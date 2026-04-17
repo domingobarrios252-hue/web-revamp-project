@@ -9,6 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RevistaRouteImport } from './routes/revista'
+import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
+import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -24,6 +27,21 @@ import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 
+const RevistaRoute = RevistaRouteImport.update({
+  id: '/revista',
+  path: '/revista',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
+  id: '/patrocinadores',
+  path: '/patrocinadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosRoute = EventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -99,6 +117,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/patrocinadores': typeof PatrocinadoresRoute
+  '/revista': typeof RevistaRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
@@ -114,6 +135,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/patrocinadores': typeof PatrocinadoresRoute
+  '/revista': typeof RevistaRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
@@ -131,6 +155,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/eventos': typeof EventosRoute
+  '/patrocinadores': typeof PatrocinadoresRoute
+  '/revista': typeof RevistaRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
@@ -149,6 +176,9 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/eventos'
+    | '/patrocinadores'
+    | '/revista'
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
@@ -164,6 +194,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/eventos'
+    | '/patrocinadores'
+    | '/revista'
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
@@ -180,6 +213,9 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/eventos'
+    | '/patrocinadores'
+    | '/revista'
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
@@ -197,6 +233,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
+  EventosRoute: typeof EventosRoute
+  PatrocinadoresRoute: typeof PatrocinadoresRoute
+  RevistaRoute: typeof RevistaRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   RankingSlugRoute: typeof RankingSlugRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
@@ -206,6 +245,27 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/revista': {
+      id: '/revista'
+      path: '/revista'
+      fullPath: '/revista'
+      preLoaderRoute: typeof RevistaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patrocinadores': {
+      id: '/patrocinadores'
+      path: '/patrocinadores'
+      fullPath: '/patrocinadores'
+      preLoaderRoute: typeof PatrocinadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos': {
+      id: '/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -331,6 +391,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
+  EventosRoute: EventosRoute,
+  PatrocinadoresRoute: PatrocinadoresRoute,
+  RevistaRoute: RevistaRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   RankingSlugRoute: RankingSlugRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
@@ -340,3 +403,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
