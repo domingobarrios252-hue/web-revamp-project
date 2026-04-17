@@ -104,10 +104,10 @@ function ArticlePage() {
     toast.success("Enlace copiado al portapapeles");
   };
 
-  const paragraphs = (article.content ?? "")
+  const paragraphs: string[] = (article.content ?? "")
     .split("\n")
-    .map((p) => p.trim())
-    .filter(Boolean);
+    .map((p: string) => p.trim())
+    .filter((p: string) => p.length > 0);
 
   return (
     <article className="mx-auto max-w-4xl px-6 py-10">
