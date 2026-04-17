@@ -1,8 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { supabase } from "@/integrations/supabase/client";
+
+type RankingPreview = {
+  id: string;
+  full_name: string;
+  slug: string;
+  photo_url: string | null;
+  total_points: number;
+  clubs: { name: string; logo_url: string | null } | null;
+  regions: { name: string; code: string; flag_url: string | null } | null;
+};
 
 type News = {
   id: string;
@@ -147,11 +157,7 @@ function HomePage() {
         )}
       </section>
 
-      <PlaceholderSection
-        id="ranking"
-        title="Ranking"
-        text="Próximamente: ficha individual de cada patinador con foto, club, marcas, puntos, bandera de comunidad e historial de competiciones."
-      />
+      <RankingPreviewSection />
       <PlaceholderSection
         id="entrevistas"
         title="Entrevistas"
@@ -245,6 +251,105 @@ function PlaceholderSection({ id, title, text }: { id: string; title: string; te
         </h2>
       </div>
       <p className="text-sm text-muted-foreground">{text}</p>
+    </section>
+  );
+}
+
+function RankingPreviewSection() {
+  const [top, setTop] = useState<RankingPreview[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("skaters")
+      .select(
+        "id, full_name, slug, photo_url, total_points, clubs(name, logo_url), regions(name, code, flag_url)"
+      )
+      .eq("active", true)
+      .order("total_points", { ascending: false })
+      .limit(5)
+      .then(({ data }) => {
+        if (!cancelled) setTop((data as unknown as RankingPreview[]) ?? []);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <section id="ranking" className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+          <Trophy className="h-6 w-6 text-gold" />
+          Top <span className="text-gold">ranking</span>
+        </h2>
+        <Link
+          to="/ranking"
+          className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
+        >
+          Ver completo →
+        </Link>
+      </div>
+
+      {top === null ? (
+        <div className="space-y-2">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-14 animate-pulse bg-surface" />
+          ))}
+        </div>
+      ) : top.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          Aún no hay patinadores en el ranking. Pide al admin que los añada desde el panel.
+        </p>
+      ) : (
+        <div className="overflow-hidden border border-border">
+          {top.map((s, i) => (
+            <Link
+              key={s.id}
+              to="/ranking/$slug"
+              params={{ slug: s.slug }}
+              className="flex items-center gap-3 border-b border-border/60 bg-surface px-4 py-3 transition-colors last:border-0 hover:bg-surface/60"
+            >
+              <span
+                className={`font-display w-8 text-2xl ${
+                  i === 0 ? "text-gold" : i < 3 ? "text-gold/70" : "text-muted-foreground"
+                }`}
+              >
+                {i + 1}
+              </span>
+              <div className="h-10 w-10 shrink-0 overflow-hidden border border-border bg-surface-2">
+                {s.photo_url ? (
+                  <img src={s.photo_url} alt={s.full_name} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="font-display flex h-full w-full items-center justify-center text-xs text-gold/40">
+                    RZ
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-display truncate text-sm uppercase tracking-wider">
+                  {s.full_name}
+                </div>
+                <div className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-wider text-muted-foreground">
+                  {s.clubs?.logo_url && (
+                    <img src={s.clubs.logo_url} alt="" className="h-3 w-3 object-contain" />
+                  )}
+                  <span className="truncate">{s.clubs?.name ?? "Sin club"}</span>
+                  {s.regions && (
+                    <>
+                      <span>·</span>
+                      <span>{s.regions.code}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="font-display text-xl text-gold">
+                {Number(s.total_points).toLocaleString("es-ES")}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

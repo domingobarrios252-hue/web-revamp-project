@@ -14,6 +14,154 @@ export type Database = {
   }
   public: {
     Tables: {
+      clubs: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          region_id: string | null
+          slug: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          region_id?: string | null
+          slug: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          region_id?: string | null
+          slug?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clubs_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competition_results: {
+        Row: {
+          category: string | null
+          competition_id: string
+          created_at: string
+          event_name: string
+          id: string
+          notes: string | null
+          points: number
+          position: number | null
+          result_time: string | null
+          skater_id: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          competition_id: string
+          created_at?: string
+          event_name: string
+          id?: string
+          notes?: string | null
+          points?: number
+          position?: number | null
+          result_time?: string | null
+          skater_id: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          competition_id?: string
+          created_at?: string
+          event_name?: string
+          id?: string
+          notes?: string | null
+          points?: number
+          position?: number | null
+          result_time?: string | null
+          skater_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_results_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competition_results_skater_id_fkey"
+            columns: ["skater_id"]
+            isOneToOne: false
+            referencedRelation: "skaters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitions: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          location: string | null
+          name: string
+          region_id: string | null
+          scope: string
+          slug: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          region_id?: string | null
+          scope?: string
+          slug: string
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          region_id?: string | null
+          scope?: string
+          slug?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitions_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news: {
         Row: {
           author: string
@@ -173,6 +321,108 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      regions: {
+        Row: {
+          code: string
+          created_at: string
+          flag_url: string | null
+          id: string
+          name: string
+          scope: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          flag_url?: string | null
+          id?: string
+          name: string
+          scope?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          flag_url?: string | null
+          id?: string
+          name?: string
+          scope?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      skaters: {
+        Row: {
+          active: boolean
+          bio: string | null
+          birth_year: number | null
+          category: string | null
+          club_id: string | null
+          created_at: string
+          full_name: string
+          gender: string | null
+          id: string
+          personal_records: Json
+          photo_url: string | null
+          region_id: string | null
+          slug: string
+          total_points: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          bio?: string | null
+          birth_year?: number | null
+          category?: string | null
+          club_id?: string | null
+          created_at?: string
+          full_name: string
+          gender?: string | null
+          id?: string
+          personal_records?: Json
+          photo_url?: string | null
+          region_id?: string | null
+          slug: string
+          total_points?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          bio?: string | null
+          birth_year?: number | null
+          category?: string | null
+          club_id?: string | null
+          created_at?: string
+          full_name?: string
+          gender?: string | null
+          id?: string
+          personal_records?: Json
+          photo_url?: string | null
+          region_id?: string | null
+          slug?: string
+          total_points?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skaters_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skaters_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

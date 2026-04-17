@@ -101,7 +101,15 @@ export function SiteHeader() {
             )}
           </li>
 
-          <NavLink to="/" hash="ranking">Ranking</NavLink>
+          <li>
+            <Link
+              to="/ranking"
+              className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold"
+              activeProps={{ className: "text-gold" }}
+            >
+              Ranking
+            </Link>
+          </li>
           <NavLink to="/" hash="entrevistas">Entrevistas</NavLink>
           <NavLink to="/" hash="eventos">Eventos</NavLink>
           <NavLink to="/" hash="revista">Revista</NavLink>
@@ -182,7 +190,7 @@ export function SiteHeader() {
               ))}
             </div>
 
-            <a href="/#ranking" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Ranking</a>
+            <Link to="/ranking" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Ranking</Link>
             <a href="/#entrevistas" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Entrevistas</a>
             <a href="/#eventos" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Eventos</a>
             <a href="/#revista" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Revista</a>
