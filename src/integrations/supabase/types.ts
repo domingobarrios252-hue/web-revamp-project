@@ -162,6 +162,128 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          categories: string[]
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          facebook_url: string | null
+          id: string
+          instagram_url: string | null
+          location: string | null
+          name: string
+          published: boolean
+          region_id: string | null
+          registration_url: string | null
+          scope: string
+          slug: string
+          sort_order: number
+          start_date: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          categories?: string[]
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          facebook_url?: string | null
+          id?: string
+          instagram_url?: string | null
+          location?: string | null
+          name: string
+          published?: boolean
+          region_id?: string | null
+          registration_url?: string | null
+          scope?: string
+          slug: string
+          sort_order?: number
+          start_date: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          categories?: string[]
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          facebook_url?: string | null
+          id?: string
+          instagram_url?: string | null
+          location?: string | null
+          name?: string
+          published?: boolean
+          region_id?: string | null
+          registration_url?: string | null
+          scope?: string
+          slug?: string
+          sort_order?: number
+          start_date?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      magazines: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          edition_date: string
+          id: string
+          issue_number: string | null
+          pdf_url: string | null
+          published: boolean
+          read_url: string | null
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          edition_date: string
+          id?: string
+          issue_number?: string | null
+          pdf_url?: string | null
+          published?: boolean
+          read_url?: string | null
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          edition_date?: string
+          id?: string
+          issue_number?: string | null
+          pdf_url?: string | null
+          published?: boolean
+          read_url?: string | null
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       news: {
         Row: {
           author: string
@@ -423,6 +545,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sponsors: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          published: boolean
+          slug: string
+          sort_order: number
+          tier: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          published?: boolean
+          slug: string
+          sort_order?: number
+          tier?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          tier?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

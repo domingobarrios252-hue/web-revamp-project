@@ -111,9 +111,21 @@ export function SiteHeader() {
             </Link>
           </li>
           <NavLink to="/" hash="entrevistas">Entrevistas</NavLink>
-          <NavLink to="/" hash="eventos">Eventos</NavLink>
-          <NavLink to="/" hash="revista">Revista</NavLink>
-          <NavLink to="/" hash="patrocinadores">Patrocinadores</NavLink>
+          <li>
+            <Link to="/eventos" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold" activeProps={{ className: "text-gold" }}>
+              Eventos
+            </Link>
+          </li>
+          <li>
+            <Link to="/revista" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold" activeProps={{ className: "text-gold" }}>
+              Revista
+            </Link>
+          </li>
+          <li>
+            <Link to="/patrocinadores" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold" activeProps={{ className: "text-gold" }}>
+              Patrocinadores
+            </Link>
+          </li>
           <NavLink to="/" hash="equipo">Equipo</NavLink>
         </ul>
 
@@ -192,9 +204,9 @@ export function SiteHeader() {
 
             <Link to="/ranking" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Ranking</Link>
             <a href="/#entrevistas" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Entrevistas</a>
-            <a href="/#eventos" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Eventos</a>
-            <a href="/#revista" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Revista</a>
-            <a href="/#patrocinadores" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Patrocinadores</a>
+            <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Eventos</Link>
+            <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Revista</Link>
+            <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Patrocinadores</Link>
             <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Equipo</a>
 
             <div className="mt-2 flex gap-2 border-t border-border pt-3">
@@ -254,7 +266,7 @@ function NavLink({ to, hash, children }: { to: "/"; hash?: string; children: Rea
   );
 }
 
-function MobileLink({ to, onClick, children }: { to: "/" | "/noticias"; onClick: () => void; children: React.ReactNode }) {
+function MobileLink({ to, onClick, children }: { to: "/" | "/noticias" | "/eventos" | "/revista" | "/patrocinadores" | "/ranking"; onClick: () => void; children: React.ReactNode }) {
   return (
     <Link
       to={to}
