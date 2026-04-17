@@ -236,6 +236,57 @@ export type Database = {
           },
         ]
       }
+      interviews: {
+        Row: {
+          content: string | null
+          cover_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          interview_date: string
+          interviewee_bio: string | null
+          interviewee_name: string
+          photos: Json
+          published: boolean
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          interview_date: string
+          interviewee_bio?: string | null
+          interviewee_name: string
+          photos?: Json
+          published?: boolean
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          interview_date?: string
+          interviewee_bio?: string | null
+          interviewee_name?: string
+          photos?: Json
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       magazines: {
         Row: {
           cover_url: string | null
