@@ -186,7 +186,7 @@ function ArticlePage() {
             (Sin contenido — añade el cuerpo del artículo desde el panel de administración)
           </p>
         ) : (
-          paragraphs.map((p, i) => <p key={i}>{p}</p>)
+          paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
         )}
       </div>
 
