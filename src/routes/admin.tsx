@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -70,6 +70,9 @@ function AdminLayout() {
           <AdminLink to="/admin/eventos" icon={<Calendar className="h-4 w-4" />}>
             Eventos
           </AdminLink>
+          <AdminLink to="/admin/entrevistas" icon={<Mic className="h-4 w-4" />}>
+            Entrevistas
+          </AdminLink>
           <AdminLink to="/admin/revistas" icon={<BookOpen className="h-4 w-4" />}>
             Revistas
           </AdminLink>
@@ -100,7 +103,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/competiciones" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/competiciones" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
