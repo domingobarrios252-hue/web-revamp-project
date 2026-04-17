@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -158,32 +158,356 @@ function HomePage() {
       </section>
 
       <RankingPreviewSection />
-      <PlaceholderSection
-        id="entrevistas"
-        title="Entrevistas"
-        text="Próximamente: entrevistas con galería de fotos en carrusel."
-      />
-      <PlaceholderSection
-        id="eventos"
-        title="Eventos"
-        text="Próximamente: eventos con categorías que pueden participar y enlaces a web/redes."
-      />
-      <PlaceholderSection
-        id="revista"
-        title="Revista"
-        text="Próximamente: portadas con fecha de edición editables desde el panel."
-      />
-      <PlaceholderSection
-        id="patrocinadores"
-        title="Patrocinadores"
-        text="Próximamente: logos en formato 500×200."
-      />
+      <InterviewsPreviewSection />
+      <EventsPreviewSection />
+      <MagazinePreviewSection />
+      <SponsorsCarouselSection />
       <PlaceholderSection
         id="equipo"
         title="Equipo"
         text="Próximamente: miembros del equipo editables desde el panel."
       />
     </>
+  );
+}
+
+type InterviewPreview = {
+  id: string;
+  title: string;
+  slug: string;
+  interviewee_name: string;
+  interview_date: string;
+  cover_url: string | null;
+  excerpt: string | null;
+};
+
+function InterviewsPreviewSection() {
+  const [items, setItems] = useState<InterviewPreview[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("interviews")
+      .select("id,title,slug,interviewee_name,interview_date,cover_url,excerpt")
+      .eq("published", true)
+      .order("interview_date", { ascending: false })
+      .limit(3)
+      .then(({ data }) => {
+        if (!cancelled) setItems((data as InterviewPreview[]) ?? []);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <section id="entrevistas" className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+          <Mic className="h-6 w-6 text-gold" />
+          Últimas <span className="text-gold">entrevistas</span>
+        </h2>
+        <Link to="/entrevistas" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
+          Ver todas →
+        </Link>
+      </div>
+      {items === null ? (
+        <div className="grid gap-5 md:grid-cols-3">
+          {[0, 1, 2].map((i) => <div key={i} className="h-72 animate-pulse bg-surface" />)}
+        </div>
+      ) : items.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Aún no hay entrevistas publicadas.</p>
+      ) : (
+        <div className="grid gap-5 md:grid-cols-3">
+          {items.map((it) => (
+            <Link
+              key={it.id}
+              to="/entrevistas/$slug"
+              params={{ slug: it.slug }}
+              className="group block border border-border bg-surface transition-colors hover:border-gold"
+            >
+              <div className="aspect-[4/3] overflow-hidden bg-background">
+                {it.cover_url ? (
+                  <img src={it.cover_url} alt={it.interviewee_name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                ) : (
+                  <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+                    <Mic className="h-10 w-10 text-gold/30" />
+                  </div>
+                )}
+              </div>
+              <div className="p-4">
+                <div className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+                  <Calendar className="h-3 w-3" />
+                  {new Date(it.interview_date).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}
+                </div>
+                <h3 className="font-display mt-2 text-lg leading-tight tracking-wider group-hover:text-gold">{it.title}</h3>
+                <div className="font-condensed mt-1 text-xs uppercase tracking-wider text-gold">{it.interviewee_name}</div>
+                {it.excerpt && <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{it.excerpt}</p>}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+type EventPreview = {
+  id: string;
+  name: string;
+  slug: string;
+  start_date: string;
+  end_date: string | null;
+  location: string | null;
+  scope: string;
+  cover_url: string | null;
+  categories: string[];
+};
+
+function EventsPreviewSection() {
+  const [items, setItems] = useState<EventPreview[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const today = new Date().toISOString().slice(0, 10);
+    supabase
+      .from("events")
+      .select("id,name,slug,start_date,end_date,location,scope,cover_url,categories")
+      .eq("published", true)
+      .gte("start_date", today)
+      .order("start_date", { ascending: true })
+      .limit(3)
+      .then(({ data }) => {
+        if (!cancelled) setItems((data as EventPreview[]) ?? []);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  return (
+    <section id="eventos" className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+          <Calendar className="h-6 w-6 text-gold" />
+          Próximos <span className="text-gold">eventos</span>
+        </h2>
+        <Link to="/eventos" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
+          Ver todos →
+        </Link>
+      </div>
+      {items === null ? (
+        <div className="grid gap-5 md:grid-cols-3">
+          {[0, 1, 2].map((i) => <div key={i} className="h-56 animate-pulse bg-surface" />)}
+        </div>
+      ) : items.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No hay eventos próximos programados.</p>
+      ) : (
+        <div className="grid gap-5 md:grid-cols-3">
+          {items.map((e) => (
+            <article key={e.id} className="border border-border bg-surface transition-colors hover:border-gold">
+              {e.cover_url && (
+                <div className="aspect-[16/9] overflow-hidden bg-background">
+                  <img src={e.cover_url} alt={e.name} className="h-full w-full object-cover" loading="lazy" />
+                </div>
+              )}
+              <div className="p-4">
+                <div className="font-condensed mb-2 flex items-center gap-2 text-[11px] uppercase tracking-widest">
+                  <span className="bg-gold/15 px-2 py-0.5 font-bold text-gold">{e.scope}</span>
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    {new Date(e.start_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+                    {e.end_date && e.end_date !== e.start_date && (
+                      <> – {new Date(e.end_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}</>
+                    )}
+                  </span>
+                </div>
+                <h3 className="font-display text-lg leading-tight tracking-wider">{e.name}</h3>
+                {e.location && (
+                  <div className="font-condensed mt-1 flex items-center gap-1 text-xs uppercase tracking-wider text-muted-foreground">
+                    <MapPin className="h-3 w-3" /> {e.location}
+                  </div>
+                )}
+                {e.categories?.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1">
+                    {e.categories.slice(0, 4).map((c) => (
+                      <span key={c} className="font-condensed border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">{c}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+type MagazinePreview = {
+  id: string;
+  title: string;
+  slug: string;
+  issue_number: string | null;
+  edition_date: string;
+  cover_url: string | null;
+  description: string | null;
+  read_url: string | null;
+  pdf_url: string | null;
+};
+
+function MagazinePreviewSection() {
+  const [item, setItem] = useState<MagazinePreview | null | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("magazines")
+      .select("id,title,slug,issue_number,edition_date,cover_url,description,read_url,pdf_url")
+      .eq("published", true)
+      .order("edition_date", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setItem((data as MagazinePreview) ?? null);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  return (
+    <section id="revista" className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+          <BookOpen className="h-6 w-6 text-gold" />
+          Última <span className="text-gold">edición</span>
+        </h2>
+        <Link to="/revista" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
+          Hemeroteca →
+        </Link>
+      </div>
+      {item === undefined ? (
+        <div className="h-72 animate-pulse bg-surface" />
+      ) : item === null ? (
+        <p className="text-sm text-muted-foreground">Aún no hay ediciones publicadas.</p>
+      ) : (
+        <div className="grid gap-6 border border-border bg-surface md:grid-cols-[260px_1fr]">
+          <div className="aspect-[3/4] overflow-hidden bg-background md:aspect-auto">
+            {item.cover_url ? (
+              <img src={item.cover_url} alt={item.title} className="h-full w-full object-cover" />
+            ) : (
+              <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+                <BookOpen className="h-12 w-12 text-gold/30" />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col justify-center p-6">
+            {item.issue_number && (
+              <div className="font-condensed text-xs uppercase tracking-widest text-gold">Nº {item.issue_number}</div>
+            )}
+            <h3 className="font-display mt-1 text-2xl leading-tight tracking-wider md:text-3xl">{item.title}</h3>
+            <div className="font-condensed mt-2 flex items-center gap-1 text-xs uppercase tracking-widest text-muted-foreground">
+              <Calendar className="h-3 w-3" />
+              {new Date(item.edition_date).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}
+            </div>
+            {item.description && <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{item.description}</p>}
+            <div className="mt-5 flex flex-wrap gap-2">
+              {item.read_url && (
+                <a href={item.read_url} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-2 bg-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
+                  Leer online <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+              {item.pdf_url && (
+                <a href={item.pdf_url} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-2 border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold/10">
+                  Descargar PDF
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+type SponsorPreview = {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  website_url: string | null;
+  tier: string;
+};
+
+function SponsorsCarouselSection() {
+  const [items, setItems] = useState<SponsorPreview[] | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("sponsors")
+      .select("id,name,logo_url,website_url,tier")
+      .eq("published", true)
+      .order("sort_order", { ascending: true })
+      .then(({ data }) => {
+        if (!cancelled) setItems((data as SponsorPreview[]) ?? []);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el || !items || items.length === 0) return;
+    let raf = 0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = now - last;
+      last = now;
+      el.scrollLeft += (dt / 1000) * 40;
+      if (el.scrollLeft >= el.scrollWidth / 2) el.scrollLeft = 0;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [items]);
+
+  return (
+    <section id="patrocinadores" className="border-y border-border bg-surface/40 py-10">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+          <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+            <Heart className="h-6 w-6 text-gold" />
+            Nuestros <span className="text-gold">patrocinadores</span>
+          </h2>
+          <Link to="/patrocinadores" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
+            Ver todos →
+          </Link>
+        </div>
+        {items === null ? (
+          <div className="h-24 animate-pulse bg-surface" />
+        ) : items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aún no hay patrocinadores publicados.</p>
+        ) : (
+          <div ref={trackRef} className="flex gap-8 overflow-x-hidden" aria-label="Carrusel de patrocinadores">
+            {[...items, ...items].map((s, idx) => {
+              const inner = (
+                <div className="flex h-24 w-[250px] shrink-0 items-center justify-center border border-border bg-background p-3 grayscale transition hover:grayscale-0">
+                  {s.logo_url ? (
+                    <img src={s.logo_url} alt={s.name} className="max-h-full max-w-full object-contain" loading="lazy" />
+                  ) : (
+                    <span className="font-display text-sm uppercase tracking-widest text-muted-foreground">{s.name}</span>
+                  )}
+                </div>
+              );
+              return s.website_url ? (
+                <a key={`${s.id}-${idx}`} href={s.website_url} target="_blank" rel="noopener noreferrer" aria-label={s.name}>
+                  {inner}
+                </a>
+              ) : (
+                <div key={`${s.id}-${idx}`} aria-label={s.name}>{inner}</div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
