@@ -17,14 +17,17 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RankingIndexRouteImport } from './routes/ranking.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
+import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RankingSlugRouteImport } from './routes/ranking.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
+import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
+import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
 import { Route as AdminCompeticionesRouteImport } from './routes/admin.competiciones'
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
@@ -70,6 +73,11 @@ const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
   path: '/noticias/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntrevistasIndexRoute = EntrevistasIndexRouteImport.update({
+  id: '/entrevistas/',
+  path: '/entrevistas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -83,6 +91,11 @@ const RankingSlugRoute = RankingSlugRouteImport.update({
 const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
   id: '/noticias/$slug',
   path: '/noticias/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
@@ -108,6 +121,11 @@ const AdminPatinadoresRoute = AdminPatinadoresRouteImport.update({
 const AdminEventosRoute = AdminEventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEntrevistasRoute = AdminEntrevistasRouteImport.update({
+  id: '/entrevistas',
+  path: '/entrevistas',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCompeticionesRoute = AdminCompeticionesRouteImport.update({
@@ -141,14 +159,17 @@ export interface FileRoutesByFullPath {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
+  '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/entrevistas/': typeof EntrevistasIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/ranking/': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
@@ -162,14 +183,17 @@ export interface FileRoutesByTo {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
+  '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/entrevistas': typeof EntrevistasIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/ranking': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
@@ -185,14 +209,17 @@ export interface FileRoutesById {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
+  '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/entrevistas/': typeof EntrevistasIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/ranking/': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
@@ -209,14 +236,17 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
+    | '/admin/entrevistas'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/revistas'
     | '/admin/usuarios'
+    | '/entrevistas/$slug'
     | '/noticias/$slug'
     | '/ranking/$slug'
     | '/admin/'
+    | '/entrevistas/'
     | '/noticias/'
     | '/ranking/'
     | '/noticias/articulo/$slug'
@@ -230,14 +260,17 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
+    | '/admin/entrevistas'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/revistas'
     | '/admin/usuarios'
+    | '/entrevistas/$slug'
     | '/noticias/$slug'
     | '/ranking/$slug'
     | '/admin'
+    | '/entrevistas'
     | '/noticias'
     | '/ranking'
     | '/noticias/articulo/$slug'
@@ -252,14 +285,17 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
+    | '/admin/entrevistas'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/revistas'
     | '/admin/usuarios'
+    | '/entrevistas/$slug'
     | '/noticias/$slug'
     | '/ranking/$slug'
     | '/admin/'
+    | '/entrevistas/'
     | '/noticias/'
     | '/ranking/'
     | '/noticias/articulo/$slug'
@@ -272,8 +308,10 @@ export interface RootRouteChildren {
   EventosRoute: typeof EventosRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   RevistaRoute: typeof RevistaRoute
+  EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   RankingSlugRoute: typeof RankingSlugRoute
+  EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
   RankingIndexRoute: typeof RankingIndexRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
@@ -337,6 +375,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticiasIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entrevistas/': {
+      id: '/entrevistas/'
+      path: '/entrevistas'
+      fullPath: '/entrevistas/'
+      preLoaderRoute: typeof EntrevistasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -356,6 +401,13 @@ declare module '@tanstack/react-router' {
       path: '/noticias/$slug'
       fullPath: '/noticias/$slug'
       preLoaderRoute: typeof NoticiasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrevistas/$slug': {
+      id: '/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/entrevistas/$slug'
+      preLoaderRoute: typeof EntrevistasSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/usuarios': {
@@ -393,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEventosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/entrevistas': {
+      id: '/admin/entrevistas'
+      path: '/entrevistas'
+      fullPath: '/admin/entrevistas'
+      preLoaderRoute: typeof AdminEntrevistasRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/competiciones': {
       id: '/admin/competiciones'
       path: '/competiciones'
@@ -428,6 +487,7 @@ interface AdminRouteChildren {
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClubesRoute: typeof AdminClubesRoute
   AdminCompeticionesRoute: typeof AdminCompeticionesRoute
+  AdminEntrevistasRoute: typeof AdminEntrevistasRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
@@ -440,6 +500,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClubesRoute: AdminClubesRoute,
   AdminCompeticionesRoute: AdminCompeticionesRoute,
+  AdminEntrevistasRoute: AdminEntrevistasRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
@@ -457,8 +518,10 @@ const rootRouteChildren: RootRouteChildren = {
   EventosRoute: EventosRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   RevistaRoute: RevistaRoute,
+  EntrevistasSlugRoute: EntrevistasSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   RankingSlugRoute: RankingSlugRoute,
+  EntrevistasIndexRoute: EntrevistasIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
   RankingIndexRoute: RankingIndexRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
