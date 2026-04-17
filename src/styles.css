@@ -169,3 +169,29 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Form inputs (admin panel) */
+.input {
+  width: 100%;
+  height: 2.25rem;
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  padding: 0 0.625rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  font-family: "Barlow Condensed", sans-serif;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+textarea.input {
+  height: auto;
+  padding: 0.5rem 0.625rem;
+  font-family: inherit;
+}
+select.input {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}

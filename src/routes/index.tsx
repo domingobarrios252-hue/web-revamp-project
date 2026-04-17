@@ -1,8 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { supabase } from "@/integrations/supabase/client";
+
+type RankingPreview = {
+  id: string;
+  full_name: string;
+  slug: string;
+  photo_url: string | null;
+  total_points: number;
+  clubs: { name: string; logo_url: string | null } | null;
+  regions: { name: string; code: string; flag_url: string | null } | null;
+};
 
 type News = {
   id: string;
@@ -147,11 +157,7 @@ function HomePage() {
         )}
       </section>
 
-      <PlaceholderSection
-        id="ranking"
-        title="Ranking"
-        text="Próximamente: ficha individual de cada patinador con foto, club, marcas, puntos, bandera de comunidad e historial de competiciones."
-      />
+      <RankingPreviewSection />
       <PlaceholderSection
         id="entrevistas"
         title="Entrevistas"
