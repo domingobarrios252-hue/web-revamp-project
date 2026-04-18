@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -162,11 +162,7 @@ function HomePage() {
       <EventsPreviewSection />
       <MagazinePreviewSection />
       <SponsorsCarouselSection />
-      <PlaceholderSection
-        id="equipo"
-        title="Equipo"
-        text="Próximamente: miembros del equipo editables desde el panel."
-      />
+      <TeamSection />
     </>
   );
 }
@@ -671,6 +667,69 @@ function RankingPreviewSection() {
                 {Number(s.total_points).toLocaleString("es-ES")}
               </div>
             </Link>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+type TeamMember = {
+  id: string;
+  full_name: string;
+  role: string;
+  bio: string | null;
+  photo_url: string | null;
+};
+
+function TeamSection() {
+  const [items, setItems] = useState<TeamMember[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("team_members")
+      .select("id,full_name,role,bio,photo_url")
+      .eq("published", true)
+      .order("sort_order", { ascending: true })
+      .order("full_name", { ascending: true })
+      .then(({ data }) => {
+        if (!cancelled) setItems((data as TeamMember[]) ?? []);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  return (
+    <section id="equipo" className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+          <UsersRound className="h-6 w-6 text-gold" />
+          Nuestro <span className="text-gold">equipo</span>
+        </h2>
+      </div>
+      {items === null ? (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => <div key={i} className="h-72 animate-pulse bg-surface" />)}
+        </div>
+      ) : items.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Aún no hay miembros del equipo publicados.</p>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((m) => (
+            <article key={m.id} className="border border-border bg-surface p-5 text-center transition-colors hover:border-gold">
+              <div className="mx-auto mb-4 h-28 w-28 overflow-hidden rounded-full border border-border bg-background">
+                {m.photo_url ? (
+                  <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" loading="lazy" />
+                ) : (
+                  <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+                    <UsersRound className="h-10 w-10 text-gold/30" />
+                  </div>
+                )}
+              </div>
+              <h3 className="font-display text-base uppercase tracking-wider">{m.full_name}</h3>
+              <div className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-gold">{m.role}</div>
+              {m.bio && <p className="mt-3 line-clamp-4 text-sm text-muted-foreground">{m.bio}</p>}
+            </article>
           ))}
         </div>
       )}
