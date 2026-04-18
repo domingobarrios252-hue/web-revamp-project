@@ -27,6 +27,7 @@ import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
+import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
 import { Route as AdminCompeticionesRouteImport } from './routes/admin.competiciones'
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
@@ -123,6 +124,11 @@ const AdminEventosRoute = AdminEventosRouteImport.update({
   path: '/eventos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEquipoRoute = AdminEquipoRouteImport.update({
+  id: '/equipo',
+  path: '/equipo',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEntrevistasRoute = AdminEntrevistasRouteImport.update({
   id: '/entrevistas',
   path: '/entrevistas',
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
+  '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
+  '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
+  '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -237,6 +246,7 @@ export interface FileRouteTypes {
     | '/admin/clubes'
     | '/admin/competiciones'
     | '/admin/entrevistas'
+    | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/admin/clubes'
     | '/admin/competiciones'
     | '/admin/entrevistas'
+    | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '/admin/clubes'
     | '/admin/competiciones'
     | '/admin/entrevistas'
+    | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -445,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEventosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/equipo': {
+      id: '/admin/equipo'
+      path: '/equipo'
+      fullPath: '/admin/equipo'
+      preLoaderRoute: typeof AdminEquipoRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/entrevistas': {
       id: '/admin/entrevistas'
       path: '/entrevistas'
@@ -488,6 +507,7 @@ interface AdminRouteChildren {
   AdminClubesRoute: typeof AdminClubesRoute
   AdminCompeticionesRoute: typeof AdminCompeticionesRoute
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
+  AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
@@ -501,6 +521,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminClubesRoute: AdminClubesRoute,
   AdminCompeticionesRoute: AdminCompeticionesRoute,
   AdminEntrevistasRoute: AdminEntrevistasRoute,
+  AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
@@ -529,3 +550,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
