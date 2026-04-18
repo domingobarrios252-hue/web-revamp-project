@@ -162,11 +162,7 @@ function HomePage() {
       <EventsPreviewSection />
       <MagazinePreviewSection />
       <SponsorsCarouselSection />
-      <PlaceholderSection
-        id="equipo"
-        title="Equipo"
-        text="Próximamente: miembros del equipo editables desde el panel."
-      />
+      <TeamSection />
     </>
   );
 }
