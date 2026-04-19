@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth-context";
 type TickerItem = {
   id: string;
   text: string;
+  link_url: string | null;
   active: boolean;
   sort_order: number;
 };
@@ -27,7 +28,7 @@ function AdminTicker() {
   const [enabled, setEnabled] = useState(true);
   const [editing, setEditing] = useState<TickerItem | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ text: "", sort_order: 0, active: true });
+  const [form, setForm] = useState({ text: "", link_url: "", sort_order: 0, active: true });
 
   const load = async () => {
     setLoading(true);
@@ -60,13 +61,23 @@ function AdminTicker() {
 
   const openNew = () => {
     setEditing(null);
-    setForm({ text: "", sort_order: (items[items.length - 1]?.sort_order ?? 0) + 1, active: true });
+    setForm({
+      text: "",
+      link_url: "",
+      sort_order: (items[items.length - 1]?.sort_order ?? 0) + 1,
+      active: true,
+    });
     setShowForm(true);
   };
 
   const openEdit = (item: TickerItem) => {
     setEditing(item);
-    setForm({ text: item.text, sort_order: item.sort_order, active: item.active });
+    setForm({
+      text: item.text,
+      link_url: item.link_url ?? "",
+      sort_order: item.sort_order,
+      active: item.active,
+    });
     setShowForm(true);
   };
 
@@ -76,17 +87,22 @@ function AdminTicker() {
       toast.error("El texto debe tener entre 2 y 280 caracteres");
       return;
     }
+    const link_url = form.link_url.trim() || null;
+    if (link_url && !/^(https?:\/\/|\/)/i.test(link_url)) {
+      toast.error("El enlace debe empezar por '/' (interno) o 'http(s)://'");
+      return;
+    }
     if (editing) {
       const { error } = await supabase
         .from("ticker_items")
-        .update({ text, sort_order: form.sort_order, active: form.active })
+        .update({ text, link_url, sort_order: form.sort_order, active: form.active })
         .eq("id", editing.id);
       if (error) return toast.error(error.message);
       toast.success("Mensaje actualizado");
     } else {
       const { error } = await supabase
         .from("ticker_items")
-        .insert({ text, sort_order: form.sort_order, active: form.active });
+        .insert({ text, link_url, sort_order: form.sort_order, active: form.active });
       if (error) return toast.error(error.message);
       toast.success("Mensaje creado");
     }
