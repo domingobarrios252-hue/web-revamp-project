@@ -164,9 +164,10 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
 
   const onSave = async () => {
     const categories = categoriesText.split(",").map((c) => c.trim()).filter(Boolean);
+    const cleanGallery = gallery.map((u) => u.trim()).filter(Boolean).slice(0, 6);
     const parsed = schema.safeParse({
       name, slug, description, start_date, end_date, location, organizer, region_id, scope, categories,
-      cover_url, website_url, instagram_url, facebook_url, registration_url, published,
+      cover_url, website_url, instagram_url, facebook_url, registration_url, published, gallery: cleanGallery,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
     setSaving(true);
