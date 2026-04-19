@@ -233,6 +233,9 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
             nameHint={slug || slugify(name)}
           />
         </Field>
+        <Field label={`Galería (hasta 6 fotos · ${gallery.length}/6)`} full>
+          <GalleryEditor value={gallery} onChange={setGallery} slug={slug || slugify(name)} />
+        </Field>
         <Field label="Web oficial"><input value={website_url} onChange={(e) => setWebsite(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Inscripción (URL)"><input value={registration_url} onChange={(e) => setRegistration(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Instagram"><input value={instagram_url} onChange={(e) => setInstagram(e.target.value)} placeholder="https://instagram.com/…" className="input" /></Field>
