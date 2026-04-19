@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Timer } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { AdBanner } from "@/components/site/AdBanner";
-import { LiveResultsWidget } from "@/components/site/LiveResultsWidget";
+import { LiveResultsHomeSection } from "@/components/site/LiveResultsHomeSection";
 import { supabase } from "@/integrations/supabase/client";
 
 type MvpPreview = {
