@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Eye, EyeOff, Link2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Link2, Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -261,12 +261,11 @@ function BannerEditor({
         </div>
         <form onSubmit={onSubmit} className="space-y-3">
           <Field label="Nombre interno" value={name} onChange={setName} required />
-          <Field label="URL de imagen" value={imageUrl} onChange={setImageUrl} type="url" required />
-          {imageUrl && (
-            <div className="border border-border bg-background p-2">
-              <img src={imageUrl} alt="preview" className="max-h-48 w-full object-contain" />
-            </div>
-          )}
+          <ImageUploadField
+            label="Imagen del banner"
+            value={imageUrl}
+            onChange={setImageUrl}
+          />
           <Field
             label="Enlace (opcional) — / interno o https://externo"
             value={linkUrl}
