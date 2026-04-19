@@ -105,7 +105,7 @@ function EventoDetail() {
         {event.categories?.length > 0 && (
           <InfoRow icon={<Trophy className="h-4 w-4" />} label="Categorías">
             <div className="flex flex-wrap gap-1.5">
-              {event.categories.map((c) => (
+              {event.categories.map((c: string) => (
                 <span key={c} className="font-condensed border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-foreground/80">{c}</span>
               ))}
             </div>
