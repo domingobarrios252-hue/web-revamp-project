@@ -35,6 +35,7 @@ import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
+import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 
 const RevistaRoute = RevistaRouteImport.update({
   id: '/revista',
@@ -166,6 +167,11 @@ const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   path: '/noticias/articulo/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
+  id: '/api/og/premios-mvp.svg',
+  path: '/api/og/premios-mvp.svg',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
+  '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
 export interface FileRoutesByTo {
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/entrevistas': typeof EntrevistasIndexRoute
   '/eventos': typeof EventosIndexRoute
   '/noticias': typeof NoticiasIndexRoute
+  '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
 export interface FileRoutesById {
@@ -249,6 +257,7 @@ export interface FileRoutesById {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
+  '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
 export interface FileRouteTypes {
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/eventos/'
     | '/noticias/'
+    | '/api/og/premios-mvp.svg'
     | '/noticias/articulo/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -306,6 +316,7 @@ export interface FileRouteTypes {
     | '/entrevistas'
     | '/eventos'
     | '/noticias'
+    | '/api/og/premios-mvp.svg'
     | '/noticias/articulo/$slug'
   id:
     | '__root__'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/eventos/'
     | '/noticias/'
+    | '/api/og/premios-mvp.svg'
     | '/noticias/articulo/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -350,6 +362,7 @@ export interface RootRouteChildren {
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
+  ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
 }
 
@@ -537,6 +550,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticiasArticuloSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/og/premios-mvp.svg': {
+      id: '/api/og/premios-mvp.svg'
+      path: '/api/og/premios-mvp.svg'
+      fullPath: '/api/og/premios-mvp.svg'
+      preLoaderRoute: typeof ApiOgPremiosMvpDotsvgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -587,6 +607,7 @@ const rootRouteChildren: RootRouteChildren = {
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
+  ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
 }
 export const routeTree = rootRouteImport
