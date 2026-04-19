@@ -108,6 +108,15 @@ function TvPage() {
 
   const embedUrl = youTubeEmbedUrl(settings?.live_stream_url, { autoplay: false });
 
+  const msUntilStart = useMemo(() => {
+    if (!settings?.live_starts_at) return null;
+    const start = new Date(settings.live_starts_at).getTime();
+    const diff = start - now.getTime();
+    return diff > 0 ? diff : null;
+  }, [settings, now]);
+
+  const showCountdown = !isLive && msUntilStart !== null;
+
   return (
     <div className="bg-background">
       {/* HERO PLAYER */}
