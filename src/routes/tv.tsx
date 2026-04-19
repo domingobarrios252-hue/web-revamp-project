@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, MapPin, Play, Radio, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { youTubeEmbedUrl, youTubeThumbnail } from "@/lib/youtube";
 
