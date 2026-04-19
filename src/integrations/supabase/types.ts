@@ -225,6 +225,77 @@ export type Database = {
         }
         Relationships: []
       }
+      live_results: {
+        Row: {
+          category: string | null
+          created_at: string
+          event_name: string
+          first_club: string | null
+          first_name: string | null
+          first_time: string | null
+          id: string
+          news_id: string | null
+          published: boolean
+          second_club: string | null
+          second_name: string | null
+          second_time: string | null
+          sort_order: number
+          status: Database["public"]["Enums"]["live_result_status"]
+          third_club: string | null
+          third_name: string | null
+          third_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          event_name: string
+          first_club?: string | null
+          first_name?: string | null
+          first_time?: string | null
+          id?: string
+          news_id?: string | null
+          published?: boolean
+          second_club?: string | null
+          second_name?: string | null
+          second_time?: string | null
+          sort_order?: number
+          status?: Database["public"]["Enums"]["live_result_status"]
+          third_club?: string | null
+          third_name?: string | null
+          third_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          event_name?: string
+          first_club?: string | null
+          first_name?: string | null
+          first_time?: string | null
+          id?: string
+          news_id?: string | null
+          published?: boolean
+          second_club?: string | null
+          second_name?: string | null
+          second_time?: string | null
+          sort_order?: number
+          status?: Database["public"]["Enums"]["live_result_status"]
+          third_club?: string | null
+          third_name?: string | null
+          third_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_results_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       magazines: {
         Row: {
           cover_url: string | null
@@ -956,6 +1027,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "user"
+      live_result_status: "en_vivo" | "finalizado"
       mvp_gender: "masculino" | "femenino"
       mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
@@ -1087,6 +1159,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "user"],
+      live_result_status: ["en_vivo", "finalizado"],
       mvp_gender: ["masculino", "femenino"],
       mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
