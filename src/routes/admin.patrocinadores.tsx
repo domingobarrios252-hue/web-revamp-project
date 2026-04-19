@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 type Sponsor = {
   id: string;
@@ -125,20 +126,6 @@ function SponsorForm({ initial, onClose, onSaved }: { initial: Sponsor | null; o
   const [sort_order, setSortOrder] = useState<number>(initial?.sort_order ?? 0);
   const [published, setPublished] = useState(initial?.published ?? true);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-
-  const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `sponsors/${slug || slugify(name) || crypto.randomUUID()}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("media").upload(path, file);
-    if (error) { toast.error(error.message); setUploading(false); return; }
-    const { data } = supabase.storage.from("media").getPublicUrl(path);
-    setLogo(data.publicUrl);
-    setUploading(false);
-  };
 
   const onSave = async () => {
     const parsed = schema.safeParse({
@@ -178,20 +165,15 @@ function SponsorForm({ initial, onClose, onSaved }: { initial: Sponsor | null; o
           <input value={slug} onChange={(e) => setSlug(e.target.value)} className="input" /></label>
         <label className="block md:col-span-2"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Descripción</span>
           <input value={description} onChange={(e) => setDescription(e.target.value)} className="input" /></label>
-        <label className="block md:col-span-2"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Logo (500 × 200 px)</span>
-          <div className="flex items-center gap-2">
-            <input value={logo_url} onChange={(e) => setLogo(e.target.value)} placeholder="URL o subir archivo" className="input flex-1" />
-            <label className="font-condensed inline-flex cursor-pointer items-center gap-1 border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold/10">
-              <Upload className="h-3.5 w-3.5" /> {uploading ? "…" : "Subir"}
-              <input type="file" accept="image/*" onChange={onUpload} className="hidden" />
-            </label>
-          </div>
-          {logo_url && (
-            <div className="mt-2 inline-flex items-center justify-center bg-white p-2" style={{ width: 250, height: 100 }}>
-              <img src={logo_url} alt="" className="max-h-full max-w-full object-contain" />
-            </div>
-          )}
-        </label>
+        <div className="block md:col-span-2"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Logo (500 × 200 px)</span>
+          <ImageUploadField
+            value={logo_url}
+            onChange={setLogo}
+            folder="sponsors"
+            nameHint={slug || slugify(name)}
+            previewClassName="mt-2 inline-block bg-white p-2 max-h-[100px] max-w-[250px] object-contain"
+          />
+        </div>
         <label className="block"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Sitio web</span>
           <input value={website_url} onChange={(e) => setWebsite(e.target.value)} placeholder="https://…" className="input" /></label>
         <label className="block"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Tier</span>

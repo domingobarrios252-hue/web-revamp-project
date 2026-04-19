@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 type Region = { id: string; name: string; code: string };
 type Club = { id: string; name: string };
@@ -219,31 +220,9 @@ function SkaterForm({
   const [active, setActive] = useState(initial?.active ?? true);
   const [prs, setPrs] = useState<PR[]>(initial?.personal_records ?? []);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
   const onSlugAuto = () => {
     if (!slug && full_name) setSlug(slugify(full_name));
-  };
-
-  const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `photos/${slug || slugify(full_name) || crypto.randomUUID()}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("skaters").upload(path, file, {
-      cacheControl: "3600",
-      upsert: false,
-    });
-    if (error) {
-      toast.error(error.message);
-      setUploading(false);
-      return;
-    }
-    const { data } = supabase.storage.from("skaters").getPublicUrl(path);
-    setPhotoUrl(data.publicUrl);
-    setUploading(false);
-    toast.success("Foto subida");
   };
 
   const onSave = async () => {
@@ -312,22 +291,14 @@ function SkaterForm({
           <input value={slug} onChange={(e) => setSlug(e.target.value)} className="input" />
         </Field>
         <Field label="Foto (carnet — vertical 3:4)">
-          <div className="flex items-center gap-2">
-            <input
-              value={photo_url}
-              onChange={(e) => setPhotoUrl(e.target.value)}
-              placeholder="URL o subir archivo"
-              className="input flex-1"
-            />
-            <label className="font-condensed inline-flex cursor-pointer items-center gap-1 border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold/10">
-              <Upload className="h-3.5 w-3.5" />
-              {uploading ? "Subiendo…" : "Subir"}
-              <input type="file" accept="image/*" onChange={onUpload} className="hidden" />
-            </label>
-          </div>
-          {photo_url && (
-            <img src={photo_url} alt="" className="mt-2 h-24 w-18 border border-border object-cover" />
-          )}
+          <ImageUploadField
+            value={photo_url}
+            onChange={setPhotoUrl}
+            bucket="skaters"
+            folder="photos"
+            nameHint={slug || slugify(full_name)}
+            previewClassName="mt-2 h-24 w-18 border border-border object-cover"
+          />
         </Field>
         <Field label="Año nacimiento">
           <input
