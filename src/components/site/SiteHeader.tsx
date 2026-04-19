@@ -8,7 +8,7 @@ type CategoryItem = { name: string; slug: string; scope: string };
 
 // Shared classes for top-level nav links — Inter, normal-case for legibility
 const NAV_LINK = "font-ui text-sm font-medium tracking-normal text-foreground/85 transition-colors hover:text-gold";
-const NAV_LINK_TV = "font-ui text-sm font-semibold tracking-normal text-tv-red transition-colors hover:text-tv-red-dark";
+const NAV_LINK_TV = "font-ui text-sm font-semibold tracking-normal text-gold transition-colors hover:text-gold-dark";
 const SUB_LINK = "font-ui text-sm font-normal text-foreground/85 hover:text-gold";
 const ACTION_BTN = "font-ui inline-flex items-center gap-1.5 border border-border px-3 py-1.5 text-xs font-semibold tracking-wide text-foreground/85 transition-colors hover:text-gold";
 
@@ -151,7 +151,7 @@ export function SiteHeader() {
             </Link>
           </li>
           <li>
-            <Link to="/tv" className={NAV_LINK_TV} activeProps={{ className: "text-tv-red" }}>
+            <Link to="/tv" className={NAV_LINK_TV} activeProps={{ className: "text-gold" }}>
               TV
             </Link>
           </li>
@@ -254,7 +254,7 @@ export function SiteHeader() {
             <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Premios MVP</Link>
             <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Entrevistas</Link>
             <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Eventos</Link>
-            <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-semibold text-tv-red hover:text-tv-red-dark">TV</Link>
+            <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-semibold text-gold hover:text-gold-dark">TV</Link>
             <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Revista</Link>
             <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Patrocinadores</Link>
             <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Equipo</a>
