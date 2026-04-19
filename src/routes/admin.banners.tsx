@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Eye, EyeOff, Link2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Link2, Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -261,12 +261,11 @@ function BannerEditor({
         </div>
         <form onSubmit={onSubmit} className="space-y-3">
           <Field label="Nombre interno" value={name} onChange={setName} required />
-          <Field label="URL de imagen" value={imageUrl} onChange={setImageUrl} type="url" required />
-          {imageUrl && (
-            <div className="border border-border bg-background p-2">
-              <img src={imageUrl} alt="preview" className="max-h-48 w-full object-contain" />
-            </div>
-          )}
+          <ImageUploadField
+            label="Imagen del banner"
+            value={imageUrl}
+            onChange={setImageUrl}
+          />
           <Field
             label="Enlace (opcional) — / interno o https://externo"
             value={linkUrl}
@@ -416,5 +415,117 @@ function Checkbox({
       />
       {label}
     </label>
+  );
+}
+
+function ImageUploadField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [urlMode, setUrlMode] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const onFile = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error("El archivo debe ser una imagen");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("La imagen no debe superar 5 MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const path = `banners/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage
+        .from("media")
+        .upload(path, file, { cacheControl: "3600", upsert: false });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      const { data } = supabase.storage.from("media").getPublicUrl(path);
+      onChange(data.publicUrl);
+      toast.success("Imagen subida");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between">
+        <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+          {label}
+        </span>
+        <button
+          type="button"
+          onClick={() => setUrlMode((v) => !v)}
+          className="font-condensed text-[10px] uppercase tracking-widest text-gold hover:underline"
+        >
+          {urlMode ? "Subir archivo" : "Pegar URL"}
+        </button>
+      </div>
+
+      {urlMode ? (
+        <input
+          type="url"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="https://…"
+          className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+        />
+      ) : (
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            const f = e.dataTransfer.files?.[0];
+            if (f) onFile(f);
+          }}
+          className="flex items-center gap-3 border border-dashed border-border bg-background p-3"
+        >
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="font-condensed inline-flex items-center gap-2 border border-border bg-surface px-3 py-2 text-xs font-bold uppercase tracking-widest text-gold hover:border-gold disabled:opacity-50"
+          >
+            {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+            {uploading ? "Subiendo…" : value ? "Reemplazar" : "Elegir imagen"}
+          </button>
+          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+            o arrastra aquí · máx. 5 MB
+          </span>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) onFile(f);
+              e.target.value = "";
+            }}
+          />
+        </div>
+      )}
+
+      {value && (
+        <div className="mt-2 border border-border bg-background p-2">
+          <img src={value} alt="preview" className="max-h-48 w-full object-contain" />
+          <div className="font-condensed mt-1 truncate text-[10px] uppercase tracking-wider text-muted-foreground">
+            {value}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
