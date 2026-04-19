@@ -74,46 +74,50 @@ export function SiteHeader() {
             >
               Noticias <ChevronDown className="h-3 w-3" />
             </Link>
-            {newsOpen && (
+            {newsOpen && (nacional.length > 0 || internacional.length > 0) && (
               <div className="absolute left-1/2 top-full w-[420px] -translate-x-1/2 pt-2">
                 <div className="rounded-md border border-border bg-popover p-4 shadow-2xl">
                   <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <div className="font-display mb-2 text-sm tracking-widest text-gold">
-                        Nacional
+                    {nacional.length > 0 && (
+                      <div>
+                        <div className="font-display mb-2 text-sm tracking-widest text-gold">
+                          Nacional
+                        </div>
+                        <ul className="space-y-1.5">
+                          {nacional.map((c) => (
+                            <li key={c.slug}>
+                              <Link
+                                to="/noticias/$slug"
+                                params={{ slug: c.slug }}
+                                className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                              >
+                                {c.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <ul className="space-y-1.5">
-                        {NACIONAL.map((c) => (
-                          <li key={c.slug}>
-                            <Link
-                              to="/noticias/$slug"
-                              params={{ slug: c.slug }}
-                              className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
-                            >
-                              {c.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="font-display mb-2 text-sm tracking-widest text-gold">
-                        Internacional
+                    )}
+                    {internacional.length > 0 && (
+                      <div>
+                        <div className="font-display mb-2 text-sm tracking-widest text-gold">
+                          Internacional
+                        </div>
+                        <ul className="space-y-1.5">
+                          {internacional.map((c) => (
+                            <li key={c.slug}>
+                              <Link
+                                to="/noticias/$slug"
+                                params={{ slug: c.slug }}
+                                className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                              >
+                                {c.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <ul className="space-y-1.5">
-                        {INTERNACIONAL.map((c) => (
-                          <li key={c.slug}>
-                            <Link
-                              to="/noticias/$slug"
-                              params={{ slug: c.slug }}
-                              className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
-                            >
-                              {c.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    )}
                   </div>
                   <Link
                     to="/noticias"
