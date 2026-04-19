@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Timer } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { AdBanner } from "@/components/site/AdBanner";
-import { LiveResultsHomeSection } from "@/components/site/LiveResultsHomeSection";
 import { supabase } from "@/integrations/supabase/client";
 
 type MvpPreview = {
@@ -128,8 +127,6 @@ function HomePage() {
       </section>
 
       <Ticker />
-
-      <LiveResultsHomeSection />
 
       <AdBanner placement="home_top" />
 
@@ -727,4 +724,3 @@ function TeamSection() {
     </section>
   );
 }
-
