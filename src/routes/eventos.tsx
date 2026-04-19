@@ -50,6 +50,9 @@ function formatRange(start: string, end: string | null) {
 
 function EventosPage() {
   const [events, setEvents] = useState<EventItem[] | null>(null);
+  const [scope, setScope] = useState<string>("all");
+  const [category, setCategory] = useState<string>("all");
+  const [month, setMonth] = useState<string>("all");
 
   useEffect(() => {
     let cancelled = false;
@@ -65,9 +68,37 @@ function EventosPage() {
     return () => { cancelled = true; };
   }, []);
 
+  const { scopes, categories } = useMemo(() => {
+    const s = new Set<string>();
+    const c = new Set<string>();
+    (events ?? []).forEach((e) => {
+      if (e.scope) s.add(e.scope);
+      e.categories?.forEach((cat) => c.add(cat));
+    });
+    return {
+      scopes: Array.from(s).sort(),
+      categories: Array.from(c).sort(),
+    };
+  }, [events]);
+
+  const filtered = useMemo(() => {
+    return (events ?? []).filter((e) => {
+      if (scope !== "all" && e.scope !== scope) return false;
+      if (category !== "all" && !e.categories?.includes(category)) return false;
+      if (month !== "all") {
+        const m = new Date(e.start_date + "T00:00:00").getMonth();
+        if (m !== Number(month)) return false;
+      }
+      return true;
+    });
+  }, [events, scope, category, month]);
+
   const today = new Date().toISOString().slice(0, 10);
-  const upcoming = (events ?? []).filter((e) => (e.end_date ?? e.start_date) >= today);
-  const past = (events ?? []).filter((e) => (e.end_date ?? e.start_date) < today).reverse();
+  const upcoming = filtered.filter((e) => (e.end_date ?? e.start_date) >= today);
+  const past = filtered.filter((e) => (e.end_date ?? e.start_date) < today).reverse();
+
+  const hasFilters = scope !== "all" || category !== "all" || month !== "all";
+  const resetFilters = () => { setScope("all"); setCategory("all"); setMonth("all"); };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
@@ -76,10 +107,43 @@ function EventosPage() {
         <h1 className="font-display text-3xl tracking-widest">EVENTOS</h1>
       </div>
 
+      {events !== null && events.length > 0 && (
+        <div className="mb-8 border border-border bg-surface p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <Filter className="h-4 w-4 text-gold" />
+            <span className="font-condensed text-xs uppercase tracking-widest text-gold">Filtros</span>
+            {hasFilters && (
+              <button
+                onClick={resetFilters}
+                className="font-condensed ml-auto inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-muted-foreground hover:text-gold"
+              >
+                <X className="h-3 w-3" /> Limpiar
+              </button>
+            )}
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <FilterSelect label="Ámbito" value={scope} onChange={setScope}>
+              <option value="all">Todos</option>
+              {scopes.map((s) => <option key={s} value={s}>{s}</option>)}
+            </FilterSelect>
+            <FilterSelect label="Categoría" value={category} onChange={setCategory}>
+              <option value="all">Todas</option>
+              {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+            </FilterSelect>
+            <FilterSelect label="Mes" value={month} onChange={setMonth}>
+              <option value="all">Todos</option>
+              {MONTHS.map((m, i) => <option key={m} value={String(i)}>{m}</option>)}
+            </FilterSelect>
+          </div>
+        </div>
+      )}
+
       {events === null ? (
         <p className="text-muted-foreground">Cargando eventos…</p>
       ) : events.length === 0 ? (
         <p className="text-muted-foreground">Aún no hay eventos publicados.</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-muted-foreground">Ningún evento coincide con los filtros seleccionados.</p>
       ) : (
         <>
           <Section title="Próximos eventos" items={upcoming} empty="No hay eventos programados próximamente." />
@@ -91,6 +155,21 @@ function EventosPage() {
         </>
       )}
     </div>
+  );
+}
+
+function FilterSelect({ label, value, onChange, children }: { label: string; value: string; onChange: (v: string) => void; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="font-condensed mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">{label}</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none"
+      >
+        {children}
+      </select>
+    </label>
   );
 }
 
