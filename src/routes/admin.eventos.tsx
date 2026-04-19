@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 type Region = { id: string; name: string };
 type EventRow = {
@@ -157,20 +158,6 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [registration_url, setRegistration] = useState(initial?.registration_url ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-
-  const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `events/${slug || slugify(name) || crypto.randomUUID()}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("media").upload(path, file);
-    if (error) { toast.error(error.message); setUploading(false); return; }
-    const { data } = supabase.storage.from("media").getPublicUrl(path);
-    setCover(data.publicUrl);
-    setUploading(false);
-  };
 
   const onSave = async () => {
     const categories = categoriesText.split(",").map((c) => c.trim()).filter(Boolean);
@@ -234,14 +221,12 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="input min-h-[80px]" />
         </Field>
         <Field label="Portada" full>
-          <div className="flex items-center gap-2">
-            <input value={cover_url} onChange={(e) => setCover(e.target.value)} placeholder="URL o subir archivo" className="input flex-1" />
-            <label className="font-condensed inline-flex cursor-pointer items-center gap-1 border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold/10">
-              <Upload className="h-3.5 w-3.5" /> {uploading ? "…" : "Subir"}
-              <input type="file" accept="image/*" onChange={onUpload} className="hidden" />
-            </label>
-          </div>
-          {cover_url && <img src={cover_url} alt="" className="mt-2 h-24 w-40 object-cover" />}
+          <ImageUploadField
+            value={cover_url}
+            onChange={setCover}
+            folder="events"
+            nameHint={slug || slugify(name)}
+          />
         </Field>
         <Field label="Web oficial"><input value={website_url} onChange={(e) => setWebsite(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Inscripción (URL)"><input value={registration_url} onChange={(e) => setRegistration(e.target.value)} placeholder="https://…" className="input" /></Field>

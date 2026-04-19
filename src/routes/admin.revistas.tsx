@@ -4,6 +4,7 @@ import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 type Magazine = {
   id: string;
@@ -126,20 +127,17 @@ function MagForm({ initial, onClose, onSaved }: { initial: Magazine | null; onCl
   const [read_url, setRead] = useState(initial?.read_url ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
 
-  const upload = async (file: File, kind: "cover" | "pdf") => {
-    const isCover = kind === "cover";
-    const setUp = isCover ? setUploading : setUploadingPdf;
-    setUp(true);
+  const uploadPdf = async (file: File) => {
+    setUploadingPdf(true);
     const ext = file.name.split(".").pop();
-    const path = `magazines/${slug || slugify(title) || crypto.randomUUID()}-${kind}-${Date.now()}.${ext}`;
+    const path = `magazines/${slug || slugify(title) || crypto.randomUUID()}-pdf-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("media").upload(path, file);
-    if (error) { toast.error(error.message); setUp(false); return; }
+    if (error) { toast.error(error.message); setUploadingPdf(false); return; }
     const { data } = supabase.storage.from("media").getPublicUrl(path);
-    if (isCover) setCover(data.publicUrl); else setPdf(data.publicUrl);
-    setUp(false);
+    setPdf(data.publicUrl);
+    setUploadingPdf(false);
   };
 
   const onSave = async () => {
@@ -184,23 +182,22 @@ function MagForm({ initial, onClose, onSaved }: { initial: Magazine | null; onCl
         <label className="block md:col-span-2"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Descripción</span>
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="input min-h-[60px]" /></label>
 
-        <label className="block md:col-span-2"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Portada</span>
-          <div className="flex items-center gap-2">
-            <input value={cover_url} onChange={(e) => setCover(e.target.value)} placeholder="URL o subir archivo" className="input flex-1" />
-            <label className="font-condensed inline-flex cursor-pointer items-center gap-1 border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold/10">
-              <Upload className="h-3.5 w-3.5" /> {uploading ? "…" : "Subir"}
-              <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], "cover")} className="hidden" />
-            </label>
-          </div>
-          {cover_url && <img src={cover_url} alt="" className="mt-2 h-32 w-24 object-cover" />}
-        </label>
+        <div className="block md:col-span-2"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Portada</span>
+          <ImageUploadField
+            value={cover_url}
+            onChange={setCover}
+            folder="magazines"
+            nameHint={`${slug || slugify(title)}-cover`}
+            previewClassName="mt-2 h-32 w-24 object-cover"
+          />
+        </div>
 
         <label className="block"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">PDF</span>
           <div className="flex items-center gap-2">
             <input value={pdf_url} onChange={(e) => setPdf(e.target.value)} placeholder="URL o subir PDF" className="input flex-1" />
             <label className="font-condensed inline-flex cursor-pointer items-center gap-1 border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold/10">
               <Upload className="h-3.5 w-3.5" /> {uploadingPdf ? "…" : "Subir"}
-              <input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], "pdf")} className="hidden" />
+              <input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && uploadPdf(e.target.files[0])} className="hidden" />
             </label>
           </div>
         </label>
