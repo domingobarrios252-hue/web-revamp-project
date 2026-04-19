@@ -24,14 +24,13 @@ type AwardRow = {
 
 const TIERS = ["elite", "estrella", "promesa"] as const;
 const GENDERS = ["masculino", "femenino"] as const;
-const POSITIONS = [1, 2, 3] as const;
 const TIER_LABEL: Record<string, string> = { elite: "Élite", estrella: "Estrella", promesa: "Promesa" };
 
 const awardSchema = z.object({
   season_id: z.string().uuid(),
   tier: z.enum(TIERS),
   gender: z.enum(GENDERS),
-  position: z.coerce.number().int().min(1).max(3),
+  position: z.literal(1),
   full_name: z.string().trim().min(2).max(160),
   photo_url: z.string().trim().url().optional().or(z.literal("")),
   club: z.string().trim().max(120).optional().or(z.literal("")),
@@ -158,46 +157,45 @@ function AdminPremiosMvp() {
               <h3 className="font-display mb-3 text-lg tracking-widest text-gold">{TIER_LABEL[tier]}</h3>
               <div className="grid gap-4 lg:grid-cols-2">
                 {GENDERS.map((gender) => {
-                  const slots = POSITIONS.map((pos) => filteredAwards.find((a) => a.tier === tier && a.gender === gender && a.position === pos));
+                  const a = filteredAwards.find((x) => x.tier === tier && x.gender === gender && x.position === 1);
                   return (
                     <div key={gender} className="border border-border bg-surface p-4">
                       <div className="font-condensed mb-3 text-xs uppercase tracking-widest text-muted-foreground">{gender}</div>
-                      <div className="grid grid-cols-3 gap-2">
-                        {slots.map((a, i) => {
-                          const pos = POSITIONS[i];
-                          return a ? (
-                            <button
-                              key={a.id}
-                              onClick={() => { setEditing(a); setShowForm(true); }}
-                              className="group flex flex-col items-center border border-border bg-background p-2 text-left hover:border-gold"
-                            >
-                              <div className="font-display mb-1 text-sm text-gold">{pos}º</div>
-                              <div className="aspect-square w-full overflow-hidden border border-border bg-surface">
-                                {a.photo_url ? (
-                                  <img src={a.photo_url} alt={a.full_name} className="h-full w-full object-cover" />
-                                ) : (
-                                  <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">Sin foto</div>
-                                )}
+                      {a ? (
+                        <button
+                          onClick={() => { setEditing(a); setShowForm(true); }}
+                          className="group flex w-full items-center gap-3 border border-border bg-background p-3 text-left hover:border-gold"
+                        >
+                          <div className="h-20 w-20 shrink-0 overflow-hidden border border-border bg-surface">
+                            {a.photo_url ? (
+                              <img src={a.photo_url} alt={a.full_name} className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">Sin foto</div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="font-display text-sm tracking-wider text-foreground">{a.full_name}</div>
+                            {a.club && <div className="font-condensed mt-0.5 text-[11px] uppercase tracking-widest text-gold">{a.club}</div>}
+                            {(a.region || a.category_age) && (
+                              <div className="font-condensed mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                                {[a.region, a.category_age].filter(Boolean).join(" · ")}
                               </div>
-                              <div className="font-condensed mt-1.5 line-clamp-2 w-full text-center text-[10px] uppercase tracking-wider text-foreground">
-                                {a.full_name}
-                              </div>
-                              {!a.published && (
-                                <span className="font-condensed mt-1 border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-muted-foreground">Borrador</span>
-                              )}
-                            </button>
-                          ) : (
-                            <button
-                              key={`empty-${pos}`}
-                              onClick={() => { setEditing({ id: "", season_id: activeSeasonId, tier, gender, position: pos, full_name: "", photo_url: null, club: null, region: null, category_age: null, merit: null, published: true }); setShowForm(true); }}
-                              className="flex aspect-square flex-col items-center justify-center border border-dashed border-border bg-background p-2 text-muted-foreground hover:border-gold hover:text-gold"
-                            >
-                              <Plus className="h-5 w-5" />
-                              <span className="font-condensed mt-1 text-[10px] uppercase tracking-widest">{pos}º puesto</span>
-                            </button>
-                          );
-                        })}
-                      </div>
+                            )}
+                            {!a.published && (
+                              <span className="font-condensed mt-1 inline-block border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-muted-foreground">Borrador</span>
+                            )}
+                          </div>
+                          <Pencil className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-gold" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => { setEditing({ id: "", season_id: activeSeasonId, tier, gender, position: 1, full_name: "", photo_url: null, club: null, region: null, category_age: null, merit: null, published: true }); setShowForm(true); }}
+                          className="flex h-24 w-full flex-col items-center justify-center gap-1 border border-dashed border-border bg-background text-muted-foreground hover:border-gold hover:text-gold"
+                        >
+                          <Plus className="h-5 w-5" />
+                          <span className="font-condensed text-[10px] uppercase tracking-widest">Asignar MVP</span>
+                        </button>
+                      )}
                     </div>
                   );
                 })}
@@ -232,7 +230,6 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
   const isEdit = !!initial?.id;
   const [tier, setTier] = useState<AwardRow["tier"]>(initial?.tier ?? "elite");
   const [gender, setGender] = useState<AwardRow["gender"]>(initial?.gender ?? "masculino");
-  const [position, setPosition] = useState<number>(initial?.position ?? 1);
   const [fullName, setFullName] = useState(initial?.full_name ?? "");
   const [photoUrl, setPhotoUrl] = useState(initial?.photo_url ?? "");
   const [club, setClub] = useState(initial?.club ?? "");
@@ -244,7 +241,7 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
 
   const save = async () => {
     const parsed = awardSchema.safeParse({
-      season_id: seasonId, tier, gender, position, full_name: fullName,
+      season_id: seasonId, tier, gender, position: 1, full_name: fullName,
       photo_url: photoUrl, club, region, category_age: categoryAge, merit, published,
     });
     if (!parsed.success) {
@@ -256,7 +253,7 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
       season_id: seasonId,
       tier,
       gender,
-      position,
+      position: 1,
       full_name: fullName.trim(),
       photo_url: photoUrl.trim() || null,
       club: club.trim() || null,
@@ -299,11 +296,6 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
           <Field label="Género">
             <select value={gender} onChange={(e) => setGender(e.target.value as AwardRow["gender"])} className="input">
               {GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}
-            </select>
-          </Field>
-          <Field label="Posición">
-            <select value={position} onChange={(e) => setPosition(Number(e.target.value))} className="input">
-              {POSITIONS.map((p) => <option key={p} value={p}>{p}º</option>)}
             </select>
           </Field>
           <Field label="Estado">
