@@ -10,28 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RevistaRouteImport } from './routes/revista'
+import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RankingIndexRouteImport } from './routes/ranking.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as RankingSlugRouteImport } from './routes/ranking.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
+import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
-import { Route as AdminCompeticionesRouteImport } from './routes/admin.competiciones'
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
@@ -40,6 +39,11 @@ import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.arti
 const RevistaRoute = RevistaRouteImport.update({
   id: '/revista',
   path: '/revista',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PremiosMvpRoute = PremiosMvpRouteImport.update({
+  id: '/premios-mvp',
+  path: '/premios-mvp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
@@ -62,11 +66,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RankingIndexRoute = RankingIndexRouteImport.update({
-  id: '/ranking/',
-  path: '/ranking/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
@@ -86,11 +85,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
-} as any)
-const RankingSlugRoute = RankingSlugRouteImport.update({
-  id: '/ranking/$slug',
-  path: '/ranking/$slug',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
   id: '/noticias/$slug',
@@ -122,6 +116,11 @@ const AdminRevistasRoute = AdminRevistasRouteImport.update({
   path: '/revistas',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
+  id: '/premios-mvp',
+  path: '/premios-mvp',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPatrocinadoresRoute = AdminPatrocinadoresRouteImport.update({
   id: '/patrocinadores',
   path: '/patrocinadores',
@@ -145,11 +144,6 @@ const AdminEquipoRoute = AdminEquipoRouteImport.update({
 const AdminEntrevistasRoute = AdminEntrevistasRouteImport.update({
   id: '/entrevistas',
   path: '/entrevistas',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCompeticionesRoute = AdminCompeticionesRouteImport.update({
-  id: '/competiciones',
-  path: '/competiciones',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminClubesRoute = AdminClubesRouteImport.update({
@@ -178,56 +172,54 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/premios-mvp': typeof PremiosMvpRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
-  '/admin/competiciones': typeof AdminCompeticionesRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
-  '/ranking/$slug': typeof RankingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
-  '/ranking/': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/premios-mvp': typeof PremiosMvpRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
-  '/admin/competiciones': typeof AdminCompeticionesRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
-  '/ranking/$slug': typeof RankingSlugRoute
   '/admin': typeof AdminIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
   '/eventos': typeof EventosIndexRoute
   '/noticias': typeof NoticiasIndexRoute
-  '/ranking': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
 export interface FileRoutesById {
@@ -236,28 +228,27 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/premios-mvp': typeof PremiosMvpRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
-  '/admin/competiciones': typeof AdminCompeticionesRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
-  '/ranking/$slug': typeof RankingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
-  '/ranking/': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
 export interface FileRouteTypes {
@@ -267,56 +258,54 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/patrocinadores'
+    | '/premios-mvp'
     | '/revista'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
-    | '/admin/competiciones'
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/premios-mvp'
     | '/admin/revistas'
     | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
     | '/noticias/$slug'
-    | '/ranking/$slug'
     | '/admin/'
     | '/entrevistas/'
     | '/eventos/'
     | '/noticias/'
-    | '/ranking/'
     | '/noticias/articulo/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/patrocinadores'
+    | '/premios-mvp'
     | '/revista'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
-    | '/admin/competiciones'
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/premios-mvp'
     | '/admin/revistas'
     | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
     | '/noticias/$slug'
-    | '/ranking/$slug'
     | '/admin'
     | '/entrevistas'
     | '/eventos'
     | '/noticias'
-    | '/ranking'
     | '/noticias/articulo/$slug'
   id:
     | '__root__'
@@ -324,28 +313,27 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/patrocinadores'
+    | '/premios-mvp'
     | '/revista'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
-    | '/admin/competiciones'
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/premios-mvp'
     | '/admin/revistas'
     | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
     | '/noticias/$slug'
-    | '/ranking/$slug'
     | '/admin/'
     | '/entrevistas/'
     | '/eventos/'
     | '/noticias/'
-    | '/ranking/'
     | '/noticias/articulo/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -354,15 +342,14 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
+  PremiosMvpRoute: typeof PremiosMvpRoute
   RevistaRoute: typeof RevistaRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EventosSlugRoute: typeof EventosSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
-  RankingSlugRoute: typeof RankingSlugRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
-  RankingIndexRoute: typeof RankingIndexRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
 }
 
@@ -373,6 +360,13 @@ declare module '@tanstack/react-router' {
       path: '/revista'
       fullPath: '/revista'
       preLoaderRoute: typeof RevistaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/premios-mvp': {
+      id: '/premios-mvp'
+      path: '/premios-mvp'
+      fullPath: '/premios-mvp'
+      preLoaderRoute: typeof PremiosMvpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patrocinadores': {
@@ -403,13 +397,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ranking/': {
-      id: '/ranking/'
-      path: '/ranking'
-      fullPath: '/ranking/'
-      preLoaderRoute: typeof RankingIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/noticias/': {
       id: '/noticias/'
       path: '/noticias'
@@ -437,13 +424,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/ranking/$slug': {
-      id: '/ranking/$slug'
-      path: '/ranking/$slug'
-      fullPath: '/ranking/$slug'
-      preLoaderRoute: typeof RankingSlugRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/noticias/$slug': {
       id: '/noticias/$slug'
@@ -487,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRevistasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/premios-mvp': {
+      id: '/admin/premios-mvp'
+      path: '/premios-mvp'
+      fullPath: '/admin/premios-mvp'
+      preLoaderRoute: typeof AdminPremiosMvpRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/patrocinadores': {
       id: '/admin/patrocinadores'
       path: '/patrocinadores'
@@ -520,13 +507,6 @@ declare module '@tanstack/react-router' {
       path: '/entrevistas'
       fullPath: '/admin/entrevistas'
       preLoaderRoute: typeof AdminEntrevistasRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/competiciones': {
-      id: '/admin/competiciones'
-      path: '/competiciones'
-      fullPath: '/admin/competiciones'
-      preLoaderRoute: typeof AdminCompeticionesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/clubes': {
@@ -564,12 +544,12 @@ interface AdminRouteChildren {
   AdminBannersRoute: typeof AdminBannersRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClubesRoute: typeof AdminClubesRoute
-  AdminCompeticionesRoute: typeof AdminCompeticionesRoute
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
+  AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
@@ -580,12 +560,12 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBannersRoute: AdminBannersRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClubesRoute: AdminClubesRoute,
-  AdminCompeticionesRoute: AdminCompeticionesRoute,
   AdminEntrevistasRoute: AdminEntrevistasRoute,
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
+  AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
@@ -599,15 +579,14 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
+  PremiosMvpRoute: PremiosMvpRoute,
   RevistaRoute: RevistaRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EventosSlugRoute: EventosSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
-  RankingSlugRoute: RankingSlugRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
-  RankingIndexRoute: RankingIndexRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
 }
 export const routeTree = rootRouteImport

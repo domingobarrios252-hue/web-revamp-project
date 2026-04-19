@@ -19,9 +19,9 @@ export function SiteFooter() {
             <h4 className="font-display mb-3 text-sm tracking-widest text-gold">Secciones</h4>
             <ul className="font-condensed space-y-1.5 text-sm uppercase tracking-wider text-muted-foreground">
               <li><Link to="/noticias" className="hover:text-gold">Noticias</Link></li>
-              <li><a href="/#eventos" className="hover:text-gold">Eventos</a></li>
-              <li><a href="/#ranking" className="hover:text-gold">Ranking</a></li>
-              <li><a href="/#revista" className="hover:text-gold">Revista</a></li>
+              <li><Link to="/eventos" className="hover:text-gold">Eventos</Link></li>
+              <li><Link to="/premios-mvp" className="hover:text-gold">Premios MVP</Link></li>
+              <li><Link to="/revista" className="hover:text-gold">Revista</Link></li>
             </ul>
           </div>
           <div>

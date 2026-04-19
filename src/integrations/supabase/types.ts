@@ -94,113 +94,6 @@ export type Database = {
           },
         ]
       }
-      competition_results: {
-        Row: {
-          category: string | null
-          competition_id: string
-          created_at: string
-          event_name: string
-          id: string
-          notes: string | null
-          points: number
-          position: number | null
-          result_time: string | null
-          skater_id: string
-          updated_at: string
-        }
-        Insert: {
-          category?: string | null
-          competition_id: string
-          created_at?: string
-          event_name: string
-          id?: string
-          notes?: string | null
-          points?: number
-          position?: number | null
-          result_time?: string | null
-          skater_id: string
-          updated_at?: string
-        }
-        Update: {
-          category?: string | null
-          competition_id?: string
-          created_at?: string
-          event_name?: string
-          id?: string
-          notes?: string | null
-          points?: number
-          position?: number | null
-          result_time?: string | null
-          skater_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "competition_results_competition_id_fkey"
-            columns: ["competition_id"]
-            isOneToOne: false
-            referencedRelation: "competitions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "competition_results_skater_id_fkey"
-            columns: ["skater_id"]
-            isOneToOne: false
-            referencedRelation: "skaters"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      competitions: {
-        Row: {
-          created_at: string
-          description: string | null
-          end_date: string | null
-          id: string
-          location: string | null
-          name: string
-          region_id: string | null
-          scope: string
-          slug: string
-          start_date: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          end_date?: string | null
-          id?: string
-          location?: string | null
-          name: string
-          region_id?: string | null
-          scope?: string
-          slug: string
-          start_date: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          end_date?: string | null
-          id?: string
-          location?: string | null
-          name?: string
-          region_id?: string | null
-          scope?: string
-          slug?: string
-          start_date?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "competitions_region_id_fkey"
-            columns: ["region_id"]
-            isOneToOne: false
-            referencedRelation: "regions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       events: {
         Row: {
           categories: string[]
@@ -377,6 +270,92 @@ export type Database = {
           sort_order?: number
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      mvp_awards: {
+        Row: {
+          category_age: string | null
+          club: string | null
+          created_at: string
+          full_name: string
+          gender: Database["public"]["Enums"]["mvp_gender"]
+          id: string
+          merit: string | null
+          photo_url: string | null
+          position: number
+          published: boolean
+          region: string | null
+          season_id: string
+          tier: Database["public"]["Enums"]["mvp_tier"]
+          updated_at: string
+        }
+        Insert: {
+          category_age?: string | null
+          club?: string | null
+          created_at?: string
+          full_name: string
+          gender: Database["public"]["Enums"]["mvp_gender"]
+          id?: string
+          merit?: string | null
+          photo_url?: string | null
+          position: number
+          published?: boolean
+          region?: string | null
+          season_id: string
+          tier: Database["public"]["Enums"]["mvp_tier"]
+          updated_at?: string
+        }
+        Update: {
+          category_age?: string | null
+          club?: string | null
+          created_at?: string
+          full_name?: string
+          gender?: Database["public"]["Enums"]["mvp_gender"]
+          id?: string
+          merit?: string | null
+          photo_url?: string | null
+          position?: number
+          published?: boolean
+          region?: string | null
+          season_id?: string
+          tier?: Database["public"]["Enums"]["mvp_tier"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mvp_awards_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "mvp_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mvp_seasons: {
+        Row: {
+          created_at: string
+          id: string
+          is_current: boolean
+          label: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          label: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          label?: string
+          updated_at?: string
+          year?: number
         }
         Relationships: []
       }
@@ -808,6 +787,8 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "user"
+      mvp_gender: "masculino" | "femenino"
+      mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
     }
     CompositeTypes: {
@@ -937,6 +918,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "user"],
+      mvp_gender: ["masculino", "femenino"],
+      mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
     },
   },

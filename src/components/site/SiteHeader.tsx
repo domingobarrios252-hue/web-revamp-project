@@ -132,11 +132,11 @@ export function SiteHeader() {
 
           <li>
             <Link
-              to="/ranking"
+              to="/premios-mvp"
               className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold"
               activeProps={{ className: "text-gold" }}
             >
-              Ranking
+              Premios MVP
             </Link>
           </li>
           <li>
@@ -245,7 +245,7 @@ export function SiteHeader() {
               </div>
             )}
 
-            <Link to="/ranking" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Ranking</Link>
+            <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Premios MVP</Link>
             <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Entrevistas</Link>
             <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Eventos</Link>
             <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Revista</Link>
@@ -309,7 +309,7 @@ function NavLink({ to, hash, children }: { to: "/"; hash?: string; children: Rea
   );
 }
 
-function MobileLink({ to, onClick, children }: { to: "/" | "/noticias" | "/eventos" | "/revista" | "/patrocinadores" | "/ranking" | "/entrevistas"; onClick: () => void; children: React.ReactNode }) {
+function MobileLink({ to, onClick, children }: { to: "/" | "/noticias" | "/eventos" | "/revista" | "/patrocinadores" | "/premios-mvp" | "/entrevistas"; onClick: () => void; children: React.ReactNode }) {
   return (
     <Link
       to={to}
