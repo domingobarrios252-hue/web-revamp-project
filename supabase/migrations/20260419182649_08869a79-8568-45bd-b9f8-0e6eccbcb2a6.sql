@@ -1,0 +1,1 @@
+UPDATE public.news SET writer_id='02732303-def8-40dc-8b75-40083516bab0', author='Sofia Seijo' WHERE id='4b22f14e-f2d5-4c41-937f-78adca0ce4e4';
