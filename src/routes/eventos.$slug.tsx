@@ -120,6 +120,8 @@ function EventoDetail() {
         </div>
       )}
 
+      {event.location && <EventLocationMap location={event.location} name={event.name} />}
+
       <div className="mt-10 flex flex-wrap items-center gap-4 border-t border-border pt-6">
         {event.website_url && <ExternalBtn href={event.website_url} icon={<Globe className="h-4 w-4" />}>Web oficial</ExternalBtn>}
         {event.instagram_url && <ExternalBtn href={event.instagram_url} icon={<Instagram className="h-4 w-4" />}>Instagram</ExternalBtn>}
