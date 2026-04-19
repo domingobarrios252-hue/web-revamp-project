@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_banners: {
+        Row: {
+          active: boolean
+          alt_text: string | null
+          created_at: string
+          id: string
+          image_url: string
+          link_url: string | null
+          name: string
+          placement: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          link_url?: string | null
+          name: string
+          placement?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          link_url?: string | null
+          name?: string
+          placement?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clubs: {
         Row: {
           created_at: string
