@@ -154,12 +154,19 @@ function TvPage() {
                   </span>
                   EN DIRECTO
                 </span>
-              ) : settings?.live_starts_at && new Date(settings.live_starts_at) > now ? (
+              ) : showCountdown ? (
                 <span className="font-condensed inline-flex items-center gap-2 border border-tv-red/60 bg-black/70 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-tv-red backdrop-blur">
                   <Clock className="h-3 w-3" /> Próxima emisión
                 </span>
               ) : null}
             </div>
+
+            {/* Countdown overlay */}
+            {showCountdown && msUntilStart !== null && (
+              <div className="pointer-events-none absolute inset-0 z-[5] flex items-end justify-center bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 sm:p-8">
+                <CountdownDisplay ms={msUntilStart} startsAt={settings!.live_starts_at!} />
+              </div>
+            )}
           </div>
 
           {/* Info side */}
