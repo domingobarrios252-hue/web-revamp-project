@@ -121,6 +121,19 @@ function EventoDetail() {
         </div>
       )}
 
+      {event.gallery?.length > 0 && (
+        <div className="mt-10 max-w-5xl">
+          <h2 className="font-display mb-4 text-xl tracking-widest text-gold">Galería</h2>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+            {event.gallery.map((url, i) => (
+              <a key={url + i} href={url} target="_blank" rel="noopener noreferrer" className="group block aspect-square overflow-hidden border border-border bg-background">
+                <img src={url} alt={`${event.name} — foto ${i + 1}`} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       {event.location && <EventLocationMap location={event.location} name={event.name} />}
 
       <div className="mt-10 flex flex-wrap items-center gap-4 border-t border-border pt-6">
