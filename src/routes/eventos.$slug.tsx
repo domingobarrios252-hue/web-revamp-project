@@ -18,6 +18,7 @@ type EventDetail = {
   instagram_url: string | null;
   facebook_url: string | null;
   registration_url: string | null;
+  gallery: string[];
 };
 
 export const Route = createFileRoute("/eventos/$slug")({
