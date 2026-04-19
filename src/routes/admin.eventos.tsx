@@ -46,6 +46,7 @@ const schema = z.object({
   facebook_url: z.string().trim().url().optional().or(z.literal("")),
   registration_url: z.string().trim().url().optional().or(z.literal("")),
   published: z.boolean(),
+  gallery: z.array(z.string().trim().url()).max(6),
 });
 
 function slugify(s: string) {
