@@ -18,13 +18,14 @@ type EventDetail = {
   instagram_url: string | null;
   facebook_url: string | null;
   registration_url: string | null;
+  gallery: string[];
 };
 
 export const Route = createFileRoute("/eventos/$slug")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("events")
-      .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url")
+      .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url, gallery")
       .eq("slug", params.slug)
       .eq("published", true)
       .maybeSingle();
@@ -117,6 +118,19 @@ function EventoDetail() {
         <div className="mt-8 max-w-3xl">
           <h2 className="font-display mb-3 text-xl tracking-widest text-gold">Descripción</h2>
           <p className="whitespace-pre-line text-base leading-relaxed text-foreground/90">{event.description}</p>
+        </div>
+      )}
+
+      {event.gallery?.length > 0 && (
+        <div className="mt-10 max-w-5xl">
+          <h2 className="font-display mb-4 text-xl tracking-widest text-gold">Galería</h2>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+            {event.gallery.map((url: string, i: number) => (
+              <a key={url + i} href={url} target="_blank" rel="noopener noreferrer" className="group block aspect-square overflow-hidden border border-border bg-background">
+                <img src={url} alt={`${event.name} — foto ${i + 1}`} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+              </a>
+            ))}
+          </div>
         </div>
       )}
 

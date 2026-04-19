@@ -25,6 +25,7 @@ type EventRow = {
   facebook_url: string | null;
   registration_url: string | null;
   published: boolean;
+  gallery: string[];
   regions: { name: string } | null;
 };
 
@@ -45,6 +46,7 @@ const schema = z.object({
   facebook_url: z.string().trim().url().optional().or(z.literal("")),
   registration_url: z.string().trim().url().optional().or(z.literal("")),
   published: z.boolean(),
+  gallery: z.array(z.string().trim().url()).max(6),
 });
 
 function slugify(s: string) {
@@ -157,13 +159,15 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [facebook_url, setFacebook] = useState(initial?.facebook_url ?? "");
   const [registration_url, setRegistration] = useState(initial?.registration_url ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
+  const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
   const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
     const categories = categoriesText.split(",").map((c) => c.trim()).filter(Boolean);
+    const cleanGallery = gallery.map((u) => u.trim()).filter(Boolean).slice(0, 6);
     const parsed = schema.safeParse({
       name, slug, description, start_date, end_date, location, organizer, region_id, scope, categories,
-      cover_url, website_url, instagram_url, facebook_url, registration_url, published,
+      cover_url, website_url, instagram_url, facebook_url, registration_url, published, gallery: cleanGallery,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
     setSaving(true);
@@ -184,6 +188,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
       facebook_url: parsed.data.facebook_url || null,
       registration_url: parsed.data.registration_url || null,
       published: parsed.data.published,
+      gallery: parsed.data.gallery,
     };
     const { error } = initial
       ? await supabase.from("events").update(payload).eq("id", initial.id)
@@ -228,6 +233,9 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
             nameHint={slug || slugify(name)}
           />
         </Field>
+        <Field label={`Galería (hasta 6 fotos · ${gallery.length}/6)`} full>
+          <GalleryEditor value={gallery} onChange={setGallery} slug={slug || slugify(name)} />
+        </Field>
         <Field label="Web oficial"><input value={website_url} onChange={(e) => setWebsite(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Inscripción (URL)"><input value={registration_url} onChange={(e) => setRegistration(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Instagram"><input value={instagram_url} onChange={(e) => setInstagram(e.target.value)} placeholder="https://instagram.com/…" className="input" /></Field>
@@ -241,6 +249,52 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
         <button onClick={onSave} disabled={saving} className="font-condensed bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50">{saving ? "Guardando…" : initial ? "Guardar" : "Crear evento"}</button>
         <button onClick={onClose} className="font-condensed border border-border px-5 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Cancelar</button>
       </div>
+    </div>
+  );
+}
+
+function GalleryEditor({ value, onChange, slug }: { value: string[]; onChange: (urls: string[]) => void; slug: string }) {
+  const setAt = (i: number, url: string) => {
+    const next = [...value];
+    next[i] = url;
+    onChange(next.filter(Boolean));
+  };
+  const removeAt = (i: number) => onChange(value.filter((_, idx) => idx !== i));
+  const addSlot = () => onChange([...value, ""]);
+  const slots = value.length < 6 ? [...value, ""] : value;
+
+  return (
+    <div className="space-y-3">
+      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+        {slots.map((url, i) => (
+          <div key={i} className="border border-border bg-background p-2">
+            <ImageUploadField
+              value={url}
+              onChange={(u) => setAt(i, u)}
+              folder={`events/${slug || "gallery"}`}
+              nameHint={`foto-${i + 1}`}
+            />
+            {url && i < value.length && (
+              <button
+                type="button"
+                onClick={() => removeAt(i)}
+                className="font-condensed mt-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-destructive"
+              >
+                <X className="h-3 w-3" /> Quitar
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {value.length < 6 && slots.length === value.length && (
+        <button
+          type="button"
+          onClick={addSlot}
+          className="font-condensed inline-flex items-center gap-1 border border-border px-3 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
+        >
+          <Plus className="h-3 w-3" /> Añadir foto
+        </button>
+      )}
     </div>
   );
 }

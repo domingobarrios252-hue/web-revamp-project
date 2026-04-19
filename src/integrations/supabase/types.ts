@@ -209,6 +209,7 @@ export type Database = {
           description: string | null
           end_date: string | null
           facebook_url: string | null
+          gallery: string[]
           id: string
           instagram_url: string | null
           location: string | null
@@ -231,6 +232,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           facebook_url?: string | null
+          gallery?: string[]
           id?: string
           instagram_url?: string | null
           location?: string | null
@@ -253,6 +255,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           facebook_url?: string | null
+          gallery?: string[]
           id?: string
           instagram_url?: string | null
           location?: string | null
