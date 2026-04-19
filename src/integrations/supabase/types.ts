@@ -213,6 +213,7 @@ export type Database = {
           instagram_url: string | null
           location: string | null
           name: string
+          organizer: string | null
           published: boolean
           region_id: string | null
           registration_url: string | null
@@ -234,6 +235,7 @@ export type Database = {
           instagram_url?: string | null
           location?: string | null
           name: string
+          organizer?: string | null
           published?: boolean
           region_id?: string | null
           registration_url?: string | null
@@ -255,6 +257,7 @@ export type Database = {
           instagram_url?: string | null
           location?: string | null
           name?: string
+          organizer?: string | null
           published?: boolean
           region_id?: string | null
           registration_url?: string | null
