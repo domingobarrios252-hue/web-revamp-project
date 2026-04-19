@@ -48,7 +48,7 @@ function NoticiasIndexPage() {
         "id, title, slug, excerpt, author, legacy_tag, image_url, views_count, published_at, news_categories(name, slug, scope)"
       )
       .eq("published", true)
-      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .then(({ data }) => setNews((data as unknown as News[]) ?? []));
 
     supabase
