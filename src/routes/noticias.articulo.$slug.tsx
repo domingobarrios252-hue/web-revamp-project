@@ -4,7 +4,6 @@ import { Calendar, Eye, User as UserIcon, Instagram, Facebook, MessageCircle, Li
 import { supabase } from "@/integrations/supabase/client";
 import { getVisitorHash } from "@/lib/visitor";
 import { toast } from "sonner";
-import { ArticleGallery } from "@/components/site/ArticleGallery";
 
 type Article = {
   id: string;
@@ -15,7 +14,6 @@ type Article = {
   author: string;
   legacy_tag: string | null;
   image_url: string | null;
-  gallery: string[] | null;
   read_minutes: number | null;
   views_count: number;
   published_at: string;
@@ -27,7 +25,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, legacy_tag, image_url, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, legacy_tag, image_url, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .eq("published", true)
@@ -191,8 +189,6 @@ function ArticlePage() {
           paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
         )}
       </div>
-
-      <ArticleGallery images={article.gallery ?? []} title={article.title} />
 
       {/* Compartir */}
       <div className="mt-10 border-t border-border pt-6">

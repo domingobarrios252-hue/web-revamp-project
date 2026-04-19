@@ -466,7 +466,6 @@ export type Database = {
           created_by: string | null
           excerpt: string | null
           featured: boolean
-          gallery: string[]
           id: string
           image_url: string | null
           legacy_tag: string | null
@@ -487,7 +486,6 @@ export type Database = {
           created_by?: string | null
           excerpt?: string | null
           featured?: boolean
-          gallery?: string[]
           id?: string
           image_url?: string | null
           legacy_tag?: string | null
@@ -508,7 +506,6 @@ export type Database = {
           created_by?: string | null
           excerpt?: string | null
           featured?: boolean
-          gallery?: string[]
           id?: string
           image_url?: string | null
           legacy_tag?: string | null

@@ -1,1 +1,0 @@
-ALTER TABLE public.news ADD COLUMN IF NOT EXISTS gallery text[] NOT NULL DEFAULT '{}'::text[];
