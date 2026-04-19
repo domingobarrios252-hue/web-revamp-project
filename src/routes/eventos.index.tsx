@@ -26,7 +26,7 @@ type EventItem = {
   registration_url: string | null;
 };
 
-export const Route = createFileRoute("/eventos")({
+export const Route = createFileRoute("/eventos/")({
   head: () => ({
     meta: [
       { title: "Eventos — RollerZone" },

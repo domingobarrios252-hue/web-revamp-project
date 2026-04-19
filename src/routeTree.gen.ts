@@ -11,12 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RevistaRouteImport } from './routes/revista'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
-import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RankingIndexRouteImport } from './routes/ranking.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
+import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RankingSlugRouteImport } from './routes/ranking.$slug'
@@ -47,11 +47,6 @@ const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   path: '/patrocinadores',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EventosRoute = EventosRouteImport.update({
-  id: '/eventos',
-  path: '/eventos',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -77,6 +72,11 @@ const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
   path: '/noticias/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventosIndexRoute = EventosIndexRouteImport.update({
+  id: '/eventos/',
+  path: '/eventos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EntrevistasIndexRoute = EntrevistasIndexRouteImport.update({
   id: '/entrevistas/',
   path: '/entrevistas/',
@@ -98,9 +98,9 @@ const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventosSlugRoute = EventosSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => EventosRoute,
+  id: '/eventos/$slug',
+  path: '/eventos/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   id: '/entrevistas/$slug',
@@ -177,7 +177,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
-  '/eventos': typeof EventosRouteWithChildren
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -198,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
+  '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/ranking/': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
@@ -205,7 +205,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/eventos': typeof EventosRouteWithChildren
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -226,6 +225,7 @@ export interface FileRoutesByTo {
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin': typeof AdminIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
+  '/eventos': typeof EventosIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/ranking': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
@@ -235,7 +235,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
-  '/eventos': typeof EventosRouteWithChildren
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -256,6 +255,7 @@ export interface FileRoutesById {
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
+  '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/ranking/': typeof RankingIndexRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
@@ -266,7 +266,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
-    | '/eventos'
     | '/patrocinadores'
     | '/revista'
     | '/admin/banners'
@@ -287,6 +286,7 @@ export interface FileRouteTypes {
     | '/ranking/$slug'
     | '/admin/'
     | '/entrevistas/'
+    | '/eventos/'
     | '/noticias/'
     | '/ranking/'
     | '/noticias/articulo/$slug'
@@ -294,7 +294,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/eventos'
     | '/patrocinadores'
     | '/revista'
     | '/admin/banners'
@@ -315,6 +314,7 @@ export interface FileRouteTypes {
     | '/ranking/$slug'
     | '/admin'
     | '/entrevistas'
+    | '/eventos'
     | '/noticias'
     | '/ranking'
     | '/noticias/articulo/$slug'
@@ -323,7 +323,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
-    | '/eventos'
     | '/patrocinadores'
     | '/revista'
     | '/admin/banners'
@@ -344,6 +343,7 @@ export interface FileRouteTypes {
     | '/ranking/$slug'
     | '/admin/'
     | '/entrevistas/'
+    | '/eventos/'
     | '/noticias/'
     | '/ranking/'
     | '/noticias/articulo/$slug'
@@ -353,13 +353,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
-  EventosRoute: typeof EventosRouteWithChildren
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   RevistaRoute: typeof RevistaRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
+  EventosSlugRoute: typeof EventosSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   RankingSlugRoute: typeof RankingSlugRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
+  EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
   RankingIndexRoute: typeof RankingIndexRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
@@ -379,13 +380,6 @@ declare module '@tanstack/react-router' {
       path: '/patrocinadores'
       fullPath: '/patrocinadores'
       preLoaderRoute: typeof PatrocinadoresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/eventos': {
-      id: '/eventos'
-      path: '/eventos'
-      fullPath: '/eventos'
-      preLoaderRoute: typeof EventosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -423,6 +417,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticiasIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/eventos/': {
+      id: '/eventos/'
+      path: '/eventos'
+      fullPath: '/eventos/'
+      preLoaderRoute: typeof EventosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/entrevistas/': {
       id: '/entrevistas/'
       path: '/entrevistas'
@@ -453,10 +454,10 @@ declare module '@tanstack/react-router' {
     }
     '/eventos/$slug': {
       id: '/eventos/$slug'
-      path: '/$slug'
+      path: '/eventos/$slug'
       fullPath: '/eventos/$slug'
       preLoaderRoute: typeof EventosSlugRouteImport
-      parentRoute: typeof EventosRoute
+      parentRoute: typeof rootRouteImport
     }
     '/entrevistas/$slug': {
       id: '/entrevistas/$slug'
@@ -593,28 +594,18 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface EventosRouteChildren {
-  EventosSlugRoute: typeof EventosSlugRoute
-}
-
-const EventosRouteChildren: EventosRouteChildren = {
-  EventosSlugRoute: EventosSlugRoute,
-}
-
-const EventosRouteWithChildren =
-  EventosRoute._addFileChildren(EventosRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
-  EventosRoute: EventosRouteWithChildren,
   PatrocinadoresRoute: PatrocinadoresRoute,
   RevistaRoute: RevistaRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
+  EventosSlugRoute: EventosSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   RankingSlugRoute: RankingSlugRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
+  EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
   RankingIndexRoute: RankingIndexRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
