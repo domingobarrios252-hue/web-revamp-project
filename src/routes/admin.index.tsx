@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
@@ -365,7 +366,19 @@ function NewsEditor({
             <Field label="Etiqueta (opcional)" value={legacyTag} onChange={setLegacyTag} />
             <NumberField label="Min. lectura" value={readMinutes} onChange={setReadMinutes} />
           </div>
-          <Field label="URL de imagen" value={imageUrl} onChange={setImageUrl} type="url" />
+          <div>
+            <label className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Imagen de portada
+            </label>
+            <ImageUploadField
+              value={imageUrl}
+              onChange={setImageUrl}
+              folder="news"
+              nameHint={slug || title}
+              previewClassName="mt-2 h-32 w-auto border border-border object-cover"
+              placeholder="URL de imagen o subir archivo"
+            />
+          </div>
           <TextareaField label="Resumen" value={excerpt} onChange={setExcerpt} rows={3} />
           <TextareaField
             label="Contenido (un párrafo por línea)"
