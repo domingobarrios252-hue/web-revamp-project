@@ -64,7 +64,7 @@ function TvPage() {
   const [activeHighlight, setActiveHighlight] = useState<Highlight | null>(null);
 
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 30_000);
+    const t = setInterval(() => setNow(new Date()), 1_000);
     return () => clearInterval(t);
   }, []);
 
@@ -108,6 +108,15 @@ function TvPage() {
 
   const embedUrl = youTubeEmbedUrl(settings?.live_stream_url, { autoplay: false });
 
+  const msUntilStart = useMemo(() => {
+    if (!settings?.live_starts_at) return null;
+    const start = new Date(settings.live_starts_at).getTime();
+    const diff = start - now.getTime();
+    return diff > 0 ? diff : null;
+  }, [settings, now]);
+
+  const showCountdown = !isLive && msUntilStart !== null;
+
   return (
     <div className="bg-background">
       {/* HERO PLAYER */}
@@ -145,12 +154,19 @@ function TvPage() {
                   </span>
                   EN DIRECTO
                 </span>
-              ) : settings?.live_starts_at && new Date(settings.live_starts_at) > now ? (
+              ) : showCountdown ? (
                 <span className="font-condensed inline-flex items-center gap-2 border border-tv-red/60 bg-black/70 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-tv-red backdrop-blur">
                   <Clock className="h-3 w-3" /> Próxima emisión
                 </span>
               ) : null}
             </div>
+
+            {/* Countdown overlay */}
+            {showCountdown && msUntilStart !== null && (
+              <div className="pointer-events-none absolute inset-0 z-[5] flex items-end justify-center bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 sm:p-8">
+                <CountdownDisplay ms={msUntilStart} startsAt={settings!.live_starts_at!} />
+              </div>
+            )}
           </div>
 
           {/* Info side */}
@@ -619,4 +635,57 @@ function formatDateTime(iso: string) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function CountdownDisplay({ ms, startsAt }: { ms: number; startsAt: string }) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(total / 86400);
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+
+  return (
+    <div className="w-full max-w-2xl text-center">
+      <p className="font-condensed text-[10px] uppercase tracking-[4px] text-tv-red sm:text-xs">
+        Comienza en
+      </p>
+      <div className="mt-2 flex items-start justify-center gap-2 sm:gap-4">
+        {days > 0 && (
+          <CountdownUnit value={pad(days)} label="Días" />
+        )}
+        <CountdownUnit value={pad(hours)} label="Horas" />
+        <CountdownSeparator />
+        <CountdownUnit value={pad(minutes)} label="Min" />
+        <CountdownSeparator />
+        <CountdownUnit value={pad(seconds)} label="Seg" pulse />
+      </div>
+      <p className="font-condensed mt-3 text-[10px] uppercase tracking-widest text-white/70 sm:text-xs">
+        {formatDateTime(startsAt)}
+      </p>
+    </div>
+  );
+}
+
+function CountdownUnit({ value, label, pulse }: { value: string; label: string; pulse?: boolean }) {
+  return (
+    <div className="flex flex-col items-center">
+      <span
+        className={`font-display tabular-nums text-3xl tracking-wider text-white sm:text-5xl md:text-6xl ${
+          pulse ? "text-tv-red" : ""
+        }`}
+      >
+        {value}
+      </span>
+      <span className="font-condensed mt-1 text-[9px] uppercase tracking-[3px] text-white/60 sm:text-[11px]">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function CountdownSeparator() {
+  return (
+    <span className="font-display text-3xl text-tv-red/60 sm:text-5xl md:text-6xl">:</span>
+  );
 }
