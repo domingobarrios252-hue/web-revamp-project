@@ -68,7 +68,7 @@ function CategoryPage() {
       )
       .eq("published", true)
       .eq("category_id", category.id)
-      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .then(({ data }) => setNews((data as News[]) ?? []));
   }, [category.id]);
 
