@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Users, Filter, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+const MONTHS = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+];
 
 type EventItem = {
   id: string;
