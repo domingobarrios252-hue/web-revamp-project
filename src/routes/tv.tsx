@@ -113,11 +113,11 @@ function TvPage() {
   return (
     <div className="bg-background">
       {/* HERO PLAYER */}
-      <section className="relative border-b border-tv-red/40 bg-black">
+      <section className="relative border-b border-gold/30 bg-background">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[1.5fr_1fr] lg:px-8 lg:py-12">
           {/* Player */}
           <div className="relative">
-            <div className="relative aspect-video w-full overflow-hidden border border-tv-red/30 bg-black shadow-[0_0_40px_rgba(229,9,20,0.25)]">
+            <div className="relative aspect-video w-full overflow-hidden border border-gold/30 bg-black shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
               {embedUrl ? (
                 <iframe
                   src={embedUrl}
@@ -128,7 +128,7 @@ function TvPage() {
                 />
               ) : (
                 <div className="flex h-full w-full flex-col items-center justify-center text-center text-muted-foreground">
-                  <Radio className="mb-3 h-10 w-10 text-tv-red" />
+                  <Radio className="mb-3 h-10 w-10 text-gold" />
                   <p className="font-display text-xl tracking-widest">Sin emisión disponible</p>
                   <p className="font-condensed mt-1 text-xs uppercase tracking-widest">
                     El equipo configurará pronto la próxima emisión
@@ -137,7 +137,7 @@ function TvPage() {
               )}
             </div>
 
-            {/* Live status badge overlay */}
+            {/* Live status badge overlay (rojo universal de directo) */}
             {isLive && (
               <div className="absolute left-4 top-4 z-10">
                 <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
@@ -153,10 +153,10 @@ function TvPage() {
 
           {/* Info side */}
           <div className="flex flex-col justify-center">
-            <p className="font-condensed text-xs uppercase tracking-[3px] text-tv-red">
+            <p className="font-condensed text-xs uppercase tracking-[3px] text-gold">
               RollerZone TV
             </p>
-            <h1 className="font-display mt-2 text-4xl tracking-widest text-white md:text-5xl">
+            <h1 className="font-display mt-2 text-4xl tracking-widest text-foreground md:text-5xl">
               {settings?.live_title ?? "RollerZone TV"}
             </h1>
             {settings?.live_subtitle && (
@@ -168,11 +168,11 @@ function TvPage() {
             <div className="mt-6 grid gap-3 border-t border-border/50 pt-5 sm:grid-cols-2">
               <StatusBlock isLive={isLive} settings={settings} now={now} />
               {settings?.next_event_title && (
-                <div className="border-l border-tv-red/40 pl-4">
-                  <p className="font-condensed text-[11px] uppercase tracking-widest text-tv-red">
+                <div className="border-l border-gold/40 pl-4">
+                  <p className="font-condensed text-[11px] uppercase tracking-widest text-gold">
                     Siguiente
                   </p>
-                  <p className="font-display mt-1 text-sm uppercase tracking-wider text-white">
+                  <p className="font-display mt-1 text-sm uppercase tracking-wider text-foreground">
                     {settings.next_event_title}
                   </p>
                   {settings.next_event_at && (
@@ -215,13 +215,12 @@ function TvPage() {
       </section>
 
       {/* HIGHLIGHTS GRID */}
-      <section className="bg-black">
+      <section className="bg-surface/40">
         <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
           <SectionHeader
             kicker="Lo mejor"
             title="Highlights"
             highlight="& momentos"
-            light
           />
 
           {highlights === null ? (
@@ -239,10 +238,10 @@ function TvPage() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-tv-red/30 bg-gradient-to-b from-black to-background">
+      <section className="border-t border-gold/30 bg-background">
         <div className="mx-auto max-w-3xl px-4 py-12 text-center lg:px-8">
-          <h2 className="font-display text-2xl tracking-widest text-white md:text-3xl">
-            ¿No te quieres perder <span className="text-tv-red">nada</span>?
+          <h2 className="font-display text-2xl tracking-widest text-foreground md:text-3xl">
+            ¿No te quieres perder <span className="text-gold">nada</span>?
           </h2>
           <p className="mt-3 text-muted-foreground">
             Suscríbete a nuestro canal y activa las notificaciones para no perderte ningún directo.
@@ -251,14 +250,14 @@ function TvPage() {
             href="https://www.youtube.com/@rollerzonespain?sub_confirmation=1"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-condensed mt-5 inline-flex items-center gap-2 bg-tv-red px-6 py-3 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-tv-red-dark"
+            className="font-condensed mt-5 inline-flex items-center gap-2 bg-gold px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground transition-colors hover:bg-gold-dark"
           >
             Suscribirse al canal
           </a>
           <div className="mt-4">
             <Link
               to="/eventos"
-              className="font-condensed text-xs uppercase tracking-widest text-muted-foreground hover:text-tv-red"
+              className="font-condensed text-xs uppercase tracking-widest text-muted-foreground hover:text-gold"
             >
               Ver todos los eventos →
             </Link>
@@ -278,22 +277,16 @@ function SectionHeader({
   kicker,
   title,
   highlight,
-  light,
 }: {
   kicker: string;
   title: string;
   highlight: string;
-  light?: boolean;
 }) {
   return (
     <div>
-      <p className="font-condensed text-xs uppercase tracking-[3px] text-tv-red">{kicker}</p>
-      <h2
-        className={`font-display mt-1 text-3xl tracking-widest md:text-4xl ${
-          light ? "text-white" : "text-foreground"
-        }`}
-      >
-        {title} <span className="text-tv-red">{highlight}</span>
+      <p className="font-condensed text-xs uppercase tracking-[3px] text-gold">{kicker}</p>
+      <h2 className="font-display mt-1 text-3xl tracking-widest text-foreground md:text-4xl">
+        {title} <span className="text-gold">{highlight}</span>
       </h2>
     </div>
   );
@@ -314,7 +307,7 @@ function StatusBlock({
         <p className="font-condensed text-[11px] uppercase tracking-widest text-tv-red">
           Estado
         </p>
-        <p className="font-display mt-1 flex items-center gap-2 text-sm uppercase tracking-wider text-white">
+        <p className="font-display mt-1 flex items-center gap-2 text-sm uppercase tracking-wider text-foreground">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-tv-red opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-tv-red" />
@@ -328,11 +321,11 @@ function StatusBlock({
     const start = new Date(settings.live_starts_at);
     const isFuture = start.getTime() > now.getTime();
     return (
-      <div className="border-l border-tv-red/40 pl-4">
-        <p className="font-condensed text-[11px] uppercase tracking-widest text-tv-red">
+      <div className="border-l border-gold/40 pl-4">
+        <p className="font-condensed text-[11px] uppercase tracking-widest text-gold">
           {isFuture ? "Próxima emisión" : "Última emisión"}
         </p>
-        <p className="font-display mt-1 text-sm uppercase tracking-wider text-white">
+        <p className="font-display mt-1 text-sm uppercase tracking-wider text-foreground">
           {formatDateTime(settings.live_starts_at)}
         </p>
       </div>
@@ -384,7 +377,7 @@ function BroadcastsCarousel({
             onClick={() => setIndex(Math.max(0, safeIndex - 1))}
             disabled={safeIndex === 0}
             aria-label="Anterior"
-            className="absolute -left-3 top-1/2 z-10 hidden -translate-y-1/2 border border-tv-red/60 bg-black/80 p-2 text-tv-red backdrop-blur transition-opacity hover:bg-tv-red hover:text-white disabled:opacity-30 sm:block"
+            className="absolute -left-3 top-1/2 z-10 hidden -translate-y-1/2 border border-gold/60 bg-background/90 p-2 text-gold backdrop-blur transition-opacity hover:bg-gold hover:text-primary-foreground disabled:opacity-30 sm:block"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -392,7 +385,7 @@ function BroadcastsCarousel({
             onClick={() => setIndex(Math.min(maxIndex, safeIndex + 1))}
             disabled={safeIndex === maxIndex}
             aria-label="Siguiente"
-            className="absolute -right-3 top-1/2 z-10 hidden -translate-y-1/2 border border-tv-red/60 bg-black/80 p-2 text-tv-red backdrop-blur transition-opacity hover:bg-tv-red hover:text-white disabled:opacity-30 sm:block"
+            className="absolute -right-3 top-1/2 z-10 hidden -translate-y-1/2 border border-gold/60 bg-background/90 p-2 text-gold backdrop-blur transition-opacity hover:bg-gold hover:text-primary-foreground disabled:opacity-30 sm:block"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -403,7 +396,7 @@ function BroadcastsCarousel({
                 onClick={() => setIndex(i)}
                 aria-label={`Ir a ${i + 1}`}
                 className={`h-1 w-6 transition-colors ${
-                  i === safeIndex ? "bg-tv-red" : "bg-border"
+                  i === safeIndex ? "bg-gold" : "bg-border"
                 }`}
               />
             ))}
@@ -422,7 +415,7 @@ function BroadcastCard({ b }: { b: Broadcast }) {
         href={b.stream_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="group block overflow-hidden border border-border bg-surface transition-all hover:border-tv-red hover:shadow-[0_0_30px_rgba(229,9,20,0.2)]"
+        className="group block overflow-hidden border border-border bg-surface transition-all hover:border-gold hover:shadow-[0_0_30px_oklch(0.78_0.16_70/0.18)]"
       >
         {children}
       </a>
@@ -442,12 +435,12 @@ function BroadcastCard({ b }: { b: Broadcast }) {
           />
         ) : (
           <div className="hero-grid-bg flex h-full w-full items-center justify-center">
-            <Radio className="h-10 w-10 text-tv-red/40" />
+            <Radio className="h-10 w-10 text-gold/40" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="absolute left-3 top-3">
-          <span className="font-condensed inline-flex items-center gap-1 bg-tv-red px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
+          <span className="font-condensed inline-flex items-center gap-1 bg-gold px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
             <Radio className="h-3 w-3" /> {b.platform}
           </span>
         </div>
@@ -458,7 +451,7 @@ function BroadcastCard({ b }: { b: Broadcast }) {
         </div>
       </div>
       <div className="p-4">
-        <h3 className="font-display clamp-2 text-base leading-tight tracking-wide text-foreground group-hover:text-tv-red">
+        <h3 className="font-display clamp-2 text-base leading-tight tracking-wide text-foreground group-hover:text-gold">
           {b.title}
         </h3>
         {b.location && (
@@ -489,7 +482,7 @@ function HighlightsGrid({
           <button
             key={h.id}
             onClick={() => onPlay(h)}
-            className={`group relative overflow-hidden border border-border bg-surface text-left transition-all hover:border-tv-red hover:shadow-[0_0_30px_rgba(229,9,20,0.25)] ${
+            className={`group relative overflow-hidden border border-border bg-surface text-left transition-all hover:border-gold hover:shadow-[0_0_30px_oklch(0.78_0.16_70/0.2)] ${
               isFeatured ? "sm:col-span-2 lg:row-span-2" : ""
             }`}
           >
@@ -505,14 +498,14 @@ function HighlightsGrid({
                   />
                 ) : (
                   <div className="hero-grid-bg flex h-full w-full items-center justify-center">
-                    <Play className="h-12 w-12 text-tv-red/50" />
+                    <Play className="h-12 w-12 text-gold/50" />
                   </div>
                 );
               })()}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90" />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-tv-red text-white shadow-2xl">
-                  <Play className="ml-1 h-7 w-7 fill-white" />
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gold text-primary-foreground shadow-2xl">
+                  <Play className="ml-1 h-7 w-7 fill-current" />
                 </span>
               </div>
               {h.duration && (
@@ -522,14 +515,14 @@ function HighlightsGrid({
               )}
               {h.category && (
                 <div className="absolute left-2 top-2">
-                  <span className="font-condensed bg-tv-red/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white">
+                  <span className="font-condensed bg-gold/95 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
                     {h.category}
                   </span>
                 </div>
               )}
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <h3
-                  className={`font-display tracking-wide text-white group-hover:text-tv-red ${
+                  className={`font-display tracking-wide text-white group-hover:text-gold ${
                     isFeatured ? "clamp-2 text-2xl md:text-3xl" : "clamp-2 text-base"
                   }`}
                 >
@@ -571,11 +564,11 @@ function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => voi
         <button
           onClick={onClose}
           aria-label="Cerrar"
-          className="absolute -top-10 right-0 text-white hover:text-tv-red"
+          className="absolute -top-10 right-0 text-white hover:text-gold"
         >
           ✕ CERRAR
         </button>
-        <div className="aspect-video w-full border border-tv-red bg-black shadow-[0_0_60px_rgba(229,9,20,0.4)]">
+        <div className="aspect-video w-full border border-gold bg-black shadow-[0_0_60px_oklch(0.78_0.16_70/0.3)]">
           {embed ? (
             <iframe
               src={embed}
@@ -591,7 +584,7 @@ function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => voi
                 href={item.video_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="ml-1 text-tv-red underline"
+                className="ml-1 text-gold underline"
               >
                 la plataforma original
               </a>
@@ -599,10 +592,10 @@ function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => voi
             </div>
           )}
         </div>
-        <div className="mt-3 text-white">
+        <div className="mt-3 text-foreground">
           <h3 className="font-display text-xl tracking-wide">{item.title}</h3>
           {item.description && (
-            <p className="mt-1 text-sm text-white/70">{item.description}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
           )}
         </div>
       </div>
