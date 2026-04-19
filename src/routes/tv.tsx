@@ -636,3 +636,56 @@ function formatDateTime(iso: string) {
     minute: "2-digit",
   });
 }
+
+function CountdownDisplay({ ms, startsAt }: { ms: number; startsAt: string }) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(total / 86400);
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+
+  return (
+    <div className="w-full max-w-2xl text-center">
+      <p className="font-condensed text-[10px] uppercase tracking-[4px] text-tv-red sm:text-xs">
+        Comienza en
+      </p>
+      <div className="mt-2 flex items-start justify-center gap-2 sm:gap-4">
+        {days > 0 && (
+          <CountdownUnit value={pad(days)} label="Días" />
+        )}
+        <CountdownUnit value={pad(hours)} label="Horas" />
+        <CountdownSeparator />
+        <CountdownUnit value={pad(minutes)} label="Min" />
+        <CountdownSeparator />
+        <CountdownUnit value={pad(seconds)} label="Seg" pulse />
+      </div>
+      <p className="font-condensed mt-3 text-[10px] uppercase tracking-widest text-white/70 sm:text-xs">
+        {formatDateTime(startsAt)}
+      </p>
+    </div>
+  );
+}
+
+function CountdownUnit({ value, label, pulse }: { value: string; label: string; pulse?: boolean }) {
+  return (
+    <div className="flex flex-col items-center">
+      <span
+        className={`font-display tabular-nums text-3xl tracking-wider text-white sm:text-5xl md:text-6xl ${
+          pulse ? "text-tv-red" : ""
+        }`}
+      >
+        {value}
+      </span>
+      <span className="font-condensed mt-1 text-[9px] uppercase tracking-[3px] text-white/60 sm:text-[11px]">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function CountdownSeparator() {
+  return (
+    <span className="font-display text-3xl text-tv-red/60 sm:text-5xl md:text-6xl">:</span>
+  );
+}
