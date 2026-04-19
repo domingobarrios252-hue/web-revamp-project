@@ -2,27 +2,47 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/integrations/supabase/client";
 
-const NACIONAL = [
-  { name: "Asturias", slug: "asturias" },
-  { name: "Navarra", slug: "navarra" },
-  { name: "Valencia", slug: "valencia" },
-  { name: "Murcia", slug: "murcia" },
-  { name: "Cataluña", slug: "cataluna" },
-];
-const INTERNACIONAL = [
-  { name: "Colombia", slug: "colombia" },
-  { name: "Ecuador", slug: "ecuador" },
-  { name: "Venezuela", slug: "venezuela" },
-];
+type CategoryItem = { name: string; slug: string; scope: string };
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
+  const [nacional, setNacional] = useState<CategoryItem[]>([]);
+  const [internacional, setInternacional] = useState<CategoryItem[]>([]);
   const { user, isAdmin, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => setMobileOpen(false), []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      // Get categories that have at least one published news item
+      const { data: newsRows } = await supabase
+        .from("news")
+        .select("category_id")
+        .eq("published", true)
+        .not("category_id", "is", null)
+        .limit(1000);
+      const usedIds = Array.from(new Set((newsRows ?? []).map((n) => n.category_id).filter(Boolean) as string[]));
+      if (usedIds.length === 0) {
+        if (!cancelled) { setNacional([]); setInternacional([]); }
+        return;
+      }
+      const { data: cats } = await supabase
+        .from("news_categories")
+        .select("name, slug, scope")
+        .in("id", usedIds)
+        .order("sort_order");
+      if (cancelled) return;
+      const list = (cats ?? []) as CategoryItem[];
+      setNacional(list.filter((c) => c.scope === "Nacional"));
+      setInternacional(list.filter((c) => c.scope === "Internacional"));
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
