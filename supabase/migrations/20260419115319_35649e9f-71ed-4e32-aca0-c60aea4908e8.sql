@@ -1,0 +1,1 @@
+ALTER TABLE public.ticker_items ADD COLUMN link_url text;

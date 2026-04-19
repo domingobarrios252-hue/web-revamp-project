@@ -698,6 +698,7 @@ export type Database = {
           active: boolean
           created_at: string
           id: string
+          link_url: string | null
           sort_order: number
           text: string
           updated_at: string
@@ -706,6 +707,7 @@ export type Database = {
           active?: boolean
           created_at?: string
           id?: string
+          link_url?: string | null
           sort_order?: number
           text: string
           updated_at?: string
@@ -714,6 +716,7 @@ export type Database = {
           active?: boolean
           created_at?: string
           id?: string
+          link_url?: string | null
           sort_order?: number
           text?: string
           updated_at?: string
