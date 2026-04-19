@@ -23,6 +23,7 @@ import { Route as RankingSlugRouteImport } from './routes/ranking.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
+import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
@@ -104,6 +105,11 @@ const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   path: '/usuarios',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTickerRoute = AdminTickerRouteImport.update({
+  id: '/ticker',
+  path: '/ticker',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRevistasRoute = AdminRevistasRouteImport.update({
   id: '/revistas',
   path: '/revistas',
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/revistas'
+    | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/noticias/$slug'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/revistas'
+    | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/noticias/$slug'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/revistas'
+    | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/noticias/$slug'
@@ -429,6 +441,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsuariosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ticker': {
+      id: '/admin/ticker'
+      path: '/ticker'
+      fullPath: '/admin/ticker'
+      preLoaderRoute: typeof AdminTickerRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/revistas': {
       id: '/admin/revistas'
       path: '/revistas'
@@ -512,6 +531,7 @@ interface AdminRouteChildren {
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
+  AdminTickerRoute: typeof AdminTickerRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -526,6 +546,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminRevistasRoute: AdminRevistasRoute,
+  AdminTickerRoute: AdminTickerRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
