@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -82,6 +82,9 @@ function AdminLayout() {
           <AdminLink to="/admin/equipo" icon={<UsersRound className="h-4 w-4" />}>
             Equipo
           </AdminLink>
+          <AdminLink to="/admin/ticker" icon={<Radio className="h-4 w-4" />}>
+            Ticker
+          </AdminLink>
           {isAdmin && (
             <AdminLink to="/admin/usuarios" icon={<ShieldCheck className="h-4 w-4" />}>
               Usuarios
@@ -106,7 +109,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/competiciones" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/competiciones" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/ticker";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
