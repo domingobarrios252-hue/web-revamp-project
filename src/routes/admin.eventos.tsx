@@ -188,6 +188,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
       facebook_url: parsed.data.facebook_url || null,
       registration_url: parsed.data.registration_url || null,
       published: parsed.data.published,
+      gallery: parsed.data.gallery,
     };
     const { error } = initial
       ? await supabase.from("events").update(payload).eq("id", initial.id)
