@@ -528,6 +528,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       skaters: {
         Row: {
           active: boolean
@@ -671,6 +689,33 @@ export type Database = {
           published?: boolean
           role?: string
           sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ticker_items: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          sort_order: number
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          sort_order?: number
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          sort_order?: number
+          text?: string
           updated_at?: string
         }
         Relationships: []
