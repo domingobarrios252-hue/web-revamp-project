@@ -336,7 +336,18 @@ function NewsEditor({
           <Field label="Título" value={title} onChange={setTitle} required />
           <Field label="Slug (URL)" value={slug} onChange={setSlug} required />
           <div className="grid gap-3 md:grid-cols-2">
-            <Field label="Autor" value={author} onChange={setAuthor} required />
+            <SelectField
+              label="Redactor / Autor *"
+              value={writerId}
+              onChange={setWriterId}
+              options={[
+                { value: "", label: visibleWriters.length === 0 ? "— Crea un redactor primero —" : "— Selecciona redactor —" },
+                ...visibleWriters.map((w) => ({
+                  value: w.id,
+                  label: w.published ? w.full_name : `${w.full_name} (oculto)`,
+                })),
+              ]}
+            />
             <SelectField
               label="Sección / Categoría"
               value={categoryId}
