@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 type Category = { id: string; name: string; slug: string; scope: string };
+type Writer = { id: string; full_name: string; published: boolean };
 type News = {
   id: string;
   title: string;
@@ -14,6 +15,7 @@ type News = {
   excerpt: string | null;
   content: string | null;
   author: string;
+  writer_id: string | null;
   category_id: string | null;
   legacy_tag: string | null;
   image_url: string | null;
@@ -29,7 +31,7 @@ const newsSchema = z.object({
   slug: z.string().trim().min(3).max(200).regex(/^[a-z0-9-]+$/, "Solo minúsculas, números y guiones"),
   excerpt: z.string().trim().max(500).optional(),
   content: z.string().trim().max(20000).optional(),
-  author: z.string().trim().min(2).max(120),
+  writer_id: z.string().uuid({ message: "Selecciona un redactor" }),
   category_id: z.string().uuid().optional(),
   legacy_tag: z.string().trim().max(60).optional(),
   image_url: z.string().trim().url().optional().or(z.literal("")),
@@ -56,25 +58,32 @@ function AdminNewsList() {
   const { isAdmin } = useAuth();
   const [news, setNews] = useState<News[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [writers, setWriters] = useState<Writer[]>([]);
   const [editing, setEditing] = useState<News | "new" | null>(null);
   const [loading, setLoading] = useState(true);
 
   const reload = async () => {
     setLoading(true);
-    const [{ data: n }, { data: c }] = await Promise.all([
+    const [{ data: n }, { data: c }, { data: w }] = await Promise.all([
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, category_id, legacy_tag, image_url, read_minutes, featured, published, views_count, published_at"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, read_minutes, featured, published, views_count, published_at"
         )
         .order("published_at", { ascending: false }),
       supabase
         .from("news_categories")
         .select("id, name, slug, scope")
         .order("sort_order", { ascending: true }),
+      supabase
+        .from("writers")
+        .select("id, full_name, published")
+        .order("sort_order", { ascending: true })
+        .order("full_name", { ascending: true }),
     ]);
     setNews((n as News[]) ?? []);
     setCategories((c as Category[]) ?? []);
+    setWriters((w as Writer[]) ?? []);
     setLoading(false);
   };
 
@@ -188,6 +197,7 @@ function AdminNewsList() {
         <NewsEditor
           item={editing === "new" ? null : editing}
           categories={categories}
+          writers={writers}
           onClose={() => setEditing(null)}
           onSaved={() => {
             setEditing(null);
@@ -223,11 +233,13 @@ function IconBtn({
 function NewsEditor({
   item,
   categories,
+  writers,
   onClose,
   onSaved,
 }: {
   item: News | null;
   categories: Category[];
+  writers: Writer[];
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -235,7 +247,7 @@ function NewsEditor({
   const [slug, setSlug] = useState(item?.slug ?? "");
   const [excerpt, setExcerpt] = useState(item?.excerpt ?? "");
   const [content, setContent] = useState(item?.content ?? "");
-  const [author, setAuthor] = useState(item?.author ?? "Redacción RollerZone");
+  const [writerId, setWriterId] = useState(item?.writer_id ?? "");
   const [categoryId, setCategoryId] = useState(item?.category_id ?? "");
   const [legacyTag, setLegacyTag] = useState(item?.legacy_tag ?? "");
   const [imageUrl, setImageUrl] = useState(item?.image_url ?? "");
@@ -249,6 +261,9 @@ function NewsEditor({
     if (!item && title && !slug) setSlug(slugify(title));
   }, [title]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Only show published writers in dropdown, but include current one if it's hidden
+  const visibleWriters = writers.filter((w) => w.published || w.id === writerId);
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = newsSchema.safeParse({
@@ -256,7 +271,7 @@ function NewsEditor({
       slug,
       excerpt: excerpt || undefined,
       content: content || undefined,
-      author,
+      writer_id: writerId,
       category_id: categoryId || undefined,
       legacy_tag: legacyTag || undefined,
       image_url: imageUrl || undefined,
@@ -268,10 +283,14 @@ function NewsEditor({
       toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos");
       return;
     }
+    const writer = writers.find((w) => w.id === parsed.data.writer_id);
+    if (!writer) {
+      toast.error("Redactor no válido");
+      return;
+    }
     setSaving(true);
     try {
       if (featured) {
-        // Ensure single featured
         await supabase.from("news").update({ featured: false }).eq("featured", true);
       }
       const payload = {
@@ -279,7 +298,8 @@ function NewsEditor({
         slug: parsed.data.slug,
         excerpt: parsed.data.excerpt ?? null,
         content: parsed.data.content ?? null,
-        author: parsed.data.author,
+        author: writer.full_name,
+        writer_id: writer.id,
         category_id: parsed.data.category_id ?? null,
         legacy_tag: parsed.data.legacy_tag ?? null,
         image_url: parsed.data.image_url || null,
