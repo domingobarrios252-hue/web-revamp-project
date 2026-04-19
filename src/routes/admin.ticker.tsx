@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Link2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
@@ -181,7 +181,23 @@ function AdminTicker() {
               {items.map((it) => (
                 <tr key={it.id} className="border-b border-border last:border-b-0">
                   <td className="px-3 py-2 text-sm text-muted-foreground">{it.sort_order}</td>
-                  <td className="px-3 py-2 text-sm text-foreground">{it.text}</td>
+                  <td className="px-3 py-2 text-sm text-foreground">
+                    <div className="flex items-center gap-2">
+                      <span>{it.text}</span>
+                      {it.link_url && (
+                        <a
+                          href={it.link_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[11px] text-gold hover:underline"
+                          title={it.link_url}
+                        >
+                          <Link2 className="h-3 w-3" />
+                          enlace
+                        </a>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-3 py-2">
                     <Switch checked={it.active} onCheckedChange={() => toggleActive(it)} />
                   </td>
@@ -235,6 +251,22 @@ function AdminTicker() {
                 />
                 <div className="mt-1 text-right text-[11px] text-muted-foreground">
                   {form.text.length}/280
+                </div>
+              </div>
+
+              <div>
+                <label className="font-condensed mb-1 block text-xs uppercase tracking-widest text-muted-foreground">
+                  Enlace (opcional)
+                </label>
+                <input
+                  type="text"
+                  value={form.link_url}
+                  onChange={(e) => setForm((f) => ({ ...f, link_url: e.target.value }))}
+                  className="w-full border border-border bg-surface px-3 py-2 text-sm text-foreground"
+                  placeholder="/noticias/articulo/mi-slug  ·  /eventos  ·  https://..."
+                />
+                <div className="mt-1 text-[11px] text-muted-foreground">
+                  Usa una ruta interna que empiece por "/" o una URL completa con http(s)://
                 </div>
               </div>
 
