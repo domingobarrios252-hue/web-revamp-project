@@ -378,6 +378,7 @@ export type Database = {
           title: string
           updated_at: string
           views_count: number
+          writer_id: string | null
         }
         Insert: {
           author?: string
@@ -397,6 +398,7 @@ export type Database = {
           title: string
           updated_at?: string
           views_count?: number
+          writer_id?: string | null
         }
         Update: {
           author?: string
@@ -416,6 +418,7 @@ export type Database = {
           title?: string
           updated_at?: string
           views_count?: number
+          writer_id?: string | null
         }
         Relationships: [
           {
@@ -423,6 +426,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "news_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_writer_id_fkey"
+            columns: ["writer_id"]
+            isOneToOne: false
+            referencedRelation: "writers"
             referencedColumns: ["id"]
           },
         ]
