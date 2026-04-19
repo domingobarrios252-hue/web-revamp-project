@@ -24,14 +24,13 @@ type AwardRow = {
 
 const TIERS = ["elite", "estrella", "promesa"] as const;
 const GENDERS = ["masculino", "femenino"] as const;
-const POSITIONS = [1, 2, 3] as const;
 const TIER_LABEL: Record<string, string> = { elite: "Élite", estrella: "Estrella", promesa: "Promesa" };
 
 const awardSchema = z.object({
   season_id: z.string().uuid(),
   tier: z.enum(TIERS),
   gender: z.enum(GENDERS),
-  position: z.coerce.number().int().min(1).max(3),
+  position: z.literal(1),
   full_name: z.string().trim().min(2).max(160),
   photo_url: z.string().trim().url().optional().or(z.literal("")),
   club: z.string().trim().max(120).optional().or(z.literal("")),

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Trophy, Award, Medal, Star, Sparkles, Crown } from "lucide-react";
+import { Trophy, Star, Sparkles, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
@@ -20,7 +20,7 @@ type Award = {
 };
 
 const TIERS: { key: Award["tier"]; label: string; subtitle: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: "elite", label: "Élite", subtitle: "La cúspide del podio", icon: Crown },
+  { key: "elite", label: "Élite", subtitle: "La cúspide del patinaje", icon: Crown },
   { key: "estrella", label: "Estrella", subtitle: "Brillan con luz propia", icon: Sparkles },
   { key: "promesa", label: "Promesa", subtitle: "El futuro del patinaje", icon: Star },
 ];
@@ -34,9 +34,9 @@ export const Route = createFileRoute("/premios-mvp")({
   head: () => ({
     meta: [
       { title: "Premios MVP — RollerZone" },
-      { name: "description", content: "Premios MVP del patinaje de velocidad: Élite, Estrella y Promesa, masculino y femenino. Top 3 de cada categoría por temporada." },
+      { name: "description", content: "Premios MVP del patinaje de velocidad: Élite, Estrella y Promesa, masculino y femenino. Un ganador por categoría y temporada." },
       { property: "og:title", content: "Premios MVP — RollerZone" },
-      { property: "og:description", content: "Top 3 de cada categoría MVP por temporada." },
+      { property: "og:description", content: "Ganadores MVP por categoría y temporada." },
     ],
   }),
   component: PremiosMvpPage,
@@ -75,18 +75,14 @@ function PremiosMvpPage() {
       .select("id, season_id, tier, gender, position, full_name, photo_url, club, region, category_age, merit")
       .eq("season_id", activeSeason.id)
       .eq("published", true)
-      .order("position", { ascending: true })
       .then(({ data }) => { if (!cancelled) setAwards((data as Award[]) ?? []); });
     return () => { cancelled = true; };
   }, [activeSeason]);
 
   const byTierGender = useMemo(() => {
-    const map = new Map<string, Award[]>();
+    const map = new Map<string, Award>();
     (awards ?? []).forEach((a) => {
-      const k = `${a.tier}:${a.gender}`;
-      const arr = map.get(k) ?? [];
-      arr.push(a);
-      map.set(k, arr);
+      map.set(`${a.tier}:${a.gender}`, a);
     });
     return map;
   }, [awards]);
@@ -101,7 +97,7 @@ function PremiosMvpPage() {
           Premios <span className="text-gold">MVP</span>
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
-          Reconocemos a los patinadores más destacados de la temporada en tres categorías: Élite, Estrella y Promesa, separados por género. Top 3 en cada categoría.
+          Reconocemos al patinador más destacado de la temporada en tres categorías: Élite, Estrella y Promesa, separados por género.
         </p>
 
         {seasons && seasons.length > 0 && (
@@ -140,8 +136,8 @@ function PremiosMvpPage() {
             <TierBlock
               key={t.key}
               tier={t}
-              masculino={byTierGender.get(`${t.key}:masculino`) ?? []}
-              femenino={byTierGender.get(`${t.key}:femenino`) ?? []}
+              masculino={byTierGender.get(`${t.key}:masculino`) ?? null}
+              femenino={byTierGender.get(`${t.key}:femenino`) ?? null}
             />
           ))}
         </div>
@@ -156,8 +152,8 @@ function TierBlock({
   femenino,
 }: {
   tier: { key: Award["tier"]; label: string; subtitle: string; icon: React.ComponentType<{ className?: string }> };
-  masculino: Award[];
-  femenino: Award[];
+  masculino: Award | null;
+  femenino: Award | null;
 }) {
   const Icon = tier.icon;
   return (
@@ -176,94 +172,62 @@ function TierBlock({
         </div>
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-2">
-        <GenderColumn label="Masculino" awards={masculino} />
-        <GenderColumn label="Femenino" awards={femenino} />
+      <div className="grid gap-8 md:grid-cols-2">
+        <GenderColumn label="Masculino" award={masculino} />
+        <GenderColumn label="Femenino" award={femenino} />
       </div>
     </section>
   );
 }
 
-function GenderColumn({ label, awards }: { label: string; awards: Award[] }) {
-  // Order: 2nd · 1st · 3rd for podium effect
-  const podium = [...awards].sort((a, b) => a.position - b.position);
-  const ordered = [
-    podium.find((a) => a.position === 2),
-    podium.find((a) => a.position === 1),
-    podium.find((a) => a.position === 3),
-  ];
-
+function GenderColumn({ label, award }: { label: string; award: Award | null }) {
   return (
     <div>
       <h3 className="font-display mb-4 text-center text-lg tracking-widest text-foreground/90">{label}</h3>
-      {awards.length === 0 ? (
-        <div className="border border-dashed border-border bg-surface/40 p-8 text-center text-sm text-muted-foreground">
-          Aún sin podio para esta categoría.
+      {!award ? (
+        <div className="border border-dashed border-border bg-surface/40 p-12 text-center text-sm text-muted-foreground">
+          Aún sin ganador para esta categoría.
         </div>
       ) : (
-        <div className="grid grid-cols-3 items-end gap-3">
-          {ordered.map((a, idx) => {
-            const slotPos = [2, 1, 3][idx];
-            return a ? (
-              <PodiumCard key={a.id} award={a} />
-            ) : (
-              <EmptySlot key={`empty-${slotPos}`} position={slotPos} />
-            );
-          })}
-        </div>
+        <WinnerCard award={award} />
       )}
     </div>
   );
 }
 
-function PodiumCard({ award }: { award: Award }) {
-  const isFirst = award.position === 1;
-  const isSecond = award.position === 2;
-  const isThird = award.position === 3;
-  const heightClass = isFirst ? "min-h-[340px]" : isSecond ? "min-h-[300px]" : "min-h-[280px]";
-  const ringClass = isFirst ? "border-gold" : isSecond ? "border-gold/60" : "border-gold/40";
-  const PositionIcon = isFirst ? Trophy : isSecond ? Award : Medal;
-
+function WinnerCard({ award }: { award: Award }) {
   return (
-    <article className={`relative flex flex-col border ${ringClass} bg-surface p-3 ${heightClass}`}>
-      <div className={`absolute -top-3 left-1/2 z-10 -translate-x-1/2 border ${ringClass} bg-background px-3 py-1`}>
-        <span className={`font-display flex items-center gap-1 text-xs tracking-widest ${isFirst ? "text-gold" : "text-foreground/80"}`}>
-          <PositionIcon className="h-3.5 w-3.5" /> {award.position}º
+    <article className="relative flex flex-col border border-gold bg-surface p-4">
+      <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 border border-gold bg-background px-3 py-1">
+        <span className="font-display flex items-center gap-1 text-xs tracking-widest text-gold">
+          <Trophy className="h-3.5 w-3.5" /> MVP
         </span>
       </div>
 
-      <div className={`relative mt-3 mb-3 ${isFirst ? "aspect-square" : "aspect-[4/5]"} overflow-hidden border border-border bg-background`}>
+      <div className="relative mt-3 mb-4 aspect-[4/5] overflow-hidden border border-border bg-background">
         {award.photo_url ? (
           <img src={award.photo_url} alt={award.full_name} loading="lazy" className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-gold/30">
-            <Trophy className="h-12 w-12" />
+            <Trophy className="h-16 w-16" />
           </div>
         )}
       </div>
 
-      <h4 className={`font-display text-center leading-tight tracking-wider ${isFirst ? "text-base md:text-lg" : "text-sm"}`}>
+      <h4 className="font-display text-center text-lg leading-tight tracking-wider md:text-xl">
         {award.full_name}
       </h4>
       {award.club && (
-        <p className="font-condensed mt-1 text-center text-[10px] uppercase tracking-widest text-gold">{award.club}</p>
+        <p className="font-condensed mt-1 text-center text-xs uppercase tracking-widest text-gold">{award.club}</p>
       )}
-      <div className="font-condensed mt-1 text-center text-[10px] uppercase tracking-wider text-muted-foreground">
-        {[award.region, award.category_age].filter(Boolean).join(" · ")}
-      </div>
+      {(award.region || award.category_age) && (
+        <div className="font-condensed mt-1 text-center text-[11px] uppercase tracking-wider text-muted-foreground">
+          {[award.region, award.category_age].filter(Boolean).join(" · ")}
+        </div>
+      )}
       {award.merit && (
-        <p className="mt-3 line-clamp-3 text-center text-xs italic text-foreground/70">«{award.merit}»</p>
+        <p className="mt-3 line-clamp-4 text-center text-sm italic text-foreground/80">«{award.merit}»</p>
       )}
     </article>
-  );
-}
-
-function EmptySlot({ position }: { position: number }) {
-  const heightClass = position === 1 ? "min-h-[340px]" : position === 2 ? "min-h-[300px]" : "min-h-[280px]";
-  return (
-    <div className={`flex flex-col items-center justify-center border border-dashed border-border bg-surface/40 p-3 ${heightClass}`}>
-      <span className="font-display text-2xl text-muted-foreground/40">{position}º</span>
-      <span className="font-condensed mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">Sin asignar</span>
-    </div>
   );
 }
