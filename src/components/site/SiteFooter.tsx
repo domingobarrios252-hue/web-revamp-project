@@ -20,6 +20,7 @@ export function SiteFooter() {
             <ul className="font-condensed space-y-1.5 text-sm uppercase tracking-wider text-muted-foreground">
               <li><Link to="/noticias" className="hover:text-gold">Noticias</Link></li>
               <li><Link to="/eventos" className="hover:text-gold">Eventos</Link></li>
+              <li><Link to="/tv" className="hover:text-tv-red">RollerZone TV</Link></li>
               <li><Link to="/premios-mvp" className="hover:text-gold">Premios MVP</Link></li>
               <li><Link to="/revista" className="hover:text-gold">Revista</Link></li>
               <li><Link to="/redactores" className="hover:text-gold">Redactores</Link></li>

@@ -757,6 +757,132 @@ export type Database = {
         }
         Relationships: []
       }
+      tv_broadcasts: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          platform: string
+          published: boolean
+          scheduled_at: string
+          sort_order: number
+          stream_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          platform?: string
+          published?: boolean
+          scheduled_at: string
+          sort_order?: number
+          stream_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          platform?: string
+          published?: boolean
+          scheduled_at?: string
+          sort_order?: number
+          stream_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tv_highlights: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          duration: string | null
+          featured: boolean
+          id: string
+          published: boolean
+          sort_order: number
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          sort_order?: number
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          sort_order?: number
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
+      tv_settings: {
+        Row: {
+          id: string
+          live_ends_at: string | null
+          live_starts_at: string | null
+          live_stream_url: string | null
+          live_subtitle: string | null
+          live_title: string
+          next_event_at: string | null
+          next_event_title: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          live_ends_at?: string | null
+          live_starts_at?: string | null
+          live_stream_url?: string | null
+          live_subtitle?: string | null
+          live_title?: string
+          next_event_at?: string | null
+          next_event_title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          live_ends_at?: string | null
+          live_starts_at?: string | null
+          live_stream_url?: string | null
+          live_subtitle?: string | null
+          live_title?: string
+          next_event_at?: string | null
+          next_event_title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

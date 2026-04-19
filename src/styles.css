@@ -40,6 +40,8 @@
   --color-gold-light: var(--gold-light);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-tv-red: var(--tv-red);
+  --color-tv-red-dark: var(--tv-red-dark);
 
   --font-display: "Bebas Neue", sans-serif;
   --font-condensed: "Barlow Condensed", sans-serif;
@@ -53,6 +55,10 @@
   --gold: oklch(0.78 0.16 70);            /* #F5A623 */
   --gold-dark: oklch(0.65 0.15 60);       /* #C8830A */
   --gold-light: oklch(0.88 0.12 80);      /* #FFD080 */
+
+  /* RollerZone TV — rojo cinematográfico */
+  --tv-red: oklch(0.58 0.24 27);          /* ~#E50914 */
+  --tv-red-dark: oklch(0.48 0.22 27);     /* ~#B0060F */
 
   /* Neutrals */
   --background: oklch(0.13 0.005 60);     /* #0D0D0D */

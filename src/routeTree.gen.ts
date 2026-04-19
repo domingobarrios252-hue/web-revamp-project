@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TvRouteImport } from './routes/tv'
 import { Route as RevistaRouteImport } from './routes/revista'
 import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
@@ -24,6 +25,9 @@ import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
+import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlights'
+import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisiones'
+import { Route as AdminTvRouteImport } from './routes/admin.tv'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
@@ -39,6 +43,11 @@ import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 
+const TvRoute = TvRouteImport.update({
+  id: '/tv',
+  path: '/tv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RevistaRoute = RevistaRouteImport.update({
   id: '/revista',
   path: '/revista',
@@ -112,6 +121,21 @@ const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
 const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTvHighlightsRoute = AdminTvHighlightsRouteImport.update({
+  id: '/tv-highlights',
+  path: '/tv-highlights',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTvEmisionesRoute = AdminTvEmisionesRouteImport.update({
+  id: '/tv-emisiones',
+  path: '/tv-emisiones',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTvRoute = AdminTvRouteImport.update({
+  id: '/tv',
+  path: '/tv',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminTickerRoute = AdminTickerRouteImport.update({
@@ -193,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/premios-mvp': typeof PremiosMvpRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
+  '/tv': typeof TvRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -205,6 +230,9 @@ export interface FileRoutesByFullPath {
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
+  '/admin/tv': typeof AdminTvRoute
+  '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
+  '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
@@ -223,6 +251,7 @@ export interface FileRoutesByTo {
   '/premios-mvp': typeof PremiosMvpRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
+  '/tv': typeof TvRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -235,6 +264,9 @@ export interface FileRoutesByTo {
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
+  '/admin/tv': typeof AdminTvRoute
+  '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
+  '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
@@ -255,6 +287,7 @@ export interface FileRoutesById {
   '/premios-mvp': typeof PremiosMvpRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
+  '/tv': typeof TvRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -267,6 +300,9 @@ export interface FileRoutesById {
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
+  '/admin/tv': typeof AdminTvRoute
+  '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
+  '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
@@ -288,6 +324,7 @@ export interface FileRouteTypes {
     | '/premios-mvp'
     | '/redactores'
     | '/revista'
+    | '/tv'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -300,6 +337,9 @@ export interface FileRouteTypes {
     | '/admin/redactores'
     | '/admin/revistas'
     | '/admin/ticker'
+    | '/admin/tv'
+    | '/admin/tv-emisiones'
+    | '/admin/tv-highlights'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
@@ -318,6 +358,7 @@ export interface FileRouteTypes {
     | '/premios-mvp'
     | '/redactores'
     | '/revista'
+    | '/tv'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -330,6 +371,9 @@ export interface FileRouteTypes {
     | '/admin/redactores'
     | '/admin/revistas'
     | '/admin/ticker'
+    | '/admin/tv'
+    | '/admin/tv-emisiones'
+    | '/admin/tv-highlights'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
@@ -349,6 +393,7 @@ export interface FileRouteTypes {
     | '/premios-mvp'
     | '/redactores'
     | '/revista'
+    | '/tv'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -361,6 +406,9 @@ export interface FileRouteTypes {
     | '/admin/redactores'
     | '/admin/revistas'
     | '/admin/ticker'
+    | '/admin/tv'
+    | '/admin/tv-emisiones'
+    | '/admin/tv-highlights'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
@@ -381,6 +429,7 @@ export interface RootRouteChildren {
   PremiosMvpRoute: typeof PremiosMvpRoute
   RedactoresRoute: typeof RedactoresRoute
   RevistaRoute: typeof RevistaRoute
+  TvRoute: typeof TvRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EventosSlugRoute: typeof EventosSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
@@ -393,6 +442,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tv': {
+      id: '/tv'
+      path: '/tv'
+      fullPath: '/tv'
+      preLoaderRoute: typeof TvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/revista': {
       id: '/revista'
       path: '/revista'
@@ -496,6 +552,27 @@ declare module '@tanstack/react-router' {
       path: '/usuarios'
       fullPath: '/admin/usuarios'
       preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tv-highlights': {
+      id: '/admin/tv-highlights'
+      path: '/tv-highlights'
+      fullPath: '/admin/tv-highlights'
+      preLoaderRoute: typeof AdminTvHighlightsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tv-emisiones': {
+      id: '/admin/tv-emisiones'
+      path: '/tv-emisiones'
+      fullPath: '/admin/tv-emisiones'
+      preLoaderRoute: typeof AdminTvEmisionesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tv': {
+      id: '/admin/tv'
+      path: '/tv'
+      fullPath: '/admin/tv'
+      preLoaderRoute: typeof AdminTvRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/ticker': {
@@ -612,6 +689,9 @@ interface AdminRouteChildren {
   AdminRedactoresRoute: typeof AdminRedactoresRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminTickerRoute: typeof AdminTickerRoute
+  AdminTvRoute: typeof AdminTvRoute
+  AdminTvEmisionesRoute: typeof AdminTvEmisionesRoute
+  AdminTvHighlightsRoute: typeof AdminTvHighlightsRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -629,6 +709,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminRedactoresRoute: AdminRedactoresRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminTickerRoute: AdminTickerRoute,
+  AdminTvRoute: AdminTvRoute,
+  AdminTvEmisionesRoute: AdminTvEmisionesRoute,
+  AdminTvHighlightsRoute: AdminTvHighlightsRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -643,6 +726,7 @@ const rootRouteChildren: RootRouteChildren = {
   PremiosMvpRoute: PremiosMvpRoute,
   RedactoresRoute: RedactoresRoute,
   RevistaRoute: RevistaRoute,
+  TvRoute: TvRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EventosSlugRoute: EventosSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
