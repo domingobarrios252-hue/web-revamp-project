@@ -66,7 +66,7 @@ function RedactoresPage() {
           Aún no hay redactores publicados.
         </p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {items.map((w) => (
             <WriterCard key={w.id} writer={w} />
           ))}
@@ -78,7 +78,7 @@ function RedactoresPage() {
 
 function WriterCard({ writer }: { writer: Writer }) {
   return (
-    <article className="flex flex-col border border-border bg-surface p-4 transition-colors hover:border-gold">
+    <article className="flex flex-col border border-border bg-surface p-3 transition-colors hover:border-gold">
       <div className="relative aspect-square overflow-hidden border border-border bg-background">
         {writer.photo_url ? (
           <img
@@ -89,15 +89,15 @@ function WriterCard({ writer }: { writer: Writer }) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-gold/30">
-            <PenLine className="h-16 w-16" />
+            <PenLine className="h-10 w-10" />
           </div>
         )}
       </div>
-      <h2 className="font-display mt-4 text-center text-lg tracking-wider md:text-xl">
+      <h2 className="font-display mt-2.5 text-center text-sm tracking-wider md:text-base">
         {writer.full_name}
       </h2>
       {writer.bio && (
-        <p className="mt-2 text-center text-sm text-foreground/80">{writer.bio}</p>
+        <p className="clamp-3 mt-1 text-center text-xs text-foreground/75">{writer.bio}</p>
       )}
     </article>
   );

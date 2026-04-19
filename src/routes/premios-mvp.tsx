@@ -183,7 +183,7 @@ function TierBlock({
         </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="mx-auto grid max-w-3xl gap-5 sm:grid-cols-2">
         <GenderColumn label="Masculino" award={masculino} />
         <GenderColumn label="Femenino" award={femenino} />
       </div>
@@ -194,9 +194,9 @@ function TierBlock({
 function GenderColumn({ label, award }: { label: string; award: Award | null }) {
   return (
     <div>
-      <h3 className="font-display mb-4 text-center text-lg tracking-widest text-foreground/90">{label}</h3>
+      <h3 className="font-display mb-3 text-center text-sm tracking-widest text-foreground/90 md:text-base">{label}</h3>
       {!award ? (
-        <div className="border border-dashed border-border bg-surface/40 p-12 text-center text-sm text-muted-foreground">
+        <div className="border border-dashed border-border bg-surface/40 p-8 text-center text-xs text-muted-foreground">
           Aún sin ganador para esta categoría.
         </div>
       ) : (
@@ -208,36 +208,36 @@ function GenderColumn({ label, award }: { label: string; award: Award | null }) 
 
 function WinnerCard({ award }: { award: Award }) {
   return (
-    <article className="relative flex flex-col border border-gold bg-surface p-4">
-      <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 border border-gold bg-background px-3 py-1">
-        <span className="font-display flex items-center gap-1 text-xs tracking-widest text-gold">
-          <Trophy className="h-3.5 w-3.5" /> MVP
+    <article className="relative mx-auto flex w-full max-w-[260px] flex-col border border-gold bg-surface p-3">
+      <div className="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 border border-gold bg-background px-2.5 py-0.5">
+        <span className="font-display flex items-center gap-1 text-[10px] tracking-widest text-gold">
+          <Trophy className="h-3 w-3" /> MVP
         </span>
       </div>
 
-      <div className="relative mt-3 mb-4 aspect-[4/5] overflow-hidden border border-border bg-background">
+      <div className="relative mt-2 mb-3 aspect-[4/5] overflow-hidden border border-border bg-background">
         {award.photo_url ? (
           <img src={award.photo_url} alt={award.full_name} loading="lazy" className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-gold/30">
-            <Trophy className="h-16 w-16" />
+            <Trophy className="h-12 w-12" />
           </div>
         )}
       </div>
 
-      <h4 className="font-display text-center text-lg leading-tight tracking-wider md:text-xl">
+      <h4 className="font-display text-center text-sm leading-tight tracking-wider md:text-base">
         {award.full_name}
       </h4>
       {award.club && (
-        <p className="font-condensed mt-1 text-center text-xs uppercase tracking-widest text-gold">{award.club}</p>
+        <p className="font-condensed mt-0.5 text-center text-[10px] uppercase tracking-widest text-gold">{award.club}</p>
       )}
       {(award.region || award.category_age) && (
-        <div className="font-condensed mt-1 text-center text-[11px] uppercase tracking-wider text-muted-foreground">
+        <div className="font-condensed mt-0.5 text-center text-[10px] uppercase tracking-wider text-muted-foreground">
           {[award.region, award.category_age].filter(Boolean).join(" · ")}
         </div>
       )}
       {award.merit && (
-        <p className="mt-3 line-clamp-4 text-center text-sm italic text-foreground/80">«{award.merit}»</p>
+        <p className="mt-2 line-clamp-3 text-center text-xs italic text-foreground/75">«{award.merit}»</p>
       )}
     </article>
   );
