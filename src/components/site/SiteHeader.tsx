@@ -6,12 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 
 type CategoryItem = { name: string; slug: string; scope: string };
 
+// Shared classes for top-level nav links — Inter, normal-case for legibility
+const NAV_LINK = "font-ui text-sm font-medium tracking-normal text-foreground/85 transition-colors hover:text-gold";
+const NAV_LINK_TV = "font-ui text-sm font-semibold tracking-normal text-tv-red transition-colors hover:text-tv-red-dark";
+const SUB_LINK = "font-ui text-sm font-normal text-foreground/85 hover:text-gold";
+const ACTION_BTN = "font-ui inline-flex items-center gap-1.5 border border-border px-3 py-1.5 text-xs font-semibold tracking-wide text-foreground/85 transition-colors hover:text-gold";
+
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
   const [nacional, setNacional] = useState<CategoryItem[]>([]);
   const [internacional, setInternacional] = useState<CategoryItem[]>([]);
-  const { user, isAdmin, isEditor, signOut } = useAuth();
+  const { user, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => setMobileOpen(false), []);
@@ -19,7 +25,6 @@ export function SiteHeader() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      // Get categories that have at least one published news item
       const { data: newsRows } = await supabase
         .from("news")
         .select("category_id")
@@ -52,13 +57,13 @@ export function SiteHeader() {
             <span className="text-gold">Roller</span>
             <span className="text-foreground">Zone</span>
           </span>
-          <span className="font-condensed mt-0.5 text-[10px] uppercase tracking-[2px] text-muted-foreground">
+          <span className="font-ui mt-0.5 text-[10px] font-medium tracking-wide text-muted-foreground">
             Revista de Patinaje de Velocidad
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-5 lg:flex">
+        <ul className="hidden items-center gap-6 lg:flex">
           <NavLink to="/">Inicio</NavLink>
 
           {/* Noticias dropdown */}
@@ -69,7 +74,7 @@ export function SiteHeader() {
           >
             <Link
               to="/noticias"
-              className="font-condensed flex items-center gap-1 text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold"
+              className={`${NAV_LINK} flex items-center gap-1`}
               activeProps={{ className: "text-gold" }}
             >
               Noticias <ChevronDown className="h-3 w-3" />
@@ -89,7 +94,7 @@ export function SiteHeader() {
                               <Link
                                 to="/noticias/$slug"
                                 params={{ slug: c.slug }}
-                                className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                                className={SUB_LINK}
                               >
                                 {c.name}
                               </Link>
@@ -109,7 +114,7 @@ export function SiteHeader() {
                               <Link
                                 to="/noticias/$slug"
                                 params={{ slug: c.slug }}
-                                className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                                className={SUB_LINK}
                               >
                                 {c.name}
                               </Link>
@@ -121,7 +126,7 @@ export function SiteHeader() {
                   </div>
                   <Link
                     to="/noticias"
-                    className="font-condensed mt-3 block border-t border-border pt-3 text-center text-xs uppercase tracking-widest text-gold hover:text-gold-dark"
+                    className="font-ui mt-3 block border-t border-border pt-3 text-center text-xs font-semibold tracking-wide text-gold hover:text-gold-dark"
                   >
                     Ver todas las noticias →
                   </Link>
@@ -131,36 +136,32 @@ export function SiteHeader() {
           </li>
 
           <li>
-            <Link
-              to="/premios-mvp"
-              className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold"
-              activeProps={{ className: "text-gold" }}
-            >
+            <Link to="/premios-mvp" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
               Premios MVP
             </Link>
           </li>
           <li>
-            <Link to="/entrevistas" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold" activeProps={{ className: "text-gold" }}>
+            <Link to="/entrevistas" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
               Entrevistas
             </Link>
           </li>
           <li>
-            <Link to="/eventos" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold" activeProps={{ className: "text-gold" }}>
+            <Link to="/eventos" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
               Eventos
             </Link>
           </li>
           <li>
-            <Link to="/tv" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-tv-red transition-colors hover:text-tv-red-dark" activeProps={{ className: "text-tv-red" }}>
+            <Link to="/tv" className={NAV_LINK_TV} activeProps={{ className: "text-tv-red" }}>
               TV
             </Link>
           </li>
           <li>
-            <Link to="/revista" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold" activeProps={{ className: "text-gold" }}>
+            <Link to="/revista" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
               Revista
             </Link>
           </li>
           <li>
-            <Link to="/patrocinadores" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold" activeProps={{ className: "text-gold" }}>
+            <Link to="/patrocinadores" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
               Patrocinadores
             </Link>
           </li>
@@ -171,7 +172,7 @@ export function SiteHeader() {
           {isEditor && (
             <Link
               to="/admin"
-              className="font-condensed hidden items-center gap-1.5 border border-border px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gold transition-colors hover:bg-gold hover:text-background md:inline-flex"
+              className="font-ui hidden items-center gap-1.5 border border-border px-3 py-1.5 text-xs font-semibold tracking-wide text-gold transition-colors hover:bg-gold hover:text-background md:inline-flex"
             >
               <LayoutDashboard className="h-3.5 w-3.5" /> Admin
             </Link>
@@ -182,7 +183,7 @@ export function SiteHeader() {
                 await signOut();
                 navigate({ to: "/" });
               }}
-              className="font-condensed hidden items-center gap-1.5 border border-border px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-gold md:inline-flex"
+              className={`${ACTION_BTN} hidden md:inline-flex`}
               aria-label="Cerrar sesión"
             >
               <LogOut className="h-3.5 w-3.5" /> Salir
@@ -190,7 +191,7 @@ export function SiteHeader() {
           ) : (
             <Link
               to="/auth"
-              className="font-condensed hidden border border-border px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-gold md:inline-block"
+              className={`${ACTION_BTN} hidden md:inline-flex`}
             >
               Acceso
             </Link>
@@ -224,7 +225,7 @@ export function SiteHeader() {
                         to="/noticias/$slug"
                         params={{ slug: c.slug }}
                         onClick={() => setMobileOpen(false)}
-                        className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                        className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
                       >
                         {c.name}
                       </Link>
@@ -240,7 +241,7 @@ export function SiteHeader() {
                         to="/noticias/$slug"
                         params={{ slug: c.slug }}
                         onClick={() => setMobileOpen(false)}
-                        className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                        className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
                       >
                         {c.name}
                       </Link>
@@ -250,17 +251,17 @@ export function SiteHeader() {
               </div>
             )}
 
-            <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Premios MVP</Link>
-            <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Entrevistas</Link>
-            <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Eventos</Link>
-            <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-tv-red hover:text-tv-red-dark">TV</Link>
-            <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Revista</Link>
-            <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Patrocinadores</Link>
-            <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Equipo</a>
+            <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Premios MVP</Link>
+            <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Entrevistas</Link>
+            <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Eventos</Link>
+            <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-semibold text-tv-red hover:text-tv-red-dark">TV</Link>
+            <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Revista</Link>
+            <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Patrocinadores</Link>
+            <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">Equipo</a>
 
             <div className="mt-2 flex gap-2 border-t border-border pt-3">
               {isEditor && (
-                <Link to="/admin" onClick={() => setMobileOpen(false)} className="font-condensed flex-1 border border-border px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-gold">
+                <Link to="/admin" onClick={() => setMobileOpen(false)} className="font-ui flex-1 border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold">
                   Admin
                 </Link>
               )}
@@ -271,12 +272,12 @@ export function SiteHeader() {
                     setMobileOpen(false);
                     navigate({ to: "/" });
                   }}
-                  className="font-condensed flex-1 border border-border px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                  className="font-ui flex-1 border border-border px-3 py-2 text-xs font-semibold tracking-wide text-foreground/85"
                 >
                   Cerrar sesión
                 </button>
               ) : (
-                <Link to="/auth" onClick={() => setMobileOpen(false)} className="font-condensed flex-1 border border-border px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <Link to="/auth" onClick={() => setMobileOpen(false)} className="font-ui flex-1 border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-foreground/85">
                   Acceso admin
                 </Link>
               )}
@@ -292,10 +293,7 @@ function NavLink({ to, hash, children }: { to: "/"; hash?: string; children: Rea
   if (hash) {
     return (
       <li>
-        <a
-          href={`/#${hash}`}
-          className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold"
-        >
+        <a href={`/#${hash}`} className={NAV_LINK}>
           {children}
         </a>
       </li>
@@ -305,7 +303,7 @@ function NavLink({ to, hash, children }: { to: "/"; hash?: string; children: Rea
     <li>
       <Link
         to={to}
-        className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold"
+        className={NAV_LINK}
         activeProps={{ className: "text-gold" }}
         activeOptions={{ exact: true }}
       >
@@ -320,7 +318,7 @@ function MobileLink({ to, onClick, children }: { to: "/" | "/noticias" | "/event
     <Link
       to={to}
       onClick={onClick}
-      className="font-condensed py-2 text-sm font-semibold uppercase tracking-wider text-foreground hover:text-gold"
+      className="font-ui py-2 text-sm font-semibold text-foreground hover:text-gold"
     >
       {children}
     </Link>
