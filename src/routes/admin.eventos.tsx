@@ -159,6 +159,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [facebook_url, setFacebook] = useState(initial?.facebook_url ?? "");
   const [registration_url, setRegistration] = useState(initial?.registration_url ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
+  const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
   const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
