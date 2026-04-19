@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Timer } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -70,6 +70,9 @@ function AdminLayout() {
           <AdminLink to="/admin/eventos" icon={<Calendar className="h-4 w-4" />}>
             Eventos
           </AdminLink>
+          <AdminLink to="/admin/resultados" icon={<Timer className="h-4 w-4" />}>
+            Resultados en vivo
+          </AdminLink>
           <AdminLink to="/admin/entrevistas" icon={<Mic className="h-4 w-4" />}>
             Entrevistas
           </AdminLink>
@@ -124,7 +127,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/resultados" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
