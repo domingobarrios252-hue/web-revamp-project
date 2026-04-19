@@ -150,6 +150,11 @@ export function SiteHeader() {
             </Link>
           </li>
           <li>
+            <Link to="/tv" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-tv-red transition-colors hover:text-tv-red-dark" activeProps={{ className: "text-tv-red" }}>
+              TV
+            </Link>
+          </li>
+          <li>
             <Link to="/revista" className="font-condensed text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground transition-colors hover:text-gold" activeProps={{ className: "text-gold" }}>
               Revista
             </Link>
@@ -248,6 +253,7 @@ export function SiteHeader() {
             <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Premios MVP</Link>
             <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Entrevistas</Link>
             <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Eventos</Link>
+            <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-tv-red hover:text-tv-red-dark">TV</Link>
             <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Revista</Link>
             <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Patrocinadores</Link>
             <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Equipo</a>
@@ -309,7 +315,7 @@ function NavLink({ to, hash, children }: { to: "/"; hash?: string; children: Rea
   );
 }
 
-function MobileLink({ to, onClick, children }: { to: "/" | "/noticias" | "/eventos" | "/revista" | "/patrocinadores" | "/premios-mvp" | "/entrevistas"; onClick: () => void; children: React.ReactNode }) {
+function MobileLink({ to, onClick, children }: { to: "/" | "/noticias" | "/eventos" | "/tv" | "/revista" | "/patrocinadores" | "/premios-mvp" | "/entrevistas"; onClick: () => void; children: React.ReactNode }) {
   return (
     <Link
       to={to}
