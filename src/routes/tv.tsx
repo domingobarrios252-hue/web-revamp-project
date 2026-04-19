@@ -64,7 +64,7 @@ function TvPage() {
   const [activeHighlight, setActiveHighlight] = useState<Highlight | null>(null);
 
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1_000);
+    const t = setInterval(() => setNow(new Date()), 30_000);
     return () => clearInterval(t);
   }, []);
 
