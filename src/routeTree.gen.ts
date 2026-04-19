@@ -12,8 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as RevistaRouteImport } from './routes/revista'
 import { Route as RedactoresRouteImport } from './routes/redactores'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -22,6 +25,7 @@ import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
+import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
@@ -34,6 +38,7 @@ import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
+import { Route as AdminLegalRouteImport } from './routes/admin.legal'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
@@ -58,6 +63,11 @@ const RedactoresRoute = RedactoresRouteImport.update({
   path: '/redactores',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PremiosMvpRoute = PremiosMvpRouteImport.update({
   id: '/premios-mvp',
   path: '/premios-mvp',
@@ -66,6 +76,16 @@ const PremiosMvpRoute = PremiosMvpRouteImport.update({
 const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   id: '/patrocinadores',
   path: '/patrocinadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvisoLegalRoute = AvisoLegalRouteImport.update({
+  id: '/aviso-legal',
+  path: '/aviso-legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -106,6 +126,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
   id: '/noticias/$slug',
   path: '/noticias/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalSlugRoute = LegalSlugRouteImport.update({
+  id: '/legal/$slug',
+  path: '/legal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventosSlugRoute = EventosSlugRouteImport.update({
@@ -168,6 +193,11 @@ const AdminPatinadoresRoute = AdminPatinadoresRouteImport.update({
   path: '/patinadores',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLegalRoute = AdminLegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEventosRoute = AdminEventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
@@ -213,8 +243,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
+  '/cookies': typeof CookiesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
+  '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
@@ -224,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/legal': typeof AdminLegalRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
@@ -236,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
+  '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
@@ -247,8 +282,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
+  '/cookies': typeof CookiesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
+  '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
@@ -258,6 +296,7 @@ export interface FileRoutesByTo {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/legal': typeof AdminLegalRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
@@ -270,6 +309,7 @@ export interface FileRoutesByTo {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
+  '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/admin': typeof AdminIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
@@ -283,8 +323,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
+  '/cookies': typeof CookiesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
+  '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
@@ -294,6 +337,7 @@ export interface FileRoutesById {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/legal': typeof AdminLegalRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
@@ -306,6 +350,7 @@ export interface FileRoutesById {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
+  '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
@@ -320,8 +365,11 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/aviso-legal'
+    | '/cookies'
     | '/patrocinadores'
     | '/premios-mvp'
+    | '/privacidad'
     | '/redactores'
     | '/revista'
     | '/tv'
@@ -331,6 +379,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/legal'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
@@ -343,6 +392,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
+    | '/legal/$slug'
     | '/noticias/$slug'
     | '/admin/'
     | '/entrevistas/'
@@ -354,8 +404,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/aviso-legal'
+    | '/cookies'
     | '/patrocinadores'
     | '/premios-mvp'
+    | '/privacidad'
     | '/redactores'
     | '/revista'
     | '/tv'
@@ -365,6 +418,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/legal'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
@@ -377,6 +431,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
+    | '/legal/$slug'
     | '/noticias/$slug'
     | '/admin'
     | '/entrevistas'
@@ -389,8 +444,11 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/aviso-legal'
+    | '/cookies'
     | '/patrocinadores'
     | '/premios-mvp'
+    | '/privacidad'
     | '/redactores'
     | '/revista'
     | '/tv'
@@ -400,6 +458,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/legal'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
@@ -412,6 +471,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
+    | '/legal/$slug'
     | '/noticias/$slug'
     | '/admin/'
     | '/entrevistas/'
@@ -425,13 +485,17 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
+  AvisoLegalRoute: typeof AvisoLegalRoute
+  CookiesRoute: typeof CookiesRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
+  PrivacidadRoute: typeof PrivacidadRoute
   RedactoresRoute: typeof RedactoresRoute
   RevistaRoute: typeof RevistaRoute
   TvRoute: typeof TvRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EventosSlugRoute: typeof EventosSlugRoute
+  LegalSlugRoute: typeof LegalSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
@@ -463,6 +527,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedactoresRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/premios-mvp': {
       id: '/premios-mvp'
       path: '/premios-mvp'
@@ -475,6 +546,20 @@ declare module '@tanstack/react-router' {
       path: '/patrocinadores'
       fullPath: '/patrocinadores'
       preLoaderRoute: typeof PatrocinadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aviso-legal': {
+      id: '/aviso-legal'
+      path: '/aviso-legal'
+      fullPath: '/aviso-legal'
+      preLoaderRoute: typeof AvisoLegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -531,6 +616,13 @@ declare module '@tanstack/react-router' {
       path: '/noticias/$slug'
       fullPath: '/noticias/$slug'
       preLoaderRoute: typeof NoticiasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/$slug': {
+      id: '/legal/$slug'
+      path: '/legal/$slug'
+      fullPath: '/legal/$slug'
+      preLoaderRoute: typeof LegalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eventos/$slug': {
@@ -617,6 +709,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPatinadoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/legal': {
+      id: '/admin/legal'
+      path: '/legal'
+      fullPath: '/admin/legal'
+      preLoaderRoute: typeof AdminLegalRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/eventos': {
       id: '/admin/eventos'
       path: '/eventos'
@@ -683,6 +782,7 @@ interface AdminRouteChildren {
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
+  AdminLegalRoute: typeof AdminLegalRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
@@ -703,6 +803,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEntrevistasRoute: AdminEntrevistasRoute,
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
+  AdminLegalRoute: AdminLegalRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
@@ -722,13 +823,17 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
+  AvisoLegalRoute: AvisoLegalRoute,
+  CookiesRoute: CookiesRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PremiosMvpRoute: PremiosMvpRoute,
+  PrivacidadRoute: PrivacidadRoute,
   RedactoresRoute: RedactoresRoute,
   RevistaRoute: RevistaRoute,
   TvRoute: TvRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EventosSlugRoute: EventosSlugRoute,
+  LegalSlugRoute: LegalSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
