@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users } from "lucide-react";
+import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users, Navigation } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type EventDetail = {
@@ -120,6 +120,8 @@ function EventoDetail() {
         </div>
       )}
 
+      {event.location && <EventLocationMap location={event.location} name={event.name} />}
+
       <div className="mt-10 flex flex-wrap items-center gap-4 border-t border-border pt-6">
         {event.website_url && <ExternalBtn href={event.website_url} icon={<Globe className="h-4 w-4" />}>Web oficial</ExternalBtn>}
         {event.instagram_url && <ExternalBtn href={event.instagram_url} icon={<Instagram className="h-4 w-4" />}>Instagram</ExternalBtn>}
@@ -151,5 +153,52 @@ function ExternalBtn({ href, icon, children }: { href: string; icon: React.React
     <a href={href} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-1.5 border border-border px-3 py-2 text-xs uppercase tracking-widest text-foreground/80 hover:border-gold hover:text-gold">
       {icon} {children}
     </a>
+  );
+}
+
+function EventLocationMap({ location, name }: { location: string; name: string }) {
+  const query = encodeURIComponent(location);
+  // OpenStreetMap embed centered by search query (no API key needed)
+  const osmUrl = `https://www.openstreetmap.org/export/embed.html?bbox=-15,35,10,55&layer=mapnik&marker=`;
+  // Use search-based embed via Nominatim-friendly query iframe
+  const mapSrc = `https://maps.google.com/maps?q=${query}&hl=es&z=14&output=embed`;
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
+  const viewUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
+  void osmUrl;
+
+  return (
+    <div className="mt-10 max-w-3xl">
+      <h2 className="font-display mb-3 flex items-center gap-2 text-xl tracking-widest text-gold">
+        <MapPin className="h-5 w-5" /> Ubicación
+      </h2>
+      <p className="mb-3 text-sm text-foreground/80">{location}</p>
+      <div className="aspect-video overflow-hidden border border-border bg-background">
+        <iframe
+          title={`Mapa de ${name}`}
+          src={mapSrc}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="h-full w-full"
+        />
+      </div>
+      <div className="mt-3 flex flex-wrap gap-3">
+        <a
+          href={directionsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
+        >
+          <Navigation className="h-3.5 w-3.5" /> Cómo llegar
+        </a>
+        <a
+          href={viewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-condensed inline-flex items-center gap-2 border border-border px-4 py-2 text-xs uppercase tracking-widest text-foreground/80 hover:border-gold hover:text-gold"
+        >
+          <ExternalLink className="h-3.5 w-3.5" /> Ver en Google Maps
+        </a>
+      </div>
+    </div>
   );
 }
