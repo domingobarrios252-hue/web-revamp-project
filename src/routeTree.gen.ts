@@ -33,6 +33,7 @@ import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas
 import { Route as AdminCompeticionesRouteImport } from './routes/admin.competiciones'
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
+import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 
 const RevistaRoute = RevistaRouteImport.update({
@@ -155,6 +156,11 @@ const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
   path: '/categorias',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBannersRoute = AdminBannersRouteImport.update({
+  id: '/banners',
+  path: '/banners',
+  getParentRoute: () => AdminRoute,
+} as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof EventosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/eventos': typeof EventosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
   '/admin/competiciones': typeof AdminCompeticionesRoute
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/patrocinadores'
     | '/revista'
+    | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
@@ -277,6 +287,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/patrocinadores'
     | '/revista'
+    | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
@@ -304,6 +315,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/patrocinadores'
     | '/revista'
+    | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
     | '/admin/competiciones'
@@ -511,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/banners': {
+      id: '/admin/banners'
+      path: '/banners'
+      fullPath: '/admin/banners'
+      preLoaderRoute: typeof AdminBannersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/noticias/articulo/$slug': {
       id: '/noticias/articulo/$slug'
       path: '/noticias/articulo/$slug'
@@ -522,6 +541,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminBannersRoute: typeof AdminBannersRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClubesRoute: typeof AdminClubesRoute
   AdminCompeticionesRoute: typeof AdminCompeticionesRoute
@@ -537,6 +557,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBannersRoute: AdminBannersRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClubesRoute: AdminClubesRoute,
   AdminCompeticionesRoute: AdminCompeticionesRoute,
