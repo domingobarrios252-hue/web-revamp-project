@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
@@ -20,6 +21,7 @@ type News = {
   category_id: string | null;
   legacy_tag: string | null;
   image_url: string | null;
+  gallery: string[] | null;
   read_minutes: number | null;
   featured: boolean;
   published: boolean;
@@ -69,7 +71,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, read_minutes, featured, published, views_count, published_at"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, published, views_count, published_at"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -252,6 +254,7 @@ function NewsEditor({
   const [categoryId, setCategoryId] = useState(item?.category_id ?? "");
   const [legacyTag, setLegacyTag] = useState(item?.legacy_tag ?? "");
   const [imageUrl, setImageUrl] = useState(item?.image_url ?? "");
+  const [gallery, setGallery] = useState<string[]>(item?.gallery ?? []);
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
   const [published, setPublished] = useState(item?.published ?? true);
@@ -304,6 +307,7 @@ function NewsEditor({
         category_id: parsed.data.category_id ?? null,
         legacy_tag: parsed.data.legacy_tag ?? null,
         image_url: parsed.data.image_url || null,
+        gallery: gallery.filter((u) => u && u.trim().length > 0),
         read_minutes: parsed.data.read_minutes ?? null,
         featured: parsed.data.featured,
         published: parsed.data.published,
