@@ -64,8 +64,8 @@ function AdminLayout() {
           <AdminLink to="/admin/clubes" icon={<Building2 className="h-4 w-4" />}>
             Clubes
           </AdminLink>
-          <AdminLink to="/admin/competiciones" icon={<Trophy className="h-4 w-4" />}>
-            Competiciones
+          <AdminLink to="/admin/premios-mvp" icon={<Trophy className="h-4 w-4" />}>
+            Premios MVP
           </AdminLink>
           <AdminLink to="/admin/eventos" icon={<Calendar className="h-4 w-4" />}>
             Eventos
@@ -112,7 +112,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/competiciones" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/ticker" | "/admin/banners";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/ticker" | "/admin/banners";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
