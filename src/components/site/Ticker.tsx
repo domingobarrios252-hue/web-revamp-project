@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const FALLBACK = [
-  "Bienvenidos a RollerZone — Revista de Patinaje de Velocidad",
+type TickerEntry = { text: string; link_url: string | null };
+
+const FALLBACK: TickerEntry[] = [
+  { text: "Bienvenidos a RollerZone — Revista de Patinaje de Velocidad", link_url: null },
 ];
 
 export function Ticker() {
-  const [items, setItems] = useState<string[]>([]);
+  const [items, setItems] = useState<TickerEntry[]>([]);
   const [enabled, setEnabled] = useState<boolean>(true);
   const [loaded, setLoaded] = useState(false);
 
@@ -16,14 +18,16 @@ export function Ticker() {
       const [itemsRes, settingRes] = await Promise.all([
         supabase
           .from("ticker_items")
-          .select("text, sort_order, active")
+          .select("text, link_url, sort_order, active")
           .eq("active", true)
           .order("sort_order", { ascending: true }),
         supabase.from("site_settings").select("value").eq("key", "ticker_enabled").maybeSingle(),
       ]);
       if (cancelled) return;
-      const texts = (itemsRes.data ?? []).map((i) => i.text).filter(Boolean);
-      setItems(texts.length ? texts : FALLBACK);
+      const entries: TickerEntry[] = (itemsRes.data ?? [])
+        .filter((i) => i.text)
+        .map((i) => ({ text: i.text, link_url: i.link_url ?? null }));
+      setItems(entries.length ? entries : FALLBACK);
       const v = settingRes.data?.value;
       setEnabled(v === true || v === "true" || v === undefined || v === null);
       setLoaded(true);
@@ -52,15 +56,35 @@ export function Ticker() {
       </div>
       <div className="flex-1 overflow-hidden">
         <div className="ticker-track">
-          {repeated.map((item, i) => (
-            <div
-              key={i}
-              className="font-condensed flex flex-shrink-0 items-center gap-2 px-8 text-xs font-bold uppercase tracking-wider text-background"
-            >
-              <span className="h-1 w-1 rounded-full bg-background/40" />
-              {item}
-            </div>
-          ))}
+          {repeated.map((item, i) => {
+            const baseClass =
+              "font-condensed flex flex-shrink-0 items-center gap-2 px-8 text-xs font-bold uppercase tracking-wider text-background";
+            const content = (
+              <>
+                <span className="h-1 w-1 rounded-full bg-background/40" />
+                {item.text}
+              </>
+            );
+            if (item.link_url) {
+              const isExternal = /^https?:\/\//i.test(item.link_url);
+              return (
+                <a
+                  key={i}
+                  href={item.link_url}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
+                  className={`${baseClass} hover:underline`}
+                >
+                  {content}
+                </a>
+              );
+            }
+            return (
+              <div key={i} className={baseClass}>
+                {content}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
