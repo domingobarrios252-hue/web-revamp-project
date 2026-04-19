@@ -230,7 +230,6 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
   const isEdit = !!initial?.id;
   const [tier, setTier] = useState<AwardRow["tier"]>(initial?.tier ?? "elite");
   const [gender, setGender] = useState<AwardRow["gender"]>(initial?.gender ?? "masculino");
-  const [position, setPosition] = useState<number>(initial?.position ?? 1);
   const [fullName, setFullName] = useState(initial?.full_name ?? "");
   const [photoUrl, setPhotoUrl] = useState(initial?.photo_url ?? "");
   const [club, setClub] = useState(initial?.club ?? "");
@@ -242,7 +241,7 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
 
   const save = async () => {
     const parsed = awardSchema.safeParse({
-      season_id: seasonId, tier, gender, position, full_name: fullName,
+      season_id: seasonId, tier, gender, position: 1, full_name: fullName,
       photo_url: photoUrl, club, region, category_age: categoryAge, merit, published,
     });
     if (!parsed.success) {
@@ -254,7 +253,7 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
       season_id: seasonId,
       tier,
       gender,
-      position,
+      position: 1,
       full_name: fullName.trim(),
       photo_url: photoUrl.trim() || null,
       club: club.trim() || null,
