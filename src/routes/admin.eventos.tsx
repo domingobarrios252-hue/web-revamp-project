@@ -253,6 +253,52 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   );
 }
 
+function GalleryEditor({ value, onChange, slug }: { value: string[]; onChange: (urls: string[]) => void; slug: string }) {
+  const setAt = (i: number, url: string) => {
+    const next = [...value];
+    next[i] = url;
+    onChange(next.filter(Boolean));
+  };
+  const removeAt = (i: number) => onChange(value.filter((_, idx) => idx !== i));
+  const addSlot = () => onChange([...value, ""]);
+  const slots = value.length < 6 ? [...value, ""] : value;
+
+  return (
+    <div className="space-y-3">
+      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+        {slots.map((url, i) => (
+          <div key={i} className="border border-border bg-background p-2">
+            <ImageUploadField
+              value={url}
+              onChange={(u) => setAt(i, u)}
+              folder={`events/${slug || "gallery"}`}
+              nameHint={`foto-${i + 1}`}
+            />
+            {url && i < value.length && (
+              <button
+                type="button"
+                onClick={() => removeAt(i)}
+                className="font-condensed mt-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-destructive"
+              >
+                <X className="h-3 w-3" /> Quitar
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {value.length < 6 && slots.length === value.length && (
+        <button
+          type="button"
+          onClick={addSlot}
+          className="font-condensed inline-flex items-center gap-1 border border-border px-3 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
+        >
+          <Plus className="h-3 w-3" /> Añadir foto
+        </button>
+      )}
+    </div>
+  );
+}
+
 function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
   return (
     <label className={`block ${full ? "md:col-span-2" : ""}`}>
