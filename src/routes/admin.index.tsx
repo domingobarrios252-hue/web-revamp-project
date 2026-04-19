@@ -67,7 +67,7 @@ function AdminNewsList() {
         .select(
           "id, title, slug, excerpt, content, author, category_id, legacy_tag, image_url, read_minutes, featured, published, views_count, published_at"
         )
-        .order("created_at", { ascending: false }),
+        .order("published_at", { ascending: false }),
       supabase
         .from("news_categories")
         .select("id, name, slug, scope")

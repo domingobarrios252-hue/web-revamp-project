@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
-import { AdBanner } from "@/components/site/AdBanner";
 import { supabase } from "@/integrations/supabase/client";
 
 type RankingPreview = {
@@ -62,7 +61,7 @@ function HomePage() {
       )
       .eq("published", true)
       .order("featured", { ascending: false })
-      .order("created_at", { ascending: false })
+      .order("published_at", { ascending: false })
       .limit(7)
       .then(({ data }) => {
         if (!cancelled) setNews((data as unknown as News[]) ?? []);
@@ -126,8 +125,6 @@ function HomePage() {
       </section>
 
       <Ticker />
-
-      <AdBanner />
 
       {/* NOTICIAS */}
       <section id="noticias" className="mx-auto max-w-7xl px-6 py-12">
