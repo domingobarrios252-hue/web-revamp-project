@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RevistaRouteImport } from './routes/revista'
+import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -24,6 +25,7 @@ import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
+import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
@@ -37,6 +39,11 @@ import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.arti
 const RevistaRoute = RevistaRouteImport.update({
   id: '/revista',
   path: '/revista',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PremiosMvpRoute = PremiosMvpRouteImport.update({
+  id: '/premios-mvp',
+  path: '/premios-mvp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
@@ -109,6 +116,11 @@ const AdminRevistasRoute = AdminRevistasRouteImport.update({
   path: '/revistas',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
+  id: '/premios-mvp',
+  path: '/premios-mvp',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPatrocinadoresRoute = AdminPatrocinadoresRouteImport.update({
   id: '/patrocinadores',
   path: '/patrocinadores',
@@ -160,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/premios-mvp': typeof PremiosMvpRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -169,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
@@ -185,6 +199,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/premios-mvp': typeof PremiosMvpRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -194,6 +209,7 @@ export interface FileRoutesByTo {
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
@@ -212,6 +228,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/premios-mvp': typeof PremiosMvpRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -221,6 +238,7 @@ export interface FileRoutesById {
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
@@ -240,6 +258,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/patrocinadores'
+    | '/premios-mvp'
     | '/revista'
     | '/admin/banners'
     | '/admin/categorias'
@@ -249,6 +268,7 @@ export interface FileRouteTypes {
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/premios-mvp'
     | '/admin/revistas'
     | '/admin/ticker'
     | '/admin/usuarios'
@@ -265,6 +285,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/patrocinadores'
+    | '/premios-mvp'
     | '/revista'
     | '/admin/banners'
     | '/admin/categorias'
@@ -274,6 +295,7 @@ export interface FileRouteTypes {
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/premios-mvp'
     | '/admin/revistas'
     | '/admin/ticker'
     | '/admin/usuarios'
@@ -291,6 +313,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/patrocinadores'
+    | '/premios-mvp'
     | '/revista'
     | '/admin/banners'
     | '/admin/categorias'
@@ -300,6 +323,7 @@ export interface FileRouteTypes {
     | '/admin/eventos'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/premios-mvp'
     | '/admin/revistas'
     | '/admin/ticker'
     | '/admin/usuarios'
@@ -318,6 +342,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
+  PremiosMvpRoute: typeof PremiosMvpRoute
   RevistaRoute: typeof RevistaRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EventosSlugRoute: typeof EventosSlugRoute
@@ -335,6 +360,13 @@ declare module '@tanstack/react-router' {
       path: '/revista'
       fullPath: '/revista'
       preLoaderRoute: typeof RevistaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/premios-mvp': {
+      id: '/premios-mvp'
+      path: '/premios-mvp'
+      fullPath: '/premios-mvp'
+      preLoaderRoute: typeof PremiosMvpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patrocinadores': {
@@ -435,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRevistasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/premios-mvp': {
+      id: '/admin/premios-mvp'
+      path: '/premios-mvp'
+      fullPath: '/admin/premios-mvp'
+      preLoaderRoute: typeof AdminPremiosMvpRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/patrocinadores': {
       id: '/admin/patrocinadores'
       path: '/patrocinadores'
@@ -510,6 +549,7 @@ interface AdminRouteChildren {
   AdminEventosRoute: typeof AdminEventosRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
+  AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
@@ -525,6 +565,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEventosRoute: AdminEventosRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
+  AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
@@ -538,6 +579,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
+  PremiosMvpRoute: PremiosMvpRoute,
   RevistaRoute: RevistaRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EventosSlugRoute: EventosSlugRoute,
@@ -550,3 +592,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
