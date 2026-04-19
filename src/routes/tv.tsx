@@ -138,8 +138,8 @@ function TvPage() {
             </div>
 
             {/* Live status badge overlay */}
-            <div className="absolute left-4 top-4 z-10">
-              {isLive ? (
+            {isLive && (
+              <div className="absolute left-4 top-4 z-10">
                 <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
@@ -147,17 +147,6 @@ function TvPage() {
                   </span>
                   EN DIRECTO
                 </span>
-              ) : showCountdown ? (
-                <span className="font-condensed inline-flex items-center gap-2 border border-tv-red/60 bg-black/70 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-tv-red backdrop-blur">
-                  <Clock className="h-3 w-3" /> Próxima emisión
-                </span>
-              ) : null}
-            </div>
-
-            {/* Countdown overlay */}
-            {showCountdown && msUntilStart !== null && (
-              <div className="pointer-events-none absolute inset-0 z-[5] flex items-end justify-center bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 sm:p-8">
-                <CountdownDisplay ms={msUntilStart} startsAt={settings!.live_starts_at!} />
               </div>
             )}
           </div>
