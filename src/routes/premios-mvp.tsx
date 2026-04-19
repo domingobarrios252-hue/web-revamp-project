@@ -31,14 +31,25 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/premios-mvp")({
   validateSearch: (search) => searchSchema.parse(search),
-  head: () => ({
-    meta: [
-      { title: "Premios MVP — RollerZone" },
-      { name: "description", content: "Premios MVP del patinaje de velocidad: Élite, Estrella y Promesa, masculino y femenino. Un ganador por categoría y temporada." },
-      { property: "og:title", content: "Premios MVP — RollerZone" },
-      { property: "og:description", content: "Ganadores MVP por categoría y temporada." },
-    ],
-  }),
+  head: () => {
+    const ogImage = "https://rollerzonenews.lovable.app/api/og/premios-mvp.svg";
+    return {
+      meta: [
+        { title: "Premios MVP — RollerZone" },
+        { name: "description", content: "Premios MVP del patinaje de velocidad: Élite, Estrella y Promesa, masculino y femenino. Un ganador por categoría y temporada." },
+        { property: "og:title", content: "Premios MVP — RollerZone" },
+        { property: "og:description", content: "Cuadro de honor MVP por temporada: Élite, Estrella y Promesa." },
+        { property: "og:image", content: ogImage },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: "Premios MVP — RollerZone" },
+        { name: "twitter:description", content: "Cuadro de honor MVP por temporada." },
+        { name: "twitter:image", content: ogImage },
+      ],
+    };
+  },
   component: PremiosMvpPage,
 });
 
