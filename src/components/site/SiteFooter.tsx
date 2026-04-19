@@ -22,21 +22,25 @@ export function SiteFooter() {
               <li><Link to="/eventos" className="hover:text-gold">Eventos</Link></li>
               <li><Link to="/premios-mvp" className="hover:text-gold">Premios MVP</Link></li>
               <li><Link to="/revista" className="hover:text-gold">Revista</Link></li>
+              <li><Link to="/redactores" className="hover:text-gold">Redactores</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-display mb-3 text-sm tracking-widest text-gold">Síguenos</h4>
             <div className="flex gap-3">
-              <a href="https://instagram.com/rollerzone" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-gold">
+              <a href="https://instagram.com/rollerzone_spain" target="_blank" rel="noopener noreferrer" aria-label="Instagram @rollerzone_spain" className="border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-gold">
                 <Instagram className="h-4 w-4" />
               </a>
-              <a href="https://facebook.com/rollerzone" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-gold">
+              <a href="https://facebook.com/rollerzonespain" target="_blank" rel="noopener noreferrer" aria-label="Facebook RollerZone Spain" className="border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-gold">
                 <Facebook className="h-4 w-4" />
               </a>
-              <a href="https://youtube.com/@rollerzone" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-gold">
+              <a href="https://www.youtube.com/@rollerzonespain" target="_blank" rel="noopener noreferrer" aria-label="YouTube @rollerzonespain" className="border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-gold">
                 <Youtube className="h-4 w-4" />
               </a>
             </div>
+            <p className="font-condensed mt-3 text-[11px] uppercase tracking-widest text-muted-foreground">
+              @rollerzone_spain
+            </p>
           </div>
         </div>
         <div className="mt-8 border-t border-border pt-4 text-center text-xs text-muted-foreground">
