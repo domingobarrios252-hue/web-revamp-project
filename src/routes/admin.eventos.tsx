@@ -25,6 +25,7 @@ type EventRow = {
   facebook_url: string | null;
   registration_url: string | null;
   published: boolean;
+  gallery: string[];
   regions: { name: string } | null;
 };
 
