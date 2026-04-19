@@ -76,8 +76,10 @@ function TvPage() {
       )
       .order("updated_at", { ascending: false })
       .limit(1)
-      .maybeSingle()
-      .then(({ data }) => setSettings((data as Settings) ?? null));
+      .then(({ data }) => {
+        const row = Array.isArray(data) ? data[0] : data;
+        setSettings((row as Settings) ?? null);
+      });
 
     supabase
       .from("tv_broadcasts")
