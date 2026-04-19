@@ -208,32 +208,42 @@ export function SiteHeader() {
             <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>
               Noticias — Todas
             </MobileLink>
-            <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
-              <div className="font-display pt-2 text-xs tracking-widest text-gold">Nacional</div>
-              {NACIONAL.map((c) => (
-                <Link
-                  key={c.slug}
-                  to="/noticias/$slug"
-                  params={{ slug: c.slug }}
-                  onClick={() => setMobileOpen(false)}
-                  className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
-                >
-                  {c.name}
-                </Link>
-              ))}
-              <div className="font-display pt-2 text-xs tracking-widest text-gold">Internacional</div>
-              {INTERNACIONAL.map((c) => (
-                <Link
-                  key={c.slug}
-                  to="/noticias/$slug"
-                  params={{ slug: c.slug }}
-                  onClick={() => setMobileOpen(false)}
-                  className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
-                >
-                  {c.name}
-                </Link>
-              ))}
-            </div>
+            {(nacional.length > 0 || internacional.length > 0) && (
+              <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
+                {nacional.length > 0 && (
+                  <>
+                    <div className="font-display pt-2 text-xs tracking-widest text-gold">Nacional</div>
+                    {nacional.map((c) => (
+                      <Link
+                        key={c.slug}
+                        to="/noticias/$slug"
+                        params={{ slug: c.slug }}
+                        onClick={() => setMobileOpen(false)}
+                        className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </>
+                )}
+                {internacional.length > 0 && (
+                  <>
+                    <div className="font-display pt-2 text-xs tracking-widest text-gold">Internacional</div>
+                    {internacional.map((c) => (
+                      <Link
+                        key={c.slug}
+                        to="/noticias/$slug"
+                        params={{ slug: c.slug }}
+                        onClick={() => setMobileOpen(false)}
+                        className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </>
+                )}
+              </div>
+            )}
 
             <Link to="/ranking" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Ranking</Link>
             <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Entrevistas</Link>
