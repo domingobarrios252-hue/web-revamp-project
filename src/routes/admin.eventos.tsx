@@ -14,6 +14,7 @@ type EventRow = {
   start_date: string;
   end_date: string | null;
   location: string | null;
+  organizer: string | null;
   region_id: string | null;
   scope: string;
   categories: string[];
@@ -33,6 +34,7 @@ const schema = z.object({
   start_date: z.string().min(8),
   end_date: z.string().optional().or(z.literal("")),
   location: z.string().trim().max(160).optional().or(z.literal("")),
+  organizer: z.string().trim().max(160).optional().or(z.literal("")),
   region_id: z.string().uuid().optional().or(z.literal("")),
   scope: z.string().trim().min(2).max(40),
   categories: z.array(z.string().min(1).max(40)).max(40),
@@ -144,6 +146,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [start_date, setStartDate] = useState(initial?.start_date ?? "");
   const [end_date, setEndDate] = useState(initial?.end_date ?? "");
   const [location, setLocation] = useState(initial?.location ?? "");
+  const [organizer, setOrganizer] = useState(initial?.organizer ?? "");
   const [region_id, setRegionId] = useState(initial?.region_id ?? "");
   const [scope, setScope] = useState(initial?.scope ?? "Nacional");
   const [categoriesText, setCategoriesText] = useState((initial?.categories ?? []).join(", "));
@@ -172,7 +175,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const onSave = async () => {
     const categories = categoriesText.split(",").map((c) => c.trim()).filter(Boolean);
     const parsed = schema.safeParse({
-      name, slug, description, start_date, end_date, location, region_id, scope, categories,
+      name, slug, description, start_date, end_date, location, organizer, region_id, scope, categories,
       cover_url, website_url, instagram_url, facebook_url, registration_url, published,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
@@ -184,6 +187,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
       start_date: parsed.data.start_date,
       end_date: parsed.data.end_date || null,
       location: parsed.data.location || null,
+      organizer: parsed.data.organizer || null,
       region_id: parsed.data.region_id || null,
       scope: parsed.data.scope,
       categories: parsed.data.categories,
@@ -215,6 +219,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
         <Field label="Fecha inicio *"><input type="date" value={start_date} onChange={(e) => setStartDate(e.target.value)} className="input" /></Field>
         <Field label="Fecha fin"><input type="date" value={end_date} onChange={(e) => setEndDate(e.target.value)} className="input" /></Field>
         <Field label="Ubicación"><input value={location} onChange={(e) => setLocation(e.target.value)} className="input" /></Field>
+        <Field label="Organizador"><input value={organizer} onChange={(e) => setOrganizer(e.target.value)} placeholder="Club / Federación / Entidad" className="input" /></Field>
         <Field label="Ámbito"><input value={scope} onChange={(e) => setScope(e.target.value)} placeholder="Nacional / Internacional / Autonómico" className="input" /></Field>
         <Field label="Comunidad / Región">
           <select value={region_id} onChange={(e) => setRegionId(e.target.value)} className="input">
