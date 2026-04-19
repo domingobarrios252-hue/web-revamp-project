@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy } from "lucide-react";
+import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type EventItem = {
@@ -11,6 +11,7 @@ type EventItem = {
   start_date: string;
   end_date: string | null;
   location: string | null;
+  organizer: string | null;
   scope: string;
   categories: string[];
   cover_url: string | null;
@@ -49,7 +50,7 @@ function EventosPage() {
     let cancelled = false;
     supabase
       .from("events")
-      .select("id, name, slug, description, start_date, end_date, location, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url")
+      .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url")
       .eq("published", true)
       .order("start_date", { ascending: true })
       .limit(200)
@@ -108,22 +109,27 @@ function Section({ title, items, empty, dim }: { title: string; items: EventItem
 function EventCard({ event }: { event: EventItem }) {
   return (
     <article className="group flex flex-col border border-border bg-surface transition-colors hover:border-gold">
-      {event.cover_url ? (
-        <div className="aspect-video overflow-hidden bg-background">
-          <img src={event.cover_url} alt={event.name} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
-        </div>
-      ) : (
-        <div className="flex aspect-video items-center justify-center bg-background">
-          <Trophy className="h-10 w-10 text-muted-foreground/40" />
-        </div>
-      )}
+      <Link to="/eventos/$slug" params={{ slug: event.slug }} className="block">
+        {event.cover_url ? (
+          <div className="aspect-video overflow-hidden bg-background">
+            <img src={event.cover_url} alt={event.name} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+          </div>
+        ) : (
+          <div className="flex aspect-video items-center justify-center bg-background">
+            <Trophy className="h-10 w-10 text-muted-foreground/40" />
+          </div>
+        )}
+      </Link>
       <div className="flex flex-1 flex-col p-5">
         <div className="font-condensed text-[11px] uppercase tracking-widest text-gold">{event.scope}</div>
-        <h3 className="font-display mt-1 text-lg leading-tight tracking-wide">{event.name}</h3>
+        <Link to="/eventos/$slug" params={{ slug: event.slug }}>
+          <h3 className="font-display mt-1 text-lg leading-tight tracking-wide hover:text-gold">{event.name}</h3>
+        </Link>
 
         <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
           <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" />{formatRange(event.start_date, event.end_date)}</div>
           {event.location && <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" />{event.location}</div>}
+          {event.organizer && <div className="flex items-center gap-2"><Users className="h-3.5 w-3.5" />{event.organizer}</div>}
         </div>
 
         {event.categories?.length > 0 && (
@@ -139,6 +145,9 @@ function EventCard({ event }: { event: EventItem }) {
         {event.description && <p className="mt-3 line-clamp-3 text-sm text-foreground/80">{event.description}</p>}
 
         <div className="mt-auto flex flex-wrap items-center gap-3 pt-4">
+          <Link to="/eventos/$slug" params={{ slug: event.slug }} className="font-condensed inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-gold hover:text-gold-dark">
+            Ver detalle →
+          </Link>
           {event.website_url && <ExternalLinkBtn href={event.website_url} icon={<Globe className="h-3.5 w-3.5" />}>Web</ExternalLinkBtn>}
           {event.instagram_url && <ExternalLinkBtn href={event.instagram_url} icon={<Instagram className="h-3.5 w-3.5" />}>Instagram</ExternalLinkBtn>}
           {event.facebook_url && <ExternalLinkBtn href={event.facebook_url} icon={<Facebook className="h-3.5 w-3.5" />}>Facebook</ExternalLinkBtn>}

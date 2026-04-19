@@ -2,27 +2,47 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/integrations/supabase/client";
 
-const NACIONAL = [
-  { name: "Asturias", slug: "asturias" },
-  { name: "Navarra", slug: "navarra" },
-  { name: "Valencia", slug: "valencia" },
-  { name: "Murcia", slug: "murcia" },
-  { name: "Cataluña", slug: "cataluna" },
-];
-const INTERNACIONAL = [
-  { name: "Colombia", slug: "colombia" },
-  { name: "Ecuador", slug: "ecuador" },
-  { name: "Venezuela", slug: "venezuela" },
-];
+type CategoryItem = { name: string; slug: string; scope: string };
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
+  const [nacional, setNacional] = useState<CategoryItem[]>([]);
+  const [internacional, setInternacional] = useState<CategoryItem[]>([]);
   const { user, isAdmin, isEditor, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => setMobileOpen(false), []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      // Get categories that have at least one published news item
+      const { data: newsRows } = await supabase
+        .from("news")
+        .select("category_id")
+        .eq("published", true)
+        .not("category_id", "is", null)
+        .limit(1000);
+      const usedIds = Array.from(new Set((newsRows ?? []).map((n) => n.category_id).filter(Boolean) as string[]));
+      if (usedIds.length === 0) {
+        if (!cancelled) { setNacional([]); setInternacional([]); }
+        return;
+      }
+      const { data: cats } = await supabase
+        .from("news_categories")
+        .select("name, slug, scope")
+        .in("id", usedIds)
+        .order("sort_order");
+      if (cancelled) return;
+      const list = (cats ?? []) as CategoryItem[];
+      setNacional(list.filter((c) => c.scope === "Nacional"));
+      setInternacional(list.filter((c) => c.scope === "Internacional"));
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
@@ -54,46 +74,50 @@ export function SiteHeader() {
             >
               Noticias <ChevronDown className="h-3 w-3" />
             </Link>
-            {newsOpen && (
+            {newsOpen && (nacional.length > 0 || internacional.length > 0) && (
               <div className="absolute left-1/2 top-full w-[420px] -translate-x-1/2 pt-2">
                 <div className="rounded-md border border-border bg-popover p-4 shadow-2xl">
                   <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <div className="font-display mb-2 text-sm tracking-widest text-gold">
-                        Nacional
+                    {nacional.length > 0 && (
+                      <div>
+                        <div className="font-display mb-2 text-sm tracking-widest text-gold">
+                          Nacional
+                        </div>
+                        <ul className="space-y-1.5">
+                          {nacional.map((c) => (
+                            <li key={c.slug}>
+                              <Link
+                                to="/noticias/$slug"
+                                params={{ slug: c.slug }}
+                                className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                              >
+                                {c.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <ul className="space-y-1.5">
-                        {NACIONAL.map((c) => (
-                          <li key={c.slug}>
-                            <Link
-                              to="/noticias/$slug"
-                              params={{ slug: c.slug }}
-                              className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
-                            >
-                              {c.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="font-display mb-2 text-sm tracking-widest text-gold">
-                        Internacional
+                    )}
+                    {internacional.length > 0 && (
+                      <div>
+                        <div className="font-display mb-2 text-sm tracking-widest text-gold">
+                          Internacional
+                        </div>
+                        <ul className="space-y-1.5">
+                          {internacional.map((c) => (
+                            <li key={c.slug}>
+                              <Link
+                                to="/noticias/$slug"
+                                params={{ slug: c.slug }}
+                                className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                              >
+                                {c.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <ul className="space-y-1.5">
-                        {INTERNACIONAL.map((c) => (
-                          <li key={c.slug}>
-                            <Link
-                              to="/noticias/$slug"
-                              params={{ slug: c.slug }}
-                              className="font-condensed text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
-                            >
-                              {c.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    )}
                   </div>
                   <Link
                     to="/noticias"
@@ -184,32 +208,42 @@ export function SiteHeader() {
             <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>
               Noticias — Todas
             </MobileLink>
-            <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
-              <div className="font-display pt-2 text-xs tracking-widest text-gold">Nacional</div>
-              {NACIONAL.map((c) => (
-                <Link
-                  key={c.slug}
-                  to="/noticias/$slug"
-                  params={{ slug: c.slug }}
-                  onClick={() => setMobileOpen(false)}
-                  className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
-                >
-                  {c.name}
-                </Link>
-              ))}
-              <div className="font-display pt-2 text-xs tracking-widest text-gold">Internacional</div>
-              {INTERNACIONAL.map((c) => (
-                <Link
-                  key={c.slug}
-                  to="/noticias/$slug"
-                  params={{ slug: c.slug }}
-                  onClick={() => setMobileOpen(false)}
-                  className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
-                >
-                  {c.name}
-                </Link>
-              ))}
-            </div>
+            {(nacional.length > 0 || internacional.length > 0) && (
+              <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
+                {nacional.length > 0 && (
+                  <>
+                    <div className="font-display pt-2 text-xs tracking-widest text-gold">Nacional</div>
+                    {nacional.map((c) => (
+                      <Link
+                        key={c.slug}
+                        to="/noticias/$slug"
+                        params={{ slug: c.slug }}
+                        onClick={() => setMobileOpen(false)}
+                        className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </>
+                )}
+                {internacional.length > 0 && (
+                  <>
+                    <div className="font-display pt-2 text-xs tracking-widest text-gold">Internacional</div>
+                    {internacional.map((c) => (
+                      <Link
+                        key={c.slug}
+                        to="/noticias/$slug"
+                        params={{ slug: c.slug }}
+                        onClick={() => setMobileOpen(false)}
+                        className="font-condensed block py-1 text-sm uppercase tracking-wider text-foreground/80 hover:text-gold"
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </>
+                )}
+              </div>
+            )}
 
             <Link to="/ranking" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Ranking</Link>
             <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-condensed py-2 text-sm uppercase tracking-wider text-muted-foreground hover:text-gold">Entrevistas</Link>

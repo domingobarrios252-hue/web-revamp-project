@@ -21,6 +21,7 @@ import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as RankingSlugRouteImport } from './routes/ranking.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
+import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
@@ -95,6 +96,11 @@ const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
   id: '/noticias/$slug',
   path: '/noticias/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const EventosSlugRoute = EventosSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => EventosRoute,
 } as any)
 const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   id: '/entrevistas/$slug',
@@ -171,7 +177,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
-  '/eventos': typeof EventosRoute
+  '/eventos': typeof EventosRouteWithChildren
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
+  '/eventos/$slug': typeof EventosSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -198,7 +205,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/eventos': typeof EventosRoute
+  '/eventos': typeof EventosRouteWithChildren
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
+  '/eventos/$slug': typeof EventosSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -227,7 +235,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
-  '/eventos': typeof EventosRoute
+  '/eventos': typeof EventosRouteWithChildren
   '/patrocinadores': typeof PatrocinadoresRoute
   '/revista': typeof RevistaRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
+  '/eventos/$slug': typeof EventosSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/ranking/$slug': typeof RankingSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
+    | '/eventos/$slug'
     | '/noticias/$slug'
     | '/ranking/$slug'
     | '/admin/'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
+    | '/eventos/$slug'
     | '/noticias/$slug'
     | '/ranking/$slug'
     | '/admin'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/admin/ticker'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
+    | '/eventos/$slug'
     | '/noticias/$slug'
     | '/ranking/$slug'
     | '/admin/'
@@ -341,7 +353,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
-  EventosRoute: typeof EventosRoute
+  EventosRoute: typeof EventosRouteWithChildren
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   RevistaRoute: typeof RevistaRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
@@ -438,6 +450,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/noticias/$slug'
       preLoaderRoute: typeof NoticiasSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/eventos/$slug': {
+      id: '/eventos/$slug'
+      path: '/$slug'
+      fullPath: '/eventos/$slug'
+      preLoaderRoute: typeof EventosSlugRouteImport
+      parentRoute: typeof EventosRoute
     }
     '/entrevistas/$slug': {
       id: '/entrevistas/$slug'
@@ -574,11 +593,22 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface EventosRouteChildren {
+  EventosSlugRoute: typeof EventosSlugRoute
+}
+
+const EventosRouteChildren: EventosRouteChildren = {
+  EventosSlugRoute: EventosSlugRoute,
+}
+
+const EventosRouteWithChildren =
+  EventosRoute._addFileChildren(EventosRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
-  EventosRoute: EventosRoute,
+  EventosRoute: EventosRouteWithChildren,
   PatrocinadoresRoute: PatrocinadoresRoute,
   RevistaRoute: RevistaRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
