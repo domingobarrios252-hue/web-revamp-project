@@ -1,15 +1,50 @@
-const ITEMS = [
-  "Chevi Guzmán bate el récord de pista en 500m",
-  "Liga Nacional 3ª División · Jornada 4 en curso",
-  "Open Madrid 2026 · Inscripciones abiertas",
-  "Daniel Milagros convocado con la selección española",
-  "Adrián Alonso · Nuevo patrocinador con Bont Skates",
-  "Campeonato Internacional Bogotá · Resultados disponibles",
-  "Livio Wenger debuta en la Liga Nacional 2026",
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+const FALLBACK = [
+  "Bienvenidos a RollerZone — Revista de Patinaje de Velocidad",
 ];
 
 export function Ticker() {
-  const repeated = [...ITEMS, ...ITEMS];
+  const [items, setItems] = useState<string[]>([]);
+  const [enabled, setEnabled] = useState<boolean>(true);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const [itemsRes, settingRes] = await Promise.all([
+        supabase
+          .from("ticker_items")
+          .select("text, sort_order, active")
+          .eq("active", true)
+          .order("sort_order", { ascending: true }),
+        supabase.from("site_settings").select("value").eq("key", "ticker_enabled").maybeSingle(),
+      ]);
+      if (cancelled) return;
+      const texts = (itemsRes.data ?? []).map((i) => i.text).filter(Boolean);
+      setItems(texts.length ? texts : FALLBACK);
+      const v = settingRes.data?.value;
+      setEnabled(v === true || v === "true" || v === undefined || v === null);
+      setLoaded(true);
+    };
+    load();
+
+    const channel = supabase
+      .channel("ticker-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "ticker_items" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, load)
+      .subscribe();
+
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  if (!loaded || !enabled || items.length === 0) return null;
+
+  const repeated = [...items, ...items];
   return (
     <div className="flex h-9 items-center overflow-hidden bg-gold">
       <div className="flex h-full flex-shrink-0 items-center bg-background px-4">
