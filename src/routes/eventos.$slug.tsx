@@ -25,7 +25,7 @@ export const Route = createFileRoute("/eventos/$slug")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("events")
-      .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url")
+      .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url, gallery")
       .eq("slug", params.slug)
       .eq("published", true)
       .maybeSingle();
