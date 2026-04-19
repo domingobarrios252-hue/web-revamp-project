@@ -45,7 +45,8 @@
 
   --font-display: "Bebas Neue", sans-serif;
   --font-condensed: "Barlow Condensed", sans-serif;
-  --font-body: "Barlow", sans-serif;
+  --font-body: "Inter", "Barlow", system-ui, -apple-system, sans-serif;
+  --font-ui: "Inter", system-ui, -apple-system, sans-serif;
 }
 
 :root {
@@ -119,6 +120,7 @@
 /* ===== UTILITY CLASSES ===== */
 .font-display { font-family: var(--font-display); }
 .font-condensed { font-family: var(--font-condensed); }
+.font-ui { font-family: var(--font-ui); }
 
 /* ===== TICKER ===== */
 @keyframes ticker {
