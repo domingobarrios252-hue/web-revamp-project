@@ -5,7 +5,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-16 border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-6 py-10">
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-4">
           <div>
             <div className="font-display text-2xl tracking-widest">
               <span className="text-gold">Roller</span>
@@ -24,6 +24,14 @@ export function SiteFooter() {
               <li><Link to="/premios-mvp" className="hover:text-gold">Premios MVP</Link></li>
               <li><Link to="/revista" className="hover:text-gold">Revista</Link></li>
               <li><Link to="/redactores" className="hover:text-gold">Redactores</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-display mb-3 text-sm tracking-widest text-gold">Legal</h4>
+            <ul className="font-ui space-y-1.5 text-sm text-muted-foreground">
+              <li><Link to="/legal/$slug" params={{ slug: "aviso-legal" }} className="hover:text-gold">Aviso Legal</Link></li>
+              <li><Link to="/legal/$slug" params={{ slug: "privacidad" }} className="hover:text-gold">Política de Privacidad</Link></li>
+              <li><Link to="/legal/$slug" params={{ slug: "cookies" }} className="hover:text-gold">Política de Cookies</Link></li>
             </ul>
           </div>
           <div>
