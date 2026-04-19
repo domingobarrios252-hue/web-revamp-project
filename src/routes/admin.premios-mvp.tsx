@@ -298,11 +298,6 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
               {GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}
             </select>
           </Field>
-          <Field label="Posición">
-            <select value={position} onChange={(e) => setPosition(Number(e.target.value))} className="input">
-              {POSITIONS.map((p) => <option key={p} value={p}>{p}º</option>)}
-            </select>
-          </Field>
           <Field label="Estado">
             <label className="flex h-9 items-center gap-2 text-sm">
               <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
