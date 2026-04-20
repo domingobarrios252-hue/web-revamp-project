@@ -63,7 +63,7 @@ function HomePage() {
       )
       .eq("published", true)
       .order("featured", { ascending: false })
-      .order("created_at", { ascending: false })
+      .order("published_at", { ascending: false })
       .limit(7)
       .then(({ data }) => {
         if (!cancelled) setNews((data as unknown as News[]) ?? []);
