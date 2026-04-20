@@ -181,7 +181,55 @@ function EventoDetail() {
       )}
 
       {event.location && <EventLocationMap location={event.location} name={event.name} />}
+
+      {lightboxOpen && event.cover_url && (
+        <PosterLightbox
+          src={event.cover_url}
+          alt={`Cartel de ${event.name}`}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </article>
+  );
+}
+
+function PosterLightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={alt}
+      onClick={onClose}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 p-4 backdrop-blur-sm md:p-8"
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Cerrar"
+        className="font-condensed absolute right-4 top-4 inline-flex items-center gap-1.5 border border-border bg-background/80 px-3 py-2 text-xs uppercase tracking-widest text-foreground hover:border-gold hover:text-gold md:right-6 md:top-6"
+      >
+        <X className="h-4 w-4" /> Cerrar
+      </button>
+      <img
+        src={src}
+        alt={alt}
+        onClick={(e) => e.stopPropagation()}
+        className="max-h-[92vh] max-w-full object-contain shadow-2xl"
+      />
+    </div>
   );
 }
 
