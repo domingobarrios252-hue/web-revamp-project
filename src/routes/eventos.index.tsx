@@ -139,6 +139,10 @@ function EventosPage() {
         </div>
       )}
 
+      <div className="mb-8">
+        <AdBannerSmall placement="eventos_side" />
+      </div>
+
       {events === null ? (
         <p className="text-muted-foreground">Cargando eventos…</p>
       ) : events.length === 0 ? (

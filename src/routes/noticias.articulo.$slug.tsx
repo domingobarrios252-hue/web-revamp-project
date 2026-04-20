@@ -191,6 +191,11 @@ function ArticlePage() {
         )}
       </div>
 
+      {/* Banner publicidad in-article */}
+      <div className="mt-10">
+        <AdBannerSmall placement="noticias_article" />
+      </div>
+
       {/* Compartir */}
       <div className="mt-10 border-t border-border pt-6">
         <h3 className="font-display mb-3 text-sm tracking-widest text-gold">Compartir</h3>

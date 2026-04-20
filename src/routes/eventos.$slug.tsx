@@ -132,6 +132,9 @@ function EventoDetail() {
               Inscripción <ExternalLink className="h-3.5 w-3.5" />
             </a>
           )}
+          <div className="mt-6">
+            <AdBannerSmall placement="eventos_detail" />
+          </div>
         </div>
 
         <div className="min-w-0">
