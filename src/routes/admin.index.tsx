@@ -280,6 +280,7 @@ function NewsEditor({
       category_id: categoryId || undefined,
       legacy_tag: legacyTag || undefined,
       image_url: imageUrl || undefined,
+      gallery,
       read_minutes: typeof readMinutes === "number" ? readMinutes : undefined,
       featured,
       published,
