@@ -573,60 +573,6 @@ function NewsCard({ news }: { news: News }) {
   );
 }
 
-function NewsCard({ news }: { news: News }) {
-  return (
-    <Link
-      to="/noticias/articulo/$slug"
-      params={{ slug: news.slug }}
-      className="group block overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
-    >
-      <div className="aspect-[16/10] overflow-hidden bg-surface-2">
-        {news.image_url ? (
-          <img
-            src={news.image_url}
-            alt={news.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="hero-grid-bg flex h-full w-full items-center justify-center">
-            <span className="font-display text-5xl tracking-widest text-gold/30">RZ</span>
-          </div>
-        )}
-      </div>
-      <div className="p-4">
-        <div className="font-condensed mb-2 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-widest">
-          {news.news_categories && (
-            <span className="bg-gold/15 px-2 py-0.5 font-bold text-gold">
-              {news.news_categories.name}
-            </span>
-          )}
-          {news.legacy_tag && (
-            <span className="text-muted-foreground">{news.legacy_tag}</span>
-          )}
-        </div>
-        <h3 className="font-display clamp-2 text-lg leading-tight tracking-wide group-hover:text-gold">
-          {news.title}
-        </h3>
-        <p className="clamp-2 mt-2 text-sm text-muted-foreground">{news.excerpt}</p>
-        <div className="font-condensed mt-3 flex items-center gap-3 text-[11px] uppercase tracking-wider text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <UserIcon className="h-3 w-3" /> {news.author}
-          </span>
-          <span className="flex items-center gap-1">
-            <Eye className="h-3 w-3" /> {news.views_count}
-          </span>
-          <span className="ml-auto flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
-            {new Date(news.published_at).toLocaleDateString("es-ES", {
-              day: "2-digit",
-              month: "short",
-            })}
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
-}
 
 function PlaceholderSection({ id, title, text }: { id: string; title: string; text: string }) {
   return (
