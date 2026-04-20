@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users, Navigation } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users, Navigation, X, ZoomIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type EventDetail = {
@@ -79,6 +80,7 @@ function formatRange(start: string, end: string | null) {
 
 function EventoDetail() {
   const { event } = Route.useLoaderData();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   return (
     <article className="mx-auto max-w-6xl px-4 py-10 md:px-8">
@@ -90,7 +92,12 @@ function EventoDetail() {
       <div className="grid gap-8 md:grid-cols-[minmax(0,360px)_1fr] lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-12">
         <div className="md:sticky md:top-24 md:self-start">
           {event.cover_url ? (
-            <div className="relative aspect-[1/1.414] overflow-hidden border border-border bg-background shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setLightboxOpen(true)}
+              aria-label={`Ampliar cartel de ${event.name}`}
+              className="group relative block aspect-[1/1.414] w-full overflow-hidden border border-border bg-background shadow-2xl transition hover:border-gold focus:border-gold focus:outline-none"
+            >
               <img
                 src={event.cover_url}
                 alt=""
@@ -105,7 +112,10 @@ function EventoDetail() {
               <span className="font-condensed absolute left-3 top-3 bg-background/85 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
                 Cartel oficial
               </span>
-            </div>
+              <span className="font-condensed absolute bottom-3 right-3 inline-flex items-center gap-1 bg-background/85 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground/90 opacity-0 backdrop-blur-sm transition group-hover:opacity-100 group-focus:opacity-100">
+                <ZoomIn className="h-3 w-3" /> Ampliar
+              </span>
+            </button>
           ) : (
             <div className="flex aspect-[1/1.414] items-center justify-center border border-border bg-background">
               <Trophy className="h-20 w-20 text-muted-foreground/30" />
@@ -171,7 +181,55 @@ function EventoDetail() {
       )}
 
       {event.location && <EventLocationMap location={event.location} name={event.name} />}
+
+      {lightboxOpen && event.cover_url && (
+        <PosterLightbox
+          src={event.cover_url}
+          alt={`Cartel de ${event.name}`}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </article>
+  );
+}
+
+function PosterLightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={alt}
+      onClick={onClose}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 p-4 backdrop-blur-sm md:p-8"
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Cerrar"
+        className="font-condensed absolute right-4 top-4 inline-flex items-center gap-1.5 border border-border bg-background/80 px-3 py-2 text-xs uppercase tracking-widest text-foreground hover:border-gold hover:text-gold md:right-6 md:top-6"
+      >
+        <X className="h-4 w-4" /> Cerrar
+      </button>
+      <img
+        src={src}
+        alt={alt}
+        onClick={(e) => e.stopPropagation()}
+        className="max-h-[92vh] max-w-full object-contain shadow-2xl"
+      />
+    </div>
   );
 }
 
