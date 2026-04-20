@@ -195,12 +195,27 @@ function EventCard({ event }: { event: EventItem }) {
     <article className="group flex flex-col border border-border bg-surface transition-colors hover:border-gold">
       <Link to="/eventos/$slug" params={{ slug: event.slug }} className="block">
         {event.cover_url ? (
-          <div className="aspect-video overflow-hidden bg-background">
-            <img src={event.cover_url} alt={event.name} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+          <div className="relative aspect-[1/1.414] overflow-hidden bg-background">
+            {/* Fondo difuminado del cartel para rellenar márgenes */}
+            <img
+              src={event.cover_url}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-xl"
+            />
+            <img
+              src={event.cover_url}
+              alt={`Cartel de ${event.name}`}
+              loading="lazy"
+              className="relative h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+            />
+            <span className="font-condensed absolute left-2 top-2 bg-background/85 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
+              Cartel
+            </span>
           </div>
         ) : (
-          <div className="flex aspect-video items-center justify-center bg-background">
-            <Trophy className="h-10 w-10 text-muted-foreground/40" />
+          <div className="flex aspect-[1/1.414] items-center justify-center bg-background">
+            <Trophy className="h-12 w-12 text-muted-foreground/40" />
           </div>
         )}
       </Link>
