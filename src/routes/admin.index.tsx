@@ -293,6 +293,7 @@ function NewsEditor({
       read_minutes: typeof readMinutes === "number" ? readMinutes : undefined,
       featured,
       published,
+      published_at: publishedAt,
     });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos");
