@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users, Navigation } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users, Navigation, X, ZoomIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type EventDetail = {
