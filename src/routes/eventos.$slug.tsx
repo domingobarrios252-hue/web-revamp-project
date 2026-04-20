@@ -81,50 +81,86 @@ function EventoDetail() {
   const { event } = Route.useLoaderData();
 
   return (
-    <article className="mx-auto max-w-5xl px-4 py-10 md:px-8">
+    <article className="mx-auto max-w-6xl px-4 py-10 md:px-8">
       <Link to="/eventos" className="font-condensed mb-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground hover:text-gold">
         <ArrowLeft className="h-3.5 w-3.5" /> Volver a Eventos
       </Link>
 
-      {event.cover_url ? (
-        <div className="mb-8 aspect-[16/7] overflow-hidden border border-border bg-background">
-          <img src={event.cover_url} alt={event.name} className="h-full w-full object-cover" />
-        </div>
-      ) : (
-        <div className="mb-8 flex aspect-[16/7] items-center justify-center border border-border bg-background">
-          <Trophy className="h-16 w-16 text-muted-foreground/30" />
-        </div>
-      )}
-
-      <div className="font-condensed text-xs uppercase tracking-widest text-gold">{event.scope}</div>
-      <h1 className="font-display mt-2 text-3xl leading-tight tracking-wide md:text-5xl">{event.name}</h1>
-
-      <div className="mt-6 grid gap-3 border-y border-border py-5 md:grid-cols-2">
-        <InfoRow icon={<Calendar className="h-4 w-4" />} label="Fecha">{formatRange(event.start_date, event.end_date)}</InfoRow>
-        {event.location && <InfoRow icon={<MapPin className="h-4 w-4" />} label="Ubicación">{event.location}</InfoRow>}
-        {event.organizer && <InfoRow icon={<Users className="h-4 w-4" />} label="Organizador">{event.organizer}</InfoRow>}
-        {event.categories?.length > 0 && (
-          <InfoRow icon={<Trophy className="h-4 w-4" />} label="Categorías">
-            <div className="flex flex-wrap gap-1.5">
-              {event.categories.map((c: string) => (
-                <span key={c} className="font-condensed border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-foreground/80">{c}</span>
-              ))}
+      {/* Split: cartel A4 izquierda + info derecha */}
+      <div className="grid gap-8 md:grid-cols-[minmax(0,360px)_1fr] lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-12">
+        <div className="md:sticky md:top-24 md:self-start">
+          {event.cover_url ? (
+            <div className="relative aspect-[1/1.414] overflow-hidden border border-border bg-background shadow-2xl">
+              <img
+                src={event.cover_url}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full scale-110 object-cover opacity-25 blur-2xl"
+              />
+              <img
+                src={event.cover_url}
+                alt={`Cartel de ${event.name}`}
+                className="relative h-full w-full object-contain"
+              />
+              <span className="font-condensed absolute left-3 top-3 bg-background/85 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
+                Cartel oficial
+              </span>
             </div>
-          </InfoRow>
-        )}
+          ) : (
+            <div className="flex aspect-[1/1.414] items-center justify-center border border-border bg-background">
+              <Trophy className="h-20 w-20 text-muted-foreground/30" />
+            </div>
+          )}
+          {event.registration_url && (
+            <a
+              href={event.registration_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-condensed mt-4 flex w-full items-center justify-center gap-2 bg-gold px-5 py-3 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
+            >
+              Inscripción <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
+
+        <div className="min-w-0">
+          <div className="font-condensed text-xs uppercase tracking-widest text-gold">{event.scope}</div>
+          <h1 className="font-display mt-2 text-3xl leading-tight tracking-wide md:text-4xl lg:text-5xl">{event.name}</h1>
+
+          <div className="mt-6 grid gap-3 border-y border-border py-5 sm:grid-cols-2">
+            <InfoRow icon={<Calendar className="h-4 w-4" />} label="Fecha">{formatRange(event.start_date, event.end_date)}</InfoRow>
+            {event.location && <InfoRow icon={<MapPin className="h-4 w-4" />} label="Ubicación">{event.location}</InfoRow>}
+            {event.organizer && <InfoRow icon={<Users className="h-4 w-4" />} label="Organizador">{event.organizer}</InfoRow>}
+            {event.categories?.length > 0 && (
+              <InfoRow icon={<Trophy className="h-4 w-4" />} label="Categorías">
+                <div className="flex flex-wrap gap-1.5">
+                  {event.categories.map((c: string) => (
+                    <span key={c} className="font-condensed border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-foreground/80">{c}</span>
+                  ))}
+                </div>
+              </InfoRow>
+            )}
+          </div>
+
+          {event.description && (
+            <div className="mt-8">
+              <h2 className="font-display mb-3 text-xl tracking-widest text-gold">Descripción</h2>
+              <p className="whitespace-pre-line text-base leading-relaxed text-foreground/90">{event.description}</p>
+            </div>
+          )}
+
+          <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-6">
+            {event.website_url && <ExternalBtn href={event.website_url} icon={<Globe className="h-4 w-4" />}>Web oficial</ExternalBtn>}
+            {event.instagram_url && <ExternalBtn href={event.instagram_url} icon={<Instagram className="h-4 w-4" />}>Instagram</ExternalBtn>}
+            {event.facebook_url && <ExternalBtn href={event.facebook_url} icon={<Facebook className="h-4 w-4" />}>Facebook</ExternalBtn>}
+          </div>
+        </div>
       </div>
 
-      {event.description && (
-        <div className="mt-8 max-w-3xl">
-          <h2 className="font-display mb-3 text-xl tracking-widest text-gold">Descripción</h2>
-          <p className="whitespace-pre-line text-base leading-relaxed text-foreground/90">{event.description}</p>
-        </div>
-      )}
-
       {event.gallery?.length > 0 && (
-        <div className="mt-10 max-w-5xl">
+        <div className="mt-12">
           <h2 className="font-display mb-4 text-xl tracking-widest text-gold">Galería</h2>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
             {event.gallery.map((url: string, i: number) => (
               <a key={url + i} href={url} target="_blank" rel="noopener noreferrer" className="group block aspect-square overflow-hidden border border-border bg-background">
                 <img src={url} alt={`${event.name} — foto ${i + 1}`} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
@@ -135,17 +171,6 @@ function EventoDetail() {
       )}
 
       {event.location && <EventLocationMap location={event.location} name={event.name} />}
-
-      <div className="mt-10 flex flex-wrap items-center gap-4 border-t border-border pt-6">
-        {event.website_url && <ExternalBtn href={event.website_url} icon={<Globe className="h-4 w-4" />}>Web oficial</ExternalBtn>}
-        {event.instagram_url && <ExternalBtn href={event.instagram_url} icon={<Instagram className="h-4 w-4" />}>Instagram</ExternalBtn>}
-        {event.facebook_url && <ExternalBtn href={event.facebook_url} icon={<Facebook className="h-4 w-4" />}>Facebook</ExternalBtn>}
-        {event.registration_url && (
-          <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="font-condensed ml-auto inline-flex items-center gap-2 bg-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-            Inscripción <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        )}
-      </div>
     </article>
   );
 }
