@@ -278,7 +278,11 @@ function BannerEditor({
               label="Ubicación"
               value={placement}
               onChange={setPlacement}
-              options={[{ value: "home_top", label: "Home — entre ticker y noticias" }]}
+              options={[
+                { value: "home_top", label: "Home — entre ticker y noticias (grande)" },
+                { value: "mvp_side", label: "Premios MVP — pequeño 300x100" },
+                { value: "tv_side", label: "RollerZone TV — pequeño 300x100" },
+              ]}
             />
             <NumberField label="Orden" value={sortOrder} onChange={setSortOrder} />
           </div>
