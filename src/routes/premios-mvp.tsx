@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Trophy, Star, Sparkles, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { z } from "zod";
 
 type Season = { id: string; year: number; label: string; is_current: boolean };
@@ -128,6 +129,8 @@ function PremiosMvpPage() {
           </div>
         )}
       </header>
+
+      <AdBannerSmall placement="mvp_side" className="mb-10" />
 
       {!activeSeason ? (
         <p className="py-20 text-center text-muted-foreground">Aún no hay temporadas configuradas. Pide al admin que añada una desde el panel.</p>
