@@ -21,6 +21,7 @@ type News = {
   category_id: string | null;
   legacy_tag: string | null;
   image_url: string | null;
+  gallery: string[];
   read_minutes: number | null;
   featured: boolean;
   published: boolean;
