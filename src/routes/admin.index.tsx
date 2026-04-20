@@ -323,6 +323,7 @@ function NewsEditor({
         read_minutes: parsed.data.read_minutes ?? null,
         featured: parsed.data.featured,
         published: parsed.data.published,
+        published_at: new Date(parsed.data.published_at).toISOString(),
       };
       const { error } = item
         ? await supabase.from("news").update(payload).eq("id", item.id)
