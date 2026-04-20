@@ -413,6 +413,18 @@ function NewsEditor({
             onChange={setContent}
             rows={10}
           />
+          <label className="block">
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Fecha de publicación
+            </span>
+            <input
+              type="datetime-local"
+              value={publishedAt}
+              onChange={(e) => setPublishedAt(e.target.value)}
+              required
+              className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold md:w-auto"
+            />
+          </label>
           <div className="flex flex-wrap gap-4">
             <Checkbox label="Publicada" checked={published} onChange={setPublished} />
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
