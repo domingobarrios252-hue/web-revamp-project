@@ -38,6 +38,7 @@ const newsSchema = z.object({
   category_id: z.string().uuid().optional(),
   legacy_tag: z.string().trim().max(60).optional(),
   image_url: z.string().trim().url().optional().or(z.literal("")),
+  gallery: z.array(z.string().trim().url()).max(50).default([]),
   read_minutes: z.number().int().min(1).max(60).optional(),
   featured: z.boolean(),
   published: z.boolean(),
