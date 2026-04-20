@@ -4,6 +4,7 @@ import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookO
 import { Ticker } from "@/components/site/Ticker";
 import { AdBanner } from "@/components/site/AdBanner";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 type MvpPreview = {
   id: string;
@@ -52,6 +53,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
+  const { t } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
 
   useEffect(() => {
@@ -94,17 +96,17 @@ function HomePage() {
         <div className="relative z-10 flex h-full max-w-[700px] flex-col justify-end p-6 md:p-10">
           <div className="live-tag font-condensed mb-4 inline-flex w-fit items-center gap-2 bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-background">
             <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-background" />
-            En Vivo · Abril 2026
+            {t("home.heroLiveTag")}
           </div>
           <h1 className="font-display text-[clamp(36px,6vw,72px)] uppercase leading-none tracking-wider text-foreground">
-            {featured?.title ?? "RollerZone"}
+            {featured?.title ?? t("home.heroFallbackTitle")}
           </h1>
           <p className="font-condensed mt-3 text-sm uppercase tracking-wider text-muted-foreground">
-            {featured?.news_categories?.name ?? "Patinaje de velocidad"} ·{" "}
+            {featured?.news_categories?.name ?? t("home.heroFallbackCategory")} ·{" "}
             <span className="text-gold">{featured?.author}</span>
           </p>
           <p className="mt-3 max-w-md text-sm text-foreground/75 md:text-base">
-            {featured?.excerpt ?? "El medio del patinaje de velocidad."}
+            {featured?.excerpt ?? t("home.heroFallbackExcerpt")}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             {featured && (
@@ -113,14 +115,14 @@ function HomePage() {
                 params={{ slug: featured.slug }}
                 className="font-condensed inline-flex items-center gap-2 bg-gold px-6 py-3 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-dark"
               >
-                Leer noticia <ArrowRight className="h-3.5 w-3.5" />
+                {t("home.heroReadNews")} <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             )}
             <Link
               to="/noticias"
               className="font-condensed inline-flex items-center gap-2 border border-border bg-transparent px-6 py-3 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold/10"
             >
-              Ver todas
+              {t("home.heroViewAll")}
             </Link>
           </div>
         </div>
@@ -134,13 +136,13 @@ function HomePage() {
       <section id="noticias" className="mx-auto max-w-7xl px-6 py-12">
         <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
           <h2 className="font-display text-2xl tracking-widest md:text-3xl">
-            Últimas <span className="text-gold">noticias</span>
+            {t("home.latestNewsPart1")} <span className="text-gold">{t("home.latestNewsPart2")}</span>
           </h2>
           <Link
             to="/noticias"
             className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
           >
-            Ver todas →
+            {t("home.viewAllArrow")}
           </Link>
         </div>
 
@@ -151,7 +153,7 @@ function HomePage() {
             ))}
           </div>
         ) : rest.length === 0 ? (
-          <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
+          <p className="text-muted-foreground">{t("home.noNews")}</p>
         ) : (
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {rest.slice(0, 6).map((n) => (
