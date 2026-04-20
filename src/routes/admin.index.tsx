@@ -267,6 +267,7 @@ function NewsEditor({
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
   const [published, setPublished] = useState(item?.published ?? true);
+  const [publishedAt, setPublishedAt] = useState<string>(toLocalInput(item?.published_at));
   const [saving, setSaving] = useState(false);
 
   // Auto-slug for new
