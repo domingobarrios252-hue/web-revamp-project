@@ -42,7 +42,15 @@ const newsSchema = z.object({
   read_minutes: z.number().int().min(1).max(60).optional(),
   featured: z.boolean(),
   published: z.boolean(),
+  published_at: z.string().min(1, "Fecha requerida"),
 });
+
+// Convert ISO timestamp to local datetime-local input value (YYYY-MM-DDTHH:mm)
+function toLocalInput(iso: string | null | undefined): string {
+  const d = iso ? new Date(iso) : new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 function slugify(s: string) {
   return s
