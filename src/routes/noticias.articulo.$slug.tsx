@@ -4,6 +4,7 @@ import { Calendar, Eye, User as UserIcon, Instagram, Facebook, MessageCircle, Li
 import { supabase } from "@/integrations/supabase/client";
 import { getVisitorHash } from "@/lib/visitor";
 import { toast } from "sonner";
+import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 
 type Article = {
   id: string;
@@ -188,6 +189,11 @@ function ArticlePage() {
         ) : (
           paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
         )}
+      </div>
+
+      {/* Banner publicidad in-article */}
+      <div className="mt-10">
+        <AdBannerSmall placement="noticias_article" />
       </div>
 
       {/* Compartir */}

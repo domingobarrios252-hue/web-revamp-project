@@ -282,6 +282,10 @@ function BannerEditor({
                 { value: "home_top", label: "Home — entre ticker y noticias (grande)" },
                 { value: "mvp_side", label: "Premios MVP — pequeño 300x100" },
                 { value: "tv_side", label: "RollerZone TV — pequeño 300x100" },
+                { value: "noticias_side", label: "Noticias (listado) — pequeño 300x100" },
+                { value: "noticias_article", label: "Noticias (dentro del artículo) — pequeño 300x100" },
+                { value: "eventos_side", label: "Eventos (listado) — pequeño 300x100" },
+                { value: "eventos_detail", label: "Eventos (detalle) — pequeño 300x100" },
               ]}
             />
             <NumberField label="Orden" value={sortOrder} onChange={setSortOrder} />
