@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth-context";
+import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { CookieBanner } from "@/components/site/CookieBanner";
@@ -79,14 +80,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <AuthProvider>
-      <SiteHeader />
-      <main className="min-h-[60vh]">
-        <Outlet />
-      </main>
-      <SiteFooter />
-      <CookieBanner />
-      <Toaster />
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <SiteHeader />
+        <main className="min-h-[60vh]">
+          <Outlet />
+        </main>
+        <SiteFooter />
+        <CookieBanner />
+        <Toaster />
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
