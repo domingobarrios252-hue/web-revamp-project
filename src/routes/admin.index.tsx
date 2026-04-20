@@ -309,6 +309,7 @@ function NewsEditor({
         category_id: parsed.data.category_id ?? null,
         legacy_tag: parsed.data.legacy_tag ?? null,
         image_url: parsed.data.image_url || null,
+        gallery: parsed.data.gallery,
         read_minutes: parsed.data.read_minutes ?? null,
         featured: parsed.data.featured,
         published: parsed.data.published,
