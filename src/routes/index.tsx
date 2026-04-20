@@ -4,6 +4,7 @@ import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookO
 import { Ticker } from "@/components/site/Ticker";
 import { AdBanner } from "@/components/site/AdBanner";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 type MvpPreview = {
   id: string;
@@ -52,6 +53,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
+  const { t } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
 
   useEffect(() => {
@@ -94,17 +96,17 @@ function HomePage() {
         <div className="relative z-10 flex h-full max-w-[700px] flex-col justify-end p-6 md:p-10">
           <div className="live-tag font-condensed mb-4 inline-flex w-fit items-center gap-2 bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-background">
             <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-background" />
-            En Vivo · Abril 2026
+            {t("home.heroLiveTag")}
           </div>
           <h1 className="font-display text-[clamp(36px,6vw,72px)] uppercase leading-none tracking-wider text-foreground">
-            {featured?.title ?? "RollerZone"}
+            {featured?.title ?? t("home.heroFallbackTitle")}
           </h1>
           <p className="font-condensed mt-3 text-sm uppercase tracking-wider text-muted-foreground">
-            {featured?.news_categories?.name ?? "Patinaje de velocidad"} ·{" "}
+            {featured?.news_categories?.name ?? t("home.heroFallbackCategory")} ·{" "}
             <span className="text-gold">{featured?.author}</span>
           </p>
           <p className="mt-3 max-w-md text-sm text-foreground/75 md:text-base">
-            {featured?.excerpt ?? "El medio del patinaje de velocidad."}
+            {featured?.excerpt ?? t("home.heroFallbackExcerpt")}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             {featured && (
@@ -113,14 +115,14 @@ function HomePage() {
                 params={{ slug: featured.slug }}
                 className="font-condensed inline-flex items-center gap-2 bg-gold px-6 py-3 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-dark"
               >
-                Leer noticia <ArrowRight className="h-3.5 w-3.5" />
+                {t("home.heroReadNews")} <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             )}
             <Link
               to="/noticias"
               className="font-condensed inline-flex items-center gap-2 border border-border bg-transparent px-6 py-3 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold/10"
             >
-              Ver todas
+              {t("home.heroViewAll")}
             </Link>
           </div>
         </div>
@@ -134,13 +136,13 @@ function HomePage() {
       <section id="noticias" className="mx-auto max-w-7xl px-6 py-12">
         <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
           <h2 className="font-display text-2xl tracking-widest md:text-3xl">
-            Últimas <span className="text-gold">noticias</span>
+            {t("home.latestNewsPart1")} <span className="text-gold">{t("home.latestNewsPart2")}</span>
           </h2>
           <Link
             to="/noticias"
             className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
           >
-            Ver todas →
+            {t("home.viewAllArrow")}
           </Link>
         </div>
 
@@ -151,7 +153,7 @@ function HomePage() {
             ))}
           </div>
         ) : rest.length === 0 ? (
-          <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
+          <p className="text-muted-foreground">{t("home.noNews")}</p>
         ) : (
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {rest.slice(0, 6).map((n) => (
@@ -182,6 +184,7 @@ type InterviewPreview = {
 };
 
 function InterviewsPreviewSection() {
+  const { t, locale } = useLanguage();
   const [items, setItems] = useState<InterviewPreview[] | null>(null);
 
   useEffect(() => {
@@ -205,10 +208,10 @@ function InterviewsPreviewSection() {
       <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
         <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
           <Mic className="h-6 w-6 text-gold" />
-          Últimas <span className="text-gold">entrevistas</span>
+          {t("home.latestInterviewsPart1")} <span className="text-gold">{t("home.latestInterviewsPart2")}</span>
         </h2>
         <Link to="/entrevistas" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
-          Ver todas →
+          {t("home.viewAllArrow")}
         </Link>
       </div>
       {items === null ? (
@@ -216,7 +219,7 @@ function InterviewsPreviewSection() {
           {[0, 1, 2].map((i) => <div key={i} className="h-72 animate-pulse bg-surface" />)}
         </div>
       ) : items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Aún no hay entrevistas publicadas.</p>
+        <p className="text-sm text-muted-foreground">{t("home.noInterviews")}</p>
       ) : (
         <div className="grid gap-5 md:grid-cols-3">
           {items.map((it) => (
@@ -238,7 +241,7 @@ function InterviewsPreviewSection() {
               <div className="p-4">
                 <div className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
                   <Calendar className="h-3 w-3" />
-                  {new Date(it.interview_date).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}
+                  {new Date(it.interview_date).toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" })}
                 </div>
                 <h3 className="font-display mt-2 text-lg leading-tight tracking-wider group-hover:text-gold">{it.title}</h3>
                 <div className="font-condensed mt-1 text-xs uppercase tracking-wider text-gold">{it.interviewee_name}</div>
@@ -265,6 +268,7 @@ type EventPreview = {
 };
 
 function EventsPreviewSection() {
+  const { t, locale } = useLanguage();
   const [items, setItems] = useState<EventPreview[] | null>(null);
 
   useEffect(() => {
@@ -288,10 +292,10 @@ function EventsPreviewSection() {
       <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
         <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
           <Calendar className="h-6 w-6 text-gold" />
-          Próximos <span className="text-gold">eventos</span>
+          {t("home.upcomingEventsPart1")} <span className="text-gold">{t("home.upcomingEventsPart2")}</span>
         </h2>
         <Link to="/eventos" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
-          Ver todos →
+          {t("home.viewAllArrow")}
         </Link>
       </div>
       {items === null ? (
@@ -299,7 +303,7 @@ function EventsPreviewSection() {
           {[0, 1, 2].map((i) => <div key={i} className="h-56 animate-pulse bg-surface" />)}
         </div>
       ) : items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No hay eventos próximos programados.</p>
+        <p className="text-sm text-muted-foreground">{t("home.noEvents")}</p>
       ) : (
         <div className="grid gap-5 md:grid-cols-3">
           {items.map((e) => (
@@ -314,9 +318,9 @@ function EventsPreviewSection() {
                   <span className="bg-gold/15 px-2 py-0.5 font-bold text-gold">{e.scope}</span>
                   <span className="text-muted-foreground flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {new Date(e.start_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+                    {new Date(e.start_date).toLocaleDateString(locale, { day: "2-digit", month: "short" })}
                     {e.end_date && e.end_date !== e.start_date && (
-                      <> – {new Date(e.end_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}</>
+                      <> – {new Date(e.end_date).toLocaleDateString(locale, { day: "2-digit", month: "short" })}</>
                     )}
                   </span>
                 </div>
@@ -355,6 +359,7 @@ type MagazinePreview = {
 };
 
 function MagazinePreviewSection() {
+  const { t, locale } = useLanguage();
   const [item, setItem] = useState<MagazinePreview | null | undefined>(undefined);
 
   useEffect(() => {
@@ -377,16 +382,16 @@ function MagazinePreviewSection() {
       <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
         <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
           <BookOpen className="h-6 w-6 text-gold" />
-          Última <span className="text-gold">edición</span>
+          {t("home.latestEditionPart1")} <span className="text-gold">{t("home.latestEditionPart2")}</span>
         </h2>
         <Link to="/revista" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
-          Hemeroteca →
+          {t("home.archive")}
         </Link>
       </div>
       {item === undefined ? (
         <div className="h-72 animate-pulse bg-surface" />
       ) : item === null ? (
-        <p className="text-sm text-muted-foreground">Aún no hay ediciones publicadas.</p>
+        <p className="text-sm text-muted-foreground">{t("home.noMagazines")}</p>
       ) : (
         <div className="grid gap-6 border border-border bg-surface md:grid-cols-[260px_1fr]">
           <div className="aspect-[3/4] overflow-hidden bg-background md:aspect-auto">
@@ -400,23 +405,23 @@ function MagazinePreviewSection() {
           </div>
           <div className="flex flex-col justify-center p-6">
             {item.issue_number && (
-              <div className="font-condensed text-xs uppercase tracking-widest text-gold">Nº {item.issue_number}</div>
+              <div className="font-condensed text-xs uppercase tracking-widest text-gold">{t("home.issue")} {item.issue_number}</div>
             )}
             <h3 className="font-display mt-1 text-2xl leading-tight tracking-wider md:text-3xl">{item.title}</h3>
             <div className="font-condensed mt-2 flex items-center gap-1 text-xs uppercase tracking-widest text-muted-foreground">
               <Calendar className="h-3 w-3" />
-              {new Date(item.edition_date).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}
+              {new Date(item.edition_date).toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" })}
             </div>
             {item.description && <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{item.description}</p>}
             <div className="mt-5 flex flex-wrap gap-2">
               {item.read_url && (
                 <a href={item.read_url} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-2 bg-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-                  Leer online <ExternalLink className="h-3 w-3" />
+                  {t("home.readOnline")} <ExternalLink className="h-3 w-3" />
                 </a>
               )}
               {item.pdf_url && (
                 <a href={item.pdf_url} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-2 border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold/10">
-                  Descargar PDF
+                  {t("home.downloadPdf")}
                 </a>
               )}
             </div>
@@ -436,6 +441,7 @@ type SponsorPreview = {
 };
 
 function SponsorsCarouselSection() {
+  const { t } = useLanguage();
   const [items, setItems] = useState<SponsorPreview[] | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
 
@@ -474,18 +480,18 @@ function SponsorsCarouselSection() {
         <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
           <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
             <Heart className="h-6 w-6 text-gold" />
-            Nuestros <span className="text-gold">patrocinadores</span>
+            {t("home.sponsorsPart1")} <span className="text-gold">{t("home.sponsorsPart2")}</span>
           </h2>
           <Link to="/patrocinadores" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
-            Ver todos →
+            {t("home.viewAllArrow")}
           </Link>
         </div>
         {items === null ? (
           <div className="h-24 animate-pulse bg-surface" />
         ) : items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aún no hay patrocinadores publicados.</p>
+          <p className="text-sm text-muted-foreground">{t("home.noSponsors")}</p>
         ) : (
-          <div ref={trackRef} className="flex gap-8 overflow-x-hidden" aria-label="Carrusel de patrocinadores">
+          <div ref={trackRef} className="flex gap-8 overflow-x-hidden" aria-label={t("home.sponsorsCarouselLabel")}>
             {[...items, ...items].map((s, idx) => {
               const inner = (
                 <div className="flex h-24 w-[250px] shrink-0 items-center justify-center border border-border bg-background p-3 grayscale transition hover:grayscale-0">
@@ -512,6 +518,7 @@ function SponsorsCarouselSection() {
 }
 
 function NewsCard({ news }: { news: News }) {
+  const { locale } = useLanguage();
   return (
     <Link
       to="/noticias/articulo/$slug"
@@ -555,7 +562,7 @@ function NewsCard({ news }: { news: News }) {
           </span>
           <span className="ml-auto flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            {new Date(news.published_at).toLocaleDateString("es-ES", {
+            {new Date(news.published_at).toLocaleDateString(locale, {
               day: "2-digit",
               month: "short",
             })}
@@ -565,6 +572,7 @@ function NewsCard({ news }: { news: News }) {
     </Link>
   );
 }
+
 
 function PlaceholderSection({ id, title, text }: { id: string; title: string; text: string }) {
   return (
@@ -580,6 +588,7 @@ function PlaceholderSection({ id, title, text }: { id: string; title: string; te
 }
 
 function RankingPreviewSection() {
+  const { t, lang } = useLanguage();
   const [top, setTop] = useState<MvpPreview[] | null>(null);
 
   useEffect(() => {
@@ -606,18 +615,29 @@ function RankingPreviewSection() {
     return () => { cancelled = true; };
   }, []);
 
+  const tierLabel = (tier: MvpPreview["tier"]) => {
+    if (lang === "en") {
+      return tier === "elite" ? "Elite" : tier === "estrella" ? "Star" : "Rising star";
+    }
+    return tier === "elite" ? "Élite" : tier === "estrella" ? "Estrella" : "Promesa";
+  };
+  const genderLabel = (g: MvpPreview["gender"]) => {
+    if (lang === "en") return g === "masculino" ? "Male" : "Female";
+    return g;
+  };
+
   return (
     <section id="premios-mvp" className="mx-auto max-w-7xl px-6 py-12">
       <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
         <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
           <Trophy className="h-6 w-6 text-gold" />
-          Premios <span className="text-gold">MVP</span>
+          {t("home.mvpPart1")} <span className="text-gold">{t("home.mvpPart2")}</span>
         </h2>
         <Link
           to="/premios-mvp"
           className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
         >
-          Ver todos →
+          {t("home.viewAllArrow")}
         </Link>
       </div>
 
@@ -627,7 +647,7 @@ function RankingPreviewSection() {
         </div>
       ) : top.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          Aún no hay premios MVP publicados. El admin puede añadirlos desde el panel.
+          {t("home.noMvp")}
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -646,14 +666,14 @@ function RankingPreviewSection() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="font-condensed text-[10px] uppercase tracking-widest text-gold">
-                  {s.tier === "elite" ? "Élite" : s.tier === "estrella" ? "Estrella" : "Promesa"} · {s.gender}
+                  {tierLabel(s.tier)} · {genderLabel(s.gender)}
                 </div>
                 <div className="font-display mt-0.5 truncate text-sm uppercase tracking-wider">{s.full_name}</div>
                 <div className="font-condensed mt-0.5 truncate text-[11px] uppercase tracking-wider text-muted-foreground">
                   {[s.club, s.region].filter(Boolean).join(" · ")}
                 </div>
               </div>
-              <div className="font-display text-2xl text-gold">1º</div>
+              <div className="font-display text-2xl text-gold">{t("home.first")}</div>
             </Link>
           ))}
         </div>

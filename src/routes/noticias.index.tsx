@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Calendar, Eye, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 type News = {
   id: string;
@@ -38,6 +39,7 @@ export const Route = createFileRoute("/noticias/")({
 });
 
 function NoticiasIndexPage() {
+  const { t, locale } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -64,15 +66,15 @@ function NoticiasIndexPage() {
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <header className="mb-8">
-        <p className="font-condensed text-xs uppercase tracking-widest text-gold">Sección</p>
+        <p className="font-condensed text-xs uppercase tracking-widest text-gold">{t("news.sectionTag")}</p>
         <h1 className="font-display text-4xl tracking-widest md:text-5xl">
-          Todas las <span className="text-gold">noticias</span>
+          {t("news.titlePart1")} <span className="text-gold">{t("news.titlePart2")}</span>
         </h1>
       </header>
 
       <div className="mb-8 grid gap-4 border border-border bg-surface p-4 md:grid-cols-2">
-        <CategoryGroup title="Nacional" categories={nacional} />
-        <CategoryGroup title="Internacional" categories={internacional} />
+        <CategoryGroup title={t("news.national")} categories={nacional} />
+        <CategoryGroup title={t("news.international")} categories={internacional} />
       </div>
 
       {news === null ? (
@@ -82,11 +84,11 @@ function NoticiasIndexPage() {
           ))}
         </div>
       ) : news.length === 0 ? (
-        <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
+        <p className="text-muted-foreground">{t("news.empty")}</p>
       ) : (
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {news.map((n) => (
-            <NewsListCard key={n.id} news={n} />
+            <NewsListCard key={n.id} news={n} locale={locale} />
           ))}
         </div>
       )}
@@ -114,7 +116,7 @@ function CategoryGroup({ title, categories }: { title: string; categories: Categ
   );
 }
 
-function NewsListCard({ news }: { news: News }) {
+function NewsListCard({ news, locale }: { news: News; locale: string }) {
   return (
     <Link
       to="/noticias/articulo/$slug"
@@ -146,7 +148,7 @@ function NewsListCard({ news }: { news: News }) {
           <span className="flex items-center gap-1"><Eye className="h-3 w-3" /> {news.views_count}</span>
           <span className="ml-auto flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            {new Date(news.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+            {new Date(news.published_at).toLocaleDateString(locale, { day: "2-digit", month: "short" })}
           </span>
         </div>
       </div>
