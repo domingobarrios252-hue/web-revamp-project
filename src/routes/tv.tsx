@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { youTubeEmbedUrl, youTubeThumbnail } from "@/lib/youtube";
 
 export const Route = createFileRoute("/tv")({
@@ -186,6 +187,12 @@ function TvPage() {
           </div>
         </div>
       </section>
+
+      <div className="border-b border-border bg-background">
+        <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
+          <AdBannerSmall placement="tv_side" />
+        </div>
+      </div>
 
       {/* PRÓXIMAS CARRERAS — CARRUSEL */}
       <section className="border-b border-border bg-background">
