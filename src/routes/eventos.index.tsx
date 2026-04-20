@@ -2,11 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Users, Filter, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
-const MONTHS = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
-];
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 type EventItem = {
   id: string;
@@ -38,14 +34,14 @@ export const Route = createFileRoute("/eventos/")({
   component: EventosPage,
 });
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return "";
-  return new Date(d + "T00:00:00").toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" });
+  return new Date(d + "T00:00:00").toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" });
 }
 
-function formatRange(start: string, end: string | null) {
-  if (!end || end === start) return formatDate(start);
-  return `${formatDate(start)} → ${formatDate(end)}`;
+function formatRange(start: string, end: string | null, locale: string) {
+  if (!end || end === start) return formatDate(start, locale);
+  return `${formatDate(start, locale)} → ${formatDate(end, locale)}`;
 }
 
 function EventosPage() {
