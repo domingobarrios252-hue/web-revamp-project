@@ -384,6 +384,17 @@ function NewsEditor({
               placeholder="URL o subir archivo"
             />
           </div>
+          <div>
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Galería de imágenes ({gallery.length})
+            </span>
+            <GalleryUploadField
+              value={gallery}
+              onChange={setGallery}
+              folder="news/gallery"
+              nameHint={slug || title}
+            />
+          </div>
           <TextareaField label="Resumen" value={excerpt} onChange={setExcerpt} rows={3} />
           <TextareaField
             label="Contenido (un párrafo por línea)"
