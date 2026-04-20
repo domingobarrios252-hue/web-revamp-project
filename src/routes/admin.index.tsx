@@ -42,7 +42,15 @@ const newsSchema = z.object({
   read_minutes: z.number().int().min(1).max(60).optional(),
   featured: z.boolean(),
   published: z.boolean(),
+  published_at: z.string().min(1, "Fecha requerida"),
 });
+
+// Convert ISO timestamp to local datetime-local input value (YYYY-MM-DDTHH:mm)
+function toLocalInput(iso: string | null | undefined): string {
+  const d = iso ? new Date(iso) : new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 function slugify(s: string) {
   return s
@@ -259,6 +267,7 @@ function NewsEditor({
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
   const [published, setPublished] = useState(item?.published ?? true);
+  const [publishedAt, setPublishedAt] = useState<string>(toLocalInput(item?.published_at));
   const [saving, setSaving] = useState(false);
 
   // Auto-slug for new
@@ -284,6 +293,7 @@ function NewsEditor({
       read_minutes: typeof readMinutes === "number" ? readMinutes : undefined,
       featured,
       published,
+      published_at: publishedAt,
     });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos");
@@ -313,6 +323,7 @@ function NewsEditor({
         read_minutes: parsed.data.read_minutes ?? null,
         featured: parsed.data.featured,
         published: parsed.data.published,
+        published_at: new Date(parsed.data.published_at).toISOString(),
       };
       const { error } = item
         ? await supabase.from("news").update(payload).eq("id", item.id)
@@ -402,6 +413,18 @@ function NewsEditor({
             onChange={setContent}
             rows={10}
           />
+          <label className="block">
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Fecha de publicación
+            </span>
+            <input
+              type="datetime-local"
+              value={publishedAt}
+              onChange={(e) => setPublishedAt(e.target.value)}
+              required
+              className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold md:w-auto"
+            />
+          </label>
           <div className="flex flex-wrap gap-4">
             <Checkbox label="Publicada" checked={published} onChange={setPublished} />
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
