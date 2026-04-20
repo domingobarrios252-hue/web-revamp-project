@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Calendar, Eye, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 
 type News = {
   id: string;
@@ -75,21 +76,28 @@ function NoticiasIndexPage() {
         <CategoryGroup title="Internacional" categories={internacional} />
       </div>
 
-      {news === null ? (
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-64 animate-pulse bg-surface" />
-          ))}
+      <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+        <div className="min-w-0">
+          {news === null ? (
+            <div className="grid gap-5 md:grid-cols-2">
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="h-64 animate-pulse bg-surface" />
+              ))}
+            </div>
+          ) : news.length === 0 ? (
+            <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
+          ) : (
+            <div className="grid gap-5 md:grid-cols-2">
+              {news.map((n) => (
+                <NewsListCard key={n.id} news={n} />
+              ))}
+            </div>
+          )}
         </div>
-      ) : news.length === 0 ? (
-        <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
-      ) : (
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {news.map((n) => (
-            <NewsListCard key={n.id} news={n} />
-          ))}
-        </div>
-      )}
+        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+          <AdBannerSmall placement="noticias_side" />
+        </aside>
+      </div>
     </div>
   );
 }

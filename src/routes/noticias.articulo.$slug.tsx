@@ -4,6 +4,7 @@ import { Calendar, Eye, User as UserIcon, Instagram, Facebook, MessageCircle, Li
 import { supabase } from "@/integrations/supabase/client";
 import { getVisitorHash } from "@/lib/visitor";
 import { toast } from "sonner";
+import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 
 type Article = {
   id: string;
