@@ -366,7 +366,18 @@ function NewsEditor({
             <Field label="Etiqueta (opcional)" value={legacyTag} onChange={setLegacyTag} />
             <NumberField label="Min. lectura" value={readMinutes} onChange={setReadMinutes} />
           </div>
-          <Field label="URL de imagen" value={imageUrl} onChange={setImageUrl} type="url" />
+          <div>
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Imagen de portada
+            </span>
+            <ImageUploadField
+              value={imageUrl}
+              onChange={setImageUrl}
+              folder="news"
+              nameHint={slug || title}
+              placeholder="URL o subir archivo"
+            />
+          </div>
           <TextareaField label="Resumen" value={excerpt} onChange={setExcerpt} rows={3} />
           <TextareaField
             label="Contenido (un párrafo por línea)"
