@@ -255,6 +255,7 @@ function NewsEditor({
   const [categoryId, setCategoryId] = useState(item?.category_id ?? "");
   const [legacyTag, setLegacyTag] = useState(item?.legacy_tag ?? "");
   const [imageUrl, setImageUrl] = useState(item?.image_url ?? "");
+  const [gallery, setGallery] = useState<string[]>(item?.gallery ?? []);
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
   const [published, setPublished] = useState(item?.published ?? true);
