@@ -45,6 +45,8 @@ function formatRange(start: string, end: string | null, locale: string) {
 }
 
 function EventosPage() {
+  const { t, tArr, locale } = useLanguage();
+  const MONTHS = tArr("events.months");
   const [events, setEvents] = useState<EventItem[] | null>(null);
   const [scope, setScope] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
@@ -100,34 +102,34 @@ function EventosPage() {
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <div className="mb-8 flex items-center gap-3 border-b border-border pb-4">
         <Calendar className="h-7 w-7 text-gold" />
-        <h1 className="font-display text-3xl tracking-widest">EVENTOS</h1>
+        <h1 className="font-display text-3xl tracking-widest">{t("events.title")}</h1>
       </div>
 
       {events !== null && events.length > 0 && (
         <div className="mb-8 border border-border bg-surface p-4">
           <div className="mb-3 flex items-center gap-2">
             <Filter className="h-4 w-4 text-gold" />
-            <span className="font-condensed text-xs uppercase tracking-widest text-gold">Filtros</span>
+            <span className="font-condensed text-xs uppercase tracking-widest text-gold">{t("events.filters")}</span>
             {hasFilters && (
               <button
                 onClick={resetFilters}
                 className="font-condensed ml-auto inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-muted-foreground hover:text-gold"
               >
-                <X className="h-3 w-3" /> Limpiar
+                <X className="h-3 w-3" /> {t("events.clear")}
               </button>
             )}
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <FilterSelect label="Ámbito" value={scope} onChange={setScope}>
-              <option value="all">Todos</option>
+            <FilterSelect label={t("events.scope")} value={scope} onChange={setScope}>
+              <option value="all">{t("events.all")}</option>
               {scopes.map((s) => <option key={s} value={s}>{s}</option>)}
             </FilterSelect>
-            <FilterSelect label="Categoría" value={category} onChange={setCategory}>
-              <option value="all">Todas</option>
+            <FilterSelect label={t("events.category")} value={category} onChange={setCategory}>
+              <option value="all">{t("events.allFem")}</option>
               {categories.map((c) => <option key={c} value={c}>{c}</option>)}
             </FilterSelect>
-            <FilterSelect label="Mes" value={month} onChange={setMonth}>
-              <option value="all">Todos</option>
+            <FilterSelect label={t("events.month")} value={month} onChange={setMonth}>
+              <option value="all">{t("events.all")}</option>
               {MONTHS.map((m, i) => <option key={m} value={String(i)}>{m}</option>)}
             </FilterSelect>
           </div>
@@ -135,17 +137,17 @@ function EventosPage() {
       )}
 
       {events === null ? (
-        <p className="text-muted-foreground">Cargando eventos…</p>
+        <p className="text-muted-foreground">{t("events.loading")}</p>
       ) : events.length === 0 ? (
-        <p className="text-muted-foreground">Aún no hay eventos publicados.</p>
+        <p className="text-muted-foreground">{t("events.empty")}</p>
       ) : filtered.length === 0 ? (
-        <p className="text-muted-foreground">Ningún evento coincide con los filtros seleccionados.</p>
+        <p className="text-muted-foreground">{t("events.noMatch")}</p>
       ) : (
         <>
-          <Section title="Próximos eventos" items={upcoming} empty="No hay eventos programados próximamente." />
+          <Section title={t("events.upcoming")} items={upcoming} empty={t("events.noUpcoming")} locale={locale} t={t} />
           {past.length > 0 && (
             <div className="mt-12">
-              <Section title="Eventos pasados" items={past} dim />
+              <Section title={t("events.past")} items={past} dim locale={locale} t={t} />
             </div>
           )}
         </>
