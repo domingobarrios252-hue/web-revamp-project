@@ -171,7 +171,7 @@ function FilterSelect({ label, value, onChange, children }: { label: string; val
   );
 }
 
-function Section({ title, items, empty, dim }: { title: string; items: EventItem[]; empty?: string; dim?: boolean }) {
+function Section({ title, items, empty, dim, locale, t }: { title: string; items: EventItem[]; empty?: string; dim?: boolean; locale: string; t: (p: string) => string }) {
   return (
     <div>
       <h2 className="font-display mb-4 text-xl tracking-widest text-gold">{title}</h2>
@@ -180,7 +180,7 @@ function Section({ title, items, empty, dim }: { title: string; items: EventItem
       ) : (
         <div className={`grid gap-6 md:grid-cols-2 lg:grid-cols-3 ${dim ? "opacity-80" : ""}`}>
           {items.map((e) => (
-            <EventCard key={e.id} event={e} />
+            <EventCard key={e.id} event={e} locale={locale} t={t} />
           ))}
         </div>
       )}
@@ -188,7 +188,7 @@ function Section({ title, items, empty, dim }: { title: string; items: EventItem
   );
 }
 
-function EventCard({ event }: { event: EventItem }) {
+function EventCard({ event, locale, t }: { event: EventItem; locale: string; t: (p: string) => string }) {
   return (
     <article className="group flex flex-col border border-border bg-surface transition-colors hover:border-gold">
       <Link to="/eventos/$slug" params={{ slug: event.slug }} className="block">
@@ -203,12 +203,12 @@ function EventCard({ event }: { event: EventItem }) {
             />
             <img
               src={event.cover_url}
-              alt={`Cartel de ${event.name}`}
+              alt={`${t("events.poster")} — ${event.name}`}
               loading="lazy"
               className="relative h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
             />
             <span className="font-condensed absolute left-2 top-2 bg-background/85 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
-              Cartel
+              {t("events.poster")}
             </span>
           </div>
         ) : (
@@ -224,7 +224,7 @@ function EventCard({ event }: { event: EventItem }) {
         </Link>
 
         <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" />{formatRange(event.start_date, event.end_date)}</div>
+          <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" />{formatRange(event.start_date, event.end_date, locale)}</div>
           {event.location && <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" />{event.location}</div>}
           {event.organizer && <div className="flex items-center gap-2"><Users className="h-3.5 w-3.5" />{event.organizer}</div>}
         </div>
@@ -243,14 +243,14 @@ function EventCard({ event }: { event: EventItem }) {
 
         <div className="mt-auto flex flex-wrap items-center gap-3 pt-4">
           <Link to="/eventos/$slug" params={{ slug: event.slug }} className="font-condensed inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-gold hover:text-gold-dark">
-            Ver detalle →
+            {t("events.viewDetail")}
           </Link>
-          {event.website_url && <ExternalLinkBtn href={event.website_url} icon={<Globe className="h-3.5 w-3.5" />}>Web</ExternalLinkBtn>}
+          {event.website_url && <ExternalLinkBtn href={event.website_url} icon={<Globe className="h-3.5 w-3.5" />}>{t("events.website")}</ExternalLinkBtn>}
           {event.instagram_url && <ExternalLinkBtn href={event.instagram_url} icon={<Instagram className="h-3.5 w-3.5" />}>Instagram</ExternalLinkBtn>}
           {event.facebook_url && <ExternalLinkBtn href={event.facebook_url} icon={<Facebook className="h-3.5 w-3.5" />}>Facebook</ExternalLinkBtn>}
           {event.registration_url && (
             <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="font-condensed ml-auto inline-flex items-center gap-1 bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-              Inscripción <ExternalLink className="h-3 w-3" />
+              {t("events.registration")} <ExternalLink className="h-3 w-3" />
             </a>
           )}
         </div>
