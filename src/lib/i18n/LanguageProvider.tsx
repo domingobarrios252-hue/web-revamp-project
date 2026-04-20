@@ -7,10 +7,6 @@ type LanguageContextValue = {
   lang: Language;
   setLang: (l: Language) => void;
   t: (path: string) => string;
-  /** Get an array of strings (e.g. months). Returns [] if not found. */
-  tArr: (path: string) => string[];
-  /** BCP 47 locale string for Intl APIs (toLocaleDateString, etc.). */
-  locale: string;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -20,6 +16,7 @@ function readInitialLang(): Language {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored === "es" || stored === "en") return stored;
+    // Optional: detect browser language on first visit
     const nav = window.navigator?.language?.toLowerCase() ?? "";
     if (nav.startsWith("en")) return "en";
   } catch {
@@ -28,32 +25,23 @@ function readInitialLang(): Language {
   return "es";
 }
 
-function resolveRaw(obj: unknown, path: string): unknown {
+function resolve(obj: unknown, path: string): string {
   const parts = path.split(".");
   let cur: unknown = obj;
   for (const p of parts) {
     if (cur && typeof cur === "object" && p in (cur as Record<string, unknown>)) {
       cur = (cur as Record<string, unknown>)[p];
     } else {
-      return undefined;
+      return path;
     }
   }
-  return cur;
-}
-
-function resolve(obj: unknown, path: string): string {
-  const v = resolveRaw(obj, path);
-  return typeof v === "string" ? v : path;
-}
-
-function resolveArr(obj: unknown, path: string): string[] {
-  const v = resolveRaw(obj, path);
-  return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+  return typeof cur === "string" ? cur : path;
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>("es");
 
+  // Hydrate from localStorage on mount (client-only) to avoid SSR mismatch.
   useEffect(() => {
     setLangState(readInitialLang());
   }, []);
@@ -78,17 +66,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     [lang],
   );
 
-  const tArr = useCallback(
-    (path: string) => resolveArr(translations[lang], path),
-    [lang],
-  );
-
-  const locale = lang === "en" ? "en-GB" : "es-ES";
-
-  const value = useMemo(
-    () => ({ lang, setLang, t, tArr, locale }),
-    [lang, setLang, t, tArr, locale],
-  );
+  const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
@@ -96,12 +74,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage(): LanguageContextValue {
   const ctx = useContext(LanguageContext);
   if (!ctx) {
+    // Safe fallback so components don't crash if used outside provider (e.g. SSR boundaries).
     return {
       lang: "es",
       setLang: () => {},
       t: (p: string) => resolve(translations.es, p),
-      tArr: (p: string) => resolveArr(translations.es, p),
-      locale: "es-ES",
     };
   }
   return ctx;
