@@ -184,6 +184,7 @@ type InterviewPreview = {
 };
 
 function InterviewsPreviewSection() {
+  const { t, locale } = useLanguage();
   const [items, setItems] = useState<InterviewPreview[] | null>(null);
 
   useEffect(() => {
@@ -207,10 +208,10 @@ function InterviewsPreviewSection() {
       <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
         <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
           <Mic className="h-6 w-6 text-gold" />
-          Últimas <span className="text-gold">entrevistas</span>
+          {t("home.latestInterviewsPart1")} <span className="text-gold">{t("home.latestInterviewsPart2")}</span>
         </h2>
         <Link to="/entrevistas" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
-          Ver todas →
+          {t("home.viewAllArrow")}
         </Link>
       </div>
       {items === null ? (
@@ -218,7 +219,7 @@ function InterviewsPreviewSection() {
           {[0, 1, 2].map((i) => <div key={i} className="h-72 animate-pulse bg-surface" />)}
         </div>
       ) : items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Aún no hay entrevistas publicadas.</p>
+        <p className="text-sm text-muted-foreground">{t("home.noInterviews")}</p>
       ) : (
         <div className="grid gap-5 md:grid-cols-3">
           {items.map((it) => (
@@ -240,7 +241,7 @@ function InterviewsPreviewSection() {
               <div className="p-4">
                 <div className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
                   <Calendar className="h-3 w-3" />
-                  {new Date(it.interview_date).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}
+                  {new Date(it.interview_date).toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" })}
                 </div>
                 <h3 className="font-display mt-2 text-lg leading-tight tracking-wider group-hover:text-gold">{it.title}</h3>
                 <div className="font-condensed mt-1 text-xs uppercase tracking-wider text-gold">{it.interviewee_name}</div>
@@ -267,6 +268,7 @@ type EventPreview = {
 };
 
 function EventsPreviewSection() {
+  const { t, locale } = useLanguage();
   const [items, setItems] = useState<EventPreview[] | null>(null);
 
   useEffect(() => {
@@ -290,10 +292,10 @@ function EventsPreviewSection() {
       <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
         <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
           <Calendar className="h-6 w-6 text-gold" />
-          Próximos <span className="text-gold">eventos</span>
+          {t("home.upcomingEventsPart1")} <span className="text-gold">{t("home.upcomingEventsPart2")}</span>
         </h2>
         <Link to="/eventos" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
-          Ver todos →
+          {t("home.viewAllArrow")}
         </Link>
       </div>
       {items === null ? (
@@ -301,7 +303,7 @@ function EventsPreviewSection() {
           {[0, 1, 2].map((i) => <div key={i} className="h-56 animate-pulse bg-surface" />)}
         </div>
       ) : items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No hay eventos próximos programados.</p>
+        <p className="text-sm text-muted-foreground">{t("home.noEvents")}</p>
       ) : (
         <div className="grid gap-5 md:grid-cols-3">
           {items.map((e) => (
@@ -316,9 +318,9 @@ function EventsPreviewSection() {
                   <span className="bg-gold/15 px-2 py-0.5 font-bold text-gold">{e.scope}</span>
                   <span className="text-muted-foreground flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {new Date(e.start_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+                    {new Date(e.start_date).toLocaleDateString(locale, { day: "2-digit", month: "short" })}
                     {e.end_date && e.end_date !== e.start_date && (
-                      <> – {new Date(e.end_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}</>
+                      <> – {new Date(e.end_date).toLocaleDateString(locale, { day: "2-digit", month: "short" })}</>
                     )}
                   </span>
                 </div>
@@ -357,6 +359,7 @@ type MagazinePreview = {
 };
 
 function MagazinePreviewSection() {
+  const { t, locale } = useLanguage();
   const [item, setItem] = useState<MagazinePreview | null | undefined>(undefined);
 
   useEffect(() => {
@@ -379,16 +382,16 @@ function MagazinePreviewSection() {
       <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
         <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
           <BookOpen className="h-6 w-6 text-gold" />
-          Última <span className="text-gold">edición</span>
+          {t("home.latestEditionPart1")} <span className="text-gold">{t("home.latestEditionPart2")}</span>
         </h2>
         <Link to="/revista" className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark">
-          Hemeroteca →
+          {t("home.archive")}
         </Link>
       </div>
       {item === undefined ? (
         <div className="h-72 animate-pulse bg-surface" />
       ) : item === null ? (
-        <p className="text-sm text-muted-foreground">Aún no hay ediciones publicadas.</p>
+        <p className="text-sm text-muted-foreground">{t("home.noMagazines")}</p>
       ) : (
         <div className="grid gap-6 border border-border bg-surface md:grid-cols-[260px_1fr]">
           <div className="aspect-[3/4] overflow-hidden bg-background md:aspect-auto">
@@ -402,23 +405,23 @@ function MagazinePreviewSection() {
           </div>
           <div className="flex flex-col justify-center p-6">
             {item.issue_number && (
-              <div className="font-condensed text-xs uppercase tracking-widest text-gold">Nº {item.issue_number}</div>
+              <div className="font-condensed text-xs uppercase tracking-widest text-gold">{t("home.issue")} {item.issue_number}</div>
             )}
             <h3 className="font-display mt-1 text-2xl leading-tight tracking-wider md:text-3xl">{item.title}</h3>
             <div className="font-condensed mt-2 flex items-center gap-1 text-xs uppercase tracking-widest text-muted-foreground">
               <Calendar className="h-3 w-3" />
-              {new Date(item.edition_date).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}
+              {new Date(item.edition_date).toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" })}
             </div>
             {item.description && <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{item.description}</p>}
             <div className="mt-5 flex flex-wrap gap-2">
               {item.read_url && (
                 <a href={item.read_url} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-2 bg-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-                  Leer online <ExternalLink className="h-3 w-3" />
+                  {t("home.readOnline")} <ExternalLink className="h-3 w-3" />
                 </a>
               )}
               {item.pdf_url && (
                 <a href={item.pdf_url} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-2 border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold/10">
-                  Descargar PDF
+                  {t("home.downloadPdf")}
                 </a>
               )}
             </div>
