@@ -689,6 +689,7 @@ export type Database = {
           category: string | null
           club_id: string | null
           created_at: string
+          featured: boolean
           full_name: string
           gender: string | null
           id: string
@@ -706,6 +707,7 @@ export type Database = {
           category?: string | null
           club_id?: string | null
           created_at?: string
+          featured?: boolean
           full_name: string
           gender?: string | null
           id?: string
@@ -723,6 +725,7 @@ export type Database = {
           category?: string | null
           club_id?: string | null
           created_at?: string
+          featured?: boolean
           full_name?: string
           gender?: string | null
           id?: string
