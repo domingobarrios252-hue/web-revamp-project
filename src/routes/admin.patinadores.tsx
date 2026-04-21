@@ -39,6 +39,7 @@ const skaterSchema = z.object({
   total_points: z.number().min(0).max(1000000),
   bio: z.string().trim().max(2000).optional(),
   active: z.boolean(),
+  featured: z.boolean(),
 });
 
 function slugify(s: string) {
@@ -70,7 +71,7 @@ function AdminSkaters() {
       supabase
         .from("skaters")
         .select(
-          "id, full_name, slug, photo_url, birth_year, category, gender, club_id, region_id, total_points, personal_records, bio, active, clubs(name), regions(name, code)"
+          "id, full_name, slug, photo_url, birth_year, category, gender, club_id, region_id, total_points, personal_records, bio, active, featured, clubs(name), regions(name, code)"
         )
         .order("total_points", { ascending: false }),
       supabase.from("clubs").select("id, name").order("name"),
@@ -218,6 +219,7 @@ function SkaterForm({
   );
   const [bio, setBio] = useState(initial?.bio ?? "");
   const [active, setActive] = useState(initial?.active ?? true);
+  const [featured, setFeatured] = useState(initial?.featured ?? false);
   const [prs, setPrs] = useState<PR[]>(initial?.personal_records ?? []);
   const [saving, setSaving] = useState(false);
 
@@ -238,6 +240,7 @@ function SkaterForm({
       total_points: Number(total_points),
       bio: bio || undefined,
       active,
+      featured,
     });
     if (!parsed.success) {
       toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
@@ -256,6 +259,7 @@ function SkaterForm({
       total_points: parsed.data.total_points,
       bio: parsed.data.bio ?? null,
       active: parsed.data.active,
+      featured: parsed.data.featured,
       personal_records: prs.filter((p) => p.event && p.time),
     };
     const { error } = initial
@@ -356,6 +360,16 @@ function SkaterForm({
           <label className="flex h-9 items-center gap-2 text-sm">
             <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
             Mostrar en ranking público
+          </label>
+        </Field>
+        <Field label="Destacado en home">
+          <label className="flex h-9 items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={featured}
+              onChange={(e) => setFeatured(e.target.checked)}
+            />
+            Aparecer en "Atletas destacados"
           </label>
         </Field>
         <div className="md:col-span-2">
