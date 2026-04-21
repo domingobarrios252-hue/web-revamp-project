@@ -24,6 +24,7 @@ import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
@@ -122,6 +123,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const PatinadoresSlugRoute = PatinadoresSlugRouteImport.update({
+  id: '/patinadores/$slug',
+  path: '/patinadores/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
   id: '/noticias/$slug',
@@ -272,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/eventos/$slug': typeof EventosSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
+  '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
@@ -311,6 +318,7 @@ export interface FileRoutesByTo {
   '/eventos/$slug': typeof EventosSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
+  '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/admin': typeof AdminIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
   '/eventos': typeof EventosIndexRoute
@@ -352,6 +360,7 @@ export interface FileRoutesById {
   '/eventos/$slug': typeof EventosSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
+  '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
@@ -394,6 +403,7 @@ export interface FileRouteTypes {
     | '/eventos/$slug'
     | '/legal/$slug'
     | '/noticias/$slug'
+    | '/patinadores/$slug'
     | '/admin/'
     | '/entrevistas/'
     | '/eventos/'
@@ -433,6 +443,7 @@ export interface FileRouteTypes {
     | '/eventos/$slug'
     | '/legal/$slug'
     | '/noticias/$slug'
+    | '/patinadores/$slug'
     | '/admin'
     | '/entrevistas'
     | '/eventos'
@@ -473,6 +484,7 @@ export interface FileRouteTypes {
     | '/eventos/$slug'
     | '/legal/$slug'
     | '/noticias/$slug'
+    | '/patinadores/$slug'
     | '/admin/'
     | '/entrevistas/'
     | '/eventos/'
@@ -497,6 +509,7 @@ export interface RootRouteChildren {
   EventosSlugRoute: typeof EventosSlugRoute
   LegalSlugRoute: typeof LegalSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
+  PatinadoresSlugRoute: typeof PatinadoresSlugRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
@@ -610,6 +623,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/patinadores/$slug': {
+      id: '/patinadores/$slug'
+      path: '/patinadores/$slug'
+      fullPath: '/patinadores/$slug'
+      preLoaderRoute: typeof PatinadoresSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/noticias/$slug': {
       id: '/noticias/$slug'
@@ -835,6 +855,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventosSlugRoute: EventosSlugRoute,
   LegalSlugRoute: LegalSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
+  PatinadoresSlugRoute: PatinadoresSlugRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,

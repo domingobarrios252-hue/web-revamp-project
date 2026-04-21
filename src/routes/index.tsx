@@ -161,6 +161,7 @@ function HomePage() {
         )}
       </section>
 
+      <FeaturedAthletesSection />
       <RankingPreviewSection />
       <InterviewsPreviewSection />
       <EventsPreviewSection />
@@ -168,6 +169,112 @@ function HomePage() {
       <SponsorsCarouselSection />
       <TeamSection />
     </>
+  );
+}
+
+type FeaturedAthlete = {
+  id: string;
+  full_name: string;
+  slug: string;
+  photo_url: string | null;
+  clubs: { name: string } | null;
+  regions: { name: string; code: string; flag_url: string | null } | null;
+};
+
+function FeaturedAthletesSection() {
+  const [items, setItems] = useState<FeaturedAthlete[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("skaters")
+      .select("id, full_name, slug, photo_url, clubs(name), regions(name, code, flag_url)")
+      .eq("active", true)
+      .eq("featured", true)
+      .order("total_points", { ascending: false })
+      .limit(8)
+      .then(({ data }) => {
+        if (!cancelled) setItems((data as unknown as FeaturedAthlete[]) ?? []);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (items !== null && items.length === 0) return null;
+
+  return (
+    <section id="atletas-destacados" className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+          <Trophy className="h-6 w-6 text-gold" />
+          Atletas <span className="text-gold">destacados</span>
+        </h2>
+      </div>
+
+      {items === null ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-72 animate-pulse bg-surface" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((a) => (
+            <article
+              key={a.id}
+              className="group flex flex-col overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
+            >
+              <div className="aspect-[4/5] overflow-hidden bg-background">
+                {a.photo_url ? (
+                  <img
+                    src={a.photo_url}
+                    alt={a.full_name}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+                    <UserIcon className="h-12 w-12 text-gold/30" />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-1 flex-col items-center p-4 text-center">
+                <h3 className="font-display text-base uppercase leading-tight tracking-wider">
+                  {a.full_name}
+                </h3>
+                {a.clubs?.name && (
+                  <div className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+                    {a.clubs.name}
+                  </div>
+                )}
+                {a.regions && (
+                  <div className="font-condensed mt-2 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-gold">
+                    {a.regions.flag_url ? (
+                      <img
+                        src={a.regions.flag_url}
+                        alt={a.regions.code}
+                        className="h-3 w-auto"
+                      />
+                    ) : (
+                      <MapPin className="h-3 w-3" />
+                    )}
+                    {a.regions.code}
+                  </div>
+                )}
+                <Link
+                  to="/patinadores/$slug"
+                  params={{ slug: a.slug }}
+                  className="font-condensed mt-4 inline-flex w-full items-center justify-center gap-1 border border-gold px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-background"
+                >
+                  Ver perfil
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
