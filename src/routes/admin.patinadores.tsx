@@ -23,6 +23,7 @@ type Skater = {
   personal_records: PR[];
   bio: string | null;
   active: boolean;
+  featured: boolean;
   clubs: { name: string } | null;
   regions: { name: string; code: string } | null;
 };
