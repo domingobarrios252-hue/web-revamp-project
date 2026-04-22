@@ -1432,26 +1432,41 @@ type SocialNetwork = {
   hoverColor: string;
 };
 
-const SOCIAL_NETWORKS: SocialNetwork[] = [
-  {
-    name: "Instagram",
+const SOCIAL_DEFAULTS = {
+  instagram: {
     handle: "@rollerzone_spain",
     url: "https://instagram.com/rollerzone_spain",
     followers: "4.4K",
-    iconKey: "instagram",
-    gradient: "from-[#feda75] via-[#d62976] to-[#4f5bd5]",
-    hoverColor: "group-hover:text-[#d62976]",
   },
-  {
-    name: "Facebook",
+  facebook: {
     handle: "@rollerzone.spain",
     url: "https://facebook.com/rollerzone.spain",
     followers: "2K",
-    iconKey: "facebook",
-    gradient: "from-[#1877f2] to-[#0a5dc2]",
-    hoverColor: "group-hover:text-[#1877f2]",
   },
-];
+};
+
+function buildSocialNetworks(settings: typeof SOCIAL_DEFAULTS): SocialNetwork[] {
+  return [
+    {
+      name: "Instagram",
+      handle: settings.instagram.handle,
+      url: settings.instagram.url,
+      followers: settings.instagram.followers,
+      iconKey: "instagram",
+      gradient: "from-[#feda75] via-[#d62976] to-[#4f5bd5]",
+      hoverColor: "group-hover:text-[#d62976]",
+    },
+    {
+      name: "Facebook",
+      handle: settings.facebook.handle,
+      url: settings.facebook.url,
+      followers: settings.facebook.followers,
+      iconKey: "facebook",
+      gradient: "from-[#1877f2] to-[#0a5dc2]",
+      hoverColor: "group-hover:text-[#1877f2]",
+    },
+  ];
+}
 
 function SocialIcon({ iconKey, className }: { iconKey: "instagram" | "facebook"; className?: string }) {
   if (iconKey === "instagram") return <Instagram className={className} />;
@@ -1460,6 +1475,7 @@ function SocialIcon({ iconKey, className }: { iconKey: "instagram" | "facebook";
 
 function MostReadAndSocialSection() {
   const [items, setItems] = useState<MostReadNews[] | null>(null);
+  const [socialSettings, setSocialSettings] = useState(SOCIAL_DEFAULTS);
 
   useEffect(() => {
     let cancelled = false;
@@ -1472,10 +1488,27 @@ function MostReadAndSocialSection() {
       .then(({ data }) => {
         if (!cancelled) setItems((data as unknown as MostReadNews[]) ?? []);
       });
+
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "social_followers")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled || !data?.value) return;
+        const v = data.value as Partial<typeof SOCIAL_DEFAULTS>;
+        setSocialSettings({
+          instagram: { ...SOCIAL_DEFAULTS.instagram, ...(v.instagram ?? {}) },
+          facebook: { ...SOCIAL_DEFAULTS.facebook, ...(v.facebook ?? {}) },
+        });
+      });
+
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const socialNetworks = buildSocialNetworks(socialSettings);
 
   return (
     <section className="mx-auto max-w-7xl px-5 py-12 md:px-6">
@@ -1561,7 +1594,7 @@ function MostReadAndSocialSection() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            {SOCIAL_NETWORKS.map((s) => (
+            {socialNetworks.map((s: SocialNetwork) => (
               <a
                 key={s.name}
                 href={s.url}
