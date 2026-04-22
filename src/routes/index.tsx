@@ -628,7 +628,7 @@ function LiveNowSection() {
                       return (
                         <li
                           key={m.id}
-                          className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                          className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-2.5 py-2 text-[11px] sm:text-xs"
                         >
                           <div className="flex min-w-0 items-center gap-2">
                             <span className="font-display w-4 text-[10px] text-muted-foreground">
@@ -638,7 +638,7 @@ function LiveNowSection() {
                               <img
                                 src={m.flag_url}
                                 alt={m.country_name}
-                                className="h-3.5 w-5 shrink-0 object-cover"
+                                className="h-3 w-4 shrink-0 object-cover sm:h-3.5 sm:w-5"
                                 loading="lazy"
                               />
                             ) : (
@@ -646,7 +646,7 @@ function LiveNowSection() {
                                 {m.country_code ?? "—"}
                               </span>
                             )}
-                            <span className="truncate uppercase tracking-wider">
+                            <span className="break-words uppercase leading-tight tracking-wider">
                               {m.country_code ?? m.country_name}
                             </span>
                           </div>
