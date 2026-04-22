@@ -1410,3 +1410,233 @@ function TeamSection() {
     </section>
   );
 }
+
+/* ===================== MOST READ + FOLLOW US ===================== */
+
+type MostReadNews = {
+  id: string;
+  title: string;
+  slug: string;
+  views_count: number;
+  image_url: string | null;
+  news_categories: { name: string } | null;
+};
+
+type SocialNetwork = {
+  name: string;
+  handle: string;
+  url: string;
+  followers: string;
+  Icon: typeof Instagram;
+  gradient: string;
+  hoverColor: string;
+};
+
+const SOCIAL_NETWORKS: SocialNetwork[] = [
+  {
+    name: "Instagram",
+    handle: "@rollerzone_spain",
+    url: "https://instagram.com/rollerzone_spain",
+    followers: "12.4K",
+    Icon: Instagram,
+    gradient: "from-[#feda75] via-[#d62976] to-[#4f5bd5]",
+    hoverColor: "group-hover:text-[#d62976]",
+  },
+  {
+    name: "Facebook",
+    handle: "RollerZone Spain",
+    url: "https://facebook.com/rollerzonespain",
+    followers: "8.7K",
+    Icon: Facebook,
+    gradient: "from-[#1877f2] to-[#0a5dc2]",
+    hoverColor: "group-hover:text-[#1877f2]",
+  },
+  {
+    name: "YouTube",
+    handle: "@rollerzonespain",
+    url: "https://www.youtube.com/@rollerzonespain",
+    followers: "5.2K",
+    Icon: Youtube,
+    gradient: "from-[#ff0000] to-[#b80000]",
+    hoverColor: "group-hover:text-[#ff0000]",
+  },
+  {
+    name: "TikTok",
+    handle: "@rollerzone_spain",
+    url: "https://www.tiktok.com/@rollerzone_spain",
+    followers: "9.1K",
+    Icon: Flame,
+    gradient: "from-[#25f4ee] via-foreground to-[#fe2c55]",
+    hoverColor: "group-hover:text-[#fe2c55]",
+  },
+];
+
+function MostReadAndSocialSection() {
+  const [items, setItems] = useState<MostReadNews[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("news")
+      .select("id, title, slug, views_count, image_url, news_categories(name)")
+      .eq("published", true)
+      .order("views_count", { ascending: false })
+      .limit(5)
+      .then(({ data }) => {
+        if (!cancelled) setItems((data as unknown as MostReadNews[]) ?? []);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-12 md:px-6">
+      <div className="grid gap-8 lg:grid-cols-2">
+        {/* MÁS LEÍDAS */}
+        <div>
+          <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+            <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+              <Flame className="h-6 w-6 text-gold" />
+              Más <span className="text-gold">leídas</span>
+            </h2>
+            <Link
+              to="/noticias"
+              className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
+            >
+              Ver todas →
+            </Link>
+          </div>
+
+          {items === null ? (
+            <ul className="space-y-3">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <li key={i} className="h-20 animate-pulse bg-surface" />
+              ))}
+            </ul>
+          ) : items.length === 0 ? (
+            <p className="font-condensed text-xs uppercase tracking-widest text-muted-foreground">
+              Aún no hay noticias.
+            </p>
+          ) : (
+            <ol className="space-y-2">
+              {items.map((n, i) => (
+                <li key={n.id}>
+                  <Link
+                    to="/noticias/articulo/$slug"
+                    params={{ slug: n.slug }}
+                    className="group relative flex items-stretch gap-4 overflow-hidden border border-border bg-surface p-3 transition-all hover:border-gold hover:bg-surface-2 hover:translate-x-1"
+                  >
+                    {/* Ranking number */}
+                    <div className="flex shrink-0 items-center justify-center">
+                      <span
+                        className={`font-display text-5xl leading-none tracking-tighter transition-colors md:text-6xl ${
+                          i === 0
+                            ? "text-gold"
+                            : "text-foreground/15 group-hover:text-gold/60"
+                        }`}
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+
+                    {/* Thumbnail */}
+                    <div className="hidden h-16 w-16 shrink-0 overflow-hidden bg-background sm:block">
+                      {n.image_url ? (
+                        <img
+                          src={n.image_url}
+                          alt={n.title}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="hero-grid-bg h-full w-full" />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex min-w-0 flex-1 flex-col justify-center">
+                      {n.news_categories?.name && (
+                        <span className="font-condensed mb-1 text-[10px] font-bold uppercase tracking-[2px] text-gold">
+                          {n.news_categories.name}
+                        </span>
+                      )}
+                      <h3 className="font-display clamp-2 text-sm uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-base">
+                        {n.title}
+                      </h3>
+                      <div className="font-condensed mt-1 flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                        <Eye className="h-3 w-3" /> {n.views_count.toLocaleString("es-ES")} lecturas
+                      </div>
+                    </div>
+
+                    <ArrowRight className="hidden h-4 w-4 self-center text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-gold sm:block" />
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+
+        {/* SÍGUENOS */}
+        <div>
+          <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+            <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+              <Heart className="h-6 w-6 text-gold" />
+              Sí<span className="text-gold">guenos</span>
+            </h2>
+            <span className="font-condensed text-xs uppercase tracking-widest text-muted-foreground">
+              Únete a la comunidad
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {SOCIAL_NETWORKS.map((s) => {
+              const Icon = s.Icon;
+              return (
+                <a
+                  key={s.name}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Síguenos en ${s.name}`}
+                  className="group relative flex flex-col overflow-hidden border border-border bg-surface p-4 transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.4)] sm:p-5"
+                >
+                  {/* Animated gradient accent on hover */}
+                  <div
+                    className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${s.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+                  />
+
+                  <div className="mb-3 flex items-center justify-between">
+                    <div
+                      className={`flex h-11 w-11 items-center justify-center bg-background/50 transition-all group-hover:scale-110 sm:h-12 sm:w-12`}
+                    >
+                      <Icon className={`h-5 w-5 text-foreground transition-colors ${s.hoverColor} sm:h-6 sm:w-6`} />
+                    </div>
+                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-1" />
+                  </div>
+
+                  <div className="font-display text-sm uppercase tracking-widest text-foreground transition-colors group-hover:text-gold sm:text-base">
+                    {s.name}
+                  </div>
+                  <div className="font-condensed mt-0.5 truncate text-[10px] uppercase tracking-widest text-muted-foreground sm:text-[11px]">
+                    {s.handle}
+                  </div>
+
+                  <div className="mt-3 flex items-baseline gap-1.5 border-t border-border pt-3">
+                    <span className="font-display text-xl tracking-wider text-gold sm:text-2xl">
+                      {s.followers}
+                    </span>
+                    <span className="font-condensed text-[9px] uppercase tracking-[2px] text-muted-foreground sm:text-[10px]">
+                      seguidores
+                    </span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
