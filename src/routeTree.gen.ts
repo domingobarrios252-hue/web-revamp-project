@@ -28,6 +28,7 @@ import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
+import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
@@ -45,6 +46,7 @@ import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
+import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-results'
 import { Route as AdminLegalRouteImport } from './routes/admin.legal'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
@@ -150,6 +152,11 @@ const LegalSlugRoute = LegalSlugRouteImport.update({
   path: '/legal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsSlugRoute = EventsSlugRouteImport.update({
+  id: '/events/$slug',
+  path: '/events/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventosSlugRoute = EventosSlugRouteImport.update({
   id: '/eventos/$slug',
   path: '/eventos/$slug',
@@ -235,6 +242,11 @@ const AdminMedalleroRoute = AdminMedalleroRouteImport.update({
   path: '/medallero',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLiveResultsRoute = AdminLiveResultsRouteImport.update({
+  id: '/live-results',
+  path: '/live-results',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLegalRoute = AdminLegalRouteImport.update({
   id: '/legal',
   path: '/legal',
@@ -300,6 +312,7 @@ export interface FileRoutesByFullPath {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -317,6 +330,7 @@ export interface FileRoutesByFullPath {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
@@ -346,6 +360,7 @@ export interface FileRoutesByTo {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -363,6 +378,7 @@ export interface FileRoutesByTo {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
@@ -394,6 +410,7 @@ export interface FileRoutesById {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -411,6 +428,7 @@ export interface FileRoutesById {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
@@ -443,6 +461,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -460,6 +479,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
+    | '/events/$slug'
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
@@ -489,6 +509,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -506,6 +527,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
+    | '/events/$slug'
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
@@ -536,6 +558,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -553,6 +576,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/eventos/$slug'
+    | '/events/$slug'
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
@@ -579,6 +603,7 @@ export interface RootRouteChildren {
   TvRoute: typeof TvRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EventosSlugRoute: typeof EventosSlugRoute
+  EventsSlugRoute: typeof EventsSlugRoute
   LegalSlugRoute: typeof LegalSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
@@ -725,6 +750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/$slug': {
+      id: '/events/$slug'
+      path: '/events/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/eventos/$slug': {
       id: '/eventos/$slug'
       path: '/eventos/$slug'
@@ -844,6 +876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMedalleroRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/live-results': {
+      id: '/admin/live-results'
+      path: '/live-results'
+      fullPath: '/admin/live-results'
+      preLoaderRoute: typeof AdminLiveResultsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/legal': {
       id: '/admin/legal'
       path: '/legal'
@@ -918,6 +957,7 @@ interface AdminRouteChildren {
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminLegalRoute: typeof AdminLegalRoute
+  AdminLiveResultsRoute: typeof AdminLiveResultsRoute
   AdminMedalleroRoute: typeof AdminMedalleroRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
@@ -944,6 +984,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminLegalRoute: AdminLegalRoute,
+  AdminLiveResultsRoute: AdminLiveResultsRoute,
   AdminMedalleroRoute: AdminMedalleroRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
@@ -978,6 +1019,7 @@ const rootRouteChildren: RootRouteChildren = {
   TvRoute: TvRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EventosSlugRoute: EventosSlugRoute,
+  EventsSlugRoute: EventsSlugRoute,
   LegalSlugRoute: LegalSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
