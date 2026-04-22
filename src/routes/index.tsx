@@ -1427,7 +1427,7 @@ type SocialNetwork = {
   handle: string;
   url: string;
   followers: string;
-  Icon: typeof Instagram;
+  iconKey: "instagram" | "facebook";
   gradient: string;
   hoverColor: string;
 };
@@ -1437,8 +1437,8 @@ const SOCIAL_NETWORKS: SocialNetwork[] = [
     name: "Instagram",
     handle: "@rollerzone_spain",
     url: "https://instagram.com/rollerzone_spain",
-    followers: "—",
-    Icon: Instagram,
+    followers: "4.4K",
+    iconKey: "instagram",
     gradient: "from-[#feda75] via-[#d62976] to-[#4f5bd5]",
     hoverColor: "group-hover:text-[#d62976]",
   },
@@ -1446,12 +1446,17 @@ const SOCIAL_NETWORKS: SocialNetwork[] = [
     name: "Facebook",
     handle: "@rollerzone.spain",
     url: "https://facebook.com/rollerzone.spain",
-    followers: "—",
-    Icon: Facebook,
+    followers: "2K",
+    iconKey: "facebook",
     gradient: "from-[#1877f2] to-[#0a5dc2]",
     hoverColor: "group-hover:text-[#1877f2]",
   },
 ];
+
+function SocialIcon({ iconKey, className }: { iconKey: "instagram" | "facebook"; className?: string }) {
+  if (iconKey === "instagram") return <Instagram className={className} />;
+  return <Facebook className={className} />;
+}
 
 function MostReadAndSocialSection() {
   const [items, setItems] = useState<MostReadNews[] | null>(null);
