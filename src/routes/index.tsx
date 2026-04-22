@@ -490,7 +490,7 @@ function LiveNowSection() {
                 </p>
               ) : (
                 <div className="border border-border bg-background/50">
-                  <div className="font-condensed grid grid-cols-[60px_1fr_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
+                  <div className="font-condensed grid grid-cols-[48px_1fr_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[60px_1fr_auto]">
                     <span>Hora</span>
                     <span>Prueba</span>
                     <span className="text-right">Cat.</span>
