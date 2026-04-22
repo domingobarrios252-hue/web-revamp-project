@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock, Medal } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock, Medal, Flame, Instagram, Facebook, Youtube } from "lucide-react";
 import { youTubeEmbedUrl } from "@/lib/youtube";
 import { Ticker } from "@/components/site/Ticker";
 import { AdBanner } from "@/components/site/AdBanner";
@@ -217,6 +217,8 @@ function HomePage() {
           </>
         )}
       </section>
+
+      <MostReadAndSocialSection />
 
       <FeaturedAthletesSection />
       <RankingPreviewSection />
