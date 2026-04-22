@@ -324,14 +324,16 @@ function LiveNowSection() {
               })}
             </div>
           )}
-          <div className="mt-6">
-            <Link
-              to="/tv"
-              className="font-condensed inline-flex items-center gap-2 bg-tv-red px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-white transition-colors hover:bg-tv-red-dark"
-            >
-              <Play className="h-4 w-4 fill-current" /> Ver en directo
-            </Link>
-          </div>
+          {isStreamLive && (
+            <div className="mt-6">
+              <Link
+                to="/tv"
+                className="font-condensed inline-flex items-center gap-2 bg-tv-red px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-white transition-colors hover:bg-tv-red-dark"
+              >
+                <Play className="h-4 w-4 fill-current" /> Ver en directo
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="mt-8 lg:mt-0">
