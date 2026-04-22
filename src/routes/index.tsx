@@ -502,18 +502,18 @@ function LiveNowSection() {
                       return (
                         <li
                           key={s.id}
-                          className="font-condensed grid grid-cols-[48px_1fr_auto] items-center gap-2 px-2.5 py-2 text-xs sm:grid-cols-[60px_1fr_auto]"
+                          className="font-condensed grid grid-cols-[44px_1fr_auto] items-start gap-2 px-2.5 py-2 text-[11px] sm:grid-cols-[60px_1fr_auto] sm:items-center sm:text-xs"
                         >
-                          <span className="font-display text-sm leading-none tracking-wider text-gold">
+                          <span className="font-display text-[13px] leading-none tracking-wider text-gold sm:text-sm">
                             {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
                           </span>
-                          <span className="font-display flex min-w-0 items-center gap-1.5 uppercase tracking-wider">
+                          <span className="font-display flex min-w-0 items-start gap-1.5 uppercase tracking-wider sm:items-center">
                             {isLive && (
-                              <span className="live-dot inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red" />
+                              <span className="live-dot mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red sm:mt-0" />
                             )}
-                            <span className="truncate">{s.event_name}</span>
+                            <span className="break-words leading-tight">{s.event_name}</span>
                           </span>
-                          <span className="truncate text-right text-[10px] uppercase tracking-widest text-muted-foreground">
+                          <span className="break-words text-right text-[9px] uppercase leading-tight tracking-widest text-muted-foreground sm:text-[10px]">
                             {s.category ?? "—"}
                           </span>
                         </li>
