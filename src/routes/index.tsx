@@ -82,7 +82,7 @@ function HomePage() {
   return (
     <>
       {/* HERO — full bleed, sport TV style */}
-      <section className="relative min-h-[50vh] w-full overflow-hidden bg-background md:min-h-[60vh]">
+      <section className="relative min-h-[55vh] w-full overflow-hidden bg-background md:min-h-[60vh]">
         {featured?.image_url ? (
           <img
             src={featured.image_url}
@@ -100,28 +100,28 @@ function HomePage() {
           01
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[50vh] max-w-7xl flex-col justify-end px-5 pb-6 pt-16 md:min-h-[60vh] md:px-10 md:pb-10 md:pt-20">
+        <div className="relative z-10 mx-auto flex min-h-[78vh] max-w-7xl flex-col justify-end px-5 pb-10 pt-24 md:min-h-[88vh] md:px-10 md:pb-16">
           <div className="max-w-3xl">
             {featured?.featured && (
-              <div className="live-red-tag font-condensed mb-3 inline-flex w-fit items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
+              <div className="live-red-tag font-condensed mb-5 inline-flex w-fit items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
                 <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
                 En Vivo · Destacada
               </div>
             )}
             {featured?.news_categories?.name && (
-              <div className="font-condensed mb-2 text-xs uppercase tracking-[4px] text-gold">
+              <div className="font-condensed mb-3 text-xs uppercase tracking-[4px] text-gold">
                 {featured.news_categories.name}
               </div>
             )}
-            <h1 className="font-display text-[clamp(36px,6vw,72px)] uppercase leading-[0.95] tracking-wider text-foreground">
+            <h1 className="font-display text-[clamp(40px,7vw,88px)] uppercase leading-[0.95] tracking-wider text-foreground">
               {featured?.title ?? "RollerZone"}
             </h1>
             {featured?.excerpt && (
-              <p className="clamp-2 mt-3 max-w-2xl text-sm text-foreground/80 md:text-base">
+              <p className="clamp-2 mt-5 max-w-2xl text-base text-foreground/80 md:text-lg">
                 {featured.excerpt}
               </p>
             )}
-            <div className="font-condensed mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+            <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
               {featured?.author && (
                 <span className="flex items-center gap-1.5">
                   <UserIcon className="h-3 w-3" /> {featured.author}
@@ -143,7 +143,7 @@ function HomePage() {
                 </span>
               )}
             </div>
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {featured && (
                 <Link
                   to="/noticias/articulo/$slug"
