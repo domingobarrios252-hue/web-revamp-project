@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      about_links: {
+        Row: {
+          active: boolean
+          created_at: string
+          icon: string
+          id: string
+          label: string
+          link_type: string
+          sort_order: number
+          target: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          icon?: string
+          id?: string
+          label: string
+          link_type?: string
+          sort_order?: number
+          target: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          icon?: string
+          id?: string
+          label?: string
+          link_type?: string
+          sort_order?: number
+          target?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      about_pages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          published: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ad_banners: {
         Row: {
           active: boolean

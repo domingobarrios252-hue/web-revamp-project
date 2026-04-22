@@ -1,11 +1,70 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Facebook, Mail, Newspaper, Calendar, Tv, Trophy, BookOpen, Users, PenTool, Handshake, Megaphone, Shield, FileText, Cookie, Info } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Instagram,
+  Facebook,
+  Mail,
+  Newspaper,
+  Calendar,
+  Tv,
+  Trophy,
+  BookOpen,
+  Users,
+  PenTool,
+  Handshake,
+  Megaphone,
+  Shield,
+  FileText,
+  Cookie,
+  Info,
+  Heart,
+  Star,
+  type LucideIcon,
+} from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { supabase } from "@/integrations/supabase/client";
 
 const CONTACT_EMAIL = "info@rollerzone.es";
 
+const ICON_MAP: Record<string, LucideIcon> = {
+  Info,
+  Users,
+  PenTool,
+  Handshake,
+  Megaphone,
+  Mail,
+  FileText,
+  Heart,
+  Star,
+  Newspaper,
+};
+
+type AboutLink = {
+  id: string;
+  label: string;
+  link_type: "internal" | "external" | "email";
+  target: string;
+  icon: string;
+};
+
 export function SiteFooter() {
   const { t } = useLanguage();
+  const [aboutLinks, setAboutLinks] = useState<AboutLink[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("about_links")
+        .select("id, label, link_type, target, icon")
+        .eq("active", true)
+        .order("sort_order");
+      if (!cancelled && data) setAboutLinks(data as AboutLink[]);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const navLinks = [
     { to: "/noticias", label: t("nav.news"), Icon: Newspaper },
@@ -13,15 +72,6 @@ export function SiteFooter() {
     { to: "/tv", label: "RollerZone TV", Icon: Tv },
     { to: "/premios-mvp", label: t("nav.mvpAwards"), Icon: Trophy },
     { to: "/revista", label: t("nav.magazine"), Icon: BookOpen },
-  ] as const;
-
-  const aboutLinks = [
-    { href: `mailto:${CONTACT_EMAIL}?subject=Quiénes somos`, label: "Quiénes somos", Icon: Info },
-    { to: "/redactores", label: "Equipo", Icon: Users },
-    { to: "/redactores", label: t("nav.writers"), Icon: PenTool },
-    { href: `mailto:${CONTACT_EMAIL}?subject=Quiero colaborar`, label: "Colabora", Icon: Handshake },
-    { href: `mailto:${CONTACT_EMAIL}?subject=Publicidad en RollerZone`, label: "Publicidad", Icon: Megaphone },
-    { href: `mailto:${CONTACT_EMAIL}?subject=Contacto`, label: "Contacto", Icon: Mail },
   ] as const;
 
   const legalLinks = [
@@ -102,7 +152,7 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Sobre nosotros */}
+          {/* Sobre nosotros (dinámico) */}
           <div className="group/card relative overflow-hidden rounded-lg border border-border bg-background/60 p-6 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-gold/60 hover:shadow-xl hover:shadow-gold/10">
             <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-gold via-gold-dark to-gold" />
             <h4 className="font-display mb-4 flex items-center gap-2 text-base tracking-widest text-gold">
@@ -110,27 +160,64 @@ export function SiteFooter() {
               Sobre nosotros
             </h4>
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
-              {aboutLinks.map((item, idx) => (
-                <li key={item.label + idx}>
-                  {"to" in item ? (
+              {aboutLinks.map((item) => {
+                const Icon = ICON_MAP[item.icon] ?? Info;
+                const className =
+                  "group/link flex items-center gap-2.5 text-muted-foreground transition-colors hover:text-gold";
+                if (item.link_type === "external") {
+                  return (
+                    <li key={item.id}>
+                      <a href={item.target} target="_blank" rel="noopener noreferrer" className={className}>
+                        <Icon className="h-3.5 w-3.5 text-gold/60 transition-transform group-hover/link:translate-x-0.5" />
+                        <span>{item.label}</span>
+                      </a>
+                    </li>
+                  );
+                }
+                if (item.link_type === "email") {
+                  return (
+                    <li key={item.id}>
+                      <a href={`mailto:${item.target}`} className={className}>
+                        <Icon className="h-3.5 w-3.5 text-gold/60 transition-transform group-hover/link:translate-x-0.5" />
+                        <span>{item.label}</span>
+                      </a>
+                    </li>
+                  );
+                }
+                // internal: rutas conocidas (redactores, etc.) o página interna /sobre/$slug
+                const KNOWN: Record<string, string> = {
+                  redactores: "/redactores",
+                  patrocinadores: "/patrocinadores",
+                  noticias: "/noticias",
+                  eventos: "/eventos",
+                  tv: "/tv",
+                  revista: "/revista",
+                  "premios-mvp": "/premios-mvp",
+                };
+                const knownPath = KNOWN[item.target];
+                if (knownPath) {
+                  return (
+                    <li key={item.id}>
+                      <a href={knownPath} className={className}>
+                        <Icon className="h-3.5 w-3.5 text-gold/60 transition-transform group-hover/link:translate-x-0.5" />
+                        <span>{item.label}</span>
+                      </a>
+                    </li>
+                  );
+                }
+                return (
+                  <li key={item.id}>
                     <Link
-                      to={item.to}
-                      className="group/link flex items-center gap-2.5 text-muted-foreground transition-colors hover:text-gold"
+                      to="/sobre/$slug"
+                      params={{ slug: item.target }}
+                      className={className}
                     >
-                      <item.Icon className="h-3.5 w-3.5 text-gold/60 transition-transform group-hover/link:translate-x-0.5" />
+                      <Icon className="h-3.5 w-3.5 text-gold/60 transition-transform group-hover/link:translate-x-0.5" />
                       <span>{item.label}</span>
                     </Link>
-                  ) : (
-                    <a
-                      href={item.href}
-                      className="group/link flex items-center gap-2.5 text-muted-foreground transition-colors hover:text-gold"
-                    >
-                      <item.Icon className="h-3.5 w-3.5 text-gold/60 transition-transform group-hover/link:translate-x-0.5" />
-                      <span>{item.label}</span>
-                    </a>
-                  )}
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
