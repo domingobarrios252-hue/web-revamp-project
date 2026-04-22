@@ -284,6 +284,7 @@ function LiveNowSection() {
   const [results, setResults] = useState<LiveResult[]>([]);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [medals, setMedals] = useState<MedalRow[]>([]);
+  const [skaters, setSkaters] = useState<SkaterRanking[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
