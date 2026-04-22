@@ -502,18 +502,18 @@ function LiveNowSection() {
                       return (
                         <li
                           key={s.id}
-                          className="font-condensed grid grid-cols-[48px_1fr_auto] items-center gap-2 px-2.5 py-2 text-xs sm:grid-cols-[60px_1fr_auto]"
+                          className="font-condensed grid grid-cols-[44px_1fr_auto] items-start gap-2 px-2.5 py-2 text-[11px] sm:grid-cols-[60px_1fr_auto] sm:items-center sm:text-xs"
                         >
-                          <span className="font-display text-sm leading-none tracking-wider text-gold">
+                          <span className="font-display text-[13px] leading-none tracking-wider text-gold sm:text-sm">
                             {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
                           </span>
-                          <span className="font-display flex min-w-0 items-center gap-1.5 uppercase tracking-wider">
+                          <span className="font-display flex min-w-0 items-start gap-1.5 uppercase tracking-wider sm:items-center">
                             {isLive && (
-                              <span className="live-dot inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red" />
+                              <span className="live-dot mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red sm:mt-0" />
                             )}
-                            <span className="truncate">{s.event_name}</span>
+                            <span className="break-words leading-tight">{s.event_name}</span>
                           </span>
-                          <span className="truncate text-right text-[10px] uppercase tracking-widest text-muted-foreground">
+                          <span className="break-words text-right text-[9px] uppercase leading-tight tracking-widest text-muted-foreground sm:text-[10px]">
                             {s.category ?? "—"}
                           </span>
                         </li>
@@ -556,7 +556,7 @@ function LiveNowSection() {
                     {skaters.slice(0, 6).map((s) => (
                       <li
                         key={s.id}
-                        className="font-condensed grid grid-cols-[24px_1fr_32px_auto] items-center gap-2 px-2.5 py-2 text-xs sm:grid-cols-[28px_1fr_70px_36px_auto]"
+                        className="font-condensed grid grid-cols-[24px_1fr_28px_auto] items-center gap-2 px-2.5 py-2 text-[11px] sm:grid-cols-[28px_1fr_70px_36px_auto] sm:text-xs"
                       >
                         <span
                           className={`font-display inline-flex h-5 w-5 items-center justify-center justify-self-center text-[10px] ${
@@ -571,10 +571,10 @@ function LiveNowSection() {
                         >
                           {s.position}
                         </span>
-                        <span className="font-display min-w-0 truncate uppercase tracking-wider text-foreground">
+                        <span className="font-display min-w-0 break-words uppercase leading-tight tracking-wider text-foreground">
                           {s.skater_name}
                         </span>
-                        <span className="hidden truncate text-[10px] uppercase tracking-widest text-muted-foreground sm:block">
+                        <span className="hidden break-words text-[10px] uppercase leading-tight tracking-widest text-muted-foreground sm:block">
                           {s.team ?? "—"}
                         </span>
                         <span className="flex items-center justify-center">
@@ -582,16 +582,16 @@ function LiveNowSection() {
                             <img
                               src={s.flag_url}
                               alt={s.country ?? ""}
-                              className="h-3.5 w-5 shrink-0 object-cover"
+                              className="h-3 w-4 shrink-0 object-cover sm:h-3.5 sm:w-5"
                               loading="lazy"
                             />
                           ) : (
-                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                            <span className="text-[9px] uppercase tracking-widest text-muted-foreground sm:text-[10px]">
                               {s.country_code ?? "—"}
                             </span>
                           )}
                         </span>
-                        <span className="text-right font-mono text-[11px] text-gold">
+                        <span className="text-right font-mono text-[10px] text-gold sm:text-[11px]">
                           {s.time_result ?? "—"}
                         </span>
                       </li>
@@ -628,7 +628,7 @@ function LiveNowSection() {
                       return (
                         <li
                           key={m.id}
-                          className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                          className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-2.5 py-2 text-[11px] sm:text-xs"
                         >
                           <div className="flex min-w-0 items-center gap-2">
                             <span className="font-display w-4 text-[10px] text-muted-foreground">
@@ -638,7 +638,7 @@ function LiveNowSection() {
                               <img
                                 src={m.flag_url}
                                 alt={m.country_name}
-                                className="h-3.5 w-5 shrink-0 object-cover"
+                                className="h-3 w-4 shrink-0 object-cover sm:h-3.5 sm:w-5"
                                 loading="lazy"
                               />
                             ) : (
@@ -646,7 +646,7 @@ function LiveNowSection() {
                                 {m.country_code ?? "—"}
                               </span>
                             )}
-                            <span className="truncate uppercase tracking-wider">
+                            <span className="break-words uppercase leading-tight tracking-wider">
                               {m.country_code ?? m.country_name}
                             </span>
                           </div>
