@@ -281,15 +281,20 @@ function LiveNowSection() {
   if (!loaded) return null;
 
   const now = Date.now();
+  const hasStreamUrl = !!tv?.live_stream_url?.trim();
   const startsAt = tv?.live_starts_at ? new Date(tv.live_starts_at).getTime() : null;
   const endsAt = tv?.live_ends_at ? new Date(tv.live_ends_at).getTime() : null;
-  const isLive =
-    !!tv?.live_stream_url &&
+  // Stream se considera activo solo si: hay URL + (sin inicio o ya empezó) + (sin fin o aún no terminó)
+  const isStreamLive =
+    hasStreamUrl &&
     (startsAt === null || now >= startsAt) &&
     (endsAt === null || now <= endsAt);
 
   const liveResults = results.filter((r) => r.status === "en_vivo");
-  if (!isLive && liveResults.length === 0) return null;
+
+  // Validación estricta: ocultar el bloque si no hay NADA realmente en directo
+  // (ni stream activo dentro de horario, ni pruebas con status "en_vivo")
+  if (!isStreamLive && liveResults.length === 0) return null;
 
   return (
     <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
