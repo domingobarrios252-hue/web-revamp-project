@@ -336,20 +336,16 @@ function LiveNowSection() {
           )}
         </div>
 
-        <div className="mt-8 lg:mt-0">
-          <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-            <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
-              Pruebas en curso
-            </h3>
-            <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
-              {liveResults.length} en directo
-            </span>
-          </div>
-          {liveResults.length === 0 ? (
-            <p className="font-condensed text-sm uppercase tracking-wider text-muted-foreground">
-              Sin pruebas activas en este momento.
-            </p>
-          ) : (
+        {liveResults.length > 0 && (
+          <div className="mt-8 lg:mt-0">
+            <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
+              <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+                Pruebas en curso
+              </h3>
+              <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+                {liveResults.length} en directo
+              </span>
+            </div>
             <ul className="divide-y divide-border">
               {liveResults.slice(0, 7).map((r) => (
                 <li key={r.id} className="flex items-center gap-3 py-3">
@@ -373,8 +369,8 @@ function LiveNowSection() {
                 </li>
               ))}
             </ul>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );
