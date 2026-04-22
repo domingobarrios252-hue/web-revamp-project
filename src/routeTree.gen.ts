@@ -40,6 +40,7 @@ import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
+import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
 import { Route as AdminLegalRouteImport } from './routes/admin.legal'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
@@ -205,6 +206,11 @@ const AdminPatinadoresRoute = AdminPatinadoresRouteImport.update({
   path: '/patinadores',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMedalleroRoute = AdminMedalleroRouteImport.update({
+  id: '/medallero',
+  path: '/medallero',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLegalRoute = AdminLegalRouteImport.update({
   id: '/legal',
   path: '/legal',
@@ -270,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
@@ -311,6 +318,7 @@ export interface FileRoutesByTo {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
@@ -354,6 +362,7 @@ export interface FileRoutesById {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
@@ -398,6 +407,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
@@ -439,6 +449,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
@@ -748,6 +760,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPatinadoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/medallero': {
+      id: '/admin/medallero'
+      path: '/medallero'
+      fullPath: '/admin/medallero'
+      preLoaderRoute: typeof AdminMedalleroRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/legal': {
       id: '/admin/legal'
       path: '/legal'
@@ -822,6 +841,7 @@ interface AdminRouteChildren {
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminLegalRoute: typeof AdminLegalRoute
+  AdminMedalleroRoute: typeof AdminMedalleroRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
@@ -844,6 +864,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminLegalRoute: AdminLegalRoute,
+  AdminMedalleroRoute: AdminMedalleroRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
