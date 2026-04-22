@@ -1581,8 +1581,8 @@ function MostReadAndSocialSection() {
                   >
                     <SocialIcon iconKey={s.iconKey} className={`h-5 w-5 text-foreground transition-colors ${s.hoverColor} sm:h-6 sm:w-6`} />
                   </div>
-                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-1" />
-                  </div>
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-1" />
+                </div>
 
                   <div className="font-display text-sm uppercase tracking-widest text-foreground transition-colors group-hover:text-gold sm:text-base">
                     {s.name}
