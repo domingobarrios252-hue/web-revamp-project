@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, RefreshCw, ChevronUp, ChevronDown, Minus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type LiveResultRow = {
