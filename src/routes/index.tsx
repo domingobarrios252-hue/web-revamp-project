@@ -1475,6 +1475,7 @@ function SocialIcon({ iconKey, className }: { iconKey: "instagram" | "facebook";
 
 function MostReadAndSocialSection() {
   const [items, setItems] = useState<MostReadNews[] | null>(null);
+  const [socialSettings, setSocialSettings] = useState(SOCIAL_DEFAULTS);
 
   useEffect(() => {
     let cancelled = false;
@@ -1487,10 +1488,27 @@ function MostReadAndSocialSection() {
       .then(({ data }) => {
         if (!cancelled) setItems((data as unknown as MostReadNews[]) ?? []);
       });
+
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "social_followers")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled || !data?.value) return;
+        const v = data.value as Partial<typeof SOCIAL_DEFAULTS>;
+        setSocialSettings({
+          instagram: { ...SOCIAL_DEFAULTS.instagram, ...(v.instagram ?? {}) },
+          facebook: { ...SOCIAL_DEFAULTS.facebook, ...(v.facebook ?? {}) },
+        });
+      });
+
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const socialNetworks = buildSocialNetworks(socialSettings);
 
   return (
     <section className="mx-auto max-w-7xl px-5 py-12 md:px-6">
