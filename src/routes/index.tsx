@@ -403,8 +403,10 @@ function LiveNowSection() {
   const liveResults = results.filter((r) => r.status === "en_vivo");
   const embedUrl = hasStreamUrl ? youTubeEmbedUrl(tv!.live_stream_url!) : null;
 
+  const medalsVisible = showMedals && medals.length > 0;
+
   // Ocultar bloque solo si no hay nada que mostrar
-  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && medals.length === 0 && skaters.length === 0) {
+  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && !medalsVisible && skaters.length === 0) {
     return null;
   }
 
