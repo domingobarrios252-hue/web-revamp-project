@@ -47,6 +47,7 @@
   --font-condensed: "Barlow Condensed", sans-serif;
   --font-body: "Inter", "Barlow", system-ui, -apple-system, sans-serif;
   --font-ui: "Inter", system-ui, -apple-system, sans-serif;
+  --font-brand: "Audiowide", "Bebas Neue", system-ui, sans-serif;
 }
 
 :root {
@@ -121,6 +122,7 @@
 .font-display { font-family: var(--font-display); }
 .font-condensed { font-family: var(--font-condensed); }
 .font-ui { font-family: var(--font-ui); }
+.font-brand { font-family: var(--font-brand); }
 
 /* ===== TICKER ===== */
 @keyframes ticker {

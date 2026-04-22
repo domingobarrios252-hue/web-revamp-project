@@ -56,11 +56,11 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <nav className="flex h-14 items-center justify-between px-4 md:px-8">
         <Link to="/" className="flex flex-col leading-none">
-          <span className="font-display text-2xl tracking-widest">
+          <span className="font-brand text-xl tracking-wide md:text-[22px]">
             <span className="text-gold">Roller</span>
             <span className="text-foreground">Zone</span>
           </span>
-          <span className="font-ui mt-0.5 text-[10px] font-medium tracking-wide text-muted-foreground">
+          <span className="font-ui mt-1 text-[10px] font-medium tracking-wide text-muted-foreground">
             Revista de Patinaje de Velocidad
           </span>
         </Link>
