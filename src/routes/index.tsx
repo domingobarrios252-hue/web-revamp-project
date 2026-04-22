@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock, Medal, Flame, Instagram, Facebook } from "lucide-react";
 import { youTubeEmbedUrl } from "@/lib/youtube";
 import { Ticker } from "@/components/site/Ticker";
-import { AdBanner } from "@/components/site/AdBanner";
+import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { supabase } from "@/integrations/supabase/client";
 
 type MvpPreview = {
@@ -203,7 +203,7 @@ function HomePage() {
 
       <Ticker />
 
-      <AdBanner placement="home_top" />
+      <AdBannerWithMagazine placement="home_top" />
 
       <LiveNowSection />
 
