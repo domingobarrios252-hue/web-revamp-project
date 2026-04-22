@@ -113,11 +113,11 @@ function HomePage() {
                 {featured.news_categories.name}
               </div>
             )}
-            <h1 className="font-display text-[clamp(36px,6vw,72px)] uppercase leading-[0.95] tracking-wider text-foreground">
+            <h1 className="font-display text-[clamp(28px,6vw,72px)] uppercase leading-[1] tracking-wide text-foreground sm:tracking-wider">
               {featured?.title ?? "RollerZone"}
             </h1>
             {featured?.excerpt && (
-              <p className="clamp-2 mt-3 max-w-2xl text-sm text-foreground/80 md:text-base">
+              <p className="clamp-2 mt-2 max-w-2xl text-[13px] text-foreground/80 sm:text-sm md:mt-3 md:text-base">
                 {featured.excerpt}
               </p>
             )}
