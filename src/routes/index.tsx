@@ -281,15 +281,20 @@ function LiveNowSection() {
   if (!loaded) return null;
 
   const now = Date.now();
+  const hasStreamUrl = !!tv?.live_stream_url?.trim();
   const startsAt = tv?.live_starts_at ? new Date(tv.live_starts_at).getTime() : null;
   const endsAt = tv?.live_ends_at ? new Date(tv.live_ends_at).getTime() : null;
-  const isLive =
-    !!tv?.live_stream_url &&
+  // Stream se considera activo solo si: hay URL + (sin inicio o ya empezó) + (sin fin o aún no terminó)
+  const isStreamLive =
+    hasStreamUrl &&
     (startsAt === null || now >= startsAt) &&
     (endsAt === null || now <= endsAt);
 
   const liveResults = results.filter((r) => r.status === "en_vivo");
-  if (!isLive && liveResults.length === 0) return null;
+
+  // Validación estricta: ocultar el bloque si no hay NADA realmente en directo
+  // (ni stream activo dentro de horario, ni pruebas con status "en_vivo")
+  if (!isStreamLive && liveResults.length === 0) return null;
 
   return (
     <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
@@ -319,30 +324,28 @@ function LiveNowSection() {
               })}
             </div>
           )}
-          <div className="mt-6">
-            <Link
-              to="/tv"
-              className="font-condensed inline-flex items-center gap-2 bg-tv-red px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-white transition-colors hover:bg-tv-red-dark"
-            >
-              <Play className="h-4 w-4 fill-current" /> Ver en directo
-            </Link>
-          </div>
+          {isStreamLive && (
+            <div className="mt-6">
+              <Link
+                to="/tv"
+                className="font-condensed inline-flex items-center gap-2 bg-tv-red px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-white transition-colors hover:bg-tv-red-dark"
+              >
+                <Play className="h-4 w-4 fill-current" /> Ver en directo
+              </Link>
+            </div>
+          )}
         </div>
 
-        <div className="mt-8 lg:mt-0">
-          <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-            <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
-              Pruebas en curso
-            </h3>
-            <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
-              {liveResults.length} en directo
-            </span>
-          </div>
-          {liveResults.length === 0 ? (
-            <p className="font-condensed text-sm uppercase tracking-wider text-muted-foreground">
-              Sin pruebas activas en este momento.
-            </p>
-          ) : (
+        {liveResults.length > 0 && (
+          <div className="mt-8 lg:mt-0">
+            <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
+              <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+                Pruebas en curso
+              </h3>
+              <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+                {liveResults.length} en directo
+              </span>
+            </div>
             <ul className="divide-y divide-border">
               {liveResults.slice(0, 7).map((r) => (
                 <li key={r.id} className="flex items-center gap-3 py-3">
@@ -366,8 +369,8 @@ function LiveNowSection() {
                 </li>
               ))}
             </ul>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );
