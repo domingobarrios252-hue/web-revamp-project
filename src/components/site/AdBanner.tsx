@@ -55,34 +55,40 @@ export function AdBanner({ placement = "home_top" }: { placement?: string }) {
     />
   );
 
+  const card = (
+    <div className="overflow-hidden border border-border bg-surface transition-opacity hover:opacity-90">
+      {img}
+    </div>
+  );
+
   return (
     <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 sm:pt-4 md:pt-6">
       <div className="font-condensed mb-1 text-[10px] uppercase tracking-widest text-muted-foreground/60 md:mb-2">
         Publicidad
       </div>
-      <div className="overflow-hidden border border-border bg-surface">
-        {banner.link_url ? (
-          isExternal(banner.link_url) ? (
-            <a
-              href={banner.link_url}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="block transition-opacity hover:opacity-90"
-            >
-              {img}
-            </a>
-          ) : (
-            <a
-              href={banner.link_url}
-              className="block transition-opacity hover:opacity-90"
-            >
-              {img}
-            </a>
-          )
+      {banner.link_url ? (
+        isExternal(banner.link_url) ? (
+          <a
+            href={banner.link_url}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            aria-label={banner.alt_text ?? banner.name}
+            className="block"
+          >
+            {card}
+          </a>
         ) : (
-          img
-        )}
-      </div>
+          <a
+            href={banner.link_url}
+            aria-label={banner.alt_text ?? banner.name}
+            className="block"
+          >
+            {card}
+          </a>
+        )
+      ) : (
+        card
+      )}
     </div>
   );
 }
