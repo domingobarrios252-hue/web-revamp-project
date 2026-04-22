@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
