@@ -24,6 +24,7 @@ import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
@@ -34,6 +35,7 @@ import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlig
 import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisiones'
 import { Route as AdminTvRouteImport } from './routes/admin.tv'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
+import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nosotros'
 import { Route as AdminSkaterRankingsRouteImport } from './routes/admin.skater-rankings'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
@@ -127,6 +129,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const SobreSlugRoute = SobreSlugRouteImport.update({
+  id: '/sobre/$slug',
+  path: '/sobre/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatinadoresSlugRoute = PatinadoresSlugRouteImport.update({
   id: '/patinadores/$slug',
   path: '/patinadores/$slug',
@@ -175,6 +182,11 @@ const AdminTvRoute = AdminTvRouteImport.update({
 const AdminTickerRoute = AdminTickerRouteImport.update({
   id: '/ticker',
   path: '/ticker',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSobreNosotrosRoute = AdminSobreNosotrosRouteImport.update({
+  id: '/sobre-nosotros',
+  path: '/sobre-nosotros',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSkaterRankingsRoute = AdminSkaterRankingsRouteImport.update({
@@ -290,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
+  '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -300,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/sobre/$slug': typeof SobreSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
@@ -333,6 +347,7 @@ export interface FileRoutesByTo {
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
+  '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -343,6 +358,7 @@ export interface FileRoutesByTo {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/sobre/$slug': typeof SobreSlugRoute
   '/admin': typeof AdminIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
   '/eventos': typeof EventosIndexRoute
@@ -378,6 +394,7 @@ export interface FileRoutesById {
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
+  '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -388,6 +405,7 @@ export interface FileRoutesById {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/sobre/$slug': typeof SobreSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
@@ -424,6 +442,7 @@ export interface FileRouteTypes {
     | '/admin/revistas'
     | '/admin/schedule'
     | '/admin/skater-rankings'
+    | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -434,6 +453,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/sobre/$slug'
     | '/admin/'
     | '/entrevistas/'
     | '/eventos/'
@@ -467,6 +487,7 @@ export interface FileRouteTypes {
     | '/admin/revistas'
     | '/admin/schedule'
     | '/admin/skater-rankings'
+    | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -477,6 +498,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/sobre/$slug'
     | '/admin'
     | '/entrevistas'
     | '/eventos'
@@ -511,6 +533,7 @@ export interface FileRouteTypes {
     | '/admin/revistas'
     | '/admin/schedule'
     | '/admin/skater-rankings'
+    | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -521,6 +544,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/sobre/$slug'
     | '/admin/'
     | '/entrevistas/'
     | '/eventos/'
@@ -546,6 +570,7 @@ export interface RootRouteChildren {
   LegalSlugRoute: typeof LegalSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
+  SobreSlugRoute: typeof SobreSlugRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
@@ -660,6 +685,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/sobre/$slug': {
+      id: '/sobre/$slug'
+      path: '/sobre/$slug'
+      fullPath: '/sobre/$slug'
+      preLoaderRoute: typeof SobreSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patinadores/$slug': {
       id: '/patinadores/$slug'
       path: '/patinadores/$slug'
@@ -728,6 +760,13 @@ declare module '@tanstack/react-router' {
       path: '/ticker'
       fullPath: '/admin/ticker'
       preLoaderRoute: typeof AdminTickerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sobre-nosotros': {
+      id: '/admin/sobre-nosotros'
+      path: '/sobre-nosotros'
+      fullPath: '/admin/sobre-nosotros'
+      preLoaderRoute: typeof AdminSobreNosotrosRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/skater-rankings': {
@@ -868,6 +907,7 @@ interface AdminRouteChildren {
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
   AdminSkaterRankingsRoute: typeof AdminSkaterRankingsRoute
+  AdminSobreNosotrosRoute: typeof AdminSobreNosotrosRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminTvRoute: typeof AdminTvRoute
   AdminTvEmisionesRoute: typeof AdminTvEmisionesRoute
@@ -892,6 +932,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminRevistasRoute: AdminRevistasRoute,
   AdminScheduleRoute: AdminScheduleRoute,
   AdminSkaterRankingsRoute: AdminSkaterRankingsRoute,
+  AdminSobreNosotrosRoute: AdminSobreNosotrosRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminTvRoute: AdminTvRoute,
   AdminTvEmisionesRoute: AdminTvEmisionesRoute,
@@ -919,6 +960,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegalSlugRoute: LegalSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
+  SobreSlugRoute: SobreSlugRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
