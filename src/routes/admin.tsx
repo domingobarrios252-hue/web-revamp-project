@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, ListOrdered, Share2 } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, ListOrdered } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -109,9 +109,6 @@ function AdminLayout() {
           <AdminLink to="/admin/banners" icon={<Megaphone className="h-4 w-4" />}>
             Banners
           </AdminLink>
-          <AdminLink to="/admin/redes-sociales" icon={<Share2 className="h-4 w-4" />}>
-            Redes sociales
-          </AdminLink>
           <AdminLink to="/admin/legal" icon={<Scale className="h-4 w-4" />}>
             Páginas legales
           </AdminLink>
@@ -139,7 +136,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/schedule" | "/admin/medallero" | "/admin/skater-rankings" | "/admin/redes-sociales";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/schedule" | "/admin/medallero" | "/admin/skater-rankings";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
