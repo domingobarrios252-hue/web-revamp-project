@@ -325,12 +325,13 @@ function LiveNowSection() {
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [medals, setMedals] = useState<MedalRow[]>([]);
   const [skaters, setSkaters] = useState<SkaterRanking[]>([]);
+  const [showMedals, setShowMedals] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: skaterData }] = await Promise.all([
+      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: skaterData }, { data: settingData }] = await Promise.all([
         supabase
           .from("tv_settings")
           .select("live_title, live_subtitle, live_stream_url, live_starts_at, live_ends_at")
@@ -365,6 +366,11 @@ function LiveNowSection() {
           .order("position", { ascending: true })
           .order("sort_order", { ascending: true })
           .limit(10),
+        supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "home_medals_enabled")
+          .maybeSingle(),
       ]);
       if (cancelled) return;
       setTv((tvData as TvSettings) ?? null);
@@ -372,6 +378,10 @@ function LiveNowSection() {
       setSchedule((schedData as ScheduleItem[]) ?? []);
       setMedals((medalData as MedalRow[]) ?? []);
       setSkaters((skaterData as SkaterRanking[]) ?? []);
+      const settingValue = settingData?.value as { enabled?: boolean } | null;
+      if (settingValue && typeof settingValue.enabled === "boolean") {
+        setShowMedals(settingValue.enabled);
+      }
       setLoaded(true);
     })();
     return () => {
