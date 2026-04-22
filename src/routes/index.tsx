@@ -325,12 +325,13 @@ function LiveNowSection() {
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [medals, setMedals] = useState<MedalRow[]>([]);
   const [skaters, setSkaters] = useState<SkaterRanking[]>([]);
+  const [showMedals, setShowMedals] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: skaterData }] = await Promise.all([
+      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: skaterData }, { data: settingData }] = await Promise.all([
         supabase
           .from("tv_settings")
           .select("live_title, live_subtitle, live_stream_url, live_starts_at, live_ends_at")
@@ -365,6 +366,11 @@ function LiveNowSection() {
           .order("position", { ascending: true })
           .order("sort_order", { ascending: true })
           .limit(10),
+        supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "home_medals_enabled")
+          .maybeSingle(),
       ]);
       if (cancelled) return;
       setTv((tvData as TvSettings) ?? null);
@@ -372,6 +378,10 @@ function LiveNowSection() {
       setSchedule((schedData as ScheduleItem[]) ?? []);
       setMedals((medalData as MedalRow[]) ?? []);
       setSkaters((skaterData as SkaterRanking[]) ?? []);
+      const settingValue = settingData?.value as { enabled?: boolean } | null;
+      if (settingValue && typeof settingValue.enabled === "boolean") {
+        setShowMedals(settingValue.enabled);
+      }
       setLoaded(true);
     })();
     return () => {
@@ -393,8 +403,10 @@ function LiveNowSection() {
   const liveResults = results.filter((r) => r.status === "en_vivo");
   const embedUrl = hasStreamUrl ? youTubeEmbedUrl(tv!.live_stream_url!) : null;
 
+  const medalsVisible = showMedals && medals.length > 0;
+
   // Ocultar bloque solo si no hay nada que mostrar
-  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && medals.length === 0 && skaters.length === 0) {
+  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && !medalsVisible && skaters.length === 0) {
     return null;
   }
 
@@ -642,18 +654,14 @@ function LiveNowSection() {
             </div>
 
             {/* Medallero países */}
-            <div>
-              <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
-                <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
-                  Medallero países
-                </h3>
-                <Medal className="h-3.5 w-3.5 text-gold" />
-              </div>
-              {medals.length === 0 ? (
-                <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                  Sin datos del medallero
-                </p>
-              ) : (
+            {medalsVisible && (
+              <div>
+                <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+                  <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+                    Medallero países
+                  </h3>
+                  <Medal className="h-3.5 w-3.5 text-gold" />
+                </div>
                 <div className="border border-border bg-background/50">
                   <div className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
                     <span>País</span>
@@ -699,8 +707,8 @@ function LiveNowSection() {
                     })}
                   </ul>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
