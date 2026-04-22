@@ -548,7 +548,7 @@ function LiveNowSection() {
                   <div className="font-condensed grid grid-cols-[24px_1fr_32px_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[28px_1fr_70px_36px_auto]">
                     <span className="text-center">#</span>
                     <span>Nombre</span>
-                    <span className="truncate">Equipo</span>
+                    <span className="hidden truncate sm:block">Equipo</span>
                     <span className="text-center">País</span>
                     <span className="text-right">Tiempo</span>
                   </div>
@@ -556,7 +556,7 @@ function LiveNowSection() {
                     {skaters.slice(0, 6).map((s) => (
                       <li
                         key={s.id}
-                        className="font-condensed grid grid-cols-[28px_1fr_70px_36px_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                        className="font-condensed grid grid-cols-[24px_1fr_32px_auto] items-center gap-2 px-2.5 py-2 text-xs sm:grid-cols-[28px_1fr_70px_36px_auto]"
                       >
                         <span
                           className={`font-display inline-flex h-5 w-5 items-center justify-center justify-self-center text-[10px] ${
@@ -571,10 +571,10 @@ function LiveNowSection() {
                         >
                           {s.position}
                         </span>
-                        <span className="font-display truncate uppercase tracking-wider text-foreground">
+                        <span className="font-display min-w-0 truncate uppercase tracking-wider text-foreground">
                           {s.skater_name}
                         </span>
-                        <span className="truncate text-[10px] uppercase tracking-widest text-muted-foreground">
+                        <span className="hidden truncate text-[10px] uppercase tracking-widest text-muted-foreground sm:block">
                           {s.team ?? "—"}
                         </span>
                         <span className="flex items-center justify-center">
