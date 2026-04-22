@@ -133,11 +133,28 @@ export function LiveResultsTable() {
               Resultados <span className="text-tv-red">en vivo</span>
             </h2>
           </div>
+          <div className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+            <RefreshCw
+              className={`h-3.5 w-3.5 text-gold ${refreshing ? "animate-spin" : ""}`}
+              aria-hidden
+            />
+            <span>
+              {refreshing
+                ? "Actualizando…"
+                : lastUpdated
+                  ? `Actualizado ${formatRelative(lastUpdated)}`
+                  : "Auto-refresh activo"}
+            </span>
+          </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
           {groups.map((g) => (
-            <LiveGroup key={`${g.event_name}-${g.race}-${g.category}`} group={g} />
+            <LiveGroup
+              key={`${g.event_name}-${g.race}-${g.category}`}
+              group={g}
+              prevPositions={prevPositions}
+            />
           ))}
         </div>
       </div>
@@ -145,8 +162,19 @@ export function LiveResultsTable() {
   );
 }
 
+function formatRelative(date: Date) {
+  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+  if (seconds < 5) return "ahora mismo";
+  if (seconds < 60) return `hace ${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `hace ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  return `hace ${hours} h`;
+}
+
 function LiveGroup({
   group,
+  prevPositions,
 }: {
   group: {
     event_name: string;
@@ -155,6 +183,7 @@ function LiveGroup({
     category: string | null;
     rows: LiveResultRow[];
   };
+  prevPositions: Map<string, number>;
 }) {
   return (
     <div className="border border-border bg-surface/60 backdrop-blur-sm">
