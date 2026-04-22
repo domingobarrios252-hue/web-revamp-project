@@ -1432,26 +1432,41 @@ type SocialNetwork = {
   hoverColor: string;
 };
 
-const SOCIAL_NETWORKS: SocialNetwork[] = [
-  {
-    name: "Instagram",
+const SOCIAL_DEFAULTS = {
+  instagram: {
     handle: "@rollerzone_spain",
     url: "https://instagram.com/rollerzone_spain",
     followers: "4.4K",
-    iconKey: "instagram",
-    gradient: "from-[#feda75] via-[#d62976] to-[#4f5bd5]",
-    hoverColor: "group-hover:text-[#d62976]",
   },
-  {
-    name: "Facebook",
+  facebook: {
     handle: "@rollerzone.spain",
     url: "https://facebook.com/rollerzone.spain",
     followers: "2K",
-    iconKey: "facebook",
-    gradient: "from-[#1877f2] to-[#0a5dc2]",
-    hoverColor: "group-hover:text-[#1877f2]",
   },
-];
+};
+
+function buildSocialNetworks(settings: typeof SOCIAL_DEFAULTS): SocialNetwork[] {
+  return [
+    {
+      name: "Instagram",
+      handle: settings.instagram.handle,
+      url: settings.instagram.url,
+      followers: settings.instagram.followers,
+      iconKey: "instagram",
+      gradient: "from-[#feda75] via-[#d62976] to-[#4f5bd5]",
+      hoverColor: "group-hover:text-[#d62976]",
+    },
+    {
+      name: "Facebook",
+      handle: settings.facebook.handle,
+      url: settings.facebook.url,
+      followers: settings.facebook.followers,
+      iconKey: "facebook",
+      gradient: "from-[#1877f2] to-[#0a5dc2]",
+      hoverColor: "group-hover:text-[#1877f2]",
+    },
+  ];
+}
 
 function SocialIcon({ iconKey, className }: { iconKey: "instagram" | "facebook"; className?: string }) {
   if (iconKey === "instagram") return <Instagram className={className} />;
