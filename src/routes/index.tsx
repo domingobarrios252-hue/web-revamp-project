@@ -502,7 +502,7 @@ function LiveNowSection() {
                       return (
                         <li
                           key={s.id}
-                          className="font-condensed grid grid-cols-[60px_1fr_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                          className="font-condensed grid grid-cols-[48px_1fr_auto] items-center gap-2 px-2.5 py-2 text-xs sm:grid-cols-[60px_1fr_auto]"
                         >
                           <span className="font-display text-sm leading-none tracking-wider text-gold">
                             {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
