@@ -247,15 +247,37 @@ type LiveResult = {
   updated_at: string;
 };
 
+type ScheduleItem = {
+  id: string;
+  event_name: string;
+  category: string | null;
+  scheduled_at: string;
+  status: "programada" | "en_curso" | "finalizada";
+  sort_order: number;
+};
+
+type MedalRow = {
+  id: string;
+  country_name: string;
+  country_code: string | null;
+  flag_url: string | null;
+  gold: number;
+  silver: number;
+  bronze: number;
+  sort_order: number;
+};
+
 function LiveNowSection() {
   const [tv, setTv] = useState<TvSettings | null>(null);
   const [results, setResults] = useState<LiveResult[]>([]);
+  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [medals, setMedals] = useState<MedalRow[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data: tvData }, { data: lrData }] = await Promise.all([
+      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }] = await Promise.all([
         supabase
           .from("tv_settings")
           .select("live_title, live_subtitle, live_stream_url, live_starts_at, live_ends_at")
@@ -268,10 +290,27 @@ function LiveNowSection() {
           .order("sort_order", { ascending: true })
           .order("updated_at", { ascending: false })
           .limit(8),
+        supabase
+          .from("schedule_items")
+          .select("id, event_name, category, scheduled_at, status, sort_order")
+          .eq("published", true)
+          .neq("status", "finalizada")
+          .order("scheduled_at", { ascending: true })
+          .limit(6),
+        supabase
+          .from("medal_standings")
+          .select("id, country_name, country_code, flag_url, gold, silver, bronze, sort_order")
+          .eq("published", true)
+          .order("gold", { ascending: false })
+          .order("silver", { ascending: false })
+          .order("bronze", { ascending: false })
+          .limit(6),
       ]);
       if (cancelled) return;
       setTv((tvData as TvSettings) ?? null);
       setResults((lrData as LiveResult[]) ?? []);
+      setSchedule((schedData as ScheduleItem[]) ?? []);
+      setMedals((medalData as MedalRow[]) ?? []);
       setLoaded(true);
     })();
     return () => {
@@ -285,109 +324,248 @@ function LiveNowSection() {
   const hasStreamUrl = !!tv?.live_stream_url?.trim();
   const startsAt = tv?.live_starts_at ? new Date(tv.live_starts_at).getTime() : null;
   const endsAt = tv?.live_ends_at ? new Date(tv.live_ends_at).getTime() : null;
-  // Stream se considera activo solo si: hay URL + (sin inicio o ya empezó) + (sin fin o aún no terminó)
   const isStreamLive =
     hasStreamUrl &&
     (startsAt === null || now >= startsAt) &&
     (endsAt === null || now <= endsAt);
 
   const liveResults = results.filter((r) => r.status === "en_vivo");
+  const embedUrl = hasStreamUrl ? youTubeEmbedUrl(tv!.live_stream_url!) : null;
 
-  // Validación: ocultar el bloque solo si no hay NADA configurado
-  // (sin URL de stream y sin pruebas en vivo). Si hay URL pero está fuera de horario,
-  // mostramos el bloque con un CTA alternativo.
-  if (!hasStreamUrl && liveResults.length === 0) return null;
+  // Ocultar bloque solo si no hay nada que mostrar
+  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && medals.length === 0) {
+    return null;
+  }
 
   return (
     <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
-      <div className="mx-auto grid max-w-7xl gap-0 px-5 py-10 md:px-6 md:py-12 lg:grid-cols-[1.3fr_1fr] lg:gap-10">
-        <div className="flex flex-col justify-center">
-          <div className="live-red-tag font-condensed mb-4 inline-flex w-fit items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
-            <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
-            En directo ahora
+      <div className="mx-auto max-w-7xl px-5 py-10 md:px-6 md:py-14">
+        {/* Header */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+          <div className="flex items-center gap-3">
+            <div className="live-red-tag font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
+              <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
+              En directo ahora
+            </div>
+            <h2 className="font-display text-2xl uppercase tracking-widest md:text-3xl">
+              {tv?.live_title ?? "Cobertura en vivo"}
+            </h2>
           </div>
-          <h2 className="font-display text-3xl uppercase leading-tight tracking-wider md:text-5xl">
-            {tv?.live_title ?? "Emisión en directo"}
-          </h2>
-          {tv?.live_subtitle && (
-            <p className="font-condensed mt-3 text-sm uppercase tracking-widest text-muted-foreground md:text-base">
-              {tv.live_subtitle}
-            </p>
-          )}
-          {tv?.live_starts_at && (
-            <div className="font-condensed mt-3 flex items-center gap-2 text-xs uppercase tracking-widest text-gold">
-              <Calendar className="h-3.5 w-3.5" />
-              {new Date(tv.live_starts_at).toLocaleString("es-ES", {
-                weekday: "long",
-                day: "2-digit",
-                month: "long",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </div>
-          )}
-          {isStreamLive ? (
-            <div className="mt-6">
-              <Link
-                to="/tv"
-                className="font-condensed inline-flex items-center gap-2 bg-tv-red px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-white transition-colors hover:bg-tv-red-dark"
-              >
-                <Play className="h-4 w-4 fill-current" /> Ver en directo
-              </Link>
-            </div>
-          ) : hasStreamUrl ? (
-            <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
-              <Link
-                to="/tv"
-                className="font-condensed inline-flex items-center gap-2 border border-tv-red/60 bg-transparent px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-tv-red transition-colors hover:bg-tv-red hover:text-white"
-              >
-                <Play className="h-4 w-4" />
-                {startsAt && now < startsAt ? "Próxima emisión" : "Ver últimas emisiones"}
-              </Link>
-              <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
-                {startsAt && now < startsAt
-                  ? "La transmisión aún no ha comenzado"
-                  : "La transmisión ha finalizado"}
-              </span>
-            </div>
-          ) : null}
+          <Link
+            to="/tv"
+            className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
+          >
+            Ir a RollerZone TV →
+          </Link>
         </div>
 
-        {liveResults.length > 0 && (
-          <div className="mt-8 lg:mt-0">
+        {/* 3-col grid: TV+desc | schedule | medals */}
+        <div className="grid gap-6 lg:grid-cols-12 lg:gap-5">
+          {/* LEFT — TV embed + description (col 1-6) */}
+          <div className="lg:col-span-6">
+            <div className="relative aspect-video w-full overflow-hidden border border-border bg-black">
+              {isStreamLive && embedUrl ? (
+                <iframe
+                  src={embedUrl}
+                  title={tv?.live_title ?? "Directo"}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              ) : (
+                <div className="hero-grid-bg absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <Radio className="mx-auto h-10 w-10 text-tv-red/60" />
+                    <p className="font-condensed mt-3 text-[11px] uppercase tracking-[3px] text-muted-foreground">
+                      {hasStreamUrl
+                        ? startsAt && now < startsAt
+                          ? "Próxima emisión programada"
+                          : "Sin emisión activa"
+                        : "Sin emisión activa"}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {isStreamLive && (
+                <span className="live-red-tag font-condensed absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 bg-tv-red px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-white shadow-lg">
+                  <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                  Live
+                </span>
+              )}
+            </div>
+
+            <div className="mt-4">
+              {tv?.live_subtitle && (
+                <p className="font-condensed text-sm uppercase tracking-widest text-muted-foreground">
+                  {tv.live_subtitle}
+                </p>
+              )}
+              {tv?.live_starts_at && (
+                <div className="font-condensed mt-2 flex items-center gap-2 text-xs uppercase tracking-widest text-gold">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {new Date(tv.live_starts_at).toLocaleString("es-ES", {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </div>
+              )}
+              {liveResults.length > 0 && (
+                <div className="mt-3">
+                  <div className="font-condensed mb-2 text-[10px] uppercase tracking-[3px] text-muted-foreground">
+                    Pruebas en curso
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {liveResults.slice(0, 5).map((r) => (
+                      <span
+                        key={r.id}
+                        className="font-condensed inline-flex items-center gap-1.5 border border-tv-red/40 bg-tv-red/10 px-2 py-1 text-[10px] uppercase tracking-widest text-foreground"
+                      >
+                        <span className="live-dot inline-block h-1 w-1 rounded-full bg-tv-red" />
+                        {r.event_name}
+                        {r.category && <span className="text-muted-foreground">· {r.category}</span>}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-5">
+                {isStreamLive ? (
+                  <Link
+                    to="/tv"
+                    className="font-condensed inline-flex items-center gap-2 bg-tv-red px-6 py-3 text-xs font-bold uppercase tracking-[2.5px] text-white transition-colors hover:bg-tv-red-dark"
+                  >
+                    <Play className="h-4 w-4 fill-current" /> Ver en directo
+                  </Link>
+                ) : hasStreamUrl ? (
+                  <Link
+                    to="/tv"
+                    className="font-condensed inline-flex items-center gap-2 border border-tv-red/60 bg-transparent px-6 py-3 text-xs font-bold uppercase tracking-[2.5px] text-tv-red transition-colors hover:bg-tv-red hover:text-white"
+                  >
+                    <Play className="h-4 w-4" />
+                    {startsAt && now < startsAt ? "Próxima emisión" : "Ver últimas emisiones"}
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          {/* CENTER — Próximas pruebas (col 7-9) */}
+          <div className="lg:col-span-3">
             <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
               <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
-                Pruebas en curso
+                Próximas pruebas
               </h3>
-              <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
-                {liveResults.length} en directo
-              </span>
+              <Clock className="h-3.5 w-3.5 text-gold" />
             </div>
-            <ul className="divide-y divide-border">
-              {liveResults.slice(0, 7).map((r) => (
-                <li key={r.id} className="flex items-center gap-3 py-3">
-                  <span className="font-condensed flex h-7 w-7 shrink-0 items-center justify-center bg-tv-red/15 text-[10px] font-bold uppercase tracking-widest text-tv-red">
-                    <Clock className="h-3.5 w-3.5" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-display truncate text-base uppercase leading-tight tracking-wider">
-                      {r.event_name}
-                    </div>
-                    {r.category && (
-                      <div className="font-condensed truncate text-[11px] uppercase tracking-widest text-muted-foreground">
-                        {r.category}
+            {schedule.length === 0 ? (
+              <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                Sin pruebas programadas
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {schedule.slice(0, 3).map((s) => {
+                  const dt = new Date(s.scheduled_at);
+                  const isLive = s.status === "en_curso";
+                  return (
+                    <li
+                      key={s.id}
+                      className={`border bg-background/50 p-3 ${isLive ? "border-tv-red/60" : "border-border"}`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-display text-lg leading-none tracking-wider text-gold">
+                          {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                        {isLive ? (
+                          <span className="font-condensed inline-flex items-center gap-1 bg-tv-red px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[2px] text-white">
+                            <span className="live-dot inline-block h-1 w-1 rounded-full bg-white" />
+                            Live
+                          </span>
+                        ) : (
+                          <span className="font-condensed text-[9px] uppercase tracking-widest text-muted-foreground">
+                            {dt.toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  <span className="font-condensed flex items-center gap-1 bg-tv-red px-2 py-0.5 text-[9px] font-bold uppercase tracking-[2px] text-white">
-                    <span className="live-dot inline-block h-1 w-1 rounded-full bg-white" />
-                    Live
-                  </span>
-                </li>
-              ))}
-            </ul>
+                      <div className="font-display mt-1.5 line-clamp-2 text-sm uppercase leading-tight tracking-wider">
+                        {s.event_name}
+                      </div>
+                      {s.category && (
+                        <div className="font-condensed mt-1 truncate text-[10px] uppercase tracking-widest text-muted-foreground">
+                          {s.category}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
-        )}
+
+          {/* RIGHT — Medallero (col 10-12) */}
+          <div className="lg:col-span-3">
+            <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
+              <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+                Medallero
+              </h3>
+              <Medal className="h-3.5 w-3.5 text-gold" />
+            </div>
+            {medals.length === 0 ? (
+              <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                Sin datos del medallero
+              </p>
+            ) : (
+              <div className="border border-border bg-background/50">
+                <div className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
+                  <span>País</span>
+                  <span title="Oro" className="w-5 text-center text-gold">🥇</span>
+                  <span title="Plata" className="w-5 text-center">🥈</span>
+                  <span title="Bronce" className="w-5 text-center">🥉</span>
+                  <span className="w-6 text-right text-foreground">Σ</span>
+                </div>
+                <ul className="divide-y divide-border">
+                  {medals.slice(0, 6).map((m, i) => {
+                    const total = m.gold + m.silver + m.bronze;
+                    return (
+                      <li
+                        key={m.id}
+                        className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                      >
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span className="font-display w-4 text-[10px] text-muted-foreground">
+                            {i + 1}
+                          </span>
+                          {m.flag_url ? (
+                            <img
+                              src={m.flag_url}
+                              alt={m.country_name}
+                              className="h-3.5 w-5 shrink-0 object-cover"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <span className="font-display w-5 shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
+                              {m.country_code ?? "—"}
+                            </span>
+                          )}
+                          <span className="truncate uppercase tracking-wider">
+                            {m.country_code ?? m.country_name}
+                          </span>
+                        </div>
+                        <span className="w-5 text-center font-bold text-gold">{m.gold}</span>
+                        <span className="w-5 text-center text-foreground/80">{m.silver}</span>
+                        <span className="w-5 text-center text-foreground/60">{m.bronze}</span>
+                        <span className="font-display w-6 text-right text-sm">{total}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
