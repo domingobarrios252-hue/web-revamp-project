@@ -1,10 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Save, Trash2, X } from "lucide-react";
+import { GripVertical, Plus, Save, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export const Route = createFileRoute("/admin/skater-rankings")({
   head: () => ({ meta: [{ title: "Admin · Clasificación patinadores" }, { name: "robots", content: "noindex" }] }),
@@ -87,6 +104,38 @@ function AdminSkaterRankings() {
     load();
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const onDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = rows.findIndex((r) => r.id === active.id);
+    const newIndex = rows.findIndex((r) => r.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(rows, oldIndex, newIndex).map((r, i) => ({
+      ...r,
+      position: i + 1,
+    }));
+    setRows(reordered);
+
+    const updates = reordered.map((r) =>
+      supabase.from("skater_rankings").update({ position: r.position }).eq("id", r.id),
+    );
+    const results = await Promise.all(updates);
+    const failed = results.find((r) => r.error);
+    if (failed?.error) {
+      toast.error("Error al guardar el orden");
+      load();
+    } else {
+      toast.success("Orden actualizado");
+    }
+  };
+
   return (
     <div>
       <div className="mb-5 flex items-center justify-between">
@@ -104,59 +153,112 @@ function AdminSkaterRankings() {
       ) : rows.length === 0 ? (
         <p className="text-muted-foreground">Sin entradas. Añade patinadores a la clasificación.</p>
       ) : (
-        <div className="overflow-x-auto border border-border bg-surface">
-          <table className="w-full text-sm">
-            <thead className="border-b border-border">
-              <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                <th className="px-3 py-2 w-12 text-center">Pos</th>
-                <th className="px-3 py-2">Nombre</th>
-                <th className="px-3 py-2">Equipo</th>
-                <th className="px-3 py-2">País</th>
-                <th className="px-3 py-2">Tiempo</th>
-                <th className="px-3 py-2">Pub.</th>
-                <th className="px-3 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.id} className="border-b border-border last:border-0 hover:bg-background/50">
-                  <td className="px-3 py-2 text-center font-display text-gold">{r.position}</td>
-                  <td className="px-3 py-2 font-medium">{r.skater_name}</td>
-                  <td className="px-3 py-2 text-muted-foreground">{r.team ?? "—"}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-2">
-                      {r.flag_url && (
-                        <img src={r.flag_url} alt={r.country ?? ""} className="h-4 w-6 object-cover" />
-                      )}
-                      <span className="text-xs">{r.country_code ?? r.country ?? "—"}</span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-2 font-mono text-xs">{r.time_result ?? "—"}</td>
-                  <td className="px-3 py-2">{r.published ? "✓" : "—"}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => { setEditing(r); setOpen(true); }}
-                        className="font-condensed text-[11px] uppercase tracking-widest text-gold hover:underline"
-                      >
-                        Editar
-                      </button>
-                      <button onClick={() => onDelete(r.id)} className="text-tv-red hover:opacity-80">
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+        <>
+          <p className="font-condensed mb-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+            Arrastra <GripVertical className="inline h-3 w-3" /> para reordenar la clasificación
+          </p>
+          <div className="overflow-x-auto border border-border bg-surface">
+            <table className="w-full text-sm">
+              <thead className="border-b border-border">
+                <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <th className="px-2 py-2 w-8"></th>
+                  <th className="px-3 py-2 w-12 text-center">Pos</th>
+                  <th className="px-3 py-2">Nombre</th>
+                  <th className="px-3 py-2">Equipo</th>
+                  <th className="px-3 py-2">País</th>
+                  <th className="px-3 py-2">Tiempo</th>
+                  <th className="px-3 py-2">Pub.</th>
+                  <th className="px-3 py-2"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+                <SortableContext items={rows.map((r) => r.id)} strategy={verticalListSortingStrategy}>
+                  <tbody>
+                    {rows.map((r) => (
+                      <SortableRow
+                        key={r.id}
+                        row={r}
+                        onEdit={() => { setEditing(r); setOpen(true); }}
+                        onDelete={() => onDelete(r.id)}
+                      />
+                    ))}
+                  </tbody>
+                </SortableContext>
+              </DndContext>
+            </table>
+          </div>
+        </>
       )}
 
       {open && editing && (
         <EditDialog row={editing} onClose={() => setOpen(false)} onSaved={() => { setOpen(false); load(); }} />
       )}
     </div>
+  );
+}
+
+function SortableRow({
+  row,
+  onEdit,
+  onDelete,
+}: {
+  row: Row;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: row.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className="border-b border-border last:border-0 hover:bg-background/50"
+    >
+      <td className="px-2 py-2">
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab text-muted-foreground hover:text-gold active:cursor-grabbing"
+          aria-label="Arrastrar para reordenar"
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+      </td>
+      <td className="px-3 py-2 text-center font-display text-gold">{row.position}</td>
+      <td className="px-3 py-2 font-medium">{row.skater_name}</td>
+      <td className="px-3 py-2 text-muted-foreground">{row.team ?? "—"}</td>
+      <td className="px-3 py-2">
+        <div className="flex items-center gap-2">
+          {row.flag_url && (
+            <img src={row.flag_url} alt={row.country ?? ""} className="h-4 w-6 object-cover" />
+          )}
+          <span className="text-xs">{row.country_code ?? row.country ?? "—"}</span>
+        </div>
+      </td>
+      <td className="px-3 py-2 font-mono text-xs">{row.time_result ?? "—"}</td>
+      <td className="px-3 py-2">{row.published ? "✓" : "—"}</td>
+      <td className="px-3 py-2">
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onEdit}
+            className="font-condensed text-[11px] uppercase tracking-widest text-gold hover:underline"
+          >
+            Editar
+          </button>
+          <button onClick={onDelete} className="text-tv-red hover:opacity-80">
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 }
 
