@@ -759,6 +759,57 @@ export type Database = {
         }
         Relationships: []
       }
+      skater_rankings: {
+        Row: {
+          category: string | null
+          country: string | null
+          country_code: string | null
+          created_at: string
+          event_name: string | null
+          flag_url: string | null
+          id: string
+          position: number
+          published: boolean
+          skater_name: string
+          sort_order: number
+          team: string | null
+          time_result: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          country?: string | null
+          country_code?: string | null
+          created_at?: string
+          event_name?: string | null
+          flag_url?: string | null
+          id?: string
+          position?: number
+          published?: boolean
+          skater_name: string
+          sort_order?: number
+          team?: string | null
+          time_result?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          country?: string | null
+          country_code?: string | null
+          created_at?: string
+          event_name?: string | null
+          flag_url?: string | null
+          id?: string
+          position?: number
+          published?: boolean
+          skater_name?: string
+          sort_order?: number
+          team?: string | null
+          time_result?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       skaters: {
         Row: {
           active: boolean
