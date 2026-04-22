@@ -164,9 +164,9 @@ function HomePage() {
         </div>
       </section>
 
-      <AdBanner placement="home_top" />
-
       <Ticker />
+
+      <AdBanner placement="home_top" />
 
       <LiveNowSection />
 
