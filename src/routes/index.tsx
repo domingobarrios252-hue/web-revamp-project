@@ -267,6 +267,18 @@ type MedalRow = {
   sort_order: number;
 };
 
+type SkaterRanking = {
+  id: string;
+  position: number;
+  skater_name: string;
+  team: string | null;
+  country: string | null;
+  country_code: string | null;
+  flag_url: string | null;
+  time_result: string | null;
+  category: string | null;
+};
+
 function LiveNowSection() {
   const [tv, setTv] = useState<TvSettings | null>(null);
   const [results, setResults] = useState<LiveResult[]>([]);
