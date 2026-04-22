@@ -25,6 +25,7 @@ type CtaConfig = {
   button_text: string;
   button_url: string;
   enabled: boolean;
+  cover_override_url: string;
 };
 
 const DEFAULT_CTA: CtaConfig = {
@@ -33,6 +34,7 @@ const DEFAULT_CTA: CtaConfig = {
   button_text: "Ver edición digital",
   button_url: "",
   enabled: true,
+  cover_override_url: "",
 };
 
 /**
@@ -192,6 +194,7 @@ function BannerCard({ banner }: { banner: Banner }) {
 function MagazineCard({ magazine, cta }: { magazine: Magazine; cta: CtaConfig }) {
   const targetUrl = cta.button_url.trim() || "/revista";
   const isExternal = /^https?:\/\//i.test(targetUrl);
+  const coverUrl = cta.cover_override_url.trim() || magazine.cover_url;
 
   const ctaButton = (
     <span className="font-condensed mt-3 inline-flex w-fit items-center gap-2 bg-gold px-4 py-2 text-[11px] font-bold uppercase tracking-[2px] text-background transition-colors hover:bg-gold-dark md:mt-4 md:px-5 md:py-2.5">
@@ -207,9 +210,9 @@ function MagazineCard({ magazine, cta }: { magazine: Magazine; cta: CtaConfig })
       <div className="group relative flex h-full min-h-[140px] items-center gap-4 overflow-hidden border border-gold/30 bg-gradient-to-br from-surface via-surface-2 to-background p-4 transition-colors hover:border-gold md:min-h-[180px] md:gap-5 md:p-5">
         {/* Cover */}
         <div className="relative h-[120px] w-[90px] shrink-0 overflow-hidden border border-border bg-background shadow-lg shadow-black/40 md:h-[160px] md:w-[120px]">
-          {magazine.cover_url ? (
+          {coverUrl ? (
             <img
-              src={magazine.cover_url}
+              src={coverUrl}
               alt={magazine.title}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"

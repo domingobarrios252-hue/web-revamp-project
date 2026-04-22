@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 type CtaConfig = {
   label_top: string;
@@ -10,6 +11,7 @@ type CtaConfig = {
   button_text: string;
   button_url: string; // vacío = usar /revista por defecto
   enabled: boolean;
+  cover_override_url: string; // vacío = usar portada de la última revista
 };
 
 const DEFAULTS: CtaConfig = {
@@ -18,6 +20,7 @@ const DEFAULTS: CtaConfig = {
   button_text: "Ver edición digital",
   button_url: "",
   enabled: true,
+  cover_override_url: "",
 };
 
 export const Route = createFileRoute("/admin/revista-cta")({
@@ -141,6 +144,23 @@ function AdminRevistaCta() {
             Si lo dejas vacío, abrirá la página interna /revista. Puedes usar URL externa (https://…) o ruta interna (/algo).
           </span>
         </label>
+
+        <div className="md:col-span-2">
+          <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+            Imagen de la portada (opcional)
+          </span>
+          <ImageUploadField
+            value={cfg.cover_override_url}
+            onChange={(url) => setCfg({ ...cfg, cover_override_url: url })}
+            folder="magazine-cta"
+            nameHint="cover"
+            previewClassName="mt-2 h-32 w-24 object-cover border border-border"
+            placeholder="URL de imagen o subir archivo"
+          />
+          <span className="font-condensed mt-1 block text-[10px] text-muted-foreground">
+            Si la dejas vacía, se usará automáticamente la portada de la última edición publicada.
+          </span>
+        </div>
       </div>
 
       <div className="mt-6 border border-border bg-background p-4">
@@ -152,19 +172,28 @@ function AdminRevistaCta() {
             <div className="font-condensed mb-1 text-[10px] uppercase tracking-widest text-gold/80">
               {cfg.label_top || "—"}
             </div>
-            <div className="border border-gold/30 bg-gradient-to-br from-surface via-surface-2 to-background p-4">
-              <div className="font-condensed text-[10px] font-bold uppercase tracking-[3px] text-gold">
-                Nº 12
+            <div className="flex gap-4 border border-gold/30 bg-gradient-to-br from-surface via-surface-2 to-background p-4">
+              {cfg.cover_override_url && (
+                <img
+                  src={cfg.cover_override_url}
+                  alt=""
+                  className="h-[120px] w-[90px] shrink-0 border border-border object-cover"
+                />
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="font-condensed text-[10px] font-bold uppercase tracking-[3px] text-gold">
+                  Nº 12
+                </div>
+                <h3 className="font-display mt-1 text-lg uppercase leading-tight tracking-wider">
+                  Título de la edición
+                </h3>
+                <p className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+                  {cfg.subtitle || "—"}
+                </p>
+                <span className="font-condensed mt-3 inline-block bg-gold px-4 py-2 text-[11px] font-bold uppercase tracking-[2px] text-background">
+                  {cfg.button_text || "—"}
+                </span>
               </div>
-              <h3 className="font-display mt-1 text-lg uppercase leading-tight tracking-wider">
-                Título de la edición
-              </h3>
-              <p className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-                {cfg.subtitle || "—"}
-              </p>
-              <span className="font-condensed mt-3 inline-block bg-gold px-4 py-2 text-[11px] font-bold uppercase tracking-[2px] text-background">
-                {cfg.button_text || "—"}
-              </span>
             </div>
           </div>
         ) : (
