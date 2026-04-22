@@ -475,7 +475,7 @@ function LiveNowSection() {
           </div>
 
           {/* RIGHT — Stack of 3 mini-tables (col 7-12) */}
-          <div className="flex flex-col gap-5 lg:col-span-6">
+          <div className="flex min-w-0 flex-col gap-5 lg:col-span-6">
             {/* Próximas pruebas */}
             <div>
               <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
@@ -490,7 +490,7 @@ function LiveNowSection() {
                 </p>
               ) : (
                 <div className="border border-border bg-background/50">
-                  <div className="font-condensed grid grid-cols-[60px_1fr_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
+                  <div className="font-condensed grid grid-cols-[48px_1fr_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[60px_1fr_auto]">
                     <span>Hora</span>
                     <span>Prueba</span>
                     <span className="text-right">Cat.</span>
@@ -502,12 +502,12 @@ function LiveNowSection() {
                       return (
                         <li
                           key={s.id}
-                          className="font-condensed grid grid-cols-[60px_1fr_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                          className="font-condensed grid grid-cols-[48px_1fr_auto] items-center gap-2 px-2.5 py-2 text-xs sm:grid-cols-[60px_1fr_auto]"
                         >
                           <span className="font-display text-sm leading-none tracking-wider text-gold">
                             {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
                           </span>
-                          <span className="font-display flex items-center gap-1.5 truncate uppercase tracking-wider">
+                          <span className="font-display flex min-w-0 items-center gap-1.5 uppercase tracking-wider">
                             {isLive && (
                               <span className="live-dot inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red" />
                             )}
@@ -545,10 +545,10 @@ function LiveNowSection() {
                 </p>
               ) : (
                 <div className="border border-border bg-background/50">
-                  <div className="font-condensed grid grid-cols-[28px_1fr_70px_36px_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
+                  <div className="font-condensed grid grid-cols-[24px_1fr_32px_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[28px_1fr_70px_36px_auto]">
                     <span className="text-center">#</span>
                     <span>Nombre</span>
-                    <span className="truncate">Equipo</span>
+                    <span className="hidden truncate sm:block">Equipo</span>
                     <span className="text-center">País</span>
                     <span className="text-right">Tiempo</span>
                   </div>
@@ -556,7 +556,7 @@ function LiveNowSection() {
                     {skaters.slice(0, 6).map((s) => (
                       <li
                         key={s.id}
-                        className="font-condensed grid grid-cols-[28px_1fr_70px_36px_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                        className="font-condensed grid grid-cols-[24px_1fr_32px_auto] items-center gap-2 px-2.5 py-2 text-xs sm:grid-cols-[28px_1fr_70px_36px_auto]"
                       >
                         <span
                           className={`font-display inline-flex h-5 w-5 items-center justify-center justify-self-center text-[10px] ${
@@ -571,10 +571,10 @@ function LiveNowSection() {
                         >
                           {s.position}
                         </span>
-                        <span className="font-display truncate uppercase tracking-wider text-foreground">
+                        <span className="font-display min-w-0 truncate uppercase tracking-wider text-foreground">
                           {s.skater_name}
                         </span>
-                        <span className="truncate text-[10px] uppercase tracking-widest text-muted-foreground">
+                        <span className="hidden truncate text-[10px] uppercase tracking-widest text-muted-foreground sm:block">
                           {s.team ?? "—"}
                         </span>
                         <span className="flex items-center justify-center">
