@@ -324,7 +324,7 @@ function LiveNowSection() {
               })}
             </div>
           )}
-          {isStreamLive && (
+          {isStreamLive ? (
             <div className="mt-6">
               <Link
                 to="/tv"
@@ -333,7 +333,22 @@ function LiveNowSection() {
                 <Play className="h-4 w-4 fill-current" /> Ver en directo
               </Link>
             </div>
-          )}
+          ) : hasStreamUrl ? (
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Link
+                to="/tv"
+                className="font-condensed inline-flex items-center gap-2 border border-tv-red/60 bg-transparent px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-tv-red transition-colors hover:bg-tv-red hover:text-white"
+              >
+                <Play className="h-4 w-4" />
+                {startsAt && now < startsAt ? "Próxima emisión" : "Ver últimas emisiones"}
+              </Link>
+              <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+                {startsAt && now < startsAt
+                  ? "La transmisión aún no ha comenzado"
+                  : "La transmisión ha finalizado"}
+              </span>
+            </div>
+          ) : null}
         </div>
 
         {liveResults.length > 0 && (
