@@ -507,7 +507,7 @@ function LiveNowSection() {
                           <span className="font-display text-sm leading-none tracking-wider text-gold">
                             {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
                           </span>
-                          <span className="font-display flex items-center gap-1.5 truncate uppercase tracking-wider">
+                          <span className="font-display flex min-w-0 items-center gap-1.5 uppercase tracking-wider">
                             {isLive && (
                               <span className="live-dot inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red" />
                             )}
