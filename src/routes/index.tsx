@@ -1594,7 +1594,7 @@ function MostReadAndSocialSection() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            {SOCIAL_NETWORKS.map((s) => (
+            {socialNetworks.map((s: SocialNetwork) => (
               <a
                 key={s.name}
                 href={s.url}
