@@ -380,7 +380,7 @@ function LiveNowSection() {
           </Link>
         </div>
 
-        {/* 3-col grid: TV+desc | schedule | medals */}
+        {/* 2-col grid: TV (left, 6/12) | side stack (right, 6/12) with 3 mini-tables */}
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-5">
           {/* LEFT — TV embed + description (col 1-6) */}
           <div className="lg:col-span-6">
@@ -474,176 +474,110 @@ function LiveNowSection() {
             </div>
           </div>
 
-          {/* CENTER — Próximas pruebas (col 7-9) */}
-          <div className="lg:col-span-3">
-            <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-              <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
-                Próximas pruebas
-              </h3>
-              <Clock className="h-3.5 w-3.5 text-gold" />
-            </div>
-            {schedule.length === 0 ? (
-              <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                Sin pruebas programadas
-              </p>
-            ) : (
-              <ul className="flex flex-col gap-2">
-                {schedule.slice(0, 3).map((s) => {
-                  const dt = new Date(s.scheduled_at);
-                  const isLive = s.status === "en_curso";
-                  return (
-                    <li
-                      key={s.id}
-                      className={`border bg-background/50 p-3 ${isLive ? "border-tv-red/60" : "border-border"}`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-display text-lg leading-none tracking-wider text-gold">
-                          {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
-                        </span>
-                        {isLive ? (
-                          <span className="font-condensed inline-flex items-center gap-1 bg-tv-red px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[2px] text-white">
-                            <span className="live-dot inline-block h-1 w-1 rounded-full bg-white" />
-                            Live
-                          </span>
-                        ) : (
-                          <span className="font-condensed text-[9px] uppercase tracking-widest text-muted-foreground">
-                            {dt.toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
-                          </span>
-                        )}
-                      </div>
-                      <div className="font-display mt-1.5 line-clamp-2 text-sm uppercase leading-tight tracking-wider">
-                        {s.event_name}
-                      </div>
-                      {s.category && (
-                        <div className="font-condensed mt-1 truncate text-[10px] uppercase tracking-widest text-muted-foreground">
-                          {s.category}
-                        </div>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-
-          {/* RIGHT — Medallero (col 10-12) */}
-          <div className="lg:col-span-3">
-            <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-              <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
-                Medallero
-              </h3>
-              <Medal className="h-3.5 w-3.5 text-gold" />
-            </div>
-            {medals.length === 0 ? (
-              <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                Sin datos del medallero
-              </p>
-            ) : (
-              <div className="border border-border bg-background/50">
-                <div className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
-                  <span>País</span>
-                  <span title="Oro" className="w-5 text-center text-gold">🥇</span>
-                  <span title="Plata" className="w-5 text-center">🥈</span>
-                  <span title="Bronce" className="w-5 text-center">🥉</span>
-                  <span className="w-6 text-right text-foreground">Σ</span>
-                </div>
-                <ul className="divide-y divide-border">
-                  {medals.slice(0, 6).map((m, i) => {
-                    const total = m.gold + m.silver + m.bronze;
-                    return (
-                      <li
-                        key={m.id}
-                        className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-2.5 py-2 text-xs"
-                      >
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span className="font-display w-4 text-[10px] text-muted-foreground">
-                            {i + 1}
-                          </span>
-                          {m.flag_url ? (
-                            <img
-                              src={m.flag_url}
-                              alt={m.country_name}
-                              className="h-3.5 w-5 shrink-0 object-cover"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <span className="font-display w-5 shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
-                              {m.country_code ?? "—"}
-                            </span>
-                          )}
-                          <span className="truncate uppercase tracking-wider">
-                            {m.country_code ?? m.country_name}
-                          </span>
-                        </div>
-                        <span className="w-5 text-center font-bold text-gold">{m.gold}</span>
-                        <span className="w-5 text-center text-foreground/80">{m.silver}</span>
-                        <span className="w-5 text-center text-foreground/60">{m.bronze}</span>
-                        <span className="font-display w-6 text-right text-sm">{total}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Clasificación patinadores — full width below 3-col grid */}
-        {skaters.length > 0 && (
-          <div className="mt-8">
-            <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-gold" />
-                <h3 className="font-display text-base uppercase tracking-widest text-foreground md:text-lg">
-                  Clasificación patinadores
+          {/* RIGHT — Stack of 3 mini-tables (col 7-12) */}
+          <div className="flex flex-col gap-5 lg:col-span-6">
+            {/* Próximas pruebas */}
+            <div>
+              <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+                <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+                  Próximas pruebas
                 </h3>
+                <Clock className="h-3.5 w-3.5 text-gold" />
               </div>
-              {skaters[0]?.category && (
-                <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {skaters[0].category}
-                </span>
+              {schedule.length === 0 ? (
+                <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Sin pruebas programadas
+                </p>
+              ) : (
+                <div className="border border-border bg-background/50">
+                  <div className="font-condensed grid grid-cols-[60px_1fr_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
+                    <span>Hora</span>
+                    <span>Prueba</span>
+                    <span className="text-right">Cat.</span>
+                  </div>
+                  <ul className="divide-y divide-border">
+                    {schedule.slice(0, 3).map((s) => {
+                      const dt = new Date(s.scheduled_at);
+                      const isLive = s.status === "en_curso";
+                      return (
+                        <li
+                          key={s.id}
+                          className="font-condensed grid grid-cols-[60px_1fr_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                        >
+                          <span className="font-display text-sm leading-none tracking-wider text-gold">
+                            {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                          <span className="font-display flex items-center gap-1.5 truncate uppercase tracking-wider">
+                            {isLive && (
+                              <span className="live-dot inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red" />
+                            )}
+                            <span className="truncate">{s.event_name}</span>
+                          </span>
+                          <span className="truncate text-right text-[10px] uppercase tracking-widest text-muted-foreground">
+                            {s.category ?? "—"}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               )}
             </div>
-            <div className="overflow-x-auto border border-border bg-background/50">
-              <table className="w-full text-sm">
-                <thead className="border-b border-border bg-surface">
-                  <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                    <th className="px-3 py-2 w-14 text-center">Pos</th>
-                    <th className="px-3 py-2">Nombre</th>
-                    <th className="px-3 py-2">Equipo</th>
-                    <th className="px-3 py-2">País</th>
-                    <th className="px-3 py-2 text-right font-mono">Tiempo</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {skaters.map((s) => (
-                    <tr
-                      key={s.id}
-                      className="border-b border-border last:border-0 transition-colors hover:bg-surface/50"
-                    >
-                      <td className="px-3 py-2.5 text-center">
+
+            {/* Clasificación patinadores (compacta, estilo medallero) */}
+            <div>
+              <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-3.5 w-3.5 text-gold" />
+                  <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+                    Clasif. patinadores
+                  </h3>
+                </div>
+                {skaters[0]?.category && (
+                  <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+                    {skaters[0].category}
+                  </span>
+                )}
+              </div>
+              {skaters.length === 0 ? (
+                <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Sin clasificación
+                </p>
+              ) : (
+                <div className="border border-border bg-background/50">
+                  <div className="font-condensed grid grid-cols-[28px_1fr_70px_36px_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
+                    <span className="text-center">#</span>
+                    <span>Nombre</span>
+                    <span className="truncate">Equipo</span>
+                    <span className="text-center">País</span>
+                    <span className="text-right">Tiempo</span>
+                  </div>
+                  <ul className="divide-y divide-border">
+                    {skaters.slice(0, 6).map((s) => (
+                      <li
+                        key={s.id}
+                        className="font-condensed grid grid-cols-[28px_1fr_70px_36px_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                      >
                         <span
-                          className={`font-display inline-flex h-7 w-7 items-center justify-center text-sm ${
+                          className={`font-display inline-flex h-5 w-5 items-center justify-center justify-self-center text-[10px] ${
                             s.position === 1
                               ? "bg-gold text-background"
                               : s.position === 2
-                              ? "bg-foreground/30 text-background"
-                              : s.position === 3
-                              ? "bg-amber-700/70 text-background"
-                              : "text-muted-foreground"
+                                ? "bg-foreground/30 text-background"
+                                : s.position === 3
+                                  ? "bg-amber-700/70 text-background"
+                                  : "text-muted-foreground"
                           }`}
                         >
                           {s.position}
                         </span>
-                      </td>
-                      <td className="px-3 py-2.5 font-display uppercase tracking-wider text-foreground">
-                        {s.skater_name}
-                      </td>
-                      <td className="px-3 py-2.5 font-condensed text-xs uppercase tracking-widest text-muted-foreground">
-                        {s.team ?? "—"}
-                      </td>
-                      <td className="px-3 py-2.5">
-                        <div className="flex items-center gap-2">
+                        <span className="font-display truncate uppercase tracking-wider text-foreground">
+                          {s.skater_name}
+                        </span>
+                        <span className="truncate text-[10px] uppercase tracking-widest text-muted-foreground">
+                          {s.team ?? "—"}
+                        </span>
+                        <span className="flex items-center justify-center">
                           {s.flag_url ? (
                             <img
                               src={s.flag_url}
@@ -651,22 +585,84 @@ function LiveNowSection() {
                               className="h-3.5 w-5 shrink-0 object-cover"
                               loading="lazy"
                             />
-                          ) : null}
-                          <span className="font-condensed text-xs uppercase tracking-widest">
-                            {s.country_code ?? s.country ?? "—"}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-mono text-xs text-gold">
-                        {s.time_result ?? "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          ) : (
+                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                              {s.country_code ?? "—"}
+                            </span>
+                          )}
+                        </span>
+                        <span className="text-right font-mono text-[11px] text-gold">
+                          {s.time_result ?? "—"}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Medallero países */}
+            <div>
+              <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+                <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+                  Medallero países
+                </h3>
+                <Medal className="h-3.5 w-3.5 text-gold" />
+              </div>
+              {medals.length === 0 ? (
+                <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Sin datos del medallero
+                </p>
+              ) : (
+                <div className="border border-border bg-background/50">
+                  <div className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
+                    <span>País</span>
+                    <span title="Oro" className="w-5 text-center text-gold">🥇</span>
+                    <span title="Plata" className="w-5 text-center">🥈</span>
+                    <span title="Bronce" className="w-5 text-center">🥉</span>
+                    <span className="w-6 text-right text-foreground">Σ</span>
+                  </div>
+                  <ul className="divide-y divide-border">
+                    {medals.slice(0, 6).map((m, i) => {
+                      const total = m.gold + m.silver + m.bronze;
+                      return (
+                        <li
+                          key={m.id}
+                          className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-2.5 py-2 text-xs"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <span className="font-display w-4 text-[10px] text-muted-foreground">
+                              {i + 1}
+                            </span>
+                            {m.flag_url ? (
+                              <img
+                                src={m.flag_url}
+                                alt={m.country_name}
+                                className="h-3.5 w-5 shrink-0 object-cover"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <span className="font-display w-5 shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
+                                {m.country_code ?? "—"}
+                              </span>
+                            )}
+                            <span className="truncate uppercase tracking-wider">
+                              {m.country_code ?? m.country_name}
+                            </span>
+                          </div>
+                          <span className="w-5 text-center font-bold text-gold">{m.gold}</span>
+                          <span className="w-5 text-center text-foreground/80">{m.silver}</span>
+                          <span className="w-5 text-center text-foreground/60">{m.bronze}</span>
+                          <span className="font-display w-6 text-right text-sm">{total}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </section>
   );
