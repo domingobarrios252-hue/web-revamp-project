@@ -371,6 +371,48 @@ export type Database = {
         }
         Relationships: []
       }
+      medal_standings: {
+        Row: {
+          bronze: number
+          country_code: string | null
+          country_name: string
+          created_at: string
+          flag_url: string | null
+          gold: number
+          id: string
+          published: boolean
+          silver: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          bronze?: number
+          country_code?: string | null
+          country_name: string
+          created_at?: string
+          flag_url?: string | null
+          gold?: number
+          id?: string
+          published?: boolean
+          silver?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          bronze?: number
+          country_code?: string | null
+          country_name?: string
+          created_at?: string
+          flag_url?: string | null
+          gold?: number
+          id?: string
+          published?: boolean
+          silver?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mvp_awards: {
         Row: {
           category_age: string | null
@@ -659,6 +701,42 @@ export type Database = {
           name?: string
           scope?: string
           sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      schedule_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          event_name: string
+          id: string
+          published: boolean
+          scheduled_at: string
+          sort_order: number
+          status: Database["public"]["Enums"]["schedule_status"]
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          event_name: string
+          id?: string
+          published?: boolean
+          scheduled_at: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["schedule_status"]
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          event_name?: string
+          id?: string
+          published?: boolean
+          scheduled_at?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["schedule_status"]
           updated_at?: string
         }
         Relationships: []
@@ -1064,6 +1142,7 @@ export type Database = {
       mvp_gender: "masculino" | "femenino"
       mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
+      schedule_status: "programada" | "en_curso" | "finalizada"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1196,6 +1275,7 @@ export const Constants = {
       mvp_gender: ["masculino", "femenino"],
       mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
+      schedule_status: ["programada", "en_curso", "finalizada"],
     },
   },
 } as const
