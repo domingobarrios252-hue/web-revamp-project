@@ -292,9 +292,10 @@ function LiveNowSection() {
 
   const liveResults = results.filter((r) => r.status === "en_vivo");
 
-  // Validación estricta: ocultar el bloque si no hay NADA realmente en directo
-  // (ni stream activo dentro de horario, ni pruebas con status "en_vivo")
-  if (!isStreamLive && liveResults.length === 0) return null;
+  // Validación: ocultar el bloque solo si no hay NADA configurado
+  // (sin URL de stream y sin pruebas en vivo). Si hay URL pero está fuera de horario,
+  // mostramos el bloque con un CTA alternativo.
+  if (!hasStreamUrl && liveResults.length === 0) return null;
 
   return (
     <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
