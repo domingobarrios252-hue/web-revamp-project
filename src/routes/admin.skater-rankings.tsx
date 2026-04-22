@@ -1,10 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Save, Trash2, X } from "lucide-react";
+import { GripVertical, Plus, Save, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export const Route = createFileRoute("/admin/skater-rankings")({
   head: () => ({ meta: [{ title: "Admin · Clasificación patinadores" }, { name: "robots", content: "noindex" }] }),
