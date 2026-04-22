@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { AdBanner } from "@/components/site/AdBanner";
 import { supabase } from "@/integrations/supabase/client";
@@ -64,7 +64,7 @@ function HomePage() {
       .eq("published", true)
       .order("featured", { ascending: false })
       .order("published_at", { ascending: false })
-      .limit(7)
+      .limit(8)
       .then(({ data }) => {
         if (!cancelled) setNews((data as unknown as News[]) ?? []);
       });
@@ -75,63 +75,102 @@ function HomePage() {
 
   const featured = news?.find((n) => n.featured) ?? news?.[0];
   const rest = news?.filter((n) => n.id !== featured?.id) ?? [];
+  const bigSecondary = rest[0];
+  const smallList = rest.slice(1, 5);
 
   return (
     <>
-      {/* HERO */}
-      <section className="relative h-[480px] overflow-hidden bg-surface md:h-[560px]">
-        <div className="hero-grid-bg absolute inset-0" />
-        {featured?.image_url && (
+      {/* HERO — full bleed, sport TV style */}
+      <section className="relative min-h-[78vh] w-full overflow-hidden bg-background md:min-h-[88vh]">
+        {featured?.image_url ? (
           <img
             src={featured.image_url}
             alt={featured.title}
-            className="absolute inset-0 h-full w-full object-cover opacity-30"
+            className="absolute inset-0 h-full w-full object-cover"
           />
+        ) : (
+          <div className="hero-grid-bg absolute inset-0" />
         )}
-        <div className="font-display pointer-events-none absolute right-[3%] top-1/2 -translate-y-1/2 select-none text-[clamp(140px,18vw,280px)] leading-none tracking-tighter text-gold/[.07]">
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+
+        <div className="font-display pointer-events-none absolute right-[3%] top-1/2 hidden -translate-y-1/2 select-none text-[clamp(180px,20vw,320px)] leading-none tracking-tighter text-gold/[.06] md:block">
           01
         </div>
-        <div className="relative z-10 flex h-full max-w-[700px] flex-col justify-end p-6 md:p-10">
-          <div className="live-tag font-condensed mb-4 inline-flex w-fit items-center gap-2 bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-background">
-            <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-background" />
-            En Vivo · Abril 2026
-          </div>
-          <h1 className="font-display text-[clamp(36px,6vw,72px)] uppercase leading-none tracking-wider text-foreground">
-            {featured?.title ?? "RollerZone"}
-          </h1>
-          <p className="font-condensed mt-3 text-sm uppercase tracking-wider text-muted-foreground">
-            {featured?.news_categories?.name ?? "Patinaje de velocidad"} ·{" "}
-            <span className="text-gold">{featured?.author}</span>
-          </p>
-          <p className="mt-3 max-w-md text-sm text-foreground/75 md:text-base">
-            {featured?.excerpt ?? "El medio del patinaje de velocidad."}
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            {featured && (
-              <Link
-                to="/noticias/articulo/$slug"
-                params={{ slug: featured.slug }}
-                className="font-condensed inline-flex items-center gap-2 bg-gold px-6 py-3 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-dark"
-              >
-                Leer noticia <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+
+        <div className="relative z-10 mx-auto flex min-h-[78vh] max-w-7xl flex-col justify-end px-5 pb-10 pt-24 md:min-h-[88vh] md:px-10 md:pb-16">
+          <div className="max-w-3xl">
+            {featured?.featured && (
+              <div className="live-red-tag font-condensed mb-5 inline-flex w-fit items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
+                <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                En Vivo · Destacada
+              </div>
             )}
-            <Link
-              to="/noticias"
-              className="font-condensed inline-flex items-center gap-2 border border-border bg-transparent px-6 py-3 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold/10"
-            >
-              Ver todas
-            </Link>
+            {featured?.news_categories?.name && (
+              <div className="font-condensed mb-3 text-xs uppercase tracking-[4px] text-gold">
+                {featured.news_categories.name}
+              </div>
+            )}
+            <h1 className="font-display text-[clamp(40px,7vw,88px)] uppercase leading-[0.95] tracking-wider text-foreground">
+              {featured?.title ?? "RollerZone"}
+            </h1>
+            {featured?.excerpt && (
+              <p className="clamp-2 mt-5 max-w-2xl text-base text-foreground/80 md:text-lg">
+                {featured.excerpt}
+              </p>
+            )}
+            <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+              {featured?.author && (
+                <span className="flex items-center gap-1.5">
+                  <UserIcon className="h-3 w-3" /> {featured.author}
+                </span>
+              )}
+              {featured?.published_at && (
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-3 w-3" />
+                  {new Date(featured.published_at).toLocaleDateString("es-ES", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
+              )}
+              {typeof featured?.views_count === "number" && (
+                <span className="flex items-center gap-1.5">
+                  <Eye className="h-3 w-3" /> {featured.views_count}
+                </span>
+              )}
+            </div>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              {featured && (
+                <Link
+                  to="/noticias/articulo/$slug"
+                  params={{ slug: featured.slug }}
+                  className="font-condensed inline-flex items-center justify-center gap-2 bg-gold px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-background transition-colors hover:bg-gold-dark"
+                >
+                  Leer cobertura completa <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
+              <Link
+                to="/tv"
+                className="font-condensed inline-flex items-center justify-center gap-2 border border-foreground/30 bg-background/40 px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-foreground backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
+              >
+                <Radio className="h-4 w-4" /> Seguir en directo
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
       <Ticker />
 
+      <LiveNowSection />
+
       <AdBanner placement="home_top" />
 
-      {/* NOTICIAS */}
-      <section id="noticias" className="mx-auto max-w-7xl px-6 py-12">
+      {/* ÚLTIMAS NOTICIAS — ESPN style */}
+      <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
         <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
           <h2 className="font-display text-2xl tracking-widest md:text-3xl">
             Últimas <span className="text-gold">noticias</span>
@@ -145,19 +184,35 @@ function HomePage() {
         </div>
 
         {news === null ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="h-64 animate-pulse bg-surface" />
-            ))}
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="h-[420px] animate-pulse bg-surface" />
+            <div className="grid grid-cols-2 gap-4">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="h-[200px] animate-pulse bg-surface" />
+              ))}
+            </div>
           </div>
         ) : rest.length === 0 ? (
           <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
         ) : (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {rest.slice(0, 6).map((n) => (
-              <NewsCard key={n.id} news={n} />
-            ))}
-          </div>
+          <>
+            <div className="hidden gap-5 lg:grid lg:grid-cols-2">
+              {bigSecondary && <BigNewsCard news={bigSecondary} />}
+              <div className="grid grid-cols-2 gap-4">
+                {smallList.map((n) => (
+                  <SmallNewsCard key={n.id} news={n} />
+                ))}
+              </div>
+            </div>
+
+            <div className="hide-scrollbar -mx-5 flex gap-4 overflow-x-auto px-5 pb-2 lg:hidden">
+              {rest.slice(0, 6).map((n) => (
+                <div key={n.id} className="w-[78%] shrink-0 sm:w-[48%]">
+                  <SmallNewsCard news={n} />
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </section>
 
@@ -171,6 +226,232 @@ function HomePage() {
     </>
   );
 }
+
+/* ===================== LIVE NOW ===================== */
+
+type TvSettings = {
+  live_title: string;
+  live_subtitle: string | null;
+  live_stream_url: string | null;
+  live_starts_at: string | null;
+  live_ends_at: string | null;
+};
+
+type LiveResult = {
+  id: string;
+  event_name: string;
+  category: string | null;
+  status: "en_vivo" | "finalizado";
+  sort_order: number;
+  updated_at: string;
+};
+
+function LiveNowSection() {
+  const [tv, setTv] = useState<TvSettings | null>(null);
+  const [results, setResults] = useState<LiveResult[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [{ data: tvData }, { data: lrData }] = await Promise.all([
+        supabase
+          .from("tv_settings")
+          .select("live_title, live_subtitle, live_stream_url, live_starts_at, live_ends_at")
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("live_results")
+          .select("id, event_name, category, status, sort_order, updated_at")
+          .eq("published", true)
+          .order("sort_order", { ascending: true })
+          .order("updated_at", { ascending: false })
+          .limit(8),
+      ]);
+      if (cancelled) return;
+      setTv((tvData as TvSettings) ?? null);
+      setResults((lrData as LiveResult[]) ?? []);
+      setLoaded(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!loaded) return null;
+
+  const now = Date.now();
+  const startsAt = tv?.live_starts_at ? new Date(tv.live_starts_at).getTime() : null;
+  const endsAt = tv?.live_ends_at ? new Date(tv.live_ends_at).getTime() : null;
+  const isLive =
+    !!tv?.live_stream_url &&
+    (startsAt === null || now >= startsAt) &&
+    (endsAt === null || now <= endsAt);
+
+  const liveResults = results.filter((r) => r.status === "en_vivo");
+  if (!isLive && liveResults.length === 0) return null;
+
+  return (
+    <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
+      <div className="mx-auto grid max-w-7xl gap-0 px-5 py-10 md:px-6 md:py-12 lg:grid-cols-[1.3fr_1fr] lg:gap-10">
+        <div className="flex flex-col justify-center">
+          <div className="live-red-tag font-condensed mb-4 inline-flex w-fit items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
+            <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
+            En directo ahora
+          </div>
+          <h2 className="font-display text-3xl uppercase leading-tight tracking-wider md:text-5xl">
+            {tv?.live_title ?? "Emisión en directo"}
+          </h2>
+          {tv?.live_subtitle && (
+            <p className="font-condensed mt-3 text-sm uppercase tracking-widest text-muted-foreground md:text-base">
+              {tv.live_subtitle}
+            </p>
+          )}
+          {tv?.live_starts_at && (
+            <div className="font-condensed mt-3 flex items-center gap-2 text-xs uppercase tracking-widest text-gold">
+              <Calendar className="h-3.5 w-3.5" />
+              {new Date(tv.live_starts_at).toLocaleString("es-ES", {
+                weekday: "long",
+                day: "2-digit",
+                month: "long",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
+          )}
+          <div className="mt-6">
+            <Link
+              to="/tv"
+              className="font-condensed inline-flex items-center gap-2 bg-tv-red px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-white transition-colors hover:bg-tv-red-dark"
+            >
+              <Play className="h-4 w-4 fill-current" /> Ver en directo
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-8 lg:mt-0">
+          <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
+            <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+              Pruebas en curso
+            </h3>
+            <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+              {liveResults.length} en directo
+            </span>
+          </div>
+          {liveResults.length === 0 ? (
+            <p className="font-condensed text-sm uppercase tracking-wider text-muted-foreground">
+              Sin pruebas activas en este momento.
+            </p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {liveResults.slice(0, 7).map((r) => (
+                <li key={r.id} className="flex items-center gap-3 py-3">
+                  <span className="font-condensed flex h-7 w-7 shrink-0 items-center justify-center bg-tv-red/15 text-[10px] font-bold uppercase tracking-widest text-tv-red">
+                    <Clock className="h-3.5 w-3.5" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-display truncate text-base uppercase leading-tight tracking-wider">
+                      {r.event_name}
+                    </div>
+                    {r.category && (
+                      <div className="font-condensed truncate text-[11px] uppercase tracking-widest text-muted-foreground">
+                        {r.category}
+                      </div>
+                    )}
+                  </div>
+                  <span className="font-condensed flex items-center gap-1 bg-tv-red px-2 py-0.5 text-[9px] font-bold uppercase tracking-[2px] text-white">
+                    <span className="live-dot inline-block h-1 w-1 rounded-full bg-white" />
+                    Live
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ===================== NEWS CARDS (sport TV) ===================== */
+
+function BigNewsCard({ news }: { news: News }) {
+  return (
+    <Link
+      to="/noticias/articulo/$slug"
+      params={{ slug: news.slug }}
+      className="group relative block aspect-[4/5] overflow-hidden border border-border bg-surface lg:aspect-auto lg:h-full lg:min-h-[420px]"
+    >
+      {news.image_url ? (
+        <img
+          src={news.image_url}
+          alt={news.title}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
+        />
+      ) : (
+        <div className="hero-grid-bg absolute inset-0" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-5 md:p-7">
+        {news.news_categories?.name && (
+          <span className="font-condensed mb-3 inline-block bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
+            {news.news_categories.name}
+          </span>
+        )}
+        <h3 className="font-display clamp-3 text-2xl uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-3xl">
+          {news.title}
+        </h3>
+        <div className="font-condensed mt-3 flex items-center gap-3 text-[11px] uppercase tracking-widest text-foreground/70">
+          <span className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {new Date(news.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+          </span>
+          <span className="flex items-center gap-1">
+            <Eye className="h-3 w-3" /> {news.views_count}
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function SmallNewsCard({ news }: { news: News }) {
+  return (
+    <Link
+      to="/noticias/articulo/$slug"
+      params={{ slug: news.slug }}
+      className="group relative block aspect-[4/5] overflow-hidden border border-border bg-surface sm:aspect-[5/6]"
+    >
+      {news.image_url ? (
+        <img
+          src={news.image_url}
+          alt={news.title}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy"
+        />
+      ) : (
+        <div className="hero-grid-bg absolute inset-0" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/40 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
+        {news.news_categories?.name && (
+          <span className="font-condensed mb-2 inline-block bg-gold/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[2px] text-background">
+            {news.news_categories.name}
+          </span>
+        )}
+        <h3 className="font-display clamp-3 text-sm uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-base">
+          {news.title}
+        </h3>
+        <div className="font-condensed mt-2 flex items-center gap-1 text-[10px] uppercase tracking-widest text-foreground/60">
+          <Clock className="h-3 w-3" />
+          {new Date(news.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 
 type FeaturedAthlete = {
   id: string;
