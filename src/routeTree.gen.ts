@@ -34,6 +34,7 @@ import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlig
 import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisiones'
 import { Route as AdminTvRouteImport } from './routes/admin.tv'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
+import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
@@ -174,6 +175,11 @@ const AdminTickerRoute = AdminTickerRouteImport.update({
   path: '/ticker',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminScheduleRoute = AdminScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRevistasRoute = AdminRevistasRouteImport.update({
   id: '/revistas',
   path: '/revistas',
@@ -269,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -309,6 +316,7 @@ export interface FileRoutesByTo {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -351,6 +359,7 @@ export interface FileRoutesById {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -394,6 +403,7 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revistas'
+    | '/admin/schedule'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -434,6 +444,7 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revistas'
+    | '/admin/schedule'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -475,6 +486,7 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revistas'
+    | '/admin/schedule'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -694,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTickerRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/schedule': {
+      id: '/admin/schedule'
+      path: '/schedule'
+      fullPath: '/admin/schedule'
+      preLoaderRoute: typeof AdminScheduleRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/revistas': {
       id: '/admin/revistas'
       path: '/revistas'
@@ -808,6 +827,7 @@ interface AdminRouteChildren {
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
+  AdminScheduleRoute: typeof AdminScheduleRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminTvRoute: typeof AdminTvRoute
   AdminTvEmisionesRoute: typeof AdminTvEmisionesRoute
@@ -829,6 +849,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
   AdminRevistasRoute: AdminRevistasRoute,
+  AdminScheduleRoute: AdminScheduleRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminTvRoute: AdminTvRoute,
   AdminTvEmisionesRoute: AdminTvEmisionesRoute,
