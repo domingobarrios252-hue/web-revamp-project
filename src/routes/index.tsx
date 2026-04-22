@@ -1437,37 +1437,19 @@ const SOCIAL_NETWORKS: SocialNetwork[] = [
     name: "Instagram",
     handle: "@rollerzone_spain",
     url: "https://instagram.com/rollerzone_spain",
-    followers: "12.4K",
+    followers: "—",
     Icon: Instagram,
     gradient: "from-[#feda75] via-[#d62976] to-[#4f5bd5]",
     hoverColor: "group-hover:text-[#d62976]",
   },
   {
     name: "Facebook",
-    handle: "RollerZone Spain",
-    url: "https://facebook.com/rollerzonespain",
-    followers: "8.7K",
+    handle: "@rollerzone.spain",
+    url: "https://facebook.com/rollerzone.spain",
+    followers: "—",
     Icon: Facebook,
     gradient: "from-[#1877f2] to-[#0a5dc2]",
     hoverColor: "group-hover:text-[#1877f2]",
-  },
-  {
-    name: "YouTube",
-    handle: "@rollerzonespain",
-    url: "https://www.youtube.com/@rollerzonespain",
-    followers: "5.2K",
-    Icon: Youtube,
-    gradient: "from-[#ff0000] to-[#b80000]",
-    hoverColor: "group-hover:text-[#ff0000]",
-  },
-  {
-    name: "TikTok",
-    handle: "@rollerzone_spain",
-    url: "https://www.tiktok.com/@rollerzone_spain",
-    followers: "9.1K",
-    Icon: Flame,
-    gradient: "from-[#25f4ee] via-foreground to-[#fe2c55]",
-    hoverColor: "group-hover:text-[#fe2c55]",
   },
 ];
 
@@ -1519,43 +1501,27 @@ function MostReadAndSocialSection() {
               Aún no hay noticias.
             </p>
           ) : (
-            <ol className="space-y-2">
+            <ol className="divide-y divide-border border-y border-border">
               {items.map((n, i) => (
                 <li key={n.id}>
                   <Link
                     to="/noticias/articulo/$slug"
                     params={{ slug: n.slug }}
-                    className="group relative flex items-stretch gap-4 overflow-hidden border border-border bg-surface p-3 transition-all hover:border-gold hover:bg-surface-2 hover:translate-x-1"
+                    className="group flex items-center gap-4 px-1 py-4 transition-all hover:translate-x-1 hover:bg-surface/50"
                   >
                     {/* Ranking number */}
-                    <div className="flex shrink-0 items-center justify-center">
-                      <span
-                        className={`font-display text-5xl leading-none tracking-tighter transition-colors md:text-6xl ${
-                          i === 0
-                            ? "text-gold"
-                            : "text-foreground/15 group-hover:text-gold/60"
-                        }`}
-                      >
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                    </div>
-
-                    {/* Thumbnail */}
-                    <div className="hidden h-16 w-16 shrink-0 overflow-hidden bg-background sm:block">
-                      {n.image_url ? (
-                        <img
-                          src={n.image_url}
-                          alt={n.title}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                      ) : (
-                        <div className="hero-grid-bg h-full w-full" />
-                      )}
-                    </div>
+                    <span
+                      className={`font-display w-12 shrink-0 text-center text-4xl leading-none tracking-tighter transition-colors md:text-5xl ${
+                        i === 0
+                          ? "text-gold"
+                          : "text-foreground/20 group-hover:text-gold/70"
+                      }`}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
 
                     {/* Content */}
-                    <div className="flex min-w-0 flex-1 flex-col justify-center">
+                    <div className="flex min-w-0 flex-1 flex-col">
                       {n.news_categories?.name && (
                         <span className="font-condensed mb-1 text-[10px] font-bold uppercase tracking-[2px] text-gold">
                           {n.news_categories.name}
@@ -1569,7 +1535,7 @@ function MostReadAndSocialSection() {
                       </div>
                     </div>
 
-                    <ArrowRight className="hidden h-4 w-4 self-center text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-gold sm:block" />
+                    <ArrowRight className="hidden h-4 w-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-gold sm:block" />
                   </Link>
                 </li>
               ))}
