@@ -39,6 +39,7 @@ import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nos
 import { Route as AdminSkaterRankingsRouteImport } from './routes/admin.skater-rankings'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
+import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
@@ -204,6 +205,11 @@ const AdminRevistasRoute = AdminRevistasRouteImport.update({
   path: '/revistas',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRevistaCtaRoute = AdminRevistaCtaRouteImport.update({
+  id: '/revista-cta',
+  path: '/revista-cta',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRedactoresRoute = AdminRedactoresRouteImport.update({
   id: '/redactores',
   path: '/redactores',
@@ -299,6 +305,7 @@ export interface FileRoutesByFullPath {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
+  '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
@@ -344,6 +351,7 @@ export interface FileRoutesByTo {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
+  '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
@@ -391,6 +399,7 @@ export interface FileRoutesById {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
+  '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
@@ -439,6 +448,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
     | '/admin/redactores'
+    | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
     | '/admin/skater-rankings'
@@ -484,6 +494,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
     | '/admin/redactores'
+    | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
     | '/admin/skater-rankings'
@@ -530,6 +541,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
     | '/admin/redactores'
+    | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
     | '/admin/skater-rankings'
@@ -790,6 +802,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRevistasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/revista-cta': {
+      id: '/admin/revista-cta'
+      path: '/revista-cta'
+      fullPath: '/admin/revista-cta'
+      preLoaderRoute: typeof AdminRevistaCtaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/redactores': {
       id: '/admin/redactores'
       path: '/redactores'
@@ -904,6 +923,7 @@ interface AdminRouteChildren {
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
+  AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
   AdminSkaterRankingsRoute: typeof AdminSkaterRankingsRoute
@@ -929,6 +949,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
+  AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminScheduleRoute: AdminScheduleRoute,
   AdminSkaterRankingsRoute: AdminSkaterRankingsRoute,

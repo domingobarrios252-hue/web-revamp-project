@@ -53,7 +53,7 @@ function AdminRevistaCta() {
     setSaving(true);
     const { error } = await supabase
       .from("site_settings")
-      .upsert({ key: "magazine_cta", value: cfg as unknown as object }, { onConflict: "key" });
+      .upsert([{ key: "magazine_cta", value: cfg as unknown as object }], { onConflict: "key" });
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("CTA actualizado");
