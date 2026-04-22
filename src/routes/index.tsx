@@ -654,18 +654,14 @@ function LiveNowSection() {
             </div>
 
             {/* Medallero países */}
-            <div>
-              <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
-                <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
-                  Medallero países
-                </h3>
-                <Medal className="h-3.5 w-3.5 text-gold" />
-              </div>
-              {medals.length === 0 ? (
-                <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                  Sin datos del medallero
-                </p>
-              ) : (
+            {medalsVisible && (
+              <div>
+                <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+                  <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+                    Medallero países
+                  </h3>
+                  <Medal className="h-3.5 w-3.5 text-gold" />
+                </div>
                 <div className="border border-border bg-background/50">
                   <div className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground">
                     <span>País</span>
@@ -711,8 +707,8 @@ function LiveNowSection() {
                     })}
                   </ul>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
