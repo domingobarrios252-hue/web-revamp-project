@@ -164,11 +164,12 @@ function HomePage() {
         </div>
       </section>
 
+      <AdBanner placement="home_top" />
+
       <Ticker />
 
       <LiveNowSection />
 
-      <AdBanner placement="home_top" />
 
       {/* ÚLTIMAS NOTICIAS — ESPN style */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
