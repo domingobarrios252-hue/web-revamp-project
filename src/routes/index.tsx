@@ -82,7 +82,7 @@ function HomePage() {
   return (
     <>
       {/* HERO — full bleed, sport TV style */}
-      <section className="relative min-h-[55vh] w-full overflow-hidden bg-background md:min-h-[60vh]">
+      <section className="relative min-h-[50vh] w-full overflow-hidden bg-background md:min-h-[60vh]">
         {featured?.image_url ? (
           <img
             src={featured.image_url}
