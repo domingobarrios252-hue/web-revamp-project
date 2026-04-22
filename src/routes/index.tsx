@@ -290,7 +290,7 @@ function LiveNowSection() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }] = await Promise.all([
+      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: skaterData }] = await Promise.all([
         supabase
           .from("tv_settings")
           .select("live_title, live_subtitle, live_stream_url, live_starts_at, live_ends_at")
@@ -318,12 +318,20 @@ function LiveNowSection() {
           .order("silver", { ascending: false })
           .order("bronze", { ascending: false })
           .limit(6),
+        supabase
+          .from("skater_rankings")
+          .select("id, position, skater_name, team, country, country_code, flag_url, time_result, category")
+          .eq("published", true)
+          .order("position", { ascending: true })
+          .order("sort_order", { ascending: true })
+          .limit(10),
       ]);
       if (cancelled) return;
       setTv((tvData as TvSettings) ?? null);
       setResults((lrData as LiveResult[]) ?? []);
       setSchedule((schedData as ScheduleItem[]) ?? []);
       setMedals((medalData as MedalRow[]) ?? []);
+      setSkaters((skaterData as SkaterRanking[]) ?? []);
       setLoaded(true);
     })();
     return () => {
