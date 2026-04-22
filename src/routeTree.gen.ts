@@ -12,15 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as RevistaRouteImport } from './routes/revista'
 import { Route as RedactoresRouteImport } from './routes/redactores'
-import { Route as QuienesSomosRouteImport } from './routes/quienes-somos'
-import { Route as PublicidadRouteImport } from './routes/publicidad'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
-import { Route as EquipoRouteImport } from './routes/equipo'
 import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as ContactoRouteImport } from './routes/contacto'
-import { Route as ColaboraRouteImport } from './routes/colabora'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -72,16 +67,6 @@ const RedactoresRoute = RedactoresRouteImport.update({
   path: '/redactores',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuienesSomosRoute = QuienesSomosRouteImport.update({
-  id: '/quienes-somos',
-  path: '/quienes-somos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PublicidadRoute = PublicidadRouteImport.update({
-  id: '/publicidad',
-  path: '/publicidad',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PrivacidadRoute = PrivacidadRouteImport.update({
   id: '/privacidad',
   path: '/privacidad',
@@ -97,24 +82,9 @@ const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   path: '/patrocinadores',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EquipoRoute = EquipoRouteImport.update({
-  id: '/equipo',
-  path: '/equipo',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CookiesRoute = CookiesRouteImport.update({
   id: '/cookies',
   path: '/cookies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactoRoute = ContactoRouteImport.update({
-  id: '/contacto',
-  path: '/contacto',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ColaboraRoute = ColaboraRouteImport.update({
-  id: '/colabora',
-  path: '/colabora',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AvisoLegalRoute = AvisoLegalRouteImport.update({
@@ -298,15 +268,10 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
-  '/colabora': typeof ColaboraRoute
-  '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
-  '/equipo': typeof EquipoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
-  '/publicidad': typeof PublicidadRoute
-  '/quienes-somos': typeof QuienesSomosRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
@@ -346,15 +311,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
-  '/colabora': typeof ColaboraRoute
-  '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
-  '/equipo': typeof EquipoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
-  '/publicidad': typeof PublicidadRoute
-  '/quienes-somos': typeof QuienesSomosRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
@@ -396,15 +356,10 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
-  '/colabora': typeof ColaboraRoute
-  '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
-  '/equipo': typeof EquipoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
-  '/publicidad': typeof PublicidadRoute
-  '/quienes-somos': typeof QuienesSomosRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
@@ -447,15 +402,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/aviso-legal'
-    | '/colabora'
-    | '/contacto'
     | '/cookies'
-    | '/equipo'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
-    | '/publicidad'
-    | '/quienes-somos'
     | '/redactores'
     | '/revista'
     | '/tv'
@@ -495,15 +445,10 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/aviso-legal'
-    | '/colabora'
-    | '/contacto'
     | '/cookies'
-    | '/equipo'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
-    | '/publicidad'
-    | '/quienes-somos'
     | '/redactores'
     | '/revista'
     | '/tv'
@@ -544,15 +489,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/aviso-legal'
-    | '/colabora'
-    | '/contacto'
     | '/cookies'
-    | '/equipo'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
-    | '/publicidad'
-    | '/quienes-somos'
     | '/redactores'
     | '/revista'
     | '/tv'
@@ -594,15 +534,10 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
-  ColaboraRoute: typeof ColaboraRoute
-  ContactoRoute: typeof ContactoRoute
   CookiesRoute: typeof CookiesRoute
-  EquipoRoute: typeof EquipoRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
-  PublicidadRoute: typeof PublicidadRoute
-  QuienesSomosRoute: typeof QuienesSomosRoute
   RedactoresRoute: typeof RedactoresRoute
   RevistaRoute: typeof RevistaRoute
   TvRoute: typeof TvRoute
@@ -641,20 +576,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedactoresRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quienes-somos': {
-      id: '/quienes-somos'
-      path: '/quienes-somos'
-      fullPath: '/quienes-somos'
-      preLoaderRoute: typeof QuienesSomosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/publicidad': {
-      id: '/publicidad'
-      path: '/publicidad'
-      fullPath: '/publicidad'
-      preLoaderRoute: typeof PublicidadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/privacidad': {
       id: '/privacidad'
       path: '/privacidad'
@@ -676,32 +597,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatrocinadoresRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/equipo': {
-      id: '/equipo'
-      path: '/equipo'
-      fullPath: '/equipo'
-      preLoaderRoute: typeof EquipoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/cookies': {
       id: '/cookies'
       path: '/cookies'
       fullPath: '/cookies'
       preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contacto': {
-      id: '/contacto'
-      path: '/contacto'
-      fullPath: '/contacto'
-      preLoaderRoute: typeof ContactoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/colabora': {
-      id: '/colabora'
-      path: '/colabora'
-      fullPath: '/colabora'
-      preLoaderRoute: typeof ColaboraRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/aviso-legal': {
@@ -1007,15 +907,10 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
-  ColaboraRoute: ColaboraRoute,
-  ContactoRoute: ContactoRoute,
   CookiesRoute: CookiesRoute,
-  EquipoRoute: EquipoRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
-  PublicidadRoute: PublicidadRoute,
-  QuienesSomosRoute: QuienesSomosRoute,
   RedactoresRoute: RedactoresRoute,
   RevistaRoute: RevistaRoute,
   TvRoute: TvRoute,

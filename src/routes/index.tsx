@@ -1427,7 +1427,7 @@ type SocialNetwork = {
   handle: string;
   url: string;
   followers: string;
-  iconKey: "instagram" | "facebook";
+  Icon: typeof Instagram;
   gradient: string;
   hoverColor: string;
 };
@@ -1438,7 +1438,7 @@ const SOCIAL_NETWORKS: SocialNetwork[] = [
     handle: "@rollerzone_spain",
     url: "https://instagram.com/rollerzone_spain",
     followers: "4.4K",
-    iconKey: "instagram",
+    Icon: Instagram,
     gradient: "from-[#feda75] via-[#d62976] to-[#4f5bd5]",
     hoverColor: "group-hover:text-[#d62976]",
   },
@@ -1447,16 +1447,11 @@ const SOCIAL_NETWORKS: SocialNetwork[] = [
     handle: "@rollerzone.spain",
     url: "https://facebook.com/rollerzone.spain",
     followers: "2K",
-    iconKey: "facebook",
+    Icon: Facebook,
     gradient: "from-[#1877f2] to-[#0a5dc2]",
     hoverColor: "group-hover:text-[#1877f2]",
   },
 ];
-
-function SocialIcon({ iconKey, className }: { iconKey: "instagram" | "facebook"; className?: string }) {
-  if (iconKey === "instagram") return <Instagram className={className} />;
-  return <Facebook className={className} />;
-}
 
 function MostReadAndSocialSection() {
   const [items, setItems] = useState<MostReadNews[] | null>(null);
@@ -1561,26 +1556,28 @@ function MostReadAndSocialSection() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            {SOCIAL_NETWORKS.map((s) => (
-              <a
-                key={s.name}
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Síguenos en ${s.name}`}
-                className="group relative flex flex-col overflow-hidden border border-border bg-surface p-4 transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.4)] sm:p-5"
-              >
-                {/* Animated gradient accent on hover */}
-                <div
-                  className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${s.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-                />
-
-                <div className="mb-3 flex items-center justify-between">
+            {SOCIAL_NETWORKS.map((s) => {
+              const Icon = s.Icon;
+              return (
+                <a
+                  key={s.name}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Síguenos en ${s.name}`}
+                  className="group relative flex flex-col overflow-hidden border border-border bg-surface p-4 transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.4)] sm:p-5"
+                >
+                  {/* Animated gradient accent on hover */}
                   <div
-                    className={`flex h-11 w-11 items-center justify-center bg-background/50 transition-all group-hover:scale-110 sm:h-12 sm:w-12`}
-                  >
-                    <SocialIcon iconKey={s.iconKey} className={`h-5 w-5 text-foreground transition-colors ${s.hoverColor} sm:h-6 sm:w-6`} />
-                  </div>
+                    className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${s.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+                  />
+
+                  <div className="mb-3 flex items-center justify-between">
+                    <div
+                      className={`flex h-11 w-11 items-center justify-center bg-background/50 transition-all group-hover:scale-110 sm:h-12 sm:w-12`}
+                    >
+                      <Icon className={`h-5 w-5 text-foreground transition-colors ${s.hoverColor} sm:h-6 sm:w-6`} />
+                    </div>
                     <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-1" />
                   </div>
 
@@ -1599,8 +1596,9 @@ function MostReadAndSocialSection() {
                       seguidores
                     </span>
                   </div>
-              </a>
-            ))}
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>
