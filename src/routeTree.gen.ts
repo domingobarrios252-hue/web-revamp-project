@@ -34,11 +34,13 @@ import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlig
 import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisiones'
 import { Route as AdminTvRouteImport } from './routes/admin.tv'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
+import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
+import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
 import { Route as AdminLegalRouteImport } from './routes/admin.legal'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
@@ -174,6 +176,11 @@ const AdminTickerRoute = AdminTickerRouteImport.update({
   path: '/ticker',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminScheduleRoute = AdminScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRevistasRoute = AdminRevistasRouteImport.update({
   id: '/revistas',
   path: '/revistas',
@@ -197,6 +204,11 @@ const AdminPatrocinadoresRoute = AdminPatrocinadoresRouteImport.update({
 const AdminPatinadoresRoute = AdminPatinadoresRouteImport.update({
   id: '/patinadores',
   path: '/patinadores',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMedalleroRoute = AdminMedalleroRouteImport.update({
+  id: '/medallero',
+  path: '/medallero',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminLegalRoute = AdminLegalRouteImport.update({
@@ -264,11 +276,13 @@ export interface FileRoutesByFullPath {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -304,11 +318,13 @@ export interface FileRoutesByTo {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -346,11 +362,13 @@ export interface FileRoutesById {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
@@ -389,11 +407,13 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revistas'
+    | '/admin/schedule'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -429,11 +449,13 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revistas'
+    | '/admin/schedule'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -470,11 +492,13 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revistas'
+    | '/admin/schedule'
     | '/admin/ticker'
     | '/admin/tv'
     | '/admin/tv-emisiones'
@@ -694,6 +718,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTickerRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/schedule': {
+      id: '/admin/schedule'
+      path: '/schedule'
+      fullPath: '/admin/schedule'
+      preLoaderRoute: typeof AdminScheduleRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/revistas': {
       id: '/admin/revistas'
       path: '/revistas'
@@ -727,6 +758,13 @@ declare module '@tanstack/react-router' {
       path: '/patinadores'
       fullPath: '/admin/patinadores'
       preLoaderRoute: typeof AdminPatinadoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/medallero': {
+      id: '/admin/medallero'
+      path: '/medallero'
+      fullPath: '/admin/medallero'
+      preLoaderRoute: typeof AdminMedalleroRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/legal': {
@@ -803,11 +841,13 @@ interface AdminRouteChildren {
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminLegalRoute: typeof AdminLegalRoute
+  AdminMedalleroRoute: typeof AdminMedalleroRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
+  AdminScheduleRoute: typeof AdminScheduleRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminTvRoute: typeof AdminTvRoute
   AdminTvEmisionesRoute: typeof AdminTvEmisionesRoute
@@ -824,11 +864,13 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminLegalRoute: AdminLegalRoute,
+  AdminMedalleroRoute: AdminMedalleroRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
   AdminRevistasRoute: AdminRevistasRoute,
+  AdminScheduleRoute: AdminScheduleRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminTvRoute: AdminTvRoute,
   AdminTvEmisionesRoute: AdminTvEmisionesRoute,

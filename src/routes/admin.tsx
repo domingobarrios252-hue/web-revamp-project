@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -88,6 +88,12 @@ function AdminLayout() {
           <AdminLink to="/admin/tv" icon={<Tv className="h-4 w-4" />}>
             TV — Directo
           </AdminLink>
+          <AdminLink to="/admin/schedule" icon={<Clock className="h-4 w-4" />}>
+            Pruebas programadas
+          </AdminLink>
+          <AdminLink to="/admin/medallero" icon={<Medal className="h-4 w-4" />}>
+            Medallero
+          </AdminLink>
           <AdminLink to="/admin/tv-emisiones" icon={<Radio className="h-4 w-4" />}>
             TV — Emisiones
           </AdminLink>
@@ -127,7 +133,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/schedule" | "/admin/medallero";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
