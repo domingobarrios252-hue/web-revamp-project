@@ -587,6 +587,86 @@ function LiveNowSection() {
             )}
           </div>
         </div>
+
+        {/* Clasificación patinadores — full width below 3-col grid */}
+        {skaters.length > 0 && (
+          <div className="mt-8">
+            <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-gold" />
+                <h3 className="font-display text-base uppercase tracking-widest text-foreground md:text-lg">
+                  Clasificación patinadores
+                </h3>
+              </div>
+              {skaters[0]?.category && (
+                <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {skaters[0].category}
+                </span>
+              )}
+            </div>
+            <div className="overflow-x-auto border border-border bg-background/50">
+              <table className="w-full text-sm">
+                <thead className="border-b border-border bg-surface">
+                  <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+                    <th className="px-3 py-2 w-14 text-center">Pos</th>
+                    <th className="px-3 py-2">Nombre</th>
+                    <th className="px-3 py-2">Equipo</th>
+                    <th className="px-3 py-2">País</th>
+                    <th className="px-3 py-2 text-right font-mono">Tiempo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {skaters.map((s) => (
+                    <tr
+                      key={s.id}
+                      className="border-b border-border last:border-0 transition-colors hover:bg-surface/50"
+                    >
+                      <td className="px-3 py-2.5 text-center">
+                        <span
+                          className={`font-display inline-flex h-7 w-7 items-center justify-center text-sm ${
+                            s.position === 1
+                              ? "bg-gold text-background"
+                              : s.position === 2
+                              ? "bg-foreground/30 text-background"
+                              : s.position === 3
+                              ? "bg-amber-700/70 text-background"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {s.position}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2.5 font-display uppercase tracking-wider text-foreground">
+                        {s.skater_name}
+                      </td>
+                      <td className="px-3 py-2.5 font-condensed text-xs uppercase tracking-widest text-muted-foreground">
+                        {s.team ?? "—"}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <div className="flex items-center gap-2">
+                          {s.flag_url ? (
+                            <img
+                              src={s.flag_url}
+                              alt={s.country ?? ""}
+                              className="h-3.5 w-5 shrink-0 object-cover"
+                              loading="lazy"
+                            />
+                          ) : null}
+                          <span className="font-condensed text-xs uppercase tracking-widest">
+                            {s.country_code ?? s.country ?? "—"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2.5 text-right font-mono text-xs text-gold">
+                        {s.time_result ?? "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
