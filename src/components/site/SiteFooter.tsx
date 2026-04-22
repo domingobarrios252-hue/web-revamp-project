@@ -7,7 +7,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-16 border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-6 py-10">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           <div>
             <div className="font-display text-2xl tracking-widest">
               <span className="text-gold">Roller</span>
@@ -24,6 +24,16 @@ export function SiteFooter() {
               <li><Link to="/premios-mvp" className="hover:text-gold">{t("nav.mvpAwards")}</Link></li>
               <li><Link to="/revista" className="hover:text-gold">{t("nav.magazine")}</Link></li>
               <li><Link to="/redactores" className="hover:text-gold">{t("nav.writers")}</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-display mb-3 text-sm tracking-widest text-gold">{t("footer.about")}</h4>
+            <ul className="font-condensed space-y-1.5 text-sm uppercase tracking-wider text-muted-foreground">
+              <li><Link to="/quienes-somos" className="hover:text-gold">{t("footer.aboutUs")}</Link></li>
+              <li><Link to="/equipo" className="hover:text-gold">{t("footer.team")}</Link></li>
+              <li><Link to="/colabora" className="hover:text-gold">{t("footer.collaborate")}</Link></li>
+              <li><Link to="/publicidad" className="hover:text-gold">{t("footer.advertising")}</Link></li>
+              <li><Link to="/contacto" className="hover:text-gold">{t("footer.contact")}</Link></li>
             </ul>
           </div>
           <div>
