@@ -4,6 +4,7 @@ import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookO
 import { youTubeEmbedUrl } from "@/lib/youtube";
 import { Ticker } from "@/components/site/Ticker";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
+import { LiveResultsTable } from "@/components/site/LiveResultsTable";
 import { supabase } from "@/integrations/supabase/client";
 
 type MvpPreview = {
@@ -206,6 +207,8 @@ function HomePage() {
       <AdBannerWithMagazine placement="home_top" />
 
       <LiveNowSection />
+
+      <LiveResultsTable />
 
 
       {/* ÚLTIMAS NOTICIAS — ESPN style */}
