@@ -54,6 +54,7 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const [news, setNews] = useState<News[] | null>(null);
+  const [liveActive, setLiveActive] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,6 +75,40 @@ function HomePage() {
     };
   }, []);
 
+  // Determinar si hay directo activo para mostrar/ocultar el botón "Seguir en directo"
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [{ data: tvData }, { data: lrData }] = await Promise.all([
+        supabase
+          .from("tv_settings")
+          .select("live_stream_url, live_starts_at, live_ends_at")
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("live_results")
+          .select("id")
+          .eq("published", true)
+          .eq("status", "en_vivo")
+          .limit(1),
+      ]);
+      if (cancelled) return;
+      const now = Date.now();
+      const hasStreamUrl = !!tvData?.live_stream_url?.trim();
+      const startsAt = tvData?.live_starts_at ? new Date(tvData.live_starts_at).getTime() : null;
+      const endsAt = tvData?.live_ends_at ? new Date(tvData.live_ends_at).getTime() : null;
+      const isStreamLive =
+        hasStreamUrl &&
+        (startsAt === null || now >= startsAt) &&
+        (endsAt === null || now <= endsAt);
+      const hasLiveResults = (lrData?.length ?? 0) > 0;
+      setLiveActive(isStreamLive || hasLiveResults);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const featured = news?.find((n) => n.featured) ?? news?.[0];
   const rest = news?.filter((n) => n.id !== featured?.id) ?? [];
   const bigSecondary = rest[0];
@@ -82,7 +117,7 @@ function HomePage() {
   return (
     <>
       {/* HERO — full bleed, sport TV style */}
-      <section className="relative min-h-[55vh] w-full overflow-hidden bg-background md:min-h-[60vh]">
+      <section className="relative min-h-[33vh] w-full overflow-hidden bg-background md:min-h-[36vh]">
         {featured?.image_url ? (
           <img
             src={featured.image_url}
@@ -100,7 +135,7 @@ function HomePage() {
           01
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[78vh] max-w-7xl flex-col justify-end px-5 pb-10 pt-24 md:min-h-[88vh] md:px-10 md:pb-16">
+        <div className="relative z-10 mx-auto flex min-h-[47vh] max-w-7xl flex-col justify-end px-5 pb-6 pt-16 md:min-h-[53vh] md:px-10 md:pb-10">
           <div className="max-w-3xl">
             {featured?.featured && (
               <div className="live-red-tag font-condensed mb-5 inline-flex w-fit items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
@@ -153,12 +188,14 @@ function HomePage() {
                   Leer cobertura completa <ArrowRight className="h-4 w-4" />
                 </Link>
               )}
-              <Link
-                to="/tv"
-                className="font-condensed inline-flex items-center justify-center gap-2 border border-foreground/30 bg-background/40 px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-foreground backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
-              >
-                <Radio className="h-4 w-4" /> Seguir en directo
-              </Link>
+              {liveActive && (
+                <Link
+                  to="/tv"
+                  className="font-condensed inline-flex items-center justify-center gap-2 border border-foreground/30 bg-background/40 px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-foreground backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
+                >
+                  <Radio className="h-4 w-4" /> Seguir en directo
+                </Link>
+              )}
             </div>
           </div>
         </div>
