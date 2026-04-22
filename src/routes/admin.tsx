@@ -76,6 +76,9 @@ function AdminLayout() {
           <AdminLink to="/admin/revistas" icon={<BookOpen className="h-4 w-4" />}>
             Revistas
           </AdminLink>
+          <AdminLink to="/admin/revista-cta" icon={<BookOpen className="h-4 w-4" />}>
+            CTA Edición Digital
+          </AdminLink>
           <AdminLink to="/admin/patrocinadores" icon={<Heart className="h-4 w-4" />}>
             Patrocinadores
           </AdminLink>
@@ -139,7 +142,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/skater-rankings";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/skater-rankings";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;

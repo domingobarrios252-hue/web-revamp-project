@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { BookOpen, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -20,14 +19,31 @@ type Magazine = {
   edition_date: string;
 };
 
+type CtaConfig = {
+  label_top: string;
+  subtitle: string;
+  button_text: string;
+  button_url: string;
+  enabled: boolean;
+};
+
+const DEFAULT_CTA: CtaConfig = {
+  label_top: "Edición digital",
+  subtitle: "RollerZone Colombia",
+  button_text: "Ver edición digital",
+  button_url: "",
+  enabled: true,
+};
+
 /**
  * Sección de dos columnas: a la izquierda banner publicitario,
- * a la derecha la última edición digital de RollerZone con CTA.
+ * a la derecha la última edición digital de RollerZone con CTA editable.
  * En móvil se apilan verticalmente.
  */
 export function AdBannerWithMagazine({ placement = "home_top" }: { placement?: string }) {
   const [banner, setBanner] = useState<Banner | null>(null);
   const [magazine, setMagazine] = useState<Magazine | null>(null);
+  const [cta, setCta] = useState<CtaConfig>(DEFAULT_CTA);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,8 +76,23 @@ export function AdBannerWithMagazine({ placement = "home_top" }: { placement?: s
         });
     };
 
+    const loadCta = () => {
+      supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "magazine_cta")
+        .maybeSingle()
+        .then(({ data }) => {
+          if (cancelled) return;
+          if (data?.value) {
+            setCta({ ...DEFAULT_CTA, ...(data.value as Partial<CtaConfig>) });
+          }
+        });
+    };
+
     loadBanner();
     loadMagazine();
+    loadCta();
 
     const channel = supabase
       .channel(`ad-banner-magazine-${placement}`)
@@ -75,6 +106,11 @@ export function AdBannerWithMagazine({ placement = "home_top" }: { placement?: s
         { event: "*", schema: "public", table: "magazines" },
         () => loadMagazine()
       )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "site_settings" },
+        () => loadCta()
+      )
       .subscribe();
 
     return () => {
@@ -83,8 +119,10 @@ export function AdBannerWithMagazine({ placement = "home_top" }: { placement?: s
     };
   }, [placement]);
 
+  const showMagazine = cta.enabled && magazine;
+
   // Si no hay nada que mostrar, ocultamos toda la sección
-  if (!banner && !magazine) return null;
+  if (!banner && !showMagazine) return null;
 
   return (
     <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 sm:pt-4 md:pt-6">
@@ -93,7 +131,11 @@ export function AdBannerWithMagazine({ placement = "home_top" }: { placement?: s
         {banner ? <BannerCard banner={banner} /> : <div className="hidden md:block" />}
 
         {/* DERECHA — Última edición digital */}
-        {magazine ? <MagazineCard magazine={magazine} /> : <div className="hidden md:block" />}
+        {showMagazine ? (
+          <MagazineCard magazine={magazine!} cta={cta} />
+        ) : (
+          <div className="hidden md:block" />
+        )}
       </div>
     </div>
   );
@@ -147,11 +189,20 @@ function BannerCard({ banner }: { banner: Banner }) {
   );
 }
 
-function MagazineCard({ magazine }: { magazine: Magazine }) {
+function MagazineCard({ magazine, cta }: { magazine: Magazine; cta: CtaConfig }) {
+  const targetUrl = cta.button_url.trim() || "/revista";
+  const isExternal = /^https?:\/\//i.test(targetUrl);
+
+  const ctaButton = (
+    <span className="font-condensed mt-3 inline-flex w-fit items-center gap-2 bg-gold px-4 py-2 text-[11px] font-bold uppercase tracking-[2px] text-background transition-colors hover:bg-gold-dark md:mt-4 md:px-5 md:py-2.5">
+      {cta.button_text || "Ver edición digital"} <ArrowRight className="h-3.5 w-3.5" />
+    </span>
+  );
+
   return (
     <div className="flex flex-col">
       <div className="font-condensed mb-1 text-[10px] uppercase tracking-widest text-gold/80 md:mb-2">
-        Edición digital
+        {cta.label_top || "Edición digital"}
       </div>
       <div className="group relative flex h-full min-h-[140px] items-center gap-4 overflow-hidden border border-gold/30 bg-gradient-to-br from-surface via-surface-2 to-background p-4 transition-colors hover:border-gold md:min-h-[180px] md:gap-5 md:p-5">
         {/* Cover */}
@@ -180,16 +231,26 @@ function MagazineCard({ magazine }: { magazine: Magazine }) {
           <h3 className="font-display mt-1 line-clamp-2 text-lg uppercase leading-tight tracking-wider text-foreground md:text-xl">
             {magazine.title}
           </h3>
-          <p className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-            RollerZone Colombia
-          </p>
+          {cta.subtitle && (
+            <p className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+              {cta.subtitle}
+            </p>
+          )}
 
-          <Link
-            to="/revista"
-            className="font-condensed mt-3 inline-flex w-fit items-center gap-2 bg-gold px-4 py-2 text-[11px] font-bold uppercase tracking-[2px] text-background transition-colors hover:bg-gold-dark md:mt-4 md:px-5 md:py-2.5"
-          >
-            Ver edición digital <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          {isExternal ? (
+            <a
+              href={targetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={cta.button_text || "Ver edición digital"}
+            >
+              {ctaButton}
+            </a>
+          ) : (
+            <a href={targetUrl} aria-label={cta.button_text || "Ver edición digital"}>
+              {ctaButton}
+            </a>
+          )}
         </div>
       </div>
     </div>
