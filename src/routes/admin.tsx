@@ -88,6 +88,12 @@ function AdminLayout() {
           <AdminLink to="/admin/tv" icon={<Tv className="h-4 w-4" />}>
             TV — Directo
           </AdminLink>
+          <AdminLink to="/admin/schedule" icon={<Clock className="h-4 w-4" />}>
+            Pruebas programadas
+          </AdminLink>
+          <AdminLink to="/admin/medallero" icon={<Medal className="h-4 w-4" />}>
+            Medallero
+          </AdminLink>
           <AdminLink to="/admin/tv-emisiones" icon={<Radio className="h-4 w-4" />}>
             TV — Emisiones
           </AdminLink>
