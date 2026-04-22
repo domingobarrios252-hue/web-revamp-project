@@ -39,17 +39,47 @@ function AdminMedallero() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Row | null>(null);
   const [open, setOpen] = useState(false);
+  const [showOnHome, setShowOnHome] = useState(true);
+  const [savingToggle, setSavingToggle] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("medal_standings")
-      .select("*")
-      .order("gold", { ascending: false })
-      .order("silver", { ascending: false })
-      .order("bronze", { ascending: false });
+    const [{ data }, { data: setting }] = await Promise.all([
+      supabase
+        .from("medal_standings")
+        .select("*")
+        .order("gold", { ascending: false })
+        .order("silver", { ascending: false })
+        .order("bronze", { ascending: false }),
+      supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "home_medals_enabled")
+        .maybeSingle(),
+    ]);
     setRows((data as Row[]) ?? []);
+    if (setting?.value && typeof (setting.value as { enabled?: boolean }).enabled === "boolean") {
+      setShowOnHome((setting.value as { enabled: boolean }).enabled);
+    }
     setLoading(false);
+  };
+
+  const toggleHomeVisibility = async (next: boolean) => {
+    setShowOnHome(next);
+    setSavingToggle(true);
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert(
+        [{ key: "home_medals_enabled", value: { enabled: next } as unknown as Record<string, unknown> }] as never,
+        { onConflict: "key" },
+      );
+    setSavingToggle(false);
+    if (error) {
+      toast.error(error.message);
+      setShowOnHome(!next);
+      return;
+    }
+    toast.success(next ? "Medallero visible en la portada" : "Medallero oculto en la portada");
   };
 
   useEffect(() => {
@@ -90,6 +120,18 @@ function AdminMedallero() {
           <Plus className="h-4 w-4" /> Añadir país
         </button>
       </div>
+
+      <label className="mb-5 flex items-center gap-2 border border-border bg-surface p-3">
+        <input
+          type="checkbox"
+          checked={showOnHome}
+          onChange={(e) => toggleHomeVisibility(e.target.checked)}
+          disabled={savingToggle}
+        />
+        <span className="font-condensed text-xs uppercase tracking-widest">
+          Mostrar el medallero de países en la portada
+        </span>
+      </label>
 
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
