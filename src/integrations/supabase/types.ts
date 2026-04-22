@@ -320,63 +320,54 @@ export type Database = {
       }
       live_results: {
         Row: {
+          athlete_name: string
           category: string | null
+          club: string | null
           created_at: string
           event_name: string
-          first_club: string | null
-          first_name: string | null
-          first_time: string | null
+          event_slug: string | null
           id: string
           news_id: string | null
+          position: number
           published: boolean
-          second_club: string | null
-          second_name: string | null
-          second_time: string | null
+          race: string | null
+          race_time: string | null
           sort_order: number
           status: Database["public"]["Enums"]["live_result_status"]
-          third_club: string | null
-          third_name: string | null
-          third_time: string | null
           updated_at: string
         }
         Insert: {
+          athlete_name?: string
           category?: string | null
+          club?: string | null
           created_at?: string
           event_name: string
-          first_club?: string | null
-          first_name?: string | null
-          first_time?: string | null
+          event_slug?: string | null
           id?: string
           news_id?: string | null
+          position?: number
           published?: boolean
-          second_club?: string | null
-          second_name?: string | null
-          second_time?: string | null
+          race?: string | null
+          race_time?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["live_result_status"]
-          third_club?: string | null
-          third_name?: string | null
-          third_time?: string | null
           updated_at?: string
         }
         Update: {
+          athlete_name?: string
           category?: string | null
+          club?: string | null
           created_at?: string
           event_name?: string
-          first_club?: string | null
-          first_name?: string | null
-          first_time?: string | null
+          event_slug?: string | null
           id?: string
           news_id?: string | null
+          position?: number
           published?: boolean
-          second_club?: string | null
-          second_name?: string | null
-          second_time?: string | null
+          race?: string | null
+          race_time?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["live_result_status"]
-          third_club?: string | null
-          third_name?: string | null
-          third_time?: string | null
           updated_at?: string
         }
         Relationships: [
