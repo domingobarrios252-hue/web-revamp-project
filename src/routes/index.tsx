@@ -1599,9 +1599,8 @@ function MostReadAndSocialSection() {
                       seguidores
                     </span>
                   </div>
-                </a>
-              );
-            })}
+              </a>
+            ))}
           </div>
         </div>
       </div>
