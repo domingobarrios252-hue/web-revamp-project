@@ -241,7 +241,13 @@ function LiveGroup({
   );
 }
 
-function LiveRow({ row }: { row: LiveResultRow }) {
+function LiveRow({
+  row,
+  prevPosition,
+}: {
+  row: LiveResultRow;
+  prevPosition: number | undefined;
+}) {
   const [highlight, setHighlight] = useState(false);
   const updatedAtRef = useRef(row.updated_at);
 
@@ -249,31 +255,54 @@ function LiveRow({ row }: { row: LiveResultRow }) {
     if (updatedAtRef.current !== row.updated_at) {
       updatedAtRef.current = row.updated_at;
       setHighlight(true);
-      const t = setTimeout(() => setHighlight(false), 1200);
+      const t = setTimeout(() => setHighlight(false), 1400);
       return () => clearTimeout(t);
     }
   }, [row.updated_at]);
 
+  // Position trend (compared to previous render)
+  const trend: "up" | "down" | "same" | "new" =
+    prevPosition === undefined
+      ? "new"
+      : prevPosition > row.position
+        ? "up"
+        : prevPosition < row.position
+          ? "down"
+          : "same";
+
   return (
     <tr
-      className={`border-b border-border last:border-0 transition-colors duration-700 ${
-        highlight ? "bg-gold/10" : "hover:bg-background/40"
+      className={`border-b border-border last:border-0 transition-all duration-700 ease-out animate-fade-in ${
+        highlight ? "bg-gold/15 shadow-[inset_3px_0_0_0] shadow-gold" : "hover:bg-background/40"
       }`}
     >
       <td className="px-3 py-2.5 text-center">
-        <span
-          className={`font-display inline-flex h-6 w-6 items-center justify-center text-[11px] ${
-            row.position === 1
-              ? "bg-gold text-background"
-              : row.position === 2
-                ? "bg-foreground/30 text-background"
-                : row.position === 3
-                  ? "bg-amber-700/70 text-background"
-                  : "text-muted-foreground"
-          }`}
-        >
-          {row.position}
-        </span>
+        <div className="inline-flex items-center gap-1">
+          <span
+            className={`font-display inline-flex h-6 w-6 items-center justify-center text-[11px] transition-transform duration-500 ${
+              highlight ? "scale-110" : ""
+            } ${
+              row.position === 1
+                ? "bg-gold text-background"
+                : row.position === 2
+                  ? "bg-foreground/30 text-background"
+                  : row.position === 3
+                    ? "bg-amber-700/70 text-background"
+                    : "text-muted-foreground"
+            }`}
+          >
+            {row.position}
+          </span>
+          {trend === "up" && (
+            <ChevronUp className="h-3 w-3 text-emerald-500 animate-fade-in" aria-label="Subió posiciones" />
+          )}
+          {trend === "down" && (
+            <ChevronDown className="h-3 w-3 text-tv-red animate-fade-in" aria-label="Bajó posiciones" />
+          )}
+          {trend === "same" && prevPosition !== undefined && (
+            <Minus className="h-3 w-3 text-muted-foreground/40" aria-hidden />
+          )}
+        </div>
       </td>
       <td className="font-display px-3 py-2.5 uppercase tracking-wider">{row.athlete_name}</td>
       <td className="hidden px-3 py-2.5 text-xs text-muted-foreground sm:table-cell">
