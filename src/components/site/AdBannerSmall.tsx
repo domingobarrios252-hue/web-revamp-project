@@ -67,31 +67,40 @@ export function AdBannerSmall({
     />
   );
 
+  const card = (
+    <div className="overflow-hidden border border-border bg-surface transition-opacity hover:opacity-90">
+      {img}
+    </div>
+  );
+
   return (
     <div className={`flex flex-col items-center ${className}`}>
       <div className="font-condensed mb-1.5 text-[9px] uppercase tracking-widest text-muted-foreground/60">
         Publicidad
       </div>
-      <div className="overflow-hidden border border-border bg-surface">
-        {banner.link_url ? (
-          /^https?:\/\//i.test(banner.link_url) ? (
-            <a
-              href={banner.link_url}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="block transition-opacity hover:opacity-90"
-            >
-              {img}
-            </a>
-          ) : (
-            <a href={banner.link_url} className="block transition-opacity hover:opacity-90">
-              {img}
-            </a>
-          )
+      {banner.link_url ? (
+        /^https?:\/\//i.test(banner.link_url) ? (
+          <a
+            href={banner.link_url}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            aria-label={banner.alt_text ?? banner.name}
+            className="block"
+          >
+            {card}
+          </a>
         ) : (
-          img
-        )}
-      </div>
+          <a
+            href={banner.link_url}
+            aria-label={banner.alt_text ?? banner.name}
+            className="block"
+          >
+            {card}
+          </a>
+        )
+      ) : (
+        card
+      )}
     </div>
   );
 }
