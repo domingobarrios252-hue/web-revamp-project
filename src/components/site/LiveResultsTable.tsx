@@ -24,12 +24,15 @@ export type LiveResultRow = {
  */
 export function LiveResultsTable() {
   const [rows, setRows] = useState<LiveResultRow[] | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const prevPositionsRef = useRef<Map<string, number>>(new Map());
 
   useEffect(() => {
     let cancelled = false;
 
     const fetchRows = async () => {
+      setRefreshing(true);
       const { data } = await supabase
         .from("live_results")
         .select(
@@ -40,7 +43,14 @@ export function LiveResultsTable() {
         .order("sort_order", { ascending: true })
         .order("position", { ascending: true })
         .limit(50);
-      if (!cancelled) setRows((data as LiveResultRow[]) ?? []);
+      if (!cancelled) {
+        setRows((data as LiveResultRow[]) ?? []);
+        setLastUpdated(new Date());
+        // Keep spinner visible briefly so the user perceives the refresh
+        setTimeout(() => {
+          if (!cancelled) setRefreshing(false);
+        }, 400);
+      }
     };
 
     fetchRows();
@@ -56,8 +66,12 @@ export function LiveResultsTable() {
       )
       .subscribe();
 
+    // Soft auto-refresh fallback every 30s in case realtime drops
+    const interval = setInterval(fetchRows, 30_000);
+
     return () => {
       cancelled = true;
+      clearInterval(interval);
       supabase.removeChannel(channel);
     };
   }, []);
@@ -85,7 +99,8 @@ export function LiveResultsTable() {
     }));
   }, [rows]);
 
-  // Track position changes for animation
+  // Snapshot previous positions BEFORE re-render so children can compare
+  const prevPositions = prevPositionsRef.current;
   useEffect(() => {
     if (!rows) return;
     const next = new Map<string, number>();
