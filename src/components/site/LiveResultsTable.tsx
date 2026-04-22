@@ -215,7 +215,11 @@ function LiveGroup({
           </thead>
           <tbody>
             {group.rows.map((r) => (
-              <LiveRow key={r.id} row={r} />
+              <LiveRow
+                key={r.id}
+                row={r}
+                prevPosition={prevPositions.get(r.id)}
+              />
             ))}
           </tbody>
         </table>
@@ -226,9 +230,10 @@ function LiveGroup({
           <Link
             to="/events/$slug"
             params={{ slug: group.event_slug }}
-            className="font-condensed inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
+            className="font-condensed group inline-flex w-full items-center justify-center gap-2 border border-tv-red/60 bg-tv-red/10 px-4 py-2.5 text-[12px] font-bold uppercase tracking-[2.5px] text-tv-red transition-all hover:bg-tv-red hover:text-white"
           >
-            Ver resultados completos <ArrowRight className="h-3 w-3" />
+            Ver resultados completos del evento
+            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       )}
