@@ -459,10 +459,21 @@ function FilterSelect({
   );
 }
 
-function StatusBadge({ status }: { status: LiveResultStatus }) {
+function StatusBadge({
+  status,
+  compact = false,
+}: {
+  status: LiveResultStatus;
+  compact?: boolean;
+}) {
+  const sizeCls = compact
+    ? "px-1.5 py-0.5 text-[8px] tracking-[2px] gap-1"
+    : "px-2 py-1 text-[10px] tracking-[2.5px] gap-1.5";
   if (status === "en_vivo") {
     return (
-      <span className="live-red-tag font-condensed inline-flex shrink-0 items-center gap-1.5 bg-tv-red px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-white">
+      <span
+        className={`live-red-tag font-condensed inline-flex shrink-0 items-center bg-tv-red font-bold uppercase text-white ${sizeCls}`}
+      >
         <span className="live-dot inline-block h-1 w-1 rounded-full bg-white" />
         Live
       </span>
@@ -470,13 +481,18 @@ function StatusBadge({ status }: { status: LiveResultStatus }) {
   }
   if (status === "proxima") {
     return (
-      <span className="font-condensed inline-flex shrink-0 items-center gap-1.5 border border-gold/60 bg-gold/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-        <span aria-hidden>⏳</span> Próxima
+      <span
+        className={`font-condensed inline-flex shrink-0 items-center border border-gold/60 bg-gold/10 font-bold uppercase text-gold ${sizeCls}`}
+      >
+        <span aria-hidden>⏳</span>
+        {compact ? "Próx." : "Próxima"}
       </span>
     );
   }
   return (
-    <span className="font-condensed inline-flex shrink-0 items-center gap-1.5 border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-emerald-400">
+    <span
+      className={`font-condensed inline-flex shrink-0 items-center border border-emerald-500/40 bg-emerald-500/10 font-bold uppercase text-emerald-400 ${sizeCls}`}
+    >
       <span aria-hidden>✓</span> Final
     </span>
   );
