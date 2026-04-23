@@ -208,8 +208,6 @@ function HomePage() {
 
       <LiveNowSection />
 
-      <LiveResultsTable />
-
 
       {/* ÚLTIMAS NOTICIAS — ESPN style */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
@@ -418,7 +416,7 @@ function LiveNowSection() {
         {/* 2-col grid: TV (left, 6/12) | side stack (right, 6/12) with 3 mini-tables */}
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-5">
           {/* LEFT — TV embed + description (col 1-6) */}
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-5">
             <div className="relative aspect-video w-full overflow-hidden border border-border bg-black">
               {isStreamLive && embedUrl ? (
                 <iframe
@@ -509,8 +507,8 @@ function LiveNowSection() {
             </div>
           </div>
 
-          {/* RIGHT — Stack of 3 mini-tables (col 7-12) */}
-          <div className="flex min-w-0 flex-col gap-5 lg:col-span-6">
+          {/* MIDDLE — Stack of mini-tables */}
+          <div className="flex min-w-0 flex-col gap-5 lg:col-span-4">
             {/* Próximas pruebas */}
             <div>
               <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
@@ -630,6 +628,11 @@ function LiveNowSection() {
               </div>
             )}
           </div>
+          {/* RIGHT — Resultados en vivo (mini-carrusel) */}
+          <div className="min-w-0 lg:col-span-3">
+            <LiveResultsTable compact />
+          </div>
+
         </div>
       </div>
     </section>

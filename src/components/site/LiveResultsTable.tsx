@@ -39,8 +39,12 @@ const ALL = "__all__";
  * - Estados: 🔴 LIVE · ✅ FINAL · ⏳ UPCOMING
  * - Auto-refresh cada 15s + realtime postgres_changes
  * - Top 3 destacados, animaciones suaves al actualizar
+ *
+ * Props:
+ * - compact: render mini-carrusel (sin section wrapper / filtros / header grande),
+ *   pensado para encajar en una columna lateral junto a TV y Próximas pruebas.
  */
-export function LiveResultsTable() {
+export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}) {
   const [rows, setRows] = useState<LiveResultRow[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -204,6 +208,9 @@ export function LiveResultsTable() {
   }, [rows]);
 
   if (rows === null) {
+    if (compact) {
+      return <div className="h-32 animate-pulse bg-surface" />;
+    }
     return (
       <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
         <div className="mx-auto max-w-7xl px-5 py-10 md:px-6">
@@ -216,6 +223,77 @@ export function LiveResultsTable() {
   // Si no hay nada absolutamente, ocultar
   if ((rows ?? []).length === 0) return null;
 
+  // ====== COMPACT MODE: mini-carrusel para columna lateral ======
+  if (compact) {
+    return (
+      <div className="min-w-0">
+        <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+          <div className="flex items-center gap-2">
+            <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+              Resultados <span className="text-tv-red">en vivo</span>
+            </h3>
+            <RefreshCw
+              className={`h-3 w-3 text-gold ${refreshing ? "animate-spin" : ""}`}
+              aria-hidden
+            />
+          </div>
+          <span className="font-condensed text-[9px] uppercase tracking-widest text-muted-foreground">
+            {lastUpdated ? formatRelative(lastUpdated) : "auto"}
+          </span>
+        </div>
+
+        {groups.length === 0 ? (
+          <p className="font-condensed py-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
+            Sin resultados
+          </p>
+        ) : (
+          <div className="relative">
+            <div
+              ref={(el) => {
+                scrollerRef.current = el;
+                if (el) requestAnimationFrame(updateScrollState);
+              }}
+              onScroll={updateScrollState}
+              className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
+              {groups.map((g) => (
+                <div
+                  key={`${g.event_name}-${g.race}-${g.category}`}
+                  className="w-[150px] shrink-0 snap-start"
+                >
+                  <LiveGroup group={g} prevPositions={prevPositions} compact />
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-1 flex justify-end gap-1.5">
+              <button
+                type="button"
+                onClick={() => scrollByCards(-1)}
+                aria-label="Anterior"
+                disabled={!canScrollLeft}
+                className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-border bg-background/90 text-foreground transition-all disabled:opacity-30 hover:border-tv-red hover:text-tv-red"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollByCards(1)}
+                aria-label="Siguiente"
+                disabled={!canScrollRight}
+                className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-border bg-background/90 text-foreground transition-all disabled:opacity-30 hover:border-tv-red hover:text-tv-red"
+              >
+                <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ====== DEFAULT MODE: section completa con filtros ======
   return (
     <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-6 md:py-14">
@@ -298,7 +376,6 @@ export function LiveResultsTable() {
             <div
               ref={(el) => {
                 scrollerRef.current = el;
-                // init state on mount/update
                 if (el) requestAnimationFrame(updateScrollState);
               }}
               onScroll={updateScrollState}
@@ -382,10 +459,21 @@ function FilterSelect({
   );
 }
 
-function StatusBadge({ status }: { status: LiveResultStatus }) {
+function StatusBadge({
+  status,
+  compact = false,
+}: {
+  status: LiveResultStatus;
+  compact?: boolean;
+}) {
+  const sizeCls = compact
+    ? "px-1.5 py-0.5 text-[8px] tracking-[2px] gap-1"
+    : "px-2 py-1 text-[10px] tracking-[2.5px] gap-1.5";
   if (status === "en_vivo") {
     return (
-      <span className="live-red-tag font-condensed inline-flex shrink-0 items-center gap-1.5 bg-tv-red px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-white">
+      <span
+        className={`live-red-tag font-condensed inline-flex shrink-0 items-center bg-tv-red font-bold uppercase text-white ${sizeCls}`}
+      >
         <span className="live-dot inline-block h-1 w-1 rounded-full bg-white" />
         Live
       </span>
@@ -393,13 +481,18 @@ function StatusBadge({ status }: { status: LiveResultStatus }) {
   }
   if (status === "proxima") {
     return (
-      <span className="font-condensed inline-flex shrink-0 items-center gap-1.5 border border-gold/60 bg-gold/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-        <span aria-hidden>⏳</span> Próxima
+      <span
+        className={`font-condensed inline-flex shrink-0 items-center border border-gold/60 bg-gold/10 font-bold uppercase text-gold ${sizeCls}`}
+      >
+        <span aria-hidden>⏳</span>
+        {compact ? "Próx." : "Próxima"}
       </span>
     );
   }
   return (
-    <span className="font-condensed inline-flex shrink-0 items-center gap-1.5 border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-emerald-400">
+    <span
+      className={`font-condensed inline-flex shrink-0 items-center border border-emerald-500/40 bg-emerald-500/10 font-bold uppercase text-emerald-400 ${sizeCls}`}
+    >
       <span aria-hidden>✓</span> Final
     </span>
   );
@@ -418,6 +511,7 @@ function formatRelative(date: Date) {
 function LiveGroup({
   group,
   prevPositions,
+  compact = false,
 }: {
   group: {
     event_name: string;
@@ -427,6 +521,7 @@ function LiveGroup({
     rows: LiveResultRow[];
   };
   prevPositions: Map<string, number>;
+  compact?: boolean;
 }) {
   // Determinar estado dominante para el badge del grupo
   const dominantStatus: LiveResultStatus = group.rows.some((r) => r.status === "en_vivo")
@@ -435,63 +530,103 @@ function LiveGroup({
       ? "proxima"
       : "finalizado";
 
-  const showPoints = group.rows.some((r) => r.points !== null && r.points !== undefined);
+  const showPoints = !compact && group.rows.some((r) => r.points !== null && r.points !== undefined);
   const isUpcoming = dominantStatus === "proxima";
+  // En modo compact mostramos solo top 3
+  const visibleRows = compact ? group.rows.slice(0, 3) : group.rows;
+  const remaining = compact ? Math.max(0, group.rows.length - visibleRows.length) : 0;
 
   return (
     <div className="flex h-full flex-col border border-border bg-surface/60 backdrop-blur-sm transition-colors">
-      <div className="flex items-start justify-between gap-2 border-b border-border bg-background/60 px-3 py-2">
+      <div
+        className={`flex items-start justify-between gap-1.5 border-b border-border bg-background/60 ${
+          compact ? "px-2 py-1.5" : "px-3 py-2"
+        }`}
+      >
         <div className="min-w-0">
-          <h3 className="font-display truncate text-sm uppercase tracking-widest text-foreground">
+          <h3
+            className={`font-display truncate uppercase tracking-widest text-foreground ${
+              compact ? "text-[11px]" : "text-sm"
+            }`}
+          >
             {group.event_name}
           </h3>
-          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-            {group.race && <span className="text-gold">{group.race}</span>}
-            {group.category && <span className="truncate">{group.category}</span>}
-          </div>
+          {!compact && (
+            <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+              {group.race && <span className="text-gold">{group.race}</span>}
+              {group.category && <span className="truncate">{group.category}</span>}
+            </div>
+          )}
+          {compact && group.race && (
+            <div className="font-condensed mt-0.5 truncate text-[9px] uppercase tracking-widest text-gold">
+              {group.race}
+            </div>
+          )}
         </div>
-        <StatusBadge status={dominantStatus} />
+        <StatusBadge status={dominantStatus} compact={compact} />
       </div>
 
       {isUpcoming ? (
-        <div className="flex flex-1 items-center justify-center gap-2 px-3 py-6 text-center">
-          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+        <div
+          className={`flex flex-1 items-center justify-center gap-2 text-center ${
+            compact ? "px-2 py-3" : "px-3 py-6"
+          }`}
+        >
+          <span
+            className={`font-condensed uppercase tracking-widest text-muted-foreground ${
+              compact ? "text-[9px]" : "text-[11px]"
+            }`}
+          >
             Inscritos: {group.rows.length}
           </span>
         </div>
       ) : (
         <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-[13px]">
-            <thead>
-              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                <th className="px-2 py-1.5 text-center">#</th>
-                <th className="px-2 py-1.5">Atleta</th>
-                <th className="px-2 py-1.5 text-right">Tiempo</th>
-                {showPoints && <th className="px-2 py-1.5 text-right">Pts</th>}
-              </tr>
-            </thead>
+          <table className={compact ? "w-full text-[10px]" : "w-full text-[13px]"}>
+            {!compact && (
+              <thead>
+                <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <th className="px-2 py-1.5 text-center">#</th>
+                  <th className="px-2 py-1.5">Atleta</th>
+                  <th className="px-2 py-1.5 text-right">Tiempo</th>
+                  {showPoints && <th className="px-2 py-1.5 text-right">Pts</th>}
+                </tr>
+              </thead>
+            )}
             <tbody>
-              {group.rows.map((r) => (
+              {visibleRows.map((r) => (
                 <LiveRow
                   key={r.id}
                   row={r}
                   prevPosition={prevPositions.get(r.id)}
                   showPoints={showPoints}
+                  compact={compact}
                 />
               ))}
             </tbody>
           </table>
+          {compact && remaining > 0 && (
+            <div className="font-condensed border-t border-border/60 px-2 py-1 text-center text-[9px] uppercase tracking-widest text-muted-foreground">
+              +{remaining} más
+            </div>
+          )}
         </div>
       )}
 
       {group.event_slug && !isUpcoming && (
-        <div className="border-t border-border bg-background/30 px-3 py-2">
+        <div
+          className={`border-t border-border bg-background/30 ${
+            compact ? "px-1.5 py-1.5" : "px-3 py-2"
+          }`}
+        >
           <Link
             to="/events/$slug"
             params={{ slug: group.event_slug }}
-            className="font-condensed group inline-flex w-full items-center justify-center gap-1.5 border border-tv-red/60 bg-tv-red/10 px-2 py-1.5 text-[10px] font-bold uppercase tracking-[2px] text-tv-red transition-all hover:bg-tv-red hover:text-white"
+            className={`font-condensed group inline-flex w-full items-center justify-center gap-1 border border-tv-red/60 bg-tv-red/10 font-bold uppercase tracking-[2px] text-tv-red transition-all hover:bg-tv-red hover:text-white ${
+              compact ? "px-1.5 py-1 text-[9px]" : "px-2 py-1.5 text-[10px]"
+            }`}
           >
-            Ver evento
+            {compact ? "Ver evento" : "Ver evento"}
             <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -504,10 +639,12 @@ function LiveRow({
   row,
   prevPosition,
   showPoints,
+  compact = false,
 }: {
   row: LiveResultRow;
   prevPosition: number | undefined;
   showPoints: boolean;
+  compact?: boolean;
 }) {
   const [highlight, setHighlight] = useState(false);
   const updatedAtRef = useRef(row.updated_at);
@@ -531,6 +668,10 @@ function LiveRow({
           : "same";
 
   const isTop3 = row.position >= 1 && row.position <= 3;
+  const cellPad = compact ? "px-1.5 py-1" : "px-2 py-1.5";
+  const nameSize = compact ? "text-[10px]" : "text-[12px]";
+  const timeSize = compact ? "text-[10px]" : "text-[12px]";
+  const posSize = compact ? "h-4 w-4 text-[9px]" : "h-5 w-5 text-[10px]";
 
   return (
     <tr
@@ -542,10 +683,10 @@ function LiveRow({
             : "hover:bg-background/40"
       }`}
     >
-      <td className="px-2 py-1.5 text-center">
+      <td className={`${cellPad} text-center`}>
         <div className="inline-flex items-center gap-0.5">
           <span
-            className={`font-display inline-flex h-5 w-5 items-center justify-center text-[10px] transition-transform duration-500 ${
+            className={`font-display inline-flex items-center justify-center transition-transform duration-500 ${posSize} ${
               highlight ? "scale-110" : ""
             } ${
               row.position === 1
@@ -559,39 +700,46 @@ function LiveRow({
           >
             {row.position}
           </span>
-          {trend === "up" && (
+          {!compact && trend === "up" && (
             <ChevronUp
               className="h-2.5 w-2.5 text-emerald-500 animate-fade-in"
               aria-label="Subió posiciones"
             />
           )}
-          {trend === "down" && (
+          {!compact && trend === "down" && (
             <ChevronDown
               className="h-2.5 w-2.5 text-tv-red animate-fade-in"
               aria-label="Bajó posiciones"
             />
           )}
-          {trend === "same" && prevPosition !== undefined && (
+          {!compact && trend === "same" && prevPosition !== undefined && (
             <Minus className="h-2.5 w-2.5 text-muted-foreground/40" aria-hidden />
           )}
         </div>
       </td>
-      <td className="font-display px-2 py-1.5 uppercase tracking-wider">
-        <span className="inline-flex items-center gap-1 text-[12px] leading-tight">
-          {row.position === 1 && <Trophy className="h-3 w-3 text-gold" aria-hidden />}
+      <td className={`font-display ${cellPad} uppercase tracking-wider`}>
+        <span className={`inline-flex items-center gap-1 leading-tight ${nameSize}`}>
+          {row.position === 1 && (
+            <Trophy
+              className={compact ? "h-2.5 w-2.5 text-gold" : "h-3 w-3 text-gold"}
+              aria-hidden
+            />
+          )}
           <span className="truncate">{row.athlete_name}</span>
         </span>
-        {row.club && (
+        {!compact && row.club && (
           <div className="font-condensed mt-0.5 truncate text-[10px] uppercase tracking-wider text-muted-foreground/80">
             {row.club}
           </div>
         )}
       </td>
-      <td className="px-2 py-1.5 text-right font-mono text-[12px] text-gold whitespace-nowrap">
+      <td
+        className={`${cellPad} text-right font-mono ${timeSize} text-gold whitespace-nowrap`}
+      >
         {row.race_time ?? "—"}
       </td>
       {showPoints && (
-        <td className="px-2 py-1.5 text-right font-mono text-[12px] text-foreground/80">
+        <td className={`${cellPad} text-right font-mono ${timeSize} text-foreground/80`}>
           {row.points !== null && row.points !== undefined ? row.points : "—"}
         </td>
       )}
