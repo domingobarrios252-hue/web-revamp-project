@@ -504,15 +504,10 @@ function LiveNowSection() {
                   </Link>
                 ) : null}
               </div>
+            </div>
           </div>
 
-          {/* RIGHT — Resultados en vivo (mini-carrusel) */}
-          <div className="min-w-0 lg:col-span-3">
-            <LiveResultsTable compact />
-          </div>
-        </div>
-
-          {/* RIGHT — Stack of 3 mini-tables (col 7-12) */}
+          {/* MIDDLE — Stack of mini-tables */}
           <div className="flex min-w-0 flex-col gap-5 lg:col-span-4">
             {/* Próximas pruebas */}
             <div>
