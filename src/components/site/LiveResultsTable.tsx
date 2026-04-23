@@ -245,13 +245,17 @@ export function LiveResultsTable() {
             Sin resultados con esos filtros.
           </p>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div
+            className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 md:-mx-6 md:px-6 [scrollbar-width:thin]"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
             {groups.map((g) => (
-              <LiveGroup
+              <div
                 key={`${g.event_name}-${g.race}-${g.category}`}
-                group={g}
-                prevPositions={prevPositions}
-              />
+                className="w-[280px] shrink-0 snap-start sm:w-[320px]"
+              >
+                <LiveGroup group={g} prevPositions={prevPositions} />
+              </div>
             ))}
           </div>
         )}
