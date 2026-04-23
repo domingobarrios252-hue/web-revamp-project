@@ -245,13 +245,17 @@ export function LiveResultsTable() {
             Sin resultados con esos filtros.
           </p>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div
+            className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 md:-mx-6 md:px-6 [scrollbar-width:thin]"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
             {groups.map((g) => (
-              <LiveGroup
+              <div
                 key={`${g.event_name}-${g.race}-${g.category}`}
-                group={g}
-                prevPositions={prevPositions}
-              />
+                className="w-[280px] shrink-0 snap-start sm:w-[320px]"
+              >
+                <LiveGroup group={g} prevPositions={prevPositions} />
+              </div>
             ))}
           </div>
         )}
@@ -356,36 +360,35 @@ function LiveGroup({
   const isUpcoming = dominantStatus === "proxima";
 
   return (
-    <div className="border border-border bg-surface/60 backdrop-blur-sm transition-colors">
-      <div className="flex items-start justify-between gap-3 border-b border-border bg-background/60 px-4 py-3">
+    <div className="flex h-full flex-col border border-border bg-surface/60 backdrop-blur-sm transition-colors">
+      <div className="flex items-start justify-between gap-2 border-b border-border bg-background/60 px-3 py-2">
         <div className="min-w-0">
-          <h3 className="font-display truncate text-base uppercase tracking-widest text-foreground">
+          <h3 className="font-display truncate text-[13px] uppercase tracking-widest text-foreground">
             {group.event_name}
           </h3>
-          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-3 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[9px] uppercase tracking-widest text-muted-foreground">
             {group.race && <span className="text-gold">{group.race}</span>}
-            {group.category && <span>{group.category}</span>}
+            {group.category && <span className="truncate">{group.category}</span>}
           </div>
         </div>
         <StatusBadge status={dominantStatus} />
       </div>
 
       {isUpcoming ? (
-        <div className="flex items-center justify-center gap-2 px-4 py-8 text-center">
-          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-            Prueba aún no comenzada — inscritos: {group.rows.length}
+        <div className="flex flex-1 items-center justify-center gap-2 px-3 py-6 text-center">
+          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+            Inscritos: {group.rows.length}
           </span>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="flex-1 overflow-x-auto">
+          <table className="w-full text-xs">
             <thead>
-              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                <th className="px-3 py-2 text-center">#</th>
-                <th className="px-3 py-2">Atleta</th>
-                <th className="hidden px-3 py-2 sm:table-cell">Club</th>
-                <th className="px-3 py-2 text-right">Tiempo</th>
-                {showPoints && <th className="px-3 py-2 text-right">Pts</th>}
+              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[9px] uppercase tracking-widest text-muted-foreground">
+                <th className="px-2 py-1.5 text-center">#</th>
+                <th className="px-2 py-1.5">Atleta</th>
+                <th className="px-2 py-1.5 text-right">Tiempo</th>
+                {showPoints && <th className="px-2 py-1.5 text-right">Pts</th>}
               </tr>
             </thead>
             <tbody>
@@ -403,14 +406,14 @@ function LiveGroup({
       )}
 
       {group.event_slug && !isUpcoming && (
-        <div className="border-t border-border bg-background/30 px-4 py-3">
+        <div className="border-t border-border bg-background/30 px-3 py-2">
           <Link
             to="/events/$slug"
             params={{ slug: group.event_slug }}
-            className="font-condensed group inline-flex w-full items-center justify-center gap-2 border border-tv-red/60 bg-tv-red/10 px-4 py-2.5 text-[12px] font-bold uppercase tracking-[2.5px] text-tv-red transition-all hover:bg-tv-red hover:text-white"
+            className="font-condensed group inline-flex w-full items-center justify-center gap-1.5 border border-tv-red/60 bg-tv-red/10 px-2 py-1.5 text-[10px] font-bold uppercase tracking-[2px] text-tv-red transition-all hover:bg-tv-red hover:text-white"
           >
-            Ver resultados completos del evento
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            Ver evento
+            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       )}
@@ -460,10 +463,10 @@ function LiveRow({
             : "hover:bg-background/40"
       }`}
     >
-      <td className="px-3 py-2.5 text-center">
-        <div className="inline-flex items-center gap-1">
+      <td className="px-2 py-1.5 text-center">
+        <div className="inline-flex items-center gap-0.5">
           <span
-            className={`font-display inline-flex h-6 w-6 items-center justify-center text-[11px] transition-transform duration-500 ${
+            className={`font-display inline-flex h-5 w-5 items-center justify-center text-[10px] transition-transform duration-500 ${
               highlight ? "scale-110" : ""
             } ${
               row.position === 1
@@ -479,35 +482,37 @@ function LiveRow({
           </span>
           {trend === "up" && (
             <ChevronUp
-              className="h-3 w-3 text-emerald-500 animate-fade-in"
+              className="h-2.5 w-2.5 text-emerald-500 animate-fade-in"
               aria-label="Subió posiciones"
             />
           )}
           {trend === "down" && (
             <ChevronDown
-              className="h-3 w-3 text-tv-red animate-fade-in"
+              className="h-2.5 w-2.5 text-tv-red animate-fade-in"
               aria-label="Bajó posiciones"
             />
           )}
           {trend === "same" && prevPosition !== undefined && (
-            <Minus className="h-3 w-3 text-muted-foreground/40" aria-hidden />
+            <Minus className="h-2.5 w-2.5 text-muted-foreground/40" aria-hidden />
           )}
         </div>
       </td>
-      <td className="font-display px-3 py-2.5 uppercase tracking-wider">
-        <span className="inline-flex items-center gap-1.5">
-          {row.position === 1 && <Trophy className="h-3 w-3 text-gold" aria-hidden />}
-          {row.athlete_name}
+      <td className="font-display px-2 py-1.5 uppercase tracking-wider">
+        <span className="inline-flex items-center gap-1 text-[11px]">
+          {row.position === 1 && <Trophy className="h-2.5 w-2.5 text-gold" aria-hidden />}
+          <span className="truncate">{row.athlete_name}</span>
         </span>
+        {row.club && (
+          <div className="font-condensed mt-0.5 truncate text-[9px] uppercase tracking-wider text-muted-foreground/80">
+            {row.club}
+          </div>
+        )}
       </td>
-      <td className="hidden px-3 py-2.5 text-xs text-muted-foreground sm:table-cell">
-        {row.club ?? "—"}
-      </td>
-      <td className="px-3 py-2.5 text-right font-mono text-xs text-gold">
+      <td className="px-2 py-1.5 text-right font-mono text-[11px] text-gold whitespace-nowrap">
         {row.race_time ?? "—"}
       </td>
       {showPoints && (
-        <td className="px-3 py-2.5 text-right font-mono text-xs text-foreground/80">
+        <td className="px-2 py-1.5 text-right font-mono text-[11px] text-foreground/80">
           {row.points !== null && row.points !== undefined ? row.points : "—"}
         </td>
       )}
