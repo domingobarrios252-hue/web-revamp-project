@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, RefreshCw, ChevronUp, ChevronDown, Minus, Trophy } from "lucide-react";
+import {
+  ArrowRight,
+  RefreshCw,
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Trophy,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type LiveResultStatus = "en_vivo" | "finalizado" | "proxima";
@@ -36,6 +45,24 @@ export function LiveResultsTable() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const prevPositionsRef = useRef<Map<string, number>>(new Map());
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  };
+
+  const scrollByCards = (dir: -1 | 1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    // Scroll ~ one card width
+    const amount = Math.max(220, Math.round(el.clientWidth * 0.85));
+    el.scrollBy({ left: dir * amount, behavior: "smooth" });
+  };
 
   // Filtros
   const [filterEvent, setFilterEvent] = useState<string>(ALL);
@@ -245,18 +272,70 @@ export function LiveResultsTable() {
             Sin resultados con esos filtros.
           </p>
         ) : (
-          <div
-            className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 md:-mx-6 md:px-6 [scrollbar-width:thin]"
-            style={{ WebkitOverflowScrolling: "touch" }}
-          >
-            {groups.map((g) => (
-              <div
-                key={`${g.event_name}-${g.race}-${g.category}`}
-                className="w-[280px] shrink-0 snap-start sm:w-[320px]"
+          <div className="relative">
+            {/* Botones de navegación */}
+            <button
+              type="button"
+              onClick={() => scrollByCards(-1)}
+              aria-label="Anterior"
+              className={`absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-md backdrop-blur transition-all hover:border-tv-red hover:text-tv-red sm:flex ${
+                canScrollLeft ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollByCards(1)}
+              aria-label="Siguiente"
+              className={`absolute right-0 top-1/2 z-10 translate-x-1/2 -translate-y-1/2 hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-md backdrop-blur transition-all hover:border-tv-red hover:text-tv-red sm:flex ${
+                canScrollRight ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden />
+            </button>
+
+            <div
+              ref={(el) => {
+                scrollerRef.current = el;
+                // init state on mount/update
+                if (el) requestAnimationFrame(updateScrollState);
+              }}
+              onScroll={updateScrollState}
+              className="-mx-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-5 pb-3 md:-mx-6 md:px-6 [scrollbar-width:thin]"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
+              {groups.map((g) => (
+                <div
+                  key={`${g.event_name}-${g.race}-${g.category}`}
+                  className="w-[260px] shrink-0 snap-start sm:w-[280px]"
+                >
+                  <LiveGroup group={g} prevPositions={prevPositions} />
+                </div>
+              ))}
+            </div>
+
+            {/* Botones móvil bajo el carrusel */}
+            <div className="mt-2 flex justify-center gap-2 sm:hidden">
+              <button
+                type="button"
+                onClick={() => scrollByCards(-1)}
+                aria-label="Anterior"
+                disabled={!canScrollLeft}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground transition-all disabled:opacity-30"
               >
-                <LiveGroup group={g} prevPositions={prevPositions} />
-              </div>
-            ))}
+                <ChevronLeft className="h-5 w-5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollByCards(1)}
+                aria-label="Siguiente"
+                disabled={!canScrollRight}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground transition-all disabled:opacity-30"
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden />
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -363,10 +442,10 @@ function LiveGroup({
     <div className="flex h-full flex-col border border-border bg-surface/60 backdrop-blur-sm transition-colors">
       <div className="flex items-start justify-between gap-2 border-b border-border bg-background/60 px-3 py-2">
         <div className="min-w-0">
-          <h3 className="font-display truncate text-[13px] uppercase tracking-widest text-foreground">
+          <h3 className="font-display truncate text-sm uppercase tracking-widest text-foreground">
             {group.event_name}
           </h3>
-          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[9px] uppercase tracking-widest text-muted-foreground">
+          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[10px] uppercase tracking-widest text-muted-foreground">
             {group.race && <span className="text-gold">{group.race}</span>}
             {group.category && <span className="truncate">{group.category}</span>}
           </div>
@@ -376,15 +455,15 @@ function LiveGroup({
 
       {isUpcoming ? (
         <div className="flex flex-1 items-center justify-center gap-2 px-3 py-6 text-center">
-          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
             Inscritos: {group.rows.length}
           </span>
         </div>
       ) : (
         <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-[13px]">
             <thead>
-              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[9px] uppercase tracking-widest text-muted-foreground">
+              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
                 <th className="px-2 py-1.5 text-center">#</th>
                 <th className="px-2 py-1.5">Atleta</th>
                 <th className="px-2 py-1.5 text-right">Tiempo</th>
@@ -498,21 +577,21 @@ function LiveRow({
         </div>
       </td>
       <td className="font-display px-2 py-1.5 uppercase tracking-wider">
-        <span className="inline-flex items-center gap-1 text-[11px]">
-          {row.position === 1 && <Trophy className="h-2.5 w-2.5 text-gold" aria-hidden />}
+        <span className="inline-flex items-center gap-1 text-[12px] leading-tight">
+          {row.position === 1 && <Trophy className="h-3 w-3 text-gold" aria-hidden />}
           <span className="truncate">{row.athlete_name}</span>
         </span>
         {row.club && (
-          <div className="font-condensed mt-0.5 truncate text-[9px] uppercase tracking-wider text-muted-foreground/80">
+          <div className="font-condensed mt-0.5 truncate text-[10px] uppercase tracking-wider text-muted-foreground/80">
             {row.club}
           </div>
         )}
       </td>
-      <td className="px-2 py-1.5 text-right font-mono text-[11px] text-gold whitespace-nowrap">
+      <td className="px-2 py-1.5 text-right font-mono text-[12px] text-gold whitespace-nowrap">
         {row.race_time ?? "—"}
       </td>
       {showPoints && (
-        <td className="px-2 py-1.5 text-right font-mono text-[11px] text-foreground/80">
+        <td className="px-2 py-1.5 text-right font-mono text-[12px] text-foreground/80">
           {row.points !== null && row.points !== undefined ? row.points : "—"}
         </td>
       )}
