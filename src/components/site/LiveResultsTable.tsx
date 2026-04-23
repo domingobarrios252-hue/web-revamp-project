@@ -360,36 +360,35 @@ function LiveGroup({
   const isUpcoming = dominantStatus === "proxima";
 
   return (
-    <div className="border border-border bg-surface/60 backdrop-blur-sm transition-colors">
-      <div className="flex items-start justify-between gap-3 border-b border-border bg-background/60 px-4 py-3">
+    <div className="flex h-full flex-col border border-border bg-surface/60 backdrop-blur-sm transition-colors">
+      <div className="flex items-start justify-between gap-2 border-b border-border bg-background/60 px-3 py-2">
         <div className="min-w-0">
-          <h3 className="font-display truncate text-base uppercase tracking-widest text-foreground">
+          <h3 className="font-display truncate text-[13px] uppercase tracking-widest text-foreground">
             {group.event_name}
           </h3>
-          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-3 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[9px] uppercase tracking-widest text-muted-foreground">
             {group.race && <span className="text-gold">{group.race}</span>}
-            {group.category && <span>{group.category}</span>}
+            {group.category && <span className="truncate">{group.category}</span>}
           </div>
         </div>
         <StatusBadge status={dominantStatus} />
       </div>
 
       {isUpcoming ? (
-        <div className="flex items-center justify-center gap-2 px-4 py-8 text-center">
-          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-            Prueba aún no comenzada — inscritos: {group.rows.length}
+        <div className="flex flex-1 items-center justify-center gap-2 px-3 py-6 text-center">
+          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+            Inscritos: {group.rows.length}
           </span>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="flex-1 overflow-x-auto">
+          <table className="w-full text-xs">
             <thead>
-              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                <th className="px-3 py-2 text-center">#</th>
-                <th className="px-3 py-2">Atleta</th>
-                <th className="hidden px-3 py-2 sm:table-cell">Club</th>
-                <th className="px-3 py-2 text-right">Tiempo</th>
-                {showPoints && <th className="px-3 py-2 text-right">Pts</th>}
+              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[9px] uppercase tracking-widest text-muted-foreground">
+                <th className="px-2 py-1.5 text-center">#</th>
+                <th className="px-2 py-1.5">Atleta</th>
+                <th className="px-2 py-1.5 text-right">Tiempo</th>
+                {showPoints && <th className="px-2 py-1.5 text-right">Pts</th>}
               </tr>
             </thead>
             <tbody>
@@ -407,14 +406,14 @@ function LiveGroup({
       )}
 
       {group.event_slug && !isUpcoming && (
-        <div className="border-t border-border bg-background/30 px-4 py-3">
+        <div className="border-t border-border bg-background/30 px-3 py-2">
           <Link
             to="/events/$slug"
             params={{ slug: group.event_slug }}
-            className="font-condensed group inline-flex w-full items-center justify-center gap-2 border border-tv-red/60 bg-tv-red/10 px-4 py-2.5 text-[12px] font-bold uppercase tracking-[2.5px] text-tv-red transition-all hover:bg-tv-red hover:text-white"
+            className="font-condensed group inline-flex w-full items-center justify-center gap-1.5 border border-tv-red/60 bg-tv-red/10 px-2 py-1.5 text-[10px] font-bold uppercase tracking-[2px] text-tv-red transition-all hover:bg-tv-red hover:text-white"
           >
-            Ver resultados completos del evento
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            Ver evento
+            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       )}
