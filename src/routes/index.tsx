@@ -208,8 +208,6 @@ function HomePage() {
 
       <LiveNowSection />
 
-      <LiveResultsTable />
-
 
       {/* ÚLTIMAS NOTICIAS — ESPN style */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
