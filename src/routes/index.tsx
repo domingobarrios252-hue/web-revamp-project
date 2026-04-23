@@ -628,6 +628,11 @@ function LiveNowSection() {
               </div>
             )}
           </div>
+          {/* RIGHT — Resultados en vivo (mini-carrusel) */}
+          <div className="min-w-0 lg:col-span-3">
+            <LiveResultsTable compact />
+          </div>
+
         </div>
       </div>
     </section>
