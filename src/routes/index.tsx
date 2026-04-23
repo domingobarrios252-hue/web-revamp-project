@@ -508,7 +508,7 @@ function LiveNowSection() {
           </div>
 
           {/* RIGHT — Stack of 3 mini-tables (col 7-12) */}
-          <div className="flex min-w-0 flex-col gap-5 lg:col-span-6">
+          <div className="flex min-w-0 flex-col gap-5 lg:col-span-4">
             {/* Próximas pruebas */}
             <div>
               <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
