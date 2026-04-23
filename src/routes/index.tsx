@@ -316,14 +316,13 @@ function LiveNowSection() {
   const [results, setResults] = useState<LiveResult[]>([]);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [medals, setMedals] = useState<MedalRow[]>([]);
-  const [skaters, setSkaters] = useState<SkaterRanking[]>([]);
   const [showMedals, setShowMedals] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: skaterData }, { data: settingData }] = await Promise.all([
+      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: settingData }] = await Promise.all([
         supabase
           .from("tv_settings")
           .select("live_title, live_subtitle, live_stream_url, live_starts_at, live_ends_at")
@@ -338,7 +337,7 @@ function LiveNowSection() {
           .limit(8),
         supabase
           .from("schedule_items")
-          .select("id, event_name, category, scheduled_at, status, sort_order")
+          .select("id, event_name, category, location, scheduled_at, status, sort_order")
           .eq("published", true)
           .neq("status", "finalizada")
           .order("scheduled_at", { ascending: true })
@@ -352,13 +351,6 @@ function LiveNowSection() {
           .order("bronze", { ascending: false })
           .limit(6),
         supabase
-          .from("skater_rankings")
-          .select("id, position, skater_name, team, country, country_code, flag_url, time_result, category")
-          .eq("published", true)
-          .order("position", { ascending: true })
-          .order("sort_order", { ascending: true })
-          .limit(10),
-        supabase
           .from("site_settings")
           .select("value")
           .eq("key", "home_medals_enabled")
@@ -369,7 +361,6 @@ function LiveNowSection() {
       setResults((lrData as LiveResult[]) ?? []);
       setSchedule((schedData as ScheduleItem[]) ?? []);
       setMedals((medalData as MedalRow[]) ?? []);
-      setSkaters((skaterData as SkaterRanking[]) ?? []);
       const settingValue = settingData?.value as { enabled?: boolean } | null;
       if (settingValue && typeof settingValue.enabled === "boolean") {
         setShowMedals(settingValue.enabled);
@@ -398,7 +389,7 @@ function LiveNowSection() {
   const medalsVisible = showMedals && medals.length > 0;
 
   // Ocultar bloque solo si no hay nada que mostrar
-  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && !medalsVisible && skaters.length === 0) {
+  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && !medalsVisible) {
     return null;
   }
 
