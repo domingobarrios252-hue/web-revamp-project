@@ -223,6 +223,77 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
   // Si no hay nada absolutamente, ocultar
   if ((rows ?? []).length === 0) return null;
 
+  // ====== COMPACT MODE: mini-carrusel para columna lateral ======
+  if (compact) {
+    return (
+      <div className="min-w-0">
+        <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+          <div className="flex items-center gap-2">
+            <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
+              Resultados <span className="text-tv-red">en vivo</span>
+            </h3>
+            <RefreshCw
+              className={`h-3 w-3 text-gold ${refreshing ? "animate-spin" : ""}`}
+              aria-hidden
+            />
+          </div>
+          <span className="font-condensed text-[9px] uppercase tracking-widest text-muted-foreground">
+            {lastUpdated ? formatRelative(lastUpdated) : "auto"}
+          </span>
+        </div>
+
+        {groups.length === 0 ? (
+          <p className="font-condensed py-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
+            Sin resultados
+          </p>
+        ) : (
+          <div className="relative">
+            <div
+              ref={(el) => {
+                scrollerRef.current = el;
+                if (el) requestAnimationFrame(updateScrollState);
+              }}
+              onScroll={updateScrollState}
+              className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
+              {groups.map((g) => (
+                <div
+                  key={`${g.event_name}-${g.race}-${g.category}`}
+                  className="w-[150px] shrink-0 snap-start"
+                >
+                  <LiveGroup group={g} prevPositions={prevPositions} compact />
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-1 flex justify-end gap-1.5">
+              <button
+                type="button"
+                onClick={() => scrollByCards(-1)}
+                aria-label="Anterior"
+                disabled={!canScrollLeft}
+                className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-border bg-background/90 text-foreground transition-all disabled:opacity-30 hover:border-tv-red hover:text-tv-red"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollByCards(1)}
+                aria-label="Siguiente"
+                disabled={!canScrollRight}
+                className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-border bg-background/90 text-foreground transition-all disabled:opacity-30 hover:border-tv-red hover:text-tv-red"
+              >
+                <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ====== DEFAULT MODE: section completa con filtros ======
   return (
     <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-6 md:py-14">
@@ -305,7 +376,6 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
             <div
               ref={(el) => {
                 scrollerRef.current = el;
-                // init state on mount/update
                 if (el) requestAnimationFrame(updateScrollState);
               }}
               onScroll={updateScrollState}
