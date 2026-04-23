@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, RefreshCw, ChevronUp, ChevronDown, Minus } from "lucide-react";
+import { ArrowRight, RefreshCw, ChevronUp, ChevronDown, Minus, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+export type LiveResultStatus = "en_vivo" | "finalizado" | "proxima";
 
 export type LiveResultRow = {
   id: string;
@@ -13,20 +15,39 @@ export type LiveResultRow = {
   athlete_name: string;
   club: string | null;
   race_time: string | null;
-  status: "en_vivo" | "finalizado";
+  points: number | null;
+  status: LiveResultStatus;
   sort_order: number;
   updated_at: string;
 };
 
+const REFRESH_MS = 15_000;
+const ALL = "__all__";
+
 /**
- * Live Results table — realtime, sorted by position, with smooth animations.
- * Used on the homepage. Only shows results with status="en_vivo" by default.
+ * Live Results — real-time sports results module.
+ * - Filtros: Evento / Carrera / Categoría
+ * - Estados: 🔴 LIVE · ✅ FINAL · ⏳ UPCOMING
+ * - Auto-refresh cada 15s + realtime postgres_changes
+ * - Top 3 destacados, animaciones suaves al actualizar
  */
 export function LiveResultsTable() {
   const [rows, setRows] = useState<LiveResultRow[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const prevPositionsRef = useRef<Map<string, number>>(new Map());
+
+  // Filtros
+  const [filterEvent, setFilterEvent] = useState<string>(ALL);
+  const [filterRace, setFilterRace] = useState<string>(ALL);
+  const [filterCategory, setFilterCategory] = useState<string>(ALL);
+
+  // Tick para mostrar "hace Xs" actualizado
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const i = setInterval(() => setTick((n) => n + 1), 1000);
+    return () => clearInterval(i);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -36,20 +57,18 @@ export function LiveResultsTable() {
       const { data } = await supabase
         .from("live_results")
         .select(
-          "id, event_name, event_slug, race, category, position, athlete_name, club, race_time, status, sort_order, updated_at",
+          "id, event_name, event_slug, race, category, position, athlete_name, club, race_time, points, status, sort_order, updated_at",
         )
         .eq("published", true)
-        .eq("status", "en_vivo")
         .order("sort_order", { ascending: true })
         .order("position", { ascending: true })
-        .limit(50);
+        .limit(200);
       if (!cancelled) {
         setRows((data as LiveResultRow[]) ?? []);
         setLastUpdated(new Date());
-        // Keep spinner visible briefly so the user perceives the refresh
         setTimeout(() => {
           if (!cancelled) setRefreshing(false);
-        }, 400);
+        }, 350);
       }
     };
 
@@ -60,14 +79,12 @@ export function LiveResultsTable() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "live_results" },
-        () => {
-          fetchRows();
-        },
+        () => fetchRows(),
       )
       .subscribe();
 
-    // Soft auto-refresh fallback every 30s in case realtime drops
-    const interval = setInterval(fetchRows, 30_000);
+    // Auto-refresh cada 15s (cumple requisito UX)
+    const interval = setInterval(fetchRows, REFRESH_MS);
 
     return () => {
       cancelled = true;
@@ -76,11 +93,59 @@ export function LiveResultsTable() {
     };
   }, []);
 
-  // Group by event + race
+  // Listas únicas para los selects
+  const allEvents = useMemo(
+    () => Array.from(new Set((rows ?? []).map((r) => r.event_name))).sort(),
+    [rows],
+  );
+  const allRaces = useMemo(() => {
+    const subset = (rows ?? []).filter(
+      (r) => filterEvent === ALL || r.event_name === filterEvent,
+    );
+    return Array.from(new Set(subset.map((r) => r.race).filter(Boolean) as string[])).sort();
+  }, [rows, filterEvent]);
+  const allCategories = useMemo(() => {
+    const subset = (rows ?? []).filter(
+      (r) =>
+        (filterEvent === ALL || r.event_name === filterEvent) &&
+        (filterRace === ALL || r.race === filterRace),
+    );
+    return Array.from(
+      new Set(subset.map((r) => r.category).filter(Boolean) as string[]),
+    ).sort();
+  }, [rows, filterEvent, filterRace]);
+
+  // Reset filtros dependientes si dejan de existir
+  useEffect(() => {
+    if (filterRace !== ALL && !allRaces.includes(filterRace)) setFilterRace(ALL);
+  }, [allRaces, filterRace]);
+  useEffect(() => {
+    if (filterCategory !== ALL && !allCategories.includes(filterCategory))
+      setFilterCategory(ALL);
+  }, [allCategories, filterCategory]);
+
+  const filtered = useMemo(() => {
+    return (rows ?? []).filter(
+      (r) =>
+        (filterEvent === ALL || r.event_name === filterEvent) &&
+        (filterRace === ALL || r.race === filterRace) &&
+        (filterCategory === ALL || r.category === filterCategory),
+    );
+  }, [rows, filterEvent, filterRace, filterCategory]);
+
+  // Agrupar por evento + carrera + categoría
   const groups = useMemo(() => {
-    if (!rows) return [];
-    const map = new Map<string, { event_name: string; event_slug: string | null; race: string | null; category: string | null; rows: LiveResultRow[] }>();
-    for (const r of rows) {
+    const map = new Map<
+      string,
+      {
+        event_name: string;
+        event_slug: string | null;
+        race: string | null;
+        category: string | null;
+        rows: LiveResultRow[];
+      }
+    >();
+    for (const r of filtered) {
       const key = `${r.event_name}::${r.race ?? ""}::${r.category ?? ""}`;
       if (!map.has(key)) {
         map.set(key, {
@@ -93,13 +158,16 @@ export function LiveResultsTable() {
       }
       map.get(key)!.rows.push(r);
     }
-    return Array.from(map.values()).map((g) => ({
-      ...g,
-      rows: g.rows.sort((a, b) => a.position - b.position),
-    }));
-  }, [rows]);
+    // Orden de grupos: live primero, luego upcoming, luego final
+    return Array.from(map.values())
+      .map((g) => ({
+        ...g,
+        rows: g.rows.sort((a, b) => a.position - b.position),
+      }))
+      .sort((a, b) => groupPriority(a.rows) - groupPriority(b.rows));
+  }, [filtered]);
 
-  // Snapshot previous positions BEFORE re-render so children can compare
+  // Snapshot de posiciones previas para animar tendencia
   const prevPositions = prevPositionsRef.current;
   useEffect(() => {
     if (!rows) return;
@@ -118,12 +186,14 @@ export function LiveResultsTable() {
     );
   }
 
-  if (groups.length === 0) return null;
+  // Si no hay nada absolutamente, ocultar
+  if ((rows ?? []).length === 0) return null;
 
   return (
     <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-6 md:py-14">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+        {/* HEADER */}
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
           <div className="flex items-center gap-3">
             <div className="live-red-tag font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
               <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
@@ -148,17 +218,107 @@ export function LiveResultsTable() {
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {groups.map((g) => (
-            <LiveGroup
-              key={`${g.event_name}-${g.race}-${g.category}`}
-              group={g}
-              prevPositions={prevPositions}
-            />
-          ))}
+        {/* FILTROS */}
+        <div className="mb-6 grid gap-2 sm:grid-cols-3">
+          <FilterSelect
+            label="Evento"
+            value={filterEvent}
+            onChange={setFilterEvent}
+            options={allEvents}
+          />
+          <FilterSelect
+            label="Carrera"
+            value={filterRace}
+            onChange={setFilterRace}
+            options={allRaces}
+          />
+          <FilterSelect
+            label="Categoría"
+            value={filterCategory}
+            onChange={setFilterCategory}
+            options={allCategories}
+          />
         </div>
+
+        {groups.length === 0 ? (
+          <p className="font-condensed py-10 text-center text-xs uppercase tracking-widest text-muted-foreground">
+            Sin resultados con esos filtros.
+          </p>
+        ) : (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {groups.map((g) => (
+              <LiveGroup
+                key={`${g.event_name}-${g.race}-${g.category}`}
+                group={g}
+                prevPositions={prevPositions}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
+  );
+}
+
+function groupPriority(rows: LiveResultRow[]): number {
+  // Determina el estado dominante del grupo (prioriza el más "vivo")
+  if (rows.some((r) => r.status === "en_vivo")) return 0;
+  if (rows.some((r) => r.status === "proxima")) return 1;
+  return 2;
+}
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+}) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="font-condensed text-[10px] uppercase tracking-[3px] text-muted-foreground">
+        {label}
+      </span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="font-condensed border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-foreground transition-colors focus:border-gold focus:outline-none"
+      >
+        <option value={ALL}>Todos</option>
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function StatusBadge({ status }: { status: LiveResultStatus }) {
+  if (status === "en_vivo") {
+    return (
+      <span className="live-red-tag font-condensed inline-flex shrink-0 items-center gap-1.5 bg-tv-red px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-white">
+        <span className="live-dot inline-block h-1 w-1 rounded-full bg-white" />
+        Live
+      </span>
+    );
+  }
+  if (status === "proxima") {
+    return (
+      <span className="font-condensed inline-flex shrink-0 items-center gap-1.5 border border-gold/60 bg-gold/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
+        <span aria-hidden>⏳</span> Próxima
+      </span>
+    );
+  }
+  return (
+    <span className="font-condensed inline-flex shrink-0 items-center gap-1.5 border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-emerald-400">
+      <span aria-hidden>✓</span> Final
+    </span>
   );
 }
 
@@ -185,8 +345,18 @@ function LiveGroup({
   };
   prevPositions: Map<string, number>;
 }) {
+  // Determinar estado dominante para el badge del grupo
+  const dominantStatus: LiveResultStatus = group.rows.some((r) => r.status === "en_vivo")
+    ? "en_vivo"
+    : group.rows.some((r) => r.status === "proxima")
+      ? "proxima"
+      : "finalizado";
+
+  const showPoints = group.rows.some((r) => r.points !== null && r.points !== undefined);
+  const isUpcoming = dominantStatus === "proxima";
+
   return (
-    <div className="border border-border bg-surface/60 backdrop-blur-sm">
+    <div className="border border-border bg-surface/60 backdrop-blur-sm transition-colors">
       <div className="flex items-start justify-between gap-3 border-b border-border bg-background/60 px-4 py-3">
         <div className="min-w-0">
           <h3 className="font-display truncate text-base uppercase tracking-widest text-foreground">
@@ -197,35 +367,42 @@ function LiveGroup({
             {group.category && <span>{group.category}</span>}
           </div>
         </div>
-        <span className="live-red-tag font-condensed inline-flex shrink-0 items-center gap-1.5 bg-tv-red px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-white">
-          <span className="live-dot inline-block h-1 w-1 rounded-full bg-white" />
-          Live
-        </span>
+        <StatusBadge status={dominantStatus} />
       </div>
 
-      <div className="overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-              <th className="px-3 py-2 text-center">#</th>
-              <th className="px-3 py-2">Atleta</th>
-              <th className="hidden px-3 py-2 sm:table-cell">Club</th>
-              <th className="px-3 py-2 text-right">Tiempo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {group.rows.map((r) => (
-              <LiveRow
-                key={r.id}
-                row={r}
-                prevPosition={prevPositions.get(r.id)}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {isUpcoming ? (
+        <div className="flex items-center justify-center gap-2 px-4 py-8 text-center">
+          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+            Prueba aún no comenzada — inscritos: {group.rows.length}
+          </span>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+                <th className="px-3 py-2 text-center">#</th>
+                <th className="px-3 py-2">Atleta</th>
+                <th className="hidden px-3 py-2 sm:table-cell">Club</th>
+                <th className="px-3 py-2 text-right">Tiempo</th>
+                {showPoints && <th className="px-3 py-2 text-right">Pts</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {group.rows.map((r) => (
+                <LiveRow
+                  key={r.id}
+                  row={r}
+                  prevPosition={prevPositions.get(r.id)}
+                  showPoints={showPoints}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      {group.event_slug && (
+      {group.event_slug && !isUpcoming && (
         <div className="border-t border-border bg-background/30 px-4 py-3">
           <Link
             to="/events/$slug"
@@ -244,9 +421,11 @@ function LiveGroup({
 function LiveRow({
   row,
   prevPosition,
+  showPoints,
 }: {
   row: LiveResultRow;
   prevPosition: number | undefined;
+  showPoints: boolean;
 }) {
   const [highlight, setHighlight] = useState(false);
   const updatedAtRef = useRef(row.updated_at);
@@ -260,7 +439,6 @@ function LiveRow({
     }
   }, [row.updated_at]);
 
-  // Position trend (compared to previous render)
   const trend: "up" | "down" | "same" | "new" =
     prevPosition === undefined
       ? "new"
@@ -270,10 +448,16 @@ function LiveRow({
           ? "down"
           : "same";
 
+  const isTop3 = row.position >= 1 && row.position <= 3;
+
   return (
     <tr
       className={`border-b border-border last:border-0 transition-all duration-700 ease-out animate-fade-in ${
-        highlight ? "bg-gold/15 shadow-[inset_3px_0_0_0] shadow-gold" : "hover:bg-background/40"
+        highlight
+          ? "bg-gold/15 shadow-[inset_3px_0_0_0] shadow-gold"
+          : isTop3
+            ? "bg-gold/[0.04] hover:bg-background/40"
+            : "hover:bg-background/40"
       }`}
     >
       <td className="px-3 py-2.5 text-center">
@@ -294,23 +478,39 @@ function LiveRow({
             {row.position}
           </span>
           {trend === "up" && (
-            <ChevronUp className="h-3 w-3 text-emerald-500 animate-fade-in" aria-label="Subió posiciones" />
+            <ChevronUp
+              className="h-3 w-3 text-emerald-500 animate-fade-in"
+              aria-label="Subió posiciones"
+            />
           )}
           {trend === "down" && (
-            <ChevronDown className="h-3 w-3 text-tv-red animate-fade-in" aria-label="Bajó posiciones" />
+            <ChevronDown
+              className="h-3 w-3 text-tv-red animate-fade-in"
+              aria-label="Bajó posiciones"
+            />
           )}
           {trend === "same" && prevPosition !== undefined && (
             <Minus className="h-3 w-3 text-muted-foreground/40" aria-hidden />
           )}
         </div>
       </td>
-      <td className="font-display px-3 py-2.5 uppercase tracking-wider">{row.athlete_name}</td>
+      <td className="font-display px-3 py-2.5 uppercase tracking-wider">
+        <span className="inline-flex items-center gap-1.5">
+          {row.position === 1 && <Trophy className="h-3 w-3 text-gold" aria-hidden />}
+          {row.athlete_name}
+        </span>
+      </td>
       <td className="hidden px-3 py-2.5 text-xs text-muted-foreground sm:table-cell">
         {row.club ?? "—"}
       </td>
       <td className="px-3 py-2.5 text-right font-mono text-xs text-gold">
         {row.race_time ?? "—"}
       </td>
+      {showPoints && (
+        <td className="px-3 py-2.5 text-right font-mono text-xs text-foreground/80">
+          {row.points !== null && row.points !== undefined ? row.points : "—"}
+        </td>
+      )}
     </tr>
   );
 }

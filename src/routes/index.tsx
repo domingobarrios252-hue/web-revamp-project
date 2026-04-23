@@ -294,6 +294,7 @@ type ScheduleItem = {
   id: string;
   event_name: string;
   category: string | null;
+  location: string | null;
   scheduled_at: string;
   status: "programada" | "en_curso" | "finalizada";
   sort_order: number;
@@ -310,31 +311,18 @@ type MedalRow = {
   sort_order: number;
 };
 
-type SkaterRanking = {
-  id: string;
-  position: number;
-  skater_name: string;
-  team: string | null;
-  country: string | null;
-  country_code: string | null;
-  flag_url: string | null;
-  time_result: string | null;
-  category: string | null;
-};
-
 function LiveNowSection() {
   const [tv, setTv] = useState<TvSettings | null>(null);
   const [results, setResults] = useState<LiveResult[]>([]);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [medals, setMedals] = useState<MedalRow[]>([]);
-  const [skaters, setSkaters] = useState<SkaterRanking[]>([]);
   const [showMedals, setShowMedals] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: skaterData }, { data: settingData }] = await Promise.all([
+      const [{ data: tvData }, { data: lrData }, { data: schedData }, { data: medalData }, { data: settingData }] = await Promise.all([
         supabase
           .from("tv_settings")
           .select("live_title, live_subtitle, live_stream_url, live_starts_at, live_ends_at")
@@ -349,7 +337,7 @@ function LiveNowSection() {
           .limit(8),
         supabase
           .from("schedule_items")
-          .select("id, event_name, category, scheduled_at, status, sort_order")
+          .select("id, event_name, category, location, scheduled_at, status, sort_order")
           .eq("published", true)
           .neq("status", "finalizada")
           .order("scheduled_at", { ascending: true })
@@ -363,13 +351,6 @@ function LiveNowSection() {
           .order("bronze", { ascending: false })
           .limit(6),
         supabase
-          .from("skater_rankings")
-          .select("id, position, skater_name, team, country, country_code, flag_url, time_result, category")
-          .eq("published", true)
-          .order("position", { ascending: true })
-          .order("sort_order", { ascending: true })
-          .limit(10),
-        supabase
           .from("site_settings")
           .select("value")
           .eq("key", "home_medals_enabled")
@@ -380,7 +361,6 @@ function LiveNowSection() {
       setResults((lrData as LiveResult[]) ?? []);
       setSchedule((schedData as ScheduleItem[]) ?? []);
       setMedals((medalData as MedalRow[]) ?? []);
-      setSkaters((skaterData as SkaterRanking[]) ?? []);
       const settingValue = settingData?.value as { enabled?: boolean } | null;
       if (settingValue && typeof settingValue.enabled === "boolean") {
         setShowMedals(settingValue.enabled);
@@ -409,7 +389,7 @@ function LiveNowSection() {
   const medalsVisible = showMedals && medals.length > 0;
 
   // Ocultar bloque solo si no hay nada que mostrar
-  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && !medalsVisible && skaters.length === 0) {
+  if (!hasStreamUrl && liveResults.length === 0 && schedule.length === 0 && !medalsVisible) {
     return null;
   }
 
@@ -545,32 +525,44 @@ function LiveNowSection() {
                 </p>
               ) : (
                 <div className="border border-border bg-background/50">
-                  <div className="font-condensed grid grid-cols-[48px_1fr_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[60px_1fr_auto]">
-                    <span>Hora</span>
-                    <span>Prueba</span>
-                    <span className="text-right">Cat.</span>
-                  </div>
                   <ul className="divide-y divide-border">
-                    {schedule.slice(0, 3).map((s) => {
+                    {schedule.slice(0, 4).map((s) => {
                       const dt = new Date(s.scheduled_at);
                       const isLive = s.status === "en_curso";
                       return (
                         <li
                           key={s.id}
-                          className="font-condensed grid grid-cols-[44px_1fr_auto] items-start gap-2 px-2.5 py-2 text-[11px] sm:grid-cols-[60px_1fr_auto] sm:items-center sm:text-xs"
+                          className="font-condensed flex items-start gap-3 px-3 py-2.5"
                         >
-                          <span className="font-display text-[13px] leading-none tracking-wider text-gold sm:text-sm">
-                            {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
-                          </span>
-                          <span className="font-display flex min-w-0 items-start gap-1.5 uppercase tracking-wider sm:items-center">
-                            {isLive && (
-                              <span className="live-dot mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red sm:mt-0" />
-                            )}
-                            <span className="break-words leading-tight">{s.event_name}</span>
-                          </span>
-                          <span className="break-words text-right text-[9px] uppercase leading-tight tracking-widest text-muted-foreground sm:text-[10px]">
-                            {s.category ?? "—"}
-                          </span>
+                          <div className="flex shrink-0 flex-col items-center justify-center border border-border bg-surface px-2 py-1.5 leading-none">
+                            <span className="font-display text-[10px] uppercase tracking-widest text-muted-foreground">
+                              {dt.toLocaleDateString("es-ES", { month: "short" }).replace(".", "")}
+                            </span>
+                            <span className="font-display text-base text-gold">
+                              {dt.toLocaleDateString("es-ES", { day: "2-digit" })}
+                            </span>
+                            <span className="font-display text-[9px] uppercase tracking-widest text-muted-foreground">
+                              {dt.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="font-display flex items-center gap-1.5 text-xs uppercase tracking-wider text-foreground">
+                              {isLive && (
+                                <span className="live-dot inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-tv-red" />
+                              )}
+                              <span className="break-words leading-tight">{s.event_name}</span>
+                            </div>
+                            <div className="font-condensed mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
+                              {s.location && (
+                                <span className="inline-flex items-center gap-1">
+                                  <MapPin className="h-2.5 w-2.5" /> {s.location}
+                                </span>
+                              )}
+                              {s.category && (
+                                <span className="text-foreground/70">{s.category}</span>
+                              )}
+                            </div>
+                          </div>
                         </li>
                       );
                     })}
@@ -579,82 +571,7 @@ function LiveNowSection() {
               )}
             </div>
 
-            {/* Clasificación patinadores (compacta, estilo medallero) */}
-            <div>
-              <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-3.5 w-3.5 text-gold" />
-                  <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
-                    Clasif. patinadores
-                  </h3>
-                </div>
-                {skaters[0]?.category && (
-                  <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
-                    {skaters[0].category}
-                  </span>
-                )}
-              </div>
-              {skaters.length === 0 ? (
-                <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                  Sin clasificación
-                </p>
-              ) : (
-                <div className="border border-border bg-background/50">
-                  <div className="font-condensed grid grid-cols-[24px_1fr_32px_auto] items-center gap-2 border-b border-border bg-surface px-2.5 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[28px_1fr_70px_36px_auto]">
-                    <span className="text-center">#</span>
-                    <span>Nombre</span>
-                    <span className="hidden truncate sm:block">Equipo</span>
-                    <span className="text-center">País</span>
-                    <span className="text-right">Tiempo</span>
-                  </div>
-                  <ul className="divide-y divide-border">
-                    {skaters.slice(0, 6).map((s) => (
-                      <li
-                        key={s.id}
-                        className="font-condensed grid grid-cols-[24px_1fr_28px_auto] items-center gap-2 px-2.5 py-2 text-[11px] sm:grid-cols-[28px_1fr_70px_36px_auto] sm:text-xs"
-                      >
-                        <span
-                          className={`font-display inline-flex h-5 w-5 items-center justify-center justify-self-center text-[10px] ${
-                            s.position === 1
-                              ? "bg-gold text-background"
-                              : s.position === 2
-                                ? "bg-foreground/30 text-background"
-                                : s.position === 3
-                                  ? "bg-amber-700/70 text-background"
-                                  : "text-muted-foreground"
-                          }`}
-                        >
-                          {s.position}
-                        </span>
-                        <span className="font-display min-w-0 break-words uppercase leading-tight tracking-wider text-foreground">
-                          {s.skater_name}
-                        </span>
-                        <span className="hidden break-words text-[10px] uppercase leading-tight tracking-widest text-muted-foreground sm:block">
-                          {s.team ?? "—"}
-                        </span>
-                        <span className="flex items-center justify-center">
-                          {s.flag_url ? (
-                            <img
-                              src={s.flag_url}
-                              alt={s.country ?? ""}
-                              className="h-3 w-4 shrink-0 object-cover sm:h-3.5 sm:w-5"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <span className="text-[9px] uppercase tracking-widest text-muted-foreground sm:text-[10px]">
-                              {s.country_code ?? "—"}
-                            </span>
-                          )}
-                        </span>
-                        <span className="text-right font-mono text-[10px] text-gold sm:text-[11px]">
-                          {s.time_result ?? "—"}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+            {/* (El bloque de Clasif. patinadores fue eliminado — ahora se gestiona en Resultados en vivo) */}
 
             {/* Medallero países */}
             {medalsVisible && (

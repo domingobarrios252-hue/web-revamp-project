@@ -328,6 +328,7 @@ export type Database = {
           event_slug: string | null
           id: string
           news_id: string | null
+          points: number | null
           position: number
           published: boolean
           race: string | null
@@ -345,6 +346,7 @@ export type Database = {
           event_slug?: string | null
           id?: string
           news_id?: string | null
+          points?: number | null
           position?: number
           published?: boolean
           race?: string | null
@@ -362,6 +364,7 @@ export type Database = {
           event_slug?: string | null
           id?: string
           news_id?: string | null
+          points?: number | null
           position?: number
           published?: boolean
           race?: string | null
@@ -768,6 +771,7 @@ export type Database = {
           created_at: string
           event_name: string
           id: string
+          location: string | null
           published: boolean
           scheduled_at: string
           sort_order: number
@@ -779,6 +783,7 @@ export type Database = {
           created_at?: string
           event_name: string
           id?: string
+          location?: string | null
           published?: boolean
           scheduled_at: string
           sort_order?: number
@@ -790,6 +795,7 @@ export type Database = {
           created_at?: string
           event_name?: string
           id?: string
+          location?: string | null
           published?: boolean
           scheduled_at?: string
           sort_order?: number
@@ -813,57 +819,6 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: Json
-        }
-        Relationships: []
-      }
-      skater_rankings: {
-        Row: {
-          category: string | null
-          country: string | null
-          country_code: string | null
-          created_at: string
-          event_name: string | null
-          flag_url: string | null
-          id: string
-          position: number
-          published: boolean
-          skater_name: string
-          sort_order: number
-          team: string | null
-          time_result: string | null
-          updated_at: string
-        }
-        Insert: {
-          category?: string | null
-          country?: string | null
-          country_code?: string | null
-          created_at?: string
-          event_name?: string | null
-          flag_url?: string | null
-          id?: string
-          position?: number
-          published?: boolean
-          skater_name: string
-          sort_order?: number
-          team?: string | null
-          time_result?: string | null
-          updated_at?: string
-        }
-        Update: {
-          category?: string | null
-          country?: string | null
-          country_code?: string | null
-          created_at?: string
-          event_name?: string | null
-          flag_url?: string | null
-          id?: string
-          position?: number
-          published?: boolean
-          skater_name?: string
-          sort_order?: number
-          team?: string | null
-          time_result?: string | null
-          updated_at?: string
         }
         Relationships: []
       }
@@ -1246,7 +1201,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "user"
-      live_result_status: "en_vivo" | "finalizado"
+      live_result_status: "en_vivo" | "finalizado" | "proxima"
       mvp_gender: "masculino" | "femenino"
       mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
@@ -1379,7 +1334,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "user"],
-      live_result_status: ["en_vivo", "finalizado"],
+      live_result_status: ["en_vivo", "finalizado", "proxima"],
       mvp_gender: ["masculino", "femenino"],
       mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
