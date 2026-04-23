@@ -7,6 +7,8 @@ type AuthState = {
   user: User | null;
   isAdmin: boolean;
   isEditor: boolean;
+  isColaborador: boolean;
+  sectionId: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string, displayName?: string) => Promise<{ error: string | null }>;
@@ -20,15 +22,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
+  const [sectionId, setSectionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadRoles = async (uid: string | null) => {
     if (!uid) {
       setRoles([]);
+      setSectionId(null);
       return;
     }
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-    setRoles((data ?? []).map((r) => r.role as string));
+    const [{ data: r }, { data: p }] = await Promise.all([
+      supabase.from("user_roles").select("role").eq("user_id", uid),
+      supabase.from("profiles").select("section_id").eq("user_id", uid).maybeSingle(),
+    ]);
+    setRoles((r ?? []).map((x) => x.role as string));
+    setSectionId(((p as { section_id: string | null } | null)?.section_id) ?? null);
   };
 
   useEffect(() => {
@@ -91,6 +99,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAdmin: roles.includes("admin"),
         isEditor: roles.includes("admin") || roles.includes("editor"),
+        isColaborador: roles.includes("colaborador"),
+        sectionId,
         loading,
         signIn,
         signUp,
