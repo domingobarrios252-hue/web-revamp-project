@@ -45,6 +45,24 @@ export function LiveResultsTable() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const prevPositionsRef = useRef<Map<string, number>>(new Map());
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  };
+
+  const scrollByCards = (dir: -1 | 1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    // Scroll ~ one card width
+    const amount = Math.max(220, Math.round(el.clientWidth * 0.85));
+    el.scrollBy({ left: dir * amount, behavior: "smooth" });
+  };
 
   // Filtros
   const [filterEvent, setFilterEvent] = useState<string>(ALL);
