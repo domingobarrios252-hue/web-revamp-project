@@ -208,6 +208,9 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
   }, [rows]);
 
   if (rows === null) {
+    if (compact) {
+      return <div className="h-32 animate-pulse bg-surface" />;
+    }
     return (
       <section className="border-y-2 border-tv-red/40 bg-gradient-to-br from-background via-surface to-background">
         <div className="mx-auto max-w-7xl px-5 py-10 md:px-6">
