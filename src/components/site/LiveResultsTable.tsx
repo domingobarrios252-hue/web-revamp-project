@@ -495,6 +495,7 @@ function formatRelative(date: Date) {
 function LiveGroup({
   group,
   prevPositions,
+  compact = false,
 }: {
   group: {
     event_name: string;
@@ -504,6 +505,7 @@ function LiveGroup({
     rows: LiveResultRow[];
   };
   prevPositions: Map<string, number>;
+  compact?: boolean;
 }) {
   // Determinar estado dominante para el badge del grupo
   const dominantStatus: LiveResultStatus = group.rows.some((r) => r.status === "en_vivo")
@@ -512,63 +514,103 @@ function LiveGroup({
       ? "proxima"
       : "finalizado";
 
-  const showPoints = group.rows.some((r) => r.points !== null && r.points !== undefined);
+  const showPoints = !compact && group.rows.some((r) => r.points !== null && r.points !== undefined);
   const isUpcoming = dominantStatus === "proxima";
+  // En modo compact mostramos solo top 3
+  const visibleRows = compact ? group.rows.slice(0, 3) : group.rows;
+  const remaining = compact ? Math.max(0, group.rows.length - visibleRows.length) : 0;
 
   return (
     <div className="flex h-full flex-col border border-border bg-surface/60 backdrop-blur-sm transition-colors">
-      <div className="flex items-start justify-between gap-2 border-b border-border bg-background/60 px-3 py-2">
+      <div
+        className={`flex items-start justify-between gap-1.5 border-b border-border bg-background/60 ${
+          compact ? "px-2 py-1.5" : "px-3 py-2"
+        }`}
+      >
         <div className="min-w-0">
-          <h3 className="font-display truncate text-sm uppercase tracking-widest text-foreground">
+          <h3
+            className={`font-display truncate uppercase tracking-widest text-foreground ${
+              compact ? "text-[11px]" : "text-sm"
+            }`}
+          >
             {group.event_name}
           </h3>
-          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-            {group.race && <span className="text-gold">{group.race}</span>}
-            {group.category && <span className="truncate">{group.category}</span>}
-          </div>
+          {!compact && (
+            <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+              {group.race && <span className="text-gold">{group.race}</span>}
+              {group.category && <span className="truncate">{group.category}</span>}
+            </div>
+          )}
+          {compact && group.race && (
+            <div className="font-condensed mt-0.5 truncate text-[9px] uppercase tracking-widest text-gold">
+              {group.race}
+            </div>
+          )}
         </div>
-        <StatusBadge status={dominantStatus} />
+        <StatusBadge status={dominantStatus} compact={compact} />
       </div>
 
       {isUpcoming ? (
-        <div className="flex flex-1 items-center justify-center gap-2 px-3 py-6 text-center">
-          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+        <div
+          className={`flex flex-1 items-center justify-center gap-2 text-center ${
+            compact ? "px-2 py-3" : "px-3 py-6"
+          }`}
+        >
+          <span
+            className={`font-condensed uppercase tracking-widest text-muted-foreground ${
+              compact ? "text-[9px]" : "text-[11px]"
+            }`}
+          >
             Inscritos: {group.rows.length}
           </span>
         </div>
       ) : (
         <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-[13px]">
-            <thead>
-              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                <th className="px-2 py-1.5 text-center">#</th>
-                <th className="px-2 py-1.5">Atleta</th>
-                <th className="px-2 py-1.5 text-right">Tiempo</th>
-                {showPoints && <th className="px-2 py-1.5 text-right">Pts</th>}
-              </tr>
-            </thead>
+          <table className={compact ? "w-full text-[10px]" : "w-full text-[13px]"}>
+            {!compact && (
+              <thead>
+                <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <th className="px-2 py-1.5 text-center">#</th>
+                  <th className="px-2 py-1.5">Atleta</th>
+                  <th className="px-2 py-1.5 text-right">Tiempo</th>
+                  {showPoints && <th className="px-2 py-1.5 text-right">Pts</th>}
+                </tr>
+              </thead>
+            )}
             <tbody>
-              {group.rows.map((r) => (
+              {visibleRows.map((r) => (
                 <LiveRow
                   key={r.id}
                   row={r}
                   prevPosition={prevPositions.get(r.id)}
                   showPoints={showPoints}
+                  compact={compact}
                 />
               ))}
             </tbody>
           </table>
+          {compact && remaining > 0 && (
+            <div className="font-condensed border-t border-border/60 px-2 py-1 text-center text-[9px] uppercase tracking-widest text-muted-foreground">
+              +{remaining} más
+            </div>
+          )}
         </div>
       )}
 
       {group.event_slug && !isUpcoming && (
-        <div className="border-t border-border bg-background/30 px-3 py-2">
+        <div
+          className={`border-t border-border bg-background/30 ${
+            compact ? "px-1.5 py-1.5" : "px-3 py-2"
+          }`}
+        >
           <Link
             to="/events/$slug"
             params={{ slug: group.event_slug }}
-            className="font-condensed group inline-flex w-full items-center justify-center gap-1.5 border border-tv-red/60 bg-tv-red/10 px-2 py-1.5 text-[10px] font-bold uppercase tracking-[2px] text-tv-red transition-all hover:bg-tv-red hover:text-white"
+            className={`font-condensed group inline-flex w-full items-center justify-center gap-1 border border-tv-red/60 bg-tv-red/10 font-bold uppercase tracking-[2px] text-tv-red transition-all hover:bg-tv-red hover:text-white ${
+              compact ? "px-1.5 py-1 text-[9px]" : "px-2 py-1.5 text-[10px]"
+            }`}
           >
-            Ver evento
+            {compact ? "Ver evento" : "Ver evento"}
             <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
