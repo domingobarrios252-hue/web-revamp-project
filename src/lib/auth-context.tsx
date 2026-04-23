@@ -49,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setTimeout(() => loadRoles(newSession.user.id), 0);
       } else {
         setRoles([]);
+        setSectionId(null);
       }
     });
 
