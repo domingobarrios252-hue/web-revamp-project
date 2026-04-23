@@ -639,10 +639,12 @@ function LiveRow({
   row,
   prevPosition,
   showPoints,
+  compact = false,
 }: {
   row: LiveResultRow;
   prevPosition: number | undefined;
   showPoints: boolean;
+  compact?: boolean;
 }) {
   const [highlight, setHighlight] = useState(false);
   const updatedAtRef = useRef(row.updated_at);
@@ -666,6 +668,10 @@ function LiveRow({
           : "same";
 
   const isTop3 = row.position >= 1 && row.position <= 3;
+  const cellPad = compact ? "px-1.5 py-1" : "px-2 py-1.5";
+  const nameSize = compact ? "text-[10px]" : "text-[12px]";
+  const timeSize = compact ? "text-[10px]" : "text-[12px]";
+  const posSize = compact ? "h-4 w-4 text-[9px]" : "h-5 w-5 text-[10px]";
 
   return (
     <tr
@@ -677,10 +683,10 @@ function LiveRow({
             : "hover:bg-background/40"
       }`}
     >
-      <td className="px-2 py-1.5 text-center">
+      <td className={`${cellPad} text-center`}>
         <div className="inline-flex items-center gap-0.5">
           <span
-            className={`font-display inline-flex h-5 w-5 items-center justify-center text-[10px] transition-transform duration-500 ${
+            className={`font-display inline-flex items-center justify-center transition-transform duration-500 ${posSize} ${
               highlight ? "scale-110" : ""
             } ${
               row.position === 1
@@ -694,39 +700,46 @@ function LiveRow({
           >
             {row.position}
           </span>
-          {trend === "up" && (
+          {!compact && trend === "up" && (
             <ChevronUp
               className="h-2.5 w-2.5 text-emerald-500 animate-fade-in"
               aria-label="Subió posiciones"
             />
           )}
-          {trend === "down" && (
+          {!compact && trend === "down" && (
             <ChevronDown
               className="h-2.5 w-2.5 text-tv-red animate-fade-in"
               aria-label="Bajó posiciones"
             />
           )}
-          {trend === "same" && prevPosition !== undefined && (
+          {!compact && trend === "same" && prevPosition !== undefined && (
             <Minus className="h-2.5 w-2.5 text-muted-foreground/40" aria-hidden />
           )}
         </div>
       </td>
-      <td className="font-display px-2 py-1.5 uppercase tracking-wider">
-        <span className="inline-flex items-center gap-1 text-[12px] leading-tight">
-          {row.position === 1 && <Trophy className="h-3 w-3 text-gold" aria-hidden />}
+      <td className={`font-display ${cellPad} uppercase tracking-wider`}>
+        <span className={`inline-flex items-center gap-1 leading-tight ${nameSize}`}>
+          {row.position === 1 && (
+            <Trophy
+              className={compact ? "h-2.5 w-2.5 text-gold" : "h-3 w-3 text-gold"}
+              aria-hidden
+            />
+          )}
           <span className="truncate">{row.athlete_name}</span>
         </span>
-        {row.club && (
+        {!compact && row.club && (
           <div className="font-condensed mt-0.5 truncate text-[10px] uppercase tracking-wider text-muted-foreground/80">
             {row.club}
           </div>
         )}
       </td>
-      <td className="px-2 py-1.5 text-right font-mono text-[12px] text-gold whitespace-nowrap">
+      <td
+        className={`${cellPad} text-right font-mono ${timeSize} text-gold whitespace-nowrap`}
+      >
         {row.race_time ?? "—"}
       </td>
       {showPoints && (
-        <td className="px-2 py-1.5 text-right font-mono text-[12px] text-foreground/80">
+        <td className={`${cellPad} text-right font-mono ${timeSize} text-foreground/80`}>
           {row.points !== null && row.points !== undefined ? row.points : "—"}
         </td>
       )}
