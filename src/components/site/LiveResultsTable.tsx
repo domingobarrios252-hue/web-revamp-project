@@ -577,21 +577,21 @@ function LiveRow({
         </div>
       </td>
       <td className="font-display px-2 py-1.5 uppercase tracking-wider">
-        <span className="inline-flex items-center gap-1 text-[11px]">
-          {row.position === 1 && <Trophy className="h-2.5 w-2.5 text-gold" aria-hidden />}
+        <span className="inline-flex items-center gap-1 text-[12px] leading-tight">
+          {row.position === 1 && <Trophy className="h-3 w-3 text-gold" aria-hidden />}
           <span className="truncate">{row.athlete_name}</span>
         </span>
         {row.club && (
-          <div className="font-condensed mt-0.5 truncate text-[9px] uppercase tracking-wider text-muted-foreground/80">
+          <div className="font-condensed mt-0.5 truncate text-[10px] uppercase tracking-wider text-muted-foreground/80">
             {row.club}
           </div>
         )}
       </td>
-      <td className="px-2 py-1.5 text-right font-mono text-[11px] text-gold whitespace-nowrap">
+      <td className="px-2 py-1.5 text-right font-mono text-[12px] text-gold whitespace-nowrap">
         {row.race_time ?? "—"}
       </td>
       {showPoints && (
-        <td className="px-2 py-1.5 text-right font-mono text-[11px] text-foreground/80">
+        <td className="px-2 py-1.5 text-right font-mono text-[12px] text-foreground/80">
           {row.points !== null && row.points !== undefined ? row.points : "—"}
         </td>
       )}
