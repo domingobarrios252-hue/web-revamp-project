@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, ListOrdered, Info, Timer } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, Info, Timer } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -100,9 +100,6 @@ function AdminLayout() {
           <AdminLink to="/admin/medallero" icon={<Medal className="h-4 w-4" />}>
             Medallero (países)
           </AdminLink>
-          <AdminLink to="/admin/skater-rankings" icon={<ListOrdered className="h-4 w-4" />}>
-            Clasif. patinadores
-          </AdminLink>
           <AdminLink to="/admin/tv-emisiones" icon={<Radio className="h-4 w-4" />}>
             TV — Emisiones
           </AdminLink>
@@ -145,7 +142,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/skater-rankings" | "/admin/live-results";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;

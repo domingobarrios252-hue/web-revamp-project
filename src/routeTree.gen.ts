@@ -37,7 +37,6 @@ import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisione
 import { Route as AdminTvRouteImport } from './routes/admin.tv'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nosotros'
-import { Route as AdminSkaterRankingsRouteImport } from './routes/admin.skater-rankings'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
@@ -197,11 +196,6 @@ const AdminSobreNosotrosRoute = AdminSobreNosotrosRouteImport.update({
   path: '/sobre-nosotros',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminSkaterRankingsRoute = AdminSkaterRankingsRouteImport.update({
-  id: '/skater-rankings',
-  path: '/skater-rankings',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminScheduleRoute = AdminScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -321,7 +315,6 @@ export interface FileRoutesByFullPath {
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
-  '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -369,7 +362,6 @@ export interface FileRoutesByTo {
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
-  '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -419,7 +411,6 @@ export interface FileRoutesById {
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
-  '/admin/skater-rankings': typeof AdminSkaterRankingsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -470,7 +461,6 @@ export interface FileRouteTypes {
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
-    | '/admin/skater-rankings'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -518,7 +508,6 @@ export interface FileRouteTypes {
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
-    | '/admin/skater-rankings'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -567,7 +556,6 @@ export interface FileRouteTypes {
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
-    | '/admin/skater-rankings'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -813,13 +801,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSobreNosotrosRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/skater-rankings': {
-      id: '/admin/skater-rankings'
-      path: '/skater-rankings'
-      fullPath: '/admin/skater-rankings'
-      preLoaderRoute: typeof AdminSkaterRankingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/schedule': {
       id: '/admin/schedule'
       path: '/schedule'
@@ -966,7 +947,6 @@ interface AdminRouteChildren {
   AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
-  AdminSkaterRankingsRoute: typeof AdminSkaterRankingsRoute
   AdminSobreNosotrosRoute: typeof AdminSobreNosotrosRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminTvRoute: typeof AdminTvRoute
@@ -993,7 +973,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminScheduleRoute: AdminScheduleRoute,
-  AdminSkaterRankingsRoute: AdminSkaterRankingsRoute,
   AdminSobreNosotrosRoute: AdminSobreNosotrosRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminTvRoute: AdminTvRoute,
