@@ -1,9 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Trash2, X, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, X, ArrowUp, ArrowDown, Sparkles, Eraser } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+
+// Slug reservado para datos de ejemplo. Cualquier resultado con este event_slug
+// se considera "demo" y puede ser limpiado/resembrado sin tocar datos reales.
+const DEMO_SLUG = "demo-ejemplo";
+const DEMO_EVENT_NAME = "[DEMO] Campeonato Ejemplo 2026";
+const DEMO_SCHEDULE_PREFIX = "[DEMO]";
 
 export const Route = createFileRoute("/admin/live-results")({
   head: () => ({
