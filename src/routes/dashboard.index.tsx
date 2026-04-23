@@ -275,7 +275,7 @@ function PostEditor({
     const newStatus: "draft" | "pending" = asPending ? "pending" : "draft";
     // Buscar un writer por defecto: el primero publicado, o usar email
     const defaultWriter = writers[0];
-    const payload: Record<string, unknown> = {
+    const basePayload = {
       title: parsed.data.title,
       slug: parsed.data.slug,
       excerpt: parsed.data.excerpt ?? null,
@@ -286,8 +286,10 @@ function PostEditor({
       writer_id: defaultWriter?.id ?? null,
     };
     const { error } = item
-      ? await supabase.from("news").update(payload).eq("id", item.id)
-      : await supabase.from("news").insert({ ...payload, created_by: user?.id });
+      ? await supabase.from("news").update(basePayload).eq("id", item.id)
+      : await supabase
+          .from("news")
+          .insert({ ...basePayload, created_by: user?.id ?? null });
     setSaving(false);
     if (error) {
       toast.error(error.message);

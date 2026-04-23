@@ -15,6 +15,7 @@ import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -23,6 +24,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
@@ -37,11 +39,13 @@ import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisione
 import { Route as AdminTvRouteImport } from './routes/admin.tv'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nosotros'
+import { Route as AdminSectionsRouteImport } from './routes/admin.sections'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
+import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
@@ -86,6 +90,11 @@ const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   path: '/patrocinadores',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CookiesRoute = CookiesRouteImport.update({
   id: '/cookies',
   path: '/cookies',
@@ -125,6 +134,11 @@ const EntrevistasIndexRoute = EntrevistasIndexRouteImport.update({
   id: '/entrevistas/',
   path: '/entrevistas/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -196,6 +210,11 @@ const AdminSobreNosotrosRoute = AdminSobreNosotrosRouteImport.update({
   path: '/sobre-nosotros',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSectionsRoute = AdminSectionsRouteImport.update({
+  id: '/sections',
+  path: '/sections',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminScheduleRoute = AdminScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -219,6 +238,11 @@ const AdminRedactoresRoute = AdminRedactoresRouteImport.update({
 const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
   id: '/premios-mvp',
   path: '/premios-mvp',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPendientesRoute = AdminPendientesRouteImport.update({
+  id: '/pendientes',
+  path: '/pendientes',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminPatrocinadoresRoute = AdminPatrocinadoresRouteImport.update({
@@ -293,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
@@ -310,11 +335,13 @@ export interface FileRoutesByFullPath {
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/sections': typeof AdminSectionsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -329,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
@@ -357,11 +385,13 @@ export interface FileRoutesByTo {
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/sections': typeof AdminSectionsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -376,6 +406,7 @@ export interface FileRoutesByTo {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
   '/eventos': typeof EventosIndexRoute
   '/noticias': typeof NoticiasIndexRoute
@@ -389,6 +420,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
@@ -406,11 +438,13 @@ export interface FileRoutesById {
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
+  '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/sections': typeof AdminSectionsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -425,6 +459,7 @@ export interface FileRoutesById {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
@@ -439,6 +474,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
+    | '/dashboard'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
@@ -456,11 +492,13 @@ export interface FileRouteTypes {
     | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/pendientes'
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
+    | '/admin/sections'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -475,6 +513,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/sobre/$slug'
     | '/admin/'
+    | '/dashboard/'
     | '/entrevistas/'
     | '/eventos/'
     | '/noticias/'
@@ -503,11 +542,13 @@ export interface FileRouteTypes {
     | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/pendientes'
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
+    | '/admin/sections'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -522,6 +563,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/sobre/$slug'
     | '/admin'
+    | '/dashboard'
     | '/entrevistas'
     | '/eventos'
     | '/noticias'
@@ -534,6 +576,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
+    | '/dashboard'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
@@ -551,11 +594,13 @@ export interface FileRouteTypes {
     | '/admin/medallero'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
+    | '/admin/pendientes'
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
+    | '/admin/sections'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -570,6 +615,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/sobre/$slug'
     | '/admin/'
+    | '/dashboard/'
     | '/entrevistas/'
     | '/eventos/'
     | '/noticias/'
@@ -583,6 +629,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
   CookiesRoute: typeof CookiesRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
@@ -647,6 +694,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatrocinadoresRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cookies': {
       id: '/cookies'
       path: '/cookies'
@@ -702,6 +756,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/entrevistas/'
       preLoaderRoute: typeof EntrevistasIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -801,6 +862,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSobreNosotrosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sections': {
+      id: '/admin/sections'
+      path: '/sections'
+      fullPath: '/admin/sections'
+      preLoaderRoute: typeof AdminSectionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/schedule': {
       id: '/admin/schedule'
       path: '/schedule'
@@ -834,6 +902,13 @@ declare module '@tanstack/react-router' {
       path: '/premios-mvp'
       fullPath: '/admin/premios-mvp'
       preLoaderRoute: typeof AdminPremiosMvpRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/pendientes': {
+      id: '/admin/pendientes'
+      path: '/pendientes'
+      fullPath: '/admin/pendientes'
+      preLoaderRoute: typeof AdminPendientesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/patrocinadores': {
@@ -942,11 +1017,13 @@ interface AdminRouteChildren {
   AdminMedalleroRoute: typeof AdminMedalleroRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
+  AdminPendientesRoute: typeof AdminPendientesRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
   AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
+  AdminSectionsRoute: typeof AdminSectionsRoute
   AdminSobreNosotrosRoute: typeof AdminSobreNosotrosRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminTvRoute: typeof AdminTvRoute
@@ -968,11 +1045,13 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminMedalleroRoute: AdminMedalleroRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
+  AdminPendientesRoute: AdminPendientesRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
   AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminScheduleRoute: AdminScheduleRoute,
+  AdminSectionsRoute: AdminSectionsRoute,
   AdminSobreNosotrosRoute: AdminSobreNosotrosRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminTvRoute: AdminTvRoute,
@@ -984,12 +1063,25 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface DashboardRouteChildren {
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
   CookiesRoute: CookiesRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
