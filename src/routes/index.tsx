@@ -414,9 +414,9 @@ function LiveNowSection() {
         </div>
 
         {/* 2-col grid: TV (left, 6/12) | side stack (right, 6/12) with 3 mini-tables */}
-        <div className="grid gap-6 lg:grid-cols-12 lg:gap-5">
+        <div className="grid items-stretch gap-6 lg:grid-cols-12 lg:gap-5">
           {/* LEFT — TV embed + description (col 1-6) */}
-          <div className="lg:col-span-5">
+          <div className="flex h-full min-w-0 flex-col lg:col-span-5">
             <div className="relative aspect-video w-full overflow-hidden border border-border bg-black">
               {isStreamLive && embedUrl ? (
                 <iframe
