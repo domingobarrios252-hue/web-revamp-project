@@ -503,16 +503,12 @@ function LiveNowSection() {
                     {startsAt && now < startsAt ? "Próxima emisión" : "Ver últimas emisiones"}
                   </Link>
                 ) : null}
+              </div>
+            </div>
           </div>
-
-          {/* RIGHT — Resultados en vivo (mini-carrusel) */}
-          <div className="min-w-0 lg:col-span-3">
-            <LiveResultsTable compact />
-          </div>
-        </div>
-      </div>
 
           {/* MIDDLE — Stack of mini-tables */}
+          <div className="flex min-w-0 flex-col gap-5 lg:col-span-4">
           <div className="flex min-w-0 flex-col gap-5 lg:col-span-4">
             {/* Próximas pruebas */}
             <div>
