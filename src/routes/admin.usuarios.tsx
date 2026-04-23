@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Shield, ShieldCheck, ShieldOff, UserPlus } from "lucide-react";
+import { Shield, ShieldCheck, ShieldOff, UserPlus, PenLine } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
-type Profile = { user_id: string; display_name: string | null };
-type RoleRow = { user_id: string; role: "admin" | "editor" | "user" };
+type Profile = { user_id: string; display_name: string | null; section_id: string | null };
+type RoleRow = { user_id: string; role: "admin" | "editor" | "user" | "colaborador" };
+type Section = { id: string; name: string };
 
 export const Route = createFileRoute("/admin/usuarios")({
   component: AdminUsersPage,
@@ -16,16 +17,19 @@ function AdminUsersPage() {
   const { isAdmin, user: me } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [roles, setRoles] = useState<RoleRow[]>([]);
+  const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
 
   const reload = async () => {
     setLoading(true);
-    const [{ data: p }, { data: r }] = await Promise.all([
-      supabase.from("profiles").select("user_id, display_name"),
+    const [{ data: p }, { data: r }, { data: s }] = await Promise.all([
+      supabase.from("profiles").select("user_id, display_name, section_id"),
       supabase.from("user_roles").select("user_id, role"),
+      supabase.from("sections").select("id, name").order("sort_order"),
     ]);
     setProfiles((p as Profile[]) ?? []);
     setRoles((r as RoleRow[]) ?? []);
+    setSections((s as Section[]) ?? []);
     setLoading(false);
   };
 
@@ -37,7 +41,11 @@ function AdminUsersPage() {
     return <p className="text-muted-foreground">Solo administradores.</p>;
   }
 
-  const setRole = async (userId: string, role: "admin" | "editor", enable: boolean) => {
+  const setRole = async (
+    userId: string,
+    role: "admin" | "editor" | "colaborador",
+    enable: boolean
+  ) => {
     if (enable) {
       const { error } = await supabase.from("user_roles").insert({ user_id: userId, role });
       if (error && !error.message.includes("duplicate")) toast.error(error.message);
@@ -54,6 +62,18 @@ function AdminUsersPage() {
     reload();
   };
 
+  const setSection = async (userId: string, sectionId: string | null) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ section_id: sectionId })
+      .eq("user_id", userId);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Sección actualizada");
+      reload();
+    }
+  };
+
   return (
     <div>
       <div className="mb-5 flex items-center justify-between">
@@ -63,8 +83,10 @@ function AdminUsersPage() {
       <div className="mb-4 flex items-start gap-2 border border-border bg-surface p-3 text-xs text-muted-foreground">
         <UserPlus className="mt-0.5 h-4 w-4 text-gold" />
         <p>
-          Los usuarios se registran desde <code className="text-gold">/auth</code>. Aquí asignas roles
-          de <strong>admin</strong> (acceso total) o <strong>editor</strong> (gestiona noticias).
+          Los usuarios se registran desde <code className="text-gold">/auth</code>. Aquí asignas
+          roles: <strong>admin</strong> (acceso total), <strong>editor</strong> (gestión y
+          aprobación de noticias) o <strong>colaborador</strong> (solo crea sus propias noticias en
+          su sección).
         </p>
       </div>
 
@@ -79,6 +101,7 @@ function AdminUsersPage() {
               <tr className="font-condensed border-b border-border bg-background text-left text-[11px] uppercase tracking-widest text-muted-foreground">
                 <th className="px-3 py-2">Usuario</th>
                 <th className="px-3 py-2">Roles</th>
+                <th className="px-3 py-2">Sección</th>
                 <th className="px-3 py-2"></th>
               </tr>
             </thead>
@@ -86,11 +109,13 @@ function AdminUsersPage() {
               {profiles.map((p) => {
                 const userRoles = roles.filter((r) => r.user_id === p.user_id).map((r) => r.role);
                 const isMe = p.user_id === me?.id;
+                const isColab = userRoles.includes("colaborador");
                 return (
                   <tr key={p.user_id} className="border-b border-border/50 last:border-0">
                     <td className="px-3 py-2">
                       <div className="font-semibold text-foreground">
-                        {p.display_name ?? "Sin nombre"} {isMe && <span className="text-xs text-gold">(tú)</span>}
+                        {p.display_name ?? "Sin nombre"}{" "}
+                        {isMe && <span className="text-xs text-gold">(tú)</span>}
                       </div>
                       <div className="text-xs text-muted-foreground">{p.user_id}</div>
                     </td>
@@ -107,6 +132,8 @@ function AdminUsersPage() {
                                 ? "bg-gold/20 text-gold"
                                 : r === "editor"
                                 ? "bg-foreground/10 text-foreground"
+                                : r === "colaborador"
+                                ? "bg-gold/10 text-gold"
                                 : "bg-muted text-muted-foreground"
                             }`}
                           >
@@ -116,18 +143,44 @@ function AdminUsersPage() {
                       </div>
                     </td>
                     <td className="px-3 py-2">
+                      <select
+                        value={p.section_id ?? ""}
+                        onChange={(e) => setSection(p.user_id, e.target.value || null)}
+                        disabled={!isColab}
+                        title={isColab ? "Asignar sección" : "Solo aplica a colaboradores"}
+                        className="border border-border bg-background px-2 py-1 text-xs focus:border-gold focus:outline-none disabled:opacity-50"
+                      >
+                        <option value="">—</option>
+                        {sections.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-3 py-2">
                       <div className="flex flex-wrap justify-end gap-1.5">
                         <RoleToggle
                           enabled={userRoles.includes("admin")}
-                          onClick={() => setRole(p.user_id, "admin", !userRoles.includes("admin"))}
+                          onClick={() =>
+                            setRole(p.user_id, "admin", !userRoles.includes("admin"))
+                          }
                           icon={<ShieldCheck className="h-3.5 w-3.5" />}
                           label="Admin"
                         />
                         <RoleToggle
                           enabled={userRoles.includes("editor")}
-                          onClick={() => setRole(p.user_id, "editor", !userRoles.includes("editor"))}
+                          onClick={() =>
+                            setRole(p.user_id, "editor", !userRoles.includes("editor"))
+                          }
                           icon={<Shield className="h-3.5 w-3.5" />}
                           label="Editor"
+                        />
+                        <RoleToggle
+                          enabled={isColab}
+                          onClick={() => setRole(p.user_id, "colaborador", !isColab)}
+                          icon={<PenLine className="h-3.5 w-3.5" />}
+                          label="Colab."
                         />
                       </div>
                     </td>
