@@ -294,6 +294,7 @@ type ScheduleItem = {
   id: string;
   event_name: string;
   category: string | null;
+  location: string | null;
   scheduled_at: string;
   status: "programada" | "en_curso" | "finalizada";
   sort_order: number;
@@ -308,18 +309,6 @@ type MedalRow = {
   silver: number;
   bronze: number;
   sort_order: number;
-};
-
-type SkaterRanking = {
-  id: string;
-  position: number;
-  skater_name: string;
-  team: string | null;
-  country: string | null;
-  country_code: string | null;
-  flag_url: string | null;
-  time_result: string | null;
-  category: string | null;
 };
 
 function LiveNowSection() {
