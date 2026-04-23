@@ -575,7 +575,9 @@ export type Database = {
           published: boolean
           published_at: string
           read_minutes: number | null
+          section_id: string | null
           slug: string
+          status: Database["public"]["Enums"]["post_status"]
           title: string
           updated_at: string
           views_count: number
@@ -596,7 +598,9 @@ export type Database = {
           published?: boolean
           published_at?: string
           read_minutes?: number | null
+          section_id?: string | null
           slug: string
+          status?: Database["public"]["Enums"]["post_status"]
           title: string
           updated_at?: string
           views_count?: number
@@ -617,7 +621,9 @@ export type Database = {
           published?: boolean
           published_at?: string
           read_minutes?: number | null
+          section_id?: string | null
           slug?: string
+          status?: Database["public"]["Enums"]["post_status"]
           title?: string
           updated_at?: string
           views_count?: number
@@ -629,6 +635,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "news_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
             referencedColumns: ["id"]
           },
           {
@@ -711,6 +724,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          section_id: string | null
           updated_at: string
           user_id: string
         }
@@ -719,6 +733,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          section_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -727,10 +742,19 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          section_id?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       regions: {
         Row: {
@@ -800,6 +824,39 @@ export type Database = {
           scheduled_at?: string
           sort_order?: number
           status?: Database["public"]["Enums"]["schedule_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sections: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
           updated_at?: string
         }
         Relationships: []
@@ -1187,6 +1244,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_user_section_id: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1200,11 +1258,12 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "editor" | "user"
+      app_role: "admin" | "editor" | "user" | "colaborador"
       live_result_status: "en_vivo" | "finalizado" | "proxima"
       mvp_gender: "masculino" | "femenino"
       mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
+      post_status: "draft" | "pending" | "published"
       schedule_status: "programada" | "en_curso" | "finalizada"
     }
     CompositeTypes: {
@@ -1333,11 +1392,12 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "editor", "user"],
+      app_role: ["admin", "editor", "user", "colaborador"],
       live_result_status: ["en_vivo", "finalizado", "proxima"],
       mvp_gender: ["masculino", "femenino"],
       mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
+      post_status: ["draft", "pending", "published"],
       schedule_status: ["programada", "en_curso", "finalizada"],
     },
   },

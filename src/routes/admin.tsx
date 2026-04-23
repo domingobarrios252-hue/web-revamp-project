@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, Info, Timer } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, Info, Timer, Layers, Inbox } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -14,14 +14,19 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminLayout() {
-  const { user, isEditor, isAdmin, loading } = useAuth();
+  const { user, isEditor, isAdmin, isColaborador, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && !user) {
       navigate({ to: "/auth" });
+      return;
     }
-  }, [user, loading, navigate]);
+    // Colaboradores no acceden a /admin: redirigir a su panel
+    if (!loading && user && !isEditor && isColaborador) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [user, loading, isEditor, isColaborador, navigate]);
 
   if (loading) {
     return <div className="px-6 py-10 text-muted-foreground">Cargando…</div>;
@@ -34,14 +39,14 @@ function AdminLayout() {
         <h1 className="font-display text-3xl tracking-widest">Sin permisos</h1>
         <p className="mt-3 text-muted-foreground">
           Tu cuenta <span className="text-gold">{user.email}</span> aún no tiene rol de
-          administrador.
+          administrador o editor.
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Pide a un administrador existente que te asigne el rol, o si eres el primer
-          usuario, asigna manualmente tu rol desde la sección de base de datos.
-        </p>
-        <p className="mt-2 text-xs text-muted-foreground">
-          (SQL: <code>insert into user_roles(user_id, role) values ('{user.id}', 'admin');</code>)
+          Si eres colaborador, accede a tu panel desde{" "}
+          <Link to="/dashboard" className="text-gold hover:underline">
+            /dashboard
+          </Link>
+          .
         </p>
       </div>
     );
@@ -54,6 +59,12 @@ function AdminLayout() {
         <nav className="flex flex-col gap-1">
           <AdminLink to="/admin" exact icon={<FileText className="h-4 w-4" />}>
             Noticias
+          </AdminLink>
+          <AdminLink to="/admin/pendientes" icon={<Inbox className="h-4 w-4" />}>
+            Cola de revisión
+          </AdminLink>
+          <AdminLink to="/admin/sections" icon={<Layers className="h-4 w-4" />}>
+            Secciones
           </AdminLink>
           <AdminLink to="/admin/categorias" icon={<Tag className="h-4 w-4" />}>
             Categorías
@@ -142,7 +153,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/dashboard";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
