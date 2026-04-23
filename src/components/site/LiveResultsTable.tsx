@@ -226,7 +226,7 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
   // ====== COMPACT MODE: mini-carrusel para columna lateral ======
   if (compact) {
     return (
-      <div className="min-w-0">
+      <div className="flex h-full min-w-0 flex-col">
         <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
           <div className="flex items-center gap-2">
             <h3 className="font-display text-sm uppercase tracking-widest text-foreground">
@@ -243,24 +243,24 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
         </div>
 
         {groups.length === 0 ? (
-          <p className="font-condensed py-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
+          <p className="font-condensed flex-1 py-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
             Sin resultados
           </p>
         ) : (
-          <div className="relative">
+          <div className="relative flex flex-1 flex-col">
             <div
               ref={(el) => {
                 scrollerRef.current = el;
                 if (el) requestAnimationFrame(updateScrollState);
               }}
               onScroll={updateScrollState}
-              className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
+              className="flex flex-1 snap-x snap-mandatory items-stretch gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
               style={{ WebkitOverflowScrolling: "touch" }}
             >
               {groups.map((g) => (
                 <div
                   key={`${g.event_name}-${g.race}-${g.category}`}
-                  className="w-[150px] shrink-0 snap-start"
+                  className="flex w-[150px] shrink-0 snap-start"
                 >
                   <LiveGroup group={g} prevPositions={prevPositions} compact />
                 </div>
