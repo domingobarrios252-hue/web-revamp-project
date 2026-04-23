@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Save, Trash2, X, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, X, ArrowUp, ArrowDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -21,10 +21,13 @@ const schema = z.object({
   athlete_name: z.string().trim().min(1).max(150),
   club: z.string().trim().max(150).optional().or(z.literal("")),
   race_time: z.string().trim().max(40).optional().or(z.literal("")),
-  status: z.enum(["en_vivo", "finalizado"]),
+  points: z.number().nullable(),
+  status: z.enum(["en_vivo", "finalizado", "proxima"]),
   published: z.boolean(),
   sort_order: z.number().int().min(0),
 });
+
+type Status = "en_vivo" | "finalizado" | "proxima";
 
 type Row = {
   id: string;
@@ -36,7 +39,8 @@ type Row = {
   athlete_name: string;
   club: string | null;
   race_time: string | null;
-  status: "en_vivo" | "finalizado";
+  points: number | null;
+  status: Status;
   published: boolean;
   sort_order: number;
 };
@@ -50,6 +54,17 @@ const slugify = (s: string) =>
     .replace(/^-+|-+$/g, "")
     .slice(0, 150);
 
+function statusLabel(s: Status) {
+  return s === "en_vivo" ? "Live" : s === "proxima" ? "Próxima" : "Final";
+}
+function statusClass(s: Status) {
+  return s === "en_vivo"
+    ? "bg-tv-red text-white"
+    : s === "proxima"
+      ? "bg-gold/20 text-gold"
+      : "bg-emerald-500/20 text-emerald-400";
+}
+
 function AdminLiveResults() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +74,7 @@ function AdminLiveResults() {
   const [filterEvent, setFilterEvent] = useState("");
   const [filterRace, setFilterRace] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"all" | "en_vivo" | "finalizado">("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | Status>("all");
 
   const load = async () => {
     setLoading(true);
@@ -110,6 +125,7 @@ function AdminLiveResults() {
       athlete_name: "",
       club: "",
       race_time: "",
+      points: null,
       status: "en_vivo",
       published: true,
       sort_order: 0,
@@ -140,6 +156,25 @@ function AdminLiveResults() {
     load();
   };
 
+  // Cambio de estado en bloque para el evento+carrera+categoría filtrados
+  const onBulkStatus = async (newStatus: Status) => {
+    if (filtered.length === 0) return;
+    if (
+      !confirm(
+        `¿Aplicar estado "${statusLabel(newStatus)}" a ${filtered.length} resultados filtrados?`,
+      )
+    )
+      return;
+    const ids = filtered.map((r) => r.id);
+    const { error } = await supabase
+      .from("live_results")
+      .update({ status: newStatus })
+      .in("id", ids);
+    if (error) return toast.error(error.message);
+    toast.success(`Actualizados ${ids.length} resultados`);
+    load();
+  };
+
   return (
     <div>
       <div className="mb-5 flex items-center justify-between">
@@ -153,7 +188,7 @@ function AdminLiveResults() {
       </div>
 
       {/* Filtros */}
-      <div className="mb-4 grid gap-2 border border-border bg-surface p-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-3 grid gap-2 border border-border bg-surface p-3 sm:grid-cols-2 lg:grid-cols-4">
         <select
           value={filterEvent}
           onChange={(e) => setFilterEvent(e.target.value)}
@@ -196,10 +231,39 @@ function AdminLiveResults() {
           className="input"
         >
           <option value="all">Todos los estados</option>
+          <option value="proxima">Próxima</option>
           <option value="en_vivo">Live</option>
-          <option value="finalizado">Finished</option>
+          <option value="finalizado">Final</option>
         </select>
       </div>
+
+      {/* Acciones rápidas (bulk) */}
+      {(filterEvent || filterRace || filterCategory || filterStatus !== "all") &&
+        filtered.length > 0 && (
+          <div className="mb-4 flex flex-wrap items-center gap-2 border border-border bg-background/30 p-2.5">
+            <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+              Cambiar estado de los {filtered.length} resultados filtrados:
+            </span>
+            <button
+              onClick={() => onBulkStatus("proxima")}
+              className="font-condensed inline-flex items-center gap-1 border border-gold/50 bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20"
+            >
+              ⏳ Próxima
+            </button>
+            <button
+              onClick={() => onBulkStatus("en_vivo")}
+              className="font-condensed inline-flex items-center gap-1 border border-tv-red/50 bg-tv-red/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-tv-red hover:bg-tv-red hover:text-white"
+            >
+              🔴 Live
+            </button>
+            <button
+              onClick={() => onBulkStatus("finalizado")}
+              className="font-condensed inline-flex items-center gap-1 border border-emerald-500/50 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-400 hover:bg-emerald-500/20"
+            >
+              ✓ Final
+            </button>
+          </div>
+        )}
 
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
@@ -214,6 +278,7 @@ function AdminLiveResults() {
                 <th className="px-3 py-2">Atleta</th>
                 <th className="px-3 py-2">Club</th>
                 <th className="px-3 py-2">Tiempo</th>
+                <th className="px-3 py-2">Pts</th>
                 <th className="px-3 py-2">Carrera</th>
                 <th className="px-3 py-2">Cat.</th>
                 <th className="px-3 py-2">Evento</th>
@@ -233,28 +298,33 @@ function AdminLiveResults() {
                   <td className="px-3 py-2 font-medium">{r.athlete_name}</td>
                   <td className="px-3 py-2 text-muted-foreground">{r.club ?? "—"}</td>
                   <td className="px-3 py-2 font-mono text-gold">{r.race_time ?? "—"}</td>
+                  <td className="px-3 py-2 font-mono text-xs">
+                    {r.points !== null && r.points !== undefined ? r.points : "—"}
+                  </td>
                   <td className="px-3 py-2 text-muted-foreground">{r.race ?? "—"}</td>
                   <td className="px-3 py-2 text-muted-foreground">{r.category ?? "—"}</td>
                   <td className="px-3 py-2 text-muted-foreground">{r.event_name}</td>
                   <td className="px-3 py-2">
                     <span
-                      className={`font-condensed inline-block px-2 py-0.5 text-[10px] uppercase tracking-widest ${
-                        r.status === "en_vivo"
-                          ? "bg-tv-red text-white"
-                          : "bg-muted text-muted-foreground"
-                      }`}
+                      className={`font-condensed inline-block px-2 py-0.5 text-[10px] uppercase tracking-widest ${statusClass(r.status)}`}
                     >
-                      {r.status === "en_vivo" ? "Live" : "Finished"}
+                      {statusLabel(r.status)}
                     </span>
                   </td>
                   <td className="px-3 py-2">{r.published ? "✓" : "—"}</td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-1">
-                      <button onClick={() => onMove(r, -1)} className="text-muted-foreground hover:text-gold">
+                      <button
+                        onClick={() => onMove(r, -1)}
+                        className="text-muted-foreground hover:text-gold"
+                      >
                         <ArrowUp className="h-3.5 w-3.5" />
                       </button>
                       <span className="w-6 text-center text-xs">{r.sort_order}</span>
-                      <button onClick={() => onMove(r, 1)} className="text-muted-foreground hover:text-gold">
+                      <button
+                        onClick={() => onMove(r, 1)}
+                        className="text-muted-foreground hover:text-gold"
+                      >
                         <ArrowDown className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -313,7 +383,10 @@ function EditDialog({
   const [athleteName, setAthleteName] = useState(row.athlete_name);
   const [club, setClub] = useState(row.club ?? "");
   const [raceTime, setRaceTime] = useState(row.race_time ?? "");
-  const [status, setStatus] = useState<Row["status"]>(row.status);
+  const [points, setPoints] = useState<string>(
+    row.points !== null && row.points !== undefined ? String(row.points) : "",
+  );
+  const [status, setStatus] = useState<Status>(row.status);
   const [published, setPublished] = useState(row.published);
   const [sortOrder, setSortOrder] = useState(row.sort_order);
   const [saving, setSaving] = useState(false);
@@ -325,6 +398,10 @@ function EditDialog({
   }, [eventName]);
 
   const onSave = async () => {
+    const pointsNumber = points.trim() === "" ? null : Number(points);
+    if (pointsNumber !== null && Number.isNaN(pointsNumber)) {
+      return toast.error("Puntos debe ser un número");
+    }
     const parsed = schema.safeParse({
       event_name: eventName,
       event_slug: eventSlug,
@@ -334,6 +411,7 @@ function EditDialog({
       athlete_name: athleteName,
       club,
       race_time: raceTime,
+      points: pointsNumber,
       status,
       published,
       sort_order: sortOrder,
@@ -351,6 +429,7 @@ function EditDialog({
       athlete_name: parsed.data.athlete_name,
       club: parsed.data.club || null,
       race_time: parsed.data.race_time || null,
+      points: parsed.data.points,
       status: parsed.data.status,
       published: parsed.data.published,
       sort_order: parsed.data.sort_order,
@@ -408,7 +487,7 @@ function EditDialog({
                 value={race}
                 onChange={(e) => setRace(e.target.value)}
                 className="input"
-                placeholder="Ej: 500m"
+                placeholder="Ej: 500m / 1000m / Eliminación"
               />
             </Field>
             <Field label="Categoría">
@@ -448,19 +527,36 @@ function EditDialog({
             </Field>
           </div>
 
-          <Field label="Club">
-            <input value={club} onChange={(e) => setClub(e.target.value)} className="input" />
-          </Field>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Club">
+              <input
+                value={club}
+                onChange={(e) => setClub(e.target.value)}
+                className="input"
+              />
+            </Field>
+            <Field label="Puntos (opcional)">
+              <input
+                type="number"
+                step="any"
+                value={points}
+                onChange={(e) => setPoints(e.target.value)}
+                className="input"
+                placeholder="Ej: 100"
+              />
+            </Field>
+          </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Estado">
               <select
                 value={status}
-                onChange={(e) => setStatus(e.target.value as Row["status"])}
+                onChange={(e) => setStatus(e.target.value as Status)}
                 className="input"
               >
-                <option value="en_vivo">Live</option>
-                <option value="finalizado">Finished</option>
+                <option value="proxima">⏳ Próxima</option>
+                <option value="en_vivo">🔴 Live</option>
+                <option value="finalizado">✓ Final</option>
               </select>
             </Field>
             <Field label="Orden">
@@ -497,7 +593,7 @@ function EditDialog({
             disabled={saving}
             className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"
           >
-            <Save className="h-4 w-4" /> {saving ? "Guardando…" : "Guardar"}
+            {saving ? "Guardando…" : "Guardar"}
           </button>
         </div>
       </div>
@@ -508,7 +604,7 @@ function EditDialog({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+      <span className="font-condensed mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">
         {label}
       </span>
       {children}

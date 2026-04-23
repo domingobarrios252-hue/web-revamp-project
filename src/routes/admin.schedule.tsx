@@ -13,6 +13,7 @@ export const Route = createFileRoute("/admin/schedule")({
 const schema = z.object({
   event_name: z.string().trim().min(2).max(150),
   category: z.string().trim().max(80).optional().or(z.literal("")),
+  location: z.string().trim().max(150).optional().or(z.literal("")),
   scheduled_at: z.string().min(1, "Fecha y hora requeridas"),
   status: z.enum(["programada", "en_curso", "finalizada"]),
   published: z.boolean(),
@@ -23,6 +24,7 @@ type Row = {
   id: string;
   event_name: string;
   category: string | null;
+  location: string | null;
   scheduled_at: string;
   status: "programada" | "en_curso" | "finalizada";
   published: boolean;
@@ -54,6 +56,7 @@ function AdminSchedule() {
       id: "",
       event_name: "",
       category: "",
+      location: "",
       scheduled_at: new Date().toISOString(),
       status: "programada",
       published: true,
@@ -98,6 +101,7 @@ function AdminSchedule() {
               <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
                 <th className="px-3 py-2">Hora</th>
                 <th className="px-3 py-2">Prueba</th>
+                <th className="px-3 py-2">Lugar</th>
                 <th className="px-3 py-2">Categoría</th>
                 <th className="px-3 py-2">Estado</th>
                 <th className="px-3 py-2">Pub.</th>
@@ -117,6 +121,7 @@ function AdminSchedule() {
                     })}
                   </td>
                   <td className="px-3 py-2 font-medium">{r.event_name}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{r.location ?? "—"}</td>
                   <td className="px-3 py-2 text-muted-foreground">{r.category ?? "—"}</td>
                   <td className="px-3 py-2">
                     <span
@@ -166,6 +171,7 @@ function AdminSchedule() {
 function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; onSaved: () => void }) {
   const [eventName, setEventName] = useState(row.event_name);
   const [category, setCategory] = useState(row.category ?? "");
+  const [location, setLocation] = useState(row.location ?? "");
   const [scheduledAt, setScheduledAt] = useState(toLocalInput(row.scheduled_at));
   const [status, setStatus] = useState<Row["status"]>(row.status);
   const [published, setPublished] = useState(row.published);
@@ -176,6 +182,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
     const parsed = schema.safeParse({
       event_name: eventName,
       category,
+      location,
       scheduled_at: scheduledAt,
       status,
       published,
@@ -187,6 +194,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
     const payload = {
       event_name: parsed.data.event_name,
       category: parsed.data.category || null,
+      location: parsed.data.location || null,
       scheduled_at: new Date(parsed.data.scheduled_at).toISOString(),
       status: parsed.data.status,
       published: parsed.data.published,
