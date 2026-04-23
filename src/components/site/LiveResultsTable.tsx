@@ -442,10 +442,10 @@ function LiveGroup({
     <div className="flex h-full flex-col border border-border bg-surface/60 backdrop-blur-sm transition-colors">
       <div className="flex items-start justify-between gap-2 border-b border-border bg-background/60 px-3 py-2">
         <div className="min-w-0">
-          <h3 className="font-display truncate text-[13px] uppercase tracking-widest text-foreground">
+          <h3 className="font-display truncate text-sm uppercase tracking-widest text-foreground">
             {group.event_name}
           </h3>
-          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[9px] uppercase tracking-widest text-muted-foreground">
+          <div className="font-condensed mt-0.5 flex flex-wrap gap-x-2 text-[10px] uppercase tracking-widest text-muted-foreground">
             {group.race && <span className="text-gold">{group.race}</span>}
             {group.category && <span className="truncate">{group.category}</span>}
           </div>
@@ -455,15 +455,15 @@ function LiveGroup({
 
       {isUpcoming ? (
         <div className="flex flex-1 items-center justify-center gap-2 px-3 py-6 text-center">
-          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
             Inscritos: {group.rows.length}
           </span>
         </div>
       ) : (
         <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-[13px]">
             <thead>
-              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[9px] uppercase tracking-widest text-muted-foreground">
+              <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
                 <th className="px-2 py-1.5 text-center">#</th>
                 <th className="px-2 py-1.5">Atleta</th>
                 <th className="px-2 py-1.5 text-right">Tiempo</th>
