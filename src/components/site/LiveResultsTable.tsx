@@ -39,8 +39,12 @@ const ALL = "__all__";
  * - Estados: 🔴 LIVE · ✅ FINAL · ⏳ UPCOMING
  * - Auto-refresh cada 15s + realtime postgres_changes
  * - Top 3 destacados, animaciones suaves al actualizar
+ *
+ * Props:
+ * - compact: render mini-carrusel (sin section wrapper / filtros / header grande),
+ *   pensado para encajar en una columna lateral junto a TV y Próximas pruebas.
  */
-export function LiveResultsTable() {
+export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}) {
   const [rows, setRows] = useState<LiveResultRow[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
