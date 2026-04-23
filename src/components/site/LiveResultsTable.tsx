@@ -272,18 +272,70 @@ export function LiveResultsTable() {
             Sin resultados con esos filtros.
           </p>
         ) : (
-          <div
-            className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 md:-mx-6 md:px-6 [scrollbar-width:thin]"
-            style={{ WebkitOverflowScrolling: "touch" }}
-          >
-            {groups.map((g) => (
-              <div
-                key={`${g.event_name}-${g.race}-${g.category}`}
-                className="w-[280px] shrink-0 snap-start sm:w-[320px]"
+          <div className="relative">
+            {/* Botones de navegación */}
+            <button
+              type="button"
+              onClick={() => scrollByCards(-1)}
+              aria-label="Anterior"
+              className={`absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-md backdrop-blur transition-all hover:border-tv-red hover:text-tv-red sm:flex ${
+                canScrollLeft ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollByCards(1)}
+              aria-label="Siguiente"
+              className={`absolute right-0 top-1/2 z-10 translate-x-1/2 -translate-y-1/2 hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-md backdrop-blur transition-all hover:border-tv-red hover:text-tv-red sm:flex ${
+                canScrollRight ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden />
+            </button>
+
+            <div
+              ref={(el) => {
+                scrollerRef.current = el;
+                // init state on mount/update
+                if (el) requestAnimationFrame(updateScrollState);
+              }}
+              onScroll={updateScrollState}
+              className="-mx-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-5 pb-3 md:-mx-6 md:px-6 [scrollbar-width:thin]"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
+              {groups.map((g) => (
+                <div
+                  key={`${g.event_name}-${g.race}-${g.category}`}
+                  className="w-[260px] shrink-0 snap-start sm:w-[280px]"
+                >
+                  <LiveGroup group={g} prevPositions={prevPositions} />
+                </div>
+              ))}
+            </div>
+
+            {/* Botones móvil bajo el carrusel */}
+            <div className="mt-2 flex justify-center gap-2 sm:hidden">
+              <button
+                type="button"
+                onClick={() => scrollByCards(-1)}
+                aria-label="Anterior"
+                disabled={!canScrollLeft}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground transition-all disabled:opacity-30"
               >
-                <LiveGroup group={g} prevPositions={prevPositions} />
-              </div>
-            ))}
+                <ChevronLeft className="h-5 w-5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollByCards(1)}
+                aria-label="Siguiente"
+                disabled={!canScrollRight}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground transition-all disabled:opacity-30"
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden />
+              </button>
+            </div>
           </div>
         )}
       </div>
