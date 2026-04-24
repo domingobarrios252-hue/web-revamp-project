@@ -922,40 +922,72 @@ function EventsPreviewSection() {
         <p className="text-sm text-muted-foreground">No hay eventos próximos programados.</p>
       ) : (
         <div className="grid gap-5 md:grid-cols-3">
-          {items.map((e) => (
-            <article key={e.id} className="border border-border bg-surface transition-colors hover:border-gold">
-              {e.cover_url && (
-                <div className="aspect-[16/9] overflow-hidden bg-background">
-                  <img src={e.cover_url} alt={e.name} className="h-full w-full object-cover" loading="lazy" />
+          {items.map((e) => {
+            const startDt = new Date(e.start_date);
+            return (
+              <article
+                key={e.id}
+                className="group relative flex flex-col overflow-hidden border border-border bg-surface transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_24px_-8px_oklch(0.78_0.16_70/0.4)]"
+              >
+                <div className="relative aspect-[16/9] overflow-hidden bg-background">
+                  {e.cover_url ? (
+                    <img
+                      src={e.cover_url}
+                      alt={e.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="hero-grid-bg h-full w-full" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                  {/* Countdown overlay */}
+                  <div className="absolute left-3 top-3">
+                    <Countdown target={e.start_date} />
+                  </div>
+                  <span className="font-condensed absolute right-3 top-3 inline-block bg-gold px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
+                    {e.scope}
+                  </span>
                 </div>
-              )}
-              <div className="p-4">
-                <div className="font-condensed mb-2 flex items-center gap-2 text-[11px] uppercase tracking-widest">
-                  <span className="bg-gold/15 px-2 py-0.5 font-bold text-gold">{e.scope}</span>
-                  <span className="text-muted-foreground flex items-center gap-1">
+                <div className="flex flex-1 flex-col p-4">
+                  <div className="font-condensed mb-2 flex items-center gap-2 text-[11px] uppercase tracking-widest text-gold">
                     <Calendar className="h-3 w-3" />
-                    {new Date(e.start_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+                    {startDt.toLocaleDateString("es-ES", { weekday: "short", day: "2-digit", month: "long" })}
                     {e.end_date && e.end_date !== e.start_date && (
                       <> – {new Date(e.end_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}</>
                     )}
-                  </span>
+                  </div>
+                  <h3 className="font-display clamp-2 text-lg uppercase leading-tight tracking-wider transition-colors group-hover:text-gold">
+                    {e.name}
+                  </h3>
+                  {e.location && (
+                    <div className="font-condensed mt-2 flex items-center gap-1 text-xs uppercase tracking-wider text-muted-foreground">
+                      <MapPin className="h-3 w-3" /> {e.location}
+                    </div>
+                  )}
+                  {e.categories?.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1">
+                      {e.categories.slice(0, 4).map((c) => (
+                        <span
+                          key={c}
+                          className="font-condensed border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground"
+                        >
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <Link
+                    to="/eventos/$slug"
+                    params={{ slug: e.slug }}
+                    className="font-condensed mt-auto inline-flex items-center justify-center gap-1.5 border border-gold/60 px-3 py-2 pt-3 text-[11px] font-bold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-background"
+                  >
+                    Ver evento <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
-                <h3 className="font-display text-lg leading-tight tracking-wider">{e.name}</h3>
-                {e.location && (
-                  <div className="font-condensed mt-1 flex items-center gap-1 text-xs uppercase tracking-wider text-muted-foreground">
-                    <MapPin className="h-3 w-3" /> {e.location}
-                  </div>
-                )}
-                {e.categories?.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1">
-                    {e.categories.slice(0, 4).map((c) => (
-                      <span key={c} className="font-condensed border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">{c}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       )}
     </section>
