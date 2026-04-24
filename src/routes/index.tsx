@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock, Medal, Flame, Instagram, Facebook } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock, Medal, Flame, Instagram, Facebook, Zap, MessageSquareQuote, Star } from "lucide-react";
 import { youTubeEmbedUrl } from "@/lib/youtube";
-import { Ticker } from "@/components/site/Ticker";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveResultsTable } from "@/components/site/LiveResultsTable";
+import { Countdown } from "@/components/site/Countdown";
 import { supabase } from "@/integrations/supabase/client";
 
 type MvpPreview = {
