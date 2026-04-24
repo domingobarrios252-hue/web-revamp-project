@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { supabase } from "@/integrations/supabase/client";
+import { NewsletterSignup } from "@/components/site/NewsletterSignup";
 
 const CONTACT_EMAIL = "info@rollerzone.es";
 
@@ -83,6 +84,11 @@ export function SiteFooter() {
   return (
     <footer className="mt-16 border-t-2 border-gold/30 bg-gradient-to-b from-surface to-background">
       <div className="mx-auto max-w-7xl px-6 py-12">
+        {/* Newsletter — captación de usuarios */}
+        <div className="mb-10">
+          <NewsletterSignup />
+        </div>
+
         {/* Top: brand + tagline */}
         <div className="mb-10 flex flex-col items-start gap-4 border-b border-border/60 pb-8 md:flex-row md:items-center md:justify-between">
           <div>
