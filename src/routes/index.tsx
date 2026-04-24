@@ -112,157 +112,116 @@ function HomePage() {
 
   const featured = news?.find((n) => n.featured) ?? news?.[0];
   const rest = news?.filter((n) => n.id !== featured?.id) ?? [];
-  const bigSecondary = rest[0];
-  const smallList = rest.slice(1, 5);
+  const heroSecondary = rest.slice(0, 4); // 4 noticias secundarias en grid
 
   return (
     <>
-      {/* HERO — full bleed, sport TV style (compacto, ~50% más bajo) */}
-      <section className="relative w-full overflow-hidden bg-background">
-        {featured?.image_url ? (
-          <img
-            src={featured.image_url}
-            alt={featured.title}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <div className="hero-grid-bg absolute inset-0" />
-        )}
-        {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-
-        <div className="font-display pointer-events-none absolute right-[3%] top-1/2 hidden -translate-y-1/2 select-none text-[clamp(110px,12vw,180px)] leading-none tracking-tighter text-gold/[.06] md:block">
-          01
-        </div>
-
-        <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-end px-5 pb-5 pt-10 md:px-10 md:pb-6 md:pt-14">
-          <div className="max-w-3xl">
-            {featured?.featured && (
-              <div className="live-red-tag font-condensed mb-2.5 inline-flex w-fit items-center gap-2 bg-tv-red px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-white">
-                <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                En Vivo · Destacada
-              </div>
-            )}
-            {featured?.news_categories?.name && (
-              <div className="font-condensed mb-1.5 text-[11px] uppercase tracking-[4px] text-gold">
-                {featured.news_categories.name}
-              </div>
-            )}
-            <h1 className="font-display text-[clamp(26px,4.2vw,48px)] uppercase leading-[1] tracking-wider text-foreground">
-              {featured?.title ?? "RollerZone"}
-            </h1>
-            {featured?.excerpt && (
-              <p className="clamp-2 mt-2.5 max-w-2xl text-sm text-foreground/80 md:text-[15px]">
-                {featured.excerpt}
-              </p>
-            )}
-            <div className="font-condensed mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-              {featured?.author && (
-                <span className="flex items-center gap-1.5">
-                  <UserIcon className="h-3 w-3" /> {featured.author}
-                </span>
-              )}
-              {featured?.published_at && (
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-3 w-3" />
-                  {new Date(featured.published_at).toLocaleDateString("es-ES", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>
-              )}
-              {typeof featured?.views_count === "number" && (
-                <span className="flex items-center gap-1.5">
-                  <Eye className="h-3 w-3" /> {featured.views_count}
-                </span>
-              )}
-            </div>
-            <div className="mt-4 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
-              {featured && (
+      {/* ==================== HERO 1+4 — formato medio deportivo (MARCA / ESPN) ==================== */}
+      <section className="border-b border-border bg-background">
+        <div className="mx-auto max-w-7xl px-4 py-5 md:px-6 md:py-7">
+          <div className="grid gap-4 lg:grid-cols-12">
+            {/* IZQ — Noticia principal */}
+            <div className="lg:col-span-7">
+              {featured ? (
                 <Link
                   to="/noticias/articulo/$slug"
                   params={{ slug: featured.slug }}
-                  className="font-condensed inline-flex items-center justify-center gap-2 bg-gold px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-background transition-colors hover:bg-gold-dark"
+                  className="group relative block aspect-[16/10] w-full overflow-hidden border border-border bg-surface"
                 >
-                  Leer cobertura completa <ArrowRight className="h-3.5 w-3.5" />
+                  {featured.image_url ? (
+                    <img
+                      src={featured.image_url}
+                      alt={featured.title}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <div className="hero-grid-bg absolute inset-0" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                  {liveActive && (
+                    <span className="live-red-tag font-condensed absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 bg-tv-red px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-white shadow-lg">
+                      <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                      En vivo
+                    </span>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 p-4 md:p-6">
+                    {featured.news_categories?.name && (
+                      <span className="font-condensed mb-2 inline-block bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
+                        {featured.news_categories.name}
+                      </span>
+                    )}
+                    <h1 className="font-display clamp-3 text-[clamp(20px,3.2vw,38px)] uppercase leading-[1.05] tracking-wider text-foreground transition-colors group-hover:text-gold">
+                      {featured.title}
+                    </h1>
+                    <div className="font-condensed mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-widest text-foreground/70">
+                      <span className="flex items-center gap-1">
+                        <UserIcon className="h-3 w-3" /> {featured.author}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {new Date(featured.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Eye className="h-3 w-3" /> {featured.views_count}
+                      </span>
+                    </div>
+                  </div>
                 </Link>
+              ) : (
+                <div className="aspect-[16/10] w-full animate-pulse bg-surface" />
               )}
-              {liveActive && (
-                <Link
-                  to="/tv"
-                  className="font-condensed inline-flex items-center justify-center gap-2 border border-foreground/30 bg-background/40 px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-foreground backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
-                >
-                  <Radio className="h-3.5 w-3.5" /> Seguir en directo
-                </Link>
-              )}
+            </div>
+
+            {/* DCHA — 4 noticias secundarias en grid 2x2 */}
+            <div className="lg:col-span-5">
+              <div className="grid h-full grid-cols-2 gap-3">
+                {heroSecondary.length > 0
+                  ? heroSecondary.map((n) => <HeroSecondaryCard key={n.id} news={n} />)
+                  : [0, 1, 2, 3].map((i) => (
+                      <div key={i} className="aspect-square animate-pulse bg-surface" />
+                    ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
-
-      <Ticker />
 
       <AdBannerWithMagazine placement="home_top" />
 
+      {/* ==================== EN DIRECTO (TV + próx pruebas + resultados) ==================== */}
       <LiveNowSection />
 
+      {/* ==================== RESULTADOS DEL DÍA — carrusel horizontal completo ==================== */}
+      <LiveResultsTable />
 
-      {/* ÚLTIMAS NOTICIAS — ESPN style */}
-      <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
-        <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
-          <h2 className="font-display text-2xl tracking-widest md:text-3xl">
-            Últimas <span className="text-gold">noticias</span>
-          </h2>
-          <Link
-            to="/noticias"
-            className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
-          >
-            Ver todas →
-          </Link>
-        </div>
+      {/* ==================== PROTAGONISTAS — 1 grande + 3 pequeñas ==================== */}
+      <ProtagonistasSection news={news ?? []} />
 
-        {news === null ? (
-          <div className="grid gap-4 lg:grid-cols-2">
-            <div className="h-[420px] animate-pulse bg-surface" />
-            <div className="grid grid-cols-2 gap-4">
-              {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="h-[200px] animate-pulse bg-surface" />
-              ))}
-            </div>
-          </div>
-        ) : rest.length === 0 ? (
-          <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
-        ) : (
-          <>
-            <div className="hidden gap-5 lg:grid lg:grid-cols-2">
-              {bigSecondary && <BigNewsCard news={bigSecondary} />}
-              <div className="grid grid-cols-2 gap-4">
-                {smallList.map((n) => (
-                  <SmallNewsCard key={n.id} news={n} />
-                ))}
-              </div>
-            </div>
+      {/* ==================== EVENTOS con countdown ==================== */}
+      <EventsPreviewSection />
 
-            <div className="hide-scrollbar -mx-5 flex gap-4 overflow-x-auto px-5 pb-2 lg:hidden">
-              {rest.slice(0, 6).map((n) => (
-                <div key={n.id} className="w-[78%] shrink-0 sm:w-[48%]">
-                  <SmallNewsCard news={n} />
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </section>
+      {/* ==================== ANÁLISIS / OPINIÓN ==================== */}
+      <OpinionSection news={news ?? []} />
 
+      {/* ==================== RANKING PATINADORES (MVP) ==================== */}
+      <RankingPreviewSection />
+
+      {/* ==================== ENTREVISTAS ==================== */}
+      <InterviewsPreviewSection />
+
+      {/* ==================== ATLETAS DESTACADOS ==================== */}
+      <FeaturedAthletesSection />
+
+      {/* ==================== REVISTA — bloque visual + CTA fuerte ==================== */}
+      <MagazinePreviewSection />
+
+      {/* ==================== MÁS LEÍDAS + REDES ==================== */}
       <MostReadAndSocialSection />
 
-      <FeaturedAthletesSection />
-      <RankingPreviewSection />
-      <InterviewsPreviewSection />
-      <EventsPreviewSection />
-      <MagazinePreviewSection />
+      {/* ==================== GRID FINAL — más noticias (6-9 cards) ==================== */}
+      <FinalNewsGridSection />
+
+      {/* ==================== PATROCINADORES + EQUIPO ==================== */}
       <SponsorsCarouselSection />
       <TeamSection />
     </>
