@@ -1540,3 +1540,246 @@ function MostReadAndSocialSection() {
   );
 }
 
+/* ===================== HERO SECONDARY CARD ===================== */
+function HeroSecondaryCard({ news }: { news: News }) {
+  return (
+    <Link
+      to="/noticias/articulo/$slug"
+      params={{ slug: news.slug }}
+      className="group relative block aspect-square overflow-hidden border border-border bg-surface"
+    >
+      {news.image_url ? (
+        <img
+          src={news.image_url}
+          alt={news.title}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy"
+        />
+      ) : (
+        <div className="hero-grid-bg absolute inset-0" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-2.5">
+        {news.news_categories?.name && (
+          <span className="font-condensed mb-1 inline-block bg-gold/90 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[2px] text-background">
+            {news.news_categories.name}
+          </span>
+        )}
+        <h3 className="font-display clamp-2 text-[12px] uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-[13px]">
+          {news.title}
+        </h3>
+      </div>
+    </Link>
+  );
+}
+
+/* ===================== PROTAGONISTAS — 1 grande + 3 pequeñas ===================== */
+function ProtagonistasSection({ news }: { news: News[] }) {
+  // Toma noticias 5 a 8 (ya que 0-4 están en hero)
+  const items = news.slice(5, 9);
+  if (items.length === 0) return null;
+  const big = items[0];
+  const small = items.slice(1, 4);
+
+  return (
+    <section id="protagonistas" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
+      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+          <Star className="h-6 w-6 text-gold" />
+          Protago<span className="text-gold">nistas</span>
+        </h2>
+        <Link
+          to="/noticias"
+          className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
+        >
+          Ver todas →
+        </Link>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
+        {/* Grande */}
+        <Link
+          to="/noticias/articulo/$slug"
+          params={{ slug: big.slug }}
+          className="group relative block aspect-[16/10] overflow-hidden border border-border bg-surface lg:aspect-auto lg:min-h-[360px]"
+        >
+          {big.image_url ? (
+            <img
+              src={big.image_url}
+              alt={big.title}
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              loading="lazy"
+            />
+          ) : (
+            <div className="hero-grid-bg absolute inset-0" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+            {big.news_categories?.name && (
+              <span className="font-condensed mb-2 inline-block bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
+                {big.news_categories.name}
+              </span>
+            )}
+            <h3 className="font-display clamp-3 text-xl uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-2xl">
+              {big.title}
+            </h3>
+            {big.excerpt && (
+              <p className="clamp-2 mt-2 text-sm text-foreground/80">{big.excerpt}</p>
+            )}
+          </div>
+        </Link>
+
+        {/* 3 pequeñas verticales */}
+        <div className="flex flex-col gap-3">
+          {small.map((n) => (
+            <Link
+              key={n.id}
+              to="/noticias/articulo/$slug"
+              params={{ slug: n.slug }}
+              className="group flex gap-3 border border-border bg-surface p-2.5 transition-colors hover:border-gold"
+            >
+              <div className="relative aspect-square h-24 w-24 shrink-0 overflow-hidden bg-background">
+                {n.image_url ? (
+                  <img
+                    src={n.image_url}
+                    alt={n.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="hero-grid-bg h-full w-full" />
+                )}
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
+                {n.news_categories?.name && (
+                  <span className="font-condensed text-[9px] font-bold uppercase tracking-[2px] text-gold">
+                    {n.news_categories.name}
+                  </span>
+                )}
+                <h4 className="font-display clamp-3 text-sm uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold">
+                  {n.title}
+                </h4>
+                <div className="font-condensed flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <Calendar className="h-3 w-3" />
+                  {new Date(n.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ===================== OPINIÓN / ANÁLISIS ===================== */
+function OpinionSection({ news }: { news: News[] }) {
+  // Reutiliza noticias existentes — toma 3 noticias para mostrar como "análisis"
+  const items = news.slice(2, 5);
+  if (items.length === 0) return null;
+
+  return (
+    <section
+      id="opinion"
+      className="border-y border-gold/20 bg-gradient-to-br from-surface/80 via-background to-surface/40"
+    >
+      <div className="mx-auto max-w-7xl px-5 py-12 md:px-6">
+        <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+          <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+            <MessageSquareQuote className="h-6 w-6 text-gold" />
+            Análisis y <span className="text-gold">opinión</span>
+          </h2>
+          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+            La voz de la redacción
+          </span>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3">
+          {items.map((n) => (
+            <Link
+              key={n.id}
+              to="/noticias/articulo/$slug"
+              params={{ slug: n.slug }}
+              className="group relative flex flex-col border-l-2 border-gold/40 bg-background/40 p-5 transition-all hover:-translate-y-1 hover:border-gold hover:bg-background"
+            >
+              <MessageSquareQuote className="absolute right-4 top-4 h-8 w-8 text-gold/10 transition-colors group-hover:text-gold/30" />
+              <div className="font-condensed inline-flex w-fit items-center gap-1.5 bg-gold/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
+                Análisis
+              </div>
+              <h3 className="font-display clamp-3 mt-3 text-lg uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold">
+                {n.title}
+              </h3>
+              {n.excerpt && (
+                <p className="clamp-3 mt-2 text-sm text-muted-foreground">{n.excerpt}</p>
+              )}
+              <div className="font-condensed mt-4 flex items-center gap-2 border-t border-border pt-3 text-[10px] uppercase tracking-widest text-muted-foreground">
+                <UserIcon className="h-3 w-3 text-gold" />
+                <span className="text-foreground/80">{n.author}</span>
+                <span className="ml-auto flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  {n.read_minutes ?? 4} min
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ===================== GRID FINAL — más noticias (6 cards) ===================== */
+function FinalNewsGridSection() {
+  const [items, setItems] = useState<News[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("news")
+      .select(
+        "id, title, slug, excerpt, author, legacy_tag, image_url, read_minutes, featured, views_count, published_at, news_categories(name, slug, scope)",
+      )
+      .eq("published", true)
+      .order("published_at", { ascending: false })
+      .range(8, 16)
+      .then(({ data }) => {
+        if (!cancelled) setItems((data as unknown as News[]) ?? []);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (items !== null && items.length === 0) return null;
+
+  return (
+    <section id="mas-noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
+      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
+          <Zap className="h-6 w-6 text-gold" />
+          Más <span className="text-gold">noticias</span>
+        </h2>
+        <Link
+          to="/noticias"
+          className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
+        >
+          Ver todas →
+        </Link>
+      </div>
+
+      {items === null ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-72 animate-pulse bg-surface" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((n) => (
+            <NewsCard key={n.id} news={n} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
