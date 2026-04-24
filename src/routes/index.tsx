@@ -117,8 +117,8 @@ function HomePage() {
 
   return (
     <>
-      {/* HERO — full bleed, sport TV style */}
-      <section className="relative min-h-[33vh] w-full overflow-hidden bg-background md:min-h-[36vh]">
+      {/* HERO — full bleed, sport TV style (compacto, ~50% más bajo) */}
+      <section className="relative w-full overflow-hidden bg-background">
         {featured?.image_url ? (
           <img
             src={featured.image_url}
@@ -132,32 +132,32 @@ function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
 
-        <div className="font-display pointer-events-none absolute right-[3%] top-1/2 hidden -translate-y-1/2 select-none text-[clamp(180px,20vw,320px)] leading-none tracking-tighter text-gold/[.06] md:block">
+        <div className="font-display pointer-events-none absolute right-[3%] top-1/2 hidden -translate-y-1/2 select-none text-[clamp(110px,12vw,180px)] leading-none tracking-tighter text-gold/[.06] md:block">
           01
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[47vh] max-w-7xl flex-col justify-end px-5 pb-6 pt-16 md:min-h-[53vh] md:px-10 md:pb-10">
+        <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-end px-5 pb-5 pt-10 md:px-10 md:pb-6 md:pt-14">
           <div className="max-w-3xl">
             {featured?.featured && (
-              <div className="live-red-tag font-condensed mb-5 inline-flex w-fit items-center gap-2 bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white">
+              <div className="live-red-tag font-condensed mb-2.5 inline-flex w-fit items-center gap-2 bg-tv-red px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-white">
                 <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
                 En Vivo · Destacada
               </div>
             )}
             {featured?.news_categories?.name && (
-              <div className="font-condensed mb-3 text-xs uppercase tracking-[4px] text-gold">
+              <div className="font-condensed mb-1.5 text-[11px] uppercase tracking-[4px] text-gold">
                 {featured.news_categories.name}
               </div>
             )}
-            <h1 className="font-display text-[clamp(40px,7vw,88px)] uppercase leading-[0.95] tracking-wider text-foreground">
+            <h1 className="font-display text-[clamp(26px,4.2vw,48px)] uppercase leading-[1] tracking-wider text-foreground">
               {featured?.title ?? "RollerZone"}
             </h1>
             {featured?.excerpt && (
-              <p className="clamp-2 mt-5 max-w-2xl text-base text-foreground/80 md:text-lg">
+              <p className="clamp-2 mt-2.5 max-w-2xl text-sm text-foreground/80 md:text-[15px]">
                 {featured.excerpt}
               </p>
             )}
-            <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+            <div className="font-condensed mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
               {featured?.author && (
                 <span className="flex items-center gap-1.5">
                   <UserIcon className="h-3 w-3" /> {featured.author}
@@ -179,22 +179,22 @@ function HomePage() {
                 </span>
               )}
             </div>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="mt-4 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
               {featured && (
                 <Link
                   to="/noticias/articulo/$slug"
                   params={{ slug: featured.slug }}
-                  className="font-condensed inline-flex items-center justify-center gap-2 bg-gold px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-background transition-colors hover:bg-gold-dark"
+                  className="font-condensed inline-flex items-center justify-center gap-2 bg-gold px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-background transition-colors hover:bg-gold-dark"
                 >
-                  Leer cobertura completa <ArrowRight className="h-4 w-4" />
+                  Leer cobertura completa <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               )}
               {liveActive && (
                 <Link
                   to="/tv"
-                  className="font-condensed inline-flex items-center justify-center gap-2 border border-foreground/30 bg-background/40 px-7 py-3.5 text-xs font-bold uppercase tracking-[2.5px] text-foreground backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
+                  className="font-condensed inline-flex items-center justify-center gap-2 border border-foreground/30 bg-background/40 px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-foreground backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
                 >
-                  <Radio className="h-4 w-4" /> Seguir en directo
+                  <Radio className="h-3.5 w-3.5" /> Seguir en directo
                 </Link>
               )}
             </div>
