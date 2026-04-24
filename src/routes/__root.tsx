@@ -4,7 +4,6 @@ import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { CookieBanner } from "@/components/site/CookieBanner";
-import { BreakingBar } from "@/components/site/BreakingBar";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -84,7 +83,6 @@ function RootComponent() {
     <LanguageProvider>
       <AuthProvider>
         <SiteHeader />
-        <BreakingBar />
         <main className="min-h-[60vh]">
           <Outlet />
         </main>

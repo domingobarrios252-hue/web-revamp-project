@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock, Medal, Flame, Instagram, Facebook, Zap, MessageSquareQuote, Star } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock, Medal, Flame, Instagram, Facebook } from "lucide-react";
 import { youTubeEmbedUrl } from "@/lib/youtube";
+import { Ticker } from "@/components/site/Ticker";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveResultsTable } from "@/components/site/LiveResultsTable";
-import { Countdown } from "@/components/site/Countdown";
 import { supabase } from "@/integrations/supabase/client";
 
 type MvpPreview = {
@@ -112,116 +112,157 @@ function HomePage() {
 
   const featured = news?.find((n) => n.featured) ?? news?.[0];
   const rest = news?.filter((n) => n.id !== featured?.id) ?? [];
-  const heroSecondary = rest.slice(0, 4); // 4 noticias secundarias en grid
+  const bigSecondary = rest[0];
+  const smallList = rest.slice(1, 5);
 
   return (
     <>
-      {/* ==================== HERO 1+4 — formato medio deportivo (MARCA / ESPN) ==================== */}
-      <section className="border-b border-border bg-background">
-        <div className="mx-auto max-w-7xl px-4 py-5 md:px-6 md:py-7">
-          <div className="grid gap-4 lg:grid-cols-12">
-            {/* IZQ — Noticia principal */}
-            <div className="lg:col-span-7">
-              {featured ? (
+      {/* HERO — full bleed, sport TV style (compacto, ~50% más bajo) */}
+      <section className="relative w-full overflow-hidden bg-background">
+        {featured?.image_url ? (
+          <img
+            src={featured.image_url}
+            alt={featured.title}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <div className="hero-grid-bg absolute inset-0" />
+        )}
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+
+        <div className="font-display pointer-events-none absolute right-[3%] top-1/2 hidden -translate-y-1/2 select-none text-[clamp(110px,12vw,180px)] leading-none tracking-tighter text-gold/[.06] md:block">
+          01
+        </div>
+
+        <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-end px-5 pb-5 pt-10 md:px-10 md:pb-6 md:pt-14">
+          <div className="max-w-3xl">
+            {featured?.featured && (
+              <div className="live-red-tag font-condensed mb-2.5 inline-flex w-fit items-center gap-2 bg-tv-red px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-white">
+                <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                En Vivo · Destacada
+              </div>
+            )}
+            {featured?.news_categories?.name && (
+              <div className="font-condensed mb-1.5 text-[11px] uppercase tracking-[4px] text-gold">
+                {featured.news_categories.name}
+              </div>
+            )}
+            <h1 className="font-display text-[clamp(26px,4.2vw,48px)] uppercase leading-[1] tracking-wider text-foreground">
+              {featured?.title ?? "RollerZone"}
+            </h1>
+            {featured?.excerpt && (
+              <p className="clamp-2 mt-2.5 max-w-2xl text-sm text-foreground/80 md:text-[15px]">
+                {featured.excerpt}
+              </p>
+            )}
+            <div className="font-condensed mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+              {featured?.author && (
+                <span className="flex items-center gap-1.5">
+                  <UserIcon className="h-3 w-3" /> {featured.author}
+                </span>
+              )}
+              {featured?.published_at && (
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-3 w-3" />
+                  {new Date(featured.published_at).toLocaleDateString("es-ES", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
+              )}
+              {typeof featured?.views_count === "number" && (
+                <span className="flex items-center gap-1.5">
+                  <Eye className="h-3 w-3" /> {featured.views_count}
+                </span>
+              )}
+            </div>
+            <div className="mt-4 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
+              {featured && (
                 <Link
                   to="/noticias/articulo/$slug"
                   params={{ slug: featured.slug }}
-                  className="group relative block aspect-[16/10] w-full overflow-hidden border border-border bg-surface"
+                  className="font-condensed inline-flex items-center justify-center gap-2 bg-gold px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-background transition-colors hover:bg-gold-dark"
                 >
-                  {featured.image_url ? (
-                    <img
-                      src={featured.image_url}
-                      alt={featured.title}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                    />
-                  ) : (
-                    <div className="hero-grid-bg absolute inset-0" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-                  {liveActive && (
-                    <span className="live-red-tag font-condensed absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 bg-tv-red px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-white shadow-lg">
-                      <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                      En vivo
-                    </span>
-                  )}
-                  <div className="absolute inset-x-0 bottom-0 p-4 md:p-6">
-                    {featured.news_categories?.name && (
-                      <span className="font-condensed mb-2 inline-block bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
-                        {featured.news_categories.name}
-                      </span>
-                    )}
-                    <h1 className="font-display clamp-3 text-[clamp(20px,3.2vw,38px)] uppercase leading-[1.05] tracking-wider text-foreground transition-colors group-hover:text-gold">
-                      {featured.title}
-                    </h1>
-                    <div className="font-condensed mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-widest text-foreground/70">
-                      <span className="flex items-center gap-1">
-                        <UserIcon className="h-3 w-3" /> {featured.author}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(featured.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Eye className="h-3 w-3" /> {featured.views_count}
-                      </span>
-                    </div>
-                  </div>
+                  Leer cobertura completa <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
-              ) : (
-                <div className="aspect-[16/10] w-full animate-pulse bg-surface" />
               )}
-            </div>
-
-            {/* DCHA — 4 noticias secundarias en grid 2x2 */}
-            <div className="lg:col-span-5">
-              <div className="grid h-full grid-cols-2 gap-3">
-                {heroSecondary.length > 0
-                  ? heroSecondary.map((n) => <HeroSecondaryCard key={n.id} news={n} />)
-                  : [0, 1, 2, 3].map((i) => (
-                      <div key={i} className="aspect-square animate-pulse bg-surface" />
-                    ))}
-              </div>
+              {liveActive && (
+                <Link
+                  to="/tv"
+                  className="font-condensed inline-flex items-center justify-center gap-2 border border-foreground/30 bg-background/40 px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-foreground backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
+                >
+                  <Radio className="h-3.5 w-3.5" /> Seguir en directo
+                </Link>
+              )}
             </div>
           </div>
         </div>
       </section>
 
+      <Ticker />
+
       <AdBannerWithMagazine placement="home_top" />
 
-      {/* ==================== EN DIRECTO (TV + próx pruebas + resultados) ==================== */}
       <LiveNowSection />
 
-      {/* ==================== RESULTADOS DEL DÍA — carrusel horizontal completo ==================== */}
-      <LiveResultsTable />
 
-      {/* ==================== PROTAGONISTAS — 1 grande + 3 pequeñas ==================== */}
-      <ProtagonistasSection news={news ?? []} />
+      {/* ÚLTIMAS NOTICIAS — ESPN style */}
+      <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
+        <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
+          <h2 className="font-display text-2xl tracking-widest md:text-3xl">
+            Últimas <span className="text-gold">noticias</span>
+          </h2>
+          <Link
+            to="/noticias"
+            className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
+          >
+            Ver todas →
+          </Link>
+        </div>
 
-      {/* ==================== EVENTOS con countdown ==================== */}
-      <EventsPreviewSection />
+        {news === null ? (
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="h-[420px] animate-pulse bg-surface" />
+            <div className="grid grid-cols-2 gap-4">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="h-[200px] animate-pulse bg-surface" />
+              ))}
+            </div>
+          </div>
+        ) : rest.length === 0 ? (
+          <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
+        ) : (
+          <>
+            <div className="hidden gap-5 lg:grid lg:grid-cols-2">
+              {bigSecondary && <BigNewsCard news={bigSecondary} />}
+              <div className="grid grid-cols-2 gap-4">
+                {smallList.map((n) => (
+                  <SmallNewsCard key={n.id} news={n} />
+                ))}
+              </div>
+            </div>
 
-      {/* ==================== ANÁLISIS / OPINIÓN ==================== */}
-      <OpinionSection news={news ?? []} />
+            <div className="hide-scrollbar -mx-5 flex gap-4 overflow-x-auto px-5 pb-2 lg:hidden">
+              {rest.slice(0, 6).map((n) => (
+                <div key={n.id} className="w-[78%] shrink-0 sm:w-[48%]">
+                  <SmallNewsCard news={n} />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
 
-      {/* ==================== RANKING PATINADORES (MVP) ==================== */}
-      <RankingPreviewSection />
-
-      {/* ==================== ENTREVISTAS ==================== */}
-      <InterviewsPreviewSection />
-
-      {/* ==================== ATLETAS DESTACADOS ==================== */}
-      <FeaturedAthletesSection />
-
-      {/* ==================== REVISTA — bloque visual + CTA fuerte ==================== */}
-      <MagazinePreviewSection />
-
-      {/* ==================== MÁS LEÍDAS + REDES ==================== */}
       <MostReadAndSocialSection />
 
-      {/* ==================== GRID FINAL — más noticias (6-9 cards) ==================== */}
-      <FinalNewsGridSection />
-
-      {/* ==================== PATROCINADORES + EQUIPO ==================== */}
+      <FeaturedAthletesSection />
+      <RankingPreviewSection />
+      <InterviewsPreviewSection />
+      <EventsPreviewSection />
+      <MagazinePreviewSection />
       <SponsorsCarouselSection />
       <TeamSection />
     </>
@@ -922,72 +963,40 @@ function EventsPreviewSection() {
         <p className="text-sm text-muted-foreground">No hay eventos próximos programados.</p>
       ) : (
         <div className="grid gap-5 md:grid-cols-3">
-          {items.map((e) => {
-            const startDt = new Date(e.start_date);
-            return (
-              <article
-                key={e.id}
-                className="group relative flex flex-col overflow-hidden border border-border bg-surface transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_24px_-8px_oklch(0.78_0.16_70/0.4)]"
-              >
-                <div className="relative aspect-[16/9] overflow-hidden bg-background">
-                  {e.cover_url ? (
-                    <img
-                      src={e.cover_url}
-                      alt={e.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="hero-grid-bg h-full w-full" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                  {/* Countdown overlay */}
-                  <div className="absolute left-3 top-3">
-                    <Countdown target={e.start_date} />
-                  </div>
-                  <span className="font-condensed absolute right-3 top-3 inline-block bg-gold px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
-                    {e.scope}
-                  </span>
+          {items.map((e) => (
+            <article key={e.id} className="border border-border bg-surface transition-colors hover:border-gold">
+              {e.cover_url && (
+                <div className="aspect-[16/9] overflow-hidden bg-background">
+                  <img src={e.cover_url} alt={e.name} className="h-full w-full object-cover" loading="lazy" />
                 </div>
-                <div className="flex flex-1 flex-col p-4">
-                  <div className="font-condensed mb-2 flex items-center gap-2 text-[11px] uppercase tracking-widest text-gold">
+              )}
+              <div className="p-4">
+                <div className="font-condensed mb-2 flex items-center gap-2 text-[11px] uppercase tracking-widest">
+                  <span className="bg-gold/15 px-2 py-0.5 font-bold text-gold">{e.scope}</span>
+                  <span className="text-muted-foreground flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {startDt.toLocaleDateString("es-ES", { weekday: "short", day: "2-digit", month: "long" })}
+                    {new Date(e.start_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
                     {e.end_date && e.end_date !== e.start_date && (
                       <> – {new Date(e.end_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}</>
                     )}
-                  </div>
-                  <h3 className="font-display clamp-2 text-lg uppercase leading-tight tracking-wider transition-colors group-hover:text-gold">
-                    {e.name}
-                  </h3>
-                  {e.location && (
-                    <div className="font-condensed mt-2 flex items-center gap-1 text-xs uppercase tracking-wider text-muted-foreground">
-                      <MapPin className="h-3 w-3" /> {e.location}
-                    </div>
-                  )}
-                  {e.categories?.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1">
-                      {e.categories.slice(0, 4).map((c) => (
-                        <span
-                          key={c}
-                          className="font-condensed border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground"
-                        >
-                          {c}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  <Link
-                    to="/eventos/$slug"
-                    params={{ slug: e.slug }}
-                    className="font-condensed mt-auto inline-flex items-center justify-center gap-1.5 border border-gold/60 px-3 py-2 pt-3 text-[11px] font-bold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-background"
-                  >
-                    Ver evento <ArrowRight className="h-3 w-3" />
-                  </Link>
+                  </span>
                 </div>
-              </article>
-            );
-          })}
+                <h3 className="font-display text-lg leading-tight tracking-wider">{e.name}</h3>
+                {e.location && (
+                  <div className="font-condensed mt-1 flex items-center gap-1 text-xs uppercase tracking-wider text-muted-foreground">
+                    <MapPin className="h-3 w-3" /> {e.location}
+                  </div>
+                )}
+                {e.categories?.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1">
+                    {e.categories.slice(0, 4).map((c) => (
+                      <span key={c} className="font-condensed border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">{c}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
         </div>
       )}
     </section>
@@ -1572,246 +1581,3 @@ function MostReadAndSocialSection() {
   );
 }
 
-/* ===================== HERO SECONDARY CARD ===================== */
-function HeroSecondaryCard({ news }: { news: News }) {
-  return (
-    <Link
-      to="/noticias/articulo/$slug"
-      params={{ slug: news.slug }}
-      className="group relative block aspect-square overflow-hidden border border-border bg-surface"
-    >
-      {news.image_url ? (
-        <img
-          src={news.image_url}
-          alt={news.title}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-          loading="lazy"
-        />
-      ) : (
-        <div className="hero-grid-bg absolute inset-0" />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 p-2.5">
-        {news.news_categories?.name && (
-          <span className="font-condensed mb-1 inline-block bg-gold/90 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[2px] text-background">
-            {news.news_categories.name}
-          </span>
-        )}
-        <h3 className="font-display clamp-2 text-[12px] uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-[13px]">
-          {news.title}
-        </h3>
-      </div>
-    </Link>
-  );
-}
-
-/* ===================== PROTAGONISTAS — 1 grande + 3 pequeñas ===================== */
-function ProtagonistasSection({ news }: { news: News[] }) {
-  // Toma noticias 5 a 8 (ya que 0-4 están en hero)
-  const items = news.slice(5, 9);
-  if (items.length === 0) return null;
-  const big = items[0];
-  const small = items.slice(1, 4);
-
-  return (
-    <section id="protagonistas" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
-      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
-        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
-          <Star className="h-6 w-6 text-gold" />
-          Protago<span className="text-gold">nistas</span>
-        </h2>
-        <Link
-          to="/noticias"
-          className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
-        >
-          Ver todas →
-        </Link>
-      </div>
-
-      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-        {/* Grande */}
-        <Link
-          to="/noticias/articulo/$slug"
-          params={{ slug: big.slug }}
-          className="group relative block aspect-[16/10] overflow-hidden border border-border bg-surface lg:aspect-auto lg:min-h-[360px]"
-        >
-          {big.image_url ? (
-            <img
-              src={big.image_url}
-              alt={big.title}
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              loading="lazy"
-            />
-          ) : (
-            <div className="hero-grid-bg absolute inset-0" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-            {big.news_categories?.name && (
-              <span className="font-condensed mb-2 inline-block bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
-                {big.news_categories.name}
-              </span>
-            )}
-            <h3 className="font-display clamp-3 text-xl uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-2xl">
-              {big.title}
-            </h3>
-            {big.excerpt && (
-              <p className="clamp-2 mt-2 text-sm text-foreground/80">{big.excerpt}</p>
-            )}
-          </div>
-        </Link>
-
-        {/* 3 pequeñas verticales */}
-        <div className="flex flex-col gap-3">
-          {small.map((n) => (
-            <Link
-              key={n.id}
-              to="/noticias/articulo/$slug"
-              params={{ slug: n.slug }}
-              className="group flex gap-3 border border-border bg-surface p-2.5 transition-colors hover:border-gold"
-            >
-              <div className="relative aspect-square h-24 w-24 shrink-0 overflow-hidden bg-background">
-                {n.image_url ? (
-                  <img
-                    src={n.image_url}
-                    alt={n.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="hero-grid-bg h-full w-full" />
-                )}
-              </div>
-              <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
-                {n.news_categories?.name && (
-                  <span className="font-condensed text-[9px] font-bold uppercase tracking-[2px] text-gold">
-                    {n.news_categories.name}
-                  </span>
-                )}
-                <h4 className="font-display clamp-3 text-sm uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold">
-                  {n.title}
-                </h4>
-                <div className="font-condensed flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-                  <Calendar className="h-3 w-3" />
-                  {new Date(n.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ===================== OPINIÓN / ANÁLISIS ===================== */
-function OpinionSection({ news }: { news: News[] }) {
-  // Reutiliza noticias existentes — toma 3 noticias para mostrar como "análisis"
-  const items = news.slice(2, 5);
-  if (items.length === 0) return null;
-
-  return (
-    <section
-      id="opinion"
-      className="border-y border-gold/20 bg-gradient-to-br from-surface/80 via-background to-surface/40"
-    >
-      <div className="mx-auto max-w-7xl px-5 py-12 md:px-6">
-        <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
-          <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
-            <MessageSquareQuote className="h-6 w-6 text-gold" />
-            Análisis y <span className="text-gold">opinión</span>
-          </h2>
-          <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-            La voz de la redacción
-          </span>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {items.map((n) => (
-            <Link
-              key={n.id}
-              to="/noticias/articulo/$slug"
-              params={{ slug: n.slug }}
-              className="group relative flex flex-col border-l-2 border-gold/40 bg-background/40 p-5 transition-all hover:-translate-y-1 hover:border-gold hover:bg-background"
-            >
-              <MessageSquareQuote className="absolute right-4 top-4 h-8 w-8 text-gold/10 transition-colors group-hover:text-gold/30" />
-              <div className="font-condensed inline-flex w-fit items-center gap-1.5 bg-gold/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-                Análisis
-              </div>
-              <h3 className="font-display clamp-3 mt-3 text-lg uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold">
-                {n.title}
-              </h3>
-              {n.excerpt && (
-                <p className="clamp-3 mt-2 text-sm text-muted-foreground">{n.excerpt}</p>
-              )}
-              <div className="font-condensed mt-4 flex items-center gap-2 border-t border-border pt-3 text-[10px] uppercase tracking-widest text-muted-foreground">
-                <UserIcon className="h-3 w-3 text-gold" />
-                <span className="text-foreground/80">{n.author}</span>
-                <span className="ml-auto flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {n.read_minutes ?? 4} min
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ===================== GRID FINAL — más noticias (6 cards) ===================== */
-function FinalNewsGridSection() {
-  const [items, setItems] = useState<News[] | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    supabase
-      .from("news")
-      .select(
-        "id, title, slug, excerpt, author, legacy_tag, image_url, read_minutes, featured, views_count, published_at, news_categories(name, slug, scope)",
-      )
-      .eq("published", true)
-      .order("published_at", { ascending: false })
-      .range(8, 16)
-      .then(({ data }) => {
-        if (!cancelled) setItems((data as unknown as News[]) ?? []);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  if (items !== null && items.length === 0) return null;
-
-  return (
-    <section id="mas-noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
-      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
-        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
-          <Zap className="h-6 w-6 text-gold" />
-          Más <span className="text-gold">noticias</span>
-        </h2>
-        <Link
-          to="/noticias"
-          className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
-        >
-          Ver todas →
-        </Link>
-      </div>
-
-      {items === null ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-72 animate-pulse bg-surface" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((n) => (
-            <NewsCard key={n.id} news={n} />
-          ))}
-        </div>
-      )}
-    </section>
-  );
-}
