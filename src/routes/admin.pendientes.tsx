@@ -126,13 +126,13 @@ function PendingPage() {
             return (
               <article
                 key={n.id}
-                className="border border-border bg-surface p-4 md:p-5"
+                className="border border-border bg-surface p-4 shadow-sm transition-colors hover:border-gold/50 md:p-5"
               >
-                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
                   <div className="min-w-0 flex-1">
-                    <div className="font-condensed mb-1 flex flex-wrap gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-                      <span className="bg-gold/15 px-2 py-0.5 text-gold">PENDIENTE</span>
-                      {sec && <span className="bg-foreground/10 px-2 py-0.5">{sec.name}</span>}
+                    <div className="font-condensed mb-2 flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <span className="bg-gold/15 px-2 py-1 text-gold">Pendiente</span>
+                      {sec && <span className="bg-foreground/10 px-2 py-1">{sec.name}</span>}
                       <span>
                         por {author?.display_name ?? n.author}
                       </span>
@@ -157,21 +157,51 @@ function PendingPage() {
                       </Link>
                     </div>
                   </div>
-                  <div className="flex gap-2 md:flex-col">
+                  <div className="flex flex-col gap-2 lg:items-stretch">
                     <button
                       onClick={() => setStatus(n.id, "published")}
-                      className="font-condensed inline-flex items-center gap-1.5 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
+                      disabled={busyId === n.id}
+                      className="font-condensed inline-flex items-center justify-center gap-1.5 bg-gold px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      <Check className="h-3.5 w-3.5" /> Publicar
+                      <Check className="h-3.5 w-3.5" /> Aprobar y publicar
                     </button>
                     <button
-                      onClick={() => setStatus(n.id, "rejected")}
-                      className="font-condensed inline-flex items-center gap-1.5 border border-border px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-destructive hover:text-destructive"
+                      onClick={() => setRejectingId(rejectingId === n.id ? null : n.id)}
+                      disabled={busyId === n.id}
+                      className="font-condensed inline-flex items-center justify-center gap-1.5 border border-border px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-destructive hover:text-destructive disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <X className="h-3.5 w-3.5" /> Rechazar
                     </button>
                   </div>
                 </div>
+                {rejectingId === n.id && (
+                  <div className="mt-4 border border-destructive/40 bg-destructive/5 p-4">
+                    <label className="font-condensed mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-destructive">
+                      <MessageSquareWarning className="h-4 w-4" /> Feedback de rechazo
+                    </label>
+                    <textarea
+                      value={feedbackById[n.id] ?? ""}
+                      onChange={(event) => setFeedbackById((current) => ({ ...current, [n.id]: event.target.value }))}
+                      placeholder="Explica qué debe corregirse antes de volver a revisión…"
+                      className="min-h-24 w-full border border-border bg-background px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-destructive"
+                    />
+                    <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
+                      <button
+                        onClick={() => setRejectingId(null)}
+                        className="font-condensed border border-border px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={() => setStatus(n.id, "rejected")}
+                        disabled={busyId === n.id}
+                        className="font-condensed bg-destructive px-4 py-2 text-xs font-bold uppercase tracking-widest text-destructive-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        Confirmar rechazo
+                      </button>
+                    </div>
+                  </div>
+                )}
               </article>
             );
           })}
