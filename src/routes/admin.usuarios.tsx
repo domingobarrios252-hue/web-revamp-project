@@ -216,3 +216,81 @@ function RoleToggle({
     </button>
   );
 }
+
+function CreateUserModal({
+  sections,
+  onClose,
+  onCreated,
+}: {
+  sections: Section[];
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"admin" | "editor">("editor");
+  const [sectionId, setSectionId] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (role === "editor" && !sectionId) return toast.error("Asigna una sección al editor");
+    setSaving(true);
+    const { data, error } = await supabase.functions.invoke("admin-create-user", {
+      body: { email, password, displayName, role, sectionId: role === "editor" ? sectionId : null },
+    });
+    setSaving(false);
+    if (error) toast.error(error.message);
+    else if ((data as { error?: string } | null)?.error) toast.error((data as { error: string }).error);
+    else {
+      toast.success("Usuario creado");
+      onCreated();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-background/85 p-4 backdrop-blur">
+      <div className="w-full max-w-lg border border-border bg-surface p-5 md:p-7">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="font-display text-2xl tracking-widest">Crear usuario</h2>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">✕</button>
+        </div>
+        <form onSubmit={onSubmit} className="space-y-3">
+          <UserField label="Nombre" value={displayName} onChange={setDisplayName} required />
+          <UserField label="Email" type="email" value={email} onChange={setEmail} required />
+          <UserField label="Contraseña temporal" type="password" value={password} onChange={setPassword} required />
+          <label className="block">
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Rol</span>
+            <select value={role} onChange={(e) => setRole(e.target.value as "admin" | "editor")} className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none">
+              <option value="editor">Editor</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+          {role === "editor" && (
+            <label className="block">
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Sección única</span>
+              <select value={sectionId} onChange={(e) => setSectionId(e.target.value)} required className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none">
+                <option value="">— Selecciona sección —</option>
+                {sections.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            </label>
+          )}
+          <div className="flex justify-end gap-2 border-t border-border pt-3">
+            <button type="button" onClick={onClose} className="font-condensed border border-border px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground">Cancelar</button>
+            <button type="submit" disabled={saving} className="font-condensed bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50">{saving ? "Creando…" : "Crear usuario"}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function UserField({ label, value, onChange, type = "text", required }: { label: string; value: string; onChange: (v: string) => void; type?: string; required?: boolean }) {
+  return (
+    <label className="block">
+      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">{label}</span>
+      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} required={required} className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none" />
+    </label>
+  );
+}
