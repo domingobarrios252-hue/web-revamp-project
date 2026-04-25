@@ -16,12 +16,14 @@ const admin = createClient(url, serviceRoleKey, {
 
 const runId = crypto.randomUUID().slice(0, 8);
 const editorEmail = `editorial-flow-${runId}@rollerzone.test`;
+const adminEmail = `editorial-admin-${runId}@rollerzone.test`;
 const password = `Rz-${runId}-Secure-12345!`;
 const sectionSlug = `qa-editorial-${runId}`;
 const pendingSlug = `qa-editor-pending-${runId}`;
 const rejectedSlug = `qa-editor-rejected-${runId}`;
 
 let editorUserId;
+let adminUserId;
 let sectionId;
 let pendingNewsId;
 let rejectedNewsId;
@@ -32,6 +34,11 @@ async function cleanup() {
     await admin.from("user_roles").delete().eq("user_id", editorUserId);
     await admin.from("profiles").delete().eq("user_id", editorUserId);
     await admin.auth.admin.deleteUser(editorUserId);
+  }
+  if (adminUserId) {
+    await admin.from("user_roles").delete().eq("user_id", adminUserId);
+    await admin.from("profiles").delete().eq("user_id", adminUserId);
+    await admin.auth.admin.deleteUser(adminUserId);
   }
   if (sectionId) await admin.from("sections").delete().eq("id", sectionId);
 }
@@ -70,11 +77,30 @@ try {
     .eq("user_id", editorUserId);
   assert.ifError(profileError);
 
+  const { data: createdAdmin, error: createAdminError } = await admin.auth.admin.createUser({
+    email: adminEmail,
+    password,
+    email_confirm: true,
+    user_metadata: { display_name: `Admin QA ${runId}` },
+  });
+  assert.ifError(createAdminError);
+  adminUserId = createdAdmin.user.id;
+
+  await admin.from("user_roles").delete().eq("user_id", adminUserId);
+  const { error: adminRoleError } = await admin.from("user_roles").insert({ user_id: adminUserId, role: "admin" });
+  assert.ifError(adminRoleError);
+
   const editor = createClient(url, anonKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
   const { error: loginError } = await editor.auth.signInWithPassword({ email: editorEmail, password });
   assert.ifError(loginError);
+
+  const signedAdmin = createClient(url, anonKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const { error: adminLoginError } = await signedAdmin.auth.signInWithPassword({ email: adminEmail, password });
+  assert.ifError(adminLoginError);
 
   const { data: insertedPending, error: insertPendingError } = await editor
     .from("news")
@@ -119,7 +145,7 @@ try {
   assert.ifError(hiddenBeforeApprovalError);
   assert.equal(hiddenBeforeApproval, null, "La noticia pendiente no aparece en consultas públicas");
 
-  const { data: approved, error: approveError } = await admin
+  const { data: approved, error: approveError } = await signedAdmin
     .from("news")
     .update({ status: "published", review_feedback: null })
     .eq("id", pendingNewsId)
@@ -158,7 +184,7 @@ try {
   assert.equal(insertedRejected.published, false);
 
   const feedback = "Falta contraste de fuentes y verificación de datos.";
-  const { data: rejected, error: rejectError } = await admin
+  const { data: rejected, error: rejectError } = await signedAdmin
     .from("news")
     .update({ status: "rejected", review_feedback: feedback })
     .eq("id", rejectedNewsId)
