@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Shield, ShieldCheck, ShieldOff, UserPlus, PenLine } from "lucide-react";
+import { Shield, ShieldCheck, ShieldOff, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ function AdminUsersPage() {
 
   const setRole = async (
     userId: string,
-    role: "admin" | "editor" | "colaborador",
+    role: "admin" | "editor",
     enable: boolean
   ) => {
     if (enable) {
@@ -84,9 +84,8 @@ function AdminUsersPage() {
         <UserPlus className="mt-0.5 h-4 w-4 text-gold" />
         <p>
           Los usuarios se registran desde <code className="text-gold">/auth</code>. Aquí asignas
-          roles: <strong>admin</strong> (acceso total), <strong>editor</strong> (gestión y
-          aprobación de noticias) o <strong>colaborador</strong> (solo crea sus propias noticias en
-          su sección).
+          roles: <strong>admin</strong> (control total) o <strong>editor</strong> (contenido limitado
+          a una única sección y siempre sujeto a aprobación).
         </p>
       </div>
 
@@ -109,7 +108,7 @@ function AdminUsersPage() {
               {profiles.map((p) => {
                 const userRoles = roles.filter((r) => r.user_id === p.user_id).map((r) => r.role);
                 const isMe = p.user_id === me?.id;
-                const isColab = userRoles.includes("colaborador");
+                const isEditor = userRoles.includes("editor") && !userRoles.includes("admin");
                 return (
                   <tr key={p.user_id} className="border-b border-border/50 last:border-0">
                     <td className="px-3 py-2">
@@ -132,8 +131,6 @@ function AdminUsersPage() {
                                 ? "bg-gold/20 text-gold"
                                 : r === "editor"
                                 ? "bg-foreground/10 text-foreground"
-                                : r === "colaborador"
-                                ? "bg-gold/10 text-gold"
                                 : "bg-muted text-muted-foreground"
                             }`}
                           >
@@ -146,8 +143,8 @@ function AdminUsersPage() {
                       <select
                         value={p.section_id ?? ""}
                         onChange={(e) => setSection(p.user_id, e.target.value || null)}
-                        disabled={!isColab}
-                        title={isColab ? "Asignar sección" : "Solo aplica a colaboradores"}
+                        disabled={!isEditor}
+                        title={isEditor ? "Asignar sección" : "Solo aplica a editores no administradores"}
                         className="border border-border bg-background px-2 py-1 text-xs focus:border-gold focus:outline-none disabled:opacity-50"
                       >
                         <option value="">—</option>
@@ -175,12 +172,6 @@ function AdminUsersPage() {
                           }
                           icon={<Shield className="h-3.5 w-3.5" />}
                           label="Editor"
-                        />
-                        <RoleToggle
-                          enabled={isColab}
-                          onClick={() => setRole(p.user_id, "colaborador", !isColab)}
-                          icon={<PenLine className="h-3.5 w-3.5" />}
-                          label="Colab."
                         />
                       </div>
                     </td>
