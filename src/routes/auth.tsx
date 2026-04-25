@@ -22,7 +22,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { user, signIn, signUp, loading } = useAuth();
+  const { user, isAdmin, signIn, signUp, loading } = useAuth();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -32,9 +32,9 @@ function AuthPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate({ to: "/admin" });
+      navigate({ to: isAdmin ? "/admin" : "/dashboard" });
     }
-  }, [user, loading, navigate]);
+  }, [user, isAdmin, loading, navigate]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +61,7 @@ function AuthPage() {
         );
       } else {
         toast.success(mode === "login" ? "Sesión iniciada" : "Cuenta creada");
-        navigate({ to: "/admin" });
+        navigate({ to: isAdmin ? "/admin" : "/dashboard" });
       }
     } finally {
       setSubmitting(false);
@@ -72,12 +72,12 @@ function AuthPage() {
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-6 py-10">
       <div className="border border-border bg-surface p-6 md:p-8">
         <h1 className="font-display text-3xl tracking-widest">
-          {mode === "login" ? "Acceso" : "Crear cuenta"} <span className="text-gold">admin</span>
+          {mode === "login" ? "Acceso" : "Crear cuenta"} <span className="text-gold">editorial</span>
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {mode === "login"
             ? "Inicia sesión para gestionar contenido."
-            : "Regístrate. Un administrador deberá asignarte el rol después."}
+            : "Regístrate. Un administrador deberá asignarte una sección antes de publicar."}
         </p>
 
         <form onSubmit={onSubmit} className="mt-6 space-y-3">
