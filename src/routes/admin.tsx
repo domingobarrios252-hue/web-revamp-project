@@ -22,27 +22,27 @@ function AdminLayout() {
       navigate({ to: "/auth" });
       return;
     }
-    // Colaboradores no acceden a /admin: redirigir a su panel
-    if (!loading && user && !isEditor && isColaborador) {
+    // Solo Admin accede al panel de administración; editores van a su panel editorial
+    if (!loading && user && !isAdmin && (isEditor || isColaborador)) {
       navigate({ to: "/dashboard" });
     }
-  }, [user, loading, isEditor, isColaborador, navigate]);
+  }, [user, loading, isAdmin, isEditor, isColaborador, navigate]);
 
   if (loading) {
     return <div className="px-6 py-10 text-muted-foreground">Cargando…</div>;
   }
   if (!user) return null;
 
-  if (!isEditor) {
+  if (!isAdmin) {
     return (
       <div className="mx-auto max-w-2xl px-6 py-16 text-center">
         <h1 className="font-display text-3xl tracking-widest">Sin permisos</h1>
         <p className="mt-3 text-muted-foreground">
           Tu cuenta <span className="text-gold">{user.email}</span> aún no tiene rol de
-          administrador o editor.
+          administrador.
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Si eres colaborador, accede a tu panel desde{" "}
+          Si eres editor, accede a tu panel desde{" "}
           <Link to="/dashboard" className="text-gold hover:underline">
             /dashboard
           </Link>

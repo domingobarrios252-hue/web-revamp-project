@@ -14,7 +14,7 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function DashboardLayout() {
-  const { user, isColaborador, isEditor, loading, signOut } = useAuth();
+  const { user, isAdmin, isColaborador, isEditor, loading, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,23 +22,23 @@ function DashboardLayout() {
       navigate({ to: "/auth" });
       return;
     }
-    // Si es admin/editor, su sitio es /admin
-    if (!loading && user && isEditor) {
+    // El Admin trabaja desde /admin; los editores desde /dashboard
+    if (!loading && user && isAdmin) {
       navigate({ to: "/admin" });
     }
-  }, [user, loading, isEditor, navigate]);
+  }, [user, loading, isAdmin, navigate]);
 
   if (loading) {
     return <div className="px-6 py-10 text-muted-foreground">Cargando…</div>;
   }
   if (!user) return null;
 
-  if (!isColaborador) {
+  if (!isEditor && !isColaborador) {
     return (
       <div className="mx-auto max-w-2xl px-6 py-16 text-center">
         <h1 className="font-display text-3xl tracking-widest">Sin permisos</h1>
         <p className="mt-3 text-muted-foreground">
-          Tu cuenta <span className="text-gold">{user.email}</span> aún no tiene rol asignado.
+          Tu cuenta <span className="text-gold">{user.email}</span> aún no tiene rol editorial asignado.
           Contacta con un administrador para que te asigne una sección.
         </p>
       </div>

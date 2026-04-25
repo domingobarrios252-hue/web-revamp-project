@@ -18,8 +18,9 @@ type Post = {
   excerpt: string | null;
   content: string | null;
   image_url: string | null;
-  status: "draft" | "pending" | "published";
+  status: "draft" | "pending" | "published" | "rejected";
   section_id: string | null;
+  review_feedback: string | null;
   updated_at: string;
 };
 
@@ -62,12 +63,17 @@ function MyPostsPage() {
 
   const reload = async () => {
     if (!user) return;
+    if (!sectionId) {
+      setPosts([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const [{ data: n }, { data: s }, { data: w }] = await Promise.all([
       supabase
         .from("news")
-        .select("id, title, slug, excerpt, content, image_url, status, section_id, updated_at")
-        .eq("created_by", user.id)
+        .select("id, title, slug, excerpt, content, image_url, status, section_id, review_feedback, updated_at")
+        .eq("section_id", sectionId)
         .order("updated_at", { ascending: false }),
       supabase.from("sections").select("id, name").order("sort_order"),
       supabase.from("writers").select("id, full_name").eq("published", true).order("sort_order"),
@@ -119,7 +125,7 @@ function MyPostsPage() {
         {sectionId ? (
           <>
             Tu sección asignada: <strong className="text-gold">{mySection?.name ?? "…"}</strong>.
-            Todas tus noticias se publicarán en esta sección.
+            Todas las noticias creadas o editadas quedarán pendientes de revisión.
           </>
         ) : (
           <span className="text-destructive">
@@ -150,7 +156,10 @@ function MyPostsPage() {
                 <tr key={p.id} className="border-b border-border/50 last:border-0">
                   <td className="px-3 py-2">
                     <div className="font-semibold text-foreground">{p.title}</div>
-                    <div className="text-xs text-muted-foreground">/{p.slug}</div>
+                      <div className="text-xs text-muted-foreground">/{p.slug}</div>
+                      {p.status === "rejected" && p.review_feedback && (
+                        <div className="mt-1 text-xs text-destructive">{p.review_feedback}</div>
+                      )}
                   </td>
                   <td className="px-3 py-2">
                     <StatusBadge status={p.status} />
@@ -170,7 +179,7 @@ function MyPostsPage() {
                           <ExternalLink className="h-4 w-4" />
                         </Link>
                       )}
-                      {p.status === "draft" && (
+                      {p.status !== "published" && (
                         <button
                           onClick={() => sendForReview(p)}
                           title="Enviar a revisión"
@@ -186,7 +195,7 @@ function MyPostsPage() {
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
-                      {p.status === "draft" && (
+                      {p.status !== "published" && (
                         <button
                           onClick={() => onDelete(p)}
                           title="Borrar"
@@ -225,6 +234,7 @@ function StatusBadge({ status }: { status: Post["status"] }) {
     draft: { label: "Borrador", cls: "bg-muted text-muted-foreground" },
     pending: { label: "En revisión", cls: "bg-gold/15 text-gold" },
     published: { label: "Publicada", cls: "bg-foreground/10 text-foreground" },
+    rejected: { label: "Rechazada", cls: "bg-destructive/15 text-destructive" },
   };
   const m = map[status];
   return (
@@ -259,7 +269,7 @@ function PostEditor({
     if (!item && title && !slug) setSlug(slugify(title));
   }, [title]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const save = async (asPending: boolean) => {
+  const save = async () => {
     const parsed = schema.safeParse({
       title,
       slug,
@@ -272,7 +282,6 @@ function PostEditor({
       return;
     }
     setSaving(true);
-    const newStatus: "draft" | "pending" = asPending ? "pending" : "draft";
     // Buscar un writer por defecto: el primero publicado, o usar email
     const defaultWriter = writers[0];
     const basePayload = {
@@ -281,7 +290,7 @@ function PostEditor({
       excerpt: parsed.data.excerpt ?? null,
       content: parsed.data.content ?? null,
       image_url: parsed.data.image_url || null,
-      status: newStatus,
+      status: "pending" as const,
       author: defaultWriter?.full_name ?? user?.email ?? "Colaborador",
       writer_id: defaultWriter?.id ?? null,
     };
@@ -295,11 +304,7 @@ function PostEditor({
       toast.error(error.message);
     } else {
       toast.success(
-        asPending
-          ? "Enviada a revisión"
-          : item
-          ? "Borrador guardado"
-          : "Borrador creado"
+          item ? "Cambios enviados a revisión" : "Noticia enviada a revisión"
       );
       onSaved();
     }
@@ -327,7 +332,7 @@ function PostEditor({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            save(false);
+            save();
           }}
           className="space-y-3"
         >
@@ -366,15 +371,7 @@ function PostEditor({
               disabled={saving}
               className="font-condensed border border-border px-5 py-2 text-xs font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold disabled:opacity-50"
             >
-              {saving ? "Guardando…" : "Guardar borrador"}
-            </button>
-            <button
-              type="button"
-              disabled={saving}
-              onClick={() => save(true)}
-              className="font-condensed inline-flex items-center gap-1.5 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"
-            >
-              <Send className="h-3.5 w-3.5" /> Enviar a revisión
+              {saving ? "Enviando…" : "Enviar a revisión"}
             </button>
           </div>
         </form>

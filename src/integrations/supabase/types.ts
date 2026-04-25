@@ -575,6 +575,7 @@ export type Database = {
           published: boolean
           published_at: string
           read_minutes: number | null
+          review_feedback: string | null
           section_id: string | null
           slug: string
           status: Database["public"]["Enums"]["post_status"]
@@ -598,6 +599,7 @@ export type Database = {
           published?: boolean
           published_at?: string
           read_minutes?: number | null
+          review_feedback?: string | null
           section_id?: string | null
           slug: string
           status?: Database["public"]["Enums"]["post_status"]
@@ -621,6 +623,7 @@ export type Database = {
           published?: boolean
           published_at?: string
           read_minutes?: number | null
+          review_feedback?: string | null
           section_id?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["post_status"]
@@ -723,6 +726,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string | null
+          email: string | null
           id: string
           section_id: string | null
           updated_at: string
@@ -732,6 +736,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          email?: string | null
           id?: string
           section_id?: string | null
           updated_at?: string
@@ -741,6 +746,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          email?: string | null
           id?: string
           section_id?: string | null
           updated_at?: string
@@ -1245,6 +1251,7 @@ export type Database = {
     }
     Functions: {
       current_user_section_id: { Args: never; Returns: string }
+      has_assigned_section: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1252,6 +1259,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_editorial_staff: { Args: { _user_id: string }; Returns: boolean }
       register_news_view: {
         Args: { _news_id: string; _visitor_hash: string }
         Returns: number
@@ -1263,7 +1271,7 @@ export type Database = {
       mvp_gender: "masculino" | "femenino"
       mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
-      post_status: "draft" | "pending" | "published"
+      post_status: "draft" | "pending" | "published" | "rejected"
       schedule_status: "programada" | "en_curso" | "finalizada"
     }
     CompositeTypes: {
@@ -1397,7 +1405,7 @@ export const Constants = {
       mvp_gender: ["masculino", "femenino"],
       mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
-      post_status: ["draft", "pending", "published"],
+      post_status: ["draft", "pending", "published", "rejected"],
       schedule_status: ["programada", "en_curso", "finalizada"],
     },
   },
