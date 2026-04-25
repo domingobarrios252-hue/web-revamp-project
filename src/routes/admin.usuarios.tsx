@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
-type Profile = { user_id: string; display_name: string | null; section_id: string | null };
+type Profile = { user_id: string; display_name: string | null; email: string | null; section_id: string | null };
 type RoleRow = { user_id: string; role: "admin" | "editor" | "user" | "colaborador" };
 type Section = { id: string; name: string };
 
@@ -19,11 +19,12 @@ function AdminUsersPage() {
   const [roles, setRoles] = useState<RoleRow[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
 
   const reload = async () => {
     setLoading(true);
     const [{ data: p }, { data: r }, { data: s }] = await Promise.all([
-      supabase.from("profiles").select("user_id, display_name, section_id"),
+      supabase.from("profiles").select("user_id, display_name, email, section_id"),
       supabase.from("user_roles").select("user_id, role"),
       supabase.from("sections").select("id, name").order("sort_order"),
     ]);
@@ -41,24 +42,16 @@ function AdminUsersPage() {
     return <p className="text-muted-foreground">Solo administradores.</p>;
   }
 
-  const setRole = async (
+  const setPrimaryRole = async (
     userId: string,
     role: "admin" | "editor",
-    enable: boolean
   ) => {
-    if (enable) {
-      const { error } = await supabase.from("user_roles").insert({ user_id: userId, role });
-      if (error && !error.message.includes("duplicate")) toast.error(error.message);
-      else toast.success(`Rol ${role} asignado`);
-    } else {
-      const { error } = await supabase
-        .from("user_roles")
-        .delete()
-        .eq("user_id", userId)
-        .eq("role", role);
-      if (error) toast.error(error.message);
-      else toast.success(`Rol ${role} retirado`);
-    }
+    const { error: deleteError } = await supabase.from("user_roles").delete().eq("user_id", userId);
+    if (deleteError) return toast.error(deleteError.message);
+    const { error } = await supabase.from("user_roles").insert({ user_id: userId, role });
+    if (error) toast.error(error.message);
+    else toast.success(`Rol ${role} asignado`);
+    if (role === "admin") await setSection(userId, null);
     reload();
   };
 
@@ -78,6 +71,12 @@ function AdminUsersPage() {
     <div>
       <div className="mb-5 flex items-center justify-between">
         <h1 className="font-display text-2xl tracking-widest md:text-3xl">Usuarios</h1>
+        <button
+          onClick={() => setShowCreate(true)}
+          className="font-condensed inline-flex items-center gap-1.5 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
+        >
+          <UserPlus className="h-3.5 w-3.5" /> Crear usuario
+        </button>
       </div>
 
       <div className="mb-4 flex items-start gap-2 border border-border bg-surface p-3 text-xs text-muted-foreground">
@@ -116,7 +115,7 @@ function AdminUsersPage() {
                         {p.display_name ?? "Sin nombre"}{" "}
                         {isMe && <span className="text-xs text-gold">(tú)</span>}
                       </div>
-                      <div className="text-xs text-muted-foreground">{p.user_id}</div>
+                      <div className="text-xs text-muted-foreground">{p.email ?? p.user_id}</div>
                     </td>
                     <td className="px-3 py-2">
                       <div className="flex flex-wrap gap-1.5">
@@ -159,17 +158,13 @@ function AdminUsersPage() {
                       <div className="flex flex-wrap justify-end gap-1.5">
                         <RoleToggle
                           enabled={userRoles.includes("admin")}
-                          onClick={() =>
-                            setRole(p.user_id, "admin", !userRoles.includes("admin"))
-                          }
+                          onClick={() => setPrimaryRole(p.user_id, "admin")}
                           icon={<ShieldCheck className="h-3.5 w-3.5" />}
                           label="Admin"
                         />
                         <RoleToggle
                           enabled={userRoles.includes("editor")}
-                          onClick={() =>
-                            setRole(p.user_id, "editor", !userRoles.includes("editor"))
-                          }
+                          onClick={() => setPrimaryRole(p.user_id, "editor")}
                           icon={<Shield className="h-3.5 w-3.5" />}
                           label="Editor"
                         />
@@ -181,6 +176,16 @@ function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+      )}
+      {showCreate && (
+        <CreateUserModal
+          sections={sections}
+          onClose={() => setShowCreate(false)}
+          onCreated={() => {
+            setShowCreate(false);
+            reload();
+          }}
+        />
       )}
     </div>
   );
