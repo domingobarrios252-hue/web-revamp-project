@@ -25,6 +25,9 @@ type News = {
   read_minutes: number | null;
   featured: boolean;
   published: boolean;
+  status: "draft" | "pending" | "published" | "rejected";
+  section_id: string | null;
+  review_feedback: string | null;
   views_count: number;
   published_at: string;
 };
@@ -41,7 +44,7 @@ const newsSchema = z.object({
   gallery: z.array(z.string().trim().url()).max(50).default([]),
   read_minutes: z.number().int().min(1).max(60).optional(),
   featured: z.boolean(),
-  published: z.boolean(),
+  status: z.enum(["draft", "pending", "published", "rejected"]),
   published_at: z.string().min(1, "Fecha requerida"),
 });
 
@@ -80,7 +83,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, published, views_count, published_at"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, published, status, section_id, review_feedback, views_count, published_at"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -116,7 +119,7 @@ function AdminNewsList() {
   const togglePublish = async (n: News) => {
     const { error } = await supabase
       .from("news")
-      .update({ published: !n.published })
+      .update({ status: n.status === "published" ? "draft" : "published" })
       .eq("id", n.id);
     if (error) toast.error(error.message);
     else reload();
@@ -184,8 +187,8 @@ function AdminNewsList() {
                         <IconBtn title={n.featured ? "Quitar destacada" : "Destacar"} onClick={() => toggleFeatured(n)}>
                           <Star className={n.featured ? "h-4 w-4 fill-gold text-gold" : "h-4 w-4"} />
                         </IconBtn>
-                        <IconBtn title={n.published ? "Despublicar" : "Publicar"} onClick={() => togglePublish(n)}>
-                          {n.published ? <Eye className="h-4 w-4 text-gold" /> : <EyeOff className="h-4 w-4" />}
+                        <IconBtn title={n.status === "published" ? "Despublicar" : "Publicar"} onClick={() => togglePublish(n)}>
+                          {n.status === "published" ? <Eye className="h-4 w-4 text-gold" /> : <EyeOff className="h-4 w-4" />}
                         </IconBtn>
                         <IconBtn title="Editar" onClick={() => setEditing(n)}>
                           <Pencil className="h-4 w-4" />
