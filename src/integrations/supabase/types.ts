@@ -1263,7 +1263,7 @@ export type Database = {
       mvp_gender: "masculino" | "femenino"
       mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
-      post_status: "draft" | "pending" | "published"
+      post_status: "draft" | "pending" | "published" | "rejected"
       schedule_status: "programada" | "en_curso" | "finalizada"
     }
     CompositeTypes: {
@@ -1397,7 +1397,7 @@ export const Constants = {
       mvp_gender: ["masculino", "femenino"],
       mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
-      post_status: ["draft", "pending", "published"],
+      post_status: ["draft", "pending", "published", "rejected"],
       schedule_status: ["programada", "en_curso", "finalizada"],
     },
   },
