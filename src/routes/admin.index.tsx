@@ -269,7 +269,7 @@ function NewsEditor({
   const [gallery, setGallery] = useState<string[]>(item?.gallery ?? []);
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
-  const [published, setPublished] = useState(item?.published ?? true);
+  const [status, setStatus] = useState<News["status"]>(item?.status ?? "draft");
   const [publishedAt, setPublishedAt] = useState<string>(toLocalInput(item?.published_at));
   const [saving, setSaving] = useState(false);
 
@@ -295,7 +295,7 @@ function NewsEditor({
       gallery,
       read_minutes: typeof readMinutes === "number" ? readMinutes : undefined,
       featured,
-      published,
+      status,
       published_at: publishedAt,
     });
     if (!parsed.success) {
@@ -325,7 +325,7 @@ function NewsEditor({
         gallery: parsed.data.gallery,
         read_minutes: parsed.data.read_minutes ?? null,
         featured: parsed.data.featured,
-        published: parsed.data.published,
+        status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
       };
       const { error } = item
@@ -429,7 +429,17 @@ function NewsEditor({
             />
           </label>
           <div className="flex flex-wrap gap-4">
-            <Checkbox label="Publicada" checked={published} onChange={setPublished} />
+            <SelectField
+              label="Estado editorial"
+              value={status}
+              onChange={(value) => setStatus(value as News["status"])}
+              options={[
+                { value: "draft", label: "Borrador" },
+                { value: "pending", label: "Pendiente de revisión" },
+                { value: "published", label: "Publicado" },
+                { value: "rejected", label: "Rechazado" },
+              ]}
+            />
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
           </div>
           <div className="flex justify-end gap-2 border-t border-border pt-3">
