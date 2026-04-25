@@ -63,6 +63,11 @@ function MyPostsPage() {
 
   const reload = async () => {
     if (!user) return;
+    if (!sectionId) {
+      setPosts([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const [{ data: n }, { data: s }, { data: w }] = await Promise.all([
       supabase
@@ -264,7 +269,7 @@ function PostEditor({
     if (!item && title && !slug) setSlug(slugify(title));
   }, [title]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const save = async (asPending: boolean) => {
+  const save = async () => {
     const parsed = schema.safeParse({
       title,
       slug,
@@ -277,7 +282,6 @@ function PostEditor({
       return;
     }
     setSaving(true);
-    const newStatus: "draft" | "pending" = asPending ? "pending" : "draft";
     // Buscar un writer por defecto: el primero publicado, o usar email
     const defaultWriter = writers[0];
     const basePayload = {
@@ -286,7 +290,7 @@ function PostEditor({
       excerpt: parsed.data.excerpt ?? null,
       content: parsed.data.content ?? null,
       image_url: parsed.data.image_url || null,
-      status: newStatus,
+      status: "pending" as const,
       author: defaultWriter?.full_name ?? user?.email ?? "Colaborador",
       writer_id: defaultWriter?.id ?? null,
     };
@@ -300,11 +304,7 @@ function PostEditor({
       toast.error(error.message);
     } else {
       toast.success(
-        asPending
-          ? "Enviada a revisión"
-          : item
-          ? "Borrador guardado"
-          : "Borrador creado"
+          item ? "Cambios enviados a revisión" : "Noticia enviada a revisión"
       );
       onSaved();
     }
@@ -332,7 +332,7 @@ function PostEditor({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            save(false);
+            save();
           }}
           className="space-y-3"
         >
@@ -371,15 +371,7 @@ function PostEditor({
               disabled={saving}
               className="font-condensed border border-border px-5 py-2 text-xs font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold disabled:opacity-50"
             >
-              {saving ? "Guardando…" : "Guardar borrador"}
-            </button>
-            <button
-              type="button"
-              disabled={saving}
-              onClick={() => save(true)}
-              className="font-condensed inline-flex items-center gap-1.5 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"
-            >
-              <Send className="h-3.5 w-3.5" /> Enviar a revisión
+              {saving ? "Enviando…" : "Enviar a revisión"}
             </button>
           </div>
         </form>
