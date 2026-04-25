@@ -13,7 +13,7 @@ type PendingNews = {
   author: string;
   created_by: string | null;
   section_id: string | null;
-  status: "draft" | "pending" | "published";
+  status: "draft" | "pending" | "published" | "rejected";
   published_at: string;
   updated_at: string;
 };
@@ -63,11 +63,14 @@ function PendingPage() {
     return <p className="text-muted-foreground">Solo admin/editor pueden revisar.</p>;
   }
 
-  const setStatus = async (id: string, status: "published" | "draft") => {
-    const { error } = await supabase.from("news").update({ status }).eq("id", id);
+  const setStatus = async (id: string, status: "published" | "rejected") => {
+    const review_feedback =
+      status === "rejected" ? window.prompt("Motivo del rechazo", "Necesita ajustes editoriales.") : null;
+    if (status === "rejected" && review_feedback === null) return;
+    const { error } = await supabase.from("news").update({ status, review_feedback }).eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success(status === "published" ? "Noticia aprobada y publicada" : "Devuelta a borrador");
+      toast.success(status === "published" ? "Noticia aprobada y publicada" : "Noticia rechazada");
       reload();
     }
   };
@@ -136,7 +139,7 @@ function PendingPage() {
                       <Check className="h-3.5 w-3.5" /> Publicar
                     </button>
                     <button
-                      onClick={() => setStatus(n.id, "draft")}
+                      onClick={() => setStatus(n.id, "rejected")}
                       className="font-condensed inline-flex items-center gap-1.5 border border-border px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-destructive hover:text-destructive"
                     >
                       <X className="h-3.5 w-3.5" /> Rechazar
