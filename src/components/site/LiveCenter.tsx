@@ -1,19 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarClock, ExternalLink, Flag, Play, Radio, RefreshCw, Trophy } from "lucide-react";
+import { CalendarClock, ExternalLink, Flag, RefreshCw, Trophy } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { extractYouTubeId, youTubeEmbedUrl } from "@/lib/youtube";
 
 type Status = "upcoming" | "live" | "finished";
-
-type LiveStream = {
-  id: string;
-  title: string;
-  embed_url: string | null;
-  is_active: boolean;
-  autoplay: boolean;
-  updated_at: string;
-};
 
 type LiveEvent = {
   id: string;
@@ -29,7 +19,6 @@ type Race = {
   category: string | null;
   scheduled_time: string;
   status: Status;
-  events?: { name: string; slug: string } | null;
 };
 
 type Result = {
@@ -48,7 +37,6 @@ type Result = {
 const REFRESH_MS = 15_000;
 
 export function LiveCenter() {
-  const [stream, setStream] = useState<LiveStream | null>(null);
   const [event, setEvent] = useState<LiveEvent | null>(null);
   const [currentRace, setCurrentRace] = useState<Race | null>(null);
   const [results, setResults] = useState<Result[]>([]);
@@ -63,22 +51,13 @@ export function LiveCenter() {
     const load = async () => {
       setRefreshing(true);
       const client = supabase as any;
-      const [{ data: streamData }, { data: eventData }] = await Promise.all([
-        client
-          .from("live_stream")
-          .select("id, title, embed_url, is_active, autoplay, updated_at")
-          .eq("is_active", true)
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        client
-          .from("events")
-          .select("id, name, slug, status")
-          .eq("status", "live")
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ]);
+      const { data: eventData } = await client
+        .from("events")
+        .select("id, name, slug, status")
+        .eq("status", "live")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
       const activeEvent = (eventData as LiveEvent | null) ?? null;
       let raceData: Race | null = null;
@@ -118,7 +97,6 @@ export function LiveCenter() {
       }
 
       if (!cancelled) {
-        setStream((streamData as LiveStream | null) ?? null);
         setEvent(activeEvent);
         setCurrentRace(raceData);
         setResults(resultData);
@@ -133,7 +111,6 @@ export function LiveCenter() {
     const interval = setInterval(load, REFRESH_MS);
     const channel = (supabase as any)
       .channel("live-center-home")
-      .on("postgres_changes", { event: "*", schema: "public", table: "live_stream" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "events" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "races" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "results" }, load)
@@ -153,14 +130,14 @@ export function LiveCenter() {
       <div className="mx-auto max-w-7xl px-5 py-8 md:px-6 md:py-10">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-3">
           <div>
-            <div className="live-red-tag font-condensed mb-2 inline-flex items-center gap-2 rounded-md bg-tv-red px-3 py-1 text-[11px] font-bold uppercase tracking-[3px] text-white">
-              <span className="live-dot h-1.5 w-1.5 rounded-full bg-white" /> En directo
+            <div className="live-red-tag font-condensed mb-2 inline-flex items-center gap-2 rounded-md bg-tv-red px-3 py-1 text-[11px] font-bold uppercase tracking-[3px] text-foreground">
+              <span className="live-dot h-1.5 w-1.5 rounded-full bg-foreground" /> Resultados en vivo
             </div>
             <h2 className="font-display text-3xl uppercase tracking-widest md:text-5xl">
-              LIVE <span className="text-gold">CENTER</span>
+              Centro de <span className="text-gold">competición</span>
             </h2>
             <p className="font-condensed mt-1 text-xs uppercase tracking-widest text-muted-foreground">
-              {event?.name ?? stream?.title ?? "Cobertura en vivo RollerZone"}
+              {event?.name ?? "Clasificaciones, prueba actual y próximas salidas"}
             </p>
           </div>
           <div className="font-condensed flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -169,10 +146,9 @@ export function LiveCenter() {
           </div>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(360px,2fr)]">
-          <LiveStreamPlayer stream={stream} />
+        <div className="grid gap-5 lg:grid-cols-[minmax(360px,2fr)_minmax(0,3fr)]">
+          <LiveRaceCard race={currentRace} event={event} />
           <div className="grid gap-4">
-            <LiveRaceCard race={currentRace} event={event} />
             <LiveResultsPanel race={currentRace} results={results} />
             <UpcomingRacesList races={upcoming} />
             {event && (
@@ -191,59 +167,20 @@ export function LiveCenter() {
   );
 }
 
-function LiveStreamPlayer({ stream }: { stream: LiveStream | null }) {
-  const embedUrl = useMemo(() => resolveStreamUrl(stream?.embed_url, stream?.autoplay), [stream]);
-
-  return (
-    <div className="overflow-hidden rounded-lg border border-border bg-surface shadow-xl">
-      <div className="relative aspect-video bg-background">
-        {stream?.is_active && embedUrl ? (
-          <iframe
-            src={embedUrl}
-            title={stream.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-            allowFullScreen
-            className="absolute inset-0 h-full w-full"
-          />
-        ) : (
-          <div className="hero-grid-bg absolute inset-0 flex items-center justify-center">
-            <div className="px-6 text-center">
-              <Radio className="mx-auto h-12 w-12 text-tv-red/70" />
-              <p className="font-display mt-3 text-xl uppercase tracking-widest text-foreground">
-                No hay emisión en directo
-              </p>
-            </div>
-          </div>
-        )}
-        <div className="live-red-tag font-condensed sticky top-0 z-10 ml-3 mt-3 inline-flex items-center gap-2 rounded-md bg-tv-red px-3 py-1 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
-          <span className="live-dot h-1.5 w-1.5 rounded-full bg-white" /> EN DIRECTO
-        </div>
-      </div>
-      <div className="flex items-center justify-between gap-3 px-4 py-3">
-        <div className="min-w-0">
-          <h3 className="font-display truncate text-lg uppercase tracking-widest">{stream?.title ?? "RollerZone Live"}</h3>
-          <p className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">Streaming · Resultados · Próximas pruebas</p>
-        </div>
-        <Play className="h-5 w-5 shrink-0 fill-current text-tv-red" />
-      </div>
-    </div>
-  );
-}
-
 function LiveRaceCard({ race, event }: { race: Race | null; event: LiveEvent | null }) {
   const countdown = useCountdown(race?.status === "upcoming" ? race.scheduled_time : null);
 
   return (
-    <article className="rounded-lg border border-border bg-surface p-4 shadow-lg">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="font-display text-lg uppercase tracking-widest">Current Race</h3>
+    <article className="rounded-lg border border-border bg-surface p-5 shadow-lg">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h3 className="font-display text-xl uppercase tracking-widest">Prueba actual</h3>
         <StatusBadge status={race?.status ?? event?.status ?? "upcoming"} />
       </div>
-      <p className="font-display text-2xl uppercase leading-none tracking-wider text-gold">
-        {race?.race_name ?? "Sin carrera activa"}
+      <p className="font-display text-4xl uppercase leading-none tracking-wider text-gold md:text-5xl">
+        {race?.race_name ?? "Sin prueba activa"}
       </p>
-      <div className="font-condensed mt-3 grid gap-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-        <span>{race?.category ?? "Categoría por confirmar"}</span>
+      <div className="font-condensed mt-4 grid gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+        <span className="inline-flex items-center gap-2"><Flag className="h-4 w-4 text-gold" />{race?.category ?? "Categoría por confirmar"}</span>
         <span>{event?.name ?? "Evento pendiente"}</span>
         {countdown && <span className="text-gold">Inicio en {countdown}</span>}
       </div>
@@ -261,24 +198,24 @@ function LiveResultsPanel({ race, results }: { race: Race | null; results: Resul
   return (
     <article className="overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h3 className="font-display text-lg uppercase tracking-widest">Live Results</h3>
+        <h3 className="font-display text-lg uppercase tracking-widest">Resultados en vivo</h3>
         <div className="font-condensed inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
           {race?.status === "live" ? <span className="live-dot h-2 w-2 rounded-full bg-tv-red" /> : null}
-          {race?.status === "finished" ? "FINAL" : "LIVE"}
+          {race?.status === "finished" ? "FINAL" : "EN VIVO"}
         </div>
       </div>
       {results.length === 0 ? (
-        <div className="p-5 text-sm text-muted-foreground">Sin resultados cargados para la carrera actual.</div>
+        <div className="p-5 text-sm text-muted-foreground">Sin resultados cargados para la prueba actual.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="font-condensed bg-background/60 text-[10px] uppercase tracking-widest text-muted-foreground">
               <tr>
                 <th className="px-3 py-2">Pos</th>
-                <th className="px-3 py-2">Atleta</th>
+                <th className="px-3 py-2">Patinador</th>
                 <th className="px-3 py-2">Club / País</th>
                 <th className="px-3 py-2">Tiempo</th>
-                <th className="px-3 py-2">Δ</th>
+                <th className="px-3 py-2">Dif.</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -307,11 +244,11 @@ function UpcomingRacesList({ races }: { races: Race[] }) {
   return (
     <article className="rounded-lg border border-border bg-surface p-4 shadow-lg">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="font-display text-lg uppercase tracking-widest">Upcoming Races</h3>
+        <h3 className="font-display text-lg uppercase tracking-widest">Próximas pruebas</h3>
         <CalendarClock className="h-4 w-4 text-gold" />
       </div>
       {races.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No hay próximas carreras en este evento.</p>
+        <p className="text-sm text-muted-foreground">No hay próximas pruebas en este evento.</p>
       ) : (
         <ul className="divide-y divide-border">
           {races.map((race) => (
@@ -332,28 +269,13 @@ function UpcomingRacesList({ races }: { races: Race[] }) {
 }
 
 function StatusBadge({ status }: { status: Status }) {
-  const label = status === "live" ? "LIVE" : status === "finished" ? "FINAL" : "UPCOMING";
+  const label = status === "live" ? "EN VIVO" : status === "finished" ? "FINAL" : "PRÓXIMA";
   return (
-    <span className={`font-condensed inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${status === "live" ? "bg-tv-red text-white" : status === "finished" ? "bg-muted text-muted-foreground" : "bg-gold/20 text-gold"}`}>
-      {status === "live" ? <span className="live-dot h-1.5 w-1.5 rounded-full bg-white" /> : null}
+    <span className={`font-condensed inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${status === "live" ? "bg-tv-red text-foreground" : status === "finished" ? "bg-muted text-muted-foreground" : "bg-gold/20 text-gold"}`}>
+      {status === "live" ? <span className="live-dot h-1.5 w-1.5 rounded-full bg-foreground" /> : null}
       {label}
     </span>
   );
-}
-
-function resolveStreamUrl(input: string | null | undefined, autoplay?: boolean) {
-  if (!input?.trim()) return null;
-  const iframeSrc = input.match(/src=["']([^"']+)["']/i)?.[1];
-  const raw = iframeSrc ?? input.trim();
-  const youtube = extractYouTubeId(raw) ? youTubeEmbedUrl(raw, { autoplay }) : null;
-  if (youtube) return youtube;
-  try {
-    const url = new URL(raw);
-    if (autoplay) url.searchParams.set("autoplay", "1");
-    return url.toString();
-  } catch {
-    return null;
-  }
 }
 
 function medal(position: number) {
