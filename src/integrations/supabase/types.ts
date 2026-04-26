@@ -181,6 +181,7 @@ export type Database = {
           slug: string
           sort_order: number
           start_date: string
+          status: Database["public"]["Enums"]["live_center_status"]
           updated_at: string
           website_url: string | null
         }
@@ -204,6 +205,7 @@ export type Database = {
           slug: string
           sort_order?: number
           start_date: string
+          status?: Database["public"]["Enums"]["live_center_status"]
           updated_at?: string
           website_url?: string | null
         }
@@ -227,6 +229,7 @@ export type Database = {
           slug?: string
           sort_order?: number
           start_date?: string
+          status?: Database["public"]["Enums"]["live_center_status"]
           updated_at?: string
           website_url?: string | null
         }
@@ -382,6 +385,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      live_stream: {
+        Row: {
+          autoplay: boolean
+          created_at: string
+          embed_url: string | null
+          id: string
+          is_active: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          autoplay?: boolean
+          created_at?: string
+          embed_url?: string | null
+          id?: string
+          is_active?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          autoplay?: boolean
+          created_at?: string
+          embed_url?: string | null
+          id?: string
+          is_active?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       magazines: {
         Row: {
@@ -762,6 +795,47 @@ export type Database = {
           },
         ]
       }
+      races: {
+        Row: {
+          category: string | null
+          created_at: string
+          event_id: string
+          id: string
+          race_name: string
+          scheduled_time: string
+          status: Database["public"]["Enums"]["live_center_status"]
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          race_name: string
+          scheduled_time?: string
+          status?: Database["public"]["Enums"]["live_center_status"]
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          race_name?: string
+          scheduled_time?: string
+          status?: Database["public"]["Enums"]["live_center_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "races_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       regions: {
         Row: {
           code: string
@@ -794,6 +868,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      results: {
+        Row: {
+          athlete_name: string
+          club: string | null
+          country: string | null
+          created_at: string
+          gap: string | null
+          id: string
+          is_highlighted: boolean
+          position: number
+          race_id: string
+          time: string | null
+          updated_at: string
+        }
+        Insert: {
+          athlete_name: string
+          club?: string | null
+          country?: string | null
+          created_at?: string
+          gap?: string | null
+          id?: string
+          is_highlighted?: boolean
+          position: number
+          race_id: string
+          time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          athlete_name?: string
+          club?: string | null
+          country?: string | null
+          created_at?: string
+          gap?: string | null
+          id?: string
+          is_highlighted?: boolean
+          position?: number
+          race_id?: string
+          time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "results_race_id_fkey"
+            columns: ["race_id"]
+            isOneToOne: false
+            referencedRelation: "races"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       schedule_items: {
         Row: {
@@ -1267,6 +1391,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "user" | "colaborador"
+      live_center_status: "upcoming" | "live" | "finished"
       live_result_status: "en_vivo" | "finalizado" | "proxima"
       mvp_gender: "masculino" | "femenino"
       mvp_tier: "elite" | "estrella" | "promesa"
@@ -1401,6 +1526,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "user", "colaborador"],
+      live_center_status: ["upcoming", "live", "finished"],
       live_result_status: ["en_vivo", "finalizado", "proxima"],
       mvp_gender: ["masculino", "femenino"],
       mvp_tier: ["elite", "estrella", "promesa"],

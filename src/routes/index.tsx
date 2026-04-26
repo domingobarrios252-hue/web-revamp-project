@@ -5,6 +5,7 @@ import { youTubeEmbedUrl } from "@/lib/youtube";
 import { Ticker } from "@/components/site/Ticker";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveResultsTable } from "@/components/site/LiveResultsTable";
+import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
 
 type MvpPreview = {
@@ -205,6 +206,8 @@ function HomePage() {
       <Ticker />
 
       <AdBannerWithMagazine placement="home_top" />
+
+      <LiveCenter />
 
       <LiveNowSection />
 
