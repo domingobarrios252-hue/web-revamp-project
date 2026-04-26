@@ -228,6 +228,7 @@ try {
       created_by: adminUserId,
       section_id: otherSectionId,
       status: "pending",
+      published: false,
     })
     .select("id, title, section_id, status, published")
     .single();
