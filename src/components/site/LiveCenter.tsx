@@ -146,8 +146,7 @@ export function LiveCenter() {
     };
   }, []);
 
-  const show = loaded && (stream || event || currentRace || upcoming.length > 0 || results.length > 0);
-  if (!show) return null;
+  if (!loaded) return null;
 
   return (
     <section className="border-y border-tv-red/50 bg-background">
