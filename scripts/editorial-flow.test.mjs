@@ -19,17 +19,21 @@ const editorEmail = `editorial-flow-${runId}@rollerzone.test`;
 const adminEmail = `editorial-admin-${runId}@rollerzone.test`;
 const password = `Rz-${runId}-Secure-12345!`;
 const sectionSlug = `qa-editorial-${runId}`;
+const otherSectionSlug = `qa-editorial-otra-${runId}`;
 const pendingSlug = `qa-editor-pending-${runId}`;
 const rejectedSlug = `qa-editor-rejected-${runId}`;
+const otherSectionSlugNews = `qa-editor-otra-seccion-${runId}`;
 
 let editorUserId;
 let adminUserId;
 let sectionId;
+let otherSectionId;
 let pendingNewsId;
 let rejectedNewsId;
+let otherSectionNewsId;
 
 async function cleanup() {
-  await admin.from("news").delete().in("slug", [pendingSlug, rejectedSlug]);
+  await admin.from("news").delete().in("slug", [pendingSlug, rejectedSlug, otherSectionSlugNews]);
   if (editorUserId) {
     await admin.from("user_roles").delete().eq("user_id", editorUserId);
     await admin.from("profiles").delete().eq("user_id", editorUserId);
@@ -40,6 +44,7 @@ async function cleanup() {
     await admin.from("profiles").delete().eq("user_id", adminUserId);
     await admin.auth.admin.deleteUser(adminUserId);
   }
+  if (otherSectionId) await admin.from("sections").delete().eq("id", otherSectionId);
   if (sectionId) await admin.from("sections").delete().eq("id", sectionId);
 }
 
@@ -57,6 +62,14 @@ try {
     .single();
   assert.ifError(sectionError);
   sectionId = section.id;
+
+  const { data: otherSection, error: otherSectionError } = await admin
+    .from("sections")
+    .insert({ name: `QA Otra sección ${runId}`, slug: otherSectionSlug, active: true })
+    .select("id")
+    .single();
+  assert.ifError(otherSectionError);
+  otherSectionId = otherSection.id;
 
   const { data: createdUser, error: createUserError } = await admin.auth.admin.createUser({
     email: editorEmail,
@@ -204,10 +217,51 @@ try {
   assert.ifError(publicRejectedError);
   assert.equal(publicRejected, null, "Las noticias rechazadas no aparecen en la web pública");
 
+  const { data: otherNews, error: otherNewsError } = await signedAdmin
+    .from("news")
+    .insert({
+      title: `QA otra sección ${runId}`,
+      slug: otherSectionSlugNews,
+      excerpt: "Noticia privada de otra sección.",
+      content: "Contenido que un editor de otra sección no debe poder modificar.",
+      author: `Admin QA ${runId}`,
+      created_by: adminUserId,
+      section_id: otherSectionId,
+      status: "pending",
+    })
+    .select("id, title, section_id, status, published")
+    .single();
+  assert.ifError(otherNewsError);
+  otherSectionNewsId = otherNews.id;
+
+  const crossSectionUpdate = await editor
+    .from("news")
+    .update({ title: `Intento indebido ${runId}`, status: "published", published: true })
+    .eq("id", otherSectionNewsId)
+    .select("id, title, status, published")
+    .maybeSingle();
+
+  assert.ok(
+    crossSectionUpdate.error || crossSectionUpdate.data === null,
+    "El editor no debe poder editar noticias de otra sección",
+  );
+
+  const { data: otherNewsAfterAttempt, error: otherNewsAfterAttemptError } = await signedAdmin
+    .from("news")
+    .select("title, section_id, status, published")
+    .eq("id", otherSectionNewsId)
+    .single();
+  assert.ifError(otherNewsAfterAttemptError);
+  assert.equal(otherNewsAfterAttempt.title, otherNews.title, "El intento de edición no altera el título");
+  assert.equal(otherNewsAfterAttempt.section_id, otherSectionId, "El intento de edición no cambia la sección");
+  assert.equal(otherNewsAfterAttempt.status, "pending", "El intento de edición no publica contenido ajeno");
+  assert.equal(otherNewsAfterAttempt.published, false, "La noticia ajena sigue sin publicarse");
+
   console.log("✓ editor crea noticias en pendiente");
   console.log("✓ editor no puede publicar");
   console.log("✓ admin aprueba y la noticia aparece públicamente");
   console.log("✓ admin rechaza con feedback y la noticia no se publica");
+  console.log("✓ editor no puede editar noticias de otra sección");
 } finally {
   await cleanup();
 }
