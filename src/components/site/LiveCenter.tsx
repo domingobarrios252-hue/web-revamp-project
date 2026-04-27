@@ -44,6 +44,12 @@ type MedalRow = {
   bronze: number;
 };
 
+type LiveCenterEventSetting = {
+  medals_enabled?: boolean;
+  full_results_label?: string;
+  full_results_url?: string;
+};
+
 const REFRESH_MS = 15_000;
 
 export function LiveCenter() {
@@ -53,6 +59,7 @@ export function LiveCenter() {
   const [upcoming, setUpcoming] = useState<Race[]>([]);
   const [medals, setMedals] = useState<MedalRow[]>([]);
   const [showMedals, setShowMedals] = useState(true);
+  const [eventSetting, setEventSetting] = useState<LiveCenterEventSetting | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -76,7 +83,7 @@ export function LiveCenter() {
       let resultData: Result[] = [];
       let upcomingData: Race[] = [];
 
-      const [{ data: medalData }, { data: medalSetting }] = await Promise.all([
+      const [{ data: medalData }, { data: medalSetting }, { data: eventSettings }] = await Promise.all([
         client
           .from("medal_standings")
           .select("id, country_name, country_code, flag_url, gold, silver, bronze")
@@ -89,6 +96,11 @@ export function LiveCenter() {
           .from("site_settings")
           .select("value")
           .eq("key", "home_medals_enabled")
+          .maybeSingle(),
+        client
+          .from("site_settings")
+          .select("value")
+          .eq("key", "live_center_event_settings")
           .maybeSingle(),
       ]);
 
@@ -132,6 +144,8 @@ export function LiveCenter() {
         setMedals((medalData as MedalRow[]) ?? []);
         const settingValue = medalSetting?.value as { enabled?: boolean } | null;
         setShowMedals(typeof settingValue?.enabled === "boolean" ? settingValue.enabled : true);
+        const perEventSettings = (eventSettings?.value ?? {}) as Record<string, LiveCenterEventSetting>;
+        setEventSetting(activeEvent ? perEventSettings[activeEvent.id] ?? null : null);
         setLoaded(true);
         setLastUpdated(new Date());
         setRefreshing(false);
@@ -184,20 +198,32 @@ export function LiveCenter() {
           <div className="grid gap-4">
             <LiveResultsPanel race={currentRace} results={results} />
             <UpcomingRacesList races={upcoming} />
-            {showMedals && medals.length > 0 && <MedalTable medals={medals} />}
-            {event && (
-              <Link
-                to="/eventos/$slug"
-                params={{ slug: event.slug }}
-                className="font-condensed inline-flex items-center justify-center gap-2 rounded-md border border-gold/60 px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-background"
-              >
-                Ver resultados completos <ExternalLink className="h-3.5 w-3.5" />
-              </Link>
-            )}
+            {showMedals && eventSetting?.medals_enabled !== false && medals.length > 0 && <MedalTable medals={medals} />}
+            {event && <FullResultsButton event={event} setting={eventSetting} />}
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function FullResultsButton({ event, setting }: { event: LiveEvent; setting: LiveCenterEventSetting | null }) {
+  const label = setting?.full_results_label?.trim() || "Ver resultados completos";
+  const customUrl = setting?.full_results_url?.trim();
+  const className = "font-condensed inline-flex items-center justify-center gap-2 rounded-md border border-gold/60 px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-background";
+
+  if (customUrl) {
+    return (
+      <a href={customUrl} className={className} target={customUrl.startsWith("http") ? "_blank" : undefined} rel={customUrl.startsWith("http") ? "noreferrer" : undefined}>
+        {label} <ExternalLink className="h-3.5 w-3.5" />
+      </a>
+    );
+  }
+
+  return (
+    <Link to="/eventos/$slug" params={{ slug: event.slug }} className={className}>
+      {label} <ExternalLink className="h-3.5 w-3.5" />
+    </Link>
   );
 }
 

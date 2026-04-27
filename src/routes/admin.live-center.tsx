@@ -14,6 +14,7 @@ type EventRow = { id: string; name: string; slug: string; status: Status };
 type Race = { id: string; event_id: string; race_name: string; category: string | null; scheduled_time: string; status: Status };
 type Result = { id: string; race_id: string; position: number; athlete_name: string; club: string | null; country: string | null; time: string | null; gap: string | null; is_highlighted: boolean };
 type Skater = { full_name: string; club?: { name: string } | null; region?: { code: string } | null };
+type EventSetting = { medals_enabled?: boolean; full_results_label?: string; full_results_url?: string };
 type GridRow = {
   localId: string;
   id?: string;
@@ -46,19 +47,23 @@ function AdminLiveCenter() {
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [showMedalsOnHome, setShowMedalsOnHome] = useState(true);
   const [savingMedalsToggle, setSavingMedalsToggle] = useState(false);
+  const [eventSettings, setEventSettings] = useState<Record<string, EventSetting>>({});
+  const [savingEventSettings, setSavingEventSettings] = useState(false);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const selectedRace = races.find((race) => race.id === selectedRaceId) ?? null;
+  const selectedEventSetting = eventSettings[selectedEventId] ?? {};
   const raceLocked = selectedRace?.status === "finished";
   const duplicateNames = useMemo(() => findDuplicates(rows), [rows]);
 
   const loadBase = useCallback(async () => {
     setLoading(true);
-    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }] = await Promise.all([
+    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }, { data: liveCenterSetting }] = await Promise.all([
       client.from("events").select("id, name, slug, status").order("start_date", { ascending: false }).limit(80),
       client.from("races").select("id, event_id, race_name, category, scheduled_time, status").order("scheduled_time", { ascending: true }).limit(250),
       client.from("skaters").select("full_name, club:clubs(name), region:regions(code)").eq("active", true).order("full_name", { ascending: true }).limit(400),
       client.from("site_settings").select("value").eq("key", "home_medals_enabled").maybeSingle(),
+      client.from("site_settings").select("value").eq("key", "live_center_event_settings").maybeSingle(),
     ]);
     const nextEvents = (eventData as EventRow[]) ?? [];
     const nextRaces = (raceData as Race[]) ?? [];
@@ -67,6 +72,7 @@ function AdminLiveCenter() {
     setRaces(nextRaces);
     setSkaters((skaterData as Skater[]) ?? []);
     setShowMedalsOnHome(typeof medalValue?.enabled === "boolean" ? medalValue.enabled : true);
+    setEventSettings((liveCenterSetting?.value ?? {}) as Record<string, EventSetting>);
     setSelectedEventId((current) => current || nextEvents.find((event) => event.status === "live")?.id || nextEvents[0]?.id || "");
     setSelectedRaceId((current) => current || nextRaces.find((race) => race.status === "live")?.id || nextRaces[0]?.id || "");
     setLoading(false);
@@ -220,6 +226,26 @@ function AdminLiveCenter() {
     setFeedback(next ? "Medallero visible en Live Center" : "Medallero oculto en Live Center");
   };
 
+  const saveSelectedEventSettings = async (patch: EventSetting) => {
+    if (!selectedEventId) return;
+    const nextSettings = {
+      ...eventSettings,
+      [selectedEventId]: { ...selectedEventSetting, ...patch },
+    };
+    setEventSettings(nextSettings);
+    setSavingEventSettings(true);
+    const { error } = await client
+      .from("site_settings")
+      .upsert([{ key: "live_center_event_settings", value: nextSettings }], { onConflict: "key" });
+    setSavingEventSettings(false);
+    if (error) {
+      setEventSettings(eventSettings);
+      toast.error(error.message);
+      return;
+    }
+    setFeedback("Ajustes del evento guardados");
+  };
+
   const pasteRows = (event: React.ClipboardEvent<HTMLDivElement>) => {
     const text = event.clipboardData.getData("text");
     if (!text.trim()) return;
@@ -295,6 +321,40 @@ function AdminLiveCenter() {
         >
           <Trophy className="h-4 w-4" /> {showMedalsOnHome ? "Visible" : "Oculto"}
         </button>
+      </section>
+
+      <section className="grid gap-3 rounded-lg border border-border bg-surface px-4 py-3 lg:grid-cols-[minmax(220px,1fr)_minmax(0,2fr)]">
+        <div>
+          <h2 className="font-display text-lg tracking-widest">Ajustes de la competición</h2>
+          <p className="text-sm text-muted-foreground">Se aplican solo al evento seleccionado en el Live Center.</p>
+        </div>
+        <div className="grid gap-3 md:grid-cols-[auto_1fr_1fr]">
+          <button
+            onClick={() => saveSelectedEventSettings({ medals_enabled: selectedEventSetting.medals_enabled === false })}
+            disabled={savingEventSettings || !selectedEventId}
+            className={`font-condensed inline-flex h-12 items-center justify-center gap-2 rounded-md px-4 text-xs font-bold uppercase tracking-widest transition-colors ${selectedEventSetting.medals_enabled === false ? "border border-border text-muted-foreground hover:border-gold hover:text-gold" : "bg-gold text-background hover:bg-gold-dark"}`}
+          >
+            <Trophy className="h-4 w-4" /> Medallero {selectedEventSetting.medals_enabled === false ? "oculto" : "visible"}
+          </button>
+          <input
+            className="input h-12 text-base"
+            value={selectedEventSetting.full_results_label ?? ""}
+            placeholder="Texto del botón: Ver resultados completos"
+            onChange={(event) => setEventSettings((current) => ({ ...current, [selectedEventId]: { ...(current[selectedEventId] ?? {}), full_results_label: event.target.value } }))}
+            onBlur={(event) => saveSelectedEventSettings({ full_results_label: event.target.value })}
+            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+            disabled={!selectedEventId}
+          />
+          <input
+            className="input h-12 text-base"
+            value={selectedEventSetting.full_results_url ?? ""}
+            placeholder="URL del botón o vacío para página del evento"
+            onChange={(event) => setEventSettings((current) => ({ ...current, [selectedEventId]: { ...(current[selectedEventId] ?? {}), full_results_url: event.target.value } }))}
+            onBlur={(event) => saveSelectedEventSettings({ full_results_url: event.target.value })}
+            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+            disabled={!selectedEventId}
+          />
+        </div>
       </section>
 
       <EditableResultsGrid
