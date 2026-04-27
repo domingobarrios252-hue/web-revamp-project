@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarClock, ExternalLink, Flag, RefreshCw, Trophy } from "lucide-react";
+import { CalendarClock, ExternalLink, Flag, Medal, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -34,6 +34,16 @@ type Result = {
   updated_at: string;
 };
 
+type MedalRow = {
+  id: string;
+  country_name: string;
+  country_code: string | null;
+  flag_url: string | null;
+  gold: number;
+  silver: number;
+  bronze: number;
+};
+
 const REFRESH_MS = 15_000;
 
 export function LiveCenter() {
@@ -41,6 +51,8 @@ export function LiveCenter() {
   const [currentRace, setCurrentRace] = useState<Race | null>(null);
   const [results, setResults] = useState<Result[]>([]);
   const [upcoming, setUpcoming] = useState<Race[]>([]);
+  const [medals, setMedals] = useState<MedalRow[]>([]);
+  const [showMedals, setShowMedals] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -63,6 +75,22 @@ export function LiveCenter() {
       let raceData: Race | null = null;
       let resultData: Result[] = [];
       let upcomingData: Race[] = [];
+
+      const [{ data: medalData }, { data: medalSetting }] = await Promise.all([
+        client
+          .from("medal_standings")
+          .select("id, country_name, country_code, flag_url, gold, silver, bronze")
+          .eq("published", true)
+          .order("gold", { ascending: false })
+          .order("silver", { ascending: false })
+          .order("bronze", { ascending: false })
+          .limit(8),
+        client
+          .from("site_settings")
+          .select("value")
+          .eq("key", "home_medals_enabled")
+          .maybeSingle(),
+      ]);
 
       if (activeEvent) {
         const [{ data: liveRace }, { data: nextRaces }] = await Promise.all([
@@ -101,6 +129,9 @@ export function LiveCenter() {
         setCurrentRace(raceData);
         setResults(resultData);
         setUpcoming(upcomingData);
+        setMedals((medalData as MedalRow[]) ?? []);
+        const settingValue = medalSetting?.value as { enabled?: boolean } | null;
+        setShowMedals(typeof settingValue?.enabled === "boolean" ? settingValue.enabled : true);
         setLoaded(true);
         setLastUpdated(new Date());
         setRefreshing(false);
@@ -114,6 +145,8 @@ export function LiveCenter() {
       .on("postgres_changes", { event: "*", schema: "public", table: "events" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "races" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "results" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "medal_standings" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, load)
       .subscribe();
 
     return () => {
@@ -151,6 +184,7 @@ export function LiveCenter() {
           <div className="grid gap-4">
             <LiveResultsPanel race={currentRace} results={results} />
             <UpcomingRacesList races={upcoming} />
+            {showMedals && medals.length > 0 && <MedalTable medals={medals} />}
             {event && (
               <Link
                 to="/eventos/$slug"
