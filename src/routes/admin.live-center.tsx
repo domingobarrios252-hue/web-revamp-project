@@ -340,15 +340,19 @@ function AdminLiveCenter() {
             className="input h-12 text-base"
             value={selectedEventSetting.full_results_label ?? ""}
             placeholder="Texto del botón: Ver resultados completos"
-            onChange={(event) => saveSelectedEventSettings({ full_results_label: event.target.value })}
-            disabled={savingEventSettings || !selectedEventId}
+            onChange={(event) => setEventSettings((current) => ({ ...current, [selectedEventId]: { ...(current[selectedEventId] ?? {}), full_results_label: event.target.value } }))}
+            onBlur={(event) => saveSelectedEventSettings({ full_results_label: event.target.value })}
+            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+            disabled={!selectedEventId}
           />
           <input
             className="input h-12 text-base"
             value={selectedEventSetting.full_results_url ?? ""}
             placeholder="URL del botón o vacío para página del evento"
-            onChange={(event) => saveSelectedEventSettings({ full_results_url: event.target.value })}
-            disabled={savingEventSettings || !selectedEventId}
+            onChange={(event) => setEventSettings((current) => ({ ...current, [selectedEventId]: { ...(current[selectedEventId] ?? {}), full_results_url: event.target.value } }))}
+            onBlur={(event) => saveSelectedEventSettings({ full_results_url: event.target.value })}
+            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+            disabled={!selectedEventId}
           />
         </div>
       </section>
