@@ -14,6 +14,7 @@ type EventRow = { id: string; name: string; slug: string; status: Status };
 type Race = { id: string; event_id: string; race_name: string; category: string | null; scheduled_time: string; status: Status };
 type Result = { id: string; race_id: string; position: number; athlete_name: string; club: string | null; country: string | null; time: string | null; gap: string | null; is_highlighted: boolean };
 type Skater = { full_name: string; club?: { name: string } | null; region?: { code: string } | null };
+type EventSetting = { medals_enabled?: boolean; full_results_label?: string; full_results_url?: string };
 type GridRow = {
   localId: string;
   id?: string;
@@ -46,19 +47,23 @@ function AdminLiveCenter() {
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [showMedalsOnHome, setShowMedalsOnHome] = useState(true);
   const [savingMedalsToggle, setSavingMedalsToggle] = useState(false);
+  const [eventSettings, setEventSettings] = useState<Record<string, EventSetting>>({});
+  const [savingEventSettings, setSavingEventSettings] = useState(false);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const selectedRace = races.find((race) => race.id === selectedRaceId) ?? null;
+  const selectedEventSetting = eventSettings[selectedEventId] ?? {};
   const raceLocked = selectedRace?.status === "finished";
   const duplicateNames = useMemo(() => findDuplicates(rows), [rows]);
 
   const loadBase = useCallback(async () => {
     setLoading(true);
-    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }] = await Promise.all([
+    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }, { data: liveCenterSetting }] = await Promise.all([
       client.from("events").select("id, name, slug, status").order("start_date", { ascending: false }).limit(80),
       client.from("races").select("id, event_id, race_name, category, scheduled_time, status").order("scheduled_time", { ascending: true }).limit(250),
       client.from("skaters").select("full_name, club:clubs(name), region:regions(code)").eq("active", true).order("full_name", { ascending: true }).limit(400),
       client.from("site_settings").select("value").eq("key", "home_medals_enabled").maybeSingle(),
+      client.from("site_settings").select("value").eq("key", "live_center_event_settings").maybeSingle(),
     ]);
     const nextEvents = (eventData as EventRow[]) ?? [];
     const nextRaces = (raceData as Race[]) ?? [];
@@ -67,6 +72,7 @@ function AdminLiveCenter() {
     setRaces(nextRaces);
     setSkaters((skaterData as Skater[]) ?? []);
     setShowMedalsOnHome(typeof medalValue?.enabled === "boolean" ? medalValue.enabled : true);
+    setEventSettings((liveCenterSetting?.value ?? {}) as Record<string, EventSetting>);
     setSelectedEventId((current) => current || nextEvents.find((event) => event.status === "live")?.id || nextEvents[0]?.id || "");
     setSelectedRaceId((current) => current || nextRaces.find((race) => race.status === "live")?.id || nextRaces[0]?.id || "");
     setLoading(false);
