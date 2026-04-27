@@ -497,6 +497,57 @@ function EditableResultsGrid({ rows, locked, duplicateNames, skaters, onCellChan
   );
 }
 
+function TogglePill({ active, icon, label, onClick }: { active: boolean; icon: React.ReactNode; label: string; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className={`font-condensed inline-flex min-h-12 items-center justify-between gap-3 rounded-md border px-3 text-xs font-bold uppercase tracking-widest transition-colors ${active ? "border-gold bg-gold text-background" : "border-border bg-background text-muted-foreground hover:border-gold hover:text-gold"}`}>
+      <span className="inline-flex items-center gap-2">{icon}{label}</span>
+      {active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+    </button>
+  );
+}
+
+function AdminField({ label, value, placeholder, onChange, onSave }: { label: string; value: string; placeholder: string; onChange: (value: string) => void; onSave: (value: string) => void }) {
+  return (
+    <label className="block">
+      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">{label}</span>
+      <input className="input h-12 text-base" value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} onBlur={(event) => onSave(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+    </label>
+  );
+}
+
+function UpcomingRaceManager({ races, selectedRaceId, onSelectRace, onSetStatus }: { races: Race[]; selectedRaceId: string; onSelectRace: (id: string) => void; onSetStatus: (id: string, status: Status) => void }) {
+  return (
+    <section className="overflow-hidden rounded-lg border border-border bg-surface">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
+        <div>
+          <h2 className="font-display text-xl tracking-widest">Próximas pruebas</h2>
+          <p className="text-sm text-muted-foreground">Selecciona la siguiente salida o márcala en directo en un toque.</p>
+        </div>
+        <CalendarClock className="h-5 w-5 text-gold" />
+      </div>
+      <div className="grid gap-2 p-3 md:grid-cols-2 xl:grid-cols-3">
+        {races.map((race) => (
+          <div key={race.id} className={`rounded-md border p-3 ${race.id === selectedRaceId ? "border-gold bg-gold/10" : "border-border bg-background"}`}>
+            <button onClick={() => onSelectRace(race.id)} className="block w-full text-left">
+              <div className="font-display text-lg tracking-widest text-foreground">{race.race_name}</div>
+              <div className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">{race.category ?? "Sin categoría"} · {new Date(race.scheduled_time).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}</div>
+            </button>
+            <div className="mt-3 grid grid-cols-3 gap-1">
+              <MiniStatusButton active={race.status === "upcoming"} onClick={() => onSetStatus(race.id, "upcoming")}>Prog.</MiniStatusButton>
+              <MiniStatusButton active={race.status === "live"} onClick={() => onSetStatus(race.id, "live")}>Live</MiniStatusButton>
+              <MiniStatusButton active={race.status === "finished"} onClick={() => onSetStatus(race.id, "finished")}>Final</MiniStatusButton>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function MiniStatusButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return <button onClick={onClick} className={`font-condensed rounded px-2 py-2 text-[10px] font-bold uppercase tracking-widest ${active ? "bg-gold text-background" : "border border-border text-muted-foreground hover:border-gold hover:text-gold"}`}>{children}</button>;
+}
+
 function GridInput({ value, locked, onChange, onEnter, refValue, type = "text", inputMode, placeholder, list }: {
   value: string | number;
   locked: boolean;
