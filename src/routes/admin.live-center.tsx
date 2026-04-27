@@ -328,14 +328,14 @@ function EditableResultsGrid({ rows, locked, duplicateNames, skaters, onCellChan
                   <td className="border-t border-border p-1"><GridInput refValue={(node) => refs.current[`${row.localId}-athlete_name`] = node} value={row.athlete_name} locked={locked} list="skaters-list" onChange={(value) => onCellChange(row.localId, "athlete_name", value)} onEnter={() => focusNext(rowIndex, 1)} /></td>
                   <td className="border-t border-border p-1"><GridInput refValue={(node) => refs.current[`${row.localId}-club`] = node} value={row.club} locked={locked} onChange={(value) => onCellChange(row.localId, "club", value)} onEnter={() => focusNext(rowIndex, 2)} /></td>
                   <td className="border-t border-border p-1">
-                    <select ref={(node) => refs.current[`${row.localId}-country`] = node} disabled={locked} className="input h-11 text-base" value={row.country} onChange={(event) => onCellChange(row.localId, "country", event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") focusNext(rowIndex, 3); }}>
+                    <select ref={(node) => { refs.current[`${row.localId}-country`] = node; }} disabled={locked} className="input h-11 text-base" value={row.country} onChange={(event) => onCellChange(row.localId, "country", event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") focusNext(rowIndex, 3); }}>
                       <option value="">—</option>
                       {COUNTRIES.map((country) => <option key={country} value={country}>{country}</option>)}
                     </select>
                   </td>
                   <td className="border-t border-border p-1"><GridInput refValue={(node) => refs.current[`${row.localId}-time`] = node} value={row.time} locked={locked} inputMode="decimal" placeholder="00:42.31" onChange={(value) => onCellChange(row.localId, "time", value)} onEnter={() => focusNext(rowIndex, 4)} /></td>
                   <td className="border-t border-border p-1"><GridInput refValue={(node) => refs.current[`${row.localId}-gap`] = node} value={row.gap} locked={locked} inputMode="decimal" placeholder="+0.49" onChange={(value) => onCellChange(row.localId, "gap", value)} onEnter={() => focusNext(rowIndex, 5)} /></td>
-                  <td className="border-t border-border p-1 text-center"><input ref={(node) => refs.current[`${row.localId}-is_highlighted`] = node} type="checkbox" disabled={locked} checked={row.is_highlighted} onChange={(event) => onCellChange(row.localId, "is_highlighted", event.target.checked)} className="h-6 w-6 accent-gold" /></td>
+                  <td className="border-t border-border p-1 text-center"><input ref={(node) => { refs.current[`${row.localId}-is_highlighted`] = node; }} type="checkbox" disabled={locked} checked={row.is_highlighted} onChange={(event) => onCellChange(row.localId, "is_highlighted", event.target.checked)} className="h-6 w-6 accent-gold" /></td>
                   <td className="border-t border-border p-2 font-condensed text-[11px] uppercase tracking-widest">{row.saving ? "Guardando" : row.error ? "Error" : isDuplicate ? "Duplicado" : row.id ? "Publicado" : "Nuevo"}</td>
                 </tr>
               );
