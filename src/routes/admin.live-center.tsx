@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronsUpDown, CircleDot, Clipboard, Flag, ListPlus, Lock, Plus, RotateCcw, Sparkles, Trash2, Trophy, Zap } from "lucide-react";
+import { CalendarClock, Check, ChevronsUpDown, CircleDot, Clipboard, Eye, EyeOff, Flag, ListPlus, Lock, PlayCircle, Plus, RotateCcw, Sparkles, Trash2, Trophy, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -15,6 +15,7 @@ type Race = { id: string; event_id: string; race_name: string; category: string 
 type Result = { id: string; race_id: string; position: number; athlete_name: string; club: string | null; country: string | null; time: string | null; gap: string | null; is_highlighted: boolean };
 type Skater = { full_name: string; club?: { name: string } | null; region?: { code: string } | null };
 type EventSetting = { medals_enabled?: boolean; full_results_label?: string; full_results_url?: string };
+type HomeSetting = { tv_enabled?: boolean; tv_url?: string; tv_title?: string; current_race_enabled?: boolean; results_enabled?: boolean; upcoming_enabled?: boolean };
 type GridRow = {
   localId: string;
   id?: string;
@@ -49,6 +50,8 @@ function AdminLiveCenter() {
   const [savingMedalsToggle, setSavingMedalsToggle] = useState(false);
   const [eventSettings, setEventSettings] = useState<Record<string, EventSetting>>({});
   const [savingEventSettings, setSavingEventSettings] = useState(false);
+  const [homeSettings, setHomeSettings] = useState<HomeSetting>({ tv_enabled: false, tv_url: "", tv_title: "TV en directo", current_race_enabled: true, results_enabled: true, upcoming_enabled: true });
+  const [savingHomeSettings, setSavingHomeSettings] = useState(false);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const selectedRace = races.find((race) => race.id === selectedRaceId) ?? null;
@@ -58,12 +61,14 @@ function AdminLiveCenter() {
 
   const loadBase = useCallback(async () => {
     setLoading(true);
-    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }, { data: liveCenterSetting }] = await Promise.all([
+    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }, { data: liveCenterSetting }, { data: homeSetting }, { data: tvSetting }] = await Promise.all([
       client.from("events").select("id, name, slug, status").order("start_date", { ascending: false }).limit(80),
       client.from("races").select("id, event_id, race_name, category, scheduled_time, status").order("scheduled_time", { ascending: true }).limit(250),
       client.from("skaters").select("full_name, club:clubs(name), region:regions(code)").eq("active", true).order("full_name", { ascending: true }).limit(400),
       client.from("site_settings").select("value").eq("key", "home_medals_enabled").maybeSingle(),
       client.from("site_settings").select("value").eq("key", "live_center_event_settings").maybeSingle(),
+      client.from("site_settings").select("value").eq("key", "live_center_home_settings").maybeSingle(),
+      client.from("tv_settings").select("live_stream_url, live_title").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
     const nextEvents = (eventData as EventRow[]) ?? [];
     const nextRaces = (raceData as Race[]) ?? [];
@@ -73,6 +78,15 @@ function AdminLiveCenter() {
     setSkaters((skaterData as Skater[]) ?? []);
     setShowMedalsOnHome(typeof medalValue?.enabled === "boolean" ? medalValue.enabled : true);
     setEventSettings((liveCenterSetting?.value ?? {}) as Record<string, EventSetting>);
+    const savedHome = (homeSetting?.value ?? {}) as HomeSetting;
+    setHomeSettings({
+      tv_enabled: savedHome.tv_enabled ?? false,
+      tv_url: savedHome.tv_url || tvSetting?.live_stream_url || "",
+      tv_title: savedHome.tv_title || tvSetting?.live_title || "TV en directo",
+      current_race_enabled: savedHome.current_race_enabled ?? true,
+      results_enabled: savedHome.results_enabled ?? true,
+      upcoming_enabled: savedHome.upcoming_enabled ?? true,
+    });
     setSelectedEventId((current) => current || nextEvents.find((event) => event.status === "live")?.id || nextEvents[0]?.id || "");
     setSelectedRaceId((current) => current || nextRaces.find((race) => race.status === "live")?.id || nextRaces[0]?.id || "");
     setLoading(false);
