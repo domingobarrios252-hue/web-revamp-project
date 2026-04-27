@@ -44,6 +44,8 @@ function AdminLiveCenter() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState("Listo");
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [showMedalsOnHome, setShowMedalsOnHome] = useState(true);
+  const [savingMedalsToggle, setSavingMedalsToggle] = useState(false);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const selectedRace = races.find((race) => race.id === selectedRaceId) ?? null;
@@ -52,16 +54,19 @@ function AdminLiveCenter() {
 
   const loadBase = useCallback(async () => {
     setLoading(true);
-    const [{ data: eventData }, { data: raceData }, { data: skaterData }] = await Promise.all([
+    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }] = await Promise.all([
       client.from("events").select("id, name, slug, status").order("start_date", { ascending: false }).limit(80),
       client.from("races").select("id, event_id, race_name, category, scheduled_time, status").order("scheduled_time", { ascending: true }).limit(250),
       client.from("skaters").select("full_name, club:clubs(name), region:regions(code)").eq("active", true).order("full_name", { ascending: true }).limit(400),
+      client.from("site_settings").select("value").eq("key", "home_medals_enabled").maybeSingle(),
     ]);
     const nextEvents = (eventData as EventRow[]) ?? [];
     const nextRaces = (raceData as Race[]) ?? [];
+    const medalValue = medalSetting?.value as { enabled?: boolean } | null;
     setEvents(nextEvents);
     setRaces(nextRaces);
     setSkaters((skaterData as Skater[]) ?? []);
+    setShowMedalsOnHome(typeof medalValue?.enabled === "boolean" ? medalValue.enabled : true);
     setSelectedEventId((current) => current || nextEvents.find((event) => event.status === "live")?.id || nextEvents[0]?.id || "");
     setSelectedRaceId((current) => current || nextRaces.find((race) => race.status === "live")?.id || nextRaces[0]?.id || "");
     setLoading(false);
@@ -199,6 +204,22 @@ function AdminLiveCenter() {
     setFeedback("Prueba creada");
   };
 
+  const toggleMedalsOnHome = async () => {
+    const next = !showMedalsOnHome;
+    setShowMedalsOnHome(next);
+    setSavingMedalsToggle(true);
+    const { error } = await client
+      .from("site_settings")
+      .upsert([{ key: "home_medals_enabled", value: { enabled: next } }], { onConflict: "key" });
+    setSavingMedalsToggle(false);
+    if (error) {
+      setShowMedalsOnHome(!next);
+      toast.error(error.message);
+      return;
+    }
+    setFeedback(next ? "Medallero visible en Live Center" : "Medallero oculto en Live Center");
+  };
+
   const pasteRows = (event: React.ClipboardEvent<HTMLDivElement>) => {
     const text = event.clipboardData.getData("text");
     if (!text.trim()) return;
@@ -260,6 +281,20 @@ function AdminLiveCenter() {
         <Stat label="Filas activas" value={String(rows.filter((row) => !isBlank(row)).length)} icon={<Zap className="h-4 w-4" />} />
         <Stat label="Duplicados" value={String(duplicateNames.size)} icon={<Sparkles className="h-4 w-4" />} />
         <Stat label="Edición" value={raceLocked ? "Bloqueada" : "Instantánea"} icon={raceLocked ? <Lock className="h-4 w-4" /> : <Check className="h-4 w-4" />} />
+      </section>
+
+      <section className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface px-4 py-3">
+        <div>
+          <h2 className="font-display text-lg tracking-widest">Medallero en Live Center</h2>
+          <p className="text-sm text-muted-foreground">Ocúltalo temporalmente en la home sin borrar países ni resultados.</p>
+        </div>
+        <button
+          onClick={toggleMedalsOnHome}
+          disabled={savingMedalsToggle}
+          className={`font-condensed inline-flex min-w-36 items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${showMedalsOnHome ? "bg-gold text-background hover:bg-gold-dark" : "border border-border text-muted-foreground hover:border-gold hover:text-gold"}`}
+        >
+          <Trophy className="h-4 w-4" /> {showMedalsOnHome ? "Visible" : "Oculto"}
+        </button>
       </section>
 
       <EditableResultsGrid
