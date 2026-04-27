@@ -260,6 +260,31 @@ function AdminLiveCenter() {
     setFeedback("Ajustes del evento guardados");
   };
 
+  const saveHomeSettings = async (patch: HomeSetting) => {
+    const next = { ...homeSettings, ...patch };
+    setHomeSettings(next);
+    setSavingHomeSettings(true);
+    const { error } = await client
+      .from("site_settings")
+      .upsert([{ key: "live_center_home_settings", value: next }], { onConflict: "key" });
+    setSavingHomeSettings(false);
+    if (error) {
+      setHomeSettings(homeSettings);
+      toast.error(error.message);
+      return;
+    }
+    setFeedback("Live Center actualizado");
+  };
+
+  const setAnyRaceStatus = async (raceId: string, status: Status) => {
+    if (status === "live") await client.from("races").update({ status: "finished" }).eq("event_id", selectedEventId).eq("status", "live").neq("id", raceId);
+    const { error } = await client.from("races").update({ status }).eq("id", raceId);
+    if (error) return toast.error(error.message);
+    setRaces((current) => current.map((race) => race.id === raceId ? { ...race, status } : status === "live" && race.event_id === selectedEventId && race.status === "live" ? { ...race, status: "finished" } : race));
+    setSelectedRaceId(raceId);
+    setFeedback(status === "live" ? "Prueba en directo" : status === "finished" ? "Prueba finalizada" : "Prueba programada");
+  };
+
   const pasteRows = (event: React.ClipboardEvent<HTMLDivElement>) => {
     const text = event.clipboardData.getData("text");
     if (!text.trim()) return;
