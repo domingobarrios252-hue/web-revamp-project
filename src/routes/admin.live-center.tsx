@@ -226,6 +226,26 @@ function AdminLiveCenter() {
     setFeedback(next ? "Medallero visible en Live Center" : "Medallero oculto en Live Center");
   };
 
+  const saveSelectedEventSettings = async (patch: EventSetting) => {
+    if (!selectedEventId) return;
+    const nextSettings = {
+      ...eventSettings,
+      [selectedEventId]: { ...selectedEventSetting, ...patch },
+    };
+    setEventSettings(nextSettings);
+    setSavingEventSettings(true);
+    const { error } = await client
+      .from("site_settings")
+      .upsert([{ key: "live_center_event_settings", value: nextSettings }], { onConflict: "key" });
+    setSavingEventSettings(false);
+    if (error) {
+      setEventSettings(eventSettings);
+      toast.error(error.message);
+      return;
+    }
+    setFeedback("Ajustes del evento guardados");
+  };
+
   const pasteRows = (event: React.ClipboardEvent<HTMLDivElement>) => {
     const text = event.clipboardData.getData("text");
     if (!text.trim()) return;
@@ -301,6 +321,36 @@ function AdminLiveCenter() {
         >
           <Trophy className="h-4 w-4" /> {showMedalsOnHome ? "Visible" : "Oculto"}
         </button>
+      </section>
+
+      <section className="grid gap-3 rounded-lg border border-border bg-surface px-4 py-3 lg:grid-cols-[minmax(220px,1fr)_minmax(0,2fr)]">
+        <div>
+          <h2 className="font-display text-lg tracking-widest">Ajustes de la competición</h2>
+          <p className="text-sm text-muted-foreground">Se aplican solo al evento seleccionado en el Live Center.</p>
+        </div>
+        <div className="grid gap-3 md:grid-cols-[auto_1fr_1fr]">
+          <button
+            onClick={() => saveSelectedEventSettings({ medals_enabled: selectedEventSetting.medals_enabled === false })}
+            disabled={savingEventSettings || !selectedEventId}
+            className={`font-condensed inline-flex h-12 items-center justify-center gap-2 rounded-md px-4 text-xs font-bold uppercase tracking-widest transition-colors ${selectedEventSetting.medals_enabled === false ? "border border-border text-muted-foreground hover:border-gold hover:text-gold" : "bg-gold text-background hover:bg-gold-dark"}`}
+          >
+            <Trophy className="h-4 w-4" /> Medallero {selectedEventSetting.medals_enabled === false ? "oculto" : "visible"}
+          </button>
+          <input
+            className="input h-12 text-base"
+            value={selectedEventSetting.full_results_label ?? ""}
+            placeholder="Texto del botón: Ver resultados completos"
+            onChange={(event) => saveSelectedEventSettings({ full_results_label: event.target.value })}
+            disabled={savingEventSettings || !selectedEventId}
+          />
+          <input
+            className="input h-12 text-base"
+            value={selectedEventSetting.full_results_url ?? ""}
+            placeholder="URL del botón o vacío para página del evento"
+            onChange={(event) => saveSelectedEventSettings({ full_results_url: event.target.value })}
+            disabled={savingEventSettings || !selectedEventId}
+          />
+        </div>
       </section>
 
       <EditableResultsGrid
