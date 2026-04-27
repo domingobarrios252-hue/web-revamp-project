@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarClock, ExternalLink, Flag, RefreshCw, Trophy } from "lucide-react";
+import { CalendarClock, ExternalLink, Flag, Medal, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -34,6 +34,16 @@ type Result = {
   updated_at: string;
 };
 
+type MedalRow = {
+  id: string;
+  country_name: string;
+  country_code: string | null;
+  flag_url: string | null;
+  gold: number;
+  silver: number;
+  bronze: number;
+};
+
 const REFRESH_MS = 15_000;
 
 export function LiveCenter() {
@@ -41,6 +51,8 @@ export function LiveCenter() {
   const [currentRace, setCurrentRace] = useState<Race | null>(null);
   const [results, setResults] = useState<Result[]>([]);
   const [upcoming, setUpcoming] = useState<Race[]>([]);
+  const [medals, setMedals] = useState<MedalRow[]>([]);
+  const [showMedals, setShowMedals] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -63,6 +75,22 @@ export function LiveCenter() {
       let raceData: Race | null = null;
       let resultData: Result[] = [];
       let upcomingData: Race[] = [];
+
+      const [{ data: medalData }, { data: medalSetting }] = await Promise.all([
+        client
+          .from("medal_standings")
+          .select("id, country_name, country_code, flag_url, gold, silver, bronze")
+          .eq("published", true)
+          .order("gold", { ascending: false })
+          .order("silver", { ascending: false })
+          .order("bronze", { ascending: false })
+          .limit(8),
+        client
+          .from("site_settings")
+          .select("value")
+          .eq("key", "home_medals_enabled")
+          .maybeSingle(),
+      ]);
 
       if (activeEvent) {
         const [{ data: liveRace }, { data: nextRaces }] = await Promise.all([
@@ -101,6 +129,9 @@ export function LiveCenter() {
         setCurrentRace(raceData);
         setResults(resultData);
         setUpcoming(upcomingData);
+        setMedals((medalData as MedalRow[]) ?? []);
+        const settingValue = medalSetting?.value as { enabled?: boolean } | null;
+        setShowMedals(typeof settingValue?.enabled === "boolean" ? settingValue.enabled : true);
         setLoaded(true);
         setLastUpdated(new Date());
         setRefreshing(false);
@@ -114,6 +145,8 @@ export function LiveCenter() {
       .on("postgres_changes", { event: "*", schema: "public", table: "events" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "races" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "results" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "medal_standings" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, load)
       .subscribe();
 
     return () => {
@@ -151,6 +184,7 @@ export function LiveCenter() {
           <div className="grid gap-4">
             <LiveResultsPanel race={currentRace} results={results} />
             <UpcomingRacesList races={upcoming} />
+            {showMedals && medals.length > 0 && <MedalTable medals={medals} />}
             {event && (
               <Link
                 to="/eventos/$slug"
@@ -264,6 +298,46 @@ function UpcomingRacesList({ races }: { races: Race[] }) {
           ))}
         </ul>
       )}
+    </article>
+  );
+}
+
+function MedalTable({ medals }: { medals: MedalRow[] }) {
+  return (
+    <article className="overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h3 className="font-display text-lg uppercase tracking-widest">Medallero</h3>
+        <Medal className="h-4 w-4 text-gold" />
+      </div>
+      <div className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 border-b border-border bg-background/60 px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[2fr_auto_auto_auto_auto]">
+        <span>País</span>
+        <span className="w-7 text-center text-gold">🥇</span>
+        <span className="w-7 text-center">🥈</span>
+        <span className="w-7 text-center">🥉</span>
+        <span className="w-8 text-right text-foreground">Σ</span>
+      </div>
+      <ul className="divide-y divide-border">
+        {medals.map((row, index) => {
+          const total = row.gold + row.silver + row.bronze;
+          return (
+            <li key={row.id} className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-3 py-2 text-xs sm:grid-cols-[2fr_auto_auto_auto_auto]">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="font-display w-4 text-[11px] text-muted-foreground">{index + 1}</span>
+                {row.flag_url ? (
+                  <img src={row.flag_url} alt={row.country_name} className="h-3.5 w-5 shrink-0 object-cover" loading="lazy" />
+                ) : (
+                  <span className="font-display w-5 shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">{row.country_code ?? "—"}</span>
+                )}
+                <span className="break-words uppercase leading-tight tracking-wider">{row.country_name}</span>
+              </div>
+              <span className="w-7 text-center font-bold text-gold">{row.gold}</span>
+              <span className="w-7 text-center text-foreground/80">{row.silver}</span>
+              <span className="w-7 text-center text-foreground/60">{row.bronze}</span>
+              <span className="font-display w-8 text-right text-sm">{total}</span>
+            </li>
+          );
+        })}
+      </ul>
     </article>
   );
 }
