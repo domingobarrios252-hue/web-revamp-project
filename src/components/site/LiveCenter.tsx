@@ -302,6 +302,46 @@ function UpcomingRacesList({ races }: { races: Race[] }) {
   );
 }
 
+function MedalTable({ medals }: { medals: MedalRow[] }) {
+  return (
+    <article className="overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h3 className="font-display text-lg uppercase tracking-widest">Medallero</h3>
+        <Medal className="h-4 w-4 text-gold" />
+      </div>
+      <div className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 border-b border-border bg-background/60 px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground sm:grid-cols-[2fr_auto_auto_auto_auto]">
+        <span>País</span>
+        <span className="w-7 text-center text-gold">🥇</span>
+        <span className="w-7 text-center">🥈</span>
+        <span className="w-7 text-center">🥉</span>
+        <span className="w-8 text-right text-foreground">Σ</span>
+      </div>
+      <ul className="divide-y divide-border">
+        {medals.map((row, index) => {
+          const total = row.gold + row.silver + row.bronze;
+          return (
+            <li key={row.id} className="font-condensed grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-2 px-3 py-2 text-xs sm:grid-cols-[2fr_auto_auto_auto_auto]">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="font-display w-4 text-[11px] text-muted-foreground">{index + 1}</span>
+                {row.flag_url ? (
+                  <img src={row.flag_url} alt={row.country_name} className="h-3.5 w-5 shrink-0 object-cover" loading="lazy" />
+                ) : (
+                  <span className="font-display w-5 shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">{row.country_code ?? "—"}</span>
+                )}
+                <span className="break-words uppercase leading-tight tracking-wider">{row.country_name}</span>
+              </div>
+              <span className="w-7 text-center font-bold text-gold">{row.gold}</span>
+              <span className="w-7 text-center text-foreground/80">{row.silver}</span>
+              <span className="w-7 text-center text-foreground/60">{row.bronze}</span>
+              <span className="font-display w-8 text-right text-sm">{total}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </article>
+  );
+}
+
 function StatusBadge({ status }: { status: Status }) {
   const label = status === "live" ? "EN VIVO" : status === "finished" ? "FINAL" : "PRÓXIMA";
   return (
