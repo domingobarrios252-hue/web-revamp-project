@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronsUpDown, CircleDot, Clipboard, Flag, ListPlus, Lock, Plus, RotateCcw, Sparkles, Trash2, Trophy, Zap } from "lucide-react";
+import { CalendarClock, Check, ChevronsUpDown, CircleDot, Clipboard, Eye, EyeOff, Flag, ListPlus, Lock, PlayCircle, Plus, RotateCcw, Sparkles, Trash2, Trophy, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -15,6 +15,7 @@ type Race = { id: string; event_id: string; race_name: string; category: string 
 type Result = { id: string; race_id: string; position: number; athlete_name: string; club: string | null; country: string | null; time: string | null; gap: string | null; is_highlighted: boolean };
 type Skater = { full_name: string; club?: { name: string } | null; region?: { code: string } | null };
 type EventSetting = { medals_enabled?: boolean; full_results_label?: string; full_results_url?: string };
+type HomeSetting = { tv_enabled?: boolean; tv_url?: string; tv_title?: string; current_race_enabled?: boolean; results_enabled?: boolean; upcoming_enabled?: boolean };
 type GridRow = {
   localId: string;
   id?: string;
@@ -49,6 +50,8 @@ function AdminLiveCenter() {
   const [savingMedalsToggle, setSavingMedalsToggle] = useState(false);
   const [eventSettings, setEventSettings] = useState<Record<string, EventSetting>>({});
   const [savingEventSettings, setSavingEventSettings] = useState(false);
+  const [homeSettings, setHomeSettings] = useState<HomeSetting>({ tv_enabled: false, tv_url: "", tv_title: "TV en directo", current_race_enabled: true, results_enabled: true, upcoming_enabled: true });
+  const [savingHomeSettings, setSavingHomeSettings] = useState(false);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const selectedRace = races.find((race) => race.id === selectedRaceId) ?? null;
@@ -58,12 +61,14 @@ function AdminLiveCenter() {
 
   const loadBase = useCallback(async () => {
     setLoading(true);
-    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }, { data: liveCenterSetting }] = await Promise.all([
+    const [{ data: eventData }, { data: raceData }, { data: skaterData }, { data: medalSetting }, { data: liveCenterSetting }, { data: homeSetting }, { data: tvSetting }] = await Promise.all([
       client.from("events").select("id, name, slug, status").order("start_date", { ascending: false }).limit(80),
       client.from("races").select("id, event_id, race_name, category, scheduled_time, status").order("scheduled_time", { ascending: true }).limit(250),
       client.from("skaters").select("full_name, club:clubs(name), region:regions(code)").eq("active", true).order("full_name", { ascending: true }).limit(400),
       client.from("site_settings").select("value").eq("key", "home_medals_enabled").maybeSingle(),
       client.from("site_settings").select("value").eq("key", "live_center_event_settings").maybeSingle(),
+      client.from("site_settings").select("value").eq("key", "live_center_home_settings").maybeSingle(),
+      client.from("tv_settings").select("live_stream_url, live_title").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
     const nextEvents = (eventData as EventRow[]) ?? [];
     const nextRaces = (raceData as Race[]) ?? [];
@@ -73,6 +78,15 @@ function AdminLiveCenter() {
     setSkaters((skaterData as Skater[]) ?? []);
     setShowMedalsOnHome(typeof medalValue?.enabled === "boolean" ? medalValue.enabled : true);
     setEventSettings((liveCenterSetting?.value ?? {}) as Record<string, EventSetting>);
+    const savedHome = (homeSetting?.value ?? {}) as HomeSetting;
+    setHomeSettings({
+      tv_enabled: savedHome.tv_enabled ?? false,
+      tv_url: savedHome.tv_url || tvSetting?.live_stream_url || "",
+      tv_title: savedHome.tv_title || tvSetting?.live_title || "TV en directo",
+      current_race_enabled: savedHome.current_race_enabled ?? true,
+      results_enabled: savedHome.results_enabled ?? true,
+      upcoming_enabled: savedHome.upcoming_enabled ?? true,
+    });
     setSelectedEventId((current) => current || nextEvents.find((event) => event.status === "live")?.id || nextEvents[0]?.id || "");
     setSelectedRaceId((current) => current || nextRaces.find((race) => race.status === "live")?.id || nextRaces[0]?.id || "");
     setLoading(false);
@@ -246,6 +260,31 @@ function AdminLiveCenter() {
     setFeedback("Ajustes del evento guardados");
   };
 
+  const saveHomeSettings = async (patch: HomeSetting) => {
+    const next = { ...homeSettings, ...patch };
+    setHomeSettings(next);
+    setSavingHomeSettings(true);
+    const { error } = await client
+      .from("site_settings")
+      .upsert([{ key: "live_center_home_settings", value: next }], { onConflict: "key" });
+    setSavingHomeSettings(false);
+    if (error) {
+      setHomeSettings(homeSettings);
+      toast.error(error.message);
+      return;
+    }
+    setFeedback("Live Center actualizado");
+  };
+
+  const setAnyRaceStatus = async (raceId: string, status: Status) => {
+    if (status === "live") await client.from("races").update({ status: "finished" }).eq("event_id", selectedEventId).eq("status", "live").neq("id", raceId);
+    const { error } = await client.from("races").update({ status }).eq("id", raceId);
+    if (error) return toast.error(error.message);
+    setRaces((current) => current.map((race) => race.id === raceId ? { ...race, status } : status === "live" && race.event_id === selectedEventId && race.status === "live" ? { ...race, status: "finished" } : race));
+    setSelectedRaceId(raceId);
+    setFeedback(status === "live" ? "Prueba en directo" : status === "finished" ? "Prueba finalizada" : "Prueba programada");
+  };
+
   const pasteRows = (event: React.ClipboardEvent<HTMLDivElement>) => {
     const text = event.clipboardData.getData("text");
     if (!text.trim()) return;
@@ -309,18 +348,27 @@ function AdminLiveCenter() {
         <Stat label="Edición" value={raceLocked ? "Bloqueada" : "Instantánea"} icon={raceLocked ? <Lock className="h-4 w-4" /> : <Check className="h-4 w-4" />} />
       </section>
 
-      <section className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface px-4 py-3">
-        <div>
-          <h2 className="font-display text-lg tracking-widest">Medallero en Live Center</h2>
-          <p className="text-sm text-muted-foreground">Ocúltalo temporalmente en la home sin borrar países ni resultados.</p>
+      <section className="grid gap-4 rounded-lg border border-border bg-surface p-4 xl:grid-cols-[1.1fr_1fr]">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="font-display text-lg tracking-widest">Qué aparece en la home</h2>
+              <p className="text-sm text-muted-foreground">Activa o desactiva módulos sin borrar datos.</p>
+            </div>
+            <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{savingHomeSettings || savingMedalsToggle ? "Guardando" : "Auto guardado"}</span>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <TogglePill active={homeSettings.tv_enabled !== false && Boolean(homeSettings.tv_enabled)} icon={<PlayCircle className="h-4 w-4" />} label="TV en directo" onClick={() => saveHomeSettings({ tv_enabled: !homeSettings.tv_enabled })} />
+            <TogglePill active={homeSettings.current_race_enabled !== false} icon={<Flag className="h-4 w-4" />} label="Prueba actual" onClick={() => saveHomeSettings({ current_race_enabled: homeSettings.current_race_enabled === false })} />
+            <TogglePill active={homeSettings.results_enabled !== false} icon={<Zap className="h-4 w-4" />} label="Clasificación en vivo" onClick={() => saveHomeSettings({ results_enabled: homeSettings.results_enabled === false })} />
+            <TogglePill active={homeSettings.upcoming_enabled !== false} icon={<CalendarClock className="h-4 w-4" />} label="Próximas pruebas" onClick={() => saveHomeSettings({ upcoming_enabled: homeSettings.upcoming_enabled === false })} />
+            <TogglePill active={showMedalsOnHome} icon={<Trophy className="h-4 w-4" />} label="Medallero global" onClick={toggleMedalsOnHome} />
+          </div>
         </div>
-        <button
-          onClick={toggleMedalsOnHome}
-          disabled={savingMedalsToggle}
-          className={`font-condensed inline-flex min-w-36 items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${showMedalsOnHome ? "bg-gold text-background hover:bg-gold-dark" : "border border-border text-muted-foreground hover:border-gold hover:text-gold"}`}
-        >
-          <Trophy className="h-4 w-4" /> {showMedalsOnHome ? "Visible" : "Oculto"}
-        </button>
+        <div className="grid gap-3">
+          <AdminField label="Título TV" value={homeSettings.tv_title ?? ""} placeholder="TV en directo" onChange={(value) => setHomeSettings((current) => ({ ...current, tv_title: value }))} onSave={(value) => saveHomeSettings({ tv_title: value })} />
+          <AdminField label="URL de la TV" value={homeSettings.tv_url ?? ""} placeholder="YouTube watch, live, embed o youtu.be" onChange={(value) => setHomeSettings((current) => ({ ...current, tv_url: value }))} onSave={(value) => saveHomeSettings({ tv_url: value })} />
+        </div>
       </section>
 
       <section className="grid gap-3 rounded-lg border border-border bg-surface px-4 py-3 lg:grid-cols-[minmax(220px,1fr)_minmax(0,2fr)]">
@@ -356,6 +404,8 @@ function AdminLiveCenter() {
           />
         </div>
       </section>
+
+      <UpcomingRaceManager races={eventRaces} selectedRaceId={selectedRaceId} onSelectRace={setSelectedRaceId} onSetStatus={setAnyRaceStatus} />
 
       <EditableResultsGrid
         rows={rows}
@@ -445,6 +495,57 @@ function EditableResultsGrid({ rows, locked, duplicateNames, skaters, onCellChan
       </button>
     </div>
   );
+}
+
+function TogglePill({ active, icon, label, onClick }: { active: boolean; icon: React.ReactNode; label: string; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className={`font-condensed inline-flex min-h-12 items-center justify-between gap-3 rounded-md border px-3 text-xs font-bold uppercase tracking-widest transition-colors ${active ? "border-gold bg-gold text-background" : "border-border bg-background text-muted-foreground hover:border-gold hover:text-gold"}`}>
+      <span className="inline-flex items-center gap-2">{icon}{label}</span>
+      {active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+    </button>
+  );
+}
+
+function AdminField({ label, value, placeholder, onChange, onSave }: { label: string; value: string; placeholder: string; onChange: (value: string) => void; onSave: (value: string) => void }) {
+  return (
+    <label className="block">
+      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">{label}</span>
+      <input className="input h-12 text-base" value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} onBlur={(event) => onSave(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+    </label>
+  );
+}
+
+function UpcomingRaceManager({ races, selectedRaceId, onSelectRace, onSetStatus }: { races: Race[]; selectedRaceId: string; onSelectRace: (id: string) => void; onSetStatus: (id: string, status: Status) => void }) {
+  return (
+    <section className="overflow-hidden rounded-lg border border-border bg-surface">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
+        <div>
+          <h2 className="font-display text-xl tracking-widest">Próximas pruebas</h2>
+          <p className="text-sm text-muted-foreground">Selecciona la siguiente salida o márcala en directo en un toque.</p>
+        </div>
+        <CalendarClock className="h-5 w-5 text-gold" />
+      </div>
+      <div className="grid gap-2 p-3 md:grid-cols-2 xl:grid-cols-3">
+        {races.map((race) => (
+          <div key={race.id} className={`rounded-md border p-3 ${race.id === selectedRaceId ? "border-gold bg-gold/10" : "border-border bg-background"}`}>
+            <button onClick={() => onSelectRace(race.id)} className="block w-full text-left">
+              <div className="font-display text-lg tracking-widest text-foreground">{race.race_name}</div>
+              <div className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">{race.category ?? "Sin categoría"} · {new Date(race.scheduled_time).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}</div>
+            </button>
+            <div className="mt-3 grid grid-cols-3 gap-1">
+              <MiniStatusButton active={race.status === "upcoming"} onClick={() => onSetStatus(race.id, "upcoming")}>Prog.</MiniStatusButton>
+              <MiniStatusButton active={race.status === "live"} onClick={() => onSetStatus(race.id, "live")}>Live</MiniStatusButton>
+              <MiniStatusButton active={race.status === "finished"} onClick={() => onSetStatus(race.id, "finished")}>Final</MiniStatusButton>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function MiniStatusButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return <button onClick={onClick} className={`font-condensed rounded px-2 py-2 text-[10px] font-bold uppercase tracking-widest ${active ? "bg-gold text-background" : "border border-border text-muted-foreground hover:border-gold hover:text-gold"}`}>{children}</button>;
 }
 
 function GridInput({ value, locked, onChange, onEnter, refValue, type = "text", inputMode, placeholder, list }: {

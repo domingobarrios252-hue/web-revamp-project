@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarClock, ExternalLink, Flag, Medal, RefreshCw } from "lucide-react";
+import { CalendarClock, ExternalLink, Flag, Medal, PlayCircle, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { youTubeEmbedUrl } from "@/lib/youtube";
 
 type Status = "upcoming" | "live" | "finished";
 
@@ -50,6 +51,15 @@ type LiveCenterEventSetting = {
   full_results_url?: string;
 };
 
+type LiveCenterHomeSetting = {
+  tv_enabled?: boolean;
+  tv_url?: string;
+  tv_title?: string;
+  current_race_enabled?: boolean;
+  results_enabled?: boolean;
+  upcoming_enabled?: boolean;
+};
+
 const REFRESH_MS = 15_000;
 
 export function LiveCenter() {
@@ -59,6 +69,7 @@ export function LiveCenter() {
   const [upcoming, setUpcoming] = useState<Race[]>([]);
   const [medals, setMedals] = useState<MedalRow[]>([]);
   const [showMedals, setShowMedals] = useState(true);
+  const [homeSetting, setHomeSetting] = useState<LiveCenterHomeSetting | null>(null);
   const [eventSetting, setEventSetting] = useState<LiveCenterEventSetting | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -83,7 +94,7 @@ export function LiveCenter() {
       let resultData: Result[] = [];
       let upcomingData: Race[] = [];
 
-      const [{ data: medalData }, { data: medalSetting }, { data: eventSettings }] = await Promise.all([
+      const [{ data: medalData }, { data: medalSetting }, { data: eventSettings }, { data: homeSettings }, { data: tvSettings }] = await Promise.all([
         client
           .from("medal_standings")
           .select("id, country_name, country_code, flag_url, gold, silver, bronze")
@@ -101,6 +112,17 @@ export function LiveCenter() {
           .from("site_settings")
           .select("value")
           .eq("key", "live_center_event_settings")
+          .maybeSingle(),
+        client
+          .from("site_settings")
+          .select("value")
+          .eq("key", "live_center_home_settings")
+          .maybeSingle(),
+        client
+          .from("tv_settings")
+          .select("live_stream_url, live_title")
+          .order("updated_at", { ascending: false })
+          .limit(1)
           .maybeSingle(),
       ]);
 
@@ -144,6 +166,15 @@ export function LiveCenter() {
         setMedals((medalData as MedalRow[]) ?? []);
         const settingValue = medalSetting?.value as { enabled?: boolean } | null;
         setShowMedals(typeof settingValue?.enabled === "boolean" ? settingValue.enabled : true);
+        const savedHomeSetting = (homeSettings?.value ?? {}) as LiveCenterHomeSetting;
+        setHomeSetting({
+          tv_enabled: savedHomeSetting.tv_enabled ?? false,
+          tv_url: savedHomeSetting.tv_url || tvSettings?.live_stream_url || "",
+          tv_title: savedHomeSetting.tv_title || tvSettings?.live_title || "TV en directo",
+          current_race_enabled: savedHomeSetting.current_race_enabled ?? true,
+          results_enabled: savedHomeSetting.results_enabled ?? true,
+          upcoming_enabled: savedHomeSetting.upcoming_enabled ?? true,
+        });
         const perEventSettings = (eventSettings?.value ?? {}) as Record<string, LiveCenterEventSetting>;
         setEventSetting(activeEvent ? perEventSettings[activeEvent.id] ?? null : null);
         setLoaded(true);
@@ -172,6 +203,11 @@ export function LiveCenter() {
 
   if (!loaded) return null;
 
+  const tvEmbedUrl = homeSetting?.tv_enabled ? youTubeEmbedUrl(homeSetting.tv_url) : null;
+  const showCurrentRace = homeSetting?.current_race_enabled !== false;
+  const showResultsPanel = homeSetting?.results_enabled !== false;
+  const showUpcomingPanel = homeSetting?.upcoming_enabled !== false;
+
   return (
     <section className="border-y border-tv-red/50 bg-background">
       <div className="mx-auto max-w-7xl px-5 py-8 md:px-6 md:py-10">
@@ -194,16 +230,33 @@ export function LiveCenter() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[minmax(360px,2fr)_minmax(0,3fr)]">
-          <LiveRaceCard race={currentRace} event={event} />
+          <div className="grid gap-4 content-start">
+            {tvEmbedUrl && <LiveTvCard embedUrl={tvEmbedUrl} title={homeSetting?.tv_title || "TV en directo"} />}
+            {showCurrentRace && <LiveRaceCard race={currentRace} event={event} />}
+          </div>
           <div className="grid gap-4">
-            <LiveResultsPanel race={currentRace} results={results} />
-            <UpcomingRacesList races={upcoming} />
+            {showResultsPanel && <LiveResultsPanel race={currentRace} results={results} />}
+            {showUpcomingPanel && <UpcomingRacesList races={upcoming} />}
             {showMedals && eventSetting?.medals_enabled !== false && medals.length > 0 && <MedalTable medals={medals} />}
             {event && <FullResultsButton event={event} setting={eventSetting} />}
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function LiveTvCard({ embedUrl, title }: { embedUrl: string; title: string }) {
+  return (
+    <article className="overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h3 className="font-display text-lg uppercase tracking-widest">{title}</h3>
+        <PlayCircle className="h-4 w-4 text-tv-red" />
+      </div>
+      <div className="aspect-video bg-background">
+        <iframe src={embedUrl} title={title} className="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" />
+      </div>
+    </article>
   );
 }
 
