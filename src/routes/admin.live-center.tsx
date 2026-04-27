@@ -348,18 +348,27 @@ function AdminLiveCenter() {
         <Stat label="Edición" value={raceLocked ? "Bloqueada" : "Instantánea"} icon={raceLocked ? <Lock className="h-4 w-4" /> : <Check className="h-4 w-4" />} />
       </section>
 
-      <section className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface px-4 py-3">
-        <div>
-          <h2 className="font-display text-lg tracking-widest">Medallero en Live Center</h2>
-          <p className="text-sm text-muted-foreground">Ocúltalo temporalmente en la home sin borrar países ni resultados.</p>
+      <section className="grid gap-4 rounded-lg border border-border bg-surface p-4 xl:grid-cols-[1.1fr_1fr]">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="font-display text-lg tracking-widest">Qué aparece en la home</h2>
+              <p className="text-sm text-muted-foreground">Activa o desactiva módulos sin borrar datos.</p>
+            </div>
+            <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{savingHomeSettings || savingMedalsToggle ? "Guardando" : "Auto guardado"}</span>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <TogglePill active={homeSettings.tv_enabled !== false && Boolean(homeSettings.tv_enabled)} icon={<PlayCircle className="h-4 w-4" />} label="TV en directo" onClick={() => saveHomeSettings({ tv_enabled: !homeSettings.tv_enabled })} />
+            <TogglePill active={homeSettings.current_race_enabled !== false} icon={<Flag className="h-4 w-4" />} label="Prueba actual" onClick={() => saveHomeSettings({ current_race_enabled: homeSettings.current_race_enabled === false })} />
+            <TogglePill active={homeSettings.results_enabled !== false} icon={<Zap className="h-4 w-4" />} label="Clasificación en vivo" onClick={() => saveHomeSettings({ results_enabled: homeSettings.results_enabled === false })} />
+            <TogglePill active={homeSettings.upcoming_enabled !== false} icon={<CalendarClock className="h-4 w-4" />} label="Próximas pruebas" onClick={() => saveHomeSettings({ upcoming_enabled: homeSettings.upcoming_enabled === false })} />
+            <TogglePill active={showMedalsOnHome} icon={<Trophy className="h-4 w-4" />} label="Medallero global" onClick={toggleMedalsOnHome} />
+          </div>
         </div>
-        <button
-          onClick={toggleMedalsOnHome}
-          disabled={savingMedalsToggle}
-          className={`font-condensed inline-flex min-w-36 items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${showMedalsOnHome ? "bg-gold text-background hover:bg-gold-dark" : "border border-border text-muted-foreground hover:border-gold hover:text-gold"}`}
-        >
-          <Trophy className="h-4 w-4" /> {showMedalsOnHome ? "Visible" : "Oculto"}
-        </button>
+        <div className="grid gap-3">
+          <AdminField label="Título TV" value={homeSettings.tv_title ?? ""} placeholder="TV en directo" onChange={(value) => setHomeSettings((current) => ({ ...current, tv_title: value }))} onSave={(value) => saveHomeSettings({ tv_title: value })} />
+          <AdminField label="URL de la TV" value={homeSettings.tv_url ?? ""} placeholder="YouTube watch, live, embed o youtu.be" onChange={(value) => setHomeSettings((current) => ({ ...current, tv_url: value }))} onSave={(value) => saveHomeSettings({ tv_url: value })} />
+        </div>
       </section>
 
       <section className="grid gap-3 rounded-lg border border-border bg-surface px-4 py-3 lg:grid-cols-[minmax(220px,1fr)_minmax(0,2fr)]">
@@ -395,6 +404,8 @@ function AdminLiveCenter() {
           />
         </div>
       </section>
+
+      <UpcomingRaceManager races={eventRaces} selectedRaceId={selectedRaceId} onSelectRace={setSelectedRaceId} onSetStatus={setAnyRaceStatus} />
 
       <EditableResultsGrid
         rows={rows}
