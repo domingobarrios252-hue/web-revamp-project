@@ -1,10 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Radio, Play, Clock, Medal, Flame, Instagram, Facebook } from "lucide-react";
-import { youTubeEmbedUrl } from "@/lib/youtube";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Clock, Flame, Instagram, Facebook } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
-import { LiveResultsTable } from "@/components/site/LiveResultsTable";
 import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -56,7 +54,6 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const [news, setNews] = useState<News[] | null>(null);
-  const [liveActive, setLiveActive] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,40 +69,6 @@ function HomePage() {
       .then(({ data }) => {
         if (!cancelled) setNews((data as unknown as News[]) ?? []);
       });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Determinar si hay directo activo para mostrar/ocultar el botón "Seguir en directo"
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const [{ data: tvData }, { data: lrData }] = await Promise.all([
-        supabase
-          .from("tv_settings")
-          .select("live_stream_url, live_starts_at, live_ends_at")
-          .limit(1)
-          .maybeSingle(),
-        supabase
-          .from("live_results")
-          .select("id")
-          .eq("published", true)
-          .eq("status", "en_vivo")
-          .limit(1),
-      ]);
-      if (cancelled) return;
-      const now = Date.now();
-      const hasStreamUrl = !!tvData?.live_stream_url?.trim();
-      const startsAt = tvData?.live_starts_at ? new Date(tvData.live_starts_at).getTime() : null;
-      const endsAt = tvData?.live_ends_at ? new Date(tvData.live_ends_at).getTime() : null;
-      const isStreamLive =
-        hasStreamUrl &&
-        (startsAt === null || now >= startsAt) &&
-        (endsAt === null || now <= endsAt);
-      const hasLiveResults = (lrData?.length ?? 0) > 0;
-      setLiveActive(isStreamLive || hasLiveResults);
-    })();
     return () => {
       cancelled = true;
     };
@@ -190,14 +153,6 @@ function HomePage() {
                   Leer cobertura completa <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               )}
-              {liveActive && (
-                <Link
-                  to="/tv"
-                  className="font-condensed inline-flex items-center justify-center gap-2 border border-foreground/30 bg-background/40 px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-foreground backdrop-blur-sm transition-colors hover:border-gold hover:text-gold"
-                >
-                  <Radio className="h-3.5 w-3.5" /> Seguir en directo
-                </Link>
-              )}
             </div>
           </div>
         </div>
@@ -208,8 +163,6 @@ function HomePage() {
       <AdBannerWithMagazine placement="home_top" />
 
       <LiveCenter />
-
-      <LiveNowSection />
 
 
       {/* ÚLTIMAS NOTICIAS — ESPN style */}
