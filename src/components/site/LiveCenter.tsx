@@ -21,7 +21,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { youTubeEmbedUrl } from "@/lib/youtube";
@@ -297,7 +297,7 @@ function SearchFilter({ query, setQuery, country, setCountry, countries, sortKey
 }
 
 function MobileTabRail({ activeTab, setActiveTab }: { activeTab: ViewTab; setActiveTab: (tab: ViewTab) => void }) {
-  const tabs: Array<[ViewTab, string, React.ReactNode]> = [["leaderboard", "Clasificación", <Trophy className="h-4 w-4" />], ["laps", "Vueltas", <Activity className="h-4 w-4" />], ["head", "Head-to-Head", <BarChart3 className="h-4 w-4" />]];
+  const tabs: Array<[ViewTab, string, ReactNode]> = [["leaderboard", "Clasificación", <Trophy className="h-4 w-4" />], ["laps", "Vueltas", <Activity className="h-4 w-4" />], ["head", "Head-to-Head", <BarChart3 className="h-4 w-4" />]];
   return <nav className="hide-scrollbar flex gap-2 overflow-x-auto lg:overflow-visible">{tabs.map(([key, label, icon]) => <button key={key} onClick={() => setActiveTab(key)} className={`font-condensed inline-flex shrink-0 items-center gap-2 rounded border px-4 py-2 text-xs font-bold uppercase tracking-widest transition ${activeTab === key ? "border-live-orange bg-live-orange/10 text-live-orange" : "border-border text-muted-foreground hover:text-foreground"}`}>{icon}{label}</button>)}</nav>;
 }
 
@@ -362,16 +362,16 @@ function ComparisonModal({ rows, selected, setSelected, onClose }: { rows: Enric
   return <Modal onClose={onClose} title="Comparar patinadores"><div className="grid gap-4 md:grid-cols-[240px_1fr]"><div className="max-h-80 space-y-2 overflow-y-auto">{rows.map((row) => <button key={row.id} onClick={() => toggle(row.id)} className={`w-full rounded border px-3 py-2 text-left text-sm ${selected.includes(row.id) ? "border-live-orange bg-live-orange/10" : "border-border"}`}>{row.flag} #{row.dorsal} {row.athlete_name}</button>)}</div><div className="grid gap-3">{selectedRows.length ? selectedRows.map((row) => <div key={row.id} className="rounded border border-border bg-background/60 p-3"><div className="mb-2 flex items-center justify-between gap-2"><strong>{row.athlete_name}</strong><span className="font-mono text-live-cyan">{row.lastLap}</span></div><div className="flex h-20 items-end gap-1">{row.consistency.map((value, index) => <span key={index} className="flex-1 rounded-t bg-live-orange" style={{ height: `${value}%` }} />)}</div></div>) : <p className="text-sm text-muted-foreground">Selecciona 2 o 3 patinadores para comparar tiempos por vuelta, consistencia y posición.</p>}</div></div></Modal>;
 }
 
-function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
+function Modal({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
   return <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur"><div className="live-panel w-full max-w-3xl rounded-lg border border-border bg-surface p-4 shadow-2xl"><div className="mb-4 flex items-center justify-between gap-3"><h3 className="font-display text-2xl uppercase tracking-widest">{title}</h3><button onClick={onClose} className="rounded border border-border p-2 hover:border-live-orange"><X className="h-4 w-4" /></button></div>{children}</div></div>;
 }
 
-function ActionButton({ icon, children, onClick }: { icon: React.ReactNode; children: React.ReactNode; onClick: () => void }) {
+function ActionButton({ icon, children, onClick }: { icon: ReactNode; children: ReactNode; onClick: () => void }) {
   return <button onClick={onClick} className="font-condensed inline-flex items-center justify-center gap-2 rounded border border-border px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground transition hover:border-live-orange hover:text-live-orange">{icon}{children}</button>;
 }
 function Metric({ label, value }: { label: string; value: string }) { return <div className="rounded border border-border bg-background/60 p-3"><p className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p><p className="font-mono text-sm text-live-cyan">{value}</p></div>; }
-function Stat({ icon, label, value, helper }: { icon: React.ReactNode; label: string; value: string; helper: string }) { return <div className="grid grid-cols-[auto_1fr] gap-3 rounded border border-border bg-background/60 p-3"><div className="text-live-orange">{icon}</div><div><p className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p><p className="font-mono text-sm text-foreground">{value}</p><p className="truncate text-xs text-muted-foreground">{helper}</p></div></div>; }
-function StatusChip({ tone, children }: { tone: EnrichedResult["statusTone"]; children: React.ReactNode }) { return <span className={`font-condensed inline-flex rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${tone === "leader" ? "bg-live-success/15 text-live-success" : tone === "chasing" ? "bg-live-warning/15 text-live-warning" : tone === "alert" ? "bg-tv-red/15 text-tv-red" : "bg-live-cyan/10 text-live-cyan"}`}>{children}</span>; }
+function Stat({ icon, label, value, helper }: { icon: ReactNode; label: string; value: string; helper: string }) { return <div className="grid grid-cols-[auto_1fr] gap-3 rounded border border-border bg-background/60 p-3"><div className="text-live-orange">{icon}</div><div><p className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p><p className="font-mono text-sm text-foreground">{value}</p><p className="truncate text-xs text-muted-foreground">{helper}</p></div></div>; }
+function StatusChip({ tone, children }: { tone: EnrichedResult["statusTone"]; children: ReactNode }) { return <span className={`font-condensed inline-flex rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${tone === "leader" ? "bg-live-success/15 text-live-success" : tone === "chasing" ? "bg-live-warning/15 text-live-warning" : tone === "alert" ? "bg-tv-red/15 text-tv-red" : "bg-live-cyan/10 text-live-cyan"}`}>{children}</span>; }
 
 function enrichResults(results: Result[]): EnrichedResult[] {
   return results.map((row, index) => {
