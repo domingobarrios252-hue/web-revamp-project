@@ -77,7 +77,7 @@ function AdminLiveCenter() {
   const [savingMedalsToggle, setSavingMedalsToggle] = useState(false);
   const [eventSettings, setEventSettings] = useState<Record<string, EventSetting>>({});
   const [savingEventSettings, setSavingEventSettings] = useState(false);
-  const [homeSettings, setHomeSettings] = useState<HomeSetting>({ tv_enabled: false, tv_url: "", tv_title: "TV en directo", current_race_enabled: true, results_enabled: true, upcoming_enabled: true });
+  const [homeSettings, setHomeSettings] = useState<HomeSetting>(HOME_DEFAULTS);
   const [savingHomeSettings, setSavingHomeSettings] = useState(false);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -106,14 +106,7 @@ function AdminLiveCenter() {
     setShowMedalsOnHome(typeof medalValue?.enabled === "boolean" ? medalValue.enabled : true);
     setEventSettings((liveCenterSetting?.value ?? {}) as Record<string, EventSetting>);
     const savedHome = (homeSetting?.value ?? {}) as HomeSetting;
-    setHomeSettings({
-      tv_enabled: savedHome.tv_enabled ?? false,
-      tv_url: savedHome.tv_url || tvSetting?.live_stream_url || "",
-      tv_title: savedHome.tv_title || tvSetting?.live_title || "TV en directo",
-      current_race_enabled: savedHome.current_race_enabled ?? true,
-      results_enabled: savedHome.results_enabled ?? true,
-      upcoming_enabled: savedHome.upcoming_enabled ?? true,
-    });
+    setHomeSettings({ ...HOME_DEFAULTS, ...savedHome, tv_url: savedHome.tv_url || tvSetting?.live_stream_url || "", tv_title: savedHome.tv_title || tvSetting?.live_title || HOME_DEFAULTS.tv_title });
     setSelectedEventId((current) => current || nextEvents.find((event) => event.status === "live")?.id || nextEvents[0]?.id || "");
     setSelectedRaceId((current) => current || nextRaces.find((race) => race.status === "live")?.id || nextRaces[0]?.id || "");
     setLoading(false);
