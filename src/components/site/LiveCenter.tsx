@@ -11,6 +11,7 @@ import {
   Filter,
   Gauge,
   Maximize2,
+  Minimize2,
   Medal,
   RefreshCw,
   Search,
@@ -79,6 +80,7 @@ export function LiveCenter() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [selectedCompare, setSelectedCompare] = useState<string[]>([]);
+  const [fullscreenMode, setFullscreenMode] = useState(false);
   const shellRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -156,6 +158,22 @@ export function LiveCenter() {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const syncFullscreen = () => setFullscreenMode(document.fullscreenElement === shellRef.current);
+    const exitOnKey = (event: KeyboardEvent) => {
+      if ((event.key === "Escape" || event.key.toLowerCase() === "f") && document.fullscreenElement === shellRef.current) {
+        document.exitFullscreen();
+      }
+    };
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    document.addEventListener("keydown", exitOnKey);
+    return () => {
+      document.removeEventListener("fullscreenchange", syncFullscreen);
+      document.removeEventListener("keydown", exitOnKey);
+    };
+  }, []);
+
   const enrichedResults = useMemo(() => enrichResults(results), [results]);
   const countries = useMemo(() => Array.from(new Set(enrichedResults.map((row) => row.country).filter(Boolean))).sort() as string[], [enrichedResults]);
   const filteredResults = useMemo(() => {
@@ -195,14 +213,19 @@ export function LiveCenter() {
 
   const toggleFullscreen = async () => {
     if (!shellRef.current || typeof document === "undefined") return;
-    if (document.fullscreenElement) await document.exitFullscreen();
-    else await shellRef.current.requestFullscreen();
+    if (document.fullscreenElement === shellRef.current) {
+      await document.exitFullscreen();
+    } else {
+      await shellRef.current.requestFullscreen();
+      setFullscreenMode(true);
+    }
   };
 
   return (
-    <section ref={shellRef} className="live-center-shell border-y border-border bg-background">
+    <section ref={shellRef} className={`live-center-shell border-y border-border bg-background ${fullscreenMode ? "live-center-fullscreen" : ""}`}>
       <div className="mx-auto max-w-[1800px] px-4 py-6 md:px-6 lg:px-8">
-        <LiveHeader event={event} race={currentRace} refreshing={refreshing} lastUpdated={lastUpdated} onShare={copyShareLink} onNotifications={() => setNotificationsOpen(true)} onFullscreen={toggleFullscreen} />
+        {fullscreenMode && <FullscreenBar event={event} race={currentRace} lastUpdated={lastUpdated} onExit={toggleFullscreen} />}
+        <LiveHeader event={event} race={currentRace} refreshing={refreshing} lastUpdated={lastUpdated} onShare={copyShareLink} onNotifications={() => setNotificationsOpen(true)} onFullscreen={toggleFullscreen} fullscreenMode={fullscreenMode} />
         {showCurrentRace && <RaceProgress race={currentRace} progress={progress} />}
 
         <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(220px,20%)_minmax(0,60%)_minmax(240px,20%)] lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.8fr)]">
@@ -234,7 +257,7 @@ export function LiveCenter() {
   );
 }
 
-function LiveHeader({ event, race, refreshing, lastUpdated, onShare, onNotifications, onFullscreen }: { event: LiveEvent | null; race: Race | null; refreshing: boolean; lastUpdated: Date | null; onShare: () => void; onNotifications: () => void; onFullscreen: () => void }) {
+function LiveHeader({ event, race, refreshing, lastUpdated, onShare, onNotifications, onFullscreen, fullscreenMode }: { event: LiveEvent | null; race: Race | null; refreshing: boolean; lastUpdated: Date | null; onShare: () => void; onNotifications: () => void; onFullscreen: () => void; fullscreenMode: boolean }) {
   return (
     <header className="live-panel overflow-hidden rounded-lg border border-border bg-surface">
       <div className="flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
@@ -250,10 +273,27 @@ function LiveHeader({ event, race, refreshing, lastUpdated, onShare, onNotificat
         <div className="grid grid-cols-3 gap-2 sm:flex">
           <ActionButton icon={<Share2 />} onClick={onShare}>Compartir</ActionButton>
           <ActionButton icon={<Bell />} onClick={onNotifications}>Alertas</ActionButton>
-          <ActionButton icon={<Maximize2 />} onClick={onFullscreen}>Full</ActionButton>
+          <ActionButton icon={fullscreenMode ? <Minimize2 /> : <Maximize2 />} onClick={onFullscreen}>{fullscreenMode ? "Salir" : "Full"}</ActionButton>
         </div>
       </div>
     </header>
+  );
+}
+
+function FullscreenBar({ event, race, lastUpdated, onExit }: { event: LiveEvent | null; race: Race | null; lastUpdated: Date | null; onExit: () => void }) {
+  return (
+    <div className="live-fullscreen-bar mb-3 rounded-lg border border-border bg-background/95 px-3 py-2 backdrop-blur">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
+          <span className="live-red-tag font-condensed mr-2 inline-flex items-center gap-2 rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground"><span className="live-dot-fast h-1.5 w-1.5 rounded-full bg-foreground" /> DIRECTO</span>
+          <span className="font-condensed text-xs uppercase tracking-widest text-muted-foreground">{event?.name ?? "Live Center"} · {race?.race_name ?? "Carrera activa"}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[11px] text-muted-foreground">{lastUpdated ? lastUpdated.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }) : "--:--"}</span>
+          <button onClick={onExit} className="live-mini-button px-3 py-1.5"><Minimize2 className="h-4 w-4" /> Salir · Esc/F</button>
+        </div>
+      </div>
+    </div>
   );
 }
 
