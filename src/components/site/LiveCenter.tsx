@@ -328,28 +328,28 @@ function RaceProgress({ race, progress, copy }: { race: Race | null; progress: n
   );
 }
 
-function SidebarEvents({ event, currentRace, upcoming, showUpcoming, onNotify }: { event: LiveEvent | null; currentRace: Race | null; upcoming: Race[]; showUpcoming: boolean; onNotify: () => void }) {
-  const categories = [currentRace?.category || "Élite Masculino", "Élite Femenino", "Junior Masculino", "Junior Femenino", "Cadete Masculino", "Cadete Femenino"];
+function SidebarEvents({ event, currentRace, upcoming, showUpcoming, onNotify, copy }: { event: LiveEvent | null; currentRace: Race | null; upcoming: Race[]; showUpcoming: boolean; onNotify: () => void; copy: LiveCenterHomeSetting }) {
+  const categories = [currentRace?.category || copy.fallback_category || "Élite Masculino", "Élite Femenino", "Junior Masculino", "Junior Femenino", "Cadete Masculino", "Cadete Femenino"];
   return (
     <article className="live-panel rounded-lg border border-border bg-surface p-4">
-      <h3 className="font-display mb-3 flex items-center gap-2 text-xl uppercase tracking-widest"><span className="live-dot-fast h-2 w-2 rounded-full bg-tv-red" /> Eventos en vivo</h3>
+      <h3 className="font-display mb-3 flex items-center gap-2 text-xl uppercase tracking-widest"><span className="live-dot-fast h-2 w-2 rounded-full bg-tv-red" /> {copy.sidebar_title}</h3>
       <div className="grid gap-2">
         {categories.map((category, index) => <button key={category} className={`font-condensed flex items-center justify-between rounded border px-3 py-2 text-left text-xs font-bold uppercase tracking-widest transition ${index === 0 ? "border-live-orange bg-live-orange/10 text-foreground" : "border-border text-muted-foreground hover:border-live-cyan hover:text-foreground"}`}><span>{category}</span>{index === 0 ? "✓" : ""}</button>)}
       </div>
-      {showUpcoming && <div className="mt-5 border-t border-border pt-4"><h4 className="font-condensed mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground"><CalendarClock className="h-4 w-4 text-live-cyan" /> Próximos eventos</h4><ul className="space-y-3">{upcoming.length ? upcoming.map((race) => <li key={race.id} className="flex items-center justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-semibold">{race.race_name}</p><time className="font-mono text-xs text-muted-foreground">{formatRaceTime(race.scheduled_time)}</time></div><button aria-label="Activar notificaciones" onClick={onNotify} className="rounded border border-border p-2 text-muted-foreground hover:border-live-orange hover:text-live-orange"><Bell className="h-3.5 w-3.5" /></button></li>) : <li className="text-sm text-muted-foreground">Sin próximas pruebas.</li>}</ul></div>}
-      <p className="font-condensed mt-4 text-[10px] uppercase tracking-widest text-muted-foreground">{event?.name ?? "Selecciona un evento desde el CMS"}</p>
+      {showUpcoming && <div className="mt-5 border-t border-border pt-4"><h4 className="font-condensed mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground"><CalendarClock className="h-4 w-4 text-live-cyan" /> {copy.upcoming_title}</h4><ul className="space-y-3">{upcoming.length ? upcoming.map((race) => <li key={race.id} className="flex items-center justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-semibold">{race.race_name}</p><time className="font-mono text-xs text-muted-foreground">{formatRaceTime(race.scheduled_time)}</time></div><button aria-label="Activar notificaciones" onClick={onNotify} className="rounded border border-border p-2 text-muted-foreground hover:border-live-orange hover:text-live-orange"><Bell className="h-3.5 w-3.5" /></button></li>) : <li className="text-sm text-muted-foreground">{copy.no_upcoming_text}</li>}</ul></div>}
+      <p className="font-condensed mt-4 text-[10px] uppercase tracking-widest text-muted-foreground">{event?.name ?? copy.cms_empty_text}</p>
     </article>
   );
 }
 
-function SearchFilter({ query, setQuery, country, setCountry, countries, sortKey, setSortKey, onCompare, onDownload }: { query: string; setQuery: (value: string) => void; country: string; setCountry: (value: string) => void; countries: string[]; sortKey: SortKey; setSortKey: (value: SortKey) => void; onCompare: () => void; onDownload: () => void }) {
+function SearchFilter({ query, setQuery, country, setCountry, countries, sortKey, setSortKey, onCompare, onDownload, copy }: { query: string; setQuery: (value: string) => void; country: string; setCountry: (value: string) => void; countries: string[]; sortKey: SortKey; setSortKey: (value: SortKey) => void; onCompare: () => void; onDownload: () => void; copy: LiveCenterHomeSetting }) {
   return (
     <div className="live-panel rounded-lg border border-border bg-surface p-3">
       <div className="grid gap-2 md:grid-cols-[1fr_auto_auto_auto]">
-        <label className="relative"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={(event) => setQuery(event.target.value)} className="input h-10 pl-9" placeholder="Buscar patinador, dorsal o club" /></label>
-        <label className="relative"><Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><select value={country} onChange={(event) => setCountry(event.target.value)} className="input h-10 min-w-32 pl-9"><option value="all">Todos</option>{countries.map((item) => <option key={item} value={item}>{flagFor(item)} {item}</option>)}</select></label>
+        <label className="relative"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={(event) => setQuery(event.target.value)} className="input h-10 pl-9" placeholder={copy.search_placeholder} /></label>
+        <label className="relative"><Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><select value={country} onChange={(event) => setCountry(event.target.value)} className="input h-10 min-w-32 pl-9"><option value="all">{copy.country_all_label}</option>{countries.map((item) => <option key={item} value={item}>{flagFor(item)} {item}</option>)}</select></label>
         <select value={sortKey} onChange={(event) => setSortKey(event.target.value as SortKey)} className="input h-10 min-w-36"><option value="position">Posición</option><option value="time">Tiempo</option><option value="gap">Gap</option><option value="lastLap">Última vuelta</option></select>
-        <div className="grid grid-cols-2 gap-2"><button onClick={onCompare} className="live-mini-button"><Users className="h-4 w-4" /> Comparar</button><button onClick={onDownload} className="live-mini-button"><Download className="h-4 w-4" /> CSV</button></div>
+        <div className="grid grid-cols-2 gap-2"><button onClick={onCompare} className="live-mini-button"><Users className="h-4 w-4" /> {copy.compare_label}</button><button onClick={onDownload} className="live-mini-button"><Download className="h-4 w-4" /> {copy.csv_label}</button></div>
       </div>
     </div>
   );
