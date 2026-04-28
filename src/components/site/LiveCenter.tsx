@@ -48,7 +48,15 @@ type Result = {
 };
 type MedalRow = { id: string; country_name: string; country_code: string | null; flag_url: string | null; gold: number; silver: number; bronze: number };
 type LiveCenterEventSetting = { medals_enabled?: boolean; full_results_label?: string; full_results_url?: string };
-type LiveCenterHomeSetting = { tv_enabled?: boolean; tv_url?: string; tv_title?: string; current_race_enabled?: boolean; results_enabled?: boolean; upcoming_enabled?: boolean };
+type LiveCenterHomeSetting = {
+  tv_enabled?: boolean; tv_url?: string; tv_title?: string; current_race_enabled?: boolean; results_enabled?: boolean; upcoming_enabled?: boolean;
+  live_badge?: string; fallback_title?: string; fallback_category?: string; fallback_race?: string; progress_elapsed?: string; progress_estimated?: string;
+  sidebar_title?: string; upcoming_title?: string; no_upcoming_text?: string; cms_empty_text?: string; search_placeholder?: string; country_all_label?: string;
+  compare_label?: string; csv_label?: string; leaderboard_title?: string; riders_label?: string; empty_results_text?: string; stats_title?: string;
+  best_lap_label?: string; avg_speed_label?: string; lead_changes_label?: string; incidents_label?: string; current_race_helper?: string; dq_helper?: string;
+  ticker_title?: string; medals_title?: string; laps_title?: string; head_title?: string; head_button_label?: string; profile_button_label?: string;
+  notifications_title?: string; compare_title?: string; compare_empty_text?: string; fullscreen_exit_label?: string; share_label?: string; alerts_label?: string; fullscreen_label?: string;
+};
 type EnrichedResult = Result & { dorsal: number; flag: string; lastLap: string; statusLabel: string; statusTone: "leader" | "chasing" | "stable" | "alert"; seasonBest: string; avgLap: string; consistency: number[]; positions: number[]; speed: string };
 
 type TickerItem = { id: string; time: string; icon: string; type: string; message: string; tone: "danger" | "warning" | "success" | "cyan" };
@@ -56,6 +64,14 @@ type TickerItem = { id: string; time: string; icon: string; type: string; messag
 const REFRESH_MS = 15_000;
 const TOTAL_LAPS = 40;
 const CURRENT_LAP = 12;
+const COPY_DEFAULTS: LiveCenterHomeSetting = {
+  live_badge: "EN VIVO", fallback_title: "Live Center RollerZone", fallback_category: "Élite Masculino", fallback_race: "10.000m Puntos/Eliminación", progress_elapsed: "45:32 transcurrido", progress_estimated: "1:32:00 estimado",
+  sidebar_title: "Eventos en vivo", upcoming_title: "Próximos eventos", no_upcoming_text: "Sin próximas pruebas.", cms_empty_text: "Selecciona un evento desde el CMS", search_placeholder: "Buscar patinador, dorsal o club", country_all_label: "Todos",
+  compare_label: "Comparar", csv_label: "CSV", leaderboard_title: "Clasificación en Vivo", riders_label: "patinadores", empty_results_text: "Sin resultados cargados para la prueba actual.", stats_title: "Estadísticas rápidas",
+  best_lap_label: "Mejor vuelta", avg_speed_label: "Velocidad media", lead_changes_label: "Cambios de liderato", incidents_label: "Caídas", current_race_helper: "Carrera actual", dq_helper: "Descalificaciones 0",
+  ticker_title: "Eventos en vivo", medals_title: "Medallero", laps_title: "Tiempos por vuelta", head_title: "Análisis Head-to-Head", head_button_label: "Elegir patinadores", profile_button_label: "Ver Perfil Completo",
+  notifications_title: "Notificaciones Live Center", compare_title: "Comparar patinadores", compare_empty_text: "Selecciona 2 o 3 patinadores para comparar tiempos por vuelta, consistencia y posición.", fullscreen_exit_label: "Salir · Esc/F", share_label: "Compartir", alerts_label: "Alertas", fullscreen_label: "Full",
+};
 const COUNTRY_FLAGS: Record<string, string> = {
   ESP: "🇪🇸", ES: "🇪🇸", POR: "🇵🇹", PT: "🇵🇹", FRA: "🇫🇷", FR: "🇫🇷", ITA: "🇮🇹", IT: "🇮🇹", GER: "🇩🇪", DE: "🇩🇪", NED: "🇳🇱", NL: "🇳🇱", BEL: "🇧🇪", BE: "🇧🇪", COL: "🇨🇴", VE: "🇻🇪", MEX: "🇲🇽", ARG: "🇦🇷", CHI: "🇨🇱", USA: "🇺🇸", US: "🇺🇸",
 };
