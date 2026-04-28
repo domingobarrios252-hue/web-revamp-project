@@ -276,30 +276,30 @@ export function LiveCenter() {
   );
 }
 
-function LiveHeader({ event, race, refreshing, lastUpdated, onShare, onNotifications, onFullscreen, fullscreenMode }: { event: LiveEvent | null; race: Race | null; refreshing: boolean; lastUpdated: Date | null; onShare: () => void; onNotifications: () => void; onFullscreen: () => void; fullscreenMode: boolean }) {
+function LiveHeader({ event, race, refreshing, lastUpdated, onShare, onNotifications, onFullscreen, fullscreenMode, copy }: { event: LiveEvent | null; race: Race | null; refreshing: boolean; lastUpdated: Date | null; onShare: () => void; onNotifications: () => void; onFullscreen: () => void; fullscreenMode: boolean; copy: LiveCenterHomeSetting }) {
   return (
     <header className="live-panel overflow-hidden rounded-lg border border-border bg-surface">
       <div className="flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span className="live-red-tag font-condensed inline-flex items-center gap-2 rounded px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-foreground"><span className="live-dot-fast h-2 w-2 rounded-full bg-foreground" /> EN VIVO</span>
+            <span className="live-red-tag font-condensed inline-flex items-center gap-2 rounded px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-foreground"><span className="live-dot-fast h-2 w-2 rounded-full bg-foreground" /> {copy.live_badge}</span>
             <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">{lastUpdated ? `Actualizado ${lastUpdated.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}` : "Sincronizando"}</span>
             <RefreshCw className={`h-3.5 w-3.5 text-live-orange ${refreshing ? "animate-spin" : ""}`} />
           </div>
-          <h2 className="font-display truncate text-3xl uppercase tracking-widest md:text-5xl">{event?.name ?? "Live Center RollerZone"}</h2>
-          <p className="font-condensed mt-1 text-sm uppercase tracking-widest text-muted-foreground">{race?.category ?? "Élite Masculino"} · {race?.race_name ?? "10.000m Puntos/Eliminación"} · Vuelta {CURRENT_LAP} de {TOTAL_LAPS}</p>
+          <h2 className="font-display truncate text-3xl uppercase tracking-widest md:text-5xl">{event?.name ?? copy.fallback_title}</h2>
+          <p className="font-condensed mt-1 text-sm uppercase tracking-widest text-muted-foreground">{race?.category ?? copy.fallback_category} · {race?.race_name ?? copy.fallback_race} · Vuelta {CURRENT_LAP} de {TOTAL_LAPS}</p>
         </div>
         <div className="grid grid-cols-3 gap-2 sm:flex">
-          <ActionButton icon={<Share2 />} onClick={onShare}>Compartir</ActionButton>
-          <ActionButton icon={<Bell />} onClick={onNotifications}>Alertas</ActionButton>
-          <ActionButton icon={fullscreenMode ? <Minimize2 /> : <Maximize2 />} onClick={onFullscreen}>{fullscreenMode ? "Salir" : "Full"}</ActionButton>
+          <ActionButton icon={<Share2 />} onClick={onShare}>{copy.share_label}</ActionButton>
+          <ActionButton icon={<Bell />} onClick={onNotifications}>{copy.alerts_label}</ActionButton>
+          <ActionButton icon={fullscreenMode ? <Minimize2 /> : <Maximize2 />} onClick={onFullscreen}>{fullscreenMode ? "Salir" : copy.fullscreen_label}</ActionButton>
         </div>
       </div>
     </header>
   );
 }
 
-function FullscreenBar({ event, race, lastUpdated, onExit }: { event: LiveEvent | null; race: Race | null; lastUpdated: Date | null; onExit: () => void }) {
+function FullscreenBar({ event, race, lastUpdated, onExit, copy }: { event: LiveEvent | null; race: Race | null; lastUpdated: Date | null; onExit: () => void; copy: LiveCenterHomeSetting }) {
   return (
     <div className="live-fullscreen-bar mb-3 rounded-lg border border-border bg-background/95 px-3 py-2 backdrop-blur">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -309,19 +309,19 @@ function FullscreenBar({ event, race, lastUpdated, onExit }: { event: LiveEvent 
         </div>
         <div className="flex items-center gap-2">
           <span className="font-mono text-[11px] text-muted-foreground">{lastUpdated ? lastUpdated.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }) : "--:--"}</span>
-          <button onClick={onExit} className="live-mini-button px-3 py-1.5"><Minimize2 className="h-4 w-4" /> Salir · Esc/F</button>
+          <button onClick={onExit} className="live-mini-button px-3 py-1.5"><Minimize2 className="h-4 w-4" /> {copy.fullscreen_exit_label}</button>
         </div>
       </div>
     </div>
   );
 }
 
-function RaceProgress({ race, progress }: { race: Race | null; progress: number }) {
+function RaceProgress({ race, progress, copy }: { race: Race | null; progress: number; copy: LiveCenterHomeSetting }) {
   return (
     <article className="live-panel mt-4 rounded-lg border border-border bg-surface p-4">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <h3 className="font-condensed text-sm font-bold uppercase tracking-widest">Vuelta {race?.status === "finished" ? TOTAL_LAPS : CURRENT_LAP} de {TOTAL_LAPS} <span className="text-live-cyan">({progress}%)</span></h3>
-        <div className="font-mono text-xs text-muted-foreground"><Clock className="mr-1 inline h-3.5 w-3.5 text-live-orange" />45:32 transcurrido · 1:32:00 estimado</div>
+        <div className="font-mono text-xs text-muted-foreground"><Clock className="mr-1 inline h-3.5 w-3.5 text-live-orange" />{copy.progress_elapsed} · {copy.progress_estimated}</div>
       </div>
       <div className="h-3 overflow-hidden rounded bg-muted"><div className="live-progress h-full rounded" style={{ width: `${progress}%` }} /></div>
     </article>
