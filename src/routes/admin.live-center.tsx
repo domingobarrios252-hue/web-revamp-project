@@ -425,6 +425,28 @@ function AdminLiveCenter() {
         </div>
       </section>
 
+      <section className="rounded-lg border border-border bg-surface p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display text-xl tracking-widest">Textos visibles del Live Center</h2>
+            <p className="text-sm text-muted-foreground">Edita desde aquí etiquetas, títulos, mensajes vacíos y botones que aparecen en la home.</p>
+          </div>
+          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{savingHomeSettings ? "Guardando" : "Auto guardado al salir del campo"}</span>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {EDITABLE_COPY_FIELDS.map((field) => (
+            <AdminField
+              key={String(field.key)}
+              label={field.label}
+              value={String(homeSettings[field.key] ?? "")}
+              placeholder={field.placeholder}
+              onChange={(value) => setHomeSettings((current) => ({ ...current, [field.key]: value }))}
+              onSave={(value) => saveHomeSettings({ [field.key]: value } as HomeSetting)}
+            />
+          ))}
+        </div>
+      </section>
+
       <UpcomingRaceManager races={eventRaces} selectedRaceId={selectedRaceId} onSelectRace={setSelectedRaceId} onSetStatus={setAnyRaceStatus} />
 
       <EditableResultsGrid
