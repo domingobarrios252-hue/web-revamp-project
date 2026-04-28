@@ -141,12 +141,14 @@ export function LiveCenter() {
         setShowMedals(typeof settingValue?.enabled === "boolean" ? settingValue.enabled : true);
         const savedHomeSetting = (homeSettings?.value ?? {}) as LiveCenterHomeSetting;
         setHomeSetting({
+          ...COPY_DEFAULTS,
           tv_enabled: savedHomeSetting.tv_enabled ?? false,
           tv_url: savedHomeSetting.tv_url || tvSettings?.live_stream_url || "",
           tv_title: savedHomeSetting.tv_title || tvSettings?.live_title || "TV en directo",
           current_race_enabled: savedHomeSetting.current_race_enabled ?? true,
           results_enabled: savedHomeSetting.results_enabled ?? true,
           upcoming_enabled: savedHomeSetting.upcoming_enabled ?? true,
+          ...savedHomeSetting,
         });
         const perEventSettings = (eventSettings?.value ?? {}) as Record<string, LiveCenterEventSetting>;
         setEventSetting(activeEvent ? perEventSettings[activeEvent.id] ?? null : null);
@@ -205,6 +207,7 @@ export function LiveCenter() {
   const showResultsPanel = homeSetting?.results_enabled !== false;
   const showUpcomingPanel = homeSetting?.upcoming_enabled !== false;
   const progress = currentRace?.status === "finished" ? 100 : Math.round((CURRENT_LAP / TOTAL_LAPS) * 100);
+  const copy = homeSetting ?? COPY_DEFAULTS;
 
   if (!loaded) return null;
 
@@ -240,35 +243,35 @@ export function LiveCenter() {
   return (
     <section ref={shellRef} className={`live-center-shell border-y border-border bg-background ${fullscreenMode ? "live-center-fullscreen" : ""}`}>
       <div className="mx-auto max-w-[1800px] px-4 py-6 md:px-6 lg:px-8">
-        {fullscreenMode && <FullscreenBar event={event} race={currentRace} lastUpdated={lastUpdated} onExit={toggleFullscreen} />}
-        <LiveHeader event={event} race={currentRace} refreshing={refreshing} lastUpdated={lastUpdated} onShare={copyShareLink} onNotifications={() => setNotificationsOpen(true)} onFullscreen={toggleFullscreen} fullscreenMode={fullscreenMode} />
-        {showCurrentRace && <RaceProgress race={currentRace} progress={progress} />}
+        {fullscreenMode && <FullscreenBar event={event} race={currentRace} lastUpdated={lastUpdated} onExit={toggleFullscreen} copy={copy} />}
+        <LiveHeader event={event} race={currentRace} refreshing={refreshing} lastUpdated={lastUpdated} onShare={copyShareLink} onNotifications={() => setNotificationsOpen(true)} onFullscreen={toggleFullscreen} fullscreenMode={fullscreenMode} copy={copy} />
+        {showCurrentRace && <RaceProgress race={currentRace} progress={progress} copy={copy} />}
 
         <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(220px,20%)_minmax(0,60%)_minmax(240px,20%)] lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.8fr)]">
           <aside className="grid content-start gap-4 lg:col-span-1">
-            <SidebarEvents event={event} currentRace={currentRace} upcoming={upcoming} showUpcoming={showUpcomingPanel} onNotify={() => setNotificationsOpen(true)} />
+            <SidebarEvents event={event} currentRace={currentRace} upcoming={upcoming} showUpcoming={showUpcomingPanel} onNotify={() => setNotificationsOpen(true)} copy={copy} />
             {tvEmbedUrl && <LiveTvCard embedUrl={tvEmbedUrl} title={homeSetting?.tv_title || "TV en directo"} />}
           </aside>
 
           <main className="min-w-0 space-y-4 lg:col-span-1">
             <MobileTabRail activeTab={activeTab} setActiveTab={setActiveTab} />
-            <SearchFilter query={query} setQuery={setQuery} country={country} setCountry={setCountry} countries={countries} sortKey={sortKey} setSortKey={setSortKey} onCompare={() => setComparisonOpen(true)} onDownload={downloadCsv} />
-            {showResultsPanel && activeTab === "leaderboard" && <Leaderboard rows={filteredResults} expandedId={expandedId} setExpandedId={setExpandedId} />}
-            {activeTab === "laps" && <LapTimes rows={filteredResults} />}
-            {activeTab === "head" && <HeadToHead rows={filteredResults.slice(0, 3)} onOpen={() => setComparisonOpen(true)} />}
+            <SearchFilter query={query} setQuery={setQuery} country={country} setCountry={setCountry} countries={countries} sortKey={sortKey} setSortKey={setSortKey} onCompare={() => setComparisonOpen(true)} onDownload={downloadCsv} copy={copy} />
+            {showResultsPanel && activeTab === "leaderboard" && <Leaderboard rows={filteredResults} expandedId={expandedId} setExpandedId={setExpandedId} copy={copy} />}
+            {activeTab === "laps" && <LapTimes rows={filteredResults} copy={copy} />}
+            {activeTab === "head" && <HeadToHead rows={filteredResults.slice(0, 3)} onOpen={() => setComparisonOpen(true)} copy={copy} />}
             {event && <FullResultsButton event={event} setting={eventSetting} />}
           </main>
 
           <aside className="grid content-start gap-4 lg:col-span-2 xl:col-span-1">
-            <StatsPanel stats={stats} leader={enrichedResults[0]} />
-            <LiveTicker items={ticker} />
-            {showMedals && eventSetting?.medals_enabled !== false && medals.length > 0 && <MedalTable medals={medals} />}
+            <StatsPanel stats={stats} leader={enrichedResults[0]} copy={copy} />
+            <LiveTicker items={ticker} copy={copy} />
+            {showMedals && eventSetting?.medals_enabled !== false && medals.length > 0 && <MedalTable medals={medals} copy={copy} />}
           </aside>
         </div>
       </div>
 
-      {notificationsOpen && <NotificationsModal rows={enrichedResults} onClose={() => setNotificationsOpen(false)} />}
-      {comparisonOpen && <ComparisonModal rows={enrichedResults} selected={selectedCompare} setSelected={setSelectedCompare} onClose={() => setComparisonOpen(false)} />}
+      {notificationsOpen && <NotificationsModal rows={enrichedResults} onClose={() => setNotificationsOpen(false)} copy={copy} />}
+      {comparisonOpen && <ComparisonModal rows={enrichedResults} selected={selectedCompare} setSelected={setSelectedCompare} onClose={() => setComparisonOpen(false)} copy={copy} />}
     </section>
   );
 }
