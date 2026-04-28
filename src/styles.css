@@ -42,6 +42,10 @@
   --color-surface-2: var(--surface-2);
   --color-tv-red: var(--tv-red);
   --color-tv-red-dark: var(--tv-red-dark);
+  --color-live-orange: var(--live-orange);
+  --color-live-cyan: var(--live-cyan);
+  --color-live-success: var(--live-success);
+  --color-live-warning: var(--live-warning);
 
   --font-display: "Bebas Neue", sans-serif;
   --font-condensed: "Barlow Condensed", sans-serif;
@@ -61,6 +65,10 @@
   /* RollerZone TV — rojo cinematográfico */
   --tv-red: oklch(0.58 0.24 27);          /* ~#E50914 */
   --tv-red-dark: oklch(0.48 0.22 27);     /* ~#B0060F */
+  --live-orange: oklch(0.72 0.2 45);      /* #FF6B00 */
+  --live-cyan: oklch(0.82 0.16 215);      /* #00D9FF */
+  --live-success: oklch(0.86 0.22 155);   /* #00FF88 */
+  --live-warning: oklch(0.86 0.17 85);    /* #FFD700 */
 
   /* Neutrals */
   --background: oklch(0.13 0.005 60);     /* #0D0D0D */
@@ -161,6 +169,74 @@
   50% { box-shadow: 0 0 18px 4px oklch(0.58 0.24 27 / 0.55); }
 }
 .live-red-tag { animation: redPulse 2s ease-in-out infinite; }
+
+@keyframes livePulseFast {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.82); }
+}
+.live-dot-fast { animation: livePulseFast .5s ease-in-out infinite; }
+
+.live-center-shell {
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--live-orange) 10%, transparent), transparent 38%),
+    radial-gradient(circle at 85% 10%, color-mix(in oklab, var(--live-cyan) 10%, transparent), transparent 30%),
+    var(--background);
+}
+.live-panel {
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--live-orange) 10%, transparent);
+  animation: livePanelIn .3s ease-out both;
+}
+@keyframes livePanelIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.live-progress {
+  background: linear-gradient(90deg, var(--live-orange), var(--live-cyan));
+  box-shadow: 0 0 18px color-mix(in oklab, var(--live-cyan) 35%, transparent);
+  transition: width .5s ease;
+}
+.live-row-pulse {
+  animation: liveRowPulse 1.8s ease-in-out infinite;
+}
+@keyframes liveRowPulse {
+  0%, 100% { background-color: color-mix(in oklab, var(--live-orange) 7%, transparent); }
+  50% { background-color: color-mix(in oklab, var(--live-orange) 15%, transparent); }
+}
+.ticker-card {
+  animation: tickerCardIn .3s ease-out both;
+}
+@keyframes tickerCardIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.ticker-danger { border-left: 3px solid var(--tv-red); }
+.ticker-warning { border-left: 3px solid var(--live-warning); }
+.ticker-success { border-left: 3px solid var(--live-success); }
+.ticker-cyan { border-left: 3px solid var(--live-cyan); }
+.live-mini-button,
+.live-modal-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: .625rem .75rem;
+  font-family: var(--font-condensed);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  transition: border-color .15s ease, color .15s ease, background-color .15s ease;
+}
+.live-mini-button:hover,
+.live-modal-option:hover {
+  border-color: var(--live-orange);
+  color: var(--live-orange);
+  background-color: color-mix(in oklab, var(--live-orange) 8%, transparent);
+}
+.live-modal-option { justify-content: flex-start; }
 
 /* Hide scrollbar utility for mobile carousels */
 .hide-scrollbar { scrollbar-width: none; }
