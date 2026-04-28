@@ -15,7 +15,15 @@ type Race = { id: string; event_id: string; race_name: string; category: string 
 type Result = { id: string; race_id: string; position: number; athlete_name: string; club: string | null; country: string | null; time: string | null; gap: string | null; is_highlighted: boolean };
 type Skater = { full_name: string; club?: { name: string } | null; region?: { code: string } | null };
 type EventSetting = { medals_enabled?: boolean; full_results_label?: string; full_results_url?: string };
-type HomeSetting = { tv_enabled?: boolean; tv_url?: string; tv_title?: string; current_race_enabled?: boolean; results_enabled?: boolean; upcoming_enabled?: boolean };
+type HomeSetting = {
+  tv_enabled?: boolean; tv_url?: string; tv_title?: string; current_race_enabled?: boolean; results_enabled?: boolean; upcoming_enabled?: boolean;
+  live_badge?: string; fallback_title?: string; fallback_category?: string; fallback_race?: string; progress_elapsed?: string; progress_estimated?: string;
+  sidebar_title?: string; upcoming_title?: string; no_upcoming_text?: string; cms_empty_text?: string; search_placeholder?: string; country_all_label?: string;
+  compare_label?: string; csv_label?: string; leaderboard_title?: string; riders_label?: string; empty_results_text?: string; stats_title?: string;
+  best_lap_label?: string; avg_speed_label?: string; lead_changes_label?: string; incidents_label?: string; current_race_helper?: string; dq_helper?: string;
+  ticker_title?: string; medals_title?: string; laps_title?: string; head_title?: string; head_button_label?: string; profile_button_label?: string;
+  notifications_title?: string; compare_title?: string; compare_empty_text?: string; fullscreen_exit_label?: string; share_label?: string; alerts_label?: string; fullscreen_label?: string;
+};
 type GridRow = {
   localId: string;
   id?: string;
@@ -34,6 +42,25 @@ type GridRow = {
 const EMPTY_ROWS = 8;
 const COUNTRIES = ["ESP", "POR", "FRA", "ITA", "GER", "NED", "BEL", "COL", "MEX", "ARG", "CHI", "USA"];
 const timePattern = /^\d{1,2}:\d{2}(?:[.,]\d{1,3})?$|^\d{1,2}[.,]\d{2,3}$/;
+const HOME_DEFAULTS: HomeSetting = {
+  tv_enabled: false, tv_url: "", tv_title: "TV en directo", current_race_enabled: true, results_enabled: true, upcoming_enabled: true,
+  live_badge: "EN VIVO", fallback_title: "Live Center RollerZone", fallback_category: "Élite Masculino", fallback_race: "10.000m Puntos/Eliminación", progress_elapsed: "45:32 transcurrido", progress_estimated: "1:32:00 estimado",
+  sidebar_title: "Eventos en vivo", upcoming_title: "Próximos eventos", no_upcoming_text: "Sin próximas pruebas.", cms_empty_text: "Selecciona un evento desde el CMS", search_placeholder: "Buscar patinador, dorsal o club", country_all_label: "Todos",
+  compare_label: "Comparar", csv_label: "CSV", leaderboard_title: "Clasificación en Vivo", riders_label: "patinadores", empty_results_text: "Sin resultados cargados para la prueba actual.", stats_title: "Estadísticas rápidas",
+  best_lap_label: "Mejor vuelta", avg_speed_label: "Velocidad media", lead_changes_label: "Cambios de liderato", incidents_label: "Caídas", current_race_helper: "Carrera actual", dq_helper: "Descalificaciones 0",
+  ticker_title: "Eventos en vivo", medals_title: "Medallero", laps_title: "Tiempos por vuelta", head_title: "Análisis Head-to-Head", head_button_label: "Elegir patinadores", profile_button_label: "Ver Perfil Completo",
+  notifications_title: "Notificaciones Live Center", compare_title: "Comparar patinadores", compare_empty_text: "Selecciona 2 o 3 patinadores para comparar tiempos por vuelta, consistencia y posición.", fullscreen_exit_label: "Salir · Esc/F", share_label: "Compartir", alerts_label: "Alertas", fullscreen_label: "Full",
+};
+const EDITABLE_COPY_FIELDS: Array<{ key: keyof HomeSetting; label: string; placeholder: string }> = [
+  { key: "live_badge", label: "Etiqueta directo", placeholder: "EN VIVO" }, { key: "fallback_title", label: "Título sin evento", placeholder: "Live Center RollerZone" }, { key: "fallback_category", label: "Categoría por defecto", placeholder: "Élite Masculino" }, { key: "fallback_race", label: "Prueba por defecto", placeholder: "10.000m Puntos/Eliminación" },
+  { key: "progress_elapsed", label: "Tiempo transcurrido", placeholder: "45:32 transcurrido" }, { key: "progress_estimated", label: "Tiempo estimado", placeholder: "1:32:00 estimado" }, { key: "sidebar_title", label: "Título sidebar", placeholder: "Eventos en vivo" }, { key: "upcoming_title", label: "Título próximas", placeholder: "Próximos eventos" },
+  { key: "no_upcoming_text", label: "Texto sin próximas", placeholder: "Sin próximas pruebas." }, { key: "cms_empty_text", label: "Texto sin evento", placeholder: "Selecciona un evento desde el CMS" }, { key: "search_placeholder", label: "Placeholder buscador", placeholder: "Buscar patinador, dorsal o club" }, { key: "country_all_label", label: "Filtro todos", placeholder: "Todos" },
+  { key: "compare_label", label: "Botón comparar", placeholder: "Comparar" }, { key: "csv_label", label: "Botón exportar", placeholder: "CSV" }, { key: "leaderboard_title", label: "Título clasificación", placeholder: "Clasificación en Vivo" }, { key: "riders_label", label: "Etiqueta participantes", placeholder: "patinadores" },
+  { key: "empty_results_text", label: "Texto sin resultados", placeholder: "Sin resultados cargados..." }, { key: "stats_title", label: "Título estadísticas", placeholder: "Estadísticas rápidas" }, { key: "ticker_title", label: "Título ticker", placeholder: "Eventos en vivo" }, { key: "medals_title", label: "Título medallero", placeholder: "Medallero" },
+  { key: "laps_title", label: "Título vueltas", placeholder: "Tiempos por vuelta" }, { key: "head_title", label: "Título head-to-head", placeholder: "Análisis Head-to-Head" }, { key: "head_button_label", label: "Botón head-to-head", placeholder: "Elegir patinadores" }, { key: "profile_button_label", label: "Botón perfil", placeholder: "Ver Perfil Completo" }, { key: "notifications_title", label: "Título alertas", placeholder: "Notificaciones Live Center" },
+  { key: "compare_title", label: "Título comparar", placeholder: "Comparar patinadores" }, { key: "compare_empty_text", label: "Texto comparar vacío", placeholder: "Selecciona 2 o 3 patinadores..." }, { key: "share_label", label: "Botón compartir", placeholder: "Compartir" }, { key: "alerts_label", label: "Botón alertas", placeholder: "Alertas" },
+  { key: "fullscreen_label", label: "Botón pantalla completa", placeholder: "Full" }, { key: "fullscreen_exit_label", label: "Botón salir pantalla completa", placeholder: "Salir · Esc/F" },
+];
 
 function AdminLiveCenter() {
   const client = supabase as any;
@@ -50,7 +77,7 @@ function AdminLiveCenter() {
   const [savingMedalsToggle, setSavingMedalsToggle] = useState(false);
   const [eventSettings, setEventSettings] = useState<Record<string, EventSetting>>({});
   const [savingEventSettings, setSavingEventSettings] = useState(false);
-  const [homeSettings, setHomeSettings] = useState<HomeSetting>({ tv_enabled: false, tv_url: "", tv_title: "TV en directo", current_race_enabled: true, results_enabled: true, upcoming_enabled: true });
+  const [homeSettings, setHomeSettings] = useState<HomeSetting>(HOME_DEFAULTS);
   const [savingHomeSettings, setSavingHomeSettings] = useState(false);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -79,14 +106,7 @@ function AdminLiveCenter() {
     setShowMedalsOnHome(typeof medalValue?.enabled === "boolean" ? medalValue.enabled : true);
     setEventSettings((liveCenterSetting?.value ?? {}) as Record<string, EventSetting>);
     const savedHome = (homeSetting?.value ?? {}) as HomeSetting;
-    setHomeSettings({
-      tv_enabled: savedHome.tv_enabled ?? false,
-      tv_url: savedHome.tv_url || tvSetting?.live_stream_url || "",
-      tv_title: savedHome.tv_title || tvSetting?.live_title || "TV en directo",
-      current_race_enabled: savedHome.current_race_enabled ?? true,
-      results_enabled: savedHome.results_enabled ?? true,
-      upcoming_enabled: savedHome.upcoming_enabled ?? true,
-    });
+    setHomeSettings({ ...HOME_DEFAULTS, ...savedHome, tv_url: savedHome.tv_url || tvSetting?.live_stream_url || "", tv_title: savedHome.tv_title || tvSetting?.live_title || HOME_DEFAULTS.tv_title });
     setSelectedEventId((current) => current || nextEvents.find((event) => event.status === "live")?.id || nextEvents[0]?.id || "");
     setSelectedRaceId((current) => current || nextRaces.find((race) => race.status === "live")?.id || nextRaces[0]?.id || "");
     setLoading(false);
@@ -402,6 +422,28 @@ function AdminLiveCenter() {
             onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
             disabled={!selectedEventId}
           />
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-border bg-surface p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display text-xl tracking-widest">Textos visibles del Live Center</h2>
+            <p className="text-sm text-muted-foreground">Edita desde aquí etiquetas, títulos, mensajes vacíos y botones que aparecen en la home.</p>
+          </div>
+          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{savingHomeSettings ? "Guardando" : "Auto guardado al salir del campo"}</span>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {EDITABLE_COPY_FIELDS.map((field) => (
+            <AdminField
+              key={String(field.key)}
+              label={field.label}
+              value={String(homeSettings[field.key] ?? "")}
+              placeholder={field.placeholder}
+              onChange={(value) => setHomeSettings((current) => ({ ...current, [field.key]: value }))}
+              onSave={(value) => saveHomeSettings({ [field.key]: value } as HomeSetting)}
+            />
+          ))}
         </div>
       </section>
 
