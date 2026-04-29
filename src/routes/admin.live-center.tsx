@@ -165,6 +165,7 @@ function AdminLiveCenter() {
         <Field label="CSV: posición, patinador, club, tiempo">
           <textarea value={csv} onChange={(e) => setCsv(e.target.value)} className="input mt-2 min-h-40 font-mono text-xs" placeholder={'posición,patinador,club,tiempo\n1,Ana Pérez,Club Madrid,00:42.120\n2,Laura Gómez,CPV Barcelona,00:42.510'} />
         </Field>
+        <Check label="Reemplazar la clasificación existente de esta prueba" checked={replaceExisting} onChange={setReplaceExisting} />
         <button onClick={importCsv} className="font-condensed mt-3 inline-flex items-center gap-2 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"><Trophy className="h-4 w-4" /> Importar clasificación</button>
       </Panel>
 
@@ -184,4 +185,5 @@ function Panel({ title, icon, children }: { title: string; icon: React.ReactNode
 function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label className="block"><span className="font-condensed mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">{label}</span>{children}</label>; }
 function Check({ label, checked, onChange }: { label: string; checked: boolean; onChange: (value: boolean) => void }) { return <label className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest"><input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />{label}</label>; }
 function slugify(value: string) { return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 150); }
+function toLocalInput(iso: string) { const d = new Date(iso); const tz = d.getTimezoneOffset(); return new Date(d.getTime() - tz * 60000).toISOString().slice(0, 16); }
 function parseCsv(text: string) { return text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).filter((line, i) => !(i === 0 && /pos|patinador|athlete/i.test(line))).map((line) => line.split(",").map((cell) => cell.trim())).map(([position, athlete_name, club, race_time]) => ({ position: Number(position), athlete_name, club: club || "", race_time: race_time || "" })).filter((row) => Number.isInteger(row.position) && row.position > 0 && row.athlete_name); }
