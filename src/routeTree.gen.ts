@@ -27,6 +27,7 @@ import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
+import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
@@ -50,6 +51,7 @@ import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocin
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
 import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-results'
+import { Route as AdminLiveCenterRouteImport } from './routes/admin.live-center'
 import { Route as AdminLegalRouteImport } from './routes/admin.legal'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
@@ -148,6 +150,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const SobreSlugRoute = SobreSlugRouteImport.update({
   id: '/sobre/$slug',
   path: '/sobre/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultadosEventoRoute = ResultadosEventoRouteImport.update({
+  id: '/resultados/$evento',
+  path: '/resultados/$evento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatinadoresSlugRoute = PatinadoresSlugRouteImport.update({
@@ -265,6 +272,11 @@ const AdminLiveResultsRoute = AdminLiveResultsRouteImport.update({
   path: '/live-results',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLiveCenterRoute = AdminLiveCenterRouteImport.update({
+  id: '/live-center',
+  path: '/live-center',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLegalRoute = AdminLegalRouteImport.update({
   id: '/legal',
   path: '/legal',
@@ -331,6 +343,7 @@ export interface FileRoutesByFullPath {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
@@ -354,6 +367,7 @@ export interface FileRoutesByFullPath {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -381,6 +395,7 @@ export interface FileRoutesByTo {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
@@ -404,6 +419,7 @@ export interface FileRoutesByTo {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -434,6 +450,7 @@ export interface FileRoutesById {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
+  '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
@@ -457,6 +474,7 @@ export interface FileRoutesById {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -488,6 +506,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
@@ -511,6 +530,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/resultados/$evento'
     | '/sobre/$slug'
     | '/admin/'
     | '/dashboard/'
@@ -538,6 +558,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
@@ -561,6 +582,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/resultados/$evento'
     | '/sobre/$slug'
     | '/admin'
     | '/dashboard'
@@ -590,6 +612,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
+    | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
@@ -613,6 +636,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/resultados/$evento'
     | '/sobre/$slug'
     | '/admin/'
     | '/dashboard/'
@@ -642,6 +666,7 @@ export interface RootRouteChildren {
   LegalSlugRoute: typeof LegalSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
+  ResultadosEventoRoute: typeof ResultadosEventoRoute
   SobreSlugRoute: typeof SobreSlugRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
@@ -776,6 +801,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre/$slug'
       fullPath: '/sobre/$slug'
       preLoaderRoute: typeof SobreSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resultados/$evento': {
+      id: '/resultados/$evento'
+      path: '/resultados/$evento'
+      fullPath: '/resultados/$evento'
+      preLoaderRoute: typeof ResultadosEventoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patinadores/$slug': {
@@ -939,6 +971,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLiveResultsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/live-center': {
+      id: '/admin/live-center'
+      path: '/live-center'
+      fullPath: '/admin/live-center'
+      preLoaderRoute: typeof AdminLiveCenterRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/legal': {
       id: '/admin/legal'
       path: '/legal'
@@ -1013,6 +1052,7 @@ interface AdminRouteChildren {
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminLegalRoute: typeof AdminLegalRoute
+  AdminLiveCenterRoute: typeof AdminLiveCenterRoute
   AdminLiveResultsRoute: typeof AdminLiveResultsRoute
   AdminMedalleroRoute: typeof AdminMedalleroRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
@@ -1041,6 +1081,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminLegalRoute: AdminLegalRoute,
+  AdminLiveCenterRoute: AdminLiveCenterRoute,
   AdminLiveResultsRoute: AdminLiveResultsRoute,
   AdminMedalleroRoute: AdminMedalleroRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
@@ -1094,6 +1135,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegalSlugRoute: LegalSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
+  ResultadosEventoRoute: ResultadosEventoRoute,
   SobreSlugRoute: SobreSlugRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
