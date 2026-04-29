@@ -42,10 +42,6 @@
   --color-surface-2: var(--surface-2);
   --color-tv-red: var(--tv-red);
   --color-tv-red-dark: var(--tv-red-dark);
-  --color-live-orange: var(--live-orange);
-  --color-live-cyan: var(--live-cyan);
-  --color-live-success: var(--live-success);
-  --color-live-warning: var(--live-warning);
 
   --font-display: "Bebas Neue", sans-serif;
   --font-condensed: "Barlow Condensed", sans-serif;
@@ -65,10 +61,6 @@
   /* RollerZone TV — rojo cinematográfico */
   --tv-red: oklch(0.58 0.24 27);          /* ~#E50914 */
   --tv-red-dark: oklch(0.48 0.22 27);     /* ~#B0060F */
-  --live-orange: oklch(0.72 0.2 45);      /* #FF6B00 */
-  --live-cyan: oklch(0.82 0.16 215);      /* #00D9FF */
-  --live-success: oklch(0.86 0.22 155);   /* #00FF88 */
-  --live-warning: oklch(0.86 0.17 85);    /* #FFD700 */
 
   /* Neutrals */
   --background: oklch(0.13 0.005 60);     /* #0D0D0D */
