@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Clock, Flame, Instagram, Facebook } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
+import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
 
 type MvpPreview = {
@@ -160,6 +161,8 @@ function HomePage() {
       <Ticker />
 
       <AdBannerWithMagazine placement="home_top" />
+
+      <LiveCenter />
 
       {/* ÚLTIMAS NOTICIAS — ESPN style */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
