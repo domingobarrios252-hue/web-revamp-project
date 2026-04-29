@@ -50,7 +50,6 @@ import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocin
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
 import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-results'
-import { Route as AdminLiveCenterRouteImport } from './routes/admin.live-center'
 import { Route as AdminLegalRouteImport } from './routes/admin.legal'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
@@ -266,11 +265,6 @@ const AdminLiveResultsRoute = AdminLiveResultsRouteImport.update({
   path: '/live-results',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminLiveCenterRoute = AdminLiveCenterRouteImport.update({
-  id: '/live-center',
-  path: '/live-center',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminLegalRoute = AdminLegalRouteImport.update({
   id: '/legal',
   path: '/legal',
@@ -337,7 +331,6 @@ export interface FileRoutesByFullPath {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
-  '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
@@ -388,7 +381,6 @@ export interface FileRoutesByTo {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
-  '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
@@ -442,7 +434,6 @@ export interface FileRoutesById {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/legal': typeof AdminLegalRoute
-  '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
@@ -497,7 +488,6 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
-    | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
@@ -548,7 +538,6 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
-    | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
@@ -601,7 +590,6 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/eventos'
     | '/admin/legal'
-    | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
     | '/admin/patinadores'
@@ -951,13 +939,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLiveResultsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/live-center': {
-      id: '/admin/live-center'
-      path: '/live-center'
-      fullPath: '/admin/live-center'
-      preLoaderRoute: typeof AdminLiveCenterRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/legal': {
       id: '/admin/legal'
       path: '/legal'
@@ -1032,7 +1013,6 @@ interface AdminRouteChildren {
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminLegalRoute: typeof AdminLegalRoute
-  AdminLiveCenterRoute: typeof AdminLiveCenterRoute
   AdminLiveResultsRoute: typeof AdminLiveResultsRoute
   AdminMedalleroRoute: typeof AdminMedalleroRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
@@ -1061,7 +1041,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminLegalRoute: AdminLegalRoute,
-  AdminLiveCenterRoute: AdminLiveCenterRoute,
   AdminLiveResultsRoute: AdminLiveResultsRoute,
   AdminMedalleroRoute: AdminMedalleroRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
