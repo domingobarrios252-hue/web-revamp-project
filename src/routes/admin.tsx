@@ -102,9 +102,6 @@ function AdminLayout() {
           <AdminLink to="/admin/tv" icon={<Tv className="h-4 w-4" />}>
             TV — Directo
           </AdminLink>
-          <AdminLink to="/admin/live-center" icon={<Radio className="h-4 w-4" />}>
-            Live Center
-          </AdminLink>
           <AdminLink to="/admin/schedule" icon={<Clock className="h-4 w-4" />}>
             Pruebas programadas
           </AdminLink>
@@ -156,7 +153,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/live-center" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/dashboard";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/premios-mvp" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/dashboard";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
