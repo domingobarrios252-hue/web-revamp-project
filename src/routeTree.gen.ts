@@ -27,6 +27,7 @@ import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
+import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
@@ -148,6 +149,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const SobreSlugRoute = SobreSlugRouteImport.update({
   id: '/sobre/$slug',
   path: '/sobre/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultadosEventoRoute = ResultadosEventoRouteImport.update({
+  id: '/resultados/$evento',
+  path: '/resultados/$evento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatinadoresSlugRoute = PatinadoresSlugRouteImport.update({
@@ -354,6 +360,7 @@ export interface FileRoutesByFullPath {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -404,6 +411,7 @@ export interface FileRoutesByTo {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -457,6 +465,7 @@ export interface FileRoutesById {
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
+  '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -511,6 +520,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/resultados/$evento'
     | '/sobre/$slug'
     | '/admin/'
     | '/dashboard/'
@@ -561,6 +571,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/resultados/$evento'
     | '/sobre/$slug'
     | '/admin'
     | '/dashboard'
@@ -613,6 +624,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
+    | '/resultados/$evento'
     | '/sobre/$slug'
     | '/admin/'
     | '/dashboard/'
@@ -642,6 +654,7 @@ export interface RootRouteChildren {
   LegalSlugRoute: typeof LegalSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
+  ResultadosEventoRoute: typeof ResultadosEventoRoute
   SobreSlugRoute: typeof SobreSlugRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
@@ -776,6 +789,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre/$slug'
       fullPath: '/sobre/$slug'
       preLoaderRoute: typeof SobreSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resultados/$evento': {
+      id: '/resultados/$evento'
+      path: '/resultados/$evento'
+      fullPath: '/resultados/$evento'
+      preLoaderRoute: typeof ResultadosEventoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patinadores/$slug': {
@@ -1094,6 +1114,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegalSlugRoute: LegalSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
+  ResultadosEventoRoute: ResultadosEventoRoute,
   SobreSlugRoute: SobreSlugRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
