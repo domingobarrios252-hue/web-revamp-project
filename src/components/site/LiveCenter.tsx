@@ -84,9 +84,11 @@ export function LiveCenter() {
       .on("postgres_changes", { event: "*", schema: "public", table: "schedule_items" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "live_stream" }, load)
       .subscribe();
+    const interval = window.setInterval(load, 15_000);
 
     return () => {
       cancelled = true;
+      window.clearInterval(interval);
       supabase.removeChannel(channel);
     };
   }, []);
