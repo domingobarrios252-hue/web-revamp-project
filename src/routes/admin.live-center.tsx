@@ -35,6 +35,10 @@ function AdminLiveCenter() {
   const [race, setRace] = useState("");
   const [category, setCategory] = useState("");
   const [csv, setCsv] = useState("");
+  const [replaceExisting, setReplaceExisting] = useState(true);
+  const [scheduleName, setScheduleName] = useState("");
+  const [scheduleCategory, setScheduleCategory] = useState("");
+  const [scheduleAt, setScheduleAt] = useState(toLocalInput(new Date().toISOString()));
 
   const load = async () => {
     setLoading(true);
@@ -71,11 +75,13 @@ function AdminLiveCenter() {
   };
 
   const addSchedule = async () => {
-    const parsed = scheduleSchema.safeParse({ event_name: race || eventName || "Nueva prueba", category, location: "", scheduled_at: new Date().toISOString(), status: "programada", published: true, sort_order: schedule.length });
+    const parsed = scheduleSchema.safeParse({ event_name: scheduleName || race || eventName, category: scheduleCategory || category, location: "", scheduled_at: scheduleAt, status: "programada", published: true, sort_order: schedule.length });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
     const { error } = await supabase.from("schedule_items").insert({ ...parsed.data, category: parsed.data.category || null, location: null });
     if (error) return toast.error(error.message);
     toast.success("Prueba añadida");
+    setScheduleName("");
+    setScheduleCategory("");
     load();
   };
 
@@ -89,6 +95,13 @@ function AdminLiveCenter() {
       const parsed = resultSchema.parse({ event_name: cleanEvent, event_slug: cleanSlug, race, category, position: row.position, athlete_name: row.athlete_name, club: row.club, race_time: row.race_time, status: "en_vivo", published: true, sort_order: index });
       return { ...parsed, race: parsed.race || null, category: parsed.category || null, club: parsed.club || null, race_time: parsed.race_time || null, points: null };
     });
+    if (replaceExisting) {
+      let query = supabase.from("live_results").delete().eq("event_slug", cleanSlug);
+      query = race.trim() ? query.eq("race", race.trim()) : query.is("race", null);
+      query = category.trim() ? query.eq("category", category.trim()) : query.is("category", null);
+      const { error: deleteError } = await query;
+      if (deleteError) return toast.error(deleteError.message);
+    }
     const { error } = await supabase.from("live_results").insert(payload);
     if (error) return toast.error(error.message);
     toast.success(`${payload.length} clasificaciones importadas`);
@@ -127,7 +140,14 @@ function AdminLiveCenter() {
         </Panel>
 
         <Panel title="Próximas pruebas" icon={<CalendarClock className="h-4 w-4" />}>
-          <button onClick={addSchedule} className="font-condensed mb-3 inline-flex items-center gap-2 border border-border px-3 py-2 text-xs font-bold uppercase tracking-widest text-gold hover:bg-background"><Plus className="h-4 w-4" /> Añadir prueba rápida</button>
+          <div className="mb-3 grid gap-2">
+            <Field label="Nombre prueba"><input value={scheduleName} onChange={(e) => setScheduleName(e.target.value)} className="input" placeholder="500m Sprint" /></Field>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Field label="Categoría"><input value={scheduleCategory} onChange={(e) => setScheduleCategory(e.target.value)} className="input" placeholder="Senior masculino" /></Field>
+              <Field label="Hora"><input type="datetime-local" value={scheduleAt} onChange={(e) => setScheduleAt(e.target.value)} className="input" /></Field>
+            </div>
+            <button onClick={addSchedule} className="font-condensed inline-flex w-fit items-center gap-2 border border-border px-3 py-2 text-xs font-bold uppercase tracking-widest text-gold hover:bg-background"><Plus className="h-4 w-4" /> Añadir prueba</button>
+          </div>
           <div className="space-y-2">
             {schedule.slice(0, 6).map((item) => <div key={item.id} className="border border-border bg-background p-3 text-sm"><div className="font-semibold">{item.event_name}</div><div className="text-xs text-muted-foreground">{item.category || "—"} · {new Date(item.scheduled_at).toLocaleString("es-ES")}</div></div>)}
           </div>
