@@ -446,6 +446,8 @@ export function AdminLiveResults() {
           </div>
         )}
 
+      <QuickEditPanel rows={filtered} onSaved={load} />
+
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
       ) : filtered.length === 0 ? (
