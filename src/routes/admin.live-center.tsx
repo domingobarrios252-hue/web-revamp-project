@@ -4,11 +4,29 @@ import { CalendarClock, FileSpreadsheet, Plus, Radio, Save, Trash2, Trophy } fro
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { AdminSchedule } from "./admin.schedule";
+import { AdminLiveResults } from "./admin.live-results";
 
 export const Route = createFileRoute("/admin/live-center")({
   head: () => ({ meta: [{ title: "Admin · Live Center" }, { name: "robots", content: "noindex" }] }),
-  component: AdminLiveCenter,
+  component: AdminLiveCenterPage,
 });
+
+function AdminLiveCenterPage() {
+  return (
+    <Tabs defaultValue="streaming" className="space-y-4">
+      <TabsList className="bg-surface">
+        <TabsTrigger value="streaming">Streaming</TabsTrigger>
+        <TabsTrigger value="schedule">Próximas pruebas</TabsTrigger>
+        <TabsTrigger value="results">Resultados</TabsTrigger>
+      </TabsList>
+      <TabsContent value="streaming"><AdminLiveCenter /></TabsContent>
+      <TabsContent value="schedule"><AdminSchedule /></TabsContent>
+      <TabsContent value="results"><AdminLiveResults /></TabsContent>
+    </Tabs>
+  );
+}
 
 type StreamRow = { id: string; title: string; embed_url: string | null; is_active: boolean; autoplay: boolean };
 type ScheduleRow = { id: string; event_name: string; category: string | null; location: string | null; scheduled_at: string; status: "programada" | "en_curso" | "finalizada"; published: boolean; sort_order: number };
