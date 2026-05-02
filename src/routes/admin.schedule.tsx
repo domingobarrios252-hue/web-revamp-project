@@ -31,7 +31,7 @@ type Row = {
   sort_order: number;
 };
 
-function AdminSchedule() {
+export function AdminSchedule() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Row | null>(null);
