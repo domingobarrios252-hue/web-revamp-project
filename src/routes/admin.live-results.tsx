@@ -862,7 +862,7 @@ function QuickEditPanel({ rows, onSaved }: { rows: Row[]; onSaved: () => void })
           })
           .eq("id", d.id);
       })
-      .filter(Boolean) as Array<Promise<{ error: unknown }>>;
+      .filter(Boolean) as Array<PromiseLike<{ error: unknown }>>;
 
     if (updates.length === 0) {
       setSaving(false);
