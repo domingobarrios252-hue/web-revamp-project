@@ -794,3 +794,180 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+
+type QuickDraft = { id: string; position: number; athlete_name: string; club: string; race_time: string };
+
+function QuickEditPanel({ rows, onSaved }: { rows: Row[]; onSaved: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [drafts, setDrafts] = useState<QuickDraft[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  // Re-sincroniza los borradores cuando cambian las filas (filtro o recarga)
+  useEffect(() => {
+    setDrafts(
+      rows.map((r) => ({
+        id: r.id,
+        position: r.position,
+        athlete_name: r.athlete_name,
+        club: r.club ?? "",
+        race_time: r.race_time ?? "",
+      })),
+    );
+  }, [rows]);
+
+  const update = (id: string, patch: Partial<QuickDraft>) =>
+    setDrafts((prev) => prev.map((d) => (d.id === id ? { ...d, ...patch } : d)));
+
+  const sortByTime = () => {
+    const parse = (t: string) => {
+      const m = t.trim().match(/^(?:(\d+):)?(\d+)(?:[.:,](\d+))?$/);
+      if (!m) return Number.POSITIVE_INFINITY;
+      const min = Number(m[1] ?? 0);
+      const sec = Number(m[2] ?? 0);
+      const ms = Number((m[3] ?? "0").padEnd(3, "0").slice(0, 3));
+      return min * 60000 + sec * 1000 + ms;
+    };
+    setDrafts((prev) => {
+      const sorted = [...prev].sort((a, b) => parse(a.race_time) - parse(b.race_time));
+      return sorted.map((d, i) => ({ ...d, position: i + 1 }));
+    });
+  };
+
+  const renumber = () =>
+    setDrafts((prev) =>
+      [...prev]
+        .sort((a, b) => a.position - b.position)
+        .map((d, i) => ({ ...d, position: i + 1 })),
+    );
+
+  const saveAll = async () => {
+    setSaving(true);
+    const updates = drafts
+      .map((d) => {
+        const original = rows.find((r) => r.id === d.id);
+        if (!original) return null;
+        const changed =
+          original.position !== d.position ||
+          original.athlete_name !== d.athlete_name.trim() ||
+          (original.club ?? "") !== d.club.trim() ||
+          (original.race_time ?? "") !== d.race_time.trim();
+        if (!changed) return null;
+        return supabase
+          .from("live_results")
+          .update({
+            position: d.position,
+            athlete_name: d.athlete_name.trim(),
+            club: d.club.trim() || null,
+            race_time: d.race_time.trim() || null,
+          })
+          .eq("id", d.id);
+      })
+      .filter(Boolean) as Array<Promise<{ error: unknown }>>;
+
+    if (updates.length === 0) {
+      setSaving(false);
+      toast.info("Nada que guardar");
+      return;
+    }
+    const results = await Promise.all(updates);
+    setSaving(false);
+    const errors = results.filter((r) => r.error);
+    if (errors.length) return toast.error(`Error guardando ${errors.length} filas`);
+    toast.success(`${updates.length} clasificaciones actualizadas`);
+    onSaved();
+  };
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="mb-4 border border-gold/30 bg-gold/5">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left"
+      >
+        <span className="font-condensed inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold">
+          <Zap className="h-4 w-4" /> Edición rápida ({rows.length} filas)
+        </span>
+        <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+          {open ? "Ocultar" : "Mostrar"}
+        </span>
+      </button>
+      {open && (
+        <div className="space-y-2 border-t border-gold/20 p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={sortByTime}
+              className="font-condensed border border-border bg-background px-2.5 py-1 text-[10px] uppercase tracking-widest hover:bg-surface"
+            >
+              Ordenar por tiempo
+            </button>
+            <button
+              onClick={renumber}
+              className="font-condensed border border-border bg-background px-2.5 py-1 text-[10px] uppercase tracking-widest hover:bg-surface"
+            >
+              Renumerar 1..N
+            </button>
+            <button
+              onClick={saveAll}
+              disabled={saving}
+              className="font-condensed ml-auto inline-flex items-center gap-1.5 bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"
+            >
+              <Save className="h-3.5 w-3.5" /> {saving ? "Guardando…" : "Guardar todo"}
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-sm">
+              <thead>
+                <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <th className="px-2 py-1.5 w-16">Pos</th>
+                  <th className="px-2 py-1.5">Atleta</th>
+                  <th className="px-2 py-1.5">Club</th>
+                  <th className="px-2 py-1.5 w-32">Tiempo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {drafts.map((d) => (
+                  <tr key={d.id} className="border-t border-border/50">
+                    <td className="px-1 py-1">
+                      <input
+                        type="number"
+                        min={1}
+                        value={d.position}
+                        onChange={(e) =>
+                          update(d.id, { position: parseInt(e.target.value || "1", 10) })
+                        }
+                        className="input h-8 w-16 px-2"
+                      />
+                    </td>
+                    <td className="px-1 py-1">
+                      <input
+                        value={d.athlete_name}
+                        onChange={(e) => update(d.id, { athlete_name: e.target.value })}
+                        className="input h-8"
+                      />
+                    </td>
+                    <td className="px-1 py-1">
+                      <input
+                        value={d.club}
+                        onChange={(e) => update(d.id, { club: e.target.value })}
+                        className="input h-8"
+                      />
+                    </td>
+                    <td className="px-1 py-1">
+                      <input
+                        value={d.race_time}
+                        onChange={(e) => update(d.id, { race_time: e.target.value })}
+                        className="input h-8 font-mono"
+                        placeholder="00:42.158"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
