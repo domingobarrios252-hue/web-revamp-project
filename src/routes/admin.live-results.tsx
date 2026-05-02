@@ -71,7 +71,7 @@ function statusClass(s: Status) {
       : "bg-emerald-500/20 text-emerald-400";
 }
 
-function AdminLiveResults() {
+export function AdminLiveResults() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Row | null>(null);

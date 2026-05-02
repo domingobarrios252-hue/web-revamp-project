@@ -105,12 +105,6 @@ function AdminLayout() {
           <AdminLink to="/admin/live-center" icon={<Radio className="h-4 w-4" />}>
             Live Center
           </AdminLink>
-          <AdminLink to="/admin/schedule" icon={<Clock className="h-4 w-4" />}>
-            Pruebas programadas
-          </AdminLink>
-          <AdminLink to="/admin/live-results" icon={<Timer className="h-4 w-4" />}>
-            Resultados en vivo
-          </AdminLink>
           <AdminLink to="/admin/medallero" icon={<Medal className="h-4 w-4" />}>
             Medallero (países)
           </AdminLink>
