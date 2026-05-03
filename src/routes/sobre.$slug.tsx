@@ -22,16 +22,37 @@ export const Route = createFileRoute("/sobre/$slug")({
     if (error || !data || !data.published) throw notFound();
     return { page: data, slug: params.slug };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const title = loaderData?.page.title ?? "Sobre nosotros";
+    const slug = params.slug;
+    const meta = SLUG_SEO[slug];
+    const description =
+      meta?.description ??
+      stripToDescription(loaderData?.page.content) ??
+      `${title} — RollerZone, el medio del patinaje de velocidad.`;
+    const fullTitle = `${title} — RollerZone`;
+    const url = `https://rollerzone.lovable.app/sobre/${slug}`;
+    const ogImage =
+      "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";
     return {
       meta: [
-        { title: `${title} — RollerZone` },
-        { name: "description", content: `${title} — RollerZone.` },
+        { title: fullTitle },
+        { name: "description", content: description },
         { name: "robots", content: "index, follow" },
-        { property: "og:title", content: `${title} — RollerZone` },
-        { property: "og:description", content: `${title} — RollerZone.` },
+        { name: "keywords", content: meta?.keywords ?? "RollerZone, patinaje de velocidad, noticias patinaje" },
+        { property: "og:title", content: fullTitle },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: ogImage },
+        { property: "og:site_name", content: "RollerZone" },
+        { property: "og:locale", content: "es_ES" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: fullTitle },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: ogImage },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: AboutPage,
