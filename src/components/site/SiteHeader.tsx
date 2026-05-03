@@ -313,7 +313,7 @@ function NavLink({ to, hash, children }: { to: "/"; hash?: string; children: Rea
       <Link
         to={to}
         className={NAV_LINK}
-        activeProps={{ className: "text-gold" }}
+        activeProps={{ className: NAV_ACTIVE }}
         activeOptions={{ exact: true }}
       >
         {children}
