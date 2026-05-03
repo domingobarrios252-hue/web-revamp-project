@@ -8,11 +8,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 type CategoryItem = { name: string; slug: string; scope: string };
 
-// Shared classes for top-level nav links — Inter, normal-case for legibility
-const NAV_LINK = "font-ui text-sm font-medium tracking-normal text-foreground/85 transition-colors hover:text-gold";
-const NAV_LINK_TV = "font-ui text-sm font-semibold tracking-normal text-gold transition-colors hover:text-gold-dark";
-const SUB_LINK = "font-ui text-sm font-normal text-foreground/85 hover:text-gold";
-const ACTION_BTN = "font-ui inline-flex items-center gap-1.5 border border-border px-3 py-1.5 text-xs font-semibold tracking-wide text-foreground/85 transition-colors hover:text-gold";
+// Shared classes for top-level nav links — Inter
+const NAV_LINK = "font-ui relative inline-flex h-16 items-center text-sm font-medium tracking-normal text-[color:var(--muted-foreground)] transition-colors duration-200 hover:text-foreground";
+const NAV_LINK_TV = "font-ui relative inline-flex h-16 items-center text-sm font-semibold tracking-normal text-gold transition-colors duration-200 hover:text-[color:var(--gold-light)]";
+const NAV_ACTIVE = "text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-gold";
+const SUB_LINK = "font-ui text-sm font-normal text-foreground/85 hover:text-gold transition-colors duration-200";
+const ACTION_BTN = "font-ui inline-flex items-center gap-1.5 rounded-[8px] border border-gold px-3 py-1.5 text-xs font-semibold tracking-wide text-gold transition-colors duration-200 hover:bg-gold hover:text-background";
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
