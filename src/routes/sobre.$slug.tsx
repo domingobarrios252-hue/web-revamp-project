@@ -12,6 +12,41 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+const SLUG_SEO: Record<string, { description: string; keywords?: string }> = {
+  "quienes-somos": {
+    description:
+      "Conoce RollerZone: el medio digital del patinaje de velocidad en España con noticias, rankings, eventos y entrevistas.",
+    keywords: "RollerZone, quiénes somos, patinaje de velocidad, medio patinaje España",
+  },
+  contacto: {
+    description:
+      "Contacta con RollerZone: envíanos noticias, propuestas o consultas sobre patinaje de velocidad.",
+    keywords: "contacto RollerZone, contactar patinaje, noticias patinaje",
+  },
+  colabora: {
+    description:
+      "Colabora con RollerZone: redactores, fotógrafos, clubes y federaciones del patinaje de velocidad.",
+    keywords: "colaborar RollerZone, redactores patinaje, fotógrafos patinaje",
+  },
+  publicidad: {
+    description:
+      "Publicidad y patrocinios en RollerZone: conecta tu marca con la comunidad del patinaje de velocidad.",
+    keywords: "publicidad patinaje, patrocinio RollerZone, anunciarse patinaje",
+  },
+};
+
+function stripToDescription(content?: string | null): string | null {
+  if (!content) return null;
+  const text = content
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[#>*_`~\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!text) return null;
+  return text.length > 155 ? `${text.slice(0, 152).trimEnd()}…` : text;
+}
+
 export const Route = createFileRoute("/sobre/$slug")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
