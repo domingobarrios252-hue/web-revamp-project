@@ -163,7 +163,19 @@ export function LiveCenter() {
           <aside className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
             <Panel title="Próximas pruebas" icon={<CalendarClock className="h-4 w-4" />}>
               {schedule.length === 0 ? (
-                <Empty text="Sin pruebas programadas" />
+                <div className="space-y-2">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="border border-border bg-background p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <div className="h-3 w-3/4 animate-pulse bg-surface-2" />
+                          <div className="h-2.5 w-1/2 animate-pulse bg-surface-2" />
+                        </div>
+                        <div className="h-3 w-10 animate-pulse bg-surface-2" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <div className="space-y-2">
                   {schedule.map((item) => (
@@ -183,7 +195,18 @@ export function LiveCenter() {
 
             <Panel title="Clasificación" icon={<Trophy className="h-4 w-4" />}>
               {!featuredGroup ? (
-                <Empty text="Sin clasificación publicada" />
+                <div className="space-y-1.5">
+                  {[0, 1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="grid grid-cols-[32px_1fr_auto] items-center gap-2 border-b border-border/60 pb-1.5 last:border-0">
+                      <div className="h-4 w-5 animate-pulse bg-surface-2" />
+                      <div className="space-y-1">
+                        <div className="h-3 w-3/4 animate-pulse bg-surface-2" />
+                        <div className="h-2.5 w-1/2 animate-pulse bg-surface-2" />
+                      </div>
+                      <div className="h-3 w-10 animate-pulse bg-surface-2" />
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <div>
                   <div className="mb-2 flex items-center justify-between gap-3">
