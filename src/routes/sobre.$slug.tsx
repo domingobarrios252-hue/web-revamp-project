@@ -12,6 +12,41 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+const SLUG_SEO: Record<string, { description: string; keywords?: string }> = {
+  "quienes-somos": {
+    description:
+      "Conoce RollerZone: el medio digital del patinaje de velocidad en España con noticias, rankings, eventos y entrevistas.",
+    keywords: "RollerZone, quiénes somos, patinaje de velocidad, medio patinaje España",
+  },
+  contacto: {
+    description:
+      "Contacta con RollerZone: envíanos noticias, propuestas o consultas sobre patinaje de velocidad.",
+    keywords: "contacto RollerZone, contactar patinaje, noticias patinaje",
+  },
+  colabora: {
+    description:
+      "Colabora con RollerZone: redactores, fotógrafos, clubes y federaciones del patinaje de velocidad.",
+    keywords: "colaborar RollerZone, redactores patinaje, fotógrafos patinaje",
+  },
+  publicidad: {
+    description:
+      "Publicidad y patrocinios en RollerZone: conecta tu marca con la comunidad del patinaje de velocidad.",
+    keywords: "publicidad patinaje, patrocinio RollerZone, anunciarse patinaje",
+  },
+};
+
+function stripToDescription(content?: string | null): string | null {
+  if (!content) return null;
+  const text = content
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[#>*_`~\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!text) return null;
+  return text.length > 155 ? `${text.slice(0, 152).trimEnd()}…` : text;
+}
+
 export const Route = createFileRoute("/sobre/$slug")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
@@ -22,16 +57,37 @@ export const Route = createFileRoute("/sobre/$slug")({
     if (error || !data || !data.published) throw notFound();
     return { page: data, slug: params.slug };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const title = loaderData?.page.title ?? "Sobre nosotros";
+    const slug = params.slug;
+    const meta = SLUG_SEO[slug];
+    const description =
+      meta?.description ??
+      stripToDescription(loaderData?.page.content) ??
+      `${title} — RollerZone, el medio del patinaje de velocidad.`;
+    const fullTitle = `${title} — RollerZone`;
+    const url = `https://rollerzone.lovable.app/sobre/${slug}`;
+    const ogImage =
+      "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";
     return {
       meta: [
-        { title: `${title} — RollerZone` },
-        { name: "description", content: `${title} — RollerZone.` },
+        { title: fullTitle },
+        { name: "description", content: description },
         { name: "robots", content: "index, follow" },
-        { property: "og:title", content: `${title} — RollerZone` },
-        { property: "og:description", content: `${title} — RollerZone.` },
+        { name: "keywords", content: meta?.keywords ?? "RollerZone, patinaje de velocidad, noticias patinaje" },
+        { property: "og:title", content: fullTitle },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: ogImage },
+        { property: "og:site_name", content: "RollerZone" },
+        { property: "og:locale", content: "es_ES" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: fullTitle },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: ogImage },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: AboutPage,
