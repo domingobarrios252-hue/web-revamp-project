@@ -81,47 +81,32 @@ function HomePage() {
 
   return (
     <>
-      {/* HERO — full bleed, sport TV style (compacto, ~50% más bajo) */}
-      <section className="relative w-full overflow-hidden bg-background">
-        {featured?.image_url ? (
-          <img
-            src={featured.image_url}
-            alt={featured.title}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <div className="hero-grid-bg absolute inset-0" />
-        )}
-        {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+      {/* HERO — minimal, fondo #242424 con líneas diagonales */}
+      <section className="relative w-full overflow-hidden bg-surface" style={{ minHeight: 480 }}>
+        <div className="diagonal-lines-bg absolute inset-0" />
+        <div className="absolute inset-x-0 top-0 h-px bg-border" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
-        <div className="font-display pointer-events-none absolute right-[3%] top-1/2 hidden -translate-y-1/2 select-none text-[clamp(110px,12vw,180px)] leading-none tracking-tighter text-gold/[.06] md:block">
-          01
-        </div>
-
-        <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-end px-5 pb-5 pt-10 md:px-10 md:pb-6 md:pt-14">
+        <div className="relative z-10 mx-auto flex min-h-[480px] max-w-7xl flex-col justify-center px-5 py-16 md:px-10">
           <div className="max-w-3xl">
-            {featured?.featured && (
-              <div className="live-red-tag font-condensed mb-2.5 inline-flex w-fit items-center gap-2 bg-tv-red px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-white">
-                <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                En Vivo · Destacada
-              </div>
-            )}
-            {featured?.news_categories?.name && (
-              <div className="font-condensed mb-1.5 text-[11px] uppercase tracking-[4px] text-gold">
-                {featured.news_categories.name}
-              </div>
-            )}
-            <h1 className="font-display text-[clamp(26px,4.2vw,48px)] uppercase leading-[1] tracking-wider text-foreground">
+            <div className="font-condensed mb-5 inline-flex w-fit items-center gap-2 border border-gold px-3 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold">
+              Revista Digital
+            </div>
+            <h1 className="font-display text-[clamp(36px,6vw,72px)] uppercase leading-[1] tracking-wider text-foreground">
               {featured?.title ?? "RollerZone"}
             </h1>
-            {featured?.excerpt && (
-              <p className="clamp-2 mt-2.5 max-w-2xl text-sm text-foreground/80 md:text-[15px]">
+            <div className="mt-5 h-[2px] w-20 bg-gold" />
+            {featured?.excerpt ? (
+              <p className="clamp-3 mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
                 {featured.excerpt}
               </p>
+            ) : (
+              <p className="mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
+                Patinaje de velocidad — noticias, eventos, ranking, entrevistas y revista.
+              </p>
             )}
-            <div className="font-condensed mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+            <div className="font-condensed mt-6 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+              {featured?.news_categories?.name && <span className="text-gold">{featured.news_categories.name}</span>}
               {featured?.author && (
                 <span className="flex items-center gap-1.5">
                   <UserIcon className="h-3 w-3" /> {featured.author}
@@ -137,23 +122,18 @@ function HomePage() {
                   })}
                 </span>
               )}
-              {typeof featured?.views_count === "number" && (
-                <span className="flex items-center gap-1.5">
-                  <Eye className="h-3 w-3" /> {featured.views_count}
-                </span>
-              )}
             </div>
-            <div className="mt-4 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
-              {featured && (
+            {featured && (
+              <div className="mt-7">
                 <Link
                   to="/noticias/articulo/$slug"
                   params={{ slug: featured.slug }}
-                  className="font-condensed inline-flex items-center justify-center gap-2 bg-gold px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-background transition-colors hover:bg-gold-dark"
+                  className="font-condensed inline-flex items-center justify-center gap-2 border border-gold px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-gold transition-colors hover:bg-gold hover:text-background"
                 >
                   Leer cobertura completa <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -164,7 +144,7 @@ function HomePage() {
 
       <LiveCenter />
 
-      {/* ÚLTIMAS NOTICIAS — ESPN style */}
+      {/* ÚLTIMAS NOTICIAS — grid 3/2/1 */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
         <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
           <h2 className="font-display text-2xl tracking-widest md:text-3xl">
@@ -172,42 +152,24 @@ function HomePage() {
           </h2>
           <Link
             to="/noticias"
-            className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-dark"
+            className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-light"
           >
             Ver todas →
           </Link>
         </div>
 
         {news === null ? (
-          <div className="grid gap-4 lg:grid-cols-2">
-            <div className="h-[420px] animate-pulse bg-surface" />
-            <div className="grid grid-cols-2 gap-4">
-              {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="h-[200px] animate-pulse bg-surface" />
-              ))}
-            </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2, 3, 4, 5].map((i) => <NewsSkeleton key={i} />)}
           </div>
-        ) : rest.length === 0 ? (
-          <p className="text-muted-foreground">No hay noticias publicadas aún.</p>
+        ) : news.length === 0 ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => <NewsSkeleton key={i} />)}
+          </div>
         ) : (
-          <>
-            <div className="hidden gap-5 lg:grid lg:grid-cols-2">
-              {bigSecondary && <BigNewsCard news={bigSecondary} />}
-              <div className="grid grid-cols-2 gap-4">
-                {smallList.map((n) => (
-                  <SmallNewsCard key={n.id} news={n} />
-                ))}
-              </div>
-            </div>
-
-            <div className="hide-scrollbar -mx-5 flex gap-4 overflow-x-auto px-5 pb-2 lg:hidden">
-              {rest.slice(0, 6).map((n) => (
-                <div key={n.id} className="w-[78%] shrink-0 sm:w-[48%]">
-                  <SmallNewsCard news={n} />
-                </div>
-              ))}
-            </div>
-          </>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {news.slice(0, 6).map((n) => <NewsGridCard key={n.id} news={n} />)}
+          </div>
         )}
       </section>
 
@@ -221,6 +183,71 @@ function HomePage() {
       <SponsorsCarouselSection />
       <TeamSection />
     </>
+  );
+}
+
+/* ===================== NEWS CARDS ===================== */
+
+function NewsSkeleton() {
+  return (
+    <div className="border border-border bg-surface">
+      <div className="aspect-[16/9] animate-pulse bg-surface-2" />
+      <div className="space-y-3 p-4">
+        <div className="h-3 w-20 animate-pulse bg-surface-2" />
+        <div className="h-4 w-full animate-pulse bg-surface-2" />
+        <div className="h-4 w-3/4 animate-pulse bg-surface-2" />
+        <div className="h-3 w-1/2 animate-pulse bg-surface-2" />
+      </div>
+    </div>
+  );
+}
+
+function NewsGridCard({ news }: { news: News }) {
+  return (
+    <Link
+      to="/noticias/articulo/$slug"
+      params={{ slug: news.slug }}
+      className="group block overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
+    >
+      <div className="aspect-[16/9] overflow-hidden bg-surface-2">
+        {news.image_url ? (
+          <img
+            src={news.image_url}
+            alt={news.title}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+            <span className="font-display text-5xl tracking-widest text-gold/30">RZ</span>
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        {news.news_categories?.name && (
+          <span className="font-condensed mb-2 inline-block bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-background">
+            {news.news_categories.name}
+          </span>
+        )}
+        <h3 className="font-display clamp-2 text-base uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-lg">
+          {news.title}
+        </h3>
+        <div className="font-condensed mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+          {news.author && (
+            <span className="flex items-center gap-1">
+              <UserIcon className="h-3 w-3" /> {news.author}
+            </span>
+          )}
+          <span className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            {new Date(news.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+          </span>
+          <span className="flex items-center gap-1">
+            <Eye className="h-3 w-3" /> {news.views_count}
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -345,64 +372,42 @@ function FeaturedAthletesSection() {
       </div>
 
       {items === null ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-72 animate-pulse bg-surface" />
+        <div className="hide-scrollbar -mx-5 flex gap-6 overflow-x-auto px-5 pb-2">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex w-[140px] shrink-0 flex-col items-center gap-3">
+              <div className="h-28 w-28 animate-pulse rounded-full bg-surface-2" />
+              <div className="h-3 w-20 animate-pulse bg-surface-2" />
+              <div className="h-3 w-14 animate-pulse bg-surface-2" />
+            </div>
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="hide-scrollbar -mx-5 flex gap-6 overflow-x-auto px-5 pb-2">
           {items.map((a) => (
-            <article
+            <Link
               key={a.id}
-              className="group flex flex-col overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
+              to="/patinadores/$slug"
+              params={{ slug: a.slug }}
+              className="group flex w-[140px] shrink-0 flex-col items-center text-center"
             >
-              <div className="aspect-[4/5] overflow-hidden bg-background">
+              <div className="h-28 w-28 overflow-hidden rounded-full border-2 border-gold bg-surface-2 transition-transform duration-300 group-hover:scale-105">
                 {a.photo_url ? (
-                  <img
-                    src={a.photo_url}
-                    alt={a.full_name}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  <img src={a.photo_url} alt={a.full_name} loading="lazy" className="h-full w-full object-cover" />
                 ) : (
-                  <div className="hero-grid-bg flex h-full w-full items-center justify-center">
-                    <UserIcon className="h-12 w-12 text-gold/30" />
+                  <div className="flex h-full w-full items-center justify-center">
+                    <UserIcon className="h-10 w-10 text-gold/40" />
                   </div>
                 )}
               </div>
-              <div className="flex flex-1 flex-col items-center p-4 text-center">
-                <h3 className="font-display text-base uppercase leading-tight tracking-wider">
-                  {a.full_name}
-                </h3>
-                {a.clubs?.name && (
-                  <div className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-                    {a.clubs.name}
-                  </div>
-                )}
-                {a.regions && (
-                  <div className="font-condensed mt-2 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-gold">
-                    {a.regions.flag_url ? (
-                      <img
-                        src={a.regions.flag_url}
-                        alt={a.regions.code}
-                        className="h-3 w-auto"
-                      />
-                    ) : (
-                      <MapPin className="h-3 w-3" />
-                    )}
-                    {a.regions.code}
-                  </div>
-                )}
-                <Link
-                  to="/patinadores/$slug"
-                  params={{ slug: a.slug }}
-                  className="font-condensed mt-4 inline-flex w-full items-center justify-center gap-1 border border-gold px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-background"
-                >
-                  Ver perfil
-                </Link>
+              <div className="font-display mt-3 text-sm uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold">
+                {a.full_name}
               </div>
-            </article>
+              {a.clubs?.name && (
+                <div className="font-condensed mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {a.clubs.name}
+                </div>
+              )}
+            </Link>
           ))}
         </div>
       )}
@@ -1111,6 +1116,7 @@ function MostReadAndSocialSection() {
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {SOCIAL_NETWORKS.map((s) => {
               const Icon = s.Icon;
+              const showFollowers = s.followers && s.followers !== "0" && s.followers !== "—";
               return (
                 <a
                   key={s.name}
@@ -1118,20 +1124,13 @@ function MostReadAndSocialSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Síguenos en ${s.name}`}
-                  className="group relative flex flex-col overflow-hidden border border-border bg-surface p-4 transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.4)] sm:p-5"
+                  className="group flex flex-col border border-border bg-surface p-4 transition-colors hover:border-gold sm:p-5"
                 >
-                  {/* Animated gradient accent on hover */}
-                  <div
-                    className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${s.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-                  />
-
                   <div className="mb-3 flex items-center justify-between">
-                    <div
-                      className={`flex h-11 w-11 items-center justify-center bg-background/50 transition-all group-hover:scale-110 sm:h-12 sm:w-12`}
-                    >
-                      <Icon className={`h-5 w-5 text-foreground transition-colors ${s.hoverColor} sm:h-6 sm:w-6`} />
+                    <div className="flex h-11 w-11 items-center justify-center border border-border transition-colors group-hover:border-gold sm:h-12 sm:w-12">
+                      <Icon className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-gold sm:h-6 sm:w-6" />
                     </div>
-                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-1" />
+                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                   </div>
 
                   <div className="font-display text-sm uppercase tracking-widest text-foreground transition-colors group-hover:text-gold sm:text-base">
@@ -1141,14 +1140,14 @@ function MostReadAndSocialSection() {
                     {s.handle}
                   </div>
 
-                  <div className="mt-3 flex items-baseline gap-1.5 border-t border-border pt-3">
-                    <span className="font-display text-xl tracking-wider text-gold sm:text-2xl">
-                      {s.followers}
-                    </span>
-                    <span className="font-condensed text-[9px] uppercase tracking-[2px] text-muted-foreground sm:text-[10px]">
-                      seguidores
-                    </span>
-                  </div>
+                  {showFollowers && (
+                    <div className="mt-3 flex items-baseline gap-1.5 border-t border-border pt-3">
+                      <span className="font-display text-xl tracking-wider text-gold sm:text-2xl">{s.followers}</span>
+                      <span className="font-condensed text-[9px] uppercase tracking-[2px] text-muted-foreground sm:text-[10px]">
+                        seguidores
+                      </span>
+                    </div>
+                  )}
                 </a>
               );
             })}
