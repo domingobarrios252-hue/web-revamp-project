@@ -51,49 +51,50 @@
 }
 
 :root {
-  --radius: 0.375rem;
+  --radius: 0.5rem; /* 8px components, badges use rounded-[4px] */
 
-  /* Brand */
-  --gold: oklch(0.78 0.16 70);            /* #F5A623 */
-  --gold-dark: oklch(0.65 0.15 60);       /* #C8830A */
-  --gold-light: oklch(0.88 0.12 80);      /* #FFD080 */
+  /* Brand — accent dorado */
+  --gold: #D4A017;
+  --gold-dark: #B8860C;       /* fallback existente */
+  --gold-light: #E8B820;      /* accent-hover */
 
   /* RollerZone TV — rojo cinematográfico */
-  --tv-red: oklch(0.58 0.24 27);          /* ~#E50914 */
-  --tv-red-dark: oklch(0.48 0.22 27);     /* ~#B0060F */
+  --tv-red: oklch(0.58 0.24 27);
+  --tv-red-dark: oklch(0.48 0.22 27);
 
-  /* Neutrals */
-  --background: oklch(0.13 0.005 60);     /* #0D0D0D */
-  --foreground: oklch(0.95 0.01 80);      /* #F0EDE8 */
-  --surface: oklch(0.16 0.005 60);        /* #1A1A1A */
-  --surface-2: oklch(0.2 0.005 60);       /* #222 */
+  /* Neutrals — nueva identidad */
+  --background: #1A1A1A;      /* bg-primary */
+  --foreground: #F5F5F5;      /* text-primary */
+  --surface: #242424;         /* bg-secondary */
+  --surface-2: #2E2E2E;       /* bg-tertiary */
 
-  --card: oklch(0.16 0.005 60);
-  --card-foreground: oklch(0.95 0.01 80);
-  --popover: oklch(0.18 0.005 60);
-  --popover-foreground: oklch(0.95 0.01 80);
+  --card: #242424;
+  --card-foreground: #F5F5F5;
+  --popover: #242424;
+  --popover-foreground: #F5F5F5;
 
-  --primary: oklch(0.78 0.16 70);
-  --primary-foreground: oklch(0.13 0.005 60);
-  --secondary: oklch(0.2 0.005 60);
-  --secondary-foreground: oklch(0.95 0.01 80);
-  --muted: oklch(0.22 0.005 60);
-  --muted-foreground: oklch(0.65 0.01 80);
-  --accent: oklch(0.78 0.16 70);
-  --accent-foreground: oklch(0.13 0.005 60);
+  --primary: #D4A017;
+  --primary-foreground: #1A1A1A;
+  --secondary: #2E2E2E;
+  --secondary-foreground: #F5F5F5;
+  --muted: #2E2E2E;
+  --muted-foreground: #A0A0A0;  /* text-secondary */
+  --accent: #D4A017;
+  --accent-foreground: #1A1A1A;
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.98 0.01 80);
 
-  --border: oklch(0.78 0.16 70 / 0.2);
-  --input: oklch(0.22 0.005 60);
-  --ring: oklch(0.78 0.16 70);
+  --border: #333333;
+  --input: #2E2E2E;
+  --ring: #D4A017;
 }
 
 .dark {
-  /* Same values — site is dark by default */
-  --background: oklch(0.13 0.005 60);
-  --foreground: oklch(0.95 0.01 80);
+  --background: #1A1A1A;
+  --foreground: #F5F5F5;
 }
+
+* { transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease; }
 
 @layer base {
   * {

@@ -8,11 +8,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 type CategoryItem = { name: string; slug: string; scope: string };
 
-// Shared classes for top-level nav links — Inter, normal-case for legibility
-const NAV_LINK = "font-ui text-sm font-medium tracking-normal text-foreground/85 transition-colors hover:text-gold";
-const NAV_LINK_TV = "font-ui text-sm font-semibold tracking-normal text-gold transition-colors hover:text-gold-dark";
-const SUB_LINK = "font-ui text-sm font-normal text-foreground/85 hover:text-gold";
-const ACTION_BTN = "font-ui inline-flex items-center gap-1.5 border border-border px-3 py-1.5 text-xs font-semibold tracking-wide text-foreground/85 transition-colors hover:text-gold";
+// Shared classes for top-level nav links — Inter
+const NAV_LINK = "font-ui relative inline-flex h-16 items-center text-sm font-medium tracking-normal text-[color:var(--muted-foreground)] transition-colors duration-200 hover:text-foreground";
+const NAV_LINK_TV = "font-ui relative inline-flex h-16 items-center text-sm font-semibold tracking-normal text-gold transition-colors duration-200 hover:text-[color:var(--gold-light)]";
+const NAV_ACTIVE = "text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-gold";
+const SUB_LINK = "font-ui text-sm font-normal text-foreground/85 hover:text-gold transition-colors duration-200";
+const ACTION_BTN = "font-ui inline-flex items-center gap-1.5 rounded-[8px] border border-gold px-3 py-1.5 text-xs font-semibold tracking-wide text-gold transition-colors duration-200 hover:bg-gold hover:text-background";
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -53,14 +54,14 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
-      <nav className="flex h-14 items-center justify-between px-4 md:px-8">
+    <header className="sticky top-0 z-50 border-b border-border bg-background">
+      <nav className="flex h-14 md:h-16 items-center justify-between px-4 md:px-8">
         <Link to="/" className="flex flex-col leading-none">
           <span className="font-brand text-xl tracking-wide md:text-[22px]">
-            <span className="text-gold">Roller</span>
-            <span className="text-foreground">Zone</span>
+            <span className="text-foreground">Roller</span>
+            <span className="text-gold">Zone</span>
           </span>
-          <span className="font-ui mt-1 text-[10px] font-medium tracking-wide text-muted-foreground">
+          <span className="font-ui mt-1 text-[10px] font-medium tracking-wide text-[color:var(--muted-foreground)]">
             Revista de Patinaje de Velocidad
           </span>
         </Link>
@@ -71,24 +72,24 @@ export function SiteHeader() {
 
           {/* Noticias dropdown */}
           <li
-            className="relative"
+            className="relative h-16 flex items-center"
             onMouseEnter={() => setNewsOpen(true)}
             onMouseLeave={() => setNewsOpen(false)}
           >
             <Link
               to="/noticias"
               className={`${NAV_LINK} flex items-center gap-1`}
-              activeProps={{ className: "text-gold" }}
+              activeProps={{ className: NAV_ACTIVE }}
             >
               {t("nav.news")} <ChevronDown className="h-3 w-3" />
             </Link>
             {newsOpen && (nacional.length > 0 || internacional.length > 0) && (
               <div className="absolute left-1/2 top-full w-[420px] -translate-x-1/2 pt-2">
-                <div className="rounded-md border border-border bg-popover p-4 shadow-2xl">
+                <div className="rounded-[8px] border border-border bg-popover p-4">
                   <div className="grid grid-cols-2 gap-6">
                     {nacional.length > 0 && (
                       <div>
-                        <div className="font-display mb-2 text-sm tracking-widest text-gold">
+                        <div className="font-ui mb-2 text-xs font-bold uppercase tracking-wider text-gold">
                           {t("nav.national")}
                         </div>
                         <ul className="space-y-1.5">
@@ -108,7 +109,7 @@ export function SiteHeader() {
                     )}
                     {internacional.length > 0 && (
                       <div>
-                        <div className="font-display mb-2 text-sm tracking-widest text-gold">
+                        <div className="font-ui mb-2 text-xs font-bold uppercase tracking-wider text-gold">
                           {t("nav.international")}
                         </div>
                         <ul className="space-y-1.5">
@@ -129,7 +130,7 @@ export function SiteHeader() {
                   </div>
                   <Link
                     to="/noticias"
-                    className="font-ui mt-3 block border-t border-border pt-3 text-center text-xs font-semibold tracking-wide text-gold hover:text-gold-dark"
+                    className="font-ui mt-3 block border-t border-border pt-3 text-center text-xs font-semibold tracking-wide text-gold hover:text-[color:var(--gold-light)]"
                   >
                     {t("nav.newsAllShort")}
                   </Link>
@@ -139,32 +140,32 @@ export function SiteHeader() {
           </li>
 
           <li>
-            <Link to="/premios-mvp" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/premios-mvp" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.mvpAwards")}
             </Link>
           </li>
           <li>
-            <Link to="/entrevistas" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/entrevistas" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.interviews")}
             </Link>
           </li>
           <li>
-            <Link to="/eventos" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/eventos" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.events")}
             </Link>
           </li>
           <li>
-            <Link to="/tv" className={NAV_LINK_TV} activeProps={{ className: "text-gold" }}>
+            <Link to="/tv" className={NAV_LINK_TV} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.tv")}
             </Link>
           </li>
           <li>
-            <Link to="/revista" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/revista" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.magazine")}
             </Link>
           </li>
           <li>
-            <Link to="/patrocinadores" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/patrocinadores" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.sponsors")}
             </Link>
           </li>
@@ -210,88 +211,112 @@ export function SiteHeader() {
         </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile slide-in panel from right */}
       {mobileOpen && (
-        <div className="border-t border-border bg-background lg:hidden">
-          <div className="flex flex-col gap-1 px-4 py-3">
-            <MobileLink to="/" onClick={() => setMobileOpen(false)}>{t("nav.home")}</MobileLink>
-            <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>
-              {t("nav.newsAll")}
-            </MobileLink>
-            {(nacional.length > 0 || internacional.length > 0) && (
-              <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
-                {nacional.length > 0 && (
-                  <>
-                    <div className="font-display pt-2 text-xs tracking-widest text-gold">{t("nav.national")}</div>
-                    {nacional.map((c) => (
-                      <Link
-                        key={c.slug}
-                        to="/noticias/$slug"
-                        params={{ slug: c.slug }}
-                        onClick={() => setMobileOpen(false)}
-                        className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
-                      >
-                        {c.name}
-                      </Link>
-                    ))}
-                  </>
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden
+          />
+          <aside
+            className="fixed right-0 top-0 z-50 h-full w-[280px] border-l border-border bg-background shadow-xl transition-transform duration-200 lg:hidden"
+            role="dialog"
+            aria-label={t("nav.menu")}
+          >
+            <div className="flex h-14 items-center justify-between border-b border-border px-4">
+              <span className="font-brand text-lg">
+                <span className="text-foreground">Roller</span>
+                <span className="text-gold">Zone</span>
+              </span>
+              <button
+                onClick={() => setMobileOpen(false)}
+                aria-label="Cerrar"
+                className="text-foreground/85 hover:text-gold"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="flex flex-col gap-1 px-4 py-3">
+              <MobileLink to="/" onClick={() => setMobileOpen(false)}>{t("nav.home")}</MobileLink>
+              <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>
+                {t("nav.newsAll")}
+              </MobileLink>
+              {(nacional.length > 0 || internacional.length > 0) && (
+                <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
+                  {nacional.length > 0 && (
+                    <>
+                      <div className="font-ui pt-2 text-xs font-bold uppercase tracking-wider text-gold">{t("nav.national")}</div>
+                      {nacional.map((c) => (
+                        <Link
+                          key={c.slug}
+                          to="/noticias/$slug"
+                          params={{ slug: c.slug }}
+                          onClick={() => setMobileOpen(false)}
+                          className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
+                        >
+                          {c.name}
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                  {internacional.length > 0 && (
+                    <>
+                      <div className="font-ui pt-2 text-xs font-bold uppercase tracking-wider text-gold">{t("nav.international")}</div>
+                      {internacional.map((c) => (
+                        <Link
+                          key={c.slug}
+                          to="/noticias/$slug"
+                          params={{ slug: c.slug }}
+                          onClick={() => setMobileOpen(false)}
+                          className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
+                        >
+                          {c.name}
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
+
+              <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.mvpAwards")}</Link>
+              <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.interviews")}</Link>
+              <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.events")}</Link>
+              <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-semibold text-gold hover:text-[color:var(--gold-light)]">{t("nav.tv")}</Link>
+              <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.magazine")}</Link>
+              <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.sponsors")}</Link>
+              <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.team")}</a>
+
+              <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
+                <LanguageToggle />
+              </div>
+
+              <div className="mt-2 flex flex-col gap-2">
+                {isEditor && (
+                  <Link to="/admin" onClick={() => setMobileOpen(false)} className="font-ui rounded-[8px] border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold">
+                    {t("nav.admin")}
+                  </Link>
                 )}
-                {internacional.length > 0 && (
-                  <>
-                    <div className="font-display pt-2 text-xs tracking-widest text-gold">{t("nav.international")}</div>
-                    {internacional.map((c) => (
-                      <Link
-                        key={c.slug}
-                        to="/noticias/$slug"
-                        params={{ slug: c.slug }}
-                        onClick={() => setMobileOpen(false)}
-                        className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
-                      >
-                        {c.name}
-                      </Link>
-                    ))}
-                  </>
+                {user ? (
+                  <button
+                    onClick={async () => {
+                      await signOut();
+                      setMobileOpen(false);
+                      navigate({ to: "/" });
+                    }}
+                    className="font-ui rounded-[8px] border border-border px-3 py-2 text-xs font-semibold tracking-wide text-foreground/85"
+                  >
+                    {t("nav.logoutLong")}
+                  </button>
+                ) : (
+                  <Link to="/auth" onClick={() => setMobileOpen(false)} className="font-ui rounded-[8px] border border-gold px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold hover:bg-gold hover:text-background">
+                    {t("nav.accessAdmin")}
+                  </Link>
                 )}
               </div>
-            )}
-
-            <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.mvpAwards")}</Link>
-            <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.interviews")}</Link>
-            <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.events")}</Link>
-            <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-semibold text-gold hover:text-gold-dark">{t("nav.tv")}</Link>
-            <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.magazine")}</Link>
-            <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.sponsors")}</Link>
-            <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.team")}</a>
-
-            <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
-              <LanguageToggle />
             </div>
-
-            <div className="mt-2 flex gap-2">
-              {isEditor && (
-                <Link to="/admin" onClick={() => setMobileOpen(false)} className="font-ui flex-1 border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold">
-                  {t("nav.admin")}
-                </Link>
-              )}
-              {user ? (
-                <button
-                  onClick={async () => {
-                    await signOut();
-                    setMobileOpen(false);
-                    navigate({ to: "/" });
-                  }}
-                  className="font-ui flex-1 border border-border px-3 py-2 text-xs font-semibold tracking-wide text-foreground/85"
-                >
-                  {t("nav.logoutLong")}
-                </button>
-              ) : (
-                <Link to="/auth" onClick={() => setMobileOpen(false)} className="font-ui flex-1 border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-foreground/85">
-                  {t("nav.accessAdmin")}
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
+          </aside>
+        </>
       )}
     </header>
   );
@@ -312,7 +337,7 @@ function NavLink({ to, hash, children }: { to: "/"; hash?: string; children: Rea
       <Link
         to={to}
         className={NAV_LINK}
-        activeProps={{ className: "text-gold" }}
+        activeProps={{ className: NAV_ACTIVE }}
         activeOptions={{ exact: true }}
       >
         {children}
