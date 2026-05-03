@@ -211,88 +211,112 @@ export function SiteHeader() {
         </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile slide-in panel from right */}
       {mobileOpen && (
-        <div className="border-t border-border bg-background lg:hidden">
-          <div className="flex flex-col gap-1 px-4 py-3">
-            <MobileLink to="/" onClick={() => setMobileOpen(false)}>{t("nav.home")}</MobileLink>
-            <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>
-              {t("nav.newsAll")}
-            </MobileLink>
-            {(nacional.length > 0 || internacional.length > 0) && (
-              <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
-                {nacional.length > 0 && (
-                  <>
-                    <div className="font-display pt-2 text-xs tracking-widest text-gold">{t("nav.national")}</div>
-                    {nacional.map((c) => (
-                      <Link
-                        key={c.slug}
-                        to="/noticias/$slug"
-                        params={{ slug: c.slug }}
-                        onClick={() => setMobileOpen(false)}
-                        className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
-                      >
-                        {c.name}
-                      </Link>
-                    ))}
-                  </>
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden
+          />
+          <aside
+            className="fixed right-0 top-0 z-50 h-full w-[280px] border-l border-border bg-background shadow-xl transition-transform duration-200 lg:hidden"
+            role="dialog"
+            aria-label={t("nav.menu")}
+          >
+            <div className="flex h-14 items-center justify-between border-b border-border px-4">
+              <span className="font-brand text-lg">
+                <span className="text-foreground">Roller</span>
+                <span className="text-gold">Zone</span>
+              </span>
+              <button
+                onClick={() => setMobileOpen(false)}
+                aria-label="Cerrar"
+                className="text-foreground/85 hover:text-gold"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="flex flex-col gap-1 px-4 py-3">
+              <MobileLink to="/" onClick={() => setMobileOpen(false)}>{t("nav.home")}</MobileLink>
+              <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>
+                {t("nav.newsAll")}
+              </MobileLink>
+              {(nacional.length > 0 || internacional.length > 0) && (
+                <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
+                  {nacional.length > 0 && (
+                    <>
+                      <div className="font-ui pt-2 text-xs font-bold uppercase tracking-wider text-gold">{t("nav.national")}</div>
+                      {nacional.map((c) => (
+                        <Link
+                          key={c.slug}
+                          to="/noticias/$slug"
+                          params={{ slug: c.slug }}
+                          onClick={() => setMobileOpen(false)}
+                          className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
+                        >
+                          {c.name}
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                  {internacional.length > 0 && (
+                    <>
+                      <div className="font-ui pt-2 text-xs font-bold uppercase tracking-wider text-gold">{t("nav.international")}</div>
+                      {internacional.map((c) => (
+                        <Link
+                          key={c.slug}
+                          to="/noticias/$slug"
+                          params={{ slug: c.slug }}
+                          onClick={() => setMobileOpen(false)}
+                          className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
+                        >
+                          {c.name}
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
+
+              <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.mvpAwards")}</Link>
+              <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.interviews")}</Link>
+              <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.events")}</Link>
+              <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-semibold text-gold hover:text-[color:var(--gold-light)]">{t("nav.tv")}</Link>
+              <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.magazine")}</Link>
+              <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.sponsors")}</Link>
+              <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.team")}</a>
+
+              <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
+                <LanguageToggle />
+              </div>
+
+              <div className="mt-2 flex flex-col gap-2">
+                {isEditor && (
+                  <Link to="/admin" onClick={() => setMobileOpen(false)} className="font-ui rounded-[8px] border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold">
+                    {t("nav.admin")}
+                  </Link>
                 )}
-                {internacional.length > 0 && (
-                  <>
-                    <div className="font-display pt-2 text-xs tracking-widest text-gold">{t("nav.international")}</div>
-                    {internacional.map((c) => (
-                      <Link
-                        key={c.slug}
-                        to="/noticias/$slug"
-                        params={{ slug: c.slug }}
-                        onClick={() => setMobileOpen(false)}
-                        className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
-                      >
-                        {c.name}
-                      </Link>
-                    ))}
-                  </>
+                {user ? (
+                  <button
+                    onClick={async () => {
+                      await signOut();
+                      setMobileOpen(false);
+                      navigate({ to: "/" });
+                    }}
+                    className="font-ui rounded-[8px] border border-border px-3 py-2 text-xs font-semibold tracking-wide text-foreground/85"
+                  >
+                    {t("nav.logoutLong")}
+                  </button>
+                ) : (
+                  <Link to="/auth" onClick={() => setMobileOpen(false)} className="font-ui rounded-[8px] border border-gold px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold hover:bg-gold hover:text-background">
+                    {t("nav.accessAdmin")}
+                  </Link>
                 )}
               </div>
-            )}
-
-            <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.mvpAwards")}</Link>
-            <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.interviews")}</Link>
-            <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.events")}</Link>
-            <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-semibold text-gold hover:text-gold-dark">{t("nav.tv")}</Link>
-            <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.magazine")}</Link>
-            <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.sponsors")}</Link>
-            <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.team")}</a>
-
-            <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
-              <LanguageToggle />
             </div>
-
-            <div className="mt-2 flex gap-2">
-              {isEditor && (
-                <Link to="/admin" onClick={() => setMobileOpen(false)} className="font-ui flex-1 border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold">
-                  {t("nav.admin")}
-                </Link>
-              )}
-              {user ? (
-                <button
-                  onClick={async () => {
-                    await signOut();
-                    setMobileOpen(false);
-                    navigate({ to: "/" });
-                  }}
-                  className="font-ui flex-1 border border-border px-3 py-2 text-xs font-semibold tracking-wide text-foreground/85"
-                >
-                  {t("nav.logoutLong")}
-                </button>
-              ) : (
-                <Link to="/auth" onClick={() => setMobileOpen(false)} className="font-ui flex-1 border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-foreground/85">
-                  {t("nav.accessAdmin")}
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
+          </aside>
+        </>
       )}
     </header>
   );
