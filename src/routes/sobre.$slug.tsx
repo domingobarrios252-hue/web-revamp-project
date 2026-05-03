@@ -22,6 +22,15 @@ export const Route = createFileRoute("/sobre/$slug")({
     if (error || !data || !data.published) throw notFound();
     return { page: data, slug: params.slug };
   },
+  loader: async ({ params }) => {
+    const { data, error } = await supabase
+      .from("about_pages")
+      .select("title, content, updated_at, published")
+      .eq("slug", params.slug)
+      .maybeSingle();
+    if (error || !data || !data.published) throw notFound();
+    return { page: data, slug: params.slug };
+  },
   head: ({ loaderData, params }) => {
     const title = loaderData?.page.title ?? "Sobre nosotros";
     const slug = params.slug;
