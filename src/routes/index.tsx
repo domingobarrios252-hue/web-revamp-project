@@ -372,64 +372,42 @@ function FeaturedAthletesSection() {
       </div>
 
       {items === null ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-72 animate-pulse bg-surface" />
+        <div className="hide-scrollbar -mx-5 flex gap-6 overflow-x-auto px-5 pb-2">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex w-[140px] shrink-0 flex-col items-center gap-3">
+              <div className="h-28 w-28 animate-pulse rounded-full bg-surface-2" />
+              <div className="h-3 w-20 animate-pulse bg-surface-2" />
+              <div className="h-3 w-14 animate-pulse bg-surface-2" />
+            </div>
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="hide-scrollbar -mx-5 flex gap-6 overflow-x-auto px-5 pb-2">
           {items.map((a) => (
-            <article
+            <Link
               key={a.id}
-              className="group flex flex-col overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
+              to="/patinadores/$slug"
+              params={{ slug: a.slug }}
+              className="group flex w-[140px] shrink-0 flex-col items-center text-center"
             >
-              <div className="aspect-[4/5] overflow-hidden bg-background">
+              <div className="h-28 w-28 overflow-hidden rounded-full border-2 border-gold bg-surface-2 transition-transform duration-300 group-hover:scale-105">
                 {a.photo_url ? (
-                  <img
-                    src={a.photo_url}
-                    alt={a.full_name}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  <img src={a.photo_url} alt={a.full_name} loading="lazy" className="h-full w-full object-cover" />
                 ) : (
-                  <div className="hero-grid-bg flex h-full w-full items-center justify-center">
-                    <UserIcon className="h-12 w-12 text-gold/30" />
+                  <div className="flex h-full w-full items-center justify-center">
+                    <UserIcon className="h-10 w-10 text-gold/40" />
                   </div>
                 )}
               </div>
-              <div className="flex flex-1 flex-col items-center p-4 text-center">
-                <h3 className="font-display text-base uppercase leading-tight tracking-wider">
-                  {a.full_name}
-                </h3>
-                {a.clubs?.name && (
-                  <div className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-                    {a.clubs.name}
-                  </div>
-                )}
-                {a.regions && (
-                  <div className="font-condensed mt-2 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-gold">
-                    {a.regions.flag_url ? (
-                      <img
-                        src={a.regions.flag_url}
-                        alt={a.regions.code}
-                        className="h-3 w-auto"
-                      />
-                    ) : (
-                      <MapPin className="h-3 w-3" />
-                    )}
-                    {a.regions.code}
-                  </div>
-                )}
-                <Link
-                  to="/patinadores/$slug"
-                  params={{ slug: a.slug }}
-                  className="font-condensed mt-4 inline-flex w-full items-center justify-center gap-1 border border-gold px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-background"
-                >
-                  Ver perfil
-                </Link>
+              <div className="font-display mt-3 text-sm uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold">
+                {a.full_name}
               </div>
-            </article>
+              {a.clubs?.name && (
+                <div className="font-condensed mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {a.clubs.name}
+                </div>
+              )}
+            </Link>
           ))}
         </div>
       )}
