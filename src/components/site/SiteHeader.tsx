@@ -54,14 +54,14 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
-      <nav className="flex h-14 items-center justify-between px-4 md:px-8">
+    <header className="sticky top-0 z-50 border-b border-border bg-background">
+      <nav className="flex h-14 md:h-16 items-center justify-between px-4 md:px-8">
         <Link to="/" className="flex flex-col leading-none">
           <span className="font-brand text-xl tracking-wide md:text-[22px]">
-            <span className="text-gold">Roller</span>
-            <span className="text-foreground">Zone</span>
+            <span className="text-foreground">Roller</span>
+            <span className="text-gold">Zone</span>
           </span>
-          <span className="font-ui mt-1 text-[10px] font-medium tracking-wide text-muted-foreground">
+          <span className="font-ui mt-1 text-[10px] font-medium tracking-wide text-[color:var(--muted-foreground)]">
             Revista de Patinaje de Velocidad
           </span>
         </Link>
@@ -72,24 +72,24 @@ export function SiteHeader() {
 
           {/* Noticias dropdown */}
           <li
-            className="relative"
+            className="relative h-16 flex items-center"
             onMouseEnter={() => setNewsOpen(true)}
             onMouseLeave={() => setNewsOpen(false)}
           >
             <Link
               to="/noticias"
               className={`${NAV_LINK} flex items-center gap-1`}
-              activeProps={{ className: "text-gold" }}
+              activeProps={{ className: NAV_ACTIVE }}
             >
               {t("nav.news")} <ChevronDown className="h-3 w-3" />
             </Link>
             {newsOpen && (nacional.length > 0 || internacional.length > 0) && (
               <div className="absolute left-1/2 top-full w-[420px] -translate-x-1/2 pt-2">
-                <div className="rounded-md border border-border bg-popover p-4 shadow-2xl">
+                <div className="rounded-[8px] border border-border bg-popover p-4">
                   <div className="grid grid-cols-2 gap-6">
                     {nacional.length > 0 && (
                       <div>
-                        <div className="font-display mb-2 text-sm tracking-widest text-gold">
+                        <div className="font-ui mb-2 text-xs font-bold uppercase tracking-wider text-gold">
                           {t("nav.national")}
                         </div>
                         <ul className="space-y-1.5">
@@ -109,7 +109,7 @@ export function SiteHeader() {
                     )}
                     {internacional.length > 0 && (
                       <div>
-                        <div className="font-display mb-2 text-sm tracking-widest text-gold">
+                        <div className="font-ui mb-2 text-xs font-bold uppercase tracking-wider text-gold">
                           {t("nav.international")}
                         </div>
                         <ul className="space-y-1.5">
@@ -130,7 +130,7 @@ export function SiteHeader() {
                   </div>
                   <Link
                     to="/noticias"
-                    className="font-ui mt-3 block border-t border-border pt-3 text-center text-xs font-semibold tracking-wide text-gold hover:text-gold-dark"
+                    className="font-ui mt-3 block border-t border-border pt-3 text-center text-xs font-semibold tracking-wide text-gold hover:text-[color:var(--gold-light)]"
                   >
                     {t("nav.newsAllShort")}
                   </Link>
@@ -140,32 +140,32 @@ export function SiteHeader() {
           </li>
 
           <li>
-            <Link to="/premios-mvp" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/premios-mvp" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.mvpAwards")}
             </Link>
           </li>
           <li>
-            <Link to="/entrevistas" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/entrevistas" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.interviews")}
             </Link>
           </li>
           <li>
-            <Link to="/eventos" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/eventos" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.events")}
             </Link>
           </li>
           <li>
-            <Link to="/tv" className={NAV_LINK_TV} activeProps={{ className: "text-gold" }}>
+            <Link to="/tv" className={NAV_LINK_TV} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.tv")}
             </Link>
           </li>
           <li>
-            <Link to="/revista" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/revista" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.magazine")}
             </Link>
           </li>
           <li>
-            <Link to="/patrocinadores" className={NAV_LINK} activeProps={{ className: "text-gold" }}>
+            <Link to="/patrocinadores" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               {t("nav.sponsors")}
             </Link>
           </li>
