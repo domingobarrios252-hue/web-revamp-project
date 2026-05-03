@@ -1116,6 +1116,7 @@ function MostReadAndSocialSection() {
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {SOCIAL_NETWORKS.map((s) => {
               const Icon = s.Icon;
+              const showFollowers = s.followers && s.followers !== "0" && s.followers !== "—";
               return (
                 <a
                   key={s.name}
@@ -1123,20 +1124,13 @@ function MostReadAndSocialSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Síguenos en ${s.name}`}
-                  className="group relative flex flex-col overflow-hidden border border-border bg-surface p-4 transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.4)] sm:p-5"
+                  className="group flex flex-col border border-border bg-surface p-4 transition-colors hover:border-gold sm:p-5"
                 >
-                  {/* Animated gradient accent on hover */}
-                  <div
-                    className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${s.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-                  />
-
                   <div className="mb-3 flex items-center justify-between">
-                    <div
-                      className={`flex h-11 w-11 items-center justify-center bg-background/50 transition-all group-hover:scale-110 sm:h-12 sm:w-12`}
-                    >
-                      <Icon className={`h-5 w-5 text-foreground transition-colors ${s.hoverColor} sm:h-6 sm:w-6`} />
+                    <div className="flex h-11 w-11 items-center justify-center border border-border transition-colors group-hover:border-gold sm:h-12 sm:w-12">
+                      <Icon className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-gold sm:h-6 sm:w-6" />
                     </div>
-                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-1" />
+                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                   </div>
 
                   <div className="font-display text-sm uppercase tracking-widest text-foreground transition-colors group-hover:text-gold sm:text-base">
@@ -1146,14 +1140,14 @@ function MostReadAndSocialSection() {
                     {s.handle}
                   </div>
 
-                  <div className="mt-3 flex items-baseline gap-1.5 border-t border-border pt-3">
-                    <span className="font-display text-xl tracking-wider text-gold sm:text-2xl">
-                      {s.followers}
-                    </span>
-                    <span className="font-condensed text-[9px] uppercase tracking-[2px] text-muted-foreground sm:text-[10px]">
-                      seguidores
-                    </span>
-                  </div>
+                  {showFollowers && (
+                    <div className="mt-3 flex items-baseline gap-1.5 border-t border-border pt-3">
+                      <span className="font-display text-xl tracking-wider text-gold sm:text-2xl">{s.followers}</span>
+                      <span className="font-condensed text-[9px] uppercase tracking-[2px] text-muted-foreground sm:text-[10px]">
+                        seguidores
+                      </span>
+                    </div>
+                  )}
                 </a>
               );
             })}
