@@ -137,6 +137,17 @@
 }
 .ticker-track:hover { animation-play-state: paused; }
 
+/* ===== Diagonal lines pattern (hero) ===== */
+.diagonal-lines-bg {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 14px,
+    rgba(212, 160, 23, 0.045) 14px,
+    rgba(212, 160, 23, 0.045) 15px
+  );
+}
+
 /* ===== HERO accents ===== */
 .hero-grid-bg {
   background:
