@@ -115,7 +115,7 @@ export function LiveCenter() {
   const eventSlug = featuredGroup?.slug;
 
   return (
-    <section id="en-directo" className="border-y border-border bg-background">
+    <section id="en-directo" className="border-t-2 border-t-gold border-b border-b-border" style={{ backgroundColor: "#0F0F0F" }}>
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-6 lg:py-12">
         <div className="mb-5 flex flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end md:justify-between">
           <div>
