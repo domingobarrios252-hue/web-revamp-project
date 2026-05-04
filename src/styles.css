@@ -148,6 +148,35 @@
   );
 }
 
+/* ===== Legal pages prose ===== */
+.legal-prose h1, .legal-prose h2, .legal-prose h3 {
+  font-family: var(--font-display, inherit);
+  color: var(--foreground);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+.legal-prose h2 { font-size: 1.4rem; border-bottom: 1px solid var(--border); padding-bottom: .5rem; }
+.legal-prose h3 { font-size: 1.1rem; color: var(--gold); }
+.legal-prose p { margin: 0.85rem 0; }
+.legal-prose ul, .legal-prose ol { margin: 0.85rem 0 0.85rem 1.25rem; }
+.legal-prose li { margin: 0.35rem 0; }
+.legal-prose ul li { list-style: disc; }
+.legal-prose ol li { list-style: decimal; }
+.legal-prose a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+.legal-prose a:hover { color: var(--gold-light, #E8B820); }
+.legal-prose strong { color: var(--foreground); font-weight: 600; }
+.legal-prose hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+.legal-prose blockquote {
+  border-left: 2px solid var(--gold);
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  background: var(--surface);
+  color: var(--muted-foreground);
+}
+
 /* ===== HERO accents ===== */
 .hero-grid-bg {
   background:
