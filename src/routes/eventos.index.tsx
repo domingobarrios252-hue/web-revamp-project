@@ -242,16 +242,29 @@ function Section({ title, items, empty, dim }: { title: string; items: EventItem
 }
 
 function EventCard({ event }: { event: EventItem }) {
+  const start = new Date(event.start_date + "T00:00:00");
+  const day = start.toLocaleDateString("es-ES", { day: "2-digit" });
+  const month = start.toLocaleDateString("es-ES", { month: "short" }).replace(".", "");
+  const year = start.getFullYear();
+
   return (
-    <article className="group flex flex-col border border-border bg-surface transition-colors hover:border-gold">
-      <Link to="/eventos/$slug" params={{ slug: event.slug }} className="block">
+    <article className="group relative flex flex-col overflow-hidden border border-border bg-surface pl-1 transition-colors hover:border-gold">
+      {/* Barra lateral dorada */}
+      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 bg-gold" />
+
+      <Link
+        to="/eventos/$slug"
+        params={{ slug: event.slug }}
+        className="relative block"
+        aria-label={`Ver detalle del evento ${event.name}`}
+      >
         {event.cover_url ? (
           <div className="relative aspect-[1/1.414] overflow-hidden bg-background">
-            {/* Fondo difuminado del cartel para rellenar márgenes */}
             <img
               src={event.cover_url}
               alt=""
               aria-hidden="true"
+              loading="lazy"
               className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-xl"
             />
             <img
@@ -260,26 +273,39 @@ function EventCard({ event }: { event: EventItem }) {
               loading="lazy"
               className="relative h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
             />
-            <span className="font-condensed absolute left-2 top-2 bg-background/85 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
-              Cartel
-            </span>
           </div>
         ) : (
           <div className="flex aspect-[1/1.414] items-center justify-center bg-background">
-            <Trophy className="h-12 w-12 text-muted-foreground/40" />
+            <Trophy className="h-12 w-12 text-muted-foreground/40" aria-hidden="true" />
           </div>
         )}
+
+        {/* Fecha destacada */}
+        <div className="absolute left-3 top-3 flex flex-col items-center border border-gold/40 bg-background/90 px-2 py-1 text-center backdrop-blur-sm">
+          <span className="font-display text-2xl leading-none tracking-wider text-gold">{day}</span>
+          <span className="font-condensed text-[9px] uppercase tracking-widest text-foreground">{month}</span>
+          <span className="font-condensed text-[9px] uppercase tracking-widest text-muted-foreground">{year}</span>
+        </div>
+
+        {/* Badge tipo evento dorado suave */}
+        {event.scope && (
+          <span className="font-condensed absolute right-3 top-3 border border-gold/40 bg-gold/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
+            {event.scope}
+          </span>
+        )}
       </Link>
+
       <div className="flex flex-1 flex-col p-5">
-        <div className="font-condensed text-[11px] uppercase tracking-widest text-gold">{event.scope}</div>
         <Link to="/eventos/$slug" params={{ slug: event.slug }}>
-          <h3 className="font-display mt-1 text-lg leading-tight tracking-wide hover:text-gold">{event.name}</h3>
+          <h3 className="font-display text-lg leading-tight tracking-wide text-foreground hover:text-gold">
+            {event.name}
+          </h3>
         </Link>
 
         <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" />{formatRange(event.start_date, event.end_date)}</div>
-          {event.location && <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" />{event.location}</div>}
-          {event.organizer && <div className="flex items-center gap-2"><Users className="h-3.5 w-3.5" />{event.organizer}</div>}
+          <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" aria-hidden="true" />{formatRange(event.start_date, event.end_date)}</div>
+          {event.location && <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" aria-hidden="true" />{event.location}</div>}
+          {event.organizer && <div className="flex items-center gap-2"><Users className="h-3.5 w-3.5" aria-hidden="true" />{event.organizer}</div>}
         </div>
 
         {event.categories?.length > 0 && (
@@ -302,8 +328,8 @@ function EventCard({ event }: { event: EventItem }) {
           {event.instagram_url && <ExternalLinkBtn href={event.instagram_url} icon={<Instagram className="h-3.5 w-3.5" />}>Instagram</ExternalLinkBtn>}
           {event.facebook_url && <ExternalLinkBtn href={event.facebook_url} icon={<Facebook className="h-3.5 w-3.5" />}>Facebook</ExternalLinkBtn>}
           {event.registration_url && (
-            <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="font-condensed ml-auto inline-flex items-center gap-1 bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-              Inscripción <ExternalLink className="h-3 w-3" />
+            <a href={event.registration_url} target="_blank" rel="noopener noreferrer" aria-label="Inscripción al evento" className="font-condensed ml-auto inline-flex items-center gap-1 bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
+              Inscripción <ExternalLink className="h-3 w-3" aria-hidden="true" />
             </a>
           )}
         </div>
