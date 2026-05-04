@@ -57,6 +57,12 @@ function EventosPage() {
 
   useEffect(() => {
     let cancelled = false;
+    // Timeout 5s → mostrar vacío si no carga
+    const timeout = setTimeout(() => {
+      if (!cancelled) {
+        setEvents((prev) => (prev === null ? [] : prev));
+      }
+    }, 5000);
     supabase
       .from("events")
       .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url")
@@ -66,7 +72,7 @@ function EventosPage() {
       .then(({ data }) => {
         if (!cancelled) setEvents((data as EventItem[]) ?? []);
       });
-    return () => { cancelled = true; };
+    return () => { cancelled = true; clearTimeout(timeout); };
   }, []);
 
   const { scopes, categories } = useMemo(() => {
