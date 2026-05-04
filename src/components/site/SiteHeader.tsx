@@ -67,7 +67,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-6 md:flex">
+        <ul className="hidden items-center gap-3 md:flex lg:gap-6">
           <NavLink to="/">{t("nav.home")}</NavLink>
 
           {/* Noticias dropdown */}
