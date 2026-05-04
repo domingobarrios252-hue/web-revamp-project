@@ -81,31 +81,31 @@ function HomePage() {
 
   return (
     <>
-      {/* HERO — minimal, fondo #242424 con líneas diagonales */}
-      <section className="relative w-full overflow-hidden bg-surface" style={{ minHeight: 480 }}>
+      {/* HERO — minimal, fondo #242424 con líneas diagonales + imagen destacada */}
+      <section className="relative w-full overflow-hidden bg-surface" style={{ minHeight: 360 }}>
         <div className="diagonal-lines-bg absolute inset-0" />
         <div className="absolute inset-x-0 top-0 h-px bg-border" />
         <div className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
-        <div className="relative z-10 mx-auto flex min-h-[480px] max-w-7xl flex-col justify-center px-5 py-16 md:px-10">
+        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-5 py-10 md:grid-cols-[1.1fr,0.9fr] md:gap-10 md:px-10 md:py-14" style={{ minHeight: 360 }}>
           <div className="max-w-3xl">
-            <div className="font-condensed mb-5 inline-flex w-fit items-center gap-2 border border-gold px-3 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold">
+            <div className="font-condensed mb-4 inline-flex w-fit items-center gap-2 border border-gold px-3 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold">
               Revista Digital
             </div>
-            <h1 className="font-display text-[clamp(36px,6vw,72px)] uppercase leading-[1] tracking-wider text-foreground">
+            <h1 className="font-display text-[clamp(28px,4.4vw,52px)] uppercase leading-[1.05] tracking-wider text-foreground">
               {featured?.title ?? "RollerZone"}
             </h1>
-            <div className="mt-5 h-[2px] w-20 bg-gold" />
+            <div className="mt-4 h-[2px] w-16 bg-gold" />
             {featured?.excerpt ? (
-              <p className="clamp-3 mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
+              <p className="clamp-2 mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
                 {featured.excerpt}
               </p>
             ) : (
-              <p className="mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
+              <p className="mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
                 Patinaje de velocidad — noticias, eventos, ranking, entrevistas y revista.
               </p>
             )}
-            <div className="font-condensed mt-6 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+            <div className="font-condensed mt-5 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
               {featured?.news_categories?.name && <span className="text-gold">{featured.news_categories.name}</span>}
               {featured?.author && (
                 <span className="flex items-center gap-1.5">
@@ -124,7 +124,7 @@ function HomePage() {
               )}
             </div>
             {featured && (
-              <div className="mt-7">
+              <div className="mt-5">
                 <Link
                   to="/noticias/articulo/$slug"
                   params={{ slug: featured.slug }}
@@ -135,6 +135,30 @@ function HomePage() {
               </div>
             )}
           </div>
+
+          {/* Imagen destacada */}
+          {featured && (
+            <Link
+              to="/noticias/articulo/$slug"
+              params={{ slug: featured.slug }}
+              className="group relative block aspect-[16/10] w-full overflow-hidden border border-border bg-background"
+              aria-label={featured.title}
+            >
+              {featured.image_url ? (
+                <img
+                  src={featured.image_url}
+                  alt={featured.title}
+                  loading="eager"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+                  <span className="font-condensed text-xs uppercase tracking-widest text-muted-foreground">RollerZone</span>
+                </div>
+              )}
+              <div className="absolute inset-x-0 bottom-0 h-1 bg-gold" />
+            </Link>
+          )}
         </div>
       </section>
 

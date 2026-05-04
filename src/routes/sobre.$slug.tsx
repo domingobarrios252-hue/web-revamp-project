@@ -123,21 +123,21 @@ const SLUG_META: Record<string, SlugMeta> = {
     eyebrow: "Habla con nosotros",
     subtitle:
       "¿Tienes una noticia, una propuesta o una duda? Estamos al otro lado para escucharte.",
-    cta: { label: "Escríbenos", href: "mailto:info@rollerzone.es", external: true },
+    cta: { label: "Escríbenos", href: "mailto:rollerzonespain@gmail.com", external: true },
   },
   colabora: {
     Icon: Handshake,
     eyebrow: "Únete al proyecto",
     subtitle:
       "Redactores, fotógrafos, clubes y federaciones: hay sitio para quien quiera empujar el patinaje.",
-    cta: { label: "Quiero colaborar", href: "mailto:info@rollerzone.es", external: true },
+    cta: { label: "Quiero colaborar", href: "mailto:rollerzonespain@gmail.com", external: true },
   },
   publicidad: {
     Icon: Megaphone,
     eyebrow: "Patrocinio y publicidad",
     subtitle:
       "Conecta tu marca con la comunidad del patinaje de velocidad en España y Latinoamérica.",
-    cta: { label: "Solicitar tarifas", href: "mailto:info@rollerzone.es", external: true },
+    cta: { label: "Solicitar tarifas", href: "mailto:rollerzonespain@gmail.com", external: true },
   },
 };
 
@@ -270,7 +270,7 @@ function AboutPage() {
             <ChevronRight className="h-4 w-4 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-gold" />
           </Link>
           <a
-            href="mailto:info@rollerzone.es"
+            href="mailto:rollerzonespain@gmail.com"
             className="group flex items-center justify-between rounded-lg border border-border bg-surface/50 px-5 py-4 transition-all hover:-translate-y-0.5 hover:border-gold/60 hover:bg-surface"
           >
             <div>
@@ -278,7 +278,7 @@ function AboutPage() {
                 Contacto directo
               </p>
               <p className="font-ui mt-0.5 text-sm font-semibold text-foreground">
-                info@rollerzone.es
+                rollerzonespain@gmail.com
               </p>
             </div>
             <Mail className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-gold" />

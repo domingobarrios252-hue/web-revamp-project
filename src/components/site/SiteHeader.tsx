@@ -67,7 +67,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-6 lg:flex">
+        <ul className="hidden items-center gap-3 md:flex lg:gap-6">
           <NavLink to="/">{t("nav.home")}</NavLink>
 
           {/* Noticias dropdown */}
@@ -202,7 +202,7 @@ export function SiteHeader() {
             </Link>
           )}
           <button
-            className="lg:hidden"
+            className="md:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={t("nav.menu")}
           >
@@ -215,12 +215,12 @@ export function SiteHeader() {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+            className="fixed inset-0 z-40 bg-black/60 md:hidden"
             onClick={() => setMobileOpen(false)}
             aria-hidden
           />
           <aside
-            className="fixed right-0 top-0 z-50 h-full w-[280px] border-l border-border bg-background shadow-xl transition-transform duration-200 lg:hidden"
+            className="fixed right-0 top-0 z-50 h-full w-[280px] border-l border-border bg-background shadow-xl transition-transform duration-200 md:hidden"
             role="dialog"
             aria-label={t("nav.menu")}
           >
