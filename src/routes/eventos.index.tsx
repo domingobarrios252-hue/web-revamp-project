@@ -150,11 +150,36 @@ function EventosPage() {
       </div>
 
       {events === null ? (
-        <p className="text-muted-foreground">Cargando eventos…</p>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="border border-border bg-surface">
+              <div className="aspect-[1/1.414] animate-pulse bg-surface-2" />
+              <div className="space-y-3 p-5">
+                <div className="h-3 w-20 animate-pulse bg-surface-2" />
+                <div className="h-5 w-3/4 animate-pulse bg-surface-2" />
+                <div className="h-3 w-1/2 animate-pulse bg-surface-2" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : events.length === 0 ? (
-        <p className="text-muted-foreground">Aún no hay eventos publicados.</p>
+        <EmptyEvents
+          title="Aún no hay eventos publicados"
+          message="Estamos preparando el calendario. Vuelve pronto para descubrir nuevas competiciones."
+        />
       ) : filtered.length === 0 ? (
-        <p className="text-muted-foreground">Ningún evento coincide con los filtros seleccionados.</p>
+        <EmptyEvents
+          title="Ningún evento coincide"
+          message="Prueba a limpiar los filtros para ver todos los eventos disponibles."
+          action={
+            <button
+              onClick={resetFilters}
+              className="font-condensed mt-6 inline-flex items-center gap-2 border border-gold px-4 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+            >
+              <X className="h-4 w-4" /> Limpiar filtros
+            </button>
+          }
+        />
       ) : (
         <>
           <Section title="Próximos eventos" items={upcoming} empty="No hay eventos programados próximamente." />
@@ -165,6 +190,21 @@ function EventosPage() {
           )}
         </>
       )}
+    </div>
+  );
+}
+
+function EmptyEvents({ title, message, action }: { title: string; message: string; action?: React.ReactNode }) {
+  return (
+    <div className="flex flex-col items-center justify-center border border-dashed border-border bg-surface px-6 py-16 text-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-gold/40 bg-background">
+        <CalendarX2 className="h-7 w-7 text-gold" aria-hidden="true" />
+      </div>
+      <h2 className="font-display text-2xl tracking-widest text-foreground">{title}</h2>
+      <p className="font-condensed mt-2 max-w-md text-sm uppercase tracking-wider text-muted-foreground">
+        {message}
+      </p>
+      {action}
     </div>
   );
 }
