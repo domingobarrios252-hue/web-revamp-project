@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Users, Filter, X } from "lucide-react";
+import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Users, Filter, X, CalendarX2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 
@@ -57,6 +57,12 @@ function EventosPage() {
 
   useEffect(() => {
     let cancelled = false;
+    // Timeout 5s → mostrar vacío si no carga
+    const timeout = setTimeout(() => {
+      if (!cancelled) {
+        setEvents((prev) => (prev === null ? [] : prev));
+      }
+    }, 5000);
     supabase
       .from("events")
       .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url")
@@ -66,7 +72,7 @@ function EventosPage() {
       .then(({ data }) => {
         if (!cancelled) setEvents((data as EventItem[]) ?? []);
       });
-    return () => { cancelled = true; };
+    return () => { cancelled = true; clearTimeout(timeout); };
   }, []);
 
   const { scopes, categories } = useMemo(() => {
@@ -144,11 +150,36 @@ function EventosPage() {
       </div>
 
       {events === null ? (
-        <p className="text-muted-foreground">Cargando eventos…</p>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="border border-border bg-surface">
+              <div className="aspect-[1/1.414] animate-pulse bg-surface-2" />
+              <div className="space-y-3 p-5">
+                <div className="h-3 w-20 animate-pulse bg-surface-2" />
+                <div className="h-5 w-3/4 animate-pulse bg-surface-2" />
+                <div className="h-3 w-1/2 animate-pulse bg-surface-2" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : events.length === 0 ? (
-        <p className="text-muted-foreground">Aún no hay eventos publicados.</p>
+        <EmptyEvents
+          title="Aún no hay eventos publicados"
+          message="Estamos preparando el calendario. Vuelve pronto para descubrir nuevas competiciones."
+        />
       ) : filtered.length === 0 ? (
-        <p className="text-muted-foreground">Ningún evento coincide con los filtros seleccionados.</p>
+        <EmptyEvents
+          title="Ningún evento coincide"
+          message="Prueba a limpiar los filtros para ver todos los eventos disponibles."
+          action={
+            <button
+              onClick={resetFilters}
+              className="font-condensed mt-6 inline-flex items-center gap-2 border border-gold px-4 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+            >
+              <X className="h-4 w-4" /> Limpiar filtros
+            </button>
+          }
+        />
       ) : (
         <>
           <Section title="Próximos eventos" items={upcoming} empty="No hay eventos programados próximamente." />
@@ -159,6 +190,21 @@ function EventosPage() {
           )}
         </>
       )}
+    </div>
+  );
+}
+
+function EmptyEvents({ title, message, action }: { title: string; message: string; action?: React.ReactNode }) {
+  return (
+    <div className="flex flex-col items-center justify-center border border-dashed border-border bg-surface px-6 py-16 text-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-gold/40 bg-background">
+        <CalendarX2 className="h-7 w-7 text-gold" aria-hidden="true" />
+      </div>
+      <h2 className="font-display text-2xl tracking-widest text-foreground">{title}</h2>
+      <p className="font-condensed mt-2 max-w-md text-sm uppercase tracking-wider text-muted-foreground">
+        {message}
+      </p>
+      {action}
     </div>
   );
 }
@@ -196,16 +242,29 @@ function Section({ title, items, empty, dim }: { title: string; items: EventItem
 }
 
 function EventCard({ event }: { event: EventItem }) {
+  const start = new Date(event.start_date + "T00:00:00");
+  const day = start.toLocaleDateString("es-ES", { day: "2-digit" });
+  const month = start.toLocaleDateString("es-ES", { month: "short" }).replace(".", "");
+  const year = start.getFullYear();
+
   return (
-    <article className="group flex flex-col border border-border bg-surface transition-colors hover:border-gold">
-      <Link to="/eventos/$slug" params={{ slug: event.slug }} className="block">
+    <article className="group relative flex flex-col overflow-hidden border border-border bg-surface pl-1 transition-colors hover:border-gold">
+      {/* Barra lateral dorada */}
+      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 bg-gold" />
+
+      <Link
+        to="/eventos/$slug"
+        params={{ slug: event.slug }}
+        className="relative block"
+        aria-label={`Ver detalle del evento ${event.name}`}
+      >
         {event.cover_url ? (
           <div className="relative aspect-[1/1.414] overflow-hidden bg-background">
-            {/* Fondo difuminado del cartel para rellenar márgenes */}
             <img
               src={event.cover_url}
               alt=""
               aria-hidden="true"
+              loading="lazy"
               className="absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-xl"
             />
             <img
@@ -214,26 +273,39 @@ function EventCard({ event }: { event: EventItem }) {
               loading="lazy"
               className="relative h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
             />
-            <span className="font-condensed absolute left-2 top-2 bg-background/85 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
-              Cartel
-            </span>
           </div>
         ) : (
           <div className="flex aspect-[1/1.414] items-center justify-center bg-background">
-            <Trophy className="h-12 w-12 text-muted-foreground/40" />
+            <Trophy className="h-12 w-12 text-muted-foreground/40" aria-hidden="true" />
           </div>
         )}
+
+        {/* Fecha destacada */}
+        <div className="absolute left-3 top-3 flex flex-col items-center border border-gold/40 bg-background/90 px-2 py-1 text-center backdrop-blur-sm">
+          <span className="font-display text-2xl leading-none tracking-wider text-gold">{day}</span>
+          <span className="font-condensed text-[9px] uppercase tracking-widest text-foreground">{month}</span>
+          <span className="font-condensed text-[9px] uppercase tracking-widest text-muted-foreground">{year}</span>
+        </div>
+
+        {/* Badge tipo evento dorado suave */}
+        {event.scope && (
+          <span className="font-condensed absolute right-3 top-3 border border-gold/40 bg-gold/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
+            {event.scope}
+          </span>
+        )}
       </Link>
+
       <div className="flex flex-1 flex-col p-5">
-        <div className="font-condensed text-[11px] uppercase tracking-widest text-gold">{event.scope}</div>
         <Link to="/eventos/$slug" params={{ slug: event.slug }}>
-          <h3 className="font-display mt-1 text-lg leading-tight tracking-wide hover:text-gold">{event.name}</h3>
+          <h3 className="font-display text-lg leading-tight tracking-wide text-foreground hover:text-gold">
+            {event.name}
+          </h3>
         </Link>
 
         <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" />{formatRange(event.start_date, event.end_date)}</div>
-          {event.location && <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" />{event.location}</div>}
-          {event.organizer && <div className="flex items-center gap-2"><Users className="h-3.5 w-3.5" />{event.organizer}</div>}
+          <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" aria-hidden="true" />{formatRange(event.start_date, event.end_date)}</div>
+          {event.location && <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" aria-hidden="true" />{event.location}</div>}
+          {event.organizer && <div className="flex items-center gap-2"><Users className="h-3.5 w-3.5" aria-hidden="true" />{event.organizer}</div>}
         </div>
 
         {event.categories?.length > 0 && (
@@ -256,8 +328,8 @@ function EventCard({ event }: { event: EventItem }) {
           {event.instagram_url && <ExternalLinkBtn href={event.instagram_url} icon={<Instagram className="h-3.5 w-3.5" />}>Instagram</ExternalLinkBtn>}
           {event.facebook_url && <ExternalLinkBtn href={event.facebook_url} icon={<Facebook className="h-3.5 w-3.5" />}>Facebook</ExternalLinkBtn>}
           {event.registration_url && (
-            <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="font-condensed ml-auto inline-flex items-center gap-1 bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-              Inscripción <ExternalLink className="h-3 w-3" />
+            <a href={event.registration_url} target="_blank" rel="noopener noreferrer" aria-label="Inscripción al evento" className="font-condensed ml-auto inline-flex items-center gap-1 bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
+              Inscripción <ExternalLink className="h-3 w-3" aria-hidden="true" />
             </a>
           )}
         </div>
