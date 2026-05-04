@@ -24,7 +24,7 @@ import {
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { supabase } from "@/integrations/supabase/client";
 
-const CONTACT_EMAIL = "info@rollerzone.es";
+const CONTACT_EMAIL = "rollerzonespain@gmail.com";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Info,
