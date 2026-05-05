@@ -161,10 +161,10 @@ export function LiveCenter() {
           )}
         </div>
 
-        {/* 2-column layout: left = tabs (schedule/results), right = TV */}
+        {/* 2-column layout: left = tabs (schedule/results), right = TV. On mobile TV first. */}
         <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           {/* LEFT: tabs */}
-          <div>
+          <div className="order-2 lg:order-1">
             <div
               role="tablist"
               aria-label="Live center"
