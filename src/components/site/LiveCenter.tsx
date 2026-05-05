@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { youTubeEmbedUrl } from "@/lib/youtube";
 
 type StreamRow = {
+  id: string;
   title: string;
   embed_url: string | null;
   is_active: boolean;
