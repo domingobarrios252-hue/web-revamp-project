@@ -192,6 +192,32 @@ function ArticlePage() {
         )}
       </div>
 
+      {Array.isArray(article.gallery) && article.gallery.length > 0 && (
+        <section className="mt-10">
+          <h3 className="font-display mb-4 text-sm uppercase tracking-widest text-gold">
+            Galería de fotos
+          </h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            {article.gallery.map((src, i) => (
+              <a
+                key={i}
+                href={src}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block overflow-hidden border border-border bg-surface"
+              >
+                <img
+                  src={src}
+                  alt={`${article.title} — foto ${i + 1}`}
+                  loading="lazy"
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Banner publicidad in-article */}
       <div className="mt-10">
         <AdBannerSmall placement="noticias_article" />
