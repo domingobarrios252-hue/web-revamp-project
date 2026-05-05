@@ -332,13 +332,29 @@ export function LiveCenter() {
 
           {/* RIGHT: TV */}
           <div className="order-1 lg:order-2">
-            <div className="font-condensed mb-4 inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-              <Radio className="h-3.5 w-3.5" /> Retransmisión
-              {isLive && (
-                <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground">
-                  <span className="live-dot h-1 w-1 rounded-full bg-foreground" />
-                  LIVE
-                </span>
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <div className="font-condensed inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
+                <Radio className="h-3.5 w-3.5" /> Retransmisión
+                {isLive && (
+                  <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground">
+                    <span className="live-dot h-1 w-1 rounded-full bg-foreground" />
+                    LIVE
+                  </span>
+                )}
+              </div>
+              {streams.length > 1 && (
+                <select
+                  aria-label="Cambiar retransmisión"
+                  value={stream?.id ?? ""}
+                  onChange={(e) => setSelectedStreamId(e.target.value)}
+                  className="font-condensed ml-auto border border-border bg-background px-3 py-2 text-[11px] font-bold uppercase tracking-[2px] text-foreground hover:border-gold focus:border-gold focus:outline-none"
+                >
+                  {streams.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.title}
+                    </option>
+                  ))}
+                </select>
               )}
             </div>
             <div className="border border-border bg-surface">
