@@ -195,7 +195,7 @@ function AboutPage() {
               </div>
               <div className="flex-1">
                 <h1 className="font-display text-4xl leading-none tracking-widest text-foreground md:text-6xl">
-                  {page.title.split(" ").map((word, idx, arr) => (
+                  {page.title.split(" ").map((word: string, idx: number, arr: string[]) => (
                     <span key={idx} className={idx === arr.length - 1 ? "text-gold" : ""}>
                       {word}
                       {idx < arr.length - 1 ? " " : ""}
