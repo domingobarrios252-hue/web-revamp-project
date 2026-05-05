@@ -198,7 +198,7 @@ function ArticlePage() {
             Galería de fotos
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {article.gallery.map((src, i) => (
+            {article.gallery.map((src: string, i: number) => (
               <a
                 key={i}
                 href={src}
