@@ -162,7 +162,7 @@ function HomePage() {
 
       <AdBannerWithMagazine placement="home_top" />
 
-      <LiveCenter />
+      <div id="live-center"><LiveCenter /></div>
 
       {/* ÚLTIMAS NOTICIAS — grid 3/2/1 */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
