@@ -161,10 +161,10 @@ export function LiveCenter() {
           )}
         </div>
 
-        {/* 2-column layout: left = tabs (schedule/results), right = TV */}
+        {/* 2-column layout: left = tabs (schedule/results), right = TV. On mobile TV first. */}
         <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           {/* LEFT: tabs */}
-          <div>
+          <div className="order-2 lg:order-1">
             <div
               role="tablist"
               aria-label="Live center"
@@ -325,7 +325,7 @@ export function LiveCenter() {
           </div>
 
           {/* RIGHT: TV */}
-          <div>
+          <div className="order-1 lg:order-2">
             <div className="font-condensed mb-4 inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
               <Radio className="h-3.5 w-3.5" /> Retransmisión
               {isLive && (
