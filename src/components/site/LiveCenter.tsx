@@ -42,7 +42,7 @@ export function LiveCenter() {
   const [schedule, setSchedule] = useState<ScheduleRow[]>([]);
   const [results, setResults] = useState<ResultRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<TabKey>("live");
+  const [tab, setTab] = useState<TabKey>("schedule");
 
   useEffect(() => {
     let cancelled = false;
