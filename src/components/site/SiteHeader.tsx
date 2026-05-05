@@ -1,25 +1,55 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, X, ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
+import { Menu, X, Search, ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { LanguageToggle } from "@/components/site/LanguageToggle";
-import { supabase } from "@/integrations/supabase/client";
+import logoUrl from "@/assets/rollerzone-logo.png";
 
-type CategoryItem = { name: string; slug: string; scope: string };
+const NAV_LINK =
+  "font-ui relative inline-flex h-14 items-center text-[13px] font-medium tracking-wide text-[#A0A0A0] transition-colors duration-200 hover:text-[#F5F5F5]";
+const NAV_ACTIVE =
+  "text-[#F5F5F5] after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:bg-[#D4A017]";
+const SUB_LINK =
+  "font-ui block py-1.5 text-sm text-[#F5F5F5]/85 hover:text-[#D4A017] transition-colors";
+const ACTION_BTN =
+  "font-ui inline-flex items-center gap-1.5 rounded-[6px] border border-[#D4A017] px-3 py-1.5 text-xs font-semibold tracking-wide text-[#D4A017] transition-colors duration-200 hover:bg-[#D4A017] hover:text-[#1A1A1A]";
 
-// Shared classes for top-level nav links — Inter
-const NAV_LINK = "font-ui relative inline-flex h-16 items-center text-sm font-medium tracking-normal text-[color:var(--muted-foreground)] transition-colors duration-200 hover:text-foreground";
-const NAV_LINK_TV = "font-ui relative inline-flex h-16 items-center text-sm font-semibold tracking-normal text-gold transition-colors duration-200 hover:text-[color:var(--gold-light)]";
-const NAV_ACTIVE = "text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-gold";
-const SUB_LINK = "font-ui text-sm font-normal text-foreground/85 hover:text-gold transition-colors duration-200";
-const ACTION_BTN = "font-ui inline-flex items-center gap-1.5 rounded-[8px] border border-gold px-3 py-1.5 text-xs font-semibold tracking-wide text-gold transition-colors duration-200 hover:bg-gold hover:text-background";
+type MegaItem = { label: string; to: string; hash?: string };
+type MegaKey = "eventos" | "resultados" | "revista";
+
+const MEGA: Record<MegaKey, { title: string; items: MegaItem[] }> = {
+  eventos: {
+    title: "Eventos",
+    items: [
+      { label: "Próximos eventos", to: "/eventos" },
+      { label: "Calendario internacional", to: "/eventos" },
+      { label: "Calendario nacional", to: "/eventos" },
+    ],
+  },
+  resultados: {
+    title: "Resultados",
+    items: [
+      { label: "Últimos resultados", to: "/", hash: "live-center" },
+      { label: "Rankings", to: "/", hash: "live-center" },
+      { label: "Premios MVP", to: "/premios-mvp" },
+    ],
+  },
+  revista: {
+    title: "Revista",
+    items: [
+      { label: "Último número", to: "/revista" },
+      { label: "Ediciones anteriores", to: "/revista" },
+    ],
+  },
+};
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [newsOpen, setNewsOpen] = useState(false);
-  const [nacional, setNacional] = useState<CategoryItem[]>([]);
-  const [internacional, setInternacional] = useState<CategoryItem[]>([]);
+  const [openMega, setOpenMega] = useState<MegaKey | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
   const { user, isEditor, signOut } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -27,157 +57,82 @@ export function SiteHeader() {
   useEffect(() => setMobileOpen(false), []);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const { data: newsRows } = await supabase
-        .from("news")
-        .select("category_id")
-        .eq("published", true)
-        .not("category_id", "is", null)
-        .limit(1000);
-      const usedIds = Array.from(new Set((newsRows ?? []).map((n) => n.category_id).filter(Boolean) as string[]));
-      if (usedIds.length === 0) {
-        if (!cancelled) { setNacional([]); setInternacional([]); }
-        return;
-      }
-      const { data: cats } = await supabase
-        .from("news_categories")
-        .select("name, slug, scope")
-        .in("id", usedIds)
-        .order("sort_order");
-      if (cancelled) return;
-      const list = (cats ?? []) as CategoryItem[];
-      setNacional(list.filter((c) => c.scope === "Nacional"));
-      setInternacional(list.filter((c) => c.scope === "Internacional"));
-    })();
-    return () => { cancelled = true; };
-  }, []);
+    if (searchOpen) searchRef.current?.focus();
+  }, [searchOpen]);
+
+  const onSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchOpen(false);
+    setMobileOpen(false);
+    navigate({ to: "/noticias" });
+    setSearchValue("");
+  };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background">
-      <nav className="flex h-14 md:h-16 items-center justify-between px-4 md:px-8">
-        <Link to="/" className="flex flex-col leading-none">
-          <span className="font-brand text-xl tracking-wide md:text-[22px]">
-            <span className="text-foreground">Roller</span>
-            <span className="text-gold">Zone</span>
-          </span>
-          <span className="font-ui mt-1 text-[10px] font-medium tracking-wide text-[color:var(--muted-foreground)]">
-            Revista de Patinaje de Velocidad
-          </span>
+    <header className="sticky top-0 z-50 border-b border-[#333] bg-[#1A1A1A]">
+      <nav className="flex h-14 items-center justify-between px-4 md:px-6">
+        {/* Logo */}
+        <Link to="/" className="flex items-center" aria-label="RollerZone — Inicio">
+          <img
+            src={logoUrl}
+            alt="RollerZone — Revista de Patinaje de Velocidad"
+            className="h-8 md:h-9 w-auto"
+            loading="eager"
+          />
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-3 md:flex lg:gap-6">
-          <NavLink to="/">{t("nav.home")}</NavLink>
-
-          {/* Noticias dropdown */}
-          <li
-            className="relative h-16 flex items-center"
-            onMouseEnter={() => setNewsOpen(true)}
-            onMouseLeave={() => setNewsOpen(false)}
-          >
-            <Link
-              to="/noticias"
-              className={`${NAV_LINK} flex items-center gap-1`}
-              activeProps={{ className: NAV_ACTIVE }}
-            >
-              {t("nav.news")} <ChevronDown className="h-3 w-3" />
+        <ul className="hidden items-center gap-1 lg:gap-3 md:flex">
+          <li>
+            <Link to="/" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }} activeOptions={{ exact: true }}>
+              {t("nav.home")}
             </Link>
-            {newsOpen && (nacional.length > 0 || internacional.length > 0) && (
-              <div className="absolute left-1/2 top-full w-[420px] -translate-x-1/2 pt-2">
-                <div className="rounded-[8px] border border-border bg-popover p-4">
-                  <div className="grid grid-cols-2 gap-6">
-                    {nacional.length > 0 && (
-                      <div>
-                        <div className="font-ui mb-2 text-xs font-bold uppercase tracking-wider text-gold">
-                          {t("nav.national")}
-                        </div>
-                        <ul className="space-y-1.5">
-                          {nacional.map((c) => (
-                            <li key={c.slug}>
-                              <Link
-                                to="/noticias/$slug"
-                                params={{ slug: c.slug }}
-                                className={SUB_LINK}
-                              >
-                                {c.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {internacional.length > 0 && (
-                      <div>
-                        <div className="font-ui mb-2 text-xs font-bold uppercase tracking-wider text-gold">
-                          {t("nav.international")}
-                        </div>
-                        <ul className="space-y-1.5">
-                          {internacional.map((c) => (
-                            <li key={c.slug}>
-                              <Link
-                                to="/noticias/$slug"
-                                params={{ slug: c.slug }}
-                                className={SUB_LINK}
-                              >
-                                {c.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                  <Link
-                    to="/noticias"
-                    className="font-ui mt-3 block border-t border-border pt-3 text-center text-xs font-semibold tracking-wide text-gold hover:text-[color:var(--gold-light)]"
-                  >
-                    {t("nav.newsAllShort")}
-                  </Link>
-                </div>
-              </div>
-            )}
           </li>
+          <li>
+            <Link to="/noticias" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
+              {t("nav.news")}
+            </Link>
+          </li>
+
+          <MegaItemLi keyName="eventos" openMega={openMega} setOpenMega={setOpenMega}>
+            <Link to="/eventos" className={NAV_LINK + " gap-1"} activeProps={{ className: NAV_ACTIVE }}>
+              Eventos <ChevronDown className="h-3 w-3" />
+            </Link>
+          </MegaItemLi>
+
+          <MegaItemLi keyName="resultados" openMega={openMega} setOpenMega={setOpenMega}>
+            <a href="/#live-center" className={NAV_LINK + " gap-1"}>
+              Resultados <ChevronDown className="h-3 w-3" />
+            </a>
+          </MegaItemLi>
+
+          <MegaItemLi keyName="revista" openMega={openMega} setOpenMega={setOpenMega}>
+            <Link to="/revista" className={NAV_LINK + " gap-1"} activeProps={{ className: NAV_ACTIVE }}>
+              Revista <ChevronDown className="h-3 w-3" />
+            </Link>
+          </MegaItemLi>
 
           <li>
             <Link to="/premios-mvp" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
-              {t("nav.mvpAwards")}
+              MVP
             </Link>
           </li>
-          <li>
-            <Link to="/entrevistas" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
-              {t("nav.interviews")}
-            </Link>
-          </li>
-          <li>
-            <Link to="/eventos" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
-              {t("nav.events")}
-            </Link>
-          </li>
-          <li>
-            <Link to="/tv" className={NAV_LINK_TV} activeProps={{ className: NAV_ACTIVE }}>
-              {t("nav.tv")}
-            </Link>
-          </li>
-          <li>
-            <Link to="/revista" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
-              {t("nav.magazine")}
-            </Link>
-          </li>
-          <li>
-            <Link to="/patrocinadores" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
-              {t("nav.sponsors")}
-            </Link>
-          </li>
-          <NavLink to="/" hash="equipo">{t("nav.team")}</NavLink>
         </ul>
 
+        {/* Right actions */}
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSearchOpen((v) => !v)}
+            aria-label="Buscar"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-[6px] border border-transparent text-[#A0A0A0] hover:text-[#D4A017] hover:border-[#333] transition-colors"
+          >
+            <Search className="h-4 w-4" />
+          </button>
           <LanguageToggle className="hidden md:inline-flex" />
           {isEditor && (
             <Link
               to="/admin"
-              className="font-ui hidden items-center gap-1.5 border border-border px-3 py-1.5 text-xs font-semibold tracking-wide text-gold transition-colors hover:bg-gold hover:text-background md:inline-flex"
+              className="font-ui hidden items-center gap-1.5 rounded-[6px] border border-[#333] px-3 py-1.5 text-xs font-semibold tracking-wide text-[#D4A017] transition-colors hover:bg-[#D4A017] hover:text-[#1A1A1A] md:inline-flex"
             >
               <LayoutDashboard className="h-3.5 w-3.5" /> {t("nav.admin")}
             </Link>
@@ -194,15 +149,12 @@ export function SiteHeader() {
               <LogOut className="h-3.5 w-3.5" /> {t("nav.logout")}
             </button>
           ) : (
-            <Link
-              to="/auth"
-              className={`${ACTION_BTN} hidden md:inline-flex`}
-            >
+            <Link to="/auth" className={`${ACTION_BTN} hidden md:inline-flex`}>
               {t("nav.access")}
             </Link>
           )}
           <button
-            className="md:hidden"
+            className="md:hidden inline-flex h-9 w-9 items-center justify-center text-[#F5F5F5]"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={t("nav.menu")}
           >
@@ -211,7 +163,61 @@ export function SiteHeader() {
         </div>
       </nav>
 
-      {/* Mobile slide-in panel from right */}
+      {/* Search bar */}
+      {searchOpen && (
+        <div className="border-t border-[#333] bg-[#242424]">
+          <form onSubmit={onSearchSubmit} className="mx-auto flex max-w-3xl items-center gap-2 px-4 py-3">
+            <Search className="h-4 w-4 text-[#A0A0A0]" />
+            <input
+              ref={searchRef}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder="Buscar noticias, eventos, atletas…"
+              className="flex-1 bg-transparent text-sm text-[#F5F5F5] placeholder:text-[#666] focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => setSearchOpen(false)}
+              aria-label="Cerrar"
+              className="text-[#A0A0A0] hover:text-[#F5F5F5]"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Mega menu dropdown panels */}
+      {openMega && (
+        <div
+          onMouseEnter={() => setOpenMega(openMega)}
+          onMouseLeave={() => setOpenMega(null)}
+          className="absolute left-0 right-0 hidden border-t border-[#333] bg-[#1A1A1A] shadow-lg md:block"
+        >
+          <div className="mx-auto max-w-7xl px-6 py-5">
+            <div className="text-[11px] font-bold uppercase tracking-widest text-[#D4A017] mb-3">
+              {MEGA[openMega].title}
+            </div>
+            <ul className="grid grid-cols-3 gap-x-8 gap-y-1">
+              {MEGA[openMega].items.map((item) => (
+                <li key={item.label}>
+                  {item.hash ? (
+                    <a href={`${item.to}#${item.hash}`} className={SUB_LINK} onClick={() => setOpenMega(null)}>
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link to={item.to} className={SUB_LINK} onClick={() => setOpenMega(null)}>
+                      {item.label}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile slide-in panel */}
       {mobileOpen && (
         <>
           <div
@@ -220,80 +226,44 @@ export function SiteHeader() {
             aria-hidden
           />
           <aside
-            className="fixed right-0 top-0 z-50 h-full w-[280px] border-l border-border bg-background shadow-xl transition-transform duration-200 md:hidden"
+            className="fixed right-0 top-0 z-50 h-full w-[300px] border-l border-[#333] bg-[#1A1A1A] shadow-xl md:hidden"
             role="dialog"
             aria-label={t("nav.menu")}
           >
-            <div className="flex h-14 items-center justify-between border-b border-border px-4">
-              <span className="font-brand text-lg">
-                <span className="text-foreground">Roller</span>
-                <span className="text-gold">Zone</span>
-              </span>
-              <button
-                onClick={() => setMobileOpen(false)}
-                aria-label="Cerrar"
-                className="text-foreground/85 hover:text-gold"
-              >
+            <div className="flex h-14 items-center justify-between border-b border-[#333] px-4">
+              <img src={logoUrl} alt="RollerZone" className="h-7 w-auto" />
+              <button onClick={() => setMobileOpen(false)} aria-label="Cerrar" className="text-[#F5F5F5]">
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <div className="flex flex-col gap-1 px-4 py-3">
+            <div className="flex flex-col gap-1 px-4 py-4">
               <MobileLink to="/" onClick={() => setMobileOpen(false)}>{t("nav.home")}</MobileLink>
-              <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>
-                {t("nav.newsAll")}
-              </MobileLink>
-              {(nacional.length > 0 || internacional.length > 0) && (
-                <div className="ml-3 space-y-1 border-l border-border pl-3 text-xs">
-                  {nacional.length > 0 && (
-                    <>
-                      <div className="font-ui pt-2 text-xs font-bold uppercase tracking-wider text-gold">{t("nav.national")}</div>
-                      {nacional.map((c) => (
-                        <Link
-                          key={c.slug}
-                          to="/noticias/$slug"
-                          params={{ slug: c.slug }}
-                          onClick={() => setMobileOpen(false)}
-                          className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
-                        >
-                          {c.name}
-                        </Link>
-                      ))}
-                    </>
-                  )}
-                  {internacional.length > 0 && (
-                    <>
-                      <div className="font-ui pt-2 text-xs font-bold uppercase tracking-wider text-gold">{t("nav.international")}</div>
-                      {internacional.map((c) => (
-                        <Link
-                          key={c.slug}
-                          to="/noticias/$slug"
-                          params={{ slug: c.slug }}
-                          onClick={() => setMobileOpen(false)}
-                          className="font-ui block py-1 text-sm text-foreground/85 hover:text-gold"
-                        >
-                          {c.name}
-                        </Link>
-                      ))}
-                    </>
-                  )}
-                </div>
-              )}
+              <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>{t("nav.news")}</MobileLink>
+              <MobileLink to="/eventos" onClick={() => setMobileOpen(false)}>Eventos</MobileLink>
+              <a
+                href="/#live-center"
+                onClick={() => setMobileOpen(false)}
+                className="font-ui py-3 text-base font-semibold text-[#F5F5F5] hover:text-[#D4A017] border-b border-[#333]"
+              >
+                Resultados
+              </a>
+              <MobileLink to="/revista" onClick={() => setMobileOpen(false)}>Revista</MobileLink>
+              <MobileLink to="/premios-mvp" onClick={() => setMobileOpen(false)}>MVP</MobileLink>
+              <MobileLink to="/entrevistas" onClick={() => setMobileOpen(false)}>{t("nav.interviews")}</MobileLink>
+              <MobileLink to="/tv" onClick={() => setMobileOpen(false)}>{t("nav.tv")}</MobileLink>
+              <MobileLink to="/patrocinadores" onClick={() => setMobileOpen(false)}>{t("nav.sponsors")}</MobileLink>
 
-              <Link to="/premios-mvp" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.mvpAwards")}</Link>
-              <Link to="/entrevistas" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.interviews")}</Link>
-              <Link to="/eventos" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.events")}</Link>
-              <Link to="/tv" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-semibold text-gold hover:text-[color:var(--gold-light)]">{t("nav.tv")}</Link>
-              <Link to="/revista" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.magazine")}</Link>
-              <Link to="/patrocinadores" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.sponsors")}</Link>
-              <a href="/#equipo" onClick={() => setMobileOpen(false)} className="font-ui py-2 text-sm font-medium text-foreground/85 hover:text-gold">{t("nav.team")}</a>
-
-              <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
+              <div className="mt-4 flex items-center justify-between border-t border-[#333] pt-4">
                 <LanguageToggle />
               </div>
 
-              <div className="mt-2 flex flex-col gap-2">
+              <div className="mt-3 flex flex-col gap-2">
                 {isEditor && (
-                  <Link to="/admin" onClick={() => setMobileOpen(false)} className="font-ui rounded-[8px] border border-border px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold">
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileOpen(false)}
+                    className="font-ui rounded-[6px] border border-[#333] px-3 py-2 text-center text-xs font-semibold tracking-wide text-[#D4A017]"
+                  >
                     {t("nav.admin")}
                   </Link>
                 )}
@@ -304,12 +274,16 @@ export function SiteHeader() {
                       setMobileOpen(false);
                       navigate({ to: "/" });
                     }}
-                    className="font-ui rounded-[8px] border border-border px-3 py-2 text-xs font-semibold tracking-wide text-foreground/85"
+                    className="font-ui rounded-[6px] border border-[#333] px-3 py-2 text-xs font-semibold tracking-wide text-[#F5F5F5]"
                   >
                     {t("nav.logoutLong")}
                   </button>
                 ) : (
-                  <Link to="/auth" onClick={() => setMobileOpen(false)} className="font-ui rounded-[8px] border border-gold px-3 py-2 text-center text-xs font-semibold tracking-wide text-gold hover:bg-gold hover:text-background">
+                  <Link
+                    to="/auth"
+                    onClick={() => setMobileOpen(false)}
+                    className="font-ui rounded-[6px] border border-[#D4A017] px-3 py-2 text-center text-xs font-semibold tracking-wide text-[#D4A017] hover:bg-[#D4A017] hover:text-[#1A1A1A]"
+                  >
                     {t("nav.accessAdmin")}
                   </Link>
                 )}
@@ -322,36 +296,43 @@ export function SiteHeader() {
   );
 }
 
-function NavLink({ to, hash, children }: { to: "/"; hash?: string; children: React.ReactNode }) {
-  if (hash) {
-    return (
-      <li>
-        <a href={`/#${hash}`} className={NAV_LINK}>
-          {children}
-        </a>
-      </li>
-    );
-  }
+function MegaItemLi({
+  keyName,
+  openMega,
+  setOpenMega,
+  children,
+}: {
+  keyName: MegaKey;
+  openMega: MegaKey | null;
+  setOpenMega: (k: MegaKey | null) => void;
+  children: React.ReactNode;
+}) {
   return (
-    <li>
-      <Link
-        to={to}
-        className={NAV_LINK}
-        activeProps={{ className: NAV_ACTIVE }}
-        activeOptions={{ exact: true }}
-      >
-        {children}
-      </Link>
+    <li
+      className="relative h-14 flex items-center"
+      onMouseEnter={() => setOpenMega(keyName)}
+      onMouseLeave={() => setOpenMega(null)}
+    >
+      {children}
+      {openMega === keyName && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-[#D4A017]" />}
     </li>
   );
 }
 
-function MobileLink({ to, onClick, children }: { to: "/" | "/noticias" | "/eventos" | "/tv" | "/revista" | "/patrocinadores" | "/premios-mvp" | "/entrevistas"; onClick: () => void; children: React.ReactNode }) {
+function MobileLink({
+  to,
+  onClick,
+  children,
+}: {
+  to: "/" | "/noticias" | "/eventos" | "/tv" | "/revista" | "/patrocinadores" | "/premios-mvp" | "/entrevistas";
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <Link
       to={to}
       onClick={onClick}
-      className="font-ui py-2 text-sm font-semibold text-foreground hover:text-gold"
+      className="font-ui py-3 text-base font-semibold text-[#F5F5F5] hover:text-[#D4A017] border-b border-[#333]"
     >
       {children}
     </Link>
