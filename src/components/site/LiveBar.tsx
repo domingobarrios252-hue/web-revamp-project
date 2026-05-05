@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+
 import { supabase } from "@/integrations/supabase/client";
 
 type LiveItem = { id: string; event_name: string; category: string | null; location: string | null };
@@ -40,9 +40,8 @@ export function LiveBar() {
           <span className="text-[11px] font-bold uppercase tracking-widest text-white">EN DIRECTO</span>
         </div>
         <div className="flex-1 overflow-x-auto whitespace-nowrap">
-          <Link
-            to="/"
-            hash="live-center"
+          <a
+            href="/#live-center"
             className="inline-flex items-center gap-6 px-4 text-xs font-semibold text-white hover:text-[#D4A017] transition-colors"
           >
             {items.map((it) => (
@@ -52,7 +51,7 @@ export function LiveBar() {
                 <span className="text-[#D4A017]">→ Ver resultados</span>
               </span>
             ))}
-          </Link>
+          </a>
         </div>
       </div>
     </div>
