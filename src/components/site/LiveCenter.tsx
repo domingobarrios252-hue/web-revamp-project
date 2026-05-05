@@ -39,11 +39,17 @@ const FALLBACK_TITLE = "RollerZone Live Center";
 type TabKey = "schedule" | "results";
 
 export function LiveCenter() {
-  const [stream, setStream] = useState<StreamRow | null>(null);
+  const [streams, setStreams] = useState<StreamRow[]>([]);
+  const [selectedStreamId, setSelectedStreamId] = useState<string | null>(null);
   const [schedule, setSchedule] = useState<ScheduleRow[]>([]);
   const [results, setResults] = useState<ResultRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabKey>("schedule");
+
+  const stream = useMemo(
+    () => streams.find((s) => s.id === selectedStreamId) ?? streams[0] ?? null,
+    [streams, selectedStreamId]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -51,11 +57,10 @@ export function LiveCenter() {
       const [streamRes, scheduleRes, resultsRes] = await Promise.all([
         supabase
           .from("live_stream")
-          .select("title, embed_url, is_active, autoplay")
+          .select("id, title, embed_url, is_active, autoplay")
           .eq("is_active", true)
           .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
+          .limit(20),
         supabase
           .from("schedule_items")
           .select("id, event_name, category, location, scheduled_at, status")
@@ -71,7 +76,7 @@ export function LiveCenter() {
           .limit(80),
       ]);
       if (cancelled) return;
-      setStream((streamRes.data as StreamRow | null) ?? null);
+      setStreams((streamRes.data as StreamRow[]) ?? []);
       setSchedule((scheduleRes.data as ScheduleRow[]) ?? []);
       setResults((resultsRes.data as ResultRow[]) ?? []);
       setLoading(false);
