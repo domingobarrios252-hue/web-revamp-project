@@ -102,6 +102,41 @@ export function SiteFooter() {
         Pie de página
       </h2>
       <div className="mx-auto max-w-7xl px-6 py-12">
+        {/* Subscription bar */}
+        <div className="mb-10 flex flex-col gap-4 border border-[#333] bg-[#1A1A1A] p-5 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="font-display text-base tracking-widest text-[#F5F5F5]">
+              Suscríbete a la newsletter
+            </div>
+            <p className="mt-1 text-xs text-[#A0A0A0]">
+              Recibe lo mejor del patinaje de velocidad cada semana.
+            </p>
+          </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const email = new FormData(e.currentTarget).get("email");
+              window.location.href = `mailto:${CONTACT_EMAIL}?subject=Suscripción newsletter&body=Quiero suscribirme: ${email}`;
+            }}
+            className="flex w-full max-w-md gap-2"
+          >
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="tu@email.com"
+              aria-label="Email"
+              className="flex-1 border border-[#333] bg-[#0F0F0F] px-3 py-2 text-sm text-[#F5F5F5] placeholder:text-[#666] focus:border-[#D4A017] focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="border border-[#D4A017] bg-transparent px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#D4A017] transition-colors hover:bg-[#D4A017] hover:text-[#1A1A1A]"
+            >
+              Suscribirme
+            </button>
+          </form>
+        </div>
+
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           {/* 1. Logo + redes */}
           <div>
