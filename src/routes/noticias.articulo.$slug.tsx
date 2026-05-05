@@ -15,6 +15,7 @@ type Article = {
   author: string;
   legacy_tag: string | null;
   image_url: string | null;
+  gallery: string[] | null;
   read_minutes: number | null;
   views_count: number;
   published_at: string;
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, legacy_tag, image_url, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, legacy_tag, image_url, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .eq("published", true)
@@ -190,6 +191,32 @@ function ArticlePage() {
           paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
         )}
       </div>
+
+      {Array.isArray(article.gallery) && article.gallery.length > 0 && (
+        <section className="mt-10">
+          <h3 className="font-display mb-4 text-sm uppercase tracking-widest text-gold">
+            Galería de fotos
+          </h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            {article.gallery.map((src: string, i: number) => (
+              <a
+                key={i}
+                href={src}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block overflow-hidden border border-border bg-surface"
+              >
+                <img
+                  src={src}
+                  alt={`${article.title} — foto ${i + 1}`}
+                  loading="lazy"
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Banner publicidad in-article */}
       <div className="mt-10">

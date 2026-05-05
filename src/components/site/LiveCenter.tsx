@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { youTubeEmbedUrl } from "@/lib/youtube";
 
 type StreamRow = {
+  id: string;
   title: string;
   embed_url: string | null;
   is_active: boolean;
@@ -38,11 +39,17 @@ const FALLBACK_TITLE = "RollerZone Live Center";
 type TabKey = "schedule" | "results";
 
 export function LiveCenter() {
-  const [stream, setStream] = useState<StreamRow | null>(null);
+  const [streams, setStreams] = useState<StreamRow[]>([]);
+  const [selectedStreamId, setSelectedStreamId] = useState<string | null>(null);
   const [schedule, setSchedule] = useState<ScheduleRow[]>([]);
   const [results, setResults] = useState<ResultRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabKey>("schedule");
+
+  const stream = useMemo(
+    () => streams.find((s) => s.id === selectedStreamId) ?? streams[0] ?? null,
+    [streams, selectedStreamId]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -50,11 +57,10 @@ export function LiveCenter() {
       const [streamRes, scheduleRes, resultsRes] = await Promise.all([
         supabase
           .from("live_stream")
-          .select("title, embed_url, is_active, autoplay")
+          .select("id, title, embed_url, is_active, autoplay")
           .eq("is_active", true)
           .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
+          .limit(20),
         supabase
           .from("schedule_items")
           .select("id, event_name, category, location, scheduled_at, status")
@@ -70,7 +76,7 @@ export function LiveCenter() {
           .limit(80),
       ]);
       if (cancelled) return;
-      setStream((streamRes.data as StreamRow | null) ?? null);
+      setStreams((streamRes.data as StreamRow[]) ?? []);
       setSchedule((scheduleRes.data as ScheduleRow[]) ?? []);
       setResults((resultsRes.data as ResultRow[]) ?? []);
       setLoading(false);
@@ -110,7 +116,7 @@ export function LiveCenter() {
   const upcoming = schedule.filter((s) => s.status !== "finalizada");
   const isLive = !!stream?.is_active;
 
-  if (!loading && !stream && schedule.length === 0 && results.length === 0) return null;
+  if (!loading && streams.length === 0 && schedule.length === 0 && results.length === 0) return null;
 
   const embed = getEmbedUrl(stream?.embed_url, stream?.autoplay);
   const eventSlug = featuredGroup[0]?.slug;
@@ -326,13 +332,29 @@ export function LiveCenter() {
 
           {/* RIGHT: TV */}
           <div className="order-1 lg:order-2">
-            <div className="font-condensed mb-4 inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-              <Radio className="h-3.5 w-3.5" /> Retransmisión
-              {isLive && (
-                <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground">
-                  <span className="live-dot h-1 w-1 rounded-full bg-foreground" />
-                  LIVE
-                </span>
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <div className="font-condensed inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
+                <Radio className="h-3.5 w-3.5" /> Retransmisión
+                {isLive && (
+                  <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground">
+                    <span className="live-dot h-1 w-1 rounded-full bg-foreground" />
+                    LIVE
+                  </span>
+                )}
+              </div>
+              {streams.length > 1 && (
+                <select
+                  aria-label="Cambiar retransmisión"
+                  value={stream?.id ?? ""}
+                  onChange={(e) => setSelectedStreamId(e.target.value)}
+                  className="font-condensed ml-auto border border-border bg-background px-3 py-2 text-[11px] font-bold uppercase tracking-[2px] text-foreground hover:border-gold focus:border-gold focus:outline-none"
+                >
+                  {streams.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.title}
+                    </option>
+                  ))}
+                </select>
               )}
             </div>
             <div className="border border-border bg-surface">
