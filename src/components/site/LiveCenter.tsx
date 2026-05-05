@@ -115,8 +115,7 @@ export function LiveCenter() {
   const embed = getEmbedUrl(stream?.embed_url, stream?.autoplay);
   const eventSlug = featuredGroup[0]?.slug;
 
-  const tabs: { key: TabKey; label: string; icon: React.ReactNode; live?: boolean }[] = [
-    { key: "live", label: "En directo", icon: <Radio className="h-3.5 w-3.5" />, live: isLive },
+  const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
     { key: "schedule", label: "Próximas pruebas", icon: <CalendarClock className="h-3.5 w-3.5" /> },
     { key: "results", label: "Resultados", icon: <Trophy className="h-3.5 w-3.5" /> },
   ];
@@ -162,203 +161,213 @@ export function LiveCenter() {
           )}
         </div>
 
-        {/* Tabs */}
-        <div
-          role="tablist"
-          aria-label="Live center"
-          className="hide-scrollbar -mx-1 mb-5 flex gap-2 overflow-x-auto px-1"
-        >
-          {tabs.map((t) => {
-            const active = tab === t.key;
-            return (
-              <button
-                key={t.key}
-                role="tab"
-                aria-selected={active}
-                onClick={() => setTab(t.key)}
-                className={
-                  "font-condensed relative inline-flex shrink-0 items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-[2.5px] transition-colors " +
-                  (active
-                    ? "border border-gold bg-gold text-background"
-                    : "border border-border bg-background text-muted-foreground hover:border-gold hover:text-gold")
-                }
-              >
-                {t.icon}
-                {t.label}
-                {t.live && (
-                  <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground">
-                    <span className="live-dot h-1 w-1 rounded-full bg-foreground" />
-                    LIVE
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        {/* 2-column layout: left = tabs (schedule/results), right = TV */}
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+          {/* LEFT: tabs */}
+          <div>
+            <div
+              role="tablist"
+              aria-label="Live center"
+              className="hide-scrollbar -mx-1 mb-4 flex gap-2 overflow-x-auto px-1"
+            >
+              {tabs.map((t) => {
+                const active = tab === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setTab(t.key)}
+                    className={
+                      "font-condensed relative inline-flex shrink-0 items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-[2.5px] transition-colors " +
+                      (active
+                        ? "border border-gold bg-gold text-background"
+                        : "border border-border bg-background text-muted-foreground hover:border-gold hover:text-gold")
+                    }
+                  >
+                    {t.icon}
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
 
-        {/* Tab content */}
-        <div className="border border-border bg-surface">
-          {tab === "live" && (
-            <div className="aspect-video bg-background">
-              {embed?.type === "iframe" ? (
-                <iframe
-                  src={embed.src}
-                  title="Retransmisión RollerZone"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                  className="h-full w-full"
-                />
-              ) : embed?.type === "link" ? (
-                <a
-                  href={embed.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground transition-colors hover:text-gold"
-                >
-                  <ExternalLink className="h-10 w-10" /> Abrir retransmisión externa
-                </a>
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center text-muted-foreground">
-                  <Play className="h-10 w-10 text-gold" />
-                  <p className="font-condensed text-xs uppercase tracking-widest">
-                    Sin retransmisión activa
-                  </p>
-                  <p className="text-xs text-muted-foreground/80">
-                    Volveremos en directo durante la próxima prueba programada.
-                  </p>
+            <div className="border border-border bg-surface">
+              {tab === "schedule" && (
+                <div className="overflow-x-auto p-4">
+                  {loading ? (
+                    <ScheduleSkeleton />
+                  ) : upcoming.length === 0 ? (
+                    <EmptyState
+                      icon={<CalendarClock className="h-8 w-8 text-gold" />}
+                      title="Sin pruebas programadas"
+                      text="No hay pruebas próximas publicadas. Vuelve pronto."
+                    />
+                  ) : (
+                    <table className="w-full min-w-[480px] border-separate border-spacing-y-1">
+                      <thead>
+                        <tr className="font-condensed text-[10px] uppercase tracking-[2.5px] text-muted-foreground">
+                          <th className="w-20 px-3 py-2 text-left">Hora</th>
+                          <th className="px-3 py-2 text-left">Evento</th>
+                          <th className="px-3 py-2 text-left">Categoría</th>
+                          <th className="w-24 px-3 py-2 text-right">Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {upcoming.map((item) => (
+                          <tr key={item.id} className="bg-background">
+                            <td className="px-3 py-3 align-middle font-mono text-sm font-bold text-gold">
+                              {formatTime(item.scheduled_at)}
+                            </td>
+                            <td className="px-3 py-3 align-middle">
+                              <div className="font-display text-sm uppercase tracking-wider text-foreground">
+                                {item.event_name}
+                              </div>
+                              {item.location && (
+                                <div className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                                  {item.location}
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-3 py-3 align-middle">
+                              <span className="font-condensed text-xs uppercase tracking-wider text-foreground/80">
+                                {item.category || "—"}
+                              </span>
+                            </td>
+                            <td className="px-3 py-3 text-right align-middle">
+                              <ScheduleStatusBadge status={item.status} />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               )}
-            </div>
-          )}
 
-          {tab === "schedule" && (
-            <div className="overflow-x-auto p-4">
-              {loading ? (
-                <ScheduleSkeleton />
-              ) : upcoming.length === 0 ? (
-                <EmptyState
-                  icon={<CalendarClock className="h-8 w-8 text-gold" />}
-                  title="Sin pruebas programadas"
-                  text="No hay pruebas próximas publicadas. Vuelve pronto."
-                />
-              ) : (
-                <table className="w-full min-w-[640px] border-separate border-spacing-y-1">
-                  <thead>
-                    <tr className="font-condensed text-[10px] uppercase tracking-[2.5px] text-muted-foreground">
-                      <th className="w-20 px-3 py-2 text-left">Hora</th>
-                      <th className="px-3 py-2 text-left">Evento</th>
-                      <th className="px-3 py-2 text-left">Prueba / Categoría</th>
-                      <th className="w-28 px-3 py-2 text-right">Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {upcoming.map((item) => (
-                      <tr key={item.id} className="bg-background">
-                        <td className="px-3 py-3 align-middle font-mono text-sm font-bold text-gold">
-                          {formatTime(item.scheduled_at)}
-                        </td>
-                        <td className="px-3 py-3 align-middle">
-                          <div className="font-display text-base uppercase tracking-wider text-foreground">
-                            {item.event_name}
-                          </div>
-                          {item.location && (
-                            <div className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                              {item.location}
+              {tab === "results" && (
+                <div className="overflow-x-auto p-4">
+                  {loading ? (
+                    <ResultsSkeleton />
+                  ) : featuredGroup.length === 0 ? (
+                    <EmptyState
+                      icon={<Trophy className="h-8 w-8 text-gold" />}
+                      title="Sin clasificaciones"
+                      text="Aún no se han publicado resultados."
+                    />
+                  ) : (
+                    <div className="space-y-6">
+                      {featuredGroup.slice(0, 3).map((g) => {
+                        const isLiveGroup = g.rows.some((r) => r.status === "en_vivo");
+                        return (
+                          <div key={g.title}>
+                            <div className="mb-2 flex items-center justify-between gap-3">
+                              <h3 className="font-display truncate text-base uppercase tracking-wider">
+                                {g.title}
+                              </h3>
+                              {isLiveGroup ? (
+                                <span className="font-condensed inline-flex items-center gap-1 bg-tv-red px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-foreground">
+                                  <span className="live-dot h-1.5 w-1.5 rounded-full bg-foreground" />
+                                  Live
+                                </span>
+                              ) : (
+                                <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+                                  Final
+                                </span>
+                              )}
                             </div>
-                          )}
-                        </td>
-                        <td className="px-3 py-3 align-middle">
-                          <span className="font-condensed text-xs uppercase tracking-wider text-foreground/80">
-                            {item.category || "—"}
-                          </span>
-                        </td>
-                        <td className="px-3 py-3 text-right align-middle">
-                          <ScheduleStatusBadge status={item.status} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          )}
-
-          {tab === "results" && (
-            <div className="overflow-x-auto p-4">
-              {loading ? (
-                <ResultsSkeleton />
-              ) : featuredGroup.length === 0 ? (
-                <EmptyState
-                  icon={<Trophy className="h-8 w-8 text-gold" />}
-                  title="Sin clasificaciones"
-                  text="Aún no se han publicado resultados."
-                />
-              ) : (
-                <div className="space-y-6">
-                  {featuredGroup.slice(0, 3).map((g) => {
-                    const isLiveGroup = g.rows.some((r) => r.status === "en_vivo");
-                    return (
-                      <div key={g.title}>
-                        <div className="mb-2 flex items-center justify-between gap-3">
-                          <h3 className="font-display truncate text-lg uppercase tracking-wider">
-                            {g.title}
-                          </h3>
-                          {isLiveGroup ? (
-                            <span className="font-condensed inline-flex items-center gap-1 bg-tv-red px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-foreground">
-                              <span className="live-dot h-1.5 w-1.5 rounded-full bg-foreground" />
-                              Live
-                            </span>
-                          ) : (
-                            <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
-                              Final
-                            </span>
-                          )}
-                        </div>
-                        <table className="w-full min-w-[560px] border-separate border-spacing-y-1">
-                          <thead>
-                            <tr className="font-condensed text-[10px] uppercase tracking-[2.5px] text-muted-foreground">
-                              <th className="w-12 px-3 py-2 text-left">Pos</th>
-                              <th className="px-3 py-2 text-left">Atleta</th>
-                              <th className="px-3 py-2 text-left">Club</th>
-                              <th className="w-28 px-3 py-2 text-right">Tiempo</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {g.rows.slice(0, 8).map((row) => {
-                              const podium = row.position <= 3;
-                              return (
-                                <tr key={row.id} className="bg-background">
-                                  <td className="px-3 py-2.5 align-middle">
-                                    <span
-                                      className={
-                                        "font-mono text-sm font-bold " +
-                                        (podium ? "text-gold" : "text-foreground/70")
-                                      }
-                                    >
-                                      {row.position}
-                                    </span>
-                                  </td>
-                                  <td className="px-3 py-2.5 align-middle text-sm font-semibold text-foreground">
-                                    {row.athlete_name}
-                                  </td>
-                                  <td className="px-3 py-2.5 align-middle text-xs text-muted-foreground">
-                                    {row.club || "—"}
-                                  </td>
-                                  <td className="px-3 py-2.5 text-right align-middle font-mono text-xs text-foreground/80">
-                                    {row.race_time || "—"}
-                                  </td>
+                            <table className="w-full min-w-[420px] border-separate border-spacing-y-1">
+                              <thead>
+                                <tr className="font-condensed text-[10px] uppercase tracking-[2.5px] text-muted-foreground">
+                                  <th className="w-12 px-3 py-2 text-left">Pos</th>
+                                  <th className="px-3 py-2 text-left">Atleta</th>
+                                  <th className="px-3 py-2 text-left">Club</th>
+                                  <th className="w-24 px-3 py-2 text-right">Tiempo</th>
                                 </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    );
-                  })}
+                              </thead>
+                              <tbody>
+                                {g.rows.slice(0, 8).map((row) => {
+                                  const podium = row.position <= 3;
+                                  return (
+                                    <tr key={row.id} className="bg-background">
+                                      <td className="px-3 py-2.5 align-middle">
+                                        <span
+                                          className={
+                                            "font-mono text-sm font-bold " +
+                                            (podium ? "text-gold" : "text-foreground/70")
+                                          }
+                                        >
+                                          {row.position}
+                                        </span>
+                                      </td>
+                                      <td className="px-3 py-2.5 align-middle text-sm font-semibold text-foreground">
+                                        {row.athlete_name}
+                                      </td>
+                                      <td className="px-3 py-2.5 align-middle text-xs text-muted-foreground">
+                                        {row.club || "—"}
+                                      </td>
+                                      <td className="px-3 py-2.5 text-right align-middle font-mono text-xs text-foreground/80">
+                                        {row.race_time || "—"}
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
+          </div>
+
+          {/* RIGHT: TV */}
+          <div>
+            <div className="font-condensed mb-4 inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
+              <Radio className="h-3.5 w-3.5" /> Retransmisión
+              {isLive && (
+                <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground">
+                  <span className="live-dot h-1 w-1 rounded-full bg-foreground" />
+                  LIVE
+                </span>
+              )}
+            </div>
+            <div className="border border-border bg-surface">
+              <div className="aspect-video bg-background">
+                {embed?.type === "iframe" ? (
+                  <iframe
+                    src={embed.src}
+                    title="Retransmisión RollerZone"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    className="h-full w-full"
+                  />
+                ) : embed?.type === "link" ? (
+                  <a
+                    href={embed.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground transition-colors hover:text-gold"
+                  >
+                    <ExternalLink className="h-10 w-10" /> Abrir retransmisión externa
+                  </a>
+                ) : (
+                  <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center text-muted-foreground">
+                    <Play className="h-10 w-10 text-gold" />
+                    <p className="font-condensed text-xs uppercase tracking-widest">
+                      Sin retransmisión activa
+                    </p>
+                    <p className="text-xs text-muted-foreground/80">
+                      Volveremos en directo durante la próxima prueba programada.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
