@@ -227,7 +227,7 @@ function NewsGridCard({ news }: { news: News }) {
     <Link
       to="/noticias/articulo/$slug"
       params={{ slug: news.slug }}
-      className="group block overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
+      className="group block overflow-hidden rounded-2xl border border-border bg-surface shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-gold hover:shadow-xl"
     >
       <div className="aspect-[16/9] overflow-hidden bg-surface-2">
         {news.image_url ? (
@@ -243,13 +243,13 @@ function NewsGridCard({ news }: { news: News }) {
           </div>
         )}
       </div>
-      <div className="p-4">
+      <div className="p-5">
         {news.news_categories?.name && (
-          <span className="font-condensed mb-2 inline-block bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-background">
+          <span className="font-condensed mb-2 inline-block rounded-md bg-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-background">
             {news.news_categories.name}
           </span>
         )}
-        <h3 className="font-display clamp-2 text-base uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold md:text-lg">
+        <h3 className="clamp-2 text-base font-bold leading-snug text-foreground transition-colors group-hover:text-gold md:text-lg">
           {news.title}
         </h3>
         <div className="font-condensed mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -262,8 +262,15 @@ function NewsGridCard({ news }: { news: News }) {
             <Calendar className="h-3 w-3" />
             {new Date(news.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
           </span>
-          <span className="flex items-center gap-1">
-            <Eye className="h-3 w-3" /> {news.views_count}
+          {news.views_count > 0 && (
+            <span className="flex items-center gap-1">
+              <Eye className="h-3 w-3" /> {news.views_count}
+            </span>
+          )}
+        </div>
+        <div className="mt-4">
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-accent transition-transform group-hover:translate-x-1">
+            Leer <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>
