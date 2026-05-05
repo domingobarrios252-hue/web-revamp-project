@@ -116,7 +116,7 @@ export function LiveCenter() {
   const upcoming = schedule.filter((s) => s.status !== "finalizada");
   const isLive = !!stream?.is_active;
 
-  if (!loading && !stream && schedule.length === 0 && results.length === 0) return null;
+  if (!loading && streams.length === 0 && schedule.length === 0 && results.length === 0) return null;
 
   const embed = getEmbedUrl(stream?.embed_url, stream?.autoplay);
   const eventSlug = featuredGroup[0]?.slug;
