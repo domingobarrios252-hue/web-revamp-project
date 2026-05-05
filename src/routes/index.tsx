@@ -81,32 +81,26 @@ function HomePage() {
 
   return (
     <>
-      {/* HERO — minimal, fondo #242424 con líneas diagonales + imagen destacada */}
-      <section className="relative w-full overflow-hidden bg-surface" style={{ minHeight: 360 }}>
-        <div className="diagonal-lines-bg absolute inset-0" />
-        <div className="absolute inset-x-0 top-0 h-px bg-border" />
-        <div className="absolute inset-x-0 bottom-0 h-px bg-border" />
+      {/* HERO — portada revista (2 columnas) */}
+      <section className="relative w-full overflow-hidden bg-surface">
+        <div className="diagonal-lines-bg absolute inset-0" aria-hidden="true" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-border" aria-hidden="true" />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-5 py-10 md:grid-cols-[1.1fr,0.9fr] md:gap-10 md:px-10 md:py-14" style={{ minHeight: 360 }}>
-          <div className="max-w-3xl">
+        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-6 py-8 md:grid-cols-2 md:gap-10 md:py-10">
+          {/* Texto */}
+          <div className="order-2 md:order-1">
             <div className="font-condensed mb-4 inline-flex w-fit items-center gap-2 border border-gold px-3 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold">
-              Revista Digital
+              {featured?.news_categories?.name ?? "Noticia destacada"}
             </div>
-            <h1 className="font-display text-[clamp(28px,4.4vw,52px)] uppercase leading-[1.05] tracking-wider text-foreground">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl">
               {featured?.title ?? "RollerZone"}
             </h1>
-            <div className="mt-4 h-[2px] w-16 bg-gold" />
-            {featured?.excerpt ? (
-              <p className="clamp-2 mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
-                {featured.excerpt}
-              </p>
-            ) : (
-              <p className="mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
-                Patinaje de velocidad — noticias, eventos, ranking, entrevistas y revista.
-              </p>
-            )}
-            <div className="font-condensed mt-5 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-              {featured?.news_categories?.name && <span className="text-gold">{featured.news_categories.name}</span>}
+            <div className="mt-4 h-[2px] w-16 bg-accent" aria-hidden="true" />
+            <p className="clamp-3 mt-4 max-w-xl text-base text-muted-foreground">
+              {featured?.excerpt ??
+                "Patinaje de velocidad — noticias, eventos, ranking, entrevistas y revista."}
+            </p>
+            <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
               {featured?.author && (
                 <span className="flex items-center gap-1.5">
                   <UserIcon className="h-3 w-3" /> {featured.author}
@@ -124,13 +118,13 @@ function HomePage() {
               )}
             </div>
             {featured && (
-              <div className="mt-5">
+              <div className="mt-6">
                 <Link
                   to="/noticias/articulo/$slug"
                   params={{ slug: featured.slug }}
-                  className="font-condensed inline-flex items-center justify-center gap-2 border border-gold px-5 py-2.5 text-[11px] font-bold uppercase tracking-[2.5px] text-gold transition-colors hover:bg-gold hover:text-background"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wider text-background transition-colors hover:bg-gold-light"
                 >
-                  Leer cobertura completa <ArrowRight className="h-3.5 w-3.5" />
+                  Leer noticia <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             )}
@@ -141,7 +135,7 @@ function HomePage() {
             <Link
               to="/noticias/articulo/$slug"
               params={{ slug: featured.slug }}
-              className="group relative block aspect-[16/10] w-full overflow-hidden border border-border bg-background"
+              className="group relative order-1 block aspect-[16/10] w-full overflow-hidden rounded-2xl border border-border bg-background shadow-lg md:order-2 md:max-h-[450px]"
               aria-label={featured.title}
             >
               {featured.image_url ? (
@@ -153,10 +147,12 @@ function HomePage() {
                 />
               ) : (
                 <div className="hero-grid-bg flex h-full w-full items-center justify-center">
-                  <span className="font-condensed text-xs uppercase tracking-widest text-muted-foreground">RollerZone</span>
+                  <span className="font-condensed text-xs uppercase tracking-widest text-muted-foreground">
+                    RollerZone
+                  </span>
                 </div>
               )}
-              <div className="absolute inset-x-0 bottom-0 h-1 bg-gold" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" aria-hidden="true" />
             </Link>
           )}
         </div>
