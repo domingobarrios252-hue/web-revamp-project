@@ -325,7 +325,7 @@ export function LiveCenter() {
           </div>
 
           {/* RIGHT: TV */}
-          <div>
+          <div className="order-1 lg:order-2">
             <div className="font-condensed mb-4 inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
               <Radio className="h-3.5 w-3.5" /> Retransmisión
               {isLive && (
