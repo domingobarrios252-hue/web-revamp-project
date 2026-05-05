@@ -3,6 +3,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { LiveBar } from "@/components/site/LiveBar";
 import { CookieBanner } from "@/components/site/CookieBanner";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -82,6 +83,7 @@ function RootComponent() {
   return (
     <LanguageProvider>
       <AuthProvider>
+        <LiveBar />
         <SiteHeader />
         <main className="min-h-[60vh]">
           <Outlet />
