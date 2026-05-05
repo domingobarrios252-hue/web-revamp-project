@@ -35,7 +35,7 @@ type ResultRow = {
 };
 
 const FALLBACK_TITLE = "RollerZone Live Center";
-type TabKey = "live" | "schedule" | "results";
+type TabKey = "schedule" | "results";
 
 export function LiveCenter() {
   const [stream, setStream] = useState<StreamRow | null>(null);
