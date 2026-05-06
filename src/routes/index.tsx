@@ -87,7 +87,7 @@ function HomePage() {
           <Link
             to="/noticias/articulo/$slug"
             params={{ slug: featured.slug }}
-            className="group relative block h-[78vh] min-h-[520px] max-h-[760px] w-full"
+            className="group relative block h-[88vh] min-h-[560px] max-h-[760px] w-full md:h-[78vh] md:min-h-[520px]"
             aria-label={featured.title}
           >
             {/* Background image with slow zoom */}
@@ -97,34 +97,34 @@ function HomePage() {
                   src={featured.image_url}
                   alt={featured.title}
                   loading="eager"
-                  className="hero-zoom h-full w-full object-cover"
+                  className="hero-zoom h-full w-full object-cover object-center"
                 />
               ) : (
                 <div className="hero-grid-bg h-full w-full" />
               )}
             </div>
 
-            {/* Cinematic gradient overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" aria-hidden="true" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" aria-hidden="true" />
-            <div className="diagonal-lines-bg absolute inset-0 opacity-50" aria-hidden="true" />
+            {/* Cinematic gradient overlays — stronger on mobile for legibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/40 md:via-black/70 md:to-black/30" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent md:from-black/80 md:via-black/40" aria-hidden="true" />
+            <div className="diagonal-lines-bg absolute inset-0 opacity-40 md:opacity-50" aria-hidden="true" />
 
             {/* Glass content */}
-            <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-5 pb-10 pt-24 md:px-6 md:pb-16">
-              <div className="glass-card w-full max-w-2xl rounded-2xl p-6 md:p-8">
-                <div className="font-condensed mb-4 inline-flex w-fit items-center gap-2 border border-gold bg-black/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur">
+            <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-4 pb-8 pt-20 sm:px-5 md:px-6 md:pb-16 md:pt-24">
+              <div className="glass-card w-full max-w-2xl rounded-xl p-5 sm:p-6 md:rounded-2xl md:p-8">
+                <div className="font-condensed mb-3 inline-flex w-fit items-center gap-2 border border-gold bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur md:mb-4 md:px-3">
                   {featured.news_categories?.name ?? "Noticia destacada"}
                 </div>
-                <h1 className="font-display text-3xl uppercase leading-[1.05] tracking-wider text-foreground drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)] md:text-5xl lg:text-6xl">
+                <h1 className="font-display text-[1.75rem] uppercase leading-[1.05] tracking-wider text-foreground drop-shadow-[0_4px_20px_rgba(0,0,0,0.85)] sm:text-4xl md:text-5xl lg:text-6xl">
                   {featured.title}
                 </h1>
-                <div className="mt-4 h-[3px] w-20 bg-gold" aria-hidden="true" />
+                <div className="mt-3 h-[3px] w-16 bg-gold md:mt-4 md:w-20" aria-hidden="true" />
                 {featured.excerpt && (
-                  <p className="clamp-2 mt-4 max-w-xl text-sm text-foreground/85 md:text-base">
+                  <p className="clamp-2 mt-3 max-w-xl text-[0.95rem] leading-relaxed text-foreground/85 md:mt-4 md:text-base">
                     {featured.excerpt}
                   </p>
                 )}
-                <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] uppercase tracking-widest text-foreground/70">
+                <div className="font-condensed mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] uppercase tracking-widest text-foreground/70 md:mt-4 md:gap-x-5">
                   {featured.author && (
                     <span className="flex items-center gap-1.5">
                       <UserIcon className="h-3 w-3" /> {featured.author}
@@ -141,8 +141,8 @@ function HomePage() {
                     </span>
                   )}
                 </div>
-                <div className="mt-6">
-                  <span className="inline-flex items-center justify-center gap-2 rounded-xl bg-gold px-6 py-3 text-sm font-bold uppercase tracking-wider text-background shadow-lg gold-glow-soft transition-all group-hover:bg-gold-light group-hover:translate-x-1">
+                <div className="mt-5 md:mt-6">
+                  <span className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold px-5 py-3 text-[13px] font-bold uppercase tracking-wider text-background shadow-lg gold-glow-soft transition-all group-hover:bg-gold-light group-hover:translate-x-1 sm:w-auto md:px-6 md:text-sm">
                     Leer noticia <ArrowRight className="h-4 w-4" />
                   </span>
                 </div>
