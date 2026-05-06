@@ -114,28 +114,13 @@ export function SiteFooter() {
             </p>
           </div>
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const email = new FormData(e.currentTarget).get("email");
-              window.location.href = `mailto:${CONTACT_EMAIL}?subject=Newsletter&body=${email}`;
-            }}
+            onSubmit={(e) => e.preventDefault()}
             className="flex w-full max-w-md gap-2"
-          >
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="tu@email.com"
-              aria-label="Email"
-              className="flex-1 border border-[#333] bg-[#0F0F0F] px-3 py-2 text-sm text-[#F5F5F5] placeholder:text-[#666] focus:border-[#D4A017] focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="border border-[#D4A017] bg-transparent px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#D4A017] transition-colors hover:bg-[#D4A017] hover:text-[#1A1A1A]"
-            >
-              {t("footer.newsletterCta")}
-            </button>
-          </form>
+            aria-hidden
+            hidden
+          />
+          <NewsletterForm source="footer" />
+
         </div>
 
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
