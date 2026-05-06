@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar, Eye, User as UserIcon, Newspaper, Inbox } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { formatDate } from "@/lib/i18n/format";
 
 type News = {
   id: string;
