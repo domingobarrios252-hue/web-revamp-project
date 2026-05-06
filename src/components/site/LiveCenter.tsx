@@ -200,9 +200,8 @@ export function LiveCenter() {
               })}
             </div>
 
-            <div className="rounded-xl border border-border bg-surface/80 shadow-lg backdrop-blur">
+            <div className="overflow-hidden rounded-xl border border-border bg-surface/80 shadow-lg backdrop-blur">
 
-            <div className="border border-border bg-surface">
               {tab === "schedule" && (
                 <div className="overflow-x-auto p-4">
                   {loading ? (
