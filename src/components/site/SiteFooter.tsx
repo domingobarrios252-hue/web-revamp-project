@@ -113,12 +113,6 @@ export function SiteFooter() {
               {t("footer.newsletterDesc")}
             </p>
           </div>
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex w-full max-w-md gap-2"
-            aria-hidden
-            hidden
-          />
           <NewsletterForm source="footer" />
 
         </div>
