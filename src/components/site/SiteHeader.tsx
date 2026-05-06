@@ -15,31 +15,31 @@ const SUB_LINK =
 const ACTION_BTN =
   "font-ui inline-flex items-center gap-1.5 rounded-[6px] border border-[#D4A017] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D4A017] transition-all duration-200 hover:bg-[#D4A017] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40";
 
-type MegaItem = { label: string; to: string; hash?: string };
+type MegaItem = { labelKey: string; to: string; hash?: string };
 type MegaKey = "eventos" | "resultados" | "revista";
 
-const MEGA: Record<MegaKey, { title: string; items: MegaItem[] }> = {
+const MEGA: Record<MegaKey, { titleKey: string; items: MegaItem[] }> = {
   eventos: {
-    title: "Eventos",
+    titleKey: "mega.eventsTitle",
     items: [
-      { label: "Próximos eventos", to: "/eventos" },
-      { label: "Calendario internacional", to: "/eventos" },
-      { label: "Calendario nacional", to: "/eventos" },
+      { labelKey: "mega.eventsUpcoming", to: "/eventos" },
+      { labelKey: "mega.eventsIntl", to: "/eventos" },
+      { labelKey: "mega.eventsNational", to: "/eventos" },
     ],
   },
   resultados: {
-    title: "Resultados",
+    titleKey: "mega.resultsTitle",
     items: [
-      { label: "Últimos resultados", to: "/", hash: "live-center" },
-      { label: "Rankings", to: "/", hash: "live-center" },
-      { label: "Premios MVP", to: "/premios-mvp" },
+      { labelKey: "mega.resultsAll", to: "/resultados" },
+      { labelKey: "mega.resultsLatest", to: "/", hash: "live-center" },
+      { labelKey: "nav.mvpAwards", to: "/premios-mvp" },
     ],
   },
   revista: {
-    title: "Revista",
+    titleKey: "mega.magazineTitle",
     items: [
-      { label: "Último número", to: "/revista" },
-      { label: "Ediciones anteriores", to: "/revista" },
+      { labelKey: "mega.magazineLatest", to: "/revista" },
+      { labelKey: "mega.magazinePast", to: "/revista" },
     ],
   },
 };
@@ -96,19 +96,19 @@ export function SiteHeader() {
 
           <MegaItemLi keyName="eventos" openMega={openMega} setOpenMega={setOpenMega}>
             <Link to="/eventos" className={NAV_LINK + " gap-1"} activeProps={{ className: NAV_ACTIVE }}>
-              Eventos <ChevronDown className="h-3 w-3" />
+              {t("nav.events")} <ChevronDown className="h-3 w-3" />
             </Link>
           </MegaItemLi>
 
           <MegaItemLi keyName="resultados" openMega={openMega} setOpenMega={setOpenMega}>
-            <a href="/#live-center" className={NAV_LINK + " gap-1"}>
-              Resultados <ChevronDown className="h-3 w-3" />
-            </a>
+            <Link to="/resultados" className={NAV_LINK + " gap-1"} activeProps={{ className: NAV_ACTIVE }}>
+              {t("nav.results")} <ChevronDown className="h-3 w-3" />
+            </Link>
           </MegaItemLi>
 
           <MegaItemLi keyName="revista" openMega={openMega} setOpenMega={setOpenMega}>
             <Link to="/revista" className={NAV_LINK + " gap-1"} activeProps={{ className: NAV_ACTIVE }}>
-              Revista <ChevronDown className="h-3 w-3" />
+              {t("nav.magazine")} <ChevronDown className="h-3 w-3" />
             </Link>
           </MegaItemLi>
 
@@ -172,7 +172,7 @@ export function SiteHeader() {
               ref={searchRef}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Buscar noticias, eventos, atletas…"
+              placeholder={t("common.searchPlaceholder")}
               className="flex-1 bg-transparent text-sm text-[#F5F5F5] placeholder:text-[#666] focus:outline-none"
             />
             <button
@@ -196,18 +196,18 @@ export function SiteHeader() {
         >
           <div className="mx-auto max-w-7xl px-6 py-5">
             <div className="text-[11px] font-bold uppercase tracking-widest text-[#D4A017] mb-3">
-              {MEGA[openMega].title}
+              {t(MEGA[openMega].titleKey)}
             </div>
             <ul className="grid grid-cols-3 gap-x-8 gap-y-1">
               {MEGA[openMega].items.map((item) => (
-                <li key={item.label}>
+                <li key={item.labelKey + item.to + (item.hash ?? "")}>
                   {item.hash ? (
                     <a href={`${item.to}#${item.hash}`} className={SUB_LINK} onClick={() => setOpenMega(null)}>
-                      {item.label}
+                      {t(item.labelKey)}
                     </a>
                   ) : (
                     <Link to={item.to} className={SUB_LINK} onClick={() => setOpenMega(null)}>
-                      {item.label}
+                      {t(item.labelKey)}
                     </Link>
                   )}
                 </li>
@@ -239,15 +239,9 @@ export function SiteHeader() {
             <div className="flex flex-col gap-1 px-4 py-4">
               <MobileLink to="/" onClick={() => setMobileOpen(false)}>{t("nav.home")}</MobileLink>
               <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>{t("nav.news")}</MobileLink>
-              <MobileLink to="/eventos" onClick={() => setMobileOpen(false)}>Eventos</MobileLink>
-              <a
-                href="/#live-center"
-                onClick={() => setMobileOpen(false)}
-                className="font-ui py-3 text-base font-semibold text-[#F5F5F5] hover:text-[#D4A017] border-b border-[#333]"
-              >
-                Resultados
-              </a>
-              <MobileLink to="/revista" onClick={() => setMobileOpen(false)}>Revista</MobileLink>
+              <MobileLink to="/eventos" onClick={() => setMobileOpen(false)}>{t("nav.events")}</MobileLink>
+              <MobileLink to="/resultados" onClick={() => setMobileOpen(false)}>{t("nav.results")}</MobileLink>
+              <MobileLink to="/revista" onClick={() => setMobileOpen(false)}>{t("nav.magazine")}</MobileLink>
               <MobileLink to="/premios-mvp" onClick={() => setMobileOpen(false)}>MVP</MobileLink>
               <MobileLink to="/entrevistas" onClick={() => setMobileOpen(false)}>{t("nav.interviews")}</MobileLink>
               <MobileLink to="/tv" onClick={() => setMobileOpen(false)}>{t("nav.tv")}</MobileLink>
@@ -324,7 +318,7 @@ function MobileLink({
   onClick,
   children,
 }: {
-  to: "/" | "/noticias" | "/eventos" | "/tv" | "/revista" | "/patrocinadores" | "/premios-mvp" | "/entrevistas";
+  to: "/" | "/noticias" | "/eventos" | "/resultados" | "/tv" | "/revista" | "/patrocinadores" | "/premios-mvp" | "/entrevistas";
   onClick: () => void;
   children: React.ReactNode;
 }) {

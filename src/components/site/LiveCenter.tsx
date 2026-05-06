@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, CalendarClock, ExternalLink, Play, Radio, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { youTubeEmbedUrl } from "@/lib/youtube";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { formatTime as fmtTime } from "@/lib/i18n/format";
 
 type StreamRow = {
   id: string;
@@ -39,6 +41,7 @@ const FALLBACK_TITLE = "RollerZone Live Center";
 type TabKey = "schedule" | "results";
 
 export function LiveCenter() {
+  const { t, lang } = useLanguage();
   const [streams, setStreams] = useState<StreamRow[]>([]);
   const [selectedStreamId, setSelectedStreamId] = useState<string | null>(null);
   const [schedule, setSchedule] = useState<ScheduleRow[]>([]);
@@ -122,8 +125,8 @@ export function LiveCenter() {
   const eventSlug = featuredGroup[0]?.slug;
 
   const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-    { key: "schedule", label: "Próximas pruebas", icon: <CalendarClock className="h-3.5 w-3.5" /> },
-    { key: "results", label: "Resultados", icon: <Trophy className="h-3.5 w-3.5" /> },
+    { key: "schedule", label: t("liveCenter.tabSchedule"), icon: <CalendarClock className="h-3.5 w-3.5" /> },
+    { key: "results", label: t("liveCenter.tabResults"), icon: <Trophy className="h-3.5 w-3.5" /> },
   ];
 
   return (
@@ -151,7 +154,7 @@ export function LiveCenter() {
                   (isLive ? "bg-foreground live-dot" : "bg-muted-foreground")
                 }
               />
-              {isLive ? "En directo" : "Sin emisión"}
+              {isLive ? t("liveCenter.onAir") : t("liveCenter.offAir")}
             </div>
             <h2 className="font-display mt-3 text-3xl uppercase tracking-widest md:text-4xl lg:text-5xl">
               {stream?.title || FALLBACK_TITLE}
@@ -164,7 +167,7 @@ export function LiveCenter() {
               params={{ evento: eventSlug }}
               className="font-condensed inline-flex items-center justify-center gap-2 rounded-md border border-gold bg-gold/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-background"
             >
-              Resultados completos <ArrowRight className="h-3.5 w-3.5" />
+              {t("liveCenter.fullResults")} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           )}
         </div>
@@ -209,24 +212,24 @@ export function LiveCenter() {
                   ) : upcoming.length === 0 ? (
                     <EmptyState
                       icon={<CalendarClock className="h-8 w-8 text-gold" />}
-                      title="Sin pruebas programadas"
-                      text="No hay pruebas próximas publicadas. Vuelve pronto."
+                      title={t("liveCenter.noSchedule")}
+                      text={t("liveCenter.noScheduleDesc")}
                     />
                   ) : (
                     <table className="w-full min-w-[480px] border-separate border-spacing-y-1">
                       <thead>
                         <tr className="font-condensed text-[10px] uppercase tracking-[2.5px] text-muted-foreground">
-                          <th className="w-20 px-3 py-2 text-left">Hora</th>
-                          <th className="px-3 py-2 text-left">Evento</th>
-                          <th className="px-3 py-2 text-left">Categoría</th>
-                          <th className="w-24 px-3 py-2 text-right">Estado</th>
+                          <th className="w-20 px-3 py-2 text-left">{t("liveCenter.time")}</th>
+                          <th className="px-3 py-2 text-left">{t("liveCenter.event")}</th>
+                          <th className="px-3 py-2 text-left">{t("liveCenter.category")}</th>
+                          <th className="w-24 px-3 py-2 text-right">{t("liveCenter.status")}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {upcoming.map((item) => (
                           <tr key={item.id} className="bg-background">
                             <td className="px-3 py-3 align-middle font-mono text-sm font-bold text-gold">
-                              {formatTime(item.scheduled_at)}
+                              {fmtTime(item.scheduled_at, lang)}
                             </td>
                             <td className="px-3 py-3 align-middle">
                               <div className="font-display text-sm uppercase tracking-wider text-foreground">
@@ -244,7 +247,7 @@ export function LiveCenter() {
                               </span>
                             </td>
                             <td className="px-3 py-3 text-right align-middle">
-                              <ScheduleStatusBadge status={item.status} />
+                              <ScheduleStatusBadge status={item.status} t={t} />
                             </td>
                           </tr>
                         ))}
@@ -261,8 +264,8 @@ export function LiveCenter() {
                   ) : featuredGroup.length === 0 ? (
                     <EmptyState
                       icon={<Trophy className="h-8 w-8 text-gold" />}
-                      title="Sin clasificaciones"
-                      text="Aún no se han publicado resultados."
+                      title={t("liveCenter.noResults")}
+                      text={t("liveCenter.noResultsDesc")}
                     />
                   ) : (
                     <div className="space-y-6">
@@ -277,21 +280,21 @@ export function LiveCenter() {
                               {isLiveGroup ? (
                                 <span className="font-condensed inline-flex items-center gap-1 bg-tv-red px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-foreground">
                                   <span className="live-dot h-1.5 w-1.5 rounded-full bg-foreground" />
-                                  Live
+                                  {t("common.live")}
                                 </span>
                               ) : (
                                 <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
-                                  Final
+                                  {t("liveCenter.finalShort")}
                                 </span>
                               )}
                             </div>
                             <table className="w-full min-w-[420px] border-separate border-spacing-y-1">
                               <thead>
                                 <tr className="font-condensed text-[10px] uppercase tracking-[2.5px] text-muted-foreground">
-                                  <th className="w-12 px-3 py-2 text-left">Pos</th>
-                                  <th className="px-3 py-2 text-left">Atleta</th>
-                                  <th className="px-3 py-2 text-left">Club</th>
-                                  <th className="w-24 px-3 py-2 text-right">Tiempo</th>
+                                  <th className="w-12 px-3 py-2 text-left">{t("liveCenter.pos")}</th>
+                                  <th className="px-3 py-2 text-left">{t("liveCenter.athlete")}</th>
+                                  <th className="px-3 py-2 text-left">{t("liveCenter.club")}</th>
+                                  <th className="w-24 px-3 py-2 text-right">{t("liveCenter.raceTime")}</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -337,7 +340,7 @@ export function LiveCenter() {
           <div className="order-1 lg:order-2">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <div className="font-condensed inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-                <Radio className="h-3.5 w-3.5" /> Retransmisión
+                <Radio className="h-3.5 w-3.5" /> {t("liveCenter.broadcast")}
                 {isLive && (
                   <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground live-red-tag">
                     <span className="live-dot h-1 w-1 rounded-full bg-foreground" />
@@ -347,7 +350,7 @@ export function LiveCenter() {
               </div>
               {streams.length > 1 && (
                 <select
-                  aria-label="Cambiar retransmisión"
+                  aria-label={t("liveCenter.switchBroadcast")}
                   value={stream?.id ?? ""}
                   onChange={(e) => setSelectedStreamId(e.target.value)}
                   className="font-condensed ml-auto rounded-md border border-border bg-background px-3 py-2 text-[11px] font-bold uppercase tracking-[2px] text-foreground hover:border-gold focus:border-gold focus:outline-none"
@@ -387,7 +390,7 @@ export function LiveCenter() {
                       <Play className="h-7 w-7 fill-background" />
                     </div>
                     <span className="font-condensed relative z-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold">
-                      <ExternalLink className="h-4 w-4" /> Abrir retransmisión externa
+                      <ExternalLink className="h-4 w-4" /> {t("liveCenter.openExternal")}
                     </span>
                   </a>
                 ) : (
@@ -398,10 +401,10 @@ export function LiveCenter() {
                       <Play className="h-7 w-7" />
                     </div>
                     <p className="font-condensed relative z-10 text-xs font-bold uppercase tracking-widest text-foreground">
-                      Sin retransmisión activa
+                      {t("liveCenter.noBroadcast")}
                     </p>
                     <p className="relative z-10 text-xs text-foreground/60">
-                      Volveremos en directo durante la próxima prueba programada.
+                      {t("liveCenter.noBroadcastDesc")}
                     </p>
                   </div>
                 )}
@@ -414,24 +417,24 @@ export function LiveCenter() {
   );
 }
 
-function ScheduleStatusBadge({ status }: { status: ScheduleRow["status"] }) {
+function ScheduleStatusBadge({ status, t }: { status: ScheduleRow["status"]; t: (k: string) => string }) {
   if (status === "en_curso") {
     return (
       <span className="font-condensed inline-flex items-center gap-1 bg-tv-red px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-foreground live-red-tag">
-        <span className="live-dot h-1.5 w-1.5 rounded-full bg-foreground" /> Live
+        <span className="live-dot h-1.5 w-1.5 rounded-full bg-foreground" /> {t("common.live")}
       </span>
     );
   }
   if (status === "finalizada") {
     return (
       <span className="font-condensed border border-border bg-background px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">
-        Final
+        {t("liveCenter.finalShort")}
       </span>
     );
   }
   return (
     <span className="font-condensed border border-gold/50 bg-gold/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-gold">
-      Próxima
+      {t("common.upcoming")}
     </span>
   );
 }
@@ -527,9 +530,6 @@ function statusPriority(rows: ResultRow[]) {
   return 2;
 }
 
-function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
-}
 
 function slugify(value: string) {
   return value

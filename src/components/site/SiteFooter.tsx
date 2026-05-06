@@ -106,17 +106,17 @@ export function SiteFooter() {
         <div className="mb-10 flex flex-col gap-4 border border-[#333] bg-[#1A1A1A] p-5 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="font-display text-base tracking-widest text-[#F5F5F5]">
-              Suscríbete a la newsletter
+              {t("footer.newsletter")}
             </div>
             <p className="mt-1 text-xs text-[#A0A0A0]">
-              Recibe lo mejor del patinaje de velocidad cada semana.
+              {t("footer.newsletterDesc")}
             </p>
           </div>
           <form
             onSubmit={(e) => {
               e.preventDefault();
               const email = new FormData(e.currentTarget).get("email");
-              window.location.href = `mailto:${CONTACT_EMAIL}?subject=Suscripción newsletter&body=Quiero suscribirme: ${email}`;
+              window.location.href = `mailto:${CONTACT_EMAIL}?subject=Newsletter&body=${email}`;
             }}
             className="flex w-full max-w-md gap-2"
           >
@@ -132,7 +132,7 @@ export function SiteFooter() {
               type="submit"
               className="border border-[#D4A017] bg-transparent px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#D4A017] transition-colors hover:bg-[#D4A017] hover:text-[#1A1A1A]"
             >
-              Suscribirme
+              {t("footer.newsletterCta")}
             </button>
           </form>
         </div>
@@ -184,7 +184,7 @@ export function SiteFooter() {
           {/* 2. Navegación */}
           <div>
             <h3 className="font-display mb-4 text-base tracking-widest text-[#D4A017]">
-              Navegación
+              {t("footer.navigation")}
             </h3>
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
               {navLinks.map(({ to, label, Icon }) => (
@@ -201,7 +201,7 @@ export function SiteFooter() {
           {/* 3. Sobre nosotros */}
           <div>
             <h3 className="font-display mb-4 text-base tracking-widest text-[#D4A017]">
-              Sobre nosotros
+              {t("footer.aboutUs")}
             </h3>
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
               {aboutLinks.map((item) => {
@@ -285,7 +285,7 @@ export function SiteFooter() {
             <span className="text-[#D4A017]">RollerZone</span> — {t("footer.rights")}
           </p>
           <p className="font-condensed text-[11px] uppercase tracking-widest text-[#666]">
-            Hecho con pasión por el patinaje 🛼
+            {t("footer.madeWith")}
           </p>
         </div>
       </div>
