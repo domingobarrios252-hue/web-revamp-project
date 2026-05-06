@@ -7,13 +7,13 @@ import { LanguageToggle } from "@/components/site/LanguageToggle";
 import logoUrl from "@/assets/rollerzone-logo.png";
 
 const NAV_LINK =
-  "font-ui relative inline-flex h-14 items-center text-[13px] font-medium tracking-wide text-[#A0A0A0] transition-colors duration-200 hover:text-[#F5F5F5]";
+  "font-ui relative inline-flex h-14 items-center px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#B5B5B5] transition-all duration-200 hover:text-[#F5F5F5] focus-visible:text-[#F5F5F5] focus-visible:outline-none after:absolute after:inset-x-1 after:bottom-3 after:h-[2px] after:scale-x-0 after:origin-left after:bg-[#D4A017] after:transition-transform after:duration-300 hover:after:scale-x-100 focus-visible:after:scale-x-100";
 const NAV_ACTIVE =
-  "text-[#F5F5F5] after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:bg-[#D4A017]";
+  "text-[#F5F5F5] after:scale-x-100";
 const SUB_LINK =
-  "font-ui block py-1.5 text-sm text-[#F5F5F5]/85 hover:text-[#D4A017] transition-colors";
+  "font-ui block py-1.5 text-sm text-[#F5F5F5]/85 transition-all duration-200 hover:text-[#D4A017] hover:translate-x-0.5";
 const ACTION_BTN =
-  "font-ui inline-flex items-center gap-1.5 rounded-[6px] border border-[#D4A017] px-3 py-1.5 text-xs font-semibold tracking-wide text-[#D4A017] transition-colors duration-200 hover:bg-[#D4A017] hover:text-[#1A1A1A]";
+  "font-ui inline-flex items-center gap-1.5 rounded-[6px] border border-[#D4A017] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D4A017] transition-all duration-200 hover:bg-[#D4A017] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40";
 
 type MegaItem = { label: string; to: string; hash?: string };
 type MegaKey = "eventos" | "resultados" | "revista";
