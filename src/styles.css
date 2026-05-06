@@ -213,6 +213,74 @@
 .hide-scrollbar { scrollbar-width: none; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 
+/* ===== PREMIUM SPORTS MEDIA UTILITIES ===== */
+
+/* Subtle premium noise/grain texture overlay for body */
+.premium-noise-bg {
+  position: relative;
+}
+.premium-noise-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Glassmorphism container */
+.glass-card {
+  background: linear-gradient(135deg, rgba(26,26,26,0.55), rgba(26,26,26,0.35));
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(212, 160, 23, 0.28);
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Subtle gold glow for premium accents */
+.gold-glow {
+  box-shadow:
+    0 0 0 1px rgba(212,160,23,0.25),
+    0 10px 40px -10px rgba(212,160,23,0.35),
+    0 30px 60px -25px rgba(0,0,0,0.6);
+}
+.gold-glow-soft {
+  box-shadow: 0 0 30px -8px rgba(212,160,23,0.25);
+}
+
+/* Premium hover lift for cards */
+.card-premium {
+  transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease, border-color .25s ease;
+  box-shadow: 0 12px 30px -18px rgba(0,0,0,.7);
+}
+.card-premium:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 30px 50px -20px rgba(0,0,0,.85),
+    0 0 0 1px rgba(212,160,23,.35),
+    0 0 30px -10px rgba(212,160,23,.25);
+}
+
+/* Hero ken-burns style slow zoom on hover */
+.hero-zoom { transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
+.group:hover .hero-zoom { transform: scale(1.06); }
+
+/* Big play button pulse */
+@keyframes playPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,160,23,0.55); }
+  50%      { box-shadow: 0 0 0 18px rgba(212,160,23,0); }
+}
+.play-pulse { animation: playPulse 2.4s ease-out infinite; }
+
+/* Section divider sheen */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,160,23,0.5), transparent);
+}
+
 /* Reveal */
 .reveal {
   opacity: 0;
