@@ -5,6 +5,8 @@ import { Ticker } from "@/components/site/Ticker";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { formatDate, formatShortDate } from "@/lib/i18n/format";
 
 type MvpPreview = {
   id: string;
@@ -53,6 +55,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
+  const { t, lang } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
 
   useEffect(() => {
@@ -113,7 +116,7 @@ function HomePage() {
             <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-4 pb-8 pt-20 sm:px-5 md:px-6 md:pb-16 md:pt-24">
               <div className="glass-card w-full max-w-2xl rounded-xl p-5 sm:p-6 md:rounded-2xl md:p-8">
                 <div className="font-condensed mb-3 inline-flex w-fit items-center gap-2 border border-gold bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur md:mb-4 md:px-3">
-                  {featured.news_categories?.name ?? "Noticia destacada"}
+                  {featured.news_categories?.name ?? t("home.featured")}
                 </div>
                 <h1 className="font-display text-[1.75rem] uppercase leading-[1.05] tracking-wider text-foreground drop-shadow-[0_4px_20px_rgba(0,0,0,0.85)] sm:text-4xl md:text-5xl lg:text-6xl">
                   {featured.title}
@@ -133,17 +136,13 @@ function HomePage() {
                   {featured.published_at && (
                     <span className="flex items-center gap-1.5">
                       <Calendar className="h-3 w-3" />
-                      {new Date(featured.published_at).toLocaleDateString("es-ES", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                      })}
+                      {formatDate(featured.published_at, lang)}
                     </span>
                   )}
                 </div>
                 <div className="mt-5 md:mt-6">
                   <span className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold px-5 py-3 text-[13px] font-bold uppercase tracking-wider text-background shadow-lg gold-glow-soft transition-all group-hover:bg-gold-light group-hover:translate-x-1 sm:w-auto md:px-6 md:text-sm">
-                    Leer noticia <ArrowRight className="h-4 w-4" />
+                    {t("common.readArticle")} <ArrowRight className="h-4 w-4" />
                   </span>
                 </div>
               </div>
@@ -170,13 +169,13 @@ function HomePage() {
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
         <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
           <h2 className="font-display text-2xl tracking-widest md:text-3xl">
-            Últimas <span className="text-gold">noticias</span>
+            {t("home.latestNews")} <span className="text-gold">{t("home.latestNewsAccent")}</span>
           </h2>
           <Link
             to="/noticias"
             className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-light"
           >
-            Ver todas →
+            {t("common.viewAllArrow")}
           </Link>
         </div>
 
