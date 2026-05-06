@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { supabase } from "@/integrations/supabase/client";
+import { NewsletterForm } from "./NewsletterForm";
 
 const CONTACT_EMAIL = "rollerzonespain@gmail.com";
 
