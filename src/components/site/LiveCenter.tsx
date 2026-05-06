@@ -129,16 +129,17 @@ export function LiveCenter() {
   return (
     <section
       id="en-directo"
-      className="border-b border-border border-t-2 border-t-gold"
+      className="relative border-b border-border border-t-2 border-t-gold"
       style={{ backgroundColor: "#0F0F0F" }}
     >
-      <div className="mx-auto max-w-7xl px-5 py-10 md:px-6 lg:py-12">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden="true" />
+      <div className="mx-auto max-w-7xl px-5 py-10 md:px-6 lg:py-14">
         {/* Scoreboard header */}
-        <div className="mb-6 flex flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end md:justify-between">
+        <div className="mb-8 flex flex-col gap-3 border-b border-border pb-5 md:flex-row md:items-end md:justify-between">
           <div>
             <div
               className={
-                "font-condensed inline-flex items-center gap-2 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] " +
+                "font-condensed inline-flex items-center gap-2 rounded-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] " +
                 (isLive
                   ? "bg-tv-red text-foreground live-red-tag"
                   : "border border-border bg-background text-muted-foreground")
@@ -152,22 +153,23 @@ export function LiveCenter() {
               />
               {isLive ? "En directo" : "Sin emisión"}
             </div>
-            <h2 className="font-display mt-3 text-3xl uppercase tracking-widest md:text-4xl">
+            <h2 className="font-display mt-3 text-3xl uppercase tracking-widest md:text-4xl lg:text-5xl">
               {stream?.title || FALLBACK_TITLE}
             </h2>
+            <div className="mt-2 h-[2px] w-16 bg-gold gold-glow-soft" aria-hidden="true" />
           </div>
           {eventSlug && (
             <Link
               to="/resultados/$evento"
               params={{ evento: eventSlug }}
-              className="font-condensed inline-flex items-center justify-center gap-2 border border-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-background"
+              className="font-condensed inline-flex items-center justify-center gap-2 rounded-md border border-gold bg-gold/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-background"
             >
               Resultados completos <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           )}
         </div>
 
-        {/* 2-column layout: left = tabs (schedule/results), right = TV. On mobile TV first. */}
+        {/* 2-column layout */}
         <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           {/* LEFT: tabs */}
           <div className="order-2 lg:order-1">
@@ -185,10 +187,10 @@ export function LiveCenter() {
                     aria-selected={active}
                     onClick={() => setTab(t.key)}
                     className={
-                      "font-condensed relative inline-flex shrink-0 items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-[2.5px] transition-colors " +
+                      "font-condensed relative inline-flex shrink-0 items-center gap-2 rounded-md px-4 py-2.5 text-xs font-bold uppercase tracking-[2.5px] transition-all " +
                       (active
-                        ? "border border-gold bg-gold text-background"
-                        : "border border-border bg-background text-muted-foreground hover:border-gold hover:text-gold")
+                        ? "border border-gold bg-gold text-background gold-glow-soft"
+                        : "border border-border bg-background/60 text-muted-foreground hover:border-gold hover:text-gold")
                     }
                   >
                     {t.icon}
@@ -197,6 +199,8 @@ export function LiveCenter() {
                 );
               })}
             </div>
+
+            <div className="rounded-xl border border-border bg-surface/80 shadow-lg backdrop-blur">
 
             <div className="border border-border bg-surface">
               {tab === "schedule" && (
