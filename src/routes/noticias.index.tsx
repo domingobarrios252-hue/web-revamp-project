@@ -41,6 +41,7 @@ export const Route = createFileRoute("/noticias/")({
 });
 
 function NoticiasIndexPage() {
+  const { t, lang } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [scope, setScope] = useState<"all" | "Nacional" | "Internacional">("all");
@@ -69,9 +70,9 @@ function NoticiasIndexPage() {
   }, [news, scope]);
 
   const tabs: { key: "all" | "Nacional" | "Internacional"; label: string }[] = [
-    { key: "all", label: "Todas" },
-    { key: "Nacional", label: "Nacional" },
-    { key: "Internacional", label: "Internacional" },
+    { key: "all", label: t("news.all") },
+    { key: "Nacional", label: t("nav.national") },
+    { key: "Internacional", label: t("nav.international") },
   ];
 
   return (
