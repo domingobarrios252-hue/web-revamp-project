@@ -81,81 +81,83 @@ function HomePage() {
 
   return (
     <>
-      {/* HERO — portada revista (2 columnas) */}
-      <section className="relative w-full overflow-hidden bg-surface">
-        <div className="diagonal-lines-bg absolute inset-0" aria-hidden="true" />
-        <div className="absolute inset-x-0 bottom-0 h-px bg-border" aria-hidden="true" />
-
-        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-6 py-8 md:grid-cols-2 md:gap-10 md:py-10">
-          {/* Texto */}
-          <div className="order-2 md:order-1">
-            <div className="font-condensed mb-4 inline-flex w-fit items-center gap-2 border border-gold px-3 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold">
-              {featured?.news_categories?.name ?? "Noticia destacada"}
-            </div>
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl">
-              {featured?.title ?? "RollerZone"}
-            </h1>
-            <div className="mt-4 h-[2px] w-16 bg-accent" aria-hidden="true" />
-            <p className="clamp-3 mt-4 max-w-xl text-base text-muted-foreground">
-              {featured?.excerpt ??
-                "Patinaje de velocidad — noticias, eventos, ranking, entrevistas y revista."}
-            </p>
-            <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-              {featured?.author && (
-                <span className="flex items-center gap-1.5">
-                  <UserIcon className="h-3 w-3" /> {featured.author}
-                </span>
-              )}
-              {featured?.published_at && (
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-3 w-3" />
-                  {new Date(featured.published_at).toLocaleDateString("es-ES", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>
-              )}
-            </div>
-            {featured && (
-              <div className="mt-6">
-                <Link
-                  to="/noticias/articulo/$slug"
-                  params={{ slug: featured.slug }}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wider text-background transition-colors hover:bg-gold-light"
-                >
-                  Leer noticia <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Imagen destacada */}
-          {featured && (
-            <Link
-              to="/noticias/articulo/$slug"
-              params={{ slug: featured.slug }}
-              className="group relative order-1 block aspect-[16/10] w-full overflow-hidden rounded-2xl border border-border bg-background shadow-lg md:order-2 md:max-h-[450px]"
-              aria-label={featured.title}
-            >
+      {/* HERO — cinematic full-width */}
+      <section className="relative w-full overflow-hidden bg-background">
+        {featured ? (
+          <Link
+            to="/noticias/articulo/$slug"
+            params={{ slug: featured.slug }}
+            className="group relative block h-[78vh] min-h-[520px] max-h-[760px] w-full"
+            aria-label={featured.title}
+          >
+            {/* Background image with slow zoom */}
+            <div className="absolute inset-0 overflow-hidden">
               {featured.image_url ? (
                 <img
                   src={featured.image_url}
                   alt={featured.title}
                   loading="eager"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="hero-zoom h-full w-full object-cover"
                 />
               ) : (
-                <div className="hero-grid-bg flex h-full w-full items-center justify-center">
-                  <span className="font-condensed text-xs uppercase tracking-widest text-muted-foreground">
-                    RollerZone
+                <div className="hero-grid-bg h-full w-full" />
+              )}
+            </div>
+
+            {/* Cinematic gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" aria-hidden="true" />
+            <div className="diagonal-lines-bg absolute inset-0 opacity-50" aria-hidden="true" />
+
+            {/* Glass content */}
+            <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-5 pb-10 pt-24 md:px-6 md:pb-16">
+              <div className="glass-card w-full max-w-2xl rounded-2xl p-6 md:p-8">
+                <div className="font-condensed mb-4 inline-flex w-fit items-center gap-2 border border-gold bg-black/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur">
+                  {featured.news_categories?.name ?? "Noticia destacada"}
+                </div>
+                <h1 className="font-display text-3xl uppercase leading-[1.05] tracking-wider text-foreground drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)] md:text-5xl lg:text-6xl">
+                  {featured.title}
+                </h1>
+                <div className="mt-4 h-[3px] w-20 bg-gold" aria-hidden="true" />
+                {featured.excerpt && (
+                  <p className="clamp-2 mt-4 max-w-xl text-sm text-foreground/85 md:text-base">
+                    {featured.excerpt}
+                  </p>
+                )}
+                <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] uppercase tracking-widest text-foreground/70">
+                  {featured.author && (
+                    <span className="flex items-center gap-1.5">
+                      <UserIcon className="h-3 w-3" /> {featured.author}
+                    </span>
+                  )}
+                  {featured.published_at && (
+                    <span className="flex items-center gap-1.5">
+                      <Calendar className="h-3 w-3" />
+                      {new Date(featured.published_at).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-6">
+                  <span className="inline-flex items-center justify-center gap-2 rounded-xl bg-gold px-6 py-3 text-sm font-bold uppercase tracking-wider text-background shadow-lg gold-glow-soft transition-all group-hover:bg-gold-light group-hover:translate-x-1">
+                    Leer noticia <ArrowRight className="h-4 w-4" />
                   </span>
                 </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" aria-hidden="true" />
-            </Link>
-          )}
-        </div>
+              </div>
+            </div>
+
+            {/* Bottom gold accent line */}
+            <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden="true" />
+          </Link>
+        ) : (
+          <div className="relative flex h-[60vh] min-h-[420px] items-center justify-center">
+            <div className="diagonal-lines-bg absolute inset-0" aria-hidden="true" />
+            <h1 className="font-display relative text-5xl uppercase tracking-widest text-gold">RollerZone</h1>
+          </div>
+        )}
       </section>
 
       <Ticker />
