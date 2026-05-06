@@ -85,7 +85,9 @@ export const Route = createFileRoute("/resultados/$evento")({
 });
 
 function ResultadosEventoPage() {
-  const { rows, meta } = Route.useLoaderData();
+  const data = Route.useLoaderData();
+  const rows: ResultRow[] = data.rows;
+  const meta = data.meta;
   const { t, lang } = useLanguage();
   const eventName = meta?.name ?? rows[0]?.event_name ?? "Resultados";
 
@@ -96,14 +98,14 @@ function ResultadosEventoPage() {
   const [fCountry, setFCountry] = useState("");
 
   const opts = useMemo(() => ({
-    categories: uniq(rows.map((r) => r.category)),
-    distances: uniq(rows.map((r) => r.distance ?? r.race)),
-    genders: uniq(rows.map((r) => r.gender)),
-    clubs: uniq(rows.map((r) => r.club)),
-    countries: uniq(rows.map((r) => r.country)),
+    categories: uniq(rows.map((r: ResultRow) => r.category)),
+    distances: uniq(rows.map((r: ResultRow) => r.distance ?? r.race)),
+    genders: uniq(rows.map((r: ResultRow) => r.gender)),
+    clubs: uniq(rows.map((r: ResultRow) => r.club)),
+    countries: uniq(rows.map((r: ResultRow) => r.country)),
   }), [rows]);
 
-  const filtered = rows.filter((r) =>
+  const filtered = rows.filter((r: ResultRow) =>
     (!fCat || r.category === fCat) &&
     (!fDist || (r.distance ?? r.race) === fDist) &&
     (!fGender || r.gender === fGender) &&

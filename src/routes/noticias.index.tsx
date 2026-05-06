@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar, Eye, User as UserIcon, Newspaper, Inbox } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { formatDate } from "@/lib/i18n/format";
 
 type News = {
   id: string;
@@ -39,6 +41,7 @@ export const Route = createFileRoute("/noticias/")({
 });
 
 function NoticiasIndexPage() {
+  const { t, lang } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [scope, setScope] = useState<"all" | "Nacional" | "Internacional">("all");
@@ -67,17 +70,17 @@ function NoticiasIndexPage() {
   }, [news, scope]);
 
   const tabs: { key: "all" | "Nacional" | "Internacional"; label: string }[] = [
-    { key: "all", label: "Todas" },
-    { key: "Nacional", label: "Nacional" },
-    { key: "Internacional", label: "Internacional" },
+    { key: "all", label: t("news.all") },
+    { key: "Nacional", label: t("nav.national") },
+    { key: "Internacional", label: t("nav.international") },
   ];
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <header className="mb-8">
-        <p className="font-condensed text-xs uppercase tracking-widest text-gold">Sección</p>
+        <p className="font-condensed text-xs uppercase tracking-widest text-gold">{t("news.category")}</p>
         <h1 className="font-display text-5xl tracking-widest md:text-6xl">
-          Todas las <span className="text-gold">noticias</span>
+          {t("home.latestNews")} <span className="text-gold">{t("home.latestNewsAccent")}</span>
         </h1>
         <div className="mt-4 h-[2px] w-24 bg-gold" aria-hidden="true" />
       </header>
@@ -190,12 +193,13 @@ function EmptyNews() {
 }
 
 function NewsListCard({ news }: { news: News }) {
+  const { lang } = useLanguage();
   return (
     <Link
       to="/noticias/articulo/$slug"
       params={{ slug: news.slug }}
       className="group block overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
-      aria-label={`Leer noticia: ${news.title}`}
+      aria-label={`${news.title}`}
     >
       <div className="aspect-[16/10] overflow-hidden bg-surface-2">
         {news.image_url ? (
@@ -231,7 +235,7 @@ function NewsListCard({ news }: { news: News }) {
           )}
           <span className="ml-auto flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            {new Date(news.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+            {formatDate(news.published_at, lang, { day: "2-digit", month: "short" })}
           </span>
         </div>
       </div>

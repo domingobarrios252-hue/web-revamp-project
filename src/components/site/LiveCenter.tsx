@@ -57,6 +57,22 @@ export function LiveCenter() {
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
+      // Find featured event in result_events first to filter results.
+      const { data: featuredEvents } = await supabase
+        .from("result_events")
+        .select("slug, name")
+        .eq("published", true)
+        .eq("featured_in_live_center", true)
+        .order("sort_order", { ascending: true })
+        .limit(1);
+      const featuredSlug = (featuredEvents?.[0] as { slug: string } | undefined)?.slug ?? null;
+
+      let resultsQuery = supabase
+        .from("live_results")
+        .select("id, event_name, event_slug, race, category, position, athlete_name, club, race_time, status, sort_order")
+        .eq("published", true);
+      if (featuredSlug) resultsQuery = resultsQuery.eq("event_slug", featuredSlug);
+
       const [streamRes, scheduleRes, resultsRes] = await Promise.all([
         supabase
           .from("live_stream")
@@ -70,10 +86,7 @@ export function LiveCenter() {
           .eq("published", true)
           .order("scheduled_at", { ascending: true })
           .limit(20),
-        supabase
-          .from("live_results")
-          .select("id, event_name, event_slug, race, category, position, athlete_name, club, race_time, status, sort_order")
-          .eq("published", true)
+        resultsQuery
           .order("sort_order", { ascending: true })
           .order("position", { ascending: true })
           .limit(80),
@@ -91,6 +104,7 @@ export function LiveCenter() {
       .on("postgres_changes", { event: "*", schema: "public", table: "live_results" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "schedule_items" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "live_stream" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "result_events" }, load)
       .subscribe();
     const interval = window.setInterval(load, 15_000);
     return () => {
