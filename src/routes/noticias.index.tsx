@@ -78,9 +78,9 @@ function NoticiasIndexPage() {
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <header className="mb-8">
-        <p className="font-condensed text-xs uppercase tracking-widest text-gold">Sección</p>
+        <p className="font-condensed text-xs uppercase tracking-widest text-gold">{t("news.category")}</p>
         <h1 className="font-display text-5xl tracking-widest md:text-6xl">
-          Todas las <span className="text-gold">noticias</span>
+          {t("home.latestNews")} <span className="text-gold">{t("home.latestNewsAccent")}</span>
         </h1>
         <div className="mt-4 h-[2px] w-24 bg-gold" aria-hidden="true" />
       </header>
