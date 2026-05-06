@@ -69,10 +69,10 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#333] bg-[#1A1A1A]">
+    <header className="sticky top-0 z-50 border-b border-[#2A2A2A] bg-[#1A1A1A]/85 backdrop-blur-md supports-[backdrop-filter]:bg-[#1A1A1A]/70">
       <nav className="flex h-14 items-center justify-between px-4 md:px-6">
         {/* Logo */}
-        <Link to="/" className="flex items-center" aria-label="RollerZone — Inicio">
+        <Link to="/" className="flex items-center transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40 rounded-sm" aria-label="RollerZone — Inicio">
           <img
             src={logoUrl}
             alt="RollerZone — Revista de Patinaje de Velocidad"
@@ -82,7 +82,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-1 lg:gap-3 md:flex">
+        <ul className="hidden items-center gap-2 lg:gap-5 md:flex">
           <li>
             <Link to="/" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }} activeOptions={{ exact: true }}>
               {t("nav.home")}
