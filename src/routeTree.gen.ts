@@ -21,6 +21,7 @@ import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
@@ -44,6 +45,7 @@ import { Route as AdminSectionsRouteImport } from './routes/admin.sections'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
+import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
@@ -120,6 +122,11 @@ const AdminRoute = AdminRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultadosIndexRoute = ResultadosIndexRouteImport.update({
+  id: '/resultados/',
+  path: '/resultados/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
@@ -237,6 +244,11 @@ const AdminRevistaCtaRoute = AdminRevistaCtaRouteImport.update({
   path: '/revista-cta',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminResultadosRoute = AdminResultadosRouteImport.update({
+  id: '/resultados',
+  path: '/resultados',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRedactoresRoute = AdminRedactoresRouteImport.update({
   id: '/redactores',
   path: '/redactores',
@@ -351,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
+  '/admin/resultados': typeof AdminResultadosRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
@@ -374,6 +387,7 @@ export interface FileRoutesByFullPath {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
+  '/resultados/': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
@@ -403,6 +417,7 @@ export interface FileRoutesByTo {
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
+  '/admin/resultados': typeof AdminResultadosRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
@@ -426,6 +441,7 @@ export interface FileRoutesByTo {
   '/entrevistas': typeof EntrevistasIndexRoute
   '/eventos': typeof EventosIndexRoute
   '/noticias': typeof NoticiasIndexRoute
+  '/resultados': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
@@ -458,6 +474,7 @@ export interface FileRoutesById {
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
+  '/admin/resultados': typeof AdminResultadosRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
@@ -481,6 +498,7 @@ export interface FileRoutesById {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
+  '/resultados/': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
 }
@@ -514,6 +532,7 @@ export interface FileRouteTypes {
     | '/admin/pendientes'
     | '/admin/premios-mvp'
     | '/admin/redactores'
+    | '/admin/resultados'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
@@ -537,6 +556,7 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/eventos/'
     | '/noticias/'
+    | '/resultados/'
     | '/api/og/premios-mvp.svg'
     | '/noticias/articulo/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -566,6 +586,7 @@ export interface FileRouteTypes {
     | '/admin/pendientes'
     | '/admin/premios-mvp'
     | '/admin/redactores'
+    | '/admin/resultados'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
@@ -589,6 +610,7 @@ export interface FileRouteTypes {
     | '/entrevistas'
     | '/eventos'
     | '/noticias'
+    | '/resultados'
     | '/api/og/premios-mvp.svg'
     | '/noticias/articulo/$slug'
   id:
@@ -620,6 +642,7 @@ export interface FileRouteTypes {
     | '/admin/pendientes'
     | '/admin/premios-mvp'
     | '/admin/redactores'
+    | '/admin/resultados'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
@@ -643,6 +666,7 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/eventos/'
     | '/noticias/'
+    | '/resultados/'
     | '/api/og/premios-mvp.svg'
     | '/noticias/articulo/$slug'
   fileRoutesById: FileRoutesById
@@ -671,6 +695,7 @@ export interface RootRouteChildren {
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
+  ResultadosIndexRoute: typeof ResultadosIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
 }
@@ -759,6 +784,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resultados/': {
+      id: '/resultados/'
+      path: '/resultados'
+      fullPath: '/resultados/'
+      preLoaderRoute: typeof ResultadosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/noticias/': {
@@ -922,6 +954,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRevistaCtaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/resultados': {
+      id: '/admin/resultados'
+      path: '/resultados'
+      fullPath: '/admin/resultados'
+      preLoaderRoute: typeof AdminResultadosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/redactores': {
       id: '/admin/redactores'
       path: '/redactores'
@@ -1060,6 +1099,7 @@ interface AdminRouteChildren {
   AdminPendientesRoute: typeof AdminPendientesRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
+  AdminResultadosRoute: typeof AdminResultadosRoute
   AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
@@ -1089,6 +1129,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPendientesRoute: AdminPendientesRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
+  AdminResultadosRoute: AdminResultadosRoute,
   AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminScheduleRoute: AdminScheduleRoute,
@@ -1140,6 +1181,7 @@ const rootRouteChildren: RootRouteChildren = {
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
+  ResultadosIndexRoute: ResultadosIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
 }
