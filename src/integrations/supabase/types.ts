@@ -326,10 +326,16 @@ export type Database = {
           athlete_name: string
           category: string | null
           club: string | null
+          country: string | null
           created_at: string
+          distance: string | null
           event_name: string
           event_slug: string | null
+          featured_in_live_center: boolean
+          gap: string | null
+          gender: string | null
           id: string
+          is_highlighted: boolean
           news_id: string | null
           points: number | null
           position: number
@@ -344,10 +350,16 @@ export type Database = {
           athlete_name?: string
           category?: string | null
           club?: string | null
+          country?: string | null
           created_at?: string
+          distance?: string | null
           event_name: string
           event_slug?: string | null
+          featured_in_live_center?: boolean
+          gap?: string | null
+          gender?: string | null
           id?: string
+          is_highlighted?: boolean
           news_id?: string | null
           points?: number | null
           position?: number
@@ -362,10 +374,16 @@ export type Database = {
           athlete_name?: string
           category?: string | null
           club?: string | null
+          country?: string | null
           created_at?: string
+          distance?: string | null
           event_name?: string
           event_slug?: string | null
+          featured_in_live_center?: boolean
+          gap?: string | null
+          gender?: string | null
           id?: string
+          is_highlighted?: boolean
           news_id?: string | null
           points?: number | null
           position?: number
@@ -865,6 +883,51 @@ export type Database = {
           name?: string
           scope?: string
           sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      result_events: {
+        Row: {
+          banner_url: string | null
+          country: string | null
+          created_at: string
+          event_date: string | null
+          featured_in_live_center: boolean
+          id: string
+          name: string
+          published: boolean
+          slug: string
+          sort_order: number
+          status: Database["public"]["Enums"]["live_result_status"]
+          updated_at: string
+        }
+        Insert: {
+          banner_url?: string | null
+          country?: string | null
+          created_at?: string
+          event_date?: string | null
+          featured_in_live_center?: boolean
+          id?: string
+          name: string
+          published?: boolean
+          slug: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["live_result_status"]
+          updated_at?: string
+        }
+        Update: {
+          banner_url?: string | null
+          country?: string | null
+          created_at?: string
+          event_date?: string | null
+          featured_in_live_center?: boolean
+          id?: string
+          name?: string
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["live_result_status"]
           updated_at?: string
         }
         Relationships: []
