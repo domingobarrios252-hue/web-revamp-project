@@ -193,12 +193,13 @@ function EmptyNews() {
 }
 
 function NewsListCard({ news }: { news: News }) {
+  const { lang } = useLanguage();
   return (
     <Link
       to="/noticias/articulo/$slug"
       params={{ slug: news.slug }}
       className="group block overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
-      aria-label={`Leer noticia: ${news.title}`}
+      aria-label={`${news.title}`}
     >
       <div className="aspect-[16/10] overflow-hidden bg-surface-2">
         {news.image_url ? (
@@ -234,7 +235,7 @@ function NewsListCard({ news }: { news: News }) {
           )}
           <span className="ml-auto flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            {new Date(news.published_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+            {formatDate(news.published_at, lang, { day: "2-digit", month: "short" })}
           </span>
         </div>
       </div>
