@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Users, Filter, X, CalendarX2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -50,6 +51,7 @@ function formatRange(start: string, end: string | null) {
 }
 
 function EventosPage() {
+  const { t } = useLanguage();
   const [events, setEvents] = useState<EventItem[] | null>(null);
   const [scope, setScope] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
@@ -111,7 +113,7 @@ function EventosPage() {
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <div className="mb-8 flex items-center gap-3 border-b border-border pb-4">
         <Calendar className="h-7 w-7 text-gold" />
-        <h1 className="font-display text-3xl tracking-widest">EVENTOS</h1>
+        <h1 className="font-display text-3xl tracking-widest">{t("events.title").toUpperCase()}</h1>
       </div>
 
       {events !== null && events.length > 0 && (
