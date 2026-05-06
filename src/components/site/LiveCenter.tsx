@@ -336,10 +336,10 @@ export function LiveCenter() {
           {/* RIGHT: TV */}
           <div className="order-1 lg:order-2">
             <div className="mb-4 flex flex-wrap items-center gap-2">
-              <div className="font-condensed inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
+              <div className="font-condensed inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
                 <Radio className="h-3.5 w-3.5" /> Retransmisión
                 {isLive && (
-                  <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground">
+                  <span className="ml-1 inline-flex items-center gap-1 rounded-sm bg-tv-red px-1.5 py-0.5 text-[9px] tracking-wider text-foreground live-red-tag">
                     <span className="live-dot h-1 w-1 rounded-full bg-foreground" />
                     LIVE
                   </span>
@@ -350,7 +350,7 @@ export function LiveCenter() {
                   aria-label="Cambiar retransmisión"
                   value={stream?.id ?? ""}
                   onChange={(e) => setSelectedStreamId(e.target.value)}
-                  className="font-condensed ml-auto border border-border bg-background px-3 py-2 text-[11px] font-bold uppercase tracking-[2px] text-foreground hover:border-gold focus:border-gold focus:outline-none"
+                  className="font-condensed ml-auto rounded-md border border-border bg-background px-3 py-2 text-[11px] font-bold uppercase tracking-[2px] text-foreground hover:border-gold focus:border-gold focus:outline-none"
                 >
                   {streams.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -360,8 +360,13 @@ export function LiveCenter() {
                 </select>
               )}
             </div>
-            <div className="border border-border bg-surface">
-              <div className="aspect-video bg-background">
+            <div className="group relative overflow-hidden rounded-xl border border-border bg-surface shadow-xl gold-glow-soft">
+              {isLive && (
+                <div className="pointer-events-none absolute left-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-sm bg-tv-red px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-foreground live-red-tag">
+                  <span className="live-dot h-1.5 w-1.5 rounded-full bg-foreground" /> LIVE
+                </div>
+              )}
+              <div className="relative aspect-video bg-background">
                 {embed?.type === "iframe" ? (
                   <iframe
                     src={embed.src}
@@ -375,17 +380,27 @@ export function LiveCenter() {
                     href={embed.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground transition-colors hover:text-gold"
+                    className="relative flex h-full flex-col items-center justify-center gap-3 text-center text-foreground"
                   >
-                    <ExternalLink className="h-10 w-10" /> Abrir retransmisión externa
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
+                    <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gold text-background play-pulse transition-transform group-hover:scale-110">
+                      <Play className="h-7 w-7 fill-background" />
+                    </div>
+                    <span className="font-condensed relative z-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold">
+                      <ExternalLink className="h-4 w-4" /> Abrir retransmisión externa
+                    </span>
                   </a>
                 ) : (
-                  <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center text-muted-foreground">
-                    <Play className="h-10 w-10 text-gold" />
-                    <p className="font-condensed text-xs uppercase tracking-widest">
+                  <div className="relative flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
+                    <div className="absolute inset-0 hero-grid-bg opacity-50" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
+                    <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold/60 bg-black/60 text-gold backdrop-blur play-pulse">
+                      <Play className="h-7 w-7" />
+                    </div>
+                    <p className="font-condensed relative z-10 text-xs font-bold uppercase tracking-widest text-foreground">
                       Sin retransmisión activa
                     </p>
-                    <p className="text-xs text-muted-foreground/80">
+                    <p className="relative z-10 text-xs text-foreground/60">
                       Volveremos en directo durante la próxima prueba programada.
                     </p>
                   </div>
