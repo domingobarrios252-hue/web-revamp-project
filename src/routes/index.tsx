@@ -549,7 +549,7 @@ function EventsPreviewSection() {
       .eq("published", true)
       .gte("start_date", today)
       .order("start_date", { ascending: true })
-      .limit(3)
+      .limit(24)
       .then(({ data }) => {
         if (!cancelled) setItems((data as EventPreview[]) ?? []);
       });
