@@ -345,6 +345,10 @@ export const translations = {
       magazineTitle: "Magazine",
       magazineLatest: "Latest issue",
       magazinePast: "Past issues",
+      tvTitle: "RollerZone TV",
+      tvLive: "Live broadcast",
+      tvBroadcasts: "Upcoming broadcasts",
+      tvHighlights: "Highlights",
     },
     footer: {
       tagline:
