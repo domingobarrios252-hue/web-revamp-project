@@ -195,7 +195,7 @@ function TvPage() {
       </div>
 
       {/* PRÓXIMAS CARRERAS — CARRUSEL */}
-      <section className="border-b border-border bg-background">
+      <section id="emisiones" className="border-b border-border bg-background scroll-mt-20">
         <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
           <SectionHeader
             kicker="Programación"
