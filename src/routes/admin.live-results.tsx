@@ -162,6 +162,16 @@ export function AdminLiveResults() {
     load();
   };
 
+  const onBulkDelete = async () => {
+    if (filtered.length === 0) return;
+    if (!confirm(`¿Eliminar ${filtered.length} resultados filtrados? Esta acción no se puede deshacer.`)) return;
+    const ids = filtered.map((r) => r.id);
+    const { error } = await supabase.from("live_results").delete().in("id", ids);
+    if (error) return toast.error(error.message);
+    toast.success(`${ids.length} resultados eliminados`);
+    load();
+  };
+
   // Cambio de estado en bloque para el evento+carrera+categoría filtrados
   const onBulkStatus = async (newStatus: Status) => {
     if (filtered.length === 0) return;
@@ -442,6 +452,12 @@ export function AdminLiveResults() {
               className="font-condensed inline-flex items-center gap-1 border border-emerald-500/50 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-400 hover:bg-emerald-500/20"
             >
               ✓ Final
+            </button>
+            <button
+              onClick={onBulkDelete}
+              className="font-condensed ml-auto inline-flex items-center gap-1 border border-tv-red/50 bg-tv-red/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-tv-red hover:bg-tv-red hover:text-white"
+            >
+              <Trash2 className="h-3 w-3" /> Eliminar filtrados
             </button>
           </div>
         )}
