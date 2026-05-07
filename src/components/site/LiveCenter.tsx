@@ -69,7 +69,7 @@ type EventCard = {
   start_date: string;
   end_date: string | null;
   location: string | null;
-  status: "programada" | "en_curso" | "finalizada";
+  status: "live" | "upcoming" | "finished";
   scope: string;
 };
 
