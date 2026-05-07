@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Clock, Flame, Instagram, Facebook } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
