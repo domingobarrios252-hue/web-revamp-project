@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Clock, Flame, Instagram, Facebook } from "lucide-react";
 import { Ticker } from "@/components/site/Ticker";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
@@ -548,7 +549,7 @@ function EventsPreviewSection() {
       .eq("published", true)
       .gte("start_date", today)
       .order("start_date", { ascending: true })
-      .limit(3)
+      .limit(24)
       .then(({ data }) => {
         if (!cancelled) setItems((data as EventPreview[]) ?? []);
       });
@@ -573,42 +574,73 @@ function EventsPreviewSection() {
       ) : items.length === 0 ? (
         <p className="text-sm text-muted-foreground">No hay eventos próximos programados.</p>
       ) : (
-        <div className="grid gap-5 md:grid-cols-3">
-          {items.map((e) => (
-            <article key={e.id} className="border border-border bg-surface transition-colors hover:border-gold">
-              {e.cover_url && (
-                <div className="aspect-[16/9] overflow-hidden bg-background">
-                  <img src={e.cover_url} alt={e.name} className="h-full w-full object-cover" loading="lazy" />
-                </div>
-              )}
-              <div className="p-4">
-                <div className="font-condensed mb-2 flex items-center gap-2 text-[11px] uppercase tracking-widest">
-                  <span className="bg-gold/15 px-2 py-0.5 font-bold text-gold">{e.scope}</span>
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(e.start_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
-                    {e.end_date && e.end_date !== e.start_date && (
-                      <> – {new Date(e.end_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}</>
+        <Carousel
+          opts={{ align: "start", loop: false }}
+          className="relative"
+        >
+          <CarouselContent className="-ml-4">
+            {items.map((e) => (
+              <CarouselItem key={e.id} className="pl-4 sm:basis-1/2 lg:basis-1/3">
+                <Link
+                  to="/eventos/$slug"
+                  params={{ slug: e.slug }}
+                  className="group flex h-full flex-col border border-border bg-surface transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_10px_30px_-10px_hsl(var(--gold)/0.4)]"
+                >
+                  <div className="relative aspect-[16/9] overflow-hidden bg-background">
+                    {e.cover_url ? (
+                      <img
+                        src={e.cover_url}
+                        alt={e.name}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+                        <Calendar className="h-10 w-10 text-gold/30" />
+                      </div>
                     )}
-                  </span>
-                </div>
-                <h3 className="font-display text-lg leading-tight tracking-wider">{e.name}</h3>
-                {e.location && (
-                  <div className="font-condensed mt-1 flex items-center gap-1 text-xs uppercase tracking-wider text-muted-foreground">
-                    <MapPin className="h-3 w-3" /> {e.location}
+                    <div className="absolute left-3 top-3 flex flex-col items-center bg-background/90 px-2.5 py-1.5 text-center backdrop-blur">
+                      <span className="font-display text-lg leading-none text-gold">
+                        {new Date(e.start_date).toLocaleDateString("es-ES", { day: "2-digit" })}
+                      </span>
+                      <span className="font-condensed text-[10px] uppercase tracking-widest text-foreground">
+                        {new Date(e.start_date).toLocaleDateString("es-ES", { month: "short" })}
+                      </span>
+                    </div>
+                    <span className="absolute right-3 top-3 bg-gold/90 px-2 py-0.5 font-condensed text-[10px] font-bold uppercase tracking-widest text-background">
+                      {e.scope}
+                    </span>
                   </div>
-                )}
-                {e.categories?.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1">
-                    {e.categories.slice(0, 4).map((c) => (
-                      <span key={c} className="font-condensed border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">{c}</span>
-                    ))}
+                  <div className="flex flex-1 flex-col p-4">
+                    <h3 className="font-display line-clamp-2 text-lg leading-tight tracking-wider transition-colors group-hover:text-gold">
+                      {e.name}
+                    </h3>
+                    {e.location && (
+                      <div className="font-condensed mt-2 flex items-center gap-1 text-xs uppercase tracking-wider text-muted-foreground">
+                        <MapPin className="h-3 w-3" /> {e.location}
+                      </div>
+                    )}
+                    {e.end_date && e.end_date !== e.start_date && (
+                      <div className="font-condensed mt-1 flex items-center gap-1 text-xs uppercase tracking-wider text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        Hasta {new Date(e.end_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
+                      </div>
+                    )}
+                    {e.categories?.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1">
+                        {e.categories.slice(0, 4).map((c) => (
+                          <span key={c} className="font-condensed border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">{c}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
+                </Link>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex -left-4 border-border bg-surface text-foreground hover:bg-gold hover:text-background" />
+          <CarouselNext className="hidden md:flex -right-4 border-border bg-surface text-foreground hover:bg-gold hover:text-background" />
+        </Carousel>
       )}
     </section>
   );
