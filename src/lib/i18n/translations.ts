@@ -76,6 +76,10 @@ export const translations = {
       magazineTitle: "Revista",
       magazineLatest: "Último número",
       magazinePast: "Ediciones anteriores",
+      tvTitle: "RollerZone TV",
+      tvLive: "Retransmisión en directo",
+      tvBroadcasts: "Próximas emisiones",
+      tvHighlights: "Highlights",
     },
     footer: {
       tagline:
