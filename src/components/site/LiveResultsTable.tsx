@@ -25,6 +25,7 @@ export type LiveResultRow = {
   club: string | null;
   race_time: string | null;
   points: number | null;
+  gender: string | null;
   status: LiveResultStatus;
   sort_order: number;
   updated_at: string;
