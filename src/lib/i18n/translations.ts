@@ -185,7 +185,7 @@ export const translations = {
       podium: "Podio",
       timeline: "Live Timeline",
       timelineEmpty: "Aún no hay actividad. Cuando comience la prueba, los eventos aparecerán aquí en tiempo real.",
-      eventsTitle: "Eventos en directo",
+      eventsTitle: "Próximos eventos",
       eventsAll: "Ver todos los eventos",
       finalLabel: "Finalizado",
       upcomingLabel: "Próximo",
