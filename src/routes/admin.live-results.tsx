@@ -162,6 +162,16 @@ export function AdminLiveResults() {
     load();
   };
 
+  const onBulkDelete = async () => {
+    if (filtered.length === 0) return;
+    if (!confirm(`¿Eliminar ${filtered.length} resultados filtrados? Esta acción no se puede deshacer.`)) return;
+    const ids = filtered.map((r) => r.id);
+    const { error } = await supabase.from("live_results").delete().in("id", ids);
+    if (error) return toast.error(error.message);
+    toast.success(`${ids.length} resultados eliminados`);
+    load();
+  };
+
   // Cambio de estado en bloque para el evento+carrera+categoría filtrados
   const onBulkStatus = async (newStatus: Status) => {
     if (filtered.length === 0) return;
