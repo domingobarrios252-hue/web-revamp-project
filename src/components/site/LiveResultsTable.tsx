@@ -444,6 +444,16 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
   );
 }
 
+function normalizeGender(g: string | null | undefined): string | null {
+  if (!g) return null;
+  const v = g.trim().toLowerCase();
+  if (!v) return null;
+  if (v.startsWith("m") && !v.startsWith("muj") && !v.startsWith("fem")) return "Masculino";
+  if (v === "h" || v === "hombre" || v === "hombres" || v === "male" || v === "men") return "Masculino";
+  if (v.startsWith("f") || v.startsWith("muj") || v === "w" || v === "women") return "Femenino";
+  return g.trim();
+}
+
 function groupPriority(rows: LiveResultRow[]): number {
   // Determina el estado dominante del grupo (prioriza el más "vivo")
   if (rows.some((r) => r.status === "en_vivo")) return 0;
