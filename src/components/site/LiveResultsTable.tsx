@@ -342,7 +342,7 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
         </div>
 
         {/* FILTROS */}
-        <div className="mb-6 grid gap-2 sm:grid-cols-3">
+        <div className="mb-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <FilterSelect
             label="Evento"
             value={filterEvent}
@@ -360,6 +360,12 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
             value={filterCategory}
             onChange={setFilterCategory}
             options={allCategories}
+          />
+          <FilterSelect
+            label="Género"
+            value={filterGender}
+            onChange={setFilterGender}
+            options={allGenders}
           />
         </div>
 
