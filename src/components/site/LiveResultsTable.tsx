@@ -73,6 +73,7 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
   const [filterEvent, setFilterEvent] = useState<string>(ALL);
   const [filterRace, setFilterRace] = useState<string>(ALL);
   const [filterCategory, setFilterCategory] = useState<string>(ALL);
+  const [filterGender, setFilterGender] = useState<string>(ALL);
 
   // Tick para mostrar "hace Xs" actualizado
   const [, setTick] = useState(0);
