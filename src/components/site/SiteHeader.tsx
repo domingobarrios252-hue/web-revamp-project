@@ -120,6 +120,12 @@ export function SiteHeader() {
             </Link>
           </MegaItemLi>
 
+          <MegaItemLi keyName="tv" openMega={openMega} setOpenMega={setOpenMega}>
+            <Link to="/tv" className={NAV_LINK + " gap-1"} activeProps={{ className: NAV_ACTIVE }}>
+              RollerZone TV <ChevronDown className="h-3 w-3" />
+            </Link>
+          </MegaItemLi>
+
           <li>
             <Link to="/premios-mvp" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
               MVP
