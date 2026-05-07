@@ -222,7 +222,7 @@ function TvPage() {
       </section>
 
       {/* HIGHLIGHTS GRID */}
-      <section className="bg-surface/40">
+      <section id="highlights" className="bg-surface/40 scroll-mt-20">
         <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
           <SectionHeader
             kicker="Lo mejor"
