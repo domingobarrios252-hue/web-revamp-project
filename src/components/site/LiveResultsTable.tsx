@@ -90,7 +90,7 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
       const { data } = await supabase
         .from("live_results")
         .select(
-          "id, event_name, event_slug, race, category, position, athlete_name, club, race_time, points, status, sort_order, updated_at",
+          "id, event_name, event_slug, race, category, position, athlete_name, club, race_time, points, gender, status, sort_order, updated_at",
         )
         .eq("published", true)
         .order("sort_order", { ascending: true })
