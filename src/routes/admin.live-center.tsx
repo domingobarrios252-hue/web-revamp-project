@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarClock, FileSpreadsheet, Plus, Radio, Save, Trash2, Trophy } from "lucide-react";
+import { CalendarClock, Eye, FileSpreadsheet, Plus, Radio, Save, Trash2, Trophy, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import * as XLSX from "xlsx";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AdminSchedule } from "./admin.schedule";
 import { AdminLiveResults } from "./admin.live-results";
@@ -54,6 +55,8 @@ function AdminLiveCenter() {
   const [category, setCategory] = useState("");
   const [csv, setCsv] = useState("");
   const [replaceExisting, setReplaceExisting] = useState(true);
+  const [previewRows, setPreviewRows] = useState<{ position: number; athlete_name: string; club: string; race_time: string }[]>([]);
+  const [previewSource, setPreviewSource] = useState<string>("");
   const [scheduleName, setScheduleName] = useState("");
   const [scheduleCategory, setScheduleCategory] = useState("");
   const [scheduleAt, setScheduleAt] = useState(toLocalInput(new Date().toISOString()));
@@ -103,12 +106,52 @@ function AdminLiveCenter() {
     load();
   };
 
+  const buildPreview = () => {
+    const rows = parseCsv(csv);
+    if (rows.length === 0) return toast.error("Pega un CSV o sube un Excel con posición, patinador, club y tiempo");
+    setPreviewRows(rows);
+    setPreviewSource("csv");
+    toast.success(`${rows.length} filas listas para revisar`);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json<any>(ws, { defval: "", raw: false });
+      const rows = json
+        .map((r) => {
+          const keys = Object.keys(r);
+          const get = (names: string[]) => {
+            for (const k of keys) if (names.some((n) => k.toLowerCase().includes(n))) return String(r[k] ?? "").trim();
+            return "";
+          };
+          return {
+            position: Number(get(["pos", "#", "puesto", "rank"])),
+            athlete_name: get(["patinador", "athlete", "nombre", "name"]),
+            club: get(["club", "team", "equipo"]),
+            race_time: get(["tiempo", "time", "marca"]),
+          };
+        })
+        .filter((r) => Number.isInteger(r.position) && r.position > 0 && r.athlete_name);
+      if (rows.length === 0) return toast.error("No se reconocieron filas. Cabeceras esperadas: posición, patinador, club, tiempo");
+      setPreviewRows(rows);
+      setPreviewSource(file.name);
+      // Sincroniza al CSV para visibilidad
+      setCsv(["posición,patinador,club,tiempo", ...rows.map((r) => `${r.position},${r.athlete_name},${r.club},${r.race_time}`)].join("\n"));
+      toast.success(`${rows.length} filas leídas de ${file.name}`);
+    } catch (e: any) {
+      toast.error(`Error leyendo archivo: ${e?.message ?? "desconocido"}`);
+    }
+  };
+
   const importCsv = async () => {
     const cleanEvent = eventName.trim();
     const cleanSlug = eventSlug.trim() || slugify(cleanEvent);
     if (!cleanEvent || !cleanSlug) return toast.error("Indica evento y slug");
-    const rows = parseCsv(csv);
-    if (rows.length === 0) return toast.error("Pega un CSV con posición, patinador, club y tiempo");
+    const rows = previewRows.length > 0 ? previewRows : parseCsv(csv);
+    if (rows.length === 0) return toast.error("Genera primero la vista previa");
     const payload = rows.map((row, index) => {
       const parsed = resultSchema.parse({ event_name: cleanEvent, event_slug: cleanSlug, race, category, position: row.position, athlete_name: row.athlete_name, club: row.club, race_time: row.race_time, status: "en_vivo", published: true, sort_order: index });
       return { ...parsed, race: parsed.race || null, category: parsed.category || null, club: parsed.club || null, race_time: parsed.race_time || null, points: null };
@@ -122,8 +165,10 @@ function AdminLiveCenter() {
     }
     const { error } = await supabase.from("live_results").insert(payload);
     if (error) return toast.error(error.message);
-    toast.success(`${payload.length} clasificaciones importadas`);
+    toast.success(`${payload.length} clasificaciones guardadas`);
     setCsv("");
+    setPreviewRows([]);
+    setPreviewSource("");
     load();
   };
 
@@ -172,7 +217,7 @@ function AdminLiveCenter() {
         </Panel>
       </section>
 
-      <Panel title="Importar clasificación desde CSV" icon={<FileSpreadsheet className="h-4 w-4" />}>
+      <Panel title="Importar clasificación desde CSV o Excel" icon={<FileSpreadsheet className="h-4 w-4" />}>
         <div className="grid gap-3 lg:grid-cols-4">
           <Field label="Evento"><input value={eventName} onChange={(e) => { setEventName(e.target.value); if (!eventSlug) setEventSlug(slugify(e.target.value)); }} list="live-events" className="input" placeholder="Campeonato..." /></Field>
           <datalist id="live-events">{events.map((event) => <option key={event} value={event} />)}</datalist>
@@ -180,11 +225,31 @@ function AdminLiveCenter() {
           <Field label="Prueba"><input value={race} onChange={(e) => setRace(e.target.value)} className="input" placeholder="500m" /></Field>
           <Field label="Categoría"><input value={category} onChange={(e) => setCategory(e.target.value)} className="input" placeholder="Senior femenino" /></Field>
         </div>
-        <Field label="CSV: posición, patinador, club, tiempo">
-          <textarea value={csv} onChange={(e) => setCsv(e.target.value)} className="input mt-2 min-h-40 font-mono text-xs" placeholder={'posición,patinador,club,tiempo\n1,Ana Pérez,Club Madrid,00:42.120\n2,Laura Gómez,CPV Barcelona,00:42.510'} />
+        <Field label="Subir Excel (.xlsx, .xls) o CSV">
+          <input type="file" accept=".xlsx,.xls,.csv" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); e.target.value = ""; }} className="input mt-2 file:mr-3 file:border-0 file:bg-gold file:px-3 file:py-1 file:text-background file:font-bold" />
+        </Field>
+        <Field label="O pega un CSV: posición, patinador, club, tiempo">
+          <textarea value={csv} onChange={(e) => { setCsv(e.target.value); setPreviewRows([]); }} className="input mt-2 min-h-40 font-mono text-xs" placeholder={'posición,patinador,club,tiempo\n1,Ana Pérez,Club Madrid,00:42.120\n2,Laura Gómez,CPV Barcelona,00:42.510'} />
         </Field>
         <Check label="Reemplazar la clasificación existente de esta prueba" checked={replaceExisting} onChange={setReplaceExisting} />
-        <button onClick={importCsv} className="font-condensed mt-3 inline-flex items-center gap-2 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"><Trophy className="h-4 w-4" /> Importar clasificación</button>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button onClick={buildPreview} className="font-condensed inline-flex items-center gap-2 border border-border px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold hover:bg-background"><Eye className="h-4 w-4" /> Vista previa</button>
+          <button onClick={importCsv} disabled={previewRows.length === 0} className="font-condensed inline-flex items-center gap-2 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"><Save className="h-4 w-4" /> Guardar cambios</button>
+        </div>
+        {previewRows.length > 0 && (
+          <div className="mt-4 border border-border bg-background p-3">
+            <div className="font-condensed mb-2 flex items-center justify-between text-[11px] uppercase tracking-widest text-muted-foreground">
+              <span>Vista previa · {previewRows.length} filas{previewSource ? ` · ${previewSource}` : ""}</span>
+              <button onClick={() => { setPreviewRows([]); setPreviewSource(""); }} className="text-tv-red hover:opacity-80">Descartar</button>
+            </div>
+            <div className="max-h-72 overflow-auto">
+              <table className="w-full text-sm">
+                <thead className="border-b border-border text-left font-condensed text-[10px] uppercase tracking-widest text-muted-foreground"><tr><th className="px-2 py-1">#</th><th>Patinador</th><th>Club</th><th>Tiempo</th></tr></thead>
+                <tbody>{previewRows.map((r, i) => <tr key={i} className="border-b border-border/50 last:border-0"><td className="px-2 py-1 font-mono text-gold">{r.position}</td><td>{r.athlete_name}</td><td className="text-muted-foreground">{r.club || "—"}</td><td className="font-mono">{r.race_time || "—"}</td></tr>)}</tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </Panel>
 
       <Panel title="Últimas clasificaciones" icon={<Trophy className="h-4 w-4" />}>
