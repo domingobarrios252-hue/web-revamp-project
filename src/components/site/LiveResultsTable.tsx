@@ -25,6 +25,7 @@ export type LiveResultRow = {
   club: string | null;
   race_time: string | null;
   points: number | null;
+  gender: string | null;
   status: LiveResultStatus;
   sort_order: number;
   updated_at: string;
@@ -72,6 +73,7 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
   const [filterEvent, setFilterEvent] = useState<string>(ALL);
   const [filterRace, setFilterRace] = useState<string>(ALL);
   const [filterCategory, setFilterCategory] = useState<string>(ALL);
+  const [filterGender, setFilterGender] = useState<string>(ALL);
 
   // Tick para mostrar "hace Xs" actualizado
   const [, setTick] = useState(0);
@@ -88,7 +90,7 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
       const { data } = await supabase
         .from("live_results")
         .select(
-          "id, event_name, event_slug, race, category, position, athlete_name, club, race_time, points, status, sort_order, updated_at",
+          "id, event_name, event_slug, race, category, position, athlete_name, club, race_time, points, gender, status, sort_order, updated_at",
         )
         .eq("published", true)
         .order("sort_order", { ascending: true })
@@ -146,6 +148,18 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
     ).sort();
   }, [rows, filterEvent, filterRace]);
 
+  const allGenders = useMemo(() => {
+    const subset = (rows ?? []).filter(
+      (r) =>
+        (filterEvent === ALL || r.event_name === filterEvent) &&
+        (filterRace === ALL || r.race === filterRace) &&
+        (filterCategory === ALL || r.category === filterCategory),
+    );
+    return Array.from(
+      new Set(subset.map((r) => normalizeGender(r.gender)).filter(Boolean) as string[]),
+    ).sort();
+  }, [rows, filterEvent, filterRace, filterCategory]);
+
   // Reset filtros dependientes si dejan de existir
   useEffect(() => {
     if (filterRace !== ALL && !allRaces.includes(filterRace)) setFilterRace(ALL);
@@ -154,15 +168,19 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
     if (filterCategory !== ALL && !allCategories.includes(filterCategory))
       setFilterCategory(ALL);
   }, [allCategories, filterCategory]);
+  useEffect(() => {
+    if (filterGender !== ALL && !allGenders.includes(filterGender)) setFilterGender(ALL);
+  }, [allGenders, filterGender]);
 
   const filtered = useMemo(() => {
     return (rows ?? []).filter(
       (r) =>
         (filterEvent === ALL || r.event_name === filterEvent) &&
         (filterRace === ALL || r.race === filterRace) &&
-        (filterCategory === ALL || r.category === filterCategory),
+        (filterCategory === ALL || r.category === filterCategory) &&
+        (filterGender === ALL || normalizeGender(r.gender) === filterGender),
     );
-  }, [rows, filterEvent, filterRace, filterCategory]);
+  }, [rows, filterEvent, filterRace, filterCategory, filterGender]);
 
   // Agrupar por evento + carrera + categoría
   const groups = useMemo(() => {
@@ -324,7 +342,7 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
         </div>
 
         {/* FILTROS */}
-        <div className="mb-6 grid gap-2 sm:grid-cols-3">
+        <div className="mb-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <FilterSelect
             label="Evento"
             value={filterEvent}
@@ -342,6 +360,12 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
             value={filterCategory}
             onChange={setFilterCategory}
             options={allCategories}
+          />
+          <FilterSelect
+            label="Género"
+            value={filterGender}
+            onChange={setFilterGender}
+            options={allGenders}
           />
         </div>
 
@@ -418,6 +442,16 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
       </div>
     </section>
   );
+}
+
+function normalizeGender(g: string | null | undefined): string | null {
+  if (!g) return null;
+  const v = g.trim().toLowerCase();
+  if (!v) return null;
+  if (v.startsWith("m") && !v.startsWith("muj") && !v.startsWith("fem")) return "Masculino";
+  if (v === "h" || v === "hombre" || v === "hombres" || v === "male" || v === "men") return "Masculino";
+  if (v.startsWith("f") || v.startsWith("muj") || v === "w" || v === "women") return "Femenino";
+  return g.trim();
 }
 
 function groupPriority(rows: LiveResultRow[]): number {
