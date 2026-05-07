@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarClock, FileSpreadsheet, Plus, Radio, Save, Trash2, Trophy } from "lucide-react";
+import { CalendarClock, Eye, FileSpreadsheet, Plus, Radio, Save, Trash2, Trophy, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import * as XLSX from "xlsx";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AdminSchedule } from "./admin.schedule";
 import { AdminLiveResults } from "./admin.live-results";
