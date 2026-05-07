@@ -895,9 +895,9 @@ function EventPosterCard({
   t: (k: string) => string;
 }) {
   const statusInfo =
-    event.status === "en_curso"
+    event.status === "live"
       ? { label: t("common.live"), cls: "bg-tv-red text-white live-red-tag" }
-      : event.status === "finalizada"
+      : event.status === "finished"
       ? { label: t("liveCenter.finalLabel"), cls: "bg-foreground/20 text-foreground/70 border border-border" }
       : { label: t("liveCenter.upcomingLabel"), cls: "bg-gold/15 text-gold border border-gold/40" };
 
@@ -921,7 +921,7 @@ function EventPosterCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
         <div className={`font-condensed absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-[10px] font-bold uppercase tracking-[2.5px] ${statusInfo.cls}`}>
-          {event.status === "en_curso" && (
+          {event.status === "live" && (
             <span className="live-dot-fast h-1.5 w-1.5 rounded-full bg-white" />
           )}
           {statusInfo.label}
