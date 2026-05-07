@@ -106,12 +106,52 @@ function AdminLiveCenter() {
     load();
   };
 
+  const buildPreview = () => {
+    const rows = parseCsv(csv);
+    if (rows.length === 0) return toast.error("Pega un CSV o sube un Excel con posición, patinador, club y tiempo");
+    setPreviewRows(rows);
+    setPreviewSource("csv");
+    toast.success(`${rows.length} filas listas para revisar`);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json<any>(ws, { defval: "", raw: false });
+      const rows = json
+        .map((r) => {
+          const keys = Object.keys(r);
+          const get = (names: string[]) => {
+            for (const k of keys) if (names.some((n) => k.toLowerCase().includes(n))) return String(r[k] ?? "").trim();
+            return "";
+          };
+          return {
+            position: Number(get(["pos", "#", "puesto", "rank"])),
+            athlete_name: get(["patinador", "athlete", "nombre", "name"]),
+            club: get(["club", "team", "equipo"]),
+            race_time: get(["tiempo", "time", "marca"]),
+          };
+        })
+        .filter((r) => Number.isInteger(r.position) && r.position > 0 && r.athlete_name);
+      if (rows.length === 0) return toast.error("No se reconocieron filas. Cabeceras esperadas: posición, patinador, club, tiempo");
+      setPreviewRows(rows);
+      setPreviewSource(file.name);
+      // Sincroniza al CSV para visibilidad
+      setCsv(["posición,patinador,club,tiempo", ...rows.map((r) => `${r.position},${r.athlete_name},${r.club},${r.race_time}`)].join("\n"));
+      toast.success(`${rows.length} filas leídas de ${file.name}`);
+    } catch (e: any) {
+      toast.error(`Error leyendo archivo: ${e?.message ?? "desconocido"}`);
+    }
+  };
+
   const importCsv = async () => {
     const cleanEvent = eventName.trim();
     const cleanSlug = eventSlug.trim() || slugify(cleanEvent);
     if (!cleanEvent || !cleanSlug) return toast.error("Indica evento y slug");
-    const rows = parseCsv(csv);
-    if (rows.length === 0) return toast.error("Pega un CSV con posición, patinador, club y tiempo");
+    const rows = previewRows.length > 0 ? previewRows : parseCsv(csv);
+    if (rows.length === 0) return toast.error("Genera primero la vista previa");
     const payload = rows.map((row, index) => {
       const parsed = resultSchema.parse({ event_name: cleanEvent, event_slug: cleanSlug, race, category, position: row.position, athlete_name: row.athlete_name, club: row.club, race_time: row.race_time, status: "en_vivo", published: true, sort_order: index });
       return { ...parsed, race: parsed.race || null, category: parsed.category || null, club: parsed.club || null, race_time: parsed.race_time || null, points: null };
@@ -125,8 +165,10 @@ function AdminLiveCenter() {
     }
     const { error } = await supabase.from("live_results").insert(payload);
     if (error) return toast.error(error.message);
-    toast.success(`${payload.length} clasificaciones importadas`);
+    toast.success(`${payload.length} clasificaciones guardadas`);
     setCsv("");
+    setPreviewRows([]);
+    setPreviewSource("");
     load();
   };
 
