@@ -114,7 +114,7 @@ function TvPage() {
   return (
     <div className="bg-background">
       {/* HERO PLAYER */}
-      <section className="relative border-b border-gold/30 bg-background">
+      <section id="directo" className="relative border-b border-gold/30 bg-background scroll-mt-20">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[1.5fr_1fr] lg:px-8 lg:py-12">
           {/* Player */}
           <div className="relative">
