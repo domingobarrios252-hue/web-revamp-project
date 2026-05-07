@@ -148,6 +148,18 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
     ).sort();
   }, [rows, filterEvent, filterRace]);
 
+  const allGenders = useMemo(() => {
+    const subset = (rows ?? []).filter(
+      (r) =>
+        (filterEvent === ALL || r.event_name === filterEvent) &&
+        (filterRace === ALL || r.race === filterRace) &&
+        (filterCategory === ALL || r.category === filterCategory),
+    );
+    return Array.from(
+      new Set(subset.map((r) => normalizeGender(r.gender)).filter(Boolean) as string[]),
+    ).sort();
+  }, [rows, filterEvent, filterRace, filterCategory]);
+
   // Reset filtros dependientes si dejan de existir
   useEffect(() => {
     if (filterRace !== ALL && !allRaces.includes(filterRace)) setFilterRace(ALL);
@@ -156,15 +168,19 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
     if (filterCategory !== ALL && !allCategories.includes(filterCategory))
       setFilterCategory(ALL);
   }, [allCategories, filterCategory]);
+  useEffect(() => {
+    if (filterGender !== ALL && !allGenders.includes(filterGender)) setFilterGender(ALL);
+  }, [allGenders, filterGender]);
 
   const filtered = useMemo(() => {
     return (rows ?? []).filter(
       (r) =>
         (filterEvent === ALL || r.event_name === filterEvent) &&
         (filterRace === ALL || r.race === filterRace) &&
-        (filterCategory === ALL || r.category === filterCategory),
+        (filterCategory === ALL || r.category === filterCategory) &&
+        (filterGender === ALL || normalizeGender(r.gender) === filterGender),
     );
-  }, [rows, filterEvent, filterRace, filterCategory]);
+  }, [rows, filterEvent, filterRace, filterCategory, filterGender]);
 
   // Agrupar por evento + carrera + categoría
   const groups = useMemo(() => {
