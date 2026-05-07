@@ -450,7 +450,7 @@ export const translations = {
       podium: "Podium",
       timeline: "Live Timeline",
       timelineEmpty: "No activity yet. When the race starts, live events will appear here in real time.",
-      eventsTitle: "Live events",
+      eventsTitle: "Upcoming events",
       eventsAll: "View all events",
       finalLabel: "Finished",
       upcomingLabel: "Upcoming",
