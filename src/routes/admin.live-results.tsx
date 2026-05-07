@@ -453,6 +453,12 @@ export function AdminLiveResults() {
             >
               ✓ Final
             </button>
+            <button
+              onClick={onBulkDelete}
+              className="font-condensed ml-auto inline-flex items-center gap-1 border border-tv-red/50 bg-tv-red/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-tv-red hover:bg-tv-red hover:text-white"
+            >
+              <Trash2 className="h-3 w-3" /> Eliminar filtrados
+            </button>
           </div>
         )}
 
