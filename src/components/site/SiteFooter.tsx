@@ -56,6 +56,8 @@ const KNOWN_INTERNAL: Record<string, string> = {
   tv: "/tv",
   revista: "/revista",
   "premios-mvp": "/premios-mvp",
+  equipo: "/#equipo",
+  Equipo: "/#equipo",
 };
 
 export function SiteFooter() {
