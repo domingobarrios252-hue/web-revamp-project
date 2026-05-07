@@ -76,6 +76,10 @@ export const translations = {
       magazineTitle: "Revista",
       magazineLatest: "Último número",
       magazinePast: "Ediciones anteriores",
+      tvTitle: "RollerZone TV",
+      tvLive: "Retransmisión en directo",
+      tvBroadcasts: "Próximas emisiones",
+      tvHighlights: "Highlights",
     },
     footer: {
       tagline:
@@ -185,7 +189,7 @@ export const translations = {
       podium: "Podio",
       timeline: "Live Timeline",
       timelineEmpty: "Aún no hay actividad. Cuando comience la prueba, los eventos aparecerán aquí en tiempo real.",
-      eventsTitle: "Eventos en directo",
+      eventsTitle: "Próximos eventos",
       eventsAll: "Ver todos los eventos",
       finalLabel: "Finalizado",
       upcomingLabel: "Próximo",
@@ -341,6 +345,10 @@ export const translations = {
       magazineTitle: "Magazine",
       magazineLatest: "Latest issue",
       magazinePast: "Past issues",
+      tvTitle: "RollerZone TV",
+      tvLive: "Live broadcast",
+      tvBroadcasts: "Upcoming broadcasts",
+      tvHighlights: "Highlights",
     },
     footer: {
       tagline:
@@ -450,7 +458,7 @@ export const translations = {
       podium: "Podium",
       timeline: "Live Timeline",
       timelineEmpty: "No activity yet. When the race starts, live events will appear here in real time.",
-      eventsTitle: "Live events",
+      eventsTitle: "Upcoming events",
       eventsAll: "View all events",
       finalLabel: "Finished",
       upcomingLabel: "Upcoming",
