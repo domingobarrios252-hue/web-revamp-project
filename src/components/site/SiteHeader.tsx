@@ -16,7 +16,7 @@ const ACTION_BTN =
   "font-ui inline-flex items-center gap-1.5 rounded-[6px] border border-[#D4A017] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D4A017] transition-all duration-200 hover:bg-[#D4A017] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40";
 
 type MegaItem = { labelKey: string; to: string; hash?: string };
-type MegaKey = "eventos" | "resultados" | "revista";
+type MegaKey = "eventos" | "resultados" | "revista" | "tv";
 
 const MEGA: Record<MegaKey, { titleKey: string; items: MegaItem[] }> = {
   eventos: {
@@ -40,6 +40,14 @@ const MEGA: Record<MegaKey, { titleKey: string; items: MegaItem[] }> = {
     items: [
       { labelKey: "mega.magazineLatest", to: "/revista" },
       { labelKey: "mega.magazinePast", to: "/revista" },
+    ],
+  },
+  tv: {
+    titleKey: "mega.tvTitle",
+    items: [
+      { labelKey: "mega.tvLive", to: "/tv", hash: "directo" },
+      { labelKey: "mega.tvBroadcasts", to: "/tv", hash: "emisiones" },
+      { labelKey: "mega.tvHighlights", to: "/tv", hash: "highlights" },
     ],
   },
 };
