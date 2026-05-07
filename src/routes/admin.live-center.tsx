@@ -55,6 +55,8 @@ function AdminLiveCenter() {
   const [category, setCategory] = useState("");
   const [csv, setCsv] = useState("");
   const [replaceExisting, setReplaceExisting] = useState(true);
+  const [previewRows, setPreviewRows] = useState<{ position: number; athlete_name: string; club: string; race_time: string }[]>([]);
+  const [previewSource, setPreviewSource] = useState<string>("");
   const [scheduleName, setScheduleName] = useState("");
   const [scheduleCategory, setScheduleCategory] = useState("");
   const [scheduleAt, setScheduleAt] = useState(toLocalInput(new Date().toISOString()));
