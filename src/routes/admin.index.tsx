@@ -178,7 +178,46 @@ function AdminNewsList() {
         </button>
       </div>
 
-      {loading ? (
+      {!loading && heroSorted.length > 0 && (
+        <div className="mb-6 border border-gold/40 bg-surface">
+          <div className="flex items-center justify-between border-b border-border px-3 py-2">
+            <h2 className="font-condensed text-[11px] font-bold uppercase tracking-widest text-gold">
+              Hero destacado · orden del carrusel ({heroSorted.length}/5)
+            </h2>
+            <span className="text-[11px] text-muted-foreground">Solo se muestran las primeras 5</span>
+          </div>
+          <ul>
+            {heroSorted.map((n, i) => (
+              <li
+                key={n.id}
+                className={
+                  "flex items-center gap-3 border-b border-border/50 px-3 py-2 last:border-0 " +
+                  (i >= 5 ? "opacity-50" : "")
+                }
+              >
+                <span className="font-condensed w-6 text-center text-xs font-bold text-gold">{i + 1}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-semibold text-foreground">{n.title}</div>
+                  <div className="truncate text-xs text-muted-foreground">/{n.slug}</div>
+                </div>
+                <div className="flex gap-1">
+                  <IconBtn title="Subir" onClick={() => moveHero(n, -1)}>
+                    <ArrowUp className="h-4 w-4" />
+                  </IconBtn>
+                  <IconBtn title="Bajar" onClick={() => moveHero(n, 1)}>
+                    <ArrowDown className="h-4 w-4" />
+                  </IconBtn>
+                  <IconBtn title="Quitar del hero" onClick={() => toggleFeatured(n)}>
+                    <Star className="h-4 w-4 fill-gold text-gold" />
+                  </IconBtn>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+
         <p className="text-muted-foreground">Cargando…</p>
       ) : news.length === 0 ? (
         <p className="text-muted-foreground">No hay noticias todavía.</p>
