@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,6 +63,16 @@ function TvPage() {
   const [now, setNow] = useState(() => new Date());
   const [carouselIdx, setCarouselIdx] = useState(0);
   const [activeHighlight, setActiveHighlight] = useState<Highlight | null>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    const hash = location.hash?.replace(/^#/, "");
+    if (!hash) return;
+    const el = document.getElementById(hash);
+    if (el) {
+      requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
+  }, [location.hash]);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30_000);

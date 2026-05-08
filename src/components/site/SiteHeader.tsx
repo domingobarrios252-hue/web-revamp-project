@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Menu, X, Search, ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
@@ -61,6 +61,7 @@ export function SiteHeader() {
   const { user, isEditor, signOut } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => setMobileOpen(false), []);
 
@@ -213,19 +214,30 @@ export function SiteHeader() {
               {t(MEGA[openMega].titleKey)}
             </div>
             <ul className="grid grid-cols-3 gap-x-8 gap-y-1">
-              {MEGA[openMega].items.map((item) => (
-                <li key={item.labelKey + item.to + (item.hash ?? "")}>
-                  {item.hash ? (
-                    <a href={`${item.to}#${item.hash}`} className={SUB_LINK} onClick={() => setOpenMega(null)}>
-                      {t(item.labelKey)}
-                    </a>
-                  ) : (
-                    <Link to={item.to} className={SUB_LINK} onClick={() => setOpenMega(null)}>
-                      {t(item.labelKey)}
-                    </Link>
-                  )}
-                </li>
-              ))}
+              {MEGA[openMega].items.map((item) => {
+                const isActive =
+                  location.pathname === item.to &&
+                  (item.hash ? location.hash === `#${item.hash}` : !location.hash);
+                const activeCls = isActive ? " text-[#D4A017]" : "";
+                return (
+                  <li key={item.labelKey + item.to + (item.hash ?? "")}>
+                    {item.hash ? (
+                      <Link
+                        to={item.to}
+                        hash={item.hash}
+                        className={SUB_LINK + activeCls}
+                        onClick={() => setOpenMega(null)}
+                      >
+                        {t(item.labelKey)}
+                      </Link>
+                    ) : (
+                      <Link to={item.to} className={SUB_LINK + activeCls} onClick={() => setOpenMega(null)}>
+                        {t(item.labelKey)}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
