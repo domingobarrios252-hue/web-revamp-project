@@ -216,8 +216,7 @@ function AdminNewsList() {
           </ul>
         </div>
       )}
-
-
+      {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
       ) : news.length === 0 ? (
         <p className="text-muted-foreground">No hay noticias todavía.</p>
