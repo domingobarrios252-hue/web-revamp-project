@@ -75,6 +75,9 @@ type EventCard = {
 
 const FALLBACK_TITLE = "RollerZone Live Center";
 
+type LiveCenterSettings = { bg_url: string; blur: number };
+const LC_DEFAULTS: LiveCenterSettings = { bg_url: "", blur: 8 };
+
 export function LiveCenter() {
   const { t, lang } = useLanguage();
   const [streams, setStreams] = useState<StreamRow[]>([]);
@@ -84,6 +87,7 @@ export function LiveCenter() {
   const [featured, setFeatured] = useState<FeaturedEvent | null>(null);
   const [events, setEvents] = useState<EventCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [bgCfg, setBgCfg] = useState<LiveCenterSettings>(LC_DEFAULTS);
 
   const stream = useMemo(
     () => streams.find((s) => s.id === selectedStreamId) ?? streams[0] ?? null,
@@ -143,6 +147,14 @@ export function LiveCenter() {
     };
 
     load();
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "live_center_bg")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data?.value) setBgCfg({ ...LC_DEFAULTS, ...(data.value as Partial<LiveCenterSettings>) });
+      });
     const channel = supabase
       .channel("rollerzone-live-center")
       .on("postgres_changes", { event: "*", schema: "public", table: "live_results" }, load)
@@ -208,12 +220,31 @@ export function LiveCenter() {
       className="relative overflow-hidden border-b border-border"
       style={{ backgroundColor: "#0B0B0B" }}
     >
+      {/* Background photo (configurable) */}
+      {bgCfg.bg_url && (
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <img
+            src={bgCfg.bg_url}
+            alt=""
+            className="h-full w-full object-cover opacity-60"
+            style={{ filter: `blur(${Math.max(0, Math.min(40, bgCfg.blur))}px)`, transform: "scale(1.08)" }}
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />
+        </div>
+      )}
       {/* Top accent line */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden="true" />
       {/* Ambient glow */}
       <div
         className="pointer-events-none absolute -top-32 left-1/2 h-[500px] w-[900px] -translate-x-1/2 rounded-full blur-3xl"
-        style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.18), transparent 70%)" }}
+        style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.22), transparent 70%)" }}
+        aria-hidden
+      />
+      {/* Secondary warm glow bottom-right */}
+      <div
+        className="pointer-events-none absolute -bottom-40 right-0 h-[420px] w-[700px] rounded-full blur-3xl"
+        style={{ background: "radial-gradient(closest-side, rgba(232,184,32,0.10), transparent 70%)" }}
         aria-hidden
       />
 

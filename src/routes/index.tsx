@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Clock, Flame, Instagram, Facebook } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Clock, Flame, Instagram, Facebook, ChevronLeft, ChevronRight } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import { Ticker } from "@/components/site/Ticker";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
@@ -55,9 +57,13 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+type HeroSettings = { live_active: boolean };
+const HERO_DEFAULTS: HeroSettings = { live_active: false };
+
 function HomePage() {
   const { t, lang } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
+  const [heroCfg, setHeroCfg] = useState<HeroSettings>(HERO_DEFAULTS);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,96 +75,35 @@ function HomePage() {
       .eq("published", true)
       .order("featured", { ascending: false })
       .order("published_at", { ascending: false })
-      .limit(8)
+      .limit(12)
       .then(({ data }) => {
         if (!cancelled) setNews((data as unknown as News[]) ?? []);
+      });
+
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "home_hero")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data?.value) setHeroCfg({ ...HERO_DEFAULTS, ...(data.value as Partial<HeroSettings>) });
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const featured = news?.find((n) => n.featured) ?? news?.[0];
-  const rest = news?.filter((n) => n.id !== featured?.id) ?? [];
-  const bigSecondary = rest[0];
-  const smallList = rest.slice(1, 5);
+  const heroSlides: News[] = (() => {
+    if (!news || news.length === 0) return [];
+    const featured = news.filter((n) => n.featured).slice(0, 5);
+    if (featured.length > 0) return featured;
+    return news.slice(0, 5);
+  })();
 
   return (
     <>
-      {/* HERO — cinematic full-width */}
-      <section className="relative w-full overflow-hidden bg-background">
-        {featured ? (
-          <Link
-            to="/noticias/articulo/$slug"
-            params={{ slug: featured.slug }}
-            className="group relative block h-[88vh] min-h-[560px] max-h-[760px] w-full md:h-[78vh] md:min-h-[520px]"
-            aria-label={featured.title}
-          >
-            {/* Background image with slow zoom */}
-            <div className="absolute inset-0 overflow-hidden">
-              {featured.image_url ? (
-                <img
-                  src={featured.image_url}
-                  alt={featured.title}
-                  loading="eager"
-                  className="hero-zoom h-full w-full object-cover object-center"
-                />
-              ) : (
-                <div className="hero-grid-bg h-full w-full" />
-              )}
-            </div>
-
-            {/* Cinematic gradient overlays — stronger on mobile for legibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/40 md:via-black/70 md:to-black/30" aria-hidden="true" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent md:from-black/80 md:via-black/40" aria-hidden="true" />
-            <div className="diagonal-lines-bg absolute inset-0 opacity-40 md:opacity-50" aria-hidden="true" />
-
-            {/* Glass content */}
-            <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-4 pb-8 pt-20 sm:px-5 md:px-6 md:pb-16 md:pt-24">
-              <div className="glass-card w-full max-w-2xl rounded-xl p-5 sm:p-6 md:rounded-2xl md:p-8">
-                <div className="font-condensed mb-3 inline-flex w-fit items-center gap-2 border border-gold bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur md:mb-4 md:px-3">
-                  {featured.news_categories?.name ?? t("home.featured")}
-                </div>
-                <h1 className="font-display text-[1.75rem] uppercase leading-[1.05] tracking-wider text-foreground drop-shadow-[0_4px_20px_rgba(0,0,0,0.85)] sm:text-4xl md:text-5xl lg:text-6xl">
-                  {featured.title}
-                </h1>
-                <div className="mt-3 h-[3px] w-16 bg-gold md:mt-4 md:w-20" aria-hidden="true" />
-                {featured.excerpt && (
-                  <p className="clamp-2 mt-3 max-w-xl text-[0.95rem] leading-relaxed text-foreground/85 md:mt-4 md:text-base">
-                    {featured.excerpt}
-                  </p>
-                )}
-                <div className="font-condensed mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] uppercase tracking-widest text-foreground/70 md:mt-4 md:gap-x-5">
-                  {featured.author && (
-                    <span className="flex items-center gap-1.5">
-                      <UserIcon className="h-3 w-3" /> {featured.author}
-                    </span>
-                  )}
-                  {featured.published_at && (
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate(featured.published_at, lang)}
-                    </span>
-                  )}
-                </div>
-                <div className="mt-5 md:mt-6">
-                  <span className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold px-5 py-3 text-[13px] font-bold uppercase tracking-wider text-background shadow-lg gold-glow-soft transition-all group-hover:bg-gold-light group-hover:translate-x-1 sm:w-auto md:px-6 md:text-sm">
-                    {t("common.readArticle")} <ArrowRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom gold accent line */}
-            <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden="true" />
-          </Link>
-        ) : (
-          <div className="relative flex h-[60vh] min-h-[420px] items-center justify-center">
-            <div className="diagonal-lines-bg absolute inset-0" aria-hidden="true" />
-            <h1 className="font-display relative text-5xl uppercase tracking-widest text-gold">RollerZone</h1>
-          </div>
-        )}
-      </section>
+      {/* HERO — carrusel cinematográfico premium */}
+      <HeroCarousel slides={heroSlides} liveActive={heroCfg.live_active} t={t} lang={lang} />
 
       <Ticker />
 
@@ -205,6 +150,185 @@ function HomePage() {
       <SponsorsCarouselSection />
       <TeamSection />
     </>
+  );
+}
+
+/* ===================== HERO CARRUSEL PREMIUM ===================== */
+
+function HeroCarousel({
+  slides,
+  liveActive,
+  t,
+  lang,
+}: {
+  slides: News[];
+  liveActive: boolean;
+  t: (k: string) => string;
+  lang: "es" | "en";
+}) {
+  const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }));
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [autoplay.current]);
+  const [selected, setSelected] = useState(0);
+  const [snaps, setSnaps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelected(emblaApi.selectedScrollSnap());
+    setSnaps(emblaApi.scrollSnapList());
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", () => {
+      setSnaps(emblaApi.scrollSnapList());
+      onSelect();
+    });
+    onSelect();
+  }, [emblaApi]);
+
+  if (slides.length === 0) {
+    return (
+      <section className="relative w-full overflow-hidden bg-background">
+        <div className="relative flex h-[50vh] min-h-[340px] items-center justify-center">
+          <div className="diagonal-lines-bg absolute inset-0" aria-hidden="true" />
+          <h1 className="font-display relative text-5xl uppercase tracking-widest text-gold">RollerZone</h1>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="relative w-full overflow-hidden bg-background">
+      <div className="relative" ref={emblaRef}>
+        <div className="flex">
+          {slides.map((slide, idx) => (
+            <div key={slide.id} className="relative min-w-0 flex-[0_0_100%]">
+              <HeroSlide slide={slide} liveActive={liveActive} active={idx === selected} t={t} lang={lang} />
+            </div>
+          ))}
+        </div>
+
+        {slides.length > 1 && (
+          <>
+            <button
+              type="button"
+              aria-label="Anterior"
+              onClick={() => emblaApi?.scrollPrev()}
+              className="absolute left-3 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-foreground backdrop-blur-md transition-all hover:border-gold hover:bg-black/70 hover:text-gold md:flex"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Siguiente"
+              onClick={() => emblaApi?.scrollNext()}
+              className="absolute right-3 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-foreground backdrop-blur-md transition-all hover:border-gold hover:bg-black/70 hover:text-gold md:flex"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </>
+        )}
+
+        {snaps.length > 1 && (
+          <div className="absolute inset-x-0 bottom-4 z-20 flex items-center justify-center gap-2">
+            {snaps.map((_, i) => {
+              const active = i === selected;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Ir al slide ${i + 1}`}
+                  onClick={() => emblaApi?.scrollTo(i)}
+                  className={
+                    "h-1.5 rounded-full transition-all duration-300 " +
+                    (active ? "w-8 bg-gold" : "w-4 bg-white/40 hover:bg-white/70")
+                  }
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function HeroSlide({
+  slide,
+  liveActive,
+  active,
+  t,
+  lang,
+}: {
+  slide: News;
+  liveActive: boolean;
+  active: boolean;
+  t: (k: string) => string;
+  lang: "es" | "en";
+}) {
+  return (
+    <Link
+      to="/noticias/articulo/$slug"
+      params={{ slug: slide.slug }}
+      className="group relative block h-[66vh] min-h-[420px] max-h-[570px] w-full md:h-[58vh] md:min-h-[400px]"
+      aria-label={slide.title}
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        {slide.image_url ? (
+          <img
+            src={slide.image_url}
+            alt={slide.title}
+            loading="eager"
+            className={
+              "h-full w-full object-cover object-center transition-transform ease-out " +
+              (active ? "scale-110 duration-[8000ms]" : "scale-100 duration-[1200ms]")
+            }
+          />
+        ) : (
+          <div className="hero-grid-bg h-full w-full" />
+        )}
+      </div>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/10" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent md:from-black/80" aria-hidden="true" />
+
+      <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-4 pb-14 pt-16 sm:px-6 md:pb-20 md:pt-24">
+        <div className="w-full max-w-2xl animate-fade-in">
+          <div className="mb-3 flex flex-wrap items-center gap-2 md:mb-4">
+            {liveActive && (
+              <span className="live-red-tag font-condensed inline-flex items-center gap-2 rounded-sm bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
+                <span className="live-dot-fast inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                EN DIRECTO
+              </span>
+            )}
+            <span className="font-condensed inline-flex items-center border border-gold/60 bg-black/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur-sm md:px-3">
+              {slide.news_categories?.name ?? t("home.featured")}
+            </span>
+            {slide.published_at && (
+              <span className="font-condensed inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-white/70">
+                <Calendar className="h-3 w-3" />
+                {formatDate(slide.published_at, lang)}
+              </span>
+            )}
+          </div>
+
+          <h1 className="font-display text-[1.85rem] uppercase leading-[1.02] tracking-wider text-foreground drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] sm:text-4xl md:text-5xl lg:text-6xl">
+            {slide.title}
+          </h1>
+          <div className="mt-3 h-[3px] w-16 bg-gold md:mt-4 md:w-24" aria-hidden="true" />
+          {slide.excerpt && (
+            <p className="clamp-2 mt-3 max-w-xl text-[0.95rem] leading-relaxed text-foreground/85 md:mt-4 md:text-base">
+              {slide.excerpt}
+            </p>
+          )}
+
+          <div className="mt-5 md:mt-6">
+            <span className="inline-flex items-center justify-center gap-2 rounded-md bg-gold px-5 py-3 text-[13px] font-bold uppercase tracking-wider text-background shadow-lg gold-glow-soft transition-all group-hover:bg-gold-light group-hover:translate-x-1 md:px-6 md:text-sm">
+              {t("common.readArticle")} <ArrowRight className="h-4 w-4" />
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden="true" />
+    </Link>
   );
 }
 
