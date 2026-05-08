@@ -75,6 +75,9 @@ type EventCard = {
 
 const FALLBACK_TITLE = "RollerZone Live Center";
 
+type LiveCenterSettings = { bg_url: string; blur: number };
+const LC_DEFAULTS: LiveCenterSettings = { bg_url: "", blur: 8 };
+
 export function LiveCenter() {
   const { t, lang } = useLanguage();
   const [streams, setStreams] = useState<StreamRow[]>([]);
@@ -84,6 +87,7 @@ export function LiveCenter() {
   const [featured, setFeatured] = useState<FeaturedEvent | null>(null);
   const [events, setEvents] = useState<EventCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [bgCfg, setBgCfg] = useState<LiveCenterSettings>(LC_DEFAULTS);
 
   const stream = useMemo(
     () => streams.find((s) => s.id === selectedStreamId) ?? streams[0] ?? null,
