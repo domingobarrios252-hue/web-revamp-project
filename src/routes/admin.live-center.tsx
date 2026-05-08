@@ -21,11 +21,98 @@ function AdminLiveCenterPage() {
         <TabsTrigger value="streaming">Streaming</TabsTrigger>
         <TabsTrigger value="schedule">Próximas pruebas</TabsTrigger>
         <TabsTrigger value="results">Resultados</TabsTrigger>
+        <TabsTrigger value="appearance">Apariencia</TabsTrigger>
       </TabsList>
       <TabsContent value="streaming"><AdminLiveCenter /></TabsContent>
       <TabsContent value="schedule"><AdminSchedule /></TabsContent>
       <TabsContent value="results"><AdminLiveResults /></TabsContent>
+      <TabsContent value="appearance"><AdminAppearance /></TabsContent>
     </Tabs>
+  );
+}
+
+function AdminAppearance() {
+  const [heroLive, setHeroLive] = useState(false);
+  const [bgUrl, setBgUrl] = useState("");
+  const [blur, setBlur] = useState(8);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const [{ data: hero }, { data: bg }] = await Promise.all([
+        supabase.from("site_settings").select("value").eq("key", "home_hero").maybeSingle(),
+        supabase.from("site_settings").select("value").eq("key", "live_center_bg").maybeSingle(),
+      ]);
+      const h = hero?.value as { live_active?: boolean } | null;
+      const b = bg?.value as { bg_url?: string; blur?: number } | null;
+      if (h?.live_active != null) setHeroLive(!!h.live_active);
+      if (b?.bg_url != null) setBgUrl(String(b.bg_url));
+      if (b?.blur != null) setBlur(Number(b.blur));
+      setLoading(false);
+    })();
+  }, []);
+
+  const save = async () => {
+    setSaving(true);
+    const { error: e1 } = await supabase
+      .from("site_settings")
+      .upsert([{ key: "home_hero", value: { live_active: heroLive } as unknown as Record<string, unknown> }] as never, { onConflict: "key" });
+    const { error: e2 } = await supabase
+      .from("site_settings")
+      .upsert([{ key: "live_center_bg", value: { bg_url: bgUrl, blur } as unknown as Record<string, unknown> }] as never, { onConflict: "key" });
+    setSaving(false);
+    if (e1 || e2) return toast.error((e1 || e2)!.message);
+    toast.success("Apariencia guardada");
+  };
+
+  if (loading) return <p className="text-muted-foreground">Cargando…</p>;
+
+  return (
+    <div className="space-y-5">
+      <section className="border border-border bg-surface p-4">
+        <h2 className="font-display mb-3 text-lg uppercase tracking-widest text-gold">Hero principal (Home)</h2>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={heroLive} onChange={(e) => setHeroLive(e.target.checked)} />
+          <span className="font-condensed text-xs uppercase tracking-widest">
+            Mostrar badge rojo "EN DIRECTO" en el hero
+          </span>
+        </label>
+        <p className="mt-2 text-xs text-muted-foreground">
+          El hero usa las noticias marcadas como <strong>destacadas</strong> (hasta 5). Cambia el orden marcando/desmarcando "destacada" en cada noticia.
+        </p>
+      </section>
+
+      <section className="border border-border bg-surface p-4">
+        <h2 className="font-display mb-3 text-lg uppercase tracking-widest text-gold">Fondo del Live Center</h2>
+        <div className="grid gap-3 md:grid-cols-[1fr_180px]">
+          <label className="block">
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">URL imagen de fondo</span>
+            <input value={bgUrl} onChange={(e) => setBgUrl(e.target.value)} placeholder="https://…/foto-deportiva.jpg" className="input" />
+          </label>
+          <label className="block">
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Blur (px)</span>
+            <input type="number" min={0} max={40} value={blur} onChange={(e) => setBlur(Number(e.target.value))} className="input" />
+          </label>
+        </div>
+        {bgUrl && (
+          <div className="mt-3 overflow-hidden border border-border">
+            <div className="relative h-40">
+              <img src={bgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" style={{ filter: `blur(${blur}px)`, transform: "scale(1.08)" }} />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-black/90" />
+              <div className="relative flex h-full items-center justify-center">
+                <span className="font-display text-2xl uppercase tracking-widest text-gold">Vista previa</span>
+              </div>
+            </div>
+          </div>
+        )}
+        <p className="mt-2 text-xs text-muted-foreground">Deja vacío para usar el fondo neutro por defecto.</p>
+      </section>
+
+      <button onClick={save} disabled={saving} className="font-condensed inline-flex items-center gap-2 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50">
+        <Save className="h-4 w-4" /> {saving ? "Guardando…" : "Guardar apariencia"}
+      </button>
+    </div>
   );
 }
 
