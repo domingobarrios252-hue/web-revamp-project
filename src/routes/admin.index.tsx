@@ -24,6 +24,7 @@ type News = {
   gallery: string[];
   read_minutes: number | null;
   featured: boolean;
+  hero_order: number;
   published: boolean;
   status: "draft" | "pending" | "published" | "rejected";
   section_id: string | null;
