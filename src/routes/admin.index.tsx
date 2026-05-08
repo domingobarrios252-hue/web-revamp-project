@@ -151,10 +151,11 @@ function AdminNewsList() {
     const b = sorted[swapIdx];
     const aOrder = a.hero_order ?? idx + 1;
     const bOrder = b.hero_order ?? swapIdx + 1;
-    const { error } = await supabase.from("news").upsert([
-      { id: a.id, hero_order: bOrder },
-      { id: b.id, hero_order: aOrder },
+    const [r1, r2] = await Promise.all([
+      supabase.from("news").update({ hero_order: bOrder }).eq("id", a.id),
+      supabase.from("news").update({ hero_order: aOrder }).eq("id", b.id),
     ]);
+    const error = r1.error || r2.error;
     if (error) toast.error(error.message);
     else reload();
   };
