@@ -61,6 +61,7 @@ export function SiteHeader() {
   const { user, isEditor, signOut } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => setMobileOpen(false), []);
 
