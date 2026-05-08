@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Eye, EyeOff, Star } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Star, ArrowUp, ArrowDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ type News = {
   gallery: string[];
   read_minutes: number | null;
   featured: boolean;
+  hero_order: number;
   published: boolean;
   status: "draft" | "pending" | "published" | "rejected";
   section_id: string | null;
@@ -83,7 +84,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, published, status, section_id, review_feedback, views_count, published_at"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -126,17 +127,42 @@ function AdminNewsList() {
   };
 
   const toggleFeatured = async (n: News) => {
-    if (!n.featured) {
-      // Unset others first
-      await supabase.from("news").update({ featured: false }).eq("featured", true);
-    }
+    const nextFeatured = !n.featured;
+    const featuredList = news.filter((x) => x.featured);
+    const nextOrder = nextFeatured
+      ? (featuredList.reduce((m, x) => Math.max(m, x.hero_order ?? 0), 0) + 1)
+      : 0;
     const { error } = await supabase
       .from("news")
-      .update({ featured: !n.featured })
+      .update({ featured: nextFeatured, hero_order: nextOrder })
       .eq("id", n.id);
     if (error) toast.error(error.message);
     else reload();
   };
+
+  const moveHero = async (n: News, dir: -1 | 1) => {
+    const sorted = news
+      .filter((x) => x.featured)
+      .sort((a, b) => (a.hero_order ?? 0) - (b.hero_order ?? 0) || a.published_at.localeCompare(b.published_at));
+    const idx = sorted.findIndex((x) => x.id === n.id);
+    const swapIdx = idx + dir;
+    if (idx < 0 || swapIdx < 0 || swapIdx >= sorted.length) return;
+    const a = sorted[idx];
+    const b = sorted[swapIdx];
+    const aOrder = a.hero_order ?? idx + 1;
+    const bOrder = b.hero_order ?? swapIdx + 1;
+    const [r1, r2] = await Promise.all([
+      supabase.from("news").update({ hero_order: bOrder }).eq("id", a.id),
+      supabase.from("news").update({ hero_order: aOrder }).eq("id", b.id),
+    ]);
+    const error = r1.error || r2.error;
+    if (error) toast.error(error.message);
+    else reload();
+  };
+
+  const heroSorted = news
+    .filter((n) => n.featured && n.status === "published")
+    .sort((a, b) => (a.hero_order ?? 0) - (b.hero_order ?? 0) || b.published_at.localeCompare(a.published_at));
 
   return (
     <div>
@@ -152,6 +178,44 @@ function AdminNewsList() {
         </button>
       </div>
 
+      {!loading && heroSorted.length > 0 && (
+        <div className="mb-6 border border-gold/40 bg-surface">
+          <div className="flex items-center justify-between border-b border-border px-3 py-2">
+            <h2 className="font-condensed text-[11px] font-bold uppercase tracking-widest text-gold">
+              Hero destacado · orden del carrusel ({heroSorted.length}/5)
+            </h2>
+            <span className="text-[11px] text-muted-foreground">Solo se muestran las primeras 5</span>
+          </div>
+          <ul>
+            {heroSorted.map((n, i) => (
+              <li
+                key={n.id}
+                className={
+                  "flex items-center gap-3 border-b border-border/50 px-3 py-2 last:border-0 " +
+                  (i >= 5 ? "opacity-50" : "")
+                }
+              >
+                <span className="font-condensed w-6 text-center text-xs font-bold text-gold">{i + 1}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-semibold text-foreground">{n.title}</div>
+                  <div className="truncate text-xs text-muted-foreground">/{n.slug}</div>
+                </div>
+                <div className="flex gap-1">
+                  <IconBtn title="Subir" onClick={() => moveHero(n, -1)}>
+                    <ArrowUp className="h-4 w-4" />
+                  </IconBtn>
+                  <IconBtn title="Bajar" onClick={() => moveHero(n, 1)}>
+                    <ArrowDown className="h-4 w-4" />
+                  </IconBtn>
+                  <IconBtn title="Quitar del hero" onClick={() => toggleFeatured(n)}>
+                    <Star className="h-4 w-4 fill-gold text-gold" />
+                  </IconBtn>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
       ) : news.length === 0 ? (

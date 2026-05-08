@@ -70,10 +70,11 @@ function HomePage() {
     supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, author, legacy_tag, image_url, read_minutes, featured, views_count, published_at, news_categories(name, slug, scope)"
+        "id, title, slug, excerpt, author, legacy_tag, image_url, read_minutes, featured, hero_order, views_count, published_at, news_categories(name, slug, scope)"
       )
       .eq("published", true)
       .order("featured", { ascending: false })
+      .order("hero_order", { ascending: true })
       .order("published_at", { ascending: false })
       .limit(12)
       .then(({ data }) => {
