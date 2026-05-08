@@ -620,6 +620,7 @@ export type Database = {
           excerpt: string | null
           featured: boolean
           gallery: string[]
+          hero_order: number
           id: string
           image_url: string | null
           legacy_tag: string | null
@@ -644,6 +645,7 @@ export type Database = {
           excerpt?: string | null
           featured?: boolean
           gallery?: string[]
+          hero_order?: number
           id?: string
           image_url?: string | null
           legacy_tag?: string | null
@@ -668,6 +670,7 @@ export type Database = {
           excerpt?: string | null
           featured?: boolean
           gallery?: string[]
+          hero_order?: number
           id?: string
           image_url?: string | null
           legacy_tag?: string | null
