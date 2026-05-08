@@ -127,17 +127,41 @@ function AdminNewsList() {
   };
 
   const toggleFeatured = async (n: News) => {
-    if (!n.featured) {
-      // Unset others first
-      await supabase.from("news").update({ featured: false }).eq("featured", true);
-    }
+    const nextFeatured = !n.featured;
+    const featuredList = news.filter((x) => x.featured);
+    const nextOrder = nextFeatured
+      ? (featuredList.reduce((m, x) => Math.max(m, x.hero_order ?? 0), 0) + 1)
+      : 0;
     const { error } = await supabase
       .from("news")
-      .update({ featured: !n.featured })
+      .update({ featured: nextFeatured, hero_order: nextOrder })
       .eq("id", n.id);
     if (error) toast.error(error.message);
     else reload();
   };
+
+  const moveHero = async (n: News, dir: -1 | 1) => {
+    const sorted = news
+      .filter((x) => x.featured)
+      .sort((a, b) => (a.hero_order ?? 0) - (b.hero_order ?? 0) || a.published_at.localeCompare(b.published_at));
+    const idx = sorted.findIndex((x) => x.id === n.id);
+    const swapIdx = idx + dir;
+    if (idx < 0 || swapIdx < 0 || swapIdx >= sorted.length) return;
+    const a = sorted[idx];
+    const b = sorted[swapIdx];
+    const aOrder = a.hero_order ?? idx + 1;
+    const bOrder = b.hero_order ?? swapIdx + 1;
+    const { error } = await supabase.from("news").upsert([
+      { id: a.id, hero_order: bOrder },
+      { id: b.id, hero_order: aOrder },
+    ]);
+    if (error) toast.error(error.message);
+    else reload();
+  };
+
+  const heroSorted = news
+    .filter((n) => n.featured && n.status === "published")
+    .sort((a, b) => (a.hero_order ?? 0) - (b.hero_order ?? 0) || b.published_at.localeCompare(a.published_at));
 
   return (
     <div>
