@@ -147,6 +147,14 @@ export function LiveCenter() {
     };
 
     load();
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "live_center_bg")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data?.value) setBgCfg({ ...LC_DEFAULTS, ...(data.value as Partial<LiveCenterSettings>) });
+      });
     const channel = supabase
       .channel("rollerzone-live-center")
       .on("postgres_changes", { event: "*", schema: "public", table: "live_results" }, load)
