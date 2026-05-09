@@ -13,6 +13,7 @@ type CtaConfig = {
   enabled: boolean;
   cover_override_url: string; // vacío = usar portada de la última revista
   issue_number_override: string; // vacío = usar nº de la última revista
+  title_override: string; // vacío = usar título de la última revista
 };
 
 const DEFAULTS: CtaConfig = {
@@ -23,6 +24,7 @@ const DEFAULTS: CtaConfig = {
   enabled: true,
   cover_override_url: "",
   issue_number_override: "",
+  title_override: "",
 };
 
 export const Route = createFileRoute("/admin/revista-cta")({
