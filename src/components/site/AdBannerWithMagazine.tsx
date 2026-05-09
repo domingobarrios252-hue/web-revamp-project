@@ -27,6 +27,7 @@ type CtaConfig = {
   enabled: boolean;
   cover_override_url: string;
   issue_number_override: string;
+  title_override: string;
 };
 
 const DEFAULT_CTA: CtaConfig = {
@@ -37,6 +38,7 @@ const DEFAULT_CTA: CtaConfig = {
   enabled: true,
   cover_override_url: "",
   issue_number_override: "",
+  title_override: "",
 };
 
 /**
