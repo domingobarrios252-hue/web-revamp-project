@@ -1,9 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Check, X, ExternalLink, Inbox, MessageSquareWarning, Newspaper } from "lucide-react";
+import { Check, X, Eye, Inbox, MessageSquareWarning, Newspaper, Calendar, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+type PreviewArticle = {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  content: string | null;
+  author: string;
+  image_url: string | null;
+  gallery: string[] | null;
+  published_at: string;
+  legacy_tag: string | null;
+};
 
 type PendingNews = {
   id: string;
@@ -40,6 +53,25 @@ function PendingPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [feedbackById, setFeedbackById] = useState<Record<string, string>>({});
+  const [previewArticle, setPreviewArticle] = useState<PreviewArticle | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const openPreview = async (id: string) => {
+    setPreviewLoading(true);
+    setPreviewArticle({ id, title: "", excerpt: null, content: null, author: "", image_url: null, gallery: null, published_at: new Date().toISOString(), legacy_tag: null });
+    const { data, error } = await supabase
+      .from("news")
+      .select("id, title, excerpt, content, author, image_url, gallery, published_at, legacy_tag")
+      .eq("id", id)
+      .maybeSingle();
+    setPreviewLoading(false);
+    if (error || !data) {
+      toast.error("No se pudo cargar la vista previa");
+      setPreviewArticle(null);
+      return;
+    }
+    setPreviewArticle(data as PreviewArticle);
+  };
 
   const reload = async () => {
     setLoading(true);
@@ -147,15 +179,14 @@ function PendingPage() {
                       </p>
                     )}
                     <div className="mt-2 text-xs text-muted-foreground">
-                      <a
-                        href={`/noticias/articulo/${n.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => openPreview(n.id)}
                         className="inline-flex items-center gap-1 text-gold hover:underline"
                       >
-                        <ExternalLink className="h-3 w-3" />
-                        Abrir vista previa /{n.slug}
-                      </a>
+                        <Eye className="h-3 w-3" />
+                        Vista previa /{n.slug}
+                      </button>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 lg:items-stretch">
@@ -208,6 +239,66 @@ function PendingPage() {
           })}
         </div>
       )}
+
+      <Dialog open={!!previewArticle} onOpenChange={(open) => !open && setPreviewArticle(null)}>
+        <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto bg-background">
+          <DialogHeader>
+            <DialogTitle className="font-display text-2xl uppercase tracking-wider">
+              {previewArticle?.title || "Cargando…"}
+            </DialogTitle>
+          </DialogHeader>
+          {previewLoading || !previewArticle ? (
+            <div className="py-10 text-center text-muted-foreground">Cargando vista previa…</div>
+          ) : (
+            <article>
+              {previewArticle.legacy_tag && (
+                <span className="font-condensed mb-3 inline-block border border-border px-2 py-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+                  {previewArticle.legacy_tag}
+                </span>
+              )}
+              {previewArticle.excerpt && (
+                <p className="text-base text-muted-foreground">{previewArticle.excerpt}</p>
+              )}
+              <div className="font-condensed mt-4 flex flex-wrap items-center gap-4 border-y border-border py-3 text-xs uppercase tracking-widest text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <UserIcon className="h-3.5 w-3.5 text-gold" />
+                  <span className="text-foreground">{previewArticle.author}</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5 text-gold" />
+                  {new Date(previewArticle.published_at).toLocaleDateString("es-ES", {
+                    day: "2-digit", month: "long", year: "numeric",
+                  })}
+                </span>
+              </div>
+              {previewArticle.image_url && (
+                <img
+                  src={previewArticle.image_url}
+                  alt={previewArticle.title}
+                  className="my-6 aspect-[16/9] w-full object-cover"
+                />
+              )}
+              <div className="prose prose-invert max-w-none space-y-4 text-[15px] leading-relaxed text-foreground/90">
+                {(previewArticle.content ?? "")
+                  .split("\n")
+                  .map((p) => p.trim())
+                  .filter((p) => p.length > 0)
+                  .map((p, i) => <p key={i}>{p}</p>)}
+                {!previewArticle.content && (
+                  <p className="italic text-muted-foreground">(Sin contenido)</p>
+                )}
+              </div>
+              {Array.isArray(previewArticle.gallery) && previewArticle.gallery.length > 0 && (
+                <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3">
+                  {previewArticle.gallery.map((src, i) => (
+                    <img key={i} src={src} alt="" className="aspect-[4/3] w-full object-cover" />
+                  ))}
+                </div>
+              )}
+            </article>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
