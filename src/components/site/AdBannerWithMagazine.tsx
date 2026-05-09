@@ -27,6 +27,7 @@ type CtaConfig = {
   enabled: boolean;
   cover_override_url: string;
   issue_number_override: string;
+  title_override: string;
 };
 
 const DEFAULT_CTA: CtaConfig = {
@@ -37,6 +38,7 @@ const DEFAULT_CTA: CtaConfig = {
   enabled: true,
   cover_override_url: "",
   issue_number_override: "",
+  title_override: "",
 };
 
 /**
@@ -234,7 +236,7 @@ function MagazineCard({ magazine, cta }: { magazine: Magazine; cta: CtaConfig })
             </div>
           )}
           <h3 className="font-display mt-1 line-clamp-2 text-lg uppercase leading-tight tracking-wider text-foreground md:text-xl">
-            {magazine.title}
+            {cta.title_override.trim() || magazine.title}
           </h3>
           {cta.subtitle && (
             <p className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">

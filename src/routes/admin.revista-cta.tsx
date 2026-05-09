@@ -13,6 +13,7 @@ type CtaConfig = {
   enabled: boolean;
   cover_override_url: string; // vacío = usar portada de la última revista
   issue_number_override: string; // vacío = usar nº de la última revista
+  title_override: string; // vacío = usar título de la última revista
 };
 
 const DEFAULTS: CtaConfig = {
@@ -23,6 +24,7 @@ const DEFAULTS: CtaConfig = {
   enabled: true,
   cover_override_url: "",
   issue_number_override: "",
+  title_override: "",
 };
 
 export const Route = createFileRoute("/admin/revista-cta")({
@@ -144,6 +146,18 @@ function AdminRevistaCta() {
           />
         </label>
 
+        <label className="block md:col-span-2">
+          <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+            Título de la edición (opcional)
+          </span>
+          <input
+            value={cfg.title_override}
+            onChange={(e) => setCfg({ ...cfg, title_override: e.target.value })}
+            placeholder="Vacío = usar el título de la última edición"
+            className="input"
+          />
+        </label>
+
         <label className="block">
           <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
             URL del botón (opcional)
@@ -199,7 +213,7 @@ function AdminRevistaCta() {
                   Nº {cfg.issue_number_override || "12"}
                 </div>
                 <h3 className="font-display mt-1 text-lg uppercase leading-tight tracking-wider">
-                  Título de la edición
+                  {cfg.title_override || "Título de la edición"}
                 </h3>
                 <p className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
                   {cfg.subtitle || "—"}

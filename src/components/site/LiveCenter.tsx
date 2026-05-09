@@ -75,8 +75,8 @@ type EventCard = {
 
 const FALLBACK_TITLE = "RollerZone Live Center";
 
-type LiveCenterSettings = { bg_url: string; blur: number };
-const LC_DEFAULTS: LiveCenterSettings = { bg_url: "", blur: 8 };
+type LiveCenterSettings = { bg_url: string; blur: number; pos_x: number; pos_y: number; scale: number };
+const LC_DEFAULTS: LiveCenterSettings = { bg_url: "", blur: 8, pos_x: 50, pos_y: 50, scale: 108 };
 
 export function LiveCenter() {
   const { t, lang } = useLanguage();
@@ -227,7 +227,11 @@ export function LiveCenter() {
             src={bgCfg.bg_url}
             alt=""
             className="h-full w-full object-cover opacity-60"
-            style={{ filter: `blur(${Math.max(0, Math.min(40, bgCfg.blur))}px)`, transform: "scale(1.08)" }}
+            style={{
+              filter: `blur(${Math.max(0, Math.min(40, bgCfg.blur))}px)`,
+              transform: `scale(${Math.max(1, Math.min(3, (bgCfg.scale ?? 108) / 100))})`,
+              objectPosition: `${bgCfg.pos_x ?? 50}% ${bgCfg.pos_y ?? 50}%`,
+            }}
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />

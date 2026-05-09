@@ -36,6 +36,9 @@ function AdminAppearance() {
   const [heroLive, setHeroLive] = useState(false);
   const [bgUrl, setBgUrl] = useState("");
   const [blur, setBlur] = useState(8);
+  const [posX, setPosX] = useState(50); // 0-100, object-position X %
+  const [posY, setPosY] = useState(50); // 0-100, object-position Y %
+  const [scale, setScale] = useState(108); // 100-300 %
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -46,10 +49,13 @@ function AdminAppearance() {
         supabase.from("site_settings").select("value").eq("key", "live_center_bg").maybeSingle(),
       ]);
       const h = hero?.value as { live_active?: boolean } | null;
-      const b = bg?.value as { bg_url?: string; blur?: number } | null;
+      const b = bg?.value as { bg_url?: string; blur?: number; pos_x?: number; pos_y?: number; scale?: number } | null;
       if (h?.live_active != null) setHeroLive(!!h.live_active);
       if (b?.bg_url != null) setBgUrl(String(b.bg_url));
       if (b?.blur != null) setBlur(Number(b.blur));
+      if (b?.pos_x != null) setPosX(Number(b.pos_x));
+      if (b?.pos_y != null) setPosY(Number(b.pos_y));
+      if (b?.scale != null) setScale(Number(b.scale));
       setLoading(false);
     })();
   }, []);
@@ -61,10 +67,16 @@ function AdminAppearance() {
       .upsert([{ key: "home_hero", value: { live_active: heroLive } as unknown as Record<string, unknown> }] as never, { onConflict: "key" });
     const { error: e2 } = await supabase
       .from("site_settings")
-      .upsert([{ key: "live_center_bg", value: { bg_url: bgUrl, blur } as unknown as Record<string, unknown> }] as never, { onConflict: "key" });
+      .upsert([{ key: "live_center_bg", value: { bg_url: bgUrl, blur, pos_x: posX, pos_y: posY, scale } as unknown as Record<string, unknown> }] as never, { onConflict: "key" });
     setSaving(false);
     if (e1 || e2) return toast.error((e1 || e2)!.message);
     toast.success("Apariencia guardada");
+  };
+
+  const resetCrop = () => {
+    setPosX(50);
+    setPosY(50);
+    setScale(108);
   };
 
   if (loading) return <p className="text-muted-foreground">Cargando…</p>;
@@ -103,13 +115,59 @@ function AdminAppearance() {
             <input type="number" min={0} max={40} value={blur} onChange={(e) => setBlur(Number(e.target.value))} className="input" />
           </label>
         </div>
+
         {bgUrl && (
-          <div className="mt-3 overflow-hidden border border-border">
-            <div className="relative h-40">
-              <img src={bgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" style={{ filter: `blur(${blur}px)`, transform: "scale(1.08)" }} />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-black/90" />
-              <div className="relative flex h-full items-center justify-center">
-                <span className="font-display text-2xl uppercase tracking-widest text-gold">Vista previa</span>
+          <div className="mt-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                Recorte y ajuste (posición y escala)
+              </span>
+              <button
+                type="button"
+                onClick={resetCrop}
+                className="font-condensed text-[10px] uppercase tracking-widest text-gold hover:underline"
+              >
+                Restablecer
+              </button>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <label className="block">
+                <span className="font-condensed mb-1 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span>Posición X</span><span className="text-foreground">{posX}%</span>
+                </span>
+                <input type="range" min={0} max={100} value={posX} onChange={(e) => setPosX(Number(e.target.value))} className="w-full accent-gold" />
+              </label>
+              <label className="block">
+                <span className="font-condensed mb-1 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span>Posición Y</span><span className="text-foreground">{posY}%</span>
+                </span>
+                <input type="range" min={0} max={100} value={posY} onChange={(e) => setPosY(Number(e.target.value))} className="w-full accent-gold" />
+              </label>
+              <label className="block">
+                <span className="font-condensed mb-1 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span>Escala (zoom)</span><span className="text-foreground">{scale}%</span>
+                </span>
+                <input type="range" min={100} max={300} value={scale} onChange={(e) => setScale(Number(e.target.value))} className="w-full accent-gold" />
+              </label>
+            </div>
+
+            <div className="overflow-hidden border border-border">
+              <div className="relative h-56">
+                <img
+                  src={bgUrl}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover opacity-70"
+                  style={{
+                    filter: `blur(${blur}px)`,
+                    transform: `scale(${scale / 100})`,
+                    objectPosition: `${posX}% ${posY}%`,
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-black/90" />
+                <div className="relative flex h-full items-center justify-center">
+                  <span className="font-display text-2xl uppercase tracking-widest text-gold">Vista previa Live Center</span>
+                </div>
               </div>
             </div>
           </div>
