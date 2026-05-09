@@ -179,15 +179,14 @@ function PendingPage() {
                       </p>
                     )}
                     <div className="mt-2 text-xs text-muted-foreground">
-                      <a
-                        href={`/noticias/articulo/${n.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => openPreview(n.id)}
                         className="inline-flex items-center gap-1 text-gold hover:underline"
                       >
-                        <ExternalLink className="h-3 w-3" />
-                        Abrir vista previa /{n.slug}
-                      </a>
+                        <Eye className="h-3 w-3" />
+                        Vista previa /{n.slug}
+                      </button>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 lg:items-stretch">
