@@ -146,6 +146,18 @@ function AdminRevistaCta() {
           />
         </label>
 
+        <label className="block md:col-span-2">
+          <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+            Título de la edición (opcional)
+          </span>
+          <input
+            value={cfg.title_override}
+            onChange={(e) => setCfg({ ...cfg, title_override: e.target.value })}
+            placeholder="Vacío = usar el título de la última edición"
+            className="input"
+          />
+        </label>
+
         <label className="block">
           <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
             URL del botón (opcional)
