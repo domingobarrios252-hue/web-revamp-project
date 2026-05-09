@@ -53,6 +53,25 @@ function PendingPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [feedbackById, setFeedbackById] = useState<Record<string, string>>({});
+  const [previewArticle, setPreviewArticle] = useState<PreviewArticle | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const openPreview = async (id: string) => {
+    setPreviewLoading(true);
+    setPreviewArticle({ id, title: "", excerpt: null, content: null, author: "", image_url: null, gallery: null, published_at: new Date().toISOString(), legacy_tag: null });
+    const { data, error } = await supabase
+      .from("news")
+      .select("id, title, excerpt, content, author, image_url, gallery, published_at, legacy_tag")
+      .eq("id", id)
+      .maybeSingle();
+    setPreviewLoading(false);
+    if (error || !data) {
+      toast.error("No se pudo cargar la vista previa");
+      setPreviewArticle(null);
+      return;
+    }
+    setPreviewArticle(data as PreviewArticle);
+  };
 
   const reload = async () => {
     setLoading(true);
