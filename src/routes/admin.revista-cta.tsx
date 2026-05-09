@@ -213,7 +213,7 @@ function AdminRevistaCta() {
                   Nº {cfg.issue_number_override || "12"}
                 </div>
                 <h3 className="font-display mt-1 text-lg uppercase leading-tight tracking-wider">
-                  Título de la edición
+                  {cfg.title_override || "Título de la edición"}
                 </h3>
                 <p className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
                   {cfg.subtitle || "—"}
