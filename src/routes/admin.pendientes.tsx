@@ -1,9 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Check, X, ExternalLink, Inbox, MessageSquareWarning, Newspaper } from "lucide-react";
+import { Check, X, Eye, Inbox, MessageSquareWarning, Newspaper, Calendar, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+type PreviewArticle = {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  content: string | null;
+  author: string;
+  image_url: string | null;
+  gallery: string[] | null;
+  published_at: string;
+  legacy_tag: string | null;
+};
 
 type PendingNews = {
   id: string;
