@@ -75,8 +75,8 @@ type EventCard = {
 
 const FALLBACK_TITLE = "RollerZone Live Center";
 
-type LiveCenterSettings = { bg_url: string; blur: number };
-const LC_DEFAULTS: LiveCenterSettings = { bg_url: "", blur: 8 };
+type LiveCenterSettings = { bg_url: string; blur: number; pos_x: number; pos_y: number; scale: number };
+const LC_DEFAULTS: LiveCenterSettings = { bg_url: "", blur: 8, pos_x: 50, pos_y: 50, scale: 108 };
 
 export function LiveCenter() {
   const { t, lang } = useLanguage();
