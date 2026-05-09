@@ -147,14 +147,15 @@ function PendingPage() {
                       </p>
                     )}
                     <div className="mt-2 text-xs text-muted-foreground">
-                      <Link
-                        to="/noticias/articulo/$slug"
-                        params={{ slug: n.slug }}
+                      <a
+                        href={`/noticias/articulo/${n.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-gold hover:underline"
                       >
                         <ExternalLink className="h-3 w-3" />
-                        Vista previa /{n.slug}
-                      </Link>
+                        Abrir vista previa /{n.slug}
+                      </a>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 lg:items-stretch">

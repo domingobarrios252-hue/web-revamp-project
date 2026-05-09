@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import * as XLSX from "xlsx";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { AdminSchedule } from "./admin.schedule";
 import { AdminLiveResults } from "./admin.live-results";
 
@@ -86,10 +87,17 @@ function AdminAppearance() {
       <section className="border border-border bg-surface p-4">
         <h2 className="font-display mb-3 text-lg uppercase tracking-widest text-gold">Fondo del Live Center</h2>
         <div className="grid gap-3 md:grid-cols-[1fr_180px]">
-          <label className="block">
-            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">URL imagen de fondo</span>
-            <input value={bgUrl} onChange={(e) => setBgUrl(e.target.value)} placeholder="https://…/foto-deportiva.jpg" className="input" />
-          </label>
+          <div className="block">
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Imagen de fondo</span>
+            <ImageUploadField
+              value={bgUrl}
+              onChange={setBgUrl}
+              folder="live-center"
+              nameHint="bg"
+              previewClassName="mt-2 h-24 w-full max-w-md object-cover border border-border"
+              placeholder="URL o subir imagen"
+            />
+          </div>
           <label className="block">
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Blur (px)</span>
             <input type="number" min={0} max={40} value={blur} onChange={(e) => setBlur(Number(e.target.value))} className="input" />
