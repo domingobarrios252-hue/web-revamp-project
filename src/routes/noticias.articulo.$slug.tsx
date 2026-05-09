@@ -30,7 +30,6 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
         "id, title, slug, excerpt, content, author, legacy_tag, image_url, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
-      .eq("published", true)
       .maybeSingle();
     if (!data) throw notFound();
     return { article: data as unknown as Article };
