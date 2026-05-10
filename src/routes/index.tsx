@@ -485,11 +485,15 @@ function SmallNewsCard({ news }: { news: News }) {
 }
 
 
+type PersonalRecord = { event?: string; time?: string; place?: string };
+
 type FeaturedAthlete = {
   id: string;
   full_name: string;
   slug: string;
   photo_url: string | null;
+  category: string | null;
+  personal_records: PersonalRecord[] | null;
   clubs: { name: string } | null;
   regions: { name: string; code: string; flag_url: string | null } | null;
 };
@@ -501,7 +505,7 @@ function FeaturedAthletesSection() {
     let cancelled = false;
     supabase
       .from("skaters")
-      .select("id, full_name, slug, photo_url, clubs(name), regions(name, code, flag_url)")
+      .select("id, full_name, slug, photo_url, category, personal_records, clubs(name), regions(name, code, flag_url)")
       .eq("active", true)
       .eq("featured", true)
       .order("total_points", { ascending: false })
@@ -517,52 +521,104 @@ function FeaturedAthletesSection() {
   if (items !== null && items.length === 0) return null;
 
   return (
-    <section id="atletas-destacados" className="mx-auto max-w-7xl px-6 py-12">
-      <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
-        <h2 className="font-display flex items-center gap-2 text-2xl tracking-widest md:text-3xl">
-          <Trophy className="h-6 w-6 text-gold" />
-          Atletas <span className="text-gold">destacados</span>
-        </h2>
+    <section id="atletas-destacados" className="mx-auto max-w-7xl px-6 py-14">
+      <div className="mb-8 flex items-end justify-between border-b border-border pb-4">
+        <div>
+          <div className="font-condensed mb-2 text-[11px] font-bold uppercase tracking-[3px] text-gold">
+            <Trophy className="mr-1.5 inline h-3.5 w-3.5" /> Élite RollerZone
+          </div>
+          <h2 className="font-display text-2xl uppercase tracking-widest md:text-4xl">
+            Patinadores <span className="text-gold">destacados</span>
+          </h2>
+        </div>
       </div>
 
       {items === null ? (
-        <div className="hide-scrollbar -mx-5 flex gap-6 overflow-x-auto px-5 pb-2">
-          {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="flex w-[140px] shrink-0 flex-col items-center gap-3">
-              <div className="h-28 w-28 animate-pulse rounded-full bg-surface-2" />
-              <div className="h-3 w-20 animate-pulse bg-surface-2" />
-              <div className="h-3 w-14 animate-pulse bg-surface-2" />
-            </div>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-[360px] animate-pulse rounded-xl bg-surface-2" />
           ))}
         </div>
       ) : (
-        <div className="hide-scrollbar -mx-5 flex gap-6 overflow-x-auto px-5 pb-2">
-          {items.map((a) => (
-            <Link
-              key={a.id}
-              to="/patinadores/$slug"
-              params={{ slug: a.slug }}
-              className="group flex w-[140px] shrink-0 flex-col items-center text-center"
-            >
-              <div className="h-28 w-28 overflow-hidden rounded-full border-2 border-gold bg-surface-2 transition-transform duration-300 group-hover:scale-105">
-                {a.photo_url ? (
-                  <img src={a.photo_url} alt={a.full_name} loading="lazy" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <UserIcon className="h-10 w-10 text-gold/40" />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((a) => {
+            const records = (a.personal_records ?? []).slice(0, 2);
+            return (
+              <Link
+                key={a.id}
+                to="/patinadores/$slug"
+                params={{ slug: a.slug }}
+                className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold/60 hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.4)]"
+              >
+                {/* Photo */}
+                <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-surface-2 to-background">
+                  {a.photo_url ? (
+                    <img
+                      src={a.photo_url}
+                      alt={a.full_name}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <UserIcon className="h-20 w-20 text-gold/30" />
+                    </div>
+                  )}
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+                  {/* Top badges */}
+                  <div className="absolute left-3 right-3 top-3 flex items-start justify-between gap-2">
+                    {a.regions?.flag_url ? (
+                      <img
+                        src={a.regions.flag_url}
+                        alt={a.regions.name}
+                        className="h-5 w-7 rounded-sm object-cover shadow-md ring-1 ring-black/30"
+                      />
+                    ) : <span />}
+                    {a.category && (
+                      <span className="font-condensed rounded-sm bg-gold px-2 py-0.5 text-[9px] font-bold uppercase tracking-[2px] text-background shadow-md">
+                        {a.category}
+                      </span>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="font-display mt-3 text-sm uppercase leading-tight tracking-wider text-foreground transition-colors group-hover:text-gold">
-                {a.full_name}
-              </div>
-              {a.clubs?.name && (
-                <div className="font-condensed mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {a.clubs.name}
+
+                  {/* Name + club over photo */}
+                  <div className="absolute inset-x-0 bottom-0 p-4">
+                    <h3 className="font-display text-base uppercase leading-tight tracking-wider text-white drop-shadow-lg transition-colors group-hover:text-gold md:text-lg">
+                      {a.full_name}
+                    </h3>
+                    {a.clubs?.name && (
+                      <div className="font-condensed mt-1 text-[10px] uppercase tracking-[2px] text-white/80">
+                        {a.clubs.name}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </Link>
-          ))}
+
+                {/* Marks */}
+                <div className="flex flex-1 flex-col gap-1.5 border-t border-border bg-background/60 p-3">
+                  <div className="font-condensed mb-0.5 text-[9px] font-bold uppercase tracking-[2.5px] text-gold/80">
+                    Marcas destacadas
+                  </div>
+                  {records.length === 0 ? (
+                    <div className="text-[11px] italic text-muted-foreground">Sin marcas registradas</div>
+                  ) : (
+                    records.map((r, idx) => (
+                      <div key={idx} className="flex items-center justify-between gap-2 text-[11px]">
+                        <span className="font-condensed truncate uppercase tracking-wider text-foreground/90">
+                          {r.event ?? "—"}
+                        </span>
+                        <span className="font-display shrink-0 text-sm font-bold text-gold tabular-nums">
+                          {r.time ?? "—"}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </section>
