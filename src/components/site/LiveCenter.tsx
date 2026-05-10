@@ -226,7 +226,7 @@ export function LiveCenter() {
           <img
             src={bgCfg.bg_url}
             alt=""
-            className="h-full w-full object-cover opacity-60"
+            className="h-full w-full object-cover opacity-95"
             style={{
               filter: `blur(${Math.max(0, Math.min(40, bgCfg.blur))}px)`,
               transform: `scale(${Math.max(1, Math.min(3, (bgCfg.scale ?? 108) / 100))})`,
@@ -234,7 +234,9 @@ export function LiveCenter() {
             }}
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />
+          {/* Lighter, more transparent overlay so background photo is more visible */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-transparent to-black/35" />
         </div>
       )}
       {/* Top accent line */}
