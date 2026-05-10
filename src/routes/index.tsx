@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { Ticker } from "@/components/site/Ticker";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
@@ -493,6 +494,7 @@ type FeaturedAthlete = {
   slug: string;
   photo_url: string | null;
   category: string | null;
+  bio: string | null;
   personal_records: PersonalRecord[] | null;
   clubs: { name: string } | null;
   regions: { name: string; code: string; flag_url: string | null } | null;
@@ -500,12 +502,13 @@ type FeaturedAthlete = {
 
 function FeaturedAthletesSection() {
   const [items, setItems] = useState<FeaturedAthlete[] | null>(null);
+  const [selected, setSelected] = useState<FeaturedAthlete | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     supabase
       .from("skaters")
-      .select("id, full_name, slug, photo_url, category, personal_records, clubs(name), regions(name, code, flag_url)")
+      .select("id, full_name, slug, photo_url, category, bio, personal_records, clubs(name), regions(name, code, flag_url)")
       .eq("active", true)
       .eq("featured", true)
       .order("total_points", { ascending: false })
@@ -521,36 +524,35 @@ function FeaturedAthletesSection() {
   if (items !== null && items.length === 0) return null;
 
   return (
-    <section id="atletas-destacados" className="mx-auto max-w-7xl px-6 py-14">
-      <div className="mb-8 flex items-end justify-between border-b border-border pb-4">
+    <section id="atletas-destacados" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mb-6 flex items-end justify-between border-b border-border pb-3 sm:mb-8 sm:pb-4">
         <div>
-          <div className="font-condensed mb-2 text-[11px] font-bold uppercase tracking-[3px] text-gold">
-            <Trophy className="mr-1.5 inline h-3.5 w-3.5" /> Élite RollerZone
+          <div className="font-condensed mb-2 text-[10px] font-bold uppercase tracking-[3px] text-gold sm:text-[11px]">
+            <Trophy className="mr-1.5 inline h-3 w-3 sm:h-3.5 sm:w-3.5" /> Élite RollerZone
           </div>
-          <h2 className="font-display text-2xl uppercase tracking-widest md:text-4xl">
+          <h2 className="font-display text-xl uppercase tracking-widest sm:text-2xl md:text-4xl">
             Patinadores <span className="text-gold">destacados</span>
           </h2>
         </div>
       </div>
 
       {items === null ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-[360px] animate-pulse rounded-xl bg-surface-2" />
+            <div key={i} className="h-[280px] animate-pulse rounded-xl bg-surface-2 sm:h-[360px]" />
           ))}
         </div>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
           {items.map((a) => {
             const records = (a.personal_records ?? []).slice(0, 2);
             return (
-              <Link
+              <button
                 key={a.id}
-                to="/patinadores/$slug"
-                params={{ slug: a.slug }}
-                className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold/60 hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.4)]"
+                type="button"
+                onClick={() => setSelected(a)}
+                className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-surface text-left shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold/60 hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.4)]"
               >
-                {/* Photo */}
                 <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-surface-2 to-background">
                   {a.photo_url ? (
                     <img
@@ -561,66 +563,156 @@ function FeaturedAthletesSection() {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
-                      <UserIcon className="h-20 w-20 text-gold/30" />
+                      <UserIcon className="h-16 w-16 text-gold/30 sm:h-20 sm:w-20" />
                     </div>
                   )}
-                  {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
-                  {/* Top badges */}
-                  <div className="absolute left-3 right-3 top-3 flex items-start justify-between gap-2">
+                  <div className="absolute left-2 right-2 top-2 flex items-start justify-between gap-2 sm:left-3 sm:right-3 sm:top-3">
                     {a.regions?.flag_url ? (
                       <img
                         src={a.regions.flag_url}
                         alt={a.regions.name}
-                        className="h-5 w-7 rounded-sm object-cover shadow-md ring-1 ring-black/30"
+                        className="h-4 w-6 rounded-sm object-cover shadow-md ring-1 ring-black/30 sm:h-5 sm:w-7"
                       />
                     ) : <span />}
                     {a.category && (
-                      <span className="font-condensed rounded-sm bg-gold px-2 py-0.5 text-[9px] font-bold uppercase tracking-[2px] text-background shadow-md">
+                      <span className="font-condensed rounded-sm bg-gold px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[1.5px] text-background shadow-md sm:px-2 sm:text-[9px] sm:tracking-[2px]">
                         {a.category}
                       </span>
                     )}
                   </div>
 
-                  {/* Name + club over photo */}
-                  <div className="absolute inset-x-0 bottom-0 p-4">
-                    <h3 className="font-display text-base uppercase leading-tight tracking-wider text-white drop-shadow-lg transition-colors group-hover:text-gold md:text-lg">
+                  <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-4">
+                    <h3 className="font-display text-sm uppercase leading-tight tracking-wider text-white drop-shadow-lg transition-colors group-hover:text-gold sm:text-base md:text-lg">
                       {a.full_name}
                     </h3>
                     {a.clubs?.name && (
-                      <div className="font-condensed mt-1 text-[10px] uppercase tracking-[2px] text-white/80">
+                      <div className="font-condensed mt-1 line-clamp-1 text-[9px] uppercase tracking-[1.5px] text-white/80 sm:text-[10px] sm:tracking-[2px]">
                         {a.clubs.name}
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Marks */}
-                <div className="flex flex-1 flex-col gap-1.5 border-t border-border bg-background/60 p-3">
-                  <div className="font-condensed mb-0.5 text-[9px] font-bold uppercase tracking-[2.5px] text-gold/80">
+                <div className="flex flex-1 flex-col gap-1 border-t border-border bg-background/60 p-2 sm:gap-1.5 sm:p-3">
+                  <div className="font-condensed mb-0.5 text-[8px] font-bold uppercase tracking-[2px] text-gold/80 sm:text-[9px] sm:tracking-[2.5px]">
                     Marcas destacadas
                   </div>
                   {records.length === 0 ? (
-                    <div className="text-[11px] italic text-muted-foreground">Sin marcas registradas</div>
+                    <div className="text-[10px] italic text-muted-foreground sm:text-[11px]">Sin marcas</div>
                   ) : (
                     records.map((r, idx) => (
-                      <div key={idx} className="flex items-center justify-between gap-2 text-[11px]">
+                      <div key={idx} className="flex items-center justify-between gap-1.5 text-[10px] sm:gap-2 sm:text-[11px]">
                         <span className="font-condensed truncate uppercase tracking-wider text-foreground/90">
                           {r.event ?? "—"}
                         </span>
-                        <span className="font-display shrink-0 text-sm font-bold text-gold tabular-nums">
+                        <span className="font-display shrink-0 text-xs font-bold text-gold tabular-nums sm:text-sm">
                           {r.time ?? "—"}
                         </span>
                       </div>
                     ))
                   )}
                 </div>
-              </Link>
+              </button>
             );
           })}
         </div>
       )}
+
+      <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-border bg-background p-0">
+          {selected && (
+            <div>
+              <div className="relative aspect-[16/10] overflow-hidden bg-surface-2 sm:aspect-[16/9]">
+                {selected.photo_url ? (
+                  <img src={selected.photo_url} alt={selected.full_name} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <UserIcon className="h-24 w-24 text-gold/30" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute left-4 right-4 top-4 flex items-start justify-between gap-2">
+                  {selected.regions?.flag_url ? (
+                    <img src={selected.regions.flag_url} alt={selected.regions.name} className="h-6 w-9 rounded-sm object-cover shadow-md ring-1 ring-black/30" />
+                  ) : <span />}
+                  {selected.category && (
+                    <span className="font-condensed rounded-sm bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2px] text-background shadow-md">
+                      {selected.category}
+                    </span>
+                  )}
+                </div>
+                <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
+                  <DialogHeader>
+                    <DialogTitle className="font-display text-2xl uppercase leading-tight tracking-wider text-white drop-shadow-lg sm:text-3xl">
+                      {selected.full_name}
+                    </DialogTitle>
+                  </DialogHeader>
+                  {selected.clubs?.name && (
+                    <div className="font-condensed mt-1 text-[11px] uppercase tracking-[2px] text-white/80">
+                      {selected.clubs.name}
+                      {selected.regions?.name && <span className="ml-2 text-gold/90">· {selected.regions.name}</span>}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-5 p-4 sm:p-6">
+                {selected.bio && (
+                  <div>
+                    <div className="font-condensed mb-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold/80">
+                      Resumen
+                    </div>
+                    <p className="line-clamp-4 text-sm leading-relaxed text-foreground/85">{selected.bio}</p>
+                  </div>
+                )}
+
+                <div>
+                  <div className="font-condensed mb-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold/80">
+                    Marcas destacadas
+                  </div>
+                  {(selected.personal_records ?? []).length === 0 ? (
+                    <div className="text-sm italic text-muted-foreground">Sin marcas registradas</div>
+                  ) : (
+                    <div className="divide-y divide-border/60 border border-border">
+                      {(selected.personal_records ?? []).slice(0, 5).map((r, idx) => (
+                        <div key={idx} className="flex items-center justify-between gap-3 px-3 py-2">
+                          <span className="font-condensed text-xs uppercase tracking-wider text-foreground/90">
+                            {r.event ?? "—"}
+                          </span>
+                          <div className="flex items-center gap-3">
+                            {r.place && <span className="text-[11px] text-muted-foreground">{r.place}</span>}
+                            <span className="font-display text-base font-bold text-gold tabular-nums">{r.time ?? "—"}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setSelected(null)}
+                    className="font-condensed rounded-sm border border-border px-4 py-2 text-xs uppercase tracking-widest text-muted-foreground transition hover:border-foreground/40 hover:text-foreground"
+                  >
+                    Cerrar
+                  </button>
+                  <Link
+                    to="/patinadores/$slug"
+                    params={{ slug: selected.slug }}
+                    onClick={() => setSelected(null)}
+                    className="font-condensed inline-flex items-center justify-center gap-2 rounded-sm bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background transition hover:bg-gold-dark"
+                  >
+                    Ver perfil completo <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
