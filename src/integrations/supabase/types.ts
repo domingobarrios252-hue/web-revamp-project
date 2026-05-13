@@ -121,6 +121,7 @@ export type Database = {
       }
       clubs: {
         Row: {
+          country_code: string
           created_at: string
           id: string
           logo_url: string | null
@@ -131,6 +132,7 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          country_code?: string
           created_at?: string
           id?: string
           logo_url?: string | null
@@ -141,6 +143,7 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          country_code?: string
           created_at?: string
           id?: string
           logo_url?: string | null
@@ -160,9 +163,75 @@ export type Database = {
           },
         ]
       }
+      countries: {
+        Row: {
+          accent_color_1: string | null
+          accent_color_2: string | null
+          accent_color_3: string | null
+          active: boolean
+          code: string
+          created_at: string
+          flag_url: string | null
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          accent_color_1?: string | null
+          accent_color_2?: string | null
+          accent_color_3?: string | null
+          active?: boolean
+          code: string
+          created_at?: string
+          flag_url?: string | null
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          accent_color_1?: string | null
+          accent_color_2?: string | null
+          accent_color_3?: string | null
+          active?: boolean
+          code?: string
+          created_at?: string
+          flag_url?: string | null
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      editor_countries: {
+        Row: {
+          country_code: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          country_code: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          country_code?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "editor_countries_country_code_fkey"
+            columns: ["country_code"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       events: {
         Row: {
           categories: string[]
+          country_code: string
           cover_url: string | null
           created_at: string
           description: string | null
@@ -187,6 +256,7 @@ export type Database = {
         }
         Insert: {
           categories?: string[]
+          country_code?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -211,6 +281,7 @@ export type Database = {
         }
         Update: {
           categories?: string[]
+          country_code?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -246,6 +317,7 @@ export type Database = {
       interviews: {
         Row: {
           content: string | null
+          country_code: string
           cover_url: string | null
           created_at: string
           excerpt: string | null
@@ -262,6 +334,7 @@ export type Database = {
         }
         Insert: {
           content?: string | null
+          country_code?: string
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
@@ -278,6 +351,7 @@ export type Database = {
         }
         Update: {
           content?: string | null
+          country_code?: string
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
@@ -615,6 +689,7 @@ export type Database = {
           author: string
           category_id: string | null
           content: string | null
+          country_code: string
           created_at: string
           created_by: string | null
           excerpt: string | null
@@ -640,6 +715,7 @@ export type Database = {
           author?: string
           category_id?: string | null
           content?: string | null
+          country_code?: string
           created_at?: string
           created_by?: string | null
           excerpt?: string | null
@@ -665,6 +741,7 @@ export type Database = {
           author?: string
           category_id?: string | null
           content?: string | null
+          country_code?: string
           created_at?: string
           created_by?: string | null
           excerpt?: string | null
@@ -768,6 +845,35 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "news_views_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_visibility: {
+        Row: {
+          channel: Database["public"]["Enums"]["visibility_channel"]
+          country_code: string
+          created_at: string
+          news_id: string
+        }
+        Insert: {
+          channel: Database["public"]["Enums"]["visibility_channel"]
+          country_code?: string
+          created_at?: string
+          news_id: string
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["visibility_channel"]
+          country_code?: string
+          created_at?: string
+          news_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_visibility_news_id_fkey"
             columns: ["news_id"]
             isOneToOne: false
             referencedRelation: "news"
@@ -1103,6 +1209,7 @@ export type Database = {
           birth_year: number | null
           category: string | null
           club_id: string | null
+          country_code: string
           created_at: string
           featured: boolean
           full_name: string
@@ -1121,6 +1228,7 @@ export type Database = {
           birth_year?: number | null
           category?: string | null
           club_id?: string | null
+          country_code?: string
           created_at?: string
           featured?: boolean
           full_name: string
@@ -1139,6 +1247,7 @@ export type Database = {
           birth_year?: number | null
           category?: string | null
           club_id?: string | null
+          country_code?: string
           created_at?: string
           featured?: boolean
           full_name?: string
@@ -1170,6 +1279,7 @@ export type Database = {
       }
       sponsors: {
         Row: {
+          country_code: string
           created_at: string
           description: string | null
           id: string
@@ -1183,6 +1293,7 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          country_code?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -1196,6 +1307,7 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          country_code?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -1278,6 +1390,7 @@ export type Database = {
       }
       tv_broadcasts: {
         Row: {
+          country_code: string
           cover_url: string | null
           created_at: string
           description: string | null
@@ -1292,6 +1405,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          country_code?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -1306,6 +1420,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          country_code?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -1324,6 +1439,7 @@ export type Database = {
       tv_highlights: {
         Row: {
           category: string | null
+          country_code: string
           created_at: string
           description: string | null
           duration: string | null
@@ -1338,6 +1454,7 @@ export type Database = {
         }
         Insert: {
           category?: string | null
+          country_code?: string
           created_at?: string
           description?: string | null
           duration?: string | null
@@ -1352,6 +1469,7 @@ export type Database = {
         }
         Update: {
           category?: string | null
+          country_code?: string
           created_at?: string
           description?: string | null
           duration?: string | null
@@ -1461,6 +1579,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_edit_country: {
+        Args: { _country: string; _user_id: string }
+        Returns: boolean
+      }
       current_user_section_id: { Args: never; Returns: string }
       has_assigned_section: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
@@ -1485,6 +1607,7 @@ export type Database = {
       news_scope: "General" | "Nacional" | "Internacional"
       post_status: "draft" | "pending" | "published" | "rejected"
       schedule_status: "programada" | "en_curso" | "finalizada"
+      visibility_channel: "global_home" | "featured" | "breaking" | "country"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1620,6 +1743,7 @@ export const Constants = {
       news_scope: ["General", "Nacional", "Internacional"],
       post_status: ["draft", "pending", "published", "rejected"],
       schedule_status: ["programada", "en_curso", "finalizada"],
+      visibility_channel: ["global_home", "featured", "breaking", "country"],
     },
   },
 } as const
