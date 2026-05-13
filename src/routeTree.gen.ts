@@ -65,6 +65,7 @@ import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountryNoticiasRouteImport } from './routes/$country.noticias'
+import { Route as CountryEventosRouteImport } from './routes/$country.eventos'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 
@@ -348,6 +349,11 @@ const CountryNoticiasRoute = CountryNoticiasRouteImport.update({
   path: '/noticias',
   getParentRoute: () => CountryRoute,
 } as any)
+const CountryEventosRoute = CountryEventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => CountryRoute,
+} as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
@@ -374,6 +380,7 @@ export interface FileRoutesByFullPath {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/eventos': typeof CountryEventosRoute
   '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -431,6 +438,7 @@ export interface FileRoutesByTo {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/eventos': typeof CountryEventosRoute
   '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -492,6 +500,7 @@ export interface FileRoutesById {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/eventos': typeof CountryEventosRoute
   '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -554,6 +563,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/eventos'
     | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
@@ -611,6 +621,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/eventos'
     | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
@@ -671,6 +682,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/eventos'
     | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
@@ -1142,6 +1154,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryNoticiasRouteImport
       parentRoute: typeof CountryRoute
     }
+    '/$country/eventos': {
+      id: '/$country/eventos'
+      path: '/eventos'
+      fullPath: '/$country/eventos'
+      preLoaderRoute: typeof CountryEventosRouteImport
+      parentRoute: typeof CountryRoute
+    }
     '/noticias/articulo/$slug': {
       id: '/noticias/articulo/$slug'
       path: '/noticias/articulo/$slug'
@@ -1160,11 +1179,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface CountryRouteChildren {
+  CountryEventosRoute: typeof CountryEventosRoute
   CountryNoticiasRoute: typeof CountryNoticiasRoute
   CountryIndexRoute: typeof CountryIndexRoute
 }
 
 const CountryRouteChildren: CountryRouteChildren = {
+  CountryEventosRoute: CountryEventosRoute,
   CountryNoticiasRoute: CountryNoticiasRoute,
   CountryIndexRoute: CountryIndexRoute,
 }
