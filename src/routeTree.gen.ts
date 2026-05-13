@@ -21,6 +21,7 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CountryRouteImport } from './routes/$country'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
@@ -123,6 +124,11 @@ const AuthRoute = AuthRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountryRoute = CountryRouteImport.update({
+  id: '/$country',
+  path: '/$country',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -343,6 +349,7 @@ const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$country': typeof CountryRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -400,6 +407,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$country': typeof CountryRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
@@ -456,6 +464,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$country': typeof CountryRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -515,6 +524,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$country'
     | '/admin'
     | '/auth'
     | '/aviso-legal'
@@ -572,6 +582,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$country'
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
@@ -627,6 +638,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$country'
     | '/admin'
     | '/auth'
     | '/aviso-legal'
@@ -685,6 +697,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CountryRoute: typeof CountryRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
@@ -797,6 +810,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$country': {
+      id: '/$country'
+      path: '/$country'
+      fullPath: '/$country'
+      preLoaderRoute: typeof CountryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -1179,6 +1199,7 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CountryRoute: CountryRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
