@@ -65,7 +65,12 @@ import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountryNoticiasRouteImport } from './routes/$country.noticias'
+import { Route as CountryGaleriaRouteImport } from './routes/$country.galeria'
 import { Route as CountryEventosRouteImport } from './routes/$country.eventos'
+import { Route as CountryEntrevistasRouteImport } from './routes/$country.entrevistas'
+import { Route as CountryClubesRouteImport } from './routes/$country.clubes'
+import { Route as CountryCalendarioRouteImport } from './routes/$country.calendario'
+import { Route as CountryAtletasRouteImport } from './routes/$country.atletas'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 
@@ -349,9 +354,34 @@ const CountryNoticiasRoute = CountryNoticiasRouteImport.update({
   path: '/noticias',
   getParentRoute: () => CountryRoute,
 } as any)
+const CountryGaleriaRoute = CountryGaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => CountryRoute,
+} as any)
 const CountryEventosRoute = CountryEventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
+  getParentRoute: () => CountryRoute,
+} as any)
+const CountryEntrevistasRoute = CountryEntrevistasRouteImport.update({
+  id: '/entrevistas',
+  path: '/entrevistas',
+  getParentRoute: () => CountryRoute,
+} as any)
+const CountryClubesRoute = CountryClubesRouteImport.update({
+  id: '/clubes',
+  path: '/clubes',
+  getParentRoute: () => CountryRoute,
+} as any)
+const CountryCalendarioRoute = CountryCalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
+  getParentRoute: () => CountryRoute,
+} as any)
+const CountryAtletasRoute = CountryAtletasRouteImport.update({
+  id: '/atletas',
+  path: '/atletas',
   getParentRoute: () => CountryRoute,
 } as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
@@ -380,7 +410,12 @@ export interface FileRoutesByFullPath {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/atletas': typeof CountryAtletasRoute
+  '/$country/calendario': typeof CountryCalendarioRoute
+  '/$country/clubes': typeof CountryClubesRoute
+  '/$country/entrevistas': typeof CountryEntrevistasRoute
   '/$country/eventos': typeof CountryEventosRoute
+  '/$country/galeria': typeof CountryGaleriaRoute
   '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -438,7 +473,12 @@ export interface FileRoutesByTo {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/atletas': typeof CountryAtletasRoute
+  '/$country/calendario': typeof CountryCalendarioRoute
+  '/$country/clubes': typeof CountryClubesRoute
+  '/$country/entrevistas': typeof CountryEntrevistasRoute
   '/$country/eventos': typeof CountryEventosRoute
+  '/$country/galeria': typeof CountryGaleriaRoute
   '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -500,7 +540,12 @@ export interface FileRoutesById {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/atletas': typeof CountryAtletasRoute
+  '/$country/calendario': typeof CountryCalendarioRoute
+  '/$country/clubes': typeof CountryClubesRoute
+  '/$country/entrevistas': typeof CountryEntrevistasRoute
   '/$country/eventos': typeof CountryEventosRoute
+  '/$country/galeria': typeof CountryGaleriaRoute
   '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -563,7 +608,12 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/atletas'
+    | '/$country/calendario'
+    | '/$country/clubes'
+    | '/$country/entrevistas'
     | '/$country/eventos'
+    | '/$country/galeria'
     | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
@@ -621,7 +671,12 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/atletas'
+    | '/$country/calendario'
+    | '/$country/clubes'
+    | '/$country/entrevistas'
     | '/$country/eventos'
+    | '/$country/galeria'
     | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
@@ -682,7 +737,12 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/atletas'
+    | '/$country/calendario'
+    | '/$country/clubes'
+    | '/$country/entrevistas'
     | '/$country/eventos'
+    | '/$country/galeria'
     | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
@@ -1154,11 +1214,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryNoticiasRouteImport
       parentRoute: typeof CountryRoute
     }
+    '/$country/galeria': {
+      id: '/$country/galeria'
+      path: '/galeria'
+      fullPath: '/$country/galeria'
+      preLoaderRoute: typeof CountryGaleriaRouteImport
+      parentRoute: typeof CountryRoute
+    }
     '/$country/eventos': {
       id: '/$country/eventos'
       path: '/eventos'
       fullPath: '/$country/eventos'
       preLoaderRoute: typeof CountryEventosRouteImport
+      parentRoute: typeof CountryRoute
+    }
+    '/$country/entrevistas': {
+      id: '/$country/entrevistas'
+      path: '/entrevistas'
+      fullPath: '/$country/entrevistas'
+      preLoaderRoute: typeof CountryEntrevistasRouteImport
+      parentRoute: typeof CountryRoute
+    }
+    '/$country/clubes': {
+      id: '/$country/clubes'
+      path: '/clubes'
+      fullPath: '/$country/clubes'
+      preLoaderRoute: typeof CountryClubesRouteImport
+      parentRoute: typeof CountryRoute
+    }
+    '/$country/calendario': {
+      id: '/$country/calendario'
+      path: '/calendario'
+      fullPath: '/$country/calendario'
+      preLoaderRoute: typeof CountryCalendarioRouteImport
+      parentRoute: typeof CountryRoute
+    }
+    '/$country/atletas': {
+      id: '/$country/atletas'
+      path: '/atletas'
+      fullPath: '/$country/atletas'
+      preLoaderRoute: typeof CountryAtletasRouteImport
       parentRoute: typeof CountryRoute
     }
     '/noticias/articulo/$slug': {
@@ -1179,13 +1274,23 @@ declare module '@tanstack/react-router' {
 }
 
 interface CountryRouteChildren {
+  CountryAtletasRoute: typeof CountryAtletasRoute
+  CountryCalendarioRoute: typeof CountryCalendarioRoute
+  CountryClubesRoute: typeof CountryClubesRoute
+  CountryEntrevistasRoute: typeof CountryEntrevistasRoute
   CountryEventosRoute: typeof CountryEventosRoute
+  CountryGaleriaRoute: typeof CountryGaleriaRoute
   CountryNoticiasRoute: typeof CountryNoticiasRoute
   CountryIndexRoute: typeof CountryIndexRoute
 }
 
 const CountryRouteChildren: CountryRouteChildren = {
+  CountryAtletasRoute: CountryAtletasRoute,
+  CountryCalendarioRoute: CountryCalendarioRoute,
+  CountryClubesRoute: CountryClubesRoute,
+  CountryEntrevistasRoute: CountryEntrevistasRoute,
   CountryEventosRoute: CountryEventosRoute,
+  CountryGaleriaRoute: CountryGaleriaRoute,
   CountryNoticiasRoute: CountryNoticiasRoute,
   CountryIndexRoute: CountryIndexRoute,
 }
