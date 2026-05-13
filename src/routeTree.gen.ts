@@ -29,6 +29,7 @@ import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as CountryIndexRouteImport } from './routes/$country.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
@@ -63,6 +64,7 @@ import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
+import { Route as CountryNoticiasRouteImport } from './routes/$country.noticias'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 
@@ -165,6 +167,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const CountryIndexRoute = CountryIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CountryRoute,
 } as any)
 const SobreSlugRoute = SobreSlugRouteImport.update({
   id: '/sobre/$slug',
@@ -336,6 +343,11 @@ const AdminBannersRoute = AdminBannersRouteImport.update({
   path: '/banners',
   getParentRoute: () => AdminRoute,
 } as any)
+const CountryNoticiasRoute = CountryNoticiasRouteImport.update({
+  id: '/noticias',
+  path: '/noticias',
+  getParentRoute: () => CountryRoute,
+} as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
@@ -349,7 +361,7 @@ const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$country': typeof CountryRoute
+  '/$country': typeof CountryRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -362,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -396,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
+  '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
@@ -407,7 +421,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$country': typeof CountryRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
@@ -418,6 +431,7 @@ export interface FileRoutesByTo {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -452,6 +466,7 @@ export interface FileRoutesByTo {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
+  '/$country': typeof CountryIndexRoute
   '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
@@ -464,7 +479,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$country': typeof CountryRoute
+  '/$country': typeof CountryRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -477,6 +492,7 @@ export interface FileRoutesById {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -511,6 +527,7 @@ export interface FileRoutesById {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
+  '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
@@ -537,6 +554,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -571,6 +589,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
+    | '/$country/'
     | '/admin/'
     | '/dashboard/'
     | '/entrevistas/'
@@ -582,7 +601,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/$country'
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
@@ -593,6 +611,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -627,6 +646,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
+    | '/$country'
     | '/admin'
     | '/dashboard'
     | '/entrevistas'
@@ -651,6 +671,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -685,6 +706,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
+    | '/$country/'
     | '/admin/'
     | '/dashboard/'
     | '/entrevistas/'
@@ -697,7 +719,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CountryRoute: typeof CountryRoute
+  CountryRoute: typeof CountryRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
@@ -867,6 +889,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/$country/': {
+      id: '/$country/'
+      path: '/'
+      fullPath: '/$country/'
+      preLoaderRoute: typeof CountryIndexRouteImport
+      parentRoute: typeof CountryRoute
     }
     '/sobre/$slug': {
       id: '/sobre/$slug'
@@ -1106,6 +1135,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBannersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/$country/noticias': {
+      id: '/$country/noticias'
+      path: '/noticias'
+      fullPath: '/$country/noticias'
+      preLoaderRoute: typeof CountryNoticiasRouteImport
+      parentRoute: typeof CountryRoute
+    }
     '/noticias/articulo/$slug': {
       id: '/noticias/articulo/$slug'
       path: '/noticias/articulo/$slug'
@@ -1122,6 +1158,19 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface CountryRouteChildren {
+  CountryNoticiasRoute: typeof CountryNoticiasRoute
+  CountryIndexRoute: typeof CountryIndexRoute
+}
+
+const CountryRouteChildren: CountryRouteChildren = {
+  CountryNoticiasRoute: CountryNoticiasRoute,
+  CountryIndexRoute: CountryIndexRoute,
+}
+
+const CountryRouteWithChildren =
+  CountryRoute._addFileChildren(CountryRouteChildren)
 
 interface AdminRouteChildren {
   AdminBannersRoute: typeof AdminBannersRoute
@@ -1199,7 +1248,7 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CountryRoute: CountryRoute,
+  CountryRoute: CountryRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
@@ -1230,3 +1279,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
