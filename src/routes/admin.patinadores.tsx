@@ -374,9 +374,10 @@ function SkaterForm({
               checked={featured}
               onChange={(e) => setFeatured(e.target.checked)}
             />
-            Aparecer en "Atletas destacados"
+            Aparecer en "Patinadores destacados"
           </label>
         </Field>
+        <CountrySelector value={country_code} onChange={setCountryCode} />
         <div className="md:col-span-2">
           <Field label="Biografía">
             <textarea
