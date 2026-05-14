@@ -18,7 +18,7 @@ export const translations = {
       close: "Cerrar",
       open: "Abrir",
       search: "Buscar",
-      searchPlaceholder: "Buscar noticias, eventos, atletas…",
+      searchPlaceholder: "Buscar noticias, eventos, patinadores…",
       share: "Compartir",
       download: "Descargar",
       next: "Siguiente",
