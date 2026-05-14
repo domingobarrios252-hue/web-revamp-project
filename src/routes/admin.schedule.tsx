@@ -64,6 +64,7 @@ export function AdminSchedule() {
       status: "programada",
       published: true,
       sort_order: 0,
+      country_code: "es",
     });
     setOpen(true);
   };
