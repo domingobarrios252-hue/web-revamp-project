@@ -274,6 +274,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
               <span className="font-condensed mb-2 text-[11px] uppercase tracking-widest">Publicada</span>
             </label>
           </div>
+          <CountrySelector value={countryCode} onChange={setCountryCode} />
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
