@@ -271,6 +271,7 @@ function InterviewForm({
       cover_url: parsed.data.cover_url || null,
       photos,
       published: parsed.data.published,
+      country_code,
     };
     const { error } = initial
       ? await supabase.from("interviews").update(payload).eq("id", initial.id)
