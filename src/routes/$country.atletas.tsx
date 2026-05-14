@@ -8,7 +8,7 @@ function Page() {
   const c = getCountryBySlug(slug)!;
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 md:px-6 text-center">
-      <h1 className="font-display text-3xl tracking-widest">Atletas <span className="text-gold">{c.name}</span></h1>
+      <h1 className="font-display text-3xl tracking-widest">Patinadores <span className="text-gold">{c.name}</span></h1>
       <p className="mt-3 text-sm text-muted-foreground">Sección en preparación para {c.name}.</p>
     </div>
   );
