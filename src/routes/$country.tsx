@@ -16,7 +16,7 @@ export const Route = createFileRoute("/$country")({
         { title: `RollerZone ${name} — Patinaje de velocidad` },
         {
           name: "description",
-          content: `Cobertura local de RollerZone en ${name}: noticias, eventos, atletas y clubes.`,
+          content: `Cobertura local de RollerZone en ${name}: noticias, eventos, patinadores y clubes.`,
         },
         { property: "og:title", content: `RollerZone ${name}` },
         {
@@ -46,7 +46,7 @@ const SUB_NAV = [
   { label: "Calendario", to: "calendario" },
   { label: "Entrevistas", to: "entrevistas" },
   { label: "Clubes", to: "clubes" },
-  { label: "Atletas", to: "atletas" },
+  { label: "Patinadores", to: "atletas" },
   { label: "Galería", to: "galeria" },
 ] as const;
 

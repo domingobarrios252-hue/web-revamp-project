@@ -4,6 +4,7 @@ import { Plus, Pencil, Trash2, Upload, X, GripVertical } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Interview = {
   id: string;
@@ -18,6 +19,7 @@ type Interview = {
   excerpt: string | null;
   published: boolean;
   sort_order: number;
+  country_code: string | null;
 };
 
 const schema = z.object({
@@ -195,6 +197,7 @@ function InterviewForm({
   const [cover_url, setCover] = useState(initial?.cover_url ?? "");
   const [photos, setPhotos] = useState<string[]>(initial?.photos ?? []);
   const [published, setPublished] = useState(initial?.published ?? true);
+  const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [saving, setSaving] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -268,6 +271,7 @@ function InterviewForm({
       cover_url: parsed.data.cover_url || null,
       photos,
       published: parsed.data.published,
+      country_code,
     };
     const { error } = initial
       ? await supabase.from("interviews").update(payload).eq("id", initial.id)
@@ -435,6 +439,8 @@ function InterviewForm({
             </div>
           )}
         </div>
+
+        <CountrySelector value={country_code} onChange={setCountryCode} className="md:col-span-2" />
 
         <label className="flex items-center gap-2 md:col-span-2">
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />

@@ -4,6 +4,7 @@ import { Plus, Save, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { CountrySelector } from "@/components/admin/CountrySelector";
 
 export const Route = createFileRoute("/admin/schedule")({
   head: () => ({ meta: [{ title: "Admin · Pruebas programadas" }, { name: "robots", content: "noindex" }] }),
@@ -18,6 +19,7 @@ const schema = z.object({
   status: z.enum(["programada", "en_curso", "finalizada"]),
   published: z.boolean(),
   sort_order: z.number().int().min(0),
+  country_code: z.string().min(2).max(2),
 });
 
 type Row = {
@@ -29,6 +31,7 @@ type Row = {
   status: "programada" | "en_curso" | "finalizada";
   published: boolean;
   sort_order: number;
+  country_code: string;
 };
 
 export function AdminSchedule() {
@@ -61,6 +64,7 @@ export function AdminSchedule() {
       status: "programada",
       published: true,
       sort_order: 0,
+      country_code: "es",
     });
     setOpen(true);
   };
@@ -176,6 +180,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
   const [status, setStatus] = useState<Row["status"]>(row.status);
   const [published, setPublished] = useState(row.published);
   const [sortOrder, setSortOrder] = useState(row.sort_order);
+  const [countryCode, setCountryCode] = useState(row.country_code ?? "es");
   const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
@@ -187,6 +192,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
       status,
       published,
       sort_order: sortOrder,
+      country_code: countryCode,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
 
@@ -199,6 +205,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
       status: parsed.data.status,
       published: parsed.data.published,
       sort_order: parsed.data.sort_order,
+      country_code: parsed.data.country_code,
     };
     const { error } = row.id
       ? await supabase.from("schedule_items").update(payload).eq("id", row.id)
@@ -267,6 +274,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
               <span className="font-condensed mb-2 text-[11px] uppercase tracking-widest">Publicada</span>
             </label>
           </div>
+          <CountrySelector value={countryCode} onChange={setCountryCode} />
         </div>
 
         <div className="mt-5 flex justify-end gap-2">

@@ -208,7 +208,7 @@ function CountryHome() {
       {/* Quick links */}
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {[
-          { to: "atletas" as const, label: "Atletas" },
+          { to: "atletas" as const, label: "Patinadores" },
           { to: "clubes" as const, label: "Clubes" },
           { to: "entrevistas" as const, label: "Entrevistas" },
           { to: "galeria" as const, label: "Galería" },

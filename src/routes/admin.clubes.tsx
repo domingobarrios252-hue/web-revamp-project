@@ -4,6 +4,7 @@ import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Region = { id: string; name: string };
 type Club = {
@@ -13,6 +14,7 @@ type Club = {
   logo_url: string | null;
   region_id: string | null;
   website: string | null;
+  country_code: string | null;
   regions: { name: string } | null;
 };
 
@@ -51,7 +53,7 @@ function AdminClubs() {
     const [c, r] = await Promise.all([
       supabase
         .from("clubs")
-        .select("id, name, slug, logo_url, region_id, website, regions(name)")
+        .select("id, name, slug, logo_url, region_id, website, country_code, regions(name)")
         .order("name"),
       supabase.from("regions").select("id, name").order("sort_order"),
     ]);
@@ -182,6 +184,7 @@ function ClubForm({
   const [logo_url, setLogoUrl] = useState(initial?.logo_url ?? "");
   const [region_id, setRegionId] = useState(initial?.region_id ?? "");
   const [website, setWebsite] = useState(initial?.website ?? "");
+  const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -218,6 +221,7 @@ function ClubForm({
       logo_url: parsed.data.logo_url || null,
       region_id: parsed.data.region_id || null,
       website: parsed.data.website || null,
+      country_code,
     };
     const { error } = initial
       ? await supabase.from("clubs").update(payload).eq("id", initial.id)
@@ -298,6 +302,7 @@ function ClubForm({
             className="input"
           />
         </label>
+        <CountrySelector value={country_code} onChange={setCountryCode} />
       </div>
       <div className="mt-5 flex gap-2">
         <button

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Region = { id: string; name: string };
 type EventRow = {
@@ -26,6 +27,7 @@ type EventRow = {
   registration_url: string | null;
   published: boolean;
   gallery: string[];
+  country_code: string | null;
   regions: { name: string } | null;
 };
 
@@ -160,6 +162,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [registration_url, setRegistration] = useState(initial?.registration_url ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
+  const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
@@ -189,6 +192,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
       registration_url: parsed.data.registration_url || null,
       published: parsed.data.published,
       gallery: parsed.data.gallery,
+      country_code,
     };
     const { error } = initial
       ? await supabase.from("events").update(payload).eq("id", initial.id)
@@ -240,6 +244,7 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
         <Field label="Inscripción (URL)"><input value={registration_url} onChange={(e) => setRegistration(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Instagram"><input value={instagram_url} onChange={(e) => setInstagram(e.target.value)} placeholder="https://instagram.com/…" className="input" /></Field>
         <Field label="Facebook"><input value={facebook_url} onChange={(e) => setFacebook(e.target.value)} placeholder="https://facebook.com/…" className="input" /></Field>
+        <CountrySelector value={country_code} onChange={setCountryCode} />
         <label className="flex items-center gap-2 md:col-span-2">
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
           <span className="font-condensed text-xs uppercase tracking-widest">Publicado</span>

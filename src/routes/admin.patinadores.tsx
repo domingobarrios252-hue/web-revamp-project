@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Region = { id: string; name: string; code: string };
 type Club = { id: string; name: string };
@@ -24,6 +25,7 @@ type Skater = {
   bio: string | null;
   active: boolean;
   featured: boolean;
+  country_code: string | null;
   clubs: { name: string } | null;
   regions: { name: string; code: string } | null;
 };
@@ -72,7 +74,7 @@ function AdminSkaters() {
       supabase
         .from("skaters")
         .select(
-          "id, full_name, slug, photo_url, birth_year, category, gender, club_id, region_id, total_points, personal_records, bio, active, featured, clubs(name), regions(name, code)"
+          "id, full_name, slug, photo_url, birth_year, category, gender, club_id, region_id, total_points, personal_records, bio, active, featured, country_code, clubs(name), regions(name, code)"
         )
         .order("total_points", { ascending: false }),
       supabase.from("clubs").select("id, name").order("name"),
@@ -221,6 +223,7 @@ function SkaterForm({
   const [bio, setBio] = useState(initial?.bio ?? "");
   const [active, setActive] = useState(initial?.active ?? true);
   const [featured, setFeatured] = useState(initial?.featured ?? false);
+  const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [prs, setPrs] = useState<PR[]>(initial?.personal_records ?? []);
   const [saving, setSaving] = useState(false);
 
@@ -262,6 +265,7 @@ function SkaterForm({
       active: parsed.data.active,
       featured: parsed.data.featured,
       personal_records: prs.filter((p) => p.event && p.time),
+      country_code,
     };
     const { error } = initial
       ? await supabase.from("skaters").update(payload).eq("id", initial.id)
@@ -370,9 +374,10 @@ function SkaterForm({
               checked={featured}
               onChange={(e) => setFeatured(e.target.checked)}
             />
-            Aparecer en "Atletas destacados"
+            Aparecer en "Patinadores destacados"
           </label>
         </Field>
+        <CountrySelector value={country_code} onChange={setCountryCode} />
         <div className="md:col-span-2">
           <Field label="Biografía">
             <textarea
