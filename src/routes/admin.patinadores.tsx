@@ -25,6 +25,7 @@ type Skater = {
   bio: string | null;
   active: boolean;
   featured: boolean;
+  country_code: string | null;
   clubs: { name: string } | null;
   regions: { name: string; code: string } | null;
 };
