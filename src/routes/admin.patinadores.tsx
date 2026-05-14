@@ -223,6 +223,7 @@ function SkaterForm({
   const [bio, setBio] = useState(initial?.bio ?? "");
   const [active, setActive] = useState(initial?.active ?? true);
   const [featured, setFeatured] = useState(initial?.featured ?? false);
+  const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [prs, setPrs] = useState<PR[]>(initial?.personal_records ?? []);
   const [saving, setSaving] = useState(false);
 
