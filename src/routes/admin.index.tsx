@@ -432,16 +432,49 @@ function NewsEditor({
         featured: parsed.data.featured,
         status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
+        country_code: countryCode,
       };
-      const { error } = item
-        ? await supabase.from("news").update(payload).eq("id", item.id)
-        : await supabase.from("news").insert(payload);
-      if (error) {
-        toast.error(error.message);
+      let newsId = item?.id;
+      if (item) {
+        const { error } = await supabase.from("news").update(payload).eq("id", item.id);
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
       } else {
-        toast.success(item ? "Noticia actualizada" : "Noticia creada");
-        onSaved();
+        const { data: inserted, error } = await supabase
+          .from("news")
+          .insert(payload)
+          .select("id")
+          .single();
+        if (error || !inserted) {
+          toast.error(error?.message ?? "Error al crear");
+          return;
+        }
+        newsId = inserted.id;
       }
+
+      // Sync news_visibility: replace all rows for this news
+      if (newsId) {
+        await supabase.from("news_visibility").delete().eq("news_id", newsId);
+        const visRows: { news_id: string; channel: VisibilityChannel; country_code: string }[] = [];
+        if (visGlobal) visRows.push({ news_id: newsId, channel: "global_home", country_code: "" });
+        if (visFeatured) visRows.push({ news_id: newsId, channel: "featured", country_code: "" });
+        if (visBreaking) visRows.push({ news_id: newsId, channel: "breaking", country_code: "" });
+        for (const cc of visCountries) {
+          visRows.push({ news_id: newsId, channel: "country", country_code: cc });
+        }
+        if (visRows.length > 0) {
+          const { error: vErr } = await supabase.from("news_visibility").insert(visRows);
+          if (vErr) {
+            toast.error(`Visibilidad: ${vErr.message}`);
+            return;
+          }
+        }
+      }
+
+      toast.success(item ? "Noticia actualizada" : "Noticia creada");
+      onSaved();
     } finally {
       setSaving(false);
     }
