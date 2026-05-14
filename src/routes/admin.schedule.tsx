@@ -205,6 +205,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
       status: parsed.data.status,
       published: parsed.data.published,
       sort_order: parsed.data.sort_order,
+      country_code: parsed.data.country_code,
     };
     const { error } = row.id
       ? await supabase.from("schedule_items").update(payload).eq("id", row.id)
