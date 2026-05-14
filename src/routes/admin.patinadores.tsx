@@ -74,7 +74,7 @@ function AdminSkaters() {
       supabase
         .from("skaters")
         .select(
-          "id, full_name, slug, photo_url, birth_year, category, gender, club_id, region_id, total_points, personal_records, bio, active, featured, clubs(name), regions(name, code)"
+          "id, full_name, slug, photo_url, birth_year, category, gender, club_id, region_id, total_points, personal_records, bio, active, featured, country_code, clubs(name), regions(name, code)"
         )
         .order("total_points", { ascending: false }),
       supabase.from("clubs").select("id, name").order("name"),
