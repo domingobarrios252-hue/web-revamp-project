@@ -302,6 +302,7 @@ function ClubForm({
             className="input"
           />
         </label>
+        <CountrySelector value={country_code} onChange={setCountryCode} />
       </div>
       <div className="mt-5 flex gap-2">
         <button
