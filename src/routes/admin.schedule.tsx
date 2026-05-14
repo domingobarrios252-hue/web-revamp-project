@@ -4,6 +4,7 @@ import { Plus, Save, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { CountrySelector } from "@/components/admin/CountrySelector";
 
 export const Route = createFileRoute("/admin/schedule")({
   head: () => ({ meta: [{ title: "Admin · Pruebas programadas" }, { name: "robots", content: "noindex" }] }),
