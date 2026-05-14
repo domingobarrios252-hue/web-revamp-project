@@ -27,6 +27,7 @@ type EventRow = {
   registration_url: string | null;
   published: boolean;
   gallery: string[];
+  country_code: string | null;
   regions: { name: string } | null;
 };
 
