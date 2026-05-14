@@ -180,6 +180,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
   const [status, setStatus] = useState<Row["status"]>(row.status);
   const [published, setPublished] = useState(row.published);
   const [sortOrder, setSortOrder] = useState(row.sort_order);
+  const [countryCode, setCountryCode] = useState(row.country_code ?? "es");
   const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
@@ -191,6 +192,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
       status,
       published,
       sort_order: sortOrder,
+      country_code: countryCode,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
 
