@@ -440,6 +440,8 @@ function InterviewForm({
           )}
         </div>
 
+        <CountrySelector value={country_code} onChange={setCountryCode} className="md:col-span-2" />
+
         <label className="flex items-center gap-2 md:col-span-2">
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
           <span className="font-condensed text-xs uppercase tracking-widest">Publicada</span>
