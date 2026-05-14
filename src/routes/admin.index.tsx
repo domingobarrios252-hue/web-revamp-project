@@ -287,6 +287,7 @@ function AdminNewsList() {
           item={editing === "new" ? null : editing}
           categories={categories}
           writers={writers}
+          countries={countries}
           onClose={() => setEditing(null)}
           onSaved={() => {
             setEditing(null);
