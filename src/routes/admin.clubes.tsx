@@ -53,7 +53,7 @@ function AdminClubs() {
     const [c, r] = await Promise.all([
       supabase
         .from("clubs")
-        .select("id, name, slug, logo_url, region_id, website, regions(name)")
+        .select("id, name, slug, logo_url, region_id, website, country_code, regions(name)")
         .order("name"),
       supabase.from("regions").select("id, name").order("sort_order"),
     ]);
