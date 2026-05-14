@@ -324,12 +324,14 @@ function NewsEditor({
   item,
   categories,
   writers,
+  countries,
   onClose,
   onSaved,
 }: {
   item: News | null;
   categories: Category[];
   writers: Writer[];
+  countries: Country[];
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -346,7 +348,35 @@ function NewsEditor({
   const [featured, setFeatured] = useState(item?.featured ?? false);
   const [status, setStatus] = useState<News["status"]>(item?.status ?? "draft");
   const [publishedAt, setPublishedAt] = useState<string>(toLocalInput(item?.published_at));
+  const [countryCode, setCountryCode] = useState<string>(item?.country_code ?? "es");
+  const [visGlobal, setVisGlobal] = useState(false);
+  const [visFeatured, setVisFeatured] = useState(false);
+  const [visBreaking, setVisBreaking] = useState(false);
+  const [visCountries, setVisCountries] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
+
+  // Load existing visibility for this news item
+  useEffect(() => {
+    if (!item) {
+      // Defaults for new: visible on global home and on the origin country
+      setVisGlobal(true);
+      setVisCountries(new Set([countryCode]));
+      return;
+    }
+    (async () => {
+      const { data } = await supabase
+        .from("news_visibility")
+        .select("channel, country_code")
+        .eq("news_id", item.id);
+      const rows = (data ?? []) as { channel: VisibilityChannel; country_code: string }[];
+      setVisGlobal(rows.some((r) => r.channel === "global_home"));
+      setVisFeatured(rows.some((r) => r.channel === "featured"));
+      setVisBreaking(rows.some((r) => r.channel === "breaking"));
+      setVisCountries(
+        new Set(rows.filter((r) => r.channel === "country" && r.country_code).map((r) => r.country_code))
+      );
+    })();
+  }, [item?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-slug for new
   useEffect(() => {
