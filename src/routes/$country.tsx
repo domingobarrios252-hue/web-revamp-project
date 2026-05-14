@@ -16,7 +16,7 @@ export const Route = createFileRoute("/$country")({
         { title: `RollerZone ${name} — Patinaje de velocidad` },
         {
           name: "description",
-          content: `Cobertura local de RollerZone en ${name}: noticias, eventos, atletas y clubes.`,
+          content: `Cobertura local de RollerZone en ${name}: noticias, eventos, patinadores y clubes.`,
         },
         { property: "og:title", content: `RollerZone ${name}` },
         {
