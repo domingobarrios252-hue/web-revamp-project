@@ -221,6 +221,7 @@ function ClubForm({
       logo_url: parsed.data.logo_url || null,
       region_id: parsed.data.region_id || null,
       website: parsed.data.website || null,
+      country_code,
     };
     const { error } = initial
       ? await supabase.from("clubs").update(payload).eq("id", initial.id)
