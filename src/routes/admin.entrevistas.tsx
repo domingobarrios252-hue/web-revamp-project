@@ -19,6 +19,7 @@ type Interview = {
   excerpt: string | null;
   published: boolean;
   sort_order: number;
+  country_code: string | null;
 };
 
 const schema = z.object({
