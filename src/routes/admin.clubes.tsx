@@ -184,6 +184,7 @@ function ClubForm({
   const [logo_url, setLogoUrl] = useState(initial?.logo_url ?? "");
   const [region_id, setRegionId] = useState(initial?.region_id ?? "");
   const [website, setWebsite] = useState(initial?.website ?? "");
+  const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
