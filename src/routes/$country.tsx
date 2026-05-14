@@ -46,7 +46,7 @@ const SUB_NAV = [
   { label: "Calendario", to: "calendario" },
   { label: "Entrevistas", to: "entrevistas" },
   { label: "Clubes", to: "clubes" },
-  { label: "Atletas", to: "atletas" },
+  { label: "Patinadores", to: "atletas" },
   { label: "Galería", to: "galeria" },
 ] as const;
 
