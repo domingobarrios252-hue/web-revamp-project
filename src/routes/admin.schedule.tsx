@@ -19,6 +19,7 @@ const schema = z.object({
   status: z.enum(["programada", "en_curso", "finalizada"]),
   published: z.boolean(),
   sort_order: z.number().int().min(0),
+  country_code: z.string().min(2).max(2),
 });
 
 type Row = {
@@ -30,6 +31,7 @@ type Row = {
   status: "programada" | "en_curso" | "finalizada";
   published: boolean;
   sort_order: number;
+  country_code: string;
 };
 
 export function AdminSchedule() {
