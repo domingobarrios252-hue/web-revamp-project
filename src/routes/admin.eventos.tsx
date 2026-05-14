@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Region = { id: string; name: string };
 type EventRow = {
