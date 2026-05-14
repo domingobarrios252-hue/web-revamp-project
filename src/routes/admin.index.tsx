@@ -10,6 +10,8 @@ import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
+type Country = { code: string; name: string; active: boolean };
+type VisibilityChannel = "global_home" | "featured" | "breaking" | "country";
 type News = {
   id: string;
   title: string;
@@ -31,6 +33,7 @@ type News = {
   review_feedback: string | null;
   views_count: number;
   published_at: string;
+  country_code: string;
 };
 
 const newsSchema = z.object({
@@ -75,16 +78,17 @@ function AdminNewsList() {
   const [news, setNews] = useState<News[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [writers, setWriters] = useState<Writer[]>([]);
+  const [countries, setCountries] = useState<Country[]>([]);
   const [editing, setEditing] = useState<News | "new" | null>(null);
   const [loading, setLoading] = useState(true);
 
   const reload = async () => {
     setLoading(true);
-    const [{ data: n }, { data: c }, { data: w }] = await Promise.all([
+    const [{ data: n }, { data: c }, { data: w }, { data: co }] = await Promise.all([
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -96,10 +100,16 @@ function AdminNewsList() {
         .select("id, full_name, published")
         .order("sort_order", { ascending: true })
         .order("full_name", { ascending: true }),
+      supabase
+        .from("countries")
+        .select("code, name, active")
+        .eq("active", true)
+        .order("sort_order", { ascending: true }),
     ]);
     setNews((n as News[]) ?? []);
     setCategories((c as Category[]) ?? []);
     setWriters((w as Writer[]) ?? []);
+    setCountries((co as Country[]) ?? []);
     setLoading(false);
   };
 
@@ -277,6 +287,7 @@ function AdminNewsList() {
           item={editing === "new" ? null : editing}
           categories={categories}
           writers={writers}
+          countries={countries}
           onClose={() => setEditing(null)}
           onSaved={() => {
             setEditing(null);
@@ -313,12 +324,14 @@ function NewsEditor({
   item,
   categories,
   writers,
+  countries,
   onClose,
   onSaved,
 }: {
   item: News | null;
   categories: Category[];
   writers: Writer[];
+  countries: Country[];
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -335,7 +348,35 @@ function NewsEditor({
   const [featured, setFeatured] = useState(item?.featured ?? false);
   const [status, setStatus] = useState<News["status"]>(item?.status ?? "draft");
   const [publishedAt, setPublishedAt] = useState<string>(toLocalInput(item?.published_at));
+  const [countryCode, setCountryCode] = useState<string>(item?.country_code ?? "es");
+  const [visGlobal, setVisGlobal] = useState(false);
+  const [visFeatured, setVisFeatured] = useState(false);
+  const [visBreaking, setVisBreaking] = useState(false);
+  const [visCountries, setVisCountries] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
+
+  // Load existing visibility for this news item
+  useEffect(() => {
+    if (!item) {
+      // Defaults for new: visible on global home and on the origin country
+      setVisGlobal(true);
+      setVisCountries(new Set([countryCode]));
+      return;
+    }
+    (async () => {
+      const { data } = await supabase
+        .from("news_visibility")
+        .select("channel, country_code")
+        .eq("news_id", item.id);
+      const rows = (data ?? []) as { channel: VisibilityChannel; country_code: string }[];
+      setVisGlobal(rows.some((r) => r.channel === "global_home"));
+      setVisFeatured(rows.some((r) => r.channel === "featured"));
+      setVisBreaking(rows.some((r) => r.channel === "breaking"));
+      setVisCountries(
+        new Set(rows.filter((r) => r.channel === "country" && r.country_code).map((r) => r.country_code))
+      );
+    })();
+  }, [item?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-slug for new
   useEffect(() => {
@@ -391,16 +432,49 @@ function NewsEditor({
         featured: parsed.data.featured,
         status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
+        country_code: countryCode,
       };
-      const { error } = item
-        ? await supabase.from("news").update(payload).eq("id", item.id)
-        : await supabase.from("news").insert(payload);
-      if (error) {
-        toast.error(error.message);
+      let newsId = item?.id;
+      if (item) {
+        const { error } = await supabase.from("news").update(payload).eq("id", item.id);
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
       } else {
-        toast.success(item ? "Noticia actualizada" : "Noticia creada");
-        onSaved();
+        const { data: inserted, error } = await supabase
+          .from("news")
+          .insert(payload)
+          .select("id")
+          .single();
+        if (error || !inserted) {
+          toast.error(error?.message ?? "Error al crear");
+          return;
+        }
+        newsId = inserted.id;
       }
+
+      // Sync news_visibility: replace all rows for this news
+      if (newsId) {
+        await supabase.from("news_visibility").delete().eq("news_id", newsId);
+        const visRows: { news_id: string; channel: VisibilityChannel; country_code: string }[] = [];
+        if (visGlobal) visRows.push({ news_id: newsId, channel: "global_home", country_code: "" });
+        if (visFeatured) visRows.push({ news_id: newsId, channel: "featured", country_code: "" });
+        if (visBreaking) visRows.push({ news_id: newsId, channel: "breaking", country_code: "" });
+        for (const cc of visCountries) {
+          visRows.push({ news_id: newsId, channel: "country", country_code: cc });
+        }
+        if (visRows.length > 0) {
+          const { error: vErr } = await supabase.from("news_visibility").insert(visRows);
+          if (vErr) {
+            toast.error(`Visibilidad: ${vErr.message}`);
+            return;
+          }
+        }
+      }
+
+      toast.success(item ? "Noticia actualizada" : "Noticia creada");
+      onSaved();
     } finally {
       setSaving(false);
     }
@@ -505,6 +579,59 @@ function NewsEditor({
               ]}
             />
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
+          </div>
+
+          <div className="border border-gold/40 bg-background/40 p-3">
+            <h3 className="font-condensed mb-2 text-[11px] font-bold uppercase tracking-widest text-gold">
+              Publicar en
+            </h3>
+            <div className="grid gap-3 md:grid-cols-2">
+              <SelectField
+                label="País de origen editorial"
+                value={countryCode}
+                onChange={(v) => {
+                  setCountryCode(v);
+                  setVisCountries((prev) => {
+                    const next = new Set(prev);
+                    next.add(v);
+                    return next;
+                  });
+                }}
+                options={countries.map((c) => ({ value: c.code, label: c.name }))}
+              />
+              <div>
+                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Canales globales
+                </span>
+                <div className="flex flex-col gap-1.5">
+                  <Checkbox label="Home global" checked={visGlobal} onChange={setVisGlobal} />
+                  <Checkbox label="Noticias destacadas" checked={visFeatured} onChange={setVisFeatured} />
+                  <Checkbox label="Breaking ticker" checked={visBreaking} onChange={setVisBreaking} />
+                </div>
+              </div>
+            </div>
+            <div className="mt-3">
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                Mostrar en home de país
+              </span>
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                {countries.map((c) => (
+                  <Checkbox
+                    key={c.code}
+                    label={c.name}
+                    checked={visCountries.has(c.code)}
+                    onChange={(v) =>
+                      setVisCountries((prev) => {
+                        const next = new Set(prev);
+                        if (v) next.add(c.code);
+                        else next.delete(c.code);
+                        return next;
+                      })
+                    }
+                  />
+                ))}
+              </div>
+            </div>
           </div>
           <div className="flex justify-end gap-2 border-t border-border pt-3">
             <button
