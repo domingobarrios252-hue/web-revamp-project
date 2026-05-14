@@ -265,6 +265,7 @@ function SkaterForm({
       active: parsed.data.active,
       featured: parsed.data.featured,
       personal_records: prs.filter((p) => p.event && p.time),
+      country_code,
     };
     const { error } = initial
       ? await supabase.from("skaters").update(payload).eq("id", initial.id)
