@@ -10,6 +10,8 @@ import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
+type Country = { code: string; name: string; active: boolean };
+type VisibilityChannel = "global_home" | "featured" | "breaking" | "country";
 type News = {
   id: string;
   title: string;
@@ -31,6 +33,7 @@ type News = {
   review_feedback: string | null;
   views_count: number;
   published_at: string;
+  country_code: string;
 };
 
 const newsSchema = z.object({
