@@ -78,16 +78,17 @@ function AdminNewsList() {
   const [news, setNews] = useState<News[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [writers, setWriters] = useState<Writer[]>([]);
+  const [countries, setCountries] = useState<Country[]>([]);
   const [editing, setEditing] = useState<News | "new" | null>(null);
   const [loading, setLoading] = useState(true);
 
   const reload = async () => {
     setLoading(true);
-    const [{ data: n }, { data: c }, { data: w }] = await Promise.all([
+    const [{ data: n }, { data: c }, { data: w }, { data: co }] = await Promise.all([
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -99,10 +100,16 @@ function AdminNewsList() {
         .select("id, full_name, published")
         .order("sort_order", { ascending: true })
         .order("full_name", { ascending: true }),
+      supabase
+        .from("countries")
+        .select("code, name, active")
+        .eq("active", true)
+        .order("sort_order", { ascending: true }),
     ]);
     setNews((n as News[]) ?? []);
     setCategories((c as Category[]) ?? []);
     setWriters((w as Writer[]) ?? []);
+    setCountries((co as Country[]) ?? []);
     setLoading(false);
   };
 
