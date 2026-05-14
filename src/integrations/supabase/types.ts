@@ -1115,6 +1115,7 @@ export type Database = {
       schedule_items: {
         Row: {
           category: string | null
+          country_code: string
           created_at: string
           event_name: string
           id: string
@@ -1127,6 +1128,7 @@ export type Database = {
         }
         Insert: {
           category?: string | null
+          country_code?: string
           created_at?: string
           event_name: string
           id?: string
@@ -1139,6 +1141,7 @@ export type Database = {
         }
         Update: {
           category?: string | null
+          country_code?: string
           created_at?: string
           event_name?: string
           id?: string
