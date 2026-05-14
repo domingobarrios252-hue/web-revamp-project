@@ -33,7 +33,7 @@ function PaisesPage() {
           Elige tu país
         </h1>
         <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-          La misma marca, cobertura local. Noticias, eventos, atletas y clubes de cada país.
+          La misma marca, cobertura local. Noticias, eventos, patinadores y clubes de cada país.
         </p>
       </header>
 
