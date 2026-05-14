@@ -197,6 +197,7 @@ function InterviewForm({
   const [cover_url, setCover] = useState(initial?.cover_url ?? "");
   const [photos, setPhotos] = useState<string[]>(initial?.photos ?? []);
   const [published, setPublished] = useState(initial?.published ?? true);
+  const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [saving, setSaving] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
