@@ -4,6 +4,7 @@ import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Region = { id: string; name: string };
 type Club = {
@@ -13,6 +14,7 @@ type Club = {
   logo_url: string | null;
   region_id: string | null;
   website: string | null;
+  country_code: string | null;
   regions: { name: string } | null;
 };
 
