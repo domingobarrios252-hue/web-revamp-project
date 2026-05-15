@@ -203,6 +203,18 @@ export function LiveCenter() {
 
   const isLiveBroadcast = !!stream?.is_active;
   const hasLiveRace = (liveGroup?.rows ?? []).some((r) => r.status === "en_vivo");
+  const [tab, setTab] = useState<"live" | "results">("live");
+  const [recentEvents, setRecentEvents] = useState<FeaturedEvent[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("result_events")
+      .select("slug, name, country, banner_url, event_date")
+      .eq("published", true)
+      .order("event_date", { ascending: false })
+      .limit(8)
+      .then(({ data }) => setRecentEvents((data as FeaturedEvent[]) ?? []));
+  }, []);
 
   if (!loading && streams.length === 0 && schedule.length === 0 && results.length === 0 && events.length === 0 && !featured) {
     return null;
