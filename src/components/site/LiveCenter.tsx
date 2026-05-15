@@ -281,19 +281,53 @@ export function LiveCenter() {
           loading={loading}
         />
 
-        {/* ─── PODIUM RESULTS + TIMELINE ─── */}
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
-          <PodiumBlock
-            t={t}
-            podium={podium}
-            remaining={remainingRows}
-            raceTitle={liveGroup?.title ?? null}
-            isLive={hasLiveRace}
-            loading={loading}
-            eventSlug={eventSlug}
-          />
-          <TimelineBlock t={t} items={timeline} loading={loading} />
+        {/* ─── TABS: En Vivo / Resultados ─── */}
+        <div className="mt-8 flex items-center gap-2 border-b border-border">
+          <button
+            type="button"
+            onClick={() => setTab("live")}
+            className={`font-condensed relative -mb-px px-4 py-2.5 text-[11px] font-bold uppercase tracking-[3px] transition-colors ${
+              tab === "live" ? "border-b-2 border-gold text-gold" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <span className="inline-flex items-center gap-2">
+              {hasLiveRace && <span className="live-dot-fast h-1.5 w-1.5 rounded-full bg-tv-red" />}
+              {t("liveCenter.tabLive") ?? "En Vivo"}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("results")}
+            className={`font-condensed relative -mb-px px-4 py-2.5 text-[11px] font-bold uppercase tracking-[3px] transition-colors ${
+              tab === "results" ? "border-b-2 border-gold text-gold" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {t("liveCenter.tabResults") ?? "Resultados"}
+          </button>
+          <Link
+            to="/resultados"
+            className="font-condensed ml-auto inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[2.5px] text-muted-foreground hover:text-gold"
+          >
+            {t("liveCenter.allResults") ?? "Ver todos"} <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
+
+        {tab === "live" ? (
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
+            <PodiumBlock
+              t={t}
+              podium={podium}
+              remaining={remainingRows}
+              raceTitle={liveGroup?.title ?? null}
+              isLive={hasLiveRace}
+              loading={loading}
+              eventSlug={eventSlug}
+            />
+            <TimelineBlock t={t} items={timeline} loading={loading} />
+          </div>
+        ) : (
+          <ResultsTab events={recentEvents} loading={loading} t={t} lang={lang} />
+        )}
 
         {/* ─── ROLLERZONE TV ─── */}
         <div className="mt-10">
