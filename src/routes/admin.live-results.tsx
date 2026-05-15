@@ -378,6 +378,8 @@ export function AdminLiveResults() {
         )}
       </div>
 
+      <BulkUploadByEvent onSaved={load} />
+
       {/* Filtros */}
       <div className="mb-3 grid gap-2 border border-border bg-surface p-3 sm:grid-cols-2 lg:grid-cols-4">
         <select
