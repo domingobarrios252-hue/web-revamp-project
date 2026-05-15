@@ -355,6 +355,7 @@ export function LiveCenter() {
       </div>
     </section>
   );
+}
 
 /* ════════════════════════════════════════════════════════════════
    HERO LIVE
