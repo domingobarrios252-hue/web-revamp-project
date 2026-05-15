@@ -594,6 +594,80 @@ function PodiumBlock({
   );
 }
 
+/* ════════════════════════════════════════════════════════════════
+   RESULTS TAB — eventos finalizados / próximos con acceso rápido
+   ════════════════════════════════════════════════════════════════ */
+function ResultsTab({
+  events,
+  loading,
+  t,
+  lang,
+}: {
+  events: FeaturedEvent[];
+  loading: boolean;
+  t: (k: string) => string;
+  lang: "es" | "en";
+}) {
+  if (loading) {
+    return (
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="h-44 animate-pulse rounded-xl border border-border bg-surface" />
+        ))}
+      </div>
+    );
+  }
+  if (events.length === 0) {
+    return (
+      <div className="mt-6 rounded-xl border border-border bg-surface/50 p-10 text-center">
+        <Trophy className="mx-auto mb-3 h-10 w-10 text-gold/60" />
+        <p className="font-display text-lg uppercase tracking-widest">
+          {t("liveCenter.noEventsYet") ?? "Aún no hay eventos publicados"}
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {events.map((e) => (
+        <Link
+          key={e.slug}
+          to="/resultados/$evento"
+          params={{ evento: e.slug }}
+          className="group relative overflow-hidden rounded-xl border border-border bg-surface transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_20px_40px_-15px_rgba(212,160,23,0.35)]"
+        >
+          <div className="relative aspect-[16/9] overflow-hidden bg-surface-2">
+            {e.banner_url ? (
+              <img src={e.banner_url} alt={e.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            ) : (
+              <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+                <Trophy className="h-10 w-10 text-gold/40" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+          </div>
+          <div className="p-4">
+            <h3 className="font-display clamp-2 text-base uppercase tracking-wider text-foreground group-hover:text-gold">
+              {e.name}
+            </h3>
+            <div className="font-condensed mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+              {e.event_date && (
+                <span className="flex items-center gap-1"><CalendarClock className="h-3 w-3" /> {formatShortDate(e.event_date, lang)}</span>
+              )}
+              {e.country && (
+                <span className="flex items-center gap-1"><Flag className="h-3 w-3 text-gold" /> {e.country}</span>
+              )}
+            </div>
+            <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-gold transition-transform group-hover:translate-x-1">
+              {t("liveCenter.viewClassification") ?? "Ver clasificación"} <ArrowRight className="h-3 w-3" />
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 function PodiumCard({ row, t }: { row: ResultRow; t: (k: string) => string }) {
   const medal = ["🥇", "🥈", "🥉"][row.position - 1] ?? "🏅";
   const accent =
