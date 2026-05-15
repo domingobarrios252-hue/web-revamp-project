@@ -28,6 +28,7 @@ import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as CountryIndexRouteImport } from './routes/$country.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
@@ -160,6 +161,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const CountryIndexRoute = CountryIndexRouteImport.update({
+  id: '/$country/',
+  path: '/$country/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SobreSlugRoute = SobreSlugRouteImport.update({
   id: '/sobre/$slug',
@@ -396,6 +402,7 @@ export interface FileRoutesByFullPath {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
+  '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
@@ -452,6 +459,7 @@ export interface FileRoutesByTo {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
+  '/$country': typeof CountryIndexRoute
   '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
@@ -511,6 +519,7 @@ export interface FileRoutesById {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
+  '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
@@ -571,6 +580,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
+    | '/$country/'
     | '/admin/'
     | '/dashboard/'
     | '/entrevistas/'
@@ -627,6 +637,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
+    | '/$country'
     | '/admin'
     | '/dashboard'
     | '/entrevistas'
@@ -685,6 +696,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
+    | '/$country/'
     | '/admin/'
     | '/dashboard/'
     | '/entrevistas/'
@@ -718,6 +730,7 @@ export interface RootRouteChildren {
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
   ResultadosEventoRoute: typeof ResultadosEventoRoute
   SobreSlugRoute: typeof SobreSlugRoute
+  CountryIndexRoute: typeof CountryIndexRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
@@ -860,6 +873,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/$country/': {
+      id: '/$country/'
+      path: '/$country'
+      fullPath: '/$country/'
+      preLoaderRoute: typeof CountryIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/sobre/$slug': {
       id: '/sobre/$slug'
@@ -1220,6 +1240,7 @@ const rootRouteChildren: RootRouteChildren = {
   PatinadoresSlugRoute: PatinadoresSlugRoute,
   ResultadosEventoRoute: ResultadosEventoRoute,
   SobreSlugRoute: SobreSlugRoute,
+  CountryIndexRoute: CountryIndexRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
