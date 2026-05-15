@@ -132,11 +132,6 @@ export function SiteHeader() {
               MVP
             </Link>
           </li>
-          <li>
-            <Link to="/paises" className={NAV_LINK} activeProps={{ className: NAV_ACTIVE }}>
-              Países
-            </Link>
-          </li>
         </ul>
 
         {/* Right actions */}

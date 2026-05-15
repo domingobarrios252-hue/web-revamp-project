@@ -4,7 +4,6 @@ import { Plus, Pencil, Trash2, Upload, X, GripVertical } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
-import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Interview = {
   id: string;
@@ -440,7 +439,6 @@ function InterviewForm({
           )}
         </div>
 
-        <CountrySelector value={country_code} onChange={setCountryCode} className="md:col-span-2" />
 
         <label className="flex items-center gap-2 md:col-span-2">
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />

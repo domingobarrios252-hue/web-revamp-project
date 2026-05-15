@@ -4,7 +4,6 @@ import { Plus, Pencil, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
-import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Region = { id: string; name: string };
 type Club = {
@@ -302,7 +301,6 @@ function ClubForm({
             className="input"
           />
         </label>
-        <CountrySelector value={country_code} onChange={setCountryCode} />
       </div>
       <div className="mt-5 flex gap-2">
         <button

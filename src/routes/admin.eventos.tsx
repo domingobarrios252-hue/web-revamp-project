@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
-import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Region = { id: string; name: string };
 type EventRow = {
@@ -244,7 +243,6 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
         <Field label="Inscripción (URL)"><input value={registration_url} onChange={(e) => setRegistration(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Instagram"><input value={instagram_url} onChange={(e) => setInstagram(e.target.value)} placeholder="https://instagram.com/…" className="input" /></Field>
         <Field label="Facebook"><input value={facebook_url} onChange={(e) => setFacebook(e.target.value)} placeholder="https://facebook.com/…" className="input" /></Field>
-        <CountrySelector value={country_code} onChange={setCountryCode} />
         <label className="flex items-center gap-2 md:col-span-2">
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
           <span className="font-condensed text-xs uppercase tracking-widest">Publicado</span>

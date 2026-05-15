@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
-import { CountrySelector } from "@/components/admin/CountrySelector";
 
 type Region = { id: string; name: string; code: string };
 type Club = { id: string; name: string };
@@ -377,7 +376,6 @@ function SkaterForm({
             Aparecer en "Patinadores destacados"
           </label>
         </Field>
-        <CountrySelector value={country_code} onChange={setCountryCode} />
         <div className="md:col-span-2">
           <Field label="Biografía">
             <textarea

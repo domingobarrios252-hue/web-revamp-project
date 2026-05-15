@@ -15,13 +15,11 @@ import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
-import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
-import { Route as CountryRouteImport } from './routes/$country'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
@@ -29,7 +27,6 @@ import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as CountryIndexRouteImport } from './routes/$country.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
@@ -64,13 +61,6 @@ import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
-import { Route as CountryNoticiasRouteImport } from './routes/$country.noticias'
-import { Route as CountryGaleriaRouteImport } from './routes/$country.galeria'
-import { Route as CountryEventosRouteImport } from './routes/$country.eventos'
-import { Route as CountryEntrevistasRouteImport } from './routes/$country.entrevistas'
-import { Route as CountryClubesRouteImport } from './routes/$country.clubes'
-import { Route as CountryCalendarioRouteImport } from './routes/$country.calendario'
-import { Route as CountryAtletasRouteImport } from './routes/$country.atletas'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 
@@ -104,11 +94,6 @@ const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   path: '/patrocinadores',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PaisesRoute = PaisesRouteImport.update({
-  id: '/paises',
-  path: '/paises',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -132,11 +117,6 @@ const AuthRoute = AuthRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CountryRoute = CountryRouteImport.update({
-  id: '/$country',
-  path: '/$country',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -173,11 +153,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
-} as any)
-const CountryIndexRoute = CountryIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CountryRoute,
 } as any)
 const SobreSlugRoute = SobreSlugRouteImport.update({
   id: '/sobre/$slug',
@@ -349,41 +324,6 @@ const AdminBannersRoute = AdminBannersRouteImport.update({
   path: '/banners',
   getParentRoute: () => AdminRoute,
 } as any)
-const CountryNoticiasRoute = CountryNoticiasRouteImport.update({
-  id: '/noticias',
-  path: '/noticias',
-  getParentRoute: () => CountryRoute,
-} as any)
-const CountryGaleriaRoute = CountryGaleriaRouteImport.update({
-  id: '/galeria',
-  path: '/galeria',
-  getParentRoute: () => CountryRoute,
-} as any)
-const CountryEventosRoute = CountryEventosRouteImport.update({
-  id: '/eventos',
-  path: '/eventos',
-  getParentRoute: () => CountryRoute,
-} as any)
-const CountryEntrevistasRoute = CountryEntrevistasRouteImport.update({
-  id: '/entrevistas',
-  path: '/entrevistas',
-  getParentRoute: () => CountryRoute,
-} as any)
-const CountryClubesRoute = CountryClubesRouteImport.update({
-  id: '/clubes',
-  path: '/clubes',
-  getParentRoute: () => CountryRoute,
-} as any)
-const CountryCalendarioRoute = CountryCalendarioRouteImport.update({
-  id: '/calendario',
-  path: '/calendario',
-  getParentRoute: () => CountryRoute,
-} as any)
-const CountryAtletasRoute = CountryAtletasRouteImport.update({
-  id: '/atletas',
-  path: '/atletas',
-  getParentRoute: () => CountryRoute,
-} as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
@@ -397,26 +337,17 @@ const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$country': typeof CountryRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
-  '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
-  '/$country/atletas': typeof CountryAtletasRoute
-  '/$country/calendario': typeof CountryCalendarioRoute
-  '/$country/clubes': typeof CountryClubesRoute
-  '/$country/entrevistas': typeof CountryEntrevistasRoute
-  '/$country/eventos': typeof CountryEventosRoute
-  '/$country/galeria': typeof CountryGaleriaRoute
-  '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -451,7 +382,6 @@ export interface FileRoutesByFullPath {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
-  '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
@@ -466,20 +396,12 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
-  '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
-  '/$country/atletas': typeof CountryAtletasRoute
-  '/$country/calendario': typeof CountryCalendarioRoute
-  '/$country/clubes': typeof CountryClubesRoute
-  '/$country/entrevistas': typeof CountryEntrevistasRoute
-  '/$country/eventos': typeof CountryEventosRoute
-  '/$country/galeria': typeof CountryGaleriaRoute
-  '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -514,7 +436,6 @@ export interface FileRoutesByTo {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
-  '/$country': typeof CountryIndexRoute
   '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
@@ -527,26 +448,17 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$country': typeof CountryRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
-  '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
-  '/$country/atletas': typeof CountryAtletasRoute
-  '/$country/calendario': typeof CountryCalendarioRoute
-  '/$country/clubes': typeof CountryClubesRoute
-  '/$country/entrevistas': typeof CountryEntrevistasRoute
-  '/$country/eventos': typeof CountryEventosRoute
-  '/$country/galeria': typeof CountryGaleriaRoute
-  '/$country/noticias': typeof CountryNoticiasRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -581,7 +493,6 @@ export interface FileRoutesById {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
   '/sobre/$slug': typeof SobreSlugRoute
-  '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
@@ -595,26 +506,17 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/$country'
     | '/admin'
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
     | '/dashboard'
-    | '/paises'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
     | '/revista'
     | '/tv'
-    | '/$country/atletas'
-    | '/$country/calendario'
-    | '/$country/clubes'
-    | '/$country/entrevistas'
-    | '/$country/eventos'
-    | '/$country/galeria'
-    | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -649,7 +551,6 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
-    | '/$country/'
     | '/admin/'
     | '/dashboard/'
     | '/entrevistas/'
@@ -664,20 +565,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
-    | '/paises'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
     | '/revista'
     | '/tv'
-    | '/$country/atletas'
-    | '/$country/calendario'
-    | '/$country/clubes'
-    | '/$country/entrevistas'
-    | '/$country/eventos'
-    | '/$country/galeria'
-    | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -712,7 +605,6 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
-    | '/$country'
     | '/admin'
     | '/dashboard'
     | '/entrevistas'
@@ -724,26 +616,17 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/$country'
     | '/admin'
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
     | '/dashboard'
-    | '/paises'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
     | '/revista'
     | '/tv'
-    | '/$country/atletas'
-    | '/$country/calendario'
-    | '/$country/clubes'
-    | '/$country/entrevistas'
-    | '/$country/eventos'
-    | '/$country/galeria'
-    | '/$country/noticias'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -778,7 +661,6 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/resultados/$evento'
     | '/sobre/$slug'
-    | '/$country/'
     | '/admin/'
     | '/dashboard/'
     | '/entrevistas/'
@@ -791,13 +673,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CountryRoute: typeof CountryRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
   CookiesRoute: typeof CookiesRoute
   DashboardRoute: typeof DashboardRouteWithChildren
-  PaisesRoute: typeof PaisesRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
@@ -864,13 +744,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatrocinadoresRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/paises': {
-      id: '/paises'
-      path: '/paises'
-      fullPath: '/paises'
-      preLoaderRoute: typeof PaisesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -904,13 +777,6 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$country': {
-      id: '/$country'
-      path: '/$country'
-      fullPath: '/$country'
-      preLoaderRoute: typeof CountryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -961,13 +827,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/$country/': {
-      id: '/$country/'
-      path: '/'
-      fullPath: '/$country/'
-      preLoaderRoute: typeof CountryIndexRouteImport
-      parentRoute: typeof CountryRoute
     }
     '/sobre/$slug': {
       id: '/sobre/$slug'
@@ -1207,55 +1066,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBannersRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/$country/noticias': {
-      id: '/$country/noticias'
-      path: '/noticias'
-      fullPath: '/$country/noticias'
-      preLoaderRoute: typeof CountryNoticiasRouteImport
-      parentRoute: typeof CountryRoute
-    }
-    '/$country/galeria': {
-      id: '/$country/galeria'
-      path: '/galeria'
-      fullPath: '/$country/galeria'
-      preLoaderRoute: typeof CountryGaleriaRouteImport
-      parentRoute: typeof CountryRoute
-    }
-    '/$country/eventos': {
-      id: '/$country/eventos'
-      path: '/eventos'
-      fullPath: '/$country/eventos'
-      preLoaderRoute: typeof CountryEventosRouteImport
-      parentRoute: typeof CountryRoute
-    }
-    '/$country/entrevistas': {
-      id: '/$country/entrevistas'
-      path: '/entrevistas'
-      fullPath: '/$country/entrevistas'
-      preLoaderRoute: typeof CountryEntrevistasRouteImport
-      parentRoute: typeof CountryRoute
-    }
-    '/$country/clubes': {
-      id: '/$country/clubes'
-      path: '/clubes'
-      fullPath: '/$country/clubes'
-      preLoaderRoute: typeof CountryClubesRouteImport
-      parentRoute: typeof CountryRoute
-    }
-    '/$country/calendario': {
-      id: '/$country/calendario'
-      path: '/calendario'
-      fullPath: '/$country/calendario'
-      preLoaderRoute: typeof CountryCalendarioRouteImport
-      parentRoute: typeof CountryRoute
-    }
-    '/$country/atletas': {
-      id: '/$country/atletas'
-      path: '/atletas'
-      fullPath: '/$country/atletas'
-      preLoaderRoute: typeof CountryAtletasRouteImport
-      parentRoute: typeof CountryRoute
-    }
     '/noticias/articulo/$slug': {
       id: '/noticias/articulo/$slug'
       path: '/noticias/articulo/$slug'
@@ -1272,31 +1082,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface CountryRouteChildren {
-  CountryAtletasRoute: typeof CountryAtletasRoute
-  CountryCalendarioRoute: typeof CountryCalendarioRoute
-  CountryClubesRoute: typeof CountryClubesRoute
-  CountryEntrevistasRoute: typeof CountryEntrevistasRoute
-  CountryEventosRoute: typeof CountryEventosRoute
-  CountryGaleriaRoute: typeof CountryGaleriaRoute
-  CountryNoticiasRoute: typeof CountryNoticiasRoute
-  CountryIndexRoute: typeof CountryIndexRoute
-}
-
-const CountryRouteChildren: CountryRouteChildren = {
-  CountryAtletasRoute: CountryAtletasRoute,
-  CountryCalendarioRoute: CountryCalendarioRoute,
-  CountryClubesRoute: CountryClubesRoute,
-  CountryEntrevistasRoute: CountryEntrevistasRoute,
-  CountryEventosRoute: CountryEventosRoute,
-  CountryGaleriaRoute: CountryGaleriaRoute,
-  CountryNoticiasRoute: CountryNoticiasRoute,
-  CountryIndexRoute: CountryIndexRoute,
-}
-
-const CountryRouteWithChildren =
-  CountryRoute._addFileChildren(CountryRouteChildren)
 
 interface AdminRouteChildren {
   AdminBannersRoute: typeof AdminBannersRoute
@@ -1374,13 +1159,11 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CountryRoute: CountryRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
   CookiesRoute: CookiesRoute,
   DashboardRoute: DashboardRouteWithChildren,
-  PaisesRoute: PaisesRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
