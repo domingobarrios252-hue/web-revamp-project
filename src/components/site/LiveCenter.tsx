@@ -352,26 +352,6 @@ export function LiveCenter() {
             />
           </div>
         </div>
-
-        {/* ─── EVENTS CAROUSEL ─── */}
-        {events.length > 0 && (
-          <div className="mt-12">
-            <SectionHeader
-              tag={t("liveCenter.eventsTitle")}
-              title={t("liveCenter.eventsTitle")}
-              t={t}
-              cta={
-                <Link
-                  to="/eventos"
-                  className="font-condensed inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[2.5px] text-gold transition-colors hover:text-gold-light"
-                >
-                  {t("liveCenter.eventsAll")} <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              }
-            />
-            <EventsCarousel events={events} lang={lang} t={t} />
-          </div>
-        )}
       </div>
     </section>
   );
