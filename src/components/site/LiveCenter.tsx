@@ -667,14 +667,17 @@ function TimelineBlock({
   t,
   items,
   loading,
+  titleOverride,
 }: {
   t: (k: string) => string;
   items: TimelineItem[];
   loading: boolean;
+  titleOverride?: string;
 }) {
+  const title = titleOverride ?? t("liveCenter.timeline");
   return (
     <div>
-      <SectionHeader tag={t("liveCenter.timeline")} title={t("liveCenter.timeline")} t={t} compact />
+      <SectionHeader tag={title} title={title} t={t} compact />
       <div className="rounded-xl border border-border bg-surface/60 p-4 backdrop-blur">
         {loading ? (
           <div className="space-y-3">
