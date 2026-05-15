@@ -62,6 +62,7 @@ import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
+import { Route as CountrySplatRouteImport } from './routes/$country.$'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 
@@ -330,6 +331,11 @@ const AdminBannersRoute = AdminBannersRouteImport.update({
   path: '/banners',
   getParentRoute: () => AdminRoute,
 } as any)
+const CountrySplatRoute = CountrySplatRouteImport.update({
+  id: '/$country/$',
+  path: '/$country/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
@@ -355,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -410,6 +417,7 @@ export interface FileRoutesByTo {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -468,6 +476,7 @@ export interface FileRoutesById {
   '/redactores': typeof RedactoresRoute
   '/revista': typeof RevistaRoute
   '/tv': typeof TvRoute
+  '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
@@ -527,6 +536,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/$'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -582,6 +592,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/$'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -639,6 +650,7 @@ export interface FileRouteTypes {
     | '/redactores'
     | '/revista'
     | '/tv'
+    | '/$country/$'
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
@@ -697,6 +709,7 @@ export interface RootRouteChildren {
   RedactoresRoute: typeof RedactoresRoute
   RevistaRoute: typeof RevistaRoute
   TvRoute: typeof TvRoute
+  CountrySplatRoute: typeof CountrySplatRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EventosSlugRoute: typeof EventosSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
@@ -1086,6 +1099,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBannersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/$country/$': {
+      id: '/$country/$'
+      path: '/$country/$'
+      fullPath: '/$country/$'
+      preLoaderRoute: typeof CountrySplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/noticias/articulo/$slug': {
       id: '/noticias/articulo/$slug'
       path: '/noticias/articulo/$slug'
@@ -1191,6 +1211,7 @@ const rootRouteChildren: RootRouteChildren = {
   RedactoresRoute: RedactoresRoute,
   RevistaRoute: RevistaRoute,
   TvRoute: TvRoute,
+  CountrySplatRoute: CountrySplatRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EventosSlugRoute: EventosSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
@@ -1209,3 +1230,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
