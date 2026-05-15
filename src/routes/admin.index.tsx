@@ -514,58 +514,6 @@ function NewsEditor({
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
           </div>
 
-          <div className="border border-gold/40 bg-background/40 p-3">
-            <h3 className="font-condensed mb-2 text-[11px] font-bold uppercase tracking-widest text-gold">
-              Publicar en
-            </h3>
-            <div className="grid gap-3 md:grid-cols-2">
-              <SelectField
-                label="País de origen editorial"
-                value={countryCode}
-                onChange={(v) => {
-                  setCountryCode(v);
-                  setVisCountries((prev) => {
-                    const next = new Set(prev);
-                    next.add(v);
-                    return next;
-                  });
-                }}
-                options={countries.map((c) => ({ value: c.code, label: c.name }))}
-              />
-              <div>
-                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                  Canales globales
-                </span>
-                <div className="flex flex-col gap-1.5">
-                  <Checkbox label="Home global" checked={visGlobal} onChange={setVisGlobal} />
-                  <Checkbox label="Noticias destacadas" checked={visFeatured} onChange={setVisFeatured} />
-                  <Checkbox label="Breaking ticker" checked={visBreaking} onChange={setVisBreaking} />
-                </div>
-              </div>
-            </div>
-            <div className="mt-3">
-              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                Mostrar en home de país
-              </span>
-              <div className="flex flex-wrap gap-x-4 gap-y-1.5">
-                {countries.map((c) => (
-                  <Checkbox
-                    key={c.code}
-                    label={c.name}
-                    checked={visCountries.has(c.code)}
-                    onChange={(v) =>
-                      setVisCountries((prev) => {
-                        const next = new Set(prev);
-                        if (v) next.add(c.code);
-                        else next.delete(c.code);
-                        return next;
-                      })
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
           <div className="flex justify-end gap-2 border-t border-border pt-3">
             <button
               type="button"
