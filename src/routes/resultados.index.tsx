@@ -32,6 +32,8 @@ function ResultadosIndex() {
   const { t, lang } = useLanguage();
   const [events, setEvents] = useState<ResultEvent[] | null>(null);
   const [legacy, setLegacy] = useState<{ slug: string; name: string }[]>([]);
+  const [fCountry, setFCountry] = useState("");
+  const [fStatus, setFStatus] = useState<"" | ResultEvent["status"]>("");
 
   useEffect(() => {
     let cancelled = false;
