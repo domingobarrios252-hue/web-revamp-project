@@ -10,8 +10,6 @@ import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
-type Country = { code: string; name: string; active: boolean };
-type VisibilityChannel = "global_home" | "featured" | "breaking" | "country";
 type News = {
   id: string;
   title: string;
