@@ -162,7 +162,10 @@ function ResultadosEventoPage() {
       <section className="mt-6 grid gap-5">
         {groups.length === 0 ? (
           <p className="text-muted-foreground">{t("results.noRows")}</p>
-        ) : groups.map((group) => (
+        ) : groups.map((group) => {
+          const podium = group.rows.slice(0, 3);
+          const rest = group.rows.slice(3);
+          return (
           <article key={group.key} className="overflow-hidden rounded-xl border border-border bg-surface">
             <div className="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -171,6 +174,50 @@ function ResultadosEventoPage() {
               </div>
               <StatusPill status={group.rows[0]?.status ?? "finalizado"} t={t} />
             </div>
+
+            {/* Visual Podium Top 3 */}
+            {podium.length > 0 && (
+              <div className="border-b border-border bg-gradient-to-b from-gold/5 to-transparent px-4 py-6">
+                <div className="mx-auto grid max-w-3xl grid-cols-3 items-end gap-3 sm:gap-5">
+                  {[1, 0, 2].map((idx) => {
+                    const row = podium[idx];
+                    if (!row) return <div key={idx} />;
+                    const place = row.position;
+                    const medal = ["🥇", "🥈", "🥉"][place - 1] ?? "🏅";
+                    const heightCls = place === 1 ? "h-44 sm:h-52" : place === 2 ? "h-36 sm:h-44" : "h-32 sm:h-40";
+                    const accent = place === 1
+                      ? "border-gold bg-gradient-to-b from-gold/30 via-gold/10 to-transparent shadow-[0_18px_40px_-15px_rgba(212,160,23,0.5)]"
+                      : place === 2
+                      ? "border-foreground/40 bg-gradient-to-b from-foreground/15 via-foreground/5 to-transparent"
+                      : "border-amber-700/50 bg-gradient-to-b from-amber-700/25 via-amber-700/5 to-transparent";
+                    return (
+                      <div
+                        key={row.id}
+                        className={`relative flex flex-col items-center justify-end overflow-hidden rounded-xl border p-3 text-center transition-transform hover:-translate-y-1 ${accent} ${heightCls}`}
+                      >
+                        <div className="absolute right-2 top-2 text-xl sm:text-2xl">{medal}</div>
+                        <div className={`font-display leading-none text-foreground ${place === 1 ? "text-5xl sm:text-6xl" : "text-4xl sm:text-5xl"}`}>
+                          #{place}
+                        </div>
+                        <div className="mt-2 font-display line-clamp-2 text-xs uppercase tracking-wider text-foreground sm:text-sm">
+                          {row.athlete_name}
+                        </div>
+                        {row.club && (
+                          <div className="font-condensed mt-0.5 line-clamp-1 text-[9px] uppercase tracking-widest text-muted-foreground sm:text-[10px]">
+                            {row.club}
+                          </div>
+                        )}
+                        <div className="mt-1.5 font-mono text-xs font-bold text-gold sm:text-sm">
+                          {row.race_time || (row.points !== null ? `${row.points} pts` : "—")}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {rest.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-sm">
                 <thead className="border-b border-border bg-background/60">
@@ -185,10 +232,10 @@ function ResultadosEventoPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {group.rows.map((row) => (
+                  {rest.map((row) => (
                     <tr key={row.id} className={"border-b border-border/70 transition-colors last:border-0 hover:bg-background/40 " + (row.is_highlighted ? "bg-gold/5" : "")}>
                       <td className="px-4 py-3">
-                        <span className={"font-mono font-bold " + (row.position <= 3 ? "text-gold" : "text-foreground/70")}>{row.position}</span>
+                        <span className="font-mono font-bold text-foreground/70">{row.position}</span>
                       </td>
                       <td className="px-4 py-3 font-semibold">
                         <span className="inline-flex items-center gap-2">
@@ -206,8 +253,10 @@ function ResultadosEventoPage() {
                 </tbody>
               </table>
             </div>
+            )}
           </article>
-        ))}
+          );
+        })}
       </section>
     </main>
   );
