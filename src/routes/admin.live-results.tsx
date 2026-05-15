@@ -378,6 +378,8 @@ export function AdminLiveResults() {
         )}
       </div>
 
+      <BulkUploadByEvent onSaved={load} />
+
       {/* Filtros */}
       <div className="mb-3 grid gap-2 border border-border bg-surface p-3 sm:grid-cols-2 lg:grid-cols-4">
         <select
@@ -981,6 +983,244 @@ function QuickEditPanel({ rows, onSaved }: { rows: Row[]; onSaved: () => void })
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BULK UPLOAD BY EVENT — Carga rápida de clasificación
+   ════════════════════════════════════════════════════════════════ */
+type ResultEventOpt = { slug: string; name: string };
+type BulkRow = { athlete_name: string; club: string; race_time: string; points: string };
+
+function emptyBulkRow(): BulkRow {
+  return { athlete_name: "", club: "", race_time: "", points: "" };
+}
+
+function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [eventOpts, setEventOpts] = useState<ResultEventOpt[]>([]);
+  const [eventSlug, setEventSlug] = useState("");
+  const [eventName, setEventName] = useState("");
+  const [race, setRace] = useState("");
+  const [category, setCategory] = useState("");
+  const [status, setStatus] = useState<Status>("finalizado");
+  const [rowsDraft, setRowsDraft] = useState<BulkRow[]>(() =>
+    Array.from({ length: 6 }, emptyBulkRow),
+  );
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    supabase
+      .from("result_events")
+      .select("slug, name")
+      .eq("published", true)
+      .order("event_date", { ascending: false })
+      .limit(100)
+      .then(({ data }) => setEventOpts((data as ResultEventOpt[]) ?? []));
+  }, [open]);
+
+  const onPickEvent = (slug: string) => {
+    setEventSlug(slug);
+    const found = eventOpts.find((e) => e.slug === slug);
+    if (found) setEventName(found.name);
+  };
+
+  const updateRow = (i: number, patch: Partial<BulkRow>) =>
+    setRowsDraft((prev) => prev.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+
+  const addRow = () => setRowsDraft((prev) => [...prev, emptyBulkRow()]);
+  const removeRow = (i: number) =>
+    setRowsDraft((prev) => prev.filter((_, idx) => idx !== i));
+
+  const onPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const text = e.clipboardData.getData("text");
+    if (!text.includes("\n") && !text.includes("\t")) return;
+    e.preventDefault();
+    const lines = text.split(/\r?\n/).filter((l) => l.trim());
+    const parsed: BulkRow[] = lines.map((line) => {
+      const cols = line.split(/\t|;|,/).map((c) => c.trim());
+      return {
+        athlete_name: cols[0] ?? "",
+        club: cols[1] ?? "",
+        race_time: cols[2] ?? "",
+        points: cols[3] ?? "",
+      };
+    });
+    if (parsed.length) setRowsDraft(parsed);
+  };
+
+  const onSave = async () => {
+    if (!eventSlug || !eventName) return toast.error("Selecciona un evento");
+    const valid = rowsDraft.filter((r) => r.athlete_name.trim());
+    if (valid.length === 0) return toast.error("Añade al menos un patinador");
+    setSaving(true);
+    const payload = valid.map((r, i) => ({
+      event_name: eventName,
+      event_slug: eventSlug,
+      race: race.trim() || null,
+      category: category.trim() || null,
+      position: i + 1,
+      athlete_name: r.athlete_name.trim(),
+      club: r.club.trim() || null,
+      race_time: r.race_time.trim() || null,
+      points: r.points.trim() === "" ? null : Number(r.points),
+      status,
+      published: true,
+      sort_order: i,
+    }));
+    const { error } = await supabase.from("live_results").insert(payload);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success(`${valid.length} clasificaciones añadidas`);
+    setRowsDraft(Array.from({ length: 6 }, emptyBulkRow));
+    setRace("");
+    setCategory("");
+    onSaved();
+  };
+
+  return (
+    <div className="mb-3 border border-gold/40 bg-gold/5">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left"
+      >
+        <span className="font-condensed inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold">
+          <Plus className="h-4 w-4" /> Carga rápida por evento
+        </span>
+        <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+          {open ? "Ocultar" : "Abrir"}
+        </span>
+      </button>
+
+      {open && (
+        <div className="space-y-3 border-t border-gold/20 p-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Field label="Evento *">
+              <select
+                value={eventSlug}
+                onChange={(e) => onPickEvent(e.target.value)}
+                className="input"
+              >
+                <option value="">— Selecciona evento —</option>
+                {eventOpts.map((e) => (
+                  <option key={e.slug} value={e.slug}>
+                    {e.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Carrera (ej: 500m)">
+              <input value={race} onChange={(e) => setRace(e.target.value)} className="input" />
+            </Field>
+            <Field label="Categoría (ej: Senior M)">
+              <input
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="input"
+              />
+            </Field>
+            <Field label="Estado">
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as Status)}
+                className="input"
+              >
+                <option value="finalizado">✓ Final</option>
+                <option value="en_vivo">🔴 Live</option>
+                <option value="proxima">⏳ Próxima</option>
+              </select>
+            </Field>
+          </div>
+
+          <div className="rounded border border-border bg-background/40 p-2">
+            <p className="font-condensed mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+              💡 Tip: pega filas desde Excel (Atleta · Club · Tiempo · Puntos) en cualquier campo Atleta.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] text-sm">
+                <thead>
+                  <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+                    <th className="px-2 py-1 w-10">#</th>
+                    <th className="px-2 py-1">Patinador</th>
+                    <th className="px-2 py-1">Club</th>
+                    <th className="px-2 py-1 w-32">Tiempo</th>
+                    <th className="px-2 py-1 w-20">Puntos</th>
+                    <th className="px-2 py-1 w-8"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rowsDraft.map((r, i) => (
+                    <tr key={i} className="border-t border-border/50">
+                      <td className="px-2 py-1 font-mono text-xs text-gold">{i + 1}</td>
+                      <td className="px-1 py-1">
+                        <textarea
+                          rows={1}
+                          value={r.athlete_name}
+                          onPaste={onPaste}
+                          onChange={(e) => updateRow(i, { athlete_name: e.target.value })}
+                          className="input h-8 resize-none px-2 py-1"
+                          placeholder="Nombre"
+                        />
+                      </td>
+                      <td className="px-1 py-1">
+                        <input
+                          value={r.club}
+                          onChange={(e) => updateRow(i, { club: e.target.value })}
+                          className="input h-8 px-2"
+                          placeholder="Club"
+                        />
+                      </td>
+                      <td className="px-1 py-1">
+                        <input
+                          value={r.race_time}
+                          onChange={(e) => updateRow(i, { race_time: e.target.value })}
+                          className="input h-8 px-2 font-mono"
+                          placeholder="00:42.158"
+                        />
+                      </td>
+                      <td className="px-1 py-1">
+                        <input
+                          value={r.points}
+                          onChange={(e) => updateRow(i, { points: e.target.value })}
+                          className="input h-8 px-2 font-mono"
+                          placeholder="100"
+                        />
+                      </td>
+                      <td className="px-1 py-1 text-right">
+                        <button
+                          onClick={() => removeRow(i)}
+                          className="text-tv-red hover:opacity-70"
+                          aria-label="Eliminar fila"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={addRow}
+              className="font-condensed border border-border bg-background px-3 py-1.5 text-[11px] uppercase tracking-widest hover:bg-surface"
+            >
+              <Plus className="mr-1 inline h-3 w-3" /> Añadir fila
+            </button>
+            <button
+              onClick={onSave}
+              disabled={saving}
+              className="font-condensed ml-auto inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"
+            >
+              <Save className="h-4 w-4" /> {saving ? "Guardando…" : "Guardar clasificación"}
+            </button>
           </div>
         </div>
       )}

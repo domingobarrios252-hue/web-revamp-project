@@ -32,6 +32,8 @@ function ResultadosIndex() {
   const { t, lang } = useLanguage();
   const [events, setEvents] = useState<ResultEvent[] | null>(null);
   const [legacy, setLegacy] = useState<{ slug: string; name: string }[]>([]);
+  const [fCountry, setFCountry] = useState("");
+  const [fStatus, setFStatus] = useState<"" | ResultEvent["status"]>("");
 
   useEffect(() => {
     let cancelled = false;
@@ -79,6 +81,11 @@ function ResultadosIndex() {
     })),
   ];
 
+  const countryOpts = Array.from(new Set(all.map((e) => e.country).filter((c): c is string => !!c))).sort();
+  const filtered = all.filter(
+    (e) => (!fCountry || e.country === fCountry) && (!fStatus || e.status === fStatus),
+  );
+
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 md:px-6">
       <header className="border-b border-border pb-6">
@@ -91,13 +98,29 @@ function ResultadosIndex() {
         <p className="mt-3 max-w-2xl text-muted-foreground">{t("results.indexLead")}</p>
       </header>
 
+      {/* Filters */}
+      {all.length > 0 && (
+        <section className="mt-6 grid gap-2 rounded-xl border border-border bg-surface p-3 sm:grid-cols-2 lg:grid-cols-4">
+          <select value={fCountry} onChange={(e) => setFCountry(e.target.value)} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
+            <option value="">Todos los países</option>
+            {countryOpts.map((c) => (<option key={c} value={c}>{c}</option>))}
+          </select>
+          <select value={fStatus} onChange={(e) => setFStatus(e.target.value as "" | ResultEvent["status"])} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
+            <option value="">Todos los estados</option>
+            <option value="en_vivo">En vivo</option>
+            <option value="proxima">Próximo</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+        </section>
+      )}
+
       {events === null ? (
         <p className="mt-10 text-muted-foreground">{t("common.loading")}</p>
-      ) : all.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <p className="mt-10 text-muted-foreground">{t("results.empty")}</p>
       ) : (
         <section className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {all.map((e) => (
+          {filtered.map((e) => (
             <Link
               key={e.id}
               to="/resultados/$evento"

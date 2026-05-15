@@ -203,6 +203,18 @@ export function LiveCenter() {
 
   const isLiveBroadcast = !!stream?.is_active;
   const hasLiveRace = (liveGroup?.rows ?? []).some((r) => r.status === "en_vivo");
+  const [tab, setTab] = useState<"live" | "results">("live");
+  const [recentEvents, setRecentEvents] = useState<FeaturedEvent[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("result_events")
+      .select("slug, name, country, banner_url, event_date")
+      .eq("published", true)
+      .order("event_date", { ascending: false })
+      .limit(8)
+      .then(({ data }) => setRecentEvents((data as FeaturedEvent[]) ?? []));
+  }, []);
 
   if (!loading && streams.length === 0 && schedule.length === 0 && results.length === 0 && events.length === 0 && !featured) {
     return null;
@@ -269,19 +281,53 @@ export function LiveCenter() {
           loading={loading}
         />
 
-        {/* ─── PODIUM RESULTS + TIMELINE ─── */}
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
-          <PodiumBlock
-            t={t}
-            podium={podium}
-            remaining={remainingRows}
-            raceTitle={liveGroup?.title ?? null}
-            isLive={hasLiveRace}
-            loading={loading}
-            eventSlug={eventSlug}
-          />
-          <TimelineBlock t={t} items={timeline} loading={loading} />
+        {/* ─── TABS: En Vivo / Resultados ─── */}
+        <div className="mt-8 flex items-center gap-2 border-b border-border">
+          <button
+            type="button"
+            onClick={() => setTab("live")}
+            className={`font-condensed relative -mb-px px-4 py-2.5 text-[11px] font-bold uppercase tracking-[3px] transition-colors ${
+              tab === "live" ? "border-b-2 border-gold text-gold" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <span className="inline-flex items-center gap-2">
+              {hasLiveRace && <span className="live-dot-fast h-1.5 w-1.5 rounded-full bg-tv-red" />}
+              {t("liveCenter.tabLive") ?? "En Vivo"}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("results")}
+            className={`font-condensed relative -mb-px px-4 py-2.5 text-[11px] font-bold uppercase tracking-[3px] transition-colors ${
+              tab === "results" ? "border-b-2 border-gold text-gold" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {t("liveCenter.tabResults") ?? "Resultados"}
+          </button>
+          <Link
+            to="/resultados"
+            className="font-condensed ml-auto inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[2.5px] text-muted-foreground hover:text-gold"
+          >
+            {t("liveCenter.allResults") ?? "Ver todos"} <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
+
+        {tab === "live" ? (
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
+            <PodiumBlock
+              t={t}
+              podium={podium}
+              remaining={remainingRows}
+              raceTitle={liveGroup?.title ?? null}
+              isLive={hasLiveRace}
+              loading={loading}
+              eventSlug={eventSlug}
+            />
+            <TimelineBlock t={t} items={timeline} loading={loading} />
+          </div>
+        ) : (
+          <ResultsTab events={recentEvents} loading={loading} t={t} lang={lang} />
+        )}
 
         {/* ─── ROLLERZONE TV ─── */}
         <div className="mt-10">
@@ -544,6 +590,80 @@ function PodiumBlock({
           )}
         </>
       )}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RESULTS TAB — eventos finalizados / próximos con acceso rápido
+   ════════════════════════════════════════════════════════════════ */
+function ResultsTab({
+  events,
+  loading,
+  t,
+  lang,
+}: {
+  events: FeaturedEvent[];
+  loading: boolean;
+  t: (k: string) => string;
+  lang: "es" | "en";
+}) {
+  if (loading) {
+    return (
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="h-44 animate-pulse rounded-xl border border-border bg-surface" />
+        ))}
+      </div>
+    );
+  }
+  if (events.length === 0) {
+    return (
+      <div className="mt-6 rounded-xl border border-border bg-surface/50 p-10 text-center">
+        <Trophy className="mx-auto mb-3 h-10 w-10 text-gold/60" />
+        <p className="font-display text-lg uppercase tracking-widest">
+          {t("liveCenter.noEventsYet") ?? "Aún no hay eventos publicados"}
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {events.map((e) => (
+        <Link
+          key={e.slug}
+          to="/resultados/$evento"
+          params={{ evento: e.slug }}
+          className="group relative overflow-hidden rounded-xl border border-border bg-surface transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_20px_40px_-15px_rgba(212,160,23,0.35)]"
+        >
+          <div className="relative aspect-[16/9] overflow-hidden bg-surface-2">
+            {e.banner_url ? (
+              <img src={e.banner_url} alt={e.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            ) : (
+              <div className="hero-grid-bg flex h-full w-full items-center justify-center">
+                <Trophy className="h-10 w-10 text-gold/40" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+          </div>
+          <div className="p-4">
+            <h3 className="font-display clamp-2 text-base uppercase tracking-wider text-foreground group-hover:text-gold">
+              {e.name}
+            </h3>
+            <div className="font-condensed mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+              {e.event_date && (
+                <span className="flex items-center gap-1"><CalendarClock className="h-3 w-3" /> {formatShortDate(e.event_date, lang)}</span>
+              )}
+              {e.country && (
+                <span className="flex items-center gap-1"><Flag className="h-3 w-3 text-gold" /> {e.country}</span>
+              )}
+            </div>
+            <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-gold transition-transform group-hover:translate-x-1">
+              {t("liveCenter.viewClassification") ?? "Ver clasificación"} <ArrowRight className="h-3 w-3" />
+            </span>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }
