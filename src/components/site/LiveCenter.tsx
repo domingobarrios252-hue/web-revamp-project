@@ -203,18 +203,6 @@ export function LiveCenter() {
 
   const isLiveBroadcast = !!stream?.is_active;
   const hasLiveRace = (liveGroup?.rows ?? []).some((r) => r.status === "en_vivo");
-  const [tab, setTab] = useState<"live" | "results">("live");
-  const [recentEvents, setRecentEvents] = useState<FeaturedEvent[]>([]);
-
-  useEffect(() => {
-    supabase
-      .from("result_events")
-      .select("slug, name, country, banner_url, event_date")
-      .eq("published", true)
-      .order("event_date", { ascending: false })
-      .limit(8)
-      .then(({ data }) => setRecentEvents((data as FeaturedEvent[]) ?? []));
-  }, []);
 
   if (!loading && streams.length === 0 && schedule.length === 0 && results.length === 0 && events.length === 0 && !featured) {
     return null;
@@ -222,9 +210,6 @@ export function LiveCenter() {
 
   const embed = getEmbedUrl(stream?.embed_url, stream?.autoplay);
   const eventSlug = featured?.slug ?? liveGroup?.slug;
-  const heroImage = featured?.banner_url ?? null;
-  const heroTitle = featured?.name ?? liveGroup?.title ?? FALLBACK_TITLE;
-  const currentRaceLabel = liveGroup ? liveGroup.title : null;
 
   return (
     <section
@@ -246,109 +231,38 @@ export function LiveCenter() {
             }}
             loading="lazy"
           />
-          {/* Lighter, more transparent overlay so background photo is more visible */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/70" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-transparent to-black/35" />
         </div>
       )}
-      {/* Top accent line */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden="true" />
-      {/* Ambient glow */}
-      <div
-        className="pointer-events-none absolute -top-32 left-1/2 h-[500px] w-[900px] -translate-x-1/2 rounded-full blur-3xl"
-        style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.22), transparent 70%)" }}
-        aria-hidden
-      />
-      {/* Secondary warm glow bottom-right */}
-      <div
-        className="pointer-events-none absolute -bottom-40 right-0 h-[420px] w-[700px] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(closest-side, rgba(232,184,32,0.10), transparent 70%)" }}
-        aria-hidden
-      />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-10 md:px-6 lg:py-16">
-        {/* ─── HERO LIVE ─── */}
-        <HeroLive
-          t={t}
-          lang={lang}
-          image={heroImage}
-          title={heroTitle}
-          country={featured?.country}
-          eventDate={featured?.event_date}
-          currentRace={currentRaceLabel}
-          isLive={hasLiveRace || isLiveBroadcast}
-          eventSlug={eventSlug}
-          loading={loading}
-        />
+      <div className="relative mx-auto max-w-7xl px-4 py-10 md:px-6 lg:py-14">
+        <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+          {/* IZQUIERDA — Pantalla / Stream */}
+          <MainTvPlayer
+            embed={embed}
+            isLive={isLiveBroadcast}
+            title={stream?.title ?? FALLBACK_TITLE}
+            t={t}
+          />
 
-        {/* ─── TABS: En Vivo / Resultados ─── */}
-        <div className="mt-8 flex items-center gap-2 border-b border-border">
-          <button
-            type="button"
-            onClick={() => setTab("live")}
-            className={`font-condensed relative -mb-px px-4 py-2.5 text-[11px] font-bold uppercase tracking-[3px] transition-colors ${
-              tab === "live" ? "border-b-2 border-gold text-gold" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <span className="inline-flex items-center gap-2">
-              {hasLiveRace && <span className="live-dot-fast h-1.5 w-1.5 rounded-full bg-tv-red" />}
-              {t("liveCenter.tabLive") ?? "En Vivo"}
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("results")}
-            className={`font-condensed relative -mb-px px-4 py-2.5 text-[11px] font-bold uppercase tracking-[3px] transition-colors ${
-              tab === "results" ? "border-b-2 border-gold text-gold" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {t("liveCenter.tabResults") ?? "Resultados"}
-          </button>
-          <Link
-            to="/resultados"
-            className="font-condensed ml-auto inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[2.5px] text-muted-foreground hover:text-gold"
-          >
-            {t("liveCenter.allResults") ?? "Ver todos"} <ArrowRight className="h-3 w-3" />
-          </Link>
-        </div>
-
-        {tab === "live" ? (
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
+          {/* DERECHA — Pruebas + Resultados */}
+          <div className="flex flex-col gap-6">
+            <TimelineBlock
+              t={t}
+              items={timeline}
+              loading={loading}
+              titleOverride={t("liveCenter.tests") ?? "Pruebas"}
+            />
             <PodiumBlock
               t={t}
               podium={podium}
-              remaining={remainingRows}
+              remaining={[]}
               raceTitle={liveGroup?.title ?? null}
               isLive={hasLiveRace}
               loading={loading}
               eventSlug={eventSlug}
-            />
-            <TimelineBlock t={t} items={timeline} loading={loading} />
-          </div>
-        ) : (
-          <ResultsTab events={recentEvents} loading={loading} t={t} lang={lang} />
-        )}
-
-        {/* ─── ROLLERZONE TV ─── */}
-        <div className="mt-10">
-          <SectionHeader
-            tag={t("liveCenter.broadcast")}
-            title="RollerZone TV"
-            isLive={isLiveBroadcast}
-            t={t}
-          />
-          <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-            <MainTvPlayer
-              embed={embed}
-              isLive={isLiveBroadcast}
-              title={stream?.title}
-              t={t}
-            />
-            <TvSidebar
-              streams={streams}
-              selectedId={stream?.id ?? null}
-              onSelect={setSelectedStreamId}
-              t={t}
             />
           </div>
         </div>
