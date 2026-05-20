@@ -42,7 +42,9 @@ import { Route as EspanaPatinadoresRouteImport } from './routes/espana.patinador
 import { Route as EspanaMvpRouteImport } from './routes/espana.mvp'
 import { Route as EspanaLiveRouteImport } from './routes/espana.live'
 import { Route as EspanaFederacionesRouteImport } from './routes/espana.federaciones'
+import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
+import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlights'
@@ -69,6 +71,7 @@ import { Route as AdminFederacionesRouteImport } from './routes/admin.federacion
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
+import { Route as AdminComunidadRouteImport } from './routes/admin.comunidad'
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
@@ -81,8 +84,10 @@ import { Route as HubCountryPatinadoresRouteImport } from './routes/hub.$country
 import { Route as HubCountryMvpRouteImport } from './routes/hub.$country.mvp'
 import { Route as HubCountryLiveRouteImport } from './routes/hub.$country.live'
 import { Route as HubCountryFederacionesRouteImport } from './routes/hub.$country.federaciones'
+import { Route as HubCountryComunidadRouteImport } from './routes/hub.$country.comunidad'
 import { Route as HubCountryCompeticionRouteImport } from './routes/hub.$country.competicion'
 import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.clubes'
+import { Route as HubCountryArchivoRouteImport } from './routes/hub.$country.archivo'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as HubCountryTvIndexRouteImport } from './routes/hub.$country.tv.index'
@@ -267,9 +272,19 @@ const EspanaFederacionesRoute = EspanaFederacionesRouteImport.update({
   path: '/espana/federaciones',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EspanaComunidadRoute = EspanaComunidadRouteImport.update({
+  id: '/espana/comunidad',
+  path: '/espana/comunidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EspanaClubesRoute = EspanaClubesRouteImport.update({
   id: '/espana/clubes',
   path: '/espana/clubes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EspanaArchivoRoute = EspanaArchivoRouteImport.update({
+  id: '/espana/archivo',
+  path: '/espana/archivo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
@@ -402,6 +417,11 @@ const AdminEntrevistasRoute = AdminEntrevistasRouteImport.update({
   path: '/entrevistas',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminComunidadRoute = AdminComunidadRouteImport.update({
+  id: '/comunidad',
+  path: '/comunidad',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminClubesRoute = AdminClubesRouteImport.update({
   id: '/clubes',
   path: '/clubes',
@@ -462,6 +482,11 @@ const HubCountryFederacionesRoute = HubCountryFederacionesRouteImport.update({
   path: '/federaciones',
   getParentRoute: () => HubCountryRoute,
 } as any)
+const HubCountryComunidadRoute = HubCountryComunidadRouteImport.update({
+  id: '/comunidad',
+  path: '/comunidad',
+  getParentRoute: () => HubCountryRoute,
+} as any)
 const HubCountryCompeticionRoute = HubCountryCompeticionRouteImport.update({
   id: '/competicion',
   path: '/competicion',
@@ -470,6 +495,11 @@ const HubCountryCompeticionRoute = HubCountryCompeticionRouteImport.update({
 const HubCountryClubesRoute = HubCountryClubesRouteImport.update({
   id: '/clubes',
   path: '/clubes',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryArchivoRoute = HubCountryArchivoRouteImport.update({
+  id: '/archivo',
+  path: '/archivo',
   getParentRoute: () => HubCountryRoute,
 } as any)
 const HubCountrySectionRoute = HubCountrySectionRouteImport.update({
@@ -592,6 +622,7 @@ export interface FileRoutesByFullPath {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
@@ -618,7 +649,9 @@ export interface FileRoutesByFullPath {
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
+  '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
+  '/espana/comunidad': typeof EspanaComunidadRoute
   '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/live': typeof EspanaLiveRoute
   '/espana/mvp': typeof EspanaMvpRoute
@@ -641,8 +674,10 @@ export interface FileRoutesByFullPath {
   '/resultados/': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
+  '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
   '/hub/$country/competicion': typeof HubCountryCompeticionRouteWithChildren
+  '/hub/$country/comunidad': typeof HubCountryComunidadRoute
   '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/live': typeof HubCountryLiveRoute
   '/hub/$country/mvp': typeof HubCountryMvpRoute
@@ -684,6 +719,7 @@ export interface FileRoutesByTo {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
@@ -710,7 +746,9 @@ export interface FileRoutesByTo {
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
+  '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
+  '/espana/comunidad': typeof EspanaComunidadRoute
   '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/live': typeof EspanaLiveRoute
   '/espana/mvp': typeof EspanaMvpRoute
@@ -732,6 +770,8 @@ export interface FileRoutesByTo {
   '/resultados': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
+  '/hub/$country/archivo': typeof HubCountryArchivoRoute
+  '/hub/$country/comunidad': typeof HubCountryComunidadRoute
   '/hub/$country/live': typeof HubCountryLiveRoute
   '/hub/$country/mvp': typeof HubCountryMvpRoute
   '/hub/$country/rfep': typeof HubCountryRfepRoute
@@ -772,6 +812,7 @@ export interface FileRoutesById {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
@@ -798,7 +839,9 @@ export interface FileRoutesById {
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
+  '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
+  '/espana/comunidad': typeof EspanaComunidadRoute
   '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/live': typeof EspanaLiveRoute
   '/espana/mvp': typeof EspanaMvpRoute
@@ -821,8 +864,10 @@ export interface FileRoutesById {
   '/resultados/': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
+  '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
   '/hub/$country/competicion': typeof HubCountryCompeticionRouteWithChildren
+  '/hub/$country/comunidad': typeof HubCountryComunidadRoute
   '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/live': typeof HubCountryLiveRoute
   '/hub/$country/mvp': typeof HubCountryMvpRoute
@@ -868,6 +913,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
+    | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
@@ -894,7 +940,9 @@ export interface FileRouteTypes {
     | '/admin/tv-highlights'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
+    | '/espana/archivo'
     | '/espana/clubes'
+    | '/espana/comunidad'
     | '/espana/federaciones'
     | '/espana/live'
     | '/espana/mvp'
@@ -917,8 +965,10 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
+    | '/hub/$country/archivo'
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
+    | '/hub/$country/comunidad'
     | '/hub/$country/federaciones'
     | '/hub/$country/live'
     | '/hub/$country/mvp'
@@ -960,6 +1010,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
+    | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
@@ -986,7 +1037,9 @@ export interface FileRouteTypes {
     | '/admin/tv-highlights'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
+    | '/espana/archivo'
     | '/espana/clubes'
+    | '/espana/comunidad'
     | '/espana/federaciones'
     | '/espana/live'
     | '/espana/mvp'
@@ -1008,6 +1061,8 @@ export interface FileRouteTypes {
     | '/resultados'
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
+    | '/hub/$country/archivo'
+    | '/hub/$country/comunidad'
     | '/hub/$country/live'
     | '/hub/$country/mvp'
     | '/hub/$country/rfep'
@@ -1047,6 +1102,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/clubes'
+    | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
@@ -1073,7 +1129,9 @@ export interface FileRouteTypes {
     | '/admin/tv-highlights'
     | '/admin/usuarios'
     | '/entrevistas/$slug'
+    | '/espana/archivo'
     | '/espana/clubes'
+    | '/espana/comunidad'
     | '/espana/federaciones'
     | '/espana/live'
     | '/espana/mvp'
@@ -1096,8 +1154,10 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
+    | '/hub/$country/archivo'
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
+    | '/hub/$country/comunidad'
     | '/hub/$country/federaciones'
     | '/hub/$country/live'
     | '/hub/$country/mvp'
@@ -1140,7 +1200,9 @@ export interface RootRouteChildren {
   TvRoute: typeof TvRoute
   CountrySplatRoute: typeof CountrySplatRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
+  EspanaArchivoRoute: typeof EspanaArchivoRoute
   EspanaClubesRoute: typeof EspanaClubesRoute
+  EspanaComunidadRoute: typeof EspanaComunidadRoute
   EspanaFederacionesRoute: typeof EspanaFederacionesRoute
   EspanaLiveRoute: typeof EspanaLiveRoute
   EspanaMvpRoute: typeof EspanaMvpRoute
@@ -1396,11 +1458,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EspanaFederacionesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/espana/comunidad': {
+      id: '/espana/comunidad'
+      path: '/espana/comunidad'
+      fullPath: '/espana/comunidad'
+      preLoaderRoute: typeof EspanaComunidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/espana/clubes': {
       id: '/espana/clubes'
       path: '/espana/clubes'
       fullPath: '/espana/clubes'
       preLoaderRoute: typeof EspanaClubesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/archivo': {
+      id: '/espana/archivo'
+      path: '/espana/archivo'
+      fullPath: '/espana/archivo'
+      preLoaderRoute: typeof EspanaArchivoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entrevistas/$slug': {
@@ -1585,6 +1661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEntrevistasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/comunidad': {
+      id: '/admin/comunidad'
+      path: '/comunidad'
+      fullPath: '/admin/comunidad'
+      preLoaderRoute: typeof AdminComunidadRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/clubes': {
       id: '/admin/clubes'
       path: '/clubes'
@@ -1669,6 +1752,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryFederacionesRouteImport
       parentRoute: typeof HubCountryRoute
     }
+    '/hub/$country/comunidad': {
+      id: '/hub/$country/comunidad'
+      path: '/comunidad'
+      fullPath: '/hub/$country/comunidad'
+      preLoaderRoute: typeof HubCountryComunidadRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
     '/hub/$country/competicion': {
       id: '/hub/$country/competicion'
       path: '/competicion'
@@ -1681,6 +1771,13 @@ declare module '@tanstack/react-router' {
       path: '/clubes'
       fullPath: '/hub/$country/clubes'
       preLoaderRoute: typeof HubCountryClubesRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/archivo': {
+      id: '/hub/$country/archivo'
+      path: '/archivo'
+      fullPath: '/hub/$country/archivo'
+      preLoaderRoute: typeof HubCountryArchivoRouteImport
       parentRoute: typeof HubCountryRoute
     }
     '/hub/$country/$section': {
@@ -1816,6 +1913,7 @@ interface AdminRouteChildren {
   AdminBannersRoute: typeof AdminBannersRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClubesRoute: typeof AdminClubesRoute
+  AdminComunidadRoute: typeof AdminComunidadRoute
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
@@ -1848,6 +1946,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBannersRoute: AdminBannersRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClubesRoute: AdminClubesRoute,
+  AdminComunidadRoute: AdminComunidadRoute,
   AdminEntrevistasRoute: AdminEntrevistasRoute,
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
@@ -1993,8 +2092,10 @@ const HubCountryTvRouteWithChildren = HubCountryTvRoute._addFileChildren(
 
 interface HubCountryRouteChildren {
   HubCountrySectionRoute: typeof HubCountrySectionRoute
+  HubCountryArchivoRoute: typeof HubCountryArchivoRoute
   HubCountryClubesRoute: typeof HubCountryClubesRouteWithChildren
   HubCountryCompeticionRoute: typeof HubCountryCompeticionRouteWithChildren
+  HubCountryComunidadRoute: typeof HubCountryComunidadRoute
   HubCountryFederacionesRoute: typeof HubCountryFederacionesRouteWithChildren
   HubCountryLiveRoute: typeof HubCountryLiveRoute
   HubCountryMvpRoute: typeof HubCountryMvpRoute
@@ -2007,8 +2108,10 @@ interface HubCountryRouteChildren {
 
 const HubCountryRouteChildren: HubCountryRouteChildren = {
   HubCountrySectionRoute: HubCountrySectionRoute,
+  HubCountryArchivoRoute: HubCountryArchivoRoute,
   HubCountryClubesRoute: HubCountryClubesRouteWithChildren,
   HubCountryCompeticionRoute: HubCountryCompeticionRouteWithChildren,
+  HubCountryComunidadRoute: HubCountryComunidadRoute,
   HubCountryFederacionesRoute: HubCountryFederacionesRouteWithChildren,
   HubCountryLiveRoute: HubCountryLiveRoute,
   HubCountryMvpRoute: HubCountryMvpRoute,
@@ -2039,7 +2142,9 @@ const rootRouteChildren: RootRouteChildren = {
   TvRoute: TvRoute,
   CountrySplatRoute: CountrySplatRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
+  EspanaArchivoRoute: EspanaArchivoRoute,
   EspanaClubesRoute: EspanaClubesRoute,
+  EspanaComunidadRoute: EspanaComunidadRoute,
   EspanaFederacionesRoute: EspanaFederacionesRoute,
   EspanaLiveRoute: EspanaLiveRoute,
   EspanaMvpRoute: EspanaMvpRoute,
