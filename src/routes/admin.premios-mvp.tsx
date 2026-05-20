@@ -19,24 +19,32 @@ type AwardRow = {
   region: string | null;
   category_age: string | null;
   merit: string | null;
+  points: number;
+  previous_position: number | null;
+  skater_id: string | null;
   published: boolean;
 };
+type SkaterOpt = { id: string; full_name: string; club: { name: string } | null };
 
 const TIERS = ["elite", "estrella", "promesa"] as const;
 const GENDERS = ["masculino", "femenino"] as const;
+const POSITIONS = [1, 2, 3] as const;
 const TIER_LABEL: Record<string, string> = { elite: "Élite", estrella: "Estrella", promesa: "Promesa" };
 
 const awardSchema = z.object({
   season_id: z.string().uuid(),
   tier: z.enum(TIERS),
   gender: z.enum(GENDERS),
-  position: z.literal(1),
+  position: z.coerce.number().int().min(1).max(3),
   full_name: z.string().trim().min(2).max(160),
   photo_url: z.string().trim().url().optional().or(z.literal("")),
   club: z.string().trim().max(120).optional().or(z.literal("")),
   region: z.string().trim().max(120).optional().or(z.literal("")),
   category_age: z.string().trim().max(60).optional().or(z.literal("")),
   merit: z.string().trim().max(500).optional().or(z.literal("")),
+  points: z.coerce.number().min(0).max(99999),
+  previous_position: z.coerce.number().int().min(0).max(999).optional(),
+  skater_id: z.string().uuid().optional().or(z.literal("")),
   published: z.boolean(),
 });
 
@@ -149,7 +157,7 @@ function AdminPremiosMvp() {
         )}
       </div>
 
-      {/* Awards grid by tier × gender */}
+      {/* Awards ranking by tier × gender (positions 1-3) */}
       {activeSeasonId && (
         <div className="space-y-8">
           {TIERS.map((tier) => (
@@ -157,45 +165,77 @@ function AdminPremiosMvp() {
               <h3 className="font-display mb-3 text-lg tracking-widest text-gold">{TIER_LABEL[tier]}</h3>
               <div className="grid gap-4 lg:grid-cols-2">
                 {GENDERS.map((gender) => {
-                  const a = filteredAwards.find((x) => x.tier === tier && x.gender === gender && x.position === 1);
+                  const ranking = filteredAwards
+                    .filter((x) => x.tier === tier && x.gender === gender)
+                    .sort((a, b) => a.position - b.position);
+                  const takenPositions = new Set(ranking.map((r) => r.position));
+                  const nextPosition = [1, 2, 3].find((p) => !takenPositions.has(p));
                   return (
                     <div key={gender} className="border border-border bg-surface p-4">
-                      <div className="font-condensed mb-3 text-xs uppercase tracking-widest text-muted-foreground">{gender}</div>
-                      {a ? (
-                        <button
-                          onClick={() => { setEditing(a); setShowForm(true); }}
-                          className="group flex w-full items-center gap-3 border border-border bg-background p-3 text-left hover:border-gold"
-                        >
-                          <div className="h-20 w-20 shrink-0 overflow-hidden border border-border bg-surface">
-                            {a.photo_url ? (
-                              <img src={a.photo_url} alt={a.full_name} className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">Sin foto</div>
-                            )}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="font-display text-sm tracking-wider text-foreground">{a.full_name}</div>
-                            {a.club && <div className="font-condensed mt-0.5 text-[11px] uppercase tracking-widest text-gold">{a.club}</div>}
-                            {(a.region || a.category_age) && (
-                              <div className="font-condensed mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-                                {[a.region, a.category_age].filter(Boolean).join(" · ")}
+                      <div className="font-condensed mb-3 flex items-center justify-between text-xs uppercase tracking-widest text-muted-foreground">
+                        <span>{gender}</span>
+                        <span className="text-[10px] text-muted-foreground/70">Top 3</span>
+                      </div>
+                      <div className="space-y-2">
+                        {ranking.map((a) => {
+                          const delta =
+                            a.previous_position != null ? a.previous_position - a.position : null;
+                          return (
+                            <button
+                              key={a.id}
+                              onClick={() => { setEditing(a); setShowForm(true); }}
+                              className="group flex w-full items-center gap-3 border border-border bg-background p-2.5 text-left hover:border-gold"
+                            >
+                              <div className="font-display w-6 shrink-0 text-center text-base text-gold">
+                                {a.position}
                               </div>
-                            )}
-                            {!a.published && (
-                              <span className="font-condensed mt-1 inline-block border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-muted-foreground">Borrador</span>
-                            )}
-                          </div>
-                          <Pencil className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-gold" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => { setEditing({ id: "", season_id: activeSeasonId, tier, gender, position: 1, full_name: "", photo_url: null, club: null, region: null, category_age: null, merit: null, published: true }); setShowForm(true); }}
-                          className="flex h-24 w-full flex-col items-center justify-center gap-1 border border-dashed border-border bg-background text-muted-foreground hover:border-gold hover:text-gold"
-                        >
-                          <Plus className="h-5 w-5" />
-                          <span className="font-condensed text-[10px] uppercase tracking-widest">Asignar MVP</span>
-                        </button>
-                      )}
+                              <div className="h-12 w-12 shrink-0 overflow-hidden border border-border bg-surface">
+                                {a.photo_url ? (
+                                  <img src={a.photo_url} alt={a.full_name} className="h-full w-full object-cover" />
+                                ) : null}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="font-display truncate text-sm tracking-wider text-foreground">{a.full_name}</div>
+                                <div className="font-condensed mt-0.5 flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                                  <span className="text-gold">{Number(a.points).toLocaleString("es-ES")} pts</span>
+                                  {a.club && <span className="truncate">· {a.club}</span>}
+                                  {delta != null && delta !== 0 && (
+                                    <span className={delta > 0 ? "text-emerald-500" : "text-destructive"}>
+                                      {delta > 0 ? `↑${delta}` : `↓${Math.abs(delta)}`}
+                                    </span>
+                                  )}
+                                  {a.previous_position == null && (
+                                    <span className="text-sky-500">NEW</span>
+                                  )}
+                                </div>
+                              </div>
+                              {!a.published && (
+                                <span className="font-condensed border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-muted-foreground">Borrador</span>
+                              )}
+                              <Pencil className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-gold" />
+                            </button>
+                          );
+                        })}
+                        {nextPosition && (
+                          <button
+                            onClick={() => {
+                              setEditing({
+                                id: "", season_id: activeSeasonId, tier, gender, position: nextPosition,
+                                full_name: "", photo_url: null, club: null, region: null,
+                                category_age: null, merit: null, points: 0, previous_position: null,
+                                skater_id: null, published: true,
+                              });
+                              setShowForm(true);
+                            }}
+                            className="flex w-full items-center justify-center gap-1 border border-dashed border-border bg-background py-2 text-muted-foreground hover:border-gold hover:text-gold"
+                          >
+                            <Plus className="h-4 w-4" />
+                            <span className="font-condensed text-[10px] uppercase tracking-widest">
+                              Añadir posición {nextPosition}
+                            </span>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -230,19 +270,57 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
   const isEdit = !!initial?.id;
   const [tier, setTier] = useState<AwardRow["tier"]>(initial?.tier ?? "elite");
   const [gender, setGender] = useState<AwardRow["gender"]>(initial?.gender ?? "masculino");
+  const [position, setPosition] = useState<number>(initial?.position ?? 1);
   const [fullName, setFullName] = useState(initial?.full_name ?? "");
   const [photoUrl, setPhotoUrl] = useState(initial?.photo_url ?? "");
   const [club, setClub] = useState(initial?.club ?? "");
   const [region, setRegion] = useState(initial?.region ?? "");
   const [categoryAge, setCategoryAge] = useState(initial?.category_age ?? "");
   const [merit, setMerit] = useState(initial?.merit ?? "");
+  const [points, setPoints] = useState<number>(initial?.points ?? 0);
+  const [previousPosition, setPreviousPosition] = useState<string>(
+    initial?.previous_position != null ? String(initial.previous_position) : ""
+  );
+  const [skaterId, setSkaterId] = useState<string>(initial?.skater_id ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
   const [saving, setSaving] = useState(false);
+  const [skaterSearch, setSkaterSearch] = useState("");
+  const [skaters, setSkaters] = useState<SkaterOpt[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("skaters")
+      .select("id,full_name,club:clubs(name)")
+      .eq("country_code", "es")
+      .order("full_name")
+      .limit(500)
+      .then(({ data }) => setSkaters((data as unknown as SkaterOpt[]) ?? []));
+  }, []);
+
+  // When linking to a skater, prefill name/club/photo if empty.
+  useEffect(() => {
+    if (!skaterId) return;
+    const s = skaters.find((x) => x.id === skaterId);
+    if (!s) return;
+    if (!fullName) setFullName(s.full_name);
+    if (!club && s.club?.name) setClub(s.club.name);
+  }, [skaterId, skaters]);
+
+  const filteredSkaters = useMemo(() => {
+    const q = skaterSearch.trim().toLowerCase();
+    const arr = skaters;
+    if (!q) return arr.slice(0, 30);
+    return arr
+      .filter((s) => s.full_name.toLowerCase().includes(q) || (s.club?.name ?? "").toLowerCase().includes(q))
+      .slice(0, 30);
+  }, [skaters, skaterSearch]);
 
   const save = async () => {
     const parsed = awardSchema.safeParse({
-      season_id: seasonId, tier, gender, position: 1, full_name: fullName,
-      photo_url: photoUrl, club, region, category_age: categoryAge, merit, published,
+      season_id: seasonId, tier, gender, position, full_name: fullName,
+      photo_url: photoUrl, club, region, category_age: categoryAge, merit,
+      points, previous_position: previousPosition === "" ? undefined : Number(previousPosition),
+      skater_id: skaterId, published,
     });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
@@ -253,13 +331,16 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
       season_id: seasonId,
       tier,
       gender,
-      position: 1,
+      position,
       full_name: fullName.trim(),
       photo_url: photoUrl.trim() || null,
       club: club.trim() || null,
       region: region.trim() || null,
       category_age: categoryAge.trim() || null,
       merit: merit.trim() || null,
+      points,
+      previous_position: previousPosition === "" ? null : Number(previousPosition),
+      skater_id: skaterId || null,
       published,
     };
     const res = isEdit
@@ -298,11 +379,56 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
               {GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}
             </select>
           </Field>
+          <Field label="Posición">
+            <select value={position} onChange={(e) => setPosition(Number(e.target.value))} className="input">
+              {POSITIONS.map((p) => <option key={p} value={p}>{p}º</option>)}
+            </select>
+          </Field>
+          <Field label="Puntos *">
+            <input
+              type="number" min={0} step={0.01}
+              value={points}
+              onChange={(e) => setPoints(Number(e.target.value))}
+              className="input"
+              placeholder="125"
+            />
+          </Field>
+          <Field label="Posición anterior (para tendencia)">
+            <input
+              type="number" min={0}
+              value={previousPosition}
+              onChange={(e) => setPreviousPosition(e.target.value)}
+              className="input"
+              placeholder="Vacío = NEW"
+            />
+          </Field>
           <Field label="Estado">
             <label className="flex h-9 items-center gap-2 text-sm">
               <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
               Publicado
             </label>
+          </Field>
+          <Field label="Patinador vinculado (opcional)" full>
+            <div className="space-y-2">
+              <input
+                value={skaterSearch}
+                onChange={(e) => setSkaterSearch(e.target.value)}
+                className="input"
+                placeholder="Buscar patinador por nombre o club…"
+              />
+              <select
+                value={skaterId}
+                onChange={(e) => setSkaterId(e.target.value)}
+                className="input"
+              >
+                <option value="">— Sin vincular —</option>
+                {filteredSkaters.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.full_name}{s.club?.name ? ` · ${s.club.name}` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
           </Field>
           <Field label="Nombre completo *" full>
             <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="input" placeholder="Ana García López" />

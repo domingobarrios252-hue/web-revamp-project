@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { AdminSchedule } from "./admin.schedule";
 import { AdminLiveResults } from "./admin.live-results";
+import { LiveTimelineEditor } from "@/components/admin/LiveTimelineEditor";
 
 export const Route = createFileRoute("/admin/live-center")({
   head: () => ({ meta: [{ title: "Admin · Live Center" }, { name: "robots", content: "noindex" }] }),
@@ -21,11 +22,13 @@ function AdminLiveCenterPage() {
       <TabsList className="bg-surface">
         <TabsTrigger value="streaming">Streaming</TabsTrigger>
         <TabsTrigger value="schedule">Próximas pruebas</TabsTrigger>
+        <TabsTrigger value="timeline">Cronología</TabsTrigger>
         <TabsTrigger value="results">Resultados</TabsTrigger>
         <TabsTrigger value="appearance">Apariencia</TabsTrigger>
       </TabsList>
       <TabsContent value="streaming"><AdminLiveCenter /></TabsContent>
       <TabsContent value="schedule"><AdminSchedule /></TabsContent>
+      <TabsContent value="timeline"><LiveTimelineEditor /></TabsContent>
       <TabsContent value="results"><AdminLiveResults /></TabsContent>
       <TabsContent value="appearance"><AdminAppearance /></TabsContent>
     </Tabs>
