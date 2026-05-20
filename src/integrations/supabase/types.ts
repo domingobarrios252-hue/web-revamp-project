@@ -419,6 +419,184 @@ export type Database = {
         }
         Relationships: []
       }
+      league_rounds: {
+        Row: {
+          city: string | null
+          created_at: string
+          event_date: string | null
+          gallery: string[]
+          id: string
+          map_url: string | null
+          name: string
+          notes: string | null
+          pdf_url: string | null
+          poster_url: string | null
+          published: boolean
+          round_number: number
+          season_id: string
+          sort_order: number
+          status: Database["public"]["Enums"]["live_center_status"]
+          summary_news_id: string | null
+          updated_at: string
+          venue: string | null
+          video_url: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          event_date?: string | null
+          gallery?: string[]
+          id?: string
+          map_url?: string | null
+          name: string
+          notes?: string | null
+          pdf_url?: string | null
+          poster_url?: string | null
+          published?: boolean
+          round_number: number
+          season_id: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["live_center_status"]
+          summary_news_id?: string | null
+          updated_at?: string
+          venue?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          event_date?: string | null
+          gallery?: string[]
+          id?: string
+          map_url?: string | null
+          name?: string
+          notes?: string | null
+          pdf_url?: string | null
+          poster_url?: string | null
+          published?: boolean
+          round_number?: number
+          season_id?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["live_center_status"]
+          summary_news_id?: string | null
+          updated_at?: string
+          venue?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_rounds_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "league_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      league_seasons: {
+        Row: {
+          country_code: string
+          created_at: string
+          id: string
+          is_current: boolean
+          name: string
+          published: boolean
+          slug: string
+          sort_order: number
+          updated_at: string
+          year_label: string | null
+        }
+        Insert: {
+          country_code?: string
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          name: string
+          published?: boolean
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          year_label?: string | null
+        }
+        Update: {
+          country_code?: string
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          name?: string
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          year_label?: string | null
+        }
+        Relationships: []
+      }
+      league_standings: {
+        Row: {
+          athlete_name: string | null
+          category: string | null
+          club: string | null
+          created_at: string
+          gender: string | null
+          group_name: string | null
+          id: string
+          podiums: number
+          point_diff: number | null
+          points: number
+          position: number
+          published: boolean
+          rounds_played: number
+          season_id: string
+          updated_at: string
+          wins: number
+        }
+        Insert: {
+          athlete_name?: string | null
+          category?: string | null
+          club?: string | null
+          created_at?: string
+          gender?: string | null
+          group_name?: string | null
+          id?: string
+          podiums?: number
+          point_diff?: number | null
+          points?: number
+          position?: number
+          published?: boolean
+          rounds_played?: number
+          season_id: string
+          updated_at?: string
+          wins?: number
+        }
+        Update: {
+          athlete_name?: string | null
+          category?: string | null
+          club?: string | null
+          created_at?: string
+          gender?: string | null
+          group_name?: string | null
+          id?: string
+          podiums?: number
+          point_diff?: number | null
+          points?: number
+          position?: number
+          published?: boolean
+          rounds_played?: number
+          season_id?: string
+          updated_at?: string
+          wins?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_standings_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "league_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_pages: {
         Row: {
           content: string
@@ -739,6 +917,7 @@ export type Database = {
         Row: {
           author: string
           category_id: string | null
+          competition_tag: string | null
           content: string | null
           country_code: string
           created_at: string
@@ -765,6 +944,7 @@ export type Database = {
         Insert: {
           author?: string
           category_id?: string | null
+          competition_tag?: string | null
           content?: string | null
           country_code?: string
           created_at?: string
@@ -791,6 +971,7 @@ export type Database = {
         Update: {
           author?: string
           category_id?: string | null
+          competition_tag?: string | null
           content?: string | null
           country_code?: string
           created_at?: string
