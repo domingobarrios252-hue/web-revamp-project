@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, Info, Timer, Layers, Inbox } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, Info, Timer, Layers, Inbox, MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -111,6 +111,9 @@ function AdminLayout() {
           <AdminLink to="/admin/live-center" icon={<Radio className="h-4 w-4" />}>
             Live Center
           </AdminLink>
+          <AdminLink to="/admin/comunidad" icon={<MessageSquare className="h-4 w-4" />}>
+            Comunidad
+          </AdminLink>
           <AdminLink to="/admin/medallero" icon={<Medal className="h-4 w-4" />}>
             Medallero (países)
           </AdminLink>
@@ -156,7 +159,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/federaciones" | "/admin/premios-mvp" | "/admin/hub-liga" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/live-center" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/dashboard";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/federaciones" | "/admin/premios-mvp" | "/admin/hub-liga" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/live-center" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/admin/comunidad" | "/dashboard";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
