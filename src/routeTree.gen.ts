@@ -58,6 +58,7 @@ import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
 import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-results'
 import { Route as AdminLiveCenterRouteImport } from './routes/admin.live-center'
 import { Route as AdminLegalRouteImport } from './routes/admin.legal'
+import { Route as AdminHubLigaRouteImport } from './routes/admin.hub-liga'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
@@ -323,6 +324,11 @@ const AdminLegalRoute = AdminLegalRouteImport.update({
   path: '/legal',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHubLigaRoute = AdminHubLigaRouteImport.update({
+  id: '/hub-liga',
+  path: '/hub-liga',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEventosRoute = AdminEventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
@@ -447,6 +453,7 @@ export interface FileRoutesByFullPath {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
@@ -515,6 +522,7 @@ export interface FileRoutesByTo {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
@@ -583,6 +591,7 @@ export interface FileRoutesById {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
@@ -655,6 +664,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/hub-liga'
     | '/admin/legal'
     | '/admin/live-center'
     | '/admin/live-results'
@@ -723,6 +733,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/hub-liga'
     | '/admin/legal'
     | '/admin/live-center'
     | '/admin/live-results'
@@ -790,6 +801,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/hub-liga'
     | '/admin/legal'
     | '/admin/live-center'
     | '/admin/live-results'
@@ -1218,6 +1230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLegalRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/hub-liga': {
+      id: '/admin/hub-liga'
+      path: '/hub-liga'
+      fullPath: '/admin/hub-liga'
+      preLoaderRoute: typeof AdminHubLigaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/eventos': {
       id: '/admin/eventos'
       path: '/eventos'
@@ -1361,6 +1380,7 @@ interface AdminRouteChildren {
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
+  AdminHubLigaRoute: typeof AdminHubLigaRoute
   AdminLegalRoute: typeof AdminLegalRoute
   AdminLiveCenterRoute: typeof AdminLiveCenterRoute
   AdminLiveResultsRoute: typeof AdminLiveResultsRoute
@@ -1391,6 +1411,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEntrevistasRoute: AdminEntrevistasRoute,
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
+  AdminHubLigaRoute: AdminHubLigaRoute,
   AdminLegalRoute: AdminLegalRoute,
   AdminLiveCenterRoute: AdminLiveCenterRoute,
   AdminLiveResultsRoute: AdminLiveResultsRoute,
