@@ -102,6 +102,16 @@ export function SiteHeader() {
               {t("nav.news")}
             </Link>
           </li>
+          <li>
+            <Link
+              to="/hub/$country"
+              params={{ country: "es" }}
+              className={NAV_LINK}
+              activeProps={{ className: NAV_ACTIVE }}
+            >
+              España
+            </Link>
+          </li>
 
           <MegaItemLi keyName="eventos" openMega={openMega} setOpenMega={setOpenMega}>
             <Link to="/eventos" className={NAV_LINK + " gap-1"} activeProps={{ className: NAV_ACTIVE }}>
@@ -265,6 +275,14 @@ export function SiteHeader() {
             <div className="flex flex-col gap-1 px-4 py-4">
               <MobileLink to="/" onClick={() => setMobileOpen(false)}>{t("nav.home")}</MobileLink>
               <MobileLink to="/noticias" onClick={() => setMobileOpen(false)}>{t("nav.news")}</MobileLink>
+              <Link
+                to="/hub/$country"
+                params={{ country: "es" }}
+                onClick={() => setMobileOpen(false)}
+                className="font-ui py-3 text-base font-semibold text-[#F5F5F5] hover:text-[#D4A017] border-b border-[#333]"
+              >
+                España
+              </Link>
               <MobileLink to="/eventos" onClick={() => setMobileOpen(false)}>{t("nav.events")}</MobileLink>
               <MobileLink to="/resultados" onClick={() => setMobileOpen(false)}>{t("nav.results")}</MobileLink>
               <MobileLink to="/revista" onClick={() => setMobileOpen(false)}>{t("nav.magazine")}</MobileLink>
