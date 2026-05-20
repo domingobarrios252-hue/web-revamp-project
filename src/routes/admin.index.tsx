@@ -337,6 +337,21 @@ function NewsEditor({
   const [status, setStatus] = useState<News["status"]>(item?.status ?? "draft");
   const [publishedAt, setPublishedAt] = useState<string>(toLocalInput(item?.published_at));
   const [saving, setSaving] = useState(false);
+  const [relClubs, setRelClubs] = useState<string[]>([]);
+  const [relSkaters, setRelSkaters] = useState<string[]>([]);
+  const [relFeds, setRelFeds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!item) return;
+    (async () => {
+      const [c, s, f] = await Promise.all([
+        loadRelations("news", "clubs", item.id),
+        loadRelations("news", "skaters", item.id),
+        loadRelations("news", "federations", item.id),
+      ]);
+      setRelClubs(c); setRelSkaters(s); setRelFeds(f);
+    })();
+  }, [item]);
 
   // Auto-slug for new
   useEffect(() => {
