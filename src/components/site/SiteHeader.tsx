@@ -102,6 +102,16 @@ export function SiteHeader() {
               {t("nav.news")}
             </Link>
           </li>
+          <li>
+            <Link
+              to="/hub/$country"
+              params={{ country: "es" }}
+              className={NAV_LINK}
+              activeProps={{ className: NAV_ACTIVE }}
+            >
+              España
+            </Link>
+          </li>
 
           <MegaItemLi keyName="eventos" openMega={openMega} setOpenMega={setOpenMega}>
             <Link to="/eventos" className={NAV_LINK + " gap-1"} activeProps={{ className: NAV_ACTIVE }}>
