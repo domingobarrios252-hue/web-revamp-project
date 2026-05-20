@@ -62,6 +62,7 @@ import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-result
 import { Route as AdminLiveCenterRouteImport } from './routes/admin.live-center'
 import { Route as AdminLegalRouteImport } from './routes/admin.legal'
 import { Route as AdminHubLigaRouteImport } from './routes/admin.hub-liga'
+import { Route as AdminFederacionesRouteImport } from './routes/admin.federaciones'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
@@ -356,6 +357,11 @@ const AdminHubLigaRoute = AdminHubLigaRouteImport.update({
   path: '/hub-liga',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFederacionesRoute = AdminFederacionesRouteImport.update({
+  id: '/federaciones',
+  path: '/federaciones',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEventosRoute = AdminEventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
@@ -529,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
   '/admin/live-center': typeof AdminLiveCenterRoute
@@ -610,6 +617,7 @@ export interface FileRoutesByTo {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
   '/admin/live-center': typeof AdminLiveCenterRoute
@@ -688,6 +696,7 @@ export interface FileRoutesById {
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/eventos': typeof AdminEventosRoute
+  '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
   '/admin/live-center': typeof AdminLiveCenterRoute
@@ -773,6 +782,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/federaciones'
     | '/admin/hub-liga'
     | '/admin/legal'
     | '/admin/live-center'
@@ -854,6 +864,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/federaciones'
     | '/admin/hub-liga'
     | '/admin/legal'
     | '/admin/live-center'
@@ -931,6 +942,7 @@ export interface FileRouteTypes {
     | '/admin/entrevistas'
     | '/admin/equipo'
     | '/admin/eventos'
+    | '/admin/federaciones'
     | '/admin/hub-liga'
     | '/admin/legal'
     | '/admin/live-center'
@@ -1403,6 +1415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminHubLigaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/federaciones': {
+      id: '/admin/federaciones'
+      path: '/federaciones'
+      fullPath: '/admin/federaciones'
+      preLoaderRoute: typeof AdminFederacionesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/eventos': {
       id: '/admin/eventos'
       path: '/eventos'
@@ -1609,6 +1628,7 @@ interface AdminRouteChildren {
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEventosRoute: typeof AdminEventosRoute
+  AdminFederacionesRoute: typeof AdminFederacionesRoute
   AdminHubLigaRoute: typeof AdminHubLigaRoute
   AdminLegalRoute: typeof AdminLegalRoute
   AdminLiveCenterRoute: typeof AdminLiveCenterRoute
@@ -1640,6 +1660,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEntrevistasRoute: AdminEntrevistasRoute,
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEventosRoute: AdminEventosRoute,
+  AdminFederacionesRoute: AdminFederacionesRoute,
   AdminHubLigaRoute: AdminHubLigaRoute,
   AdminLegalRoute: AdminLegalRoute,
   AdminLiveCenterRoute: AdminLiveCenterRoute,
