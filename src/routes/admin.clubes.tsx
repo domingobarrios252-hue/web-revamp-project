@@ -11,9 +11,27 @@ type Club = {
   name: string;
   slug: string;
   logo_url: string | null;
+  cover_url: string | null;
   region_id: string | null;
   website: string | null;
   country_code: string | null;
+  city: string | null;
+  province: string | null;
+  address: string | null;
+  email: string | null;
+  phone: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
+  youtube_url: string | null;
+  tiktok_url: string | null;
+  description: string | null;
+  history: string | null;
+  school_type: string;
+  categories: string[] | null;
+  gallery: string[] | null;
+  featured: boolean;
+  published: boolean;
+  founded_year: number | null;
   regions: { name: string } | null;
 };
 
@@ -21,8 +39,10 @@ const clubSchema = z.object({
   name: z.string().trim().min(2).max(120),
   slug: z.string().trim().min(2).max(120).regex(/^[a-z0-9-]+$/),
   logo_url: z.string().trim().url().optional().or(z.literal("")),
+  cover_url: z.string().trim().url().optional().or(z.literal("")),
   region_id: z.string().uuid().optional().or(z.literal("")),
   website: z.string().trim().url().optional().or(z.literal("")),
+  email: z.string().trim().email().optional().or(z.literal("")),
 });
 
 function slugify(s: string) {
