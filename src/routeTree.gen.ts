@@ -67,8 +67,16 @@ import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
+import { Route as HubCountryCompeticionRouteImport } from './routes/hub.$country.competicion'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
+import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
+import { Route as HubCountryCompeticionLigaNacionalRouteImport } from './routes/hub.$country.competicion.liga-nacional'
+import { Route as HubCountryCompeticionLigaNacionalIndexRouteImport } from './routes/hub.$country.competicion.liga-nacional.index'
+import { Route as HubCountryCompeticionLigaNacionalResultadosRouteImport } from './routes/hub.$country.competicion.liga-nacional.resultados'
+import { Route as HubCountryCompeticionLigaNacionalNoticiasRouteImport } from './routes/hub.$country.competicion.liga-nacional.noticias'
+import { Route as HubCountryCompeticionLigaNacionalClasificacionesRouteImport } from './routes/hub.$country.competicion.liga-nacional.clasificaciones'
+import { Route as HubCountryCompeticionLigaNacionalCalendarioRouteImport } from './routes/hub.$country.competicion.liga-nacional.calendario'
 
 const TvRoute = TvRouteImport.update({
   id: '/tv',
@@ -360,6 +368,11 @@ const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   path: '/noticias/articulo/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HubCountryCompeticionRoute = HubCountryCompeticionRouteImport.update({
+  id: '/competicion',
+  path: '/competicion',
+  getParentRoute: () => HubCountryRoute,
+} as any)
 const HubCountrySectionRoute = HubCountrySectionRouteImport.update({
   id: '/$section',
   path: '/$section',
@@ -370,6 +383,48 @@ const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
   path: '/api/og/premios-mvp.svg',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HubCountryCompeticionIndexRoute =
+  HubCountryCompeticionIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => HubCountryCompeticionRoute,
+  } as any)
+const HubCountryCompeticionLigaNacionalRoute =
+  HubCountryCompeticionLigaNacionalRouteImport.update({
+    id: '/liga-nacional',
+    path: '/liga-nacional',
+    getParentRoute: () => HubCountryCompeticionRoute,
+  } as any)
+const HubCountryCompeticionLigaNacionalIndexRoute =
+  HubCountryCompeticionLigaNacionalIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
+  } as any)
+const HubCountryCompeticionLigaNacionalResultadosRoute =
+  HubCountryCompeticionLigaNacionalResultadosRouteImport.update({
+    id: '/resultados',
+    path: '/resultados',
+    getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
+  } as any)
+const HubCountryCompeticionLigaNacionalNoticiasRoute =
+  HubCountryCompeticionLigaNacionalNoticiasRouteImport.update({
+    id: '/noticias',
+    path: '/noticias',
+    getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
+  } as any)
+const HubCountryCompeticionLigaNacionalClasificacionesRoute =
+  HubCountryCompeticionLigaNacionalClasificacionesRouteImport.update({
+    id: '/clasificaciones',
+    path: '/clasificaciones',
+    getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
+  } as any)
+const HubCountryCompeticionLigaNacionalCalendarioRoute =
+  HubCountryCompeticionLigaNacionalCalendarioRouteImport.update({
+    id: '/calendario',
+    path: '/calendario',
+    getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -430,8 +485,16 @@ export interface FileRoutesByFullPath {
   '/resultados/': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
+  '/hub/$country/competicion': typeof HubCountryCompeticionRouteWithChildren
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country/': typeof HubCountryIndexRoute
+  '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
+  '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
+  '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
+  '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
+  '/hub/$country/competicion/liga-nacional/noticias': typeof HubCountryCompeticionLigaNacionalNoticiasRoute
+  '/hub/$country/competicion/liga-nacional/resultados': typeof HubCountryCompeticionLigaNacionalResultadosRoute
+  '/hub/$country/competicion/liga-nacional/': typeof HubCountryCompeticionLigaNacionalIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -491,6 +554,12 @@ export interface FileRoutesByTo {
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country': typeof HubCountryIndexRoute
+  '/hub/$country/competicion': typeof HubCountryCompeticionIndexRoute
+  '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
+  '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
+  '/hub/$country/competicion/liga-nacional/noticias': typeof HubCountryCompeticionLigaNacionalNoticiasRoute
+  '/hub/$country/competicion/liga-nacional/resultados': typeof HubCountryCompeticionLigaNacionalResultadosRoute
+  '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -552,8 +621,16 @@ export interface FileRoutesById {
   '/resultados/': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
+  '/hub/$country/competicion': typeof HubCountryCompeticionRouteWithChildren
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country/': typeof HubCountryIndexRoute
+  '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
+  '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
+  '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
+  '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
+  '/hub/$country/competicion/liga-nacional/noticias': typeof HubCountryCompeticionLigaNacionalNoticiasRoute
+  '/hub/$country/competicion/liga-nacional/resultados': typeof HubCountryCompeticionLigaNacionalResultadosRoute
+  '/hub/$country/competicion/liga-nacional/': typeof HubCountryCompeticionLigaNacionalIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -616,8 +693,16 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
+    | '/hub/$country/competicion'
     | '/noticias/articulo/$slug'
     | '/hub/$country/'
+    | '/hub/$country/competicion/liga-nacional'
+    | '/hub/$country/competicion/'
+    | '/hub/$country/competicion/liga-nacional/calendario'
+    | '/hub/$country/competicion/liga-nacional/clasificaciones'
+    | '/hub/$country/competicion/liga-nacional/noticias'
+    | '/hub/$country/competicion/liga-nacional/resultados'
+    | '/hub/$country/competicion/liga-nacional/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -677,6 +762,12 @@ export interface FileRouteTypes {
     | '/hub/$country/$section'
     | '/noticias/articulo/$slug'
     | '/hub/$country'
+    | '/hub/$country/competicion'
+    | '/hub/$country/competicion/liga-nacional/calendario'
+    | '/hub/$country/competicion/liga-nacional/clasificaciones'
+    | '/hub/$country/competicion/liga-nacional/noticias'
+    | '/hub/$country/competicion/liga-nacional/resultados'
+    | '/hub/$country/competicion/liga-nacional'
   id:
     | '__root__'
     | '/'
@@ -737,8 +828,16 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
+    | '/hub/$country/competicion'
     | '/noticias/articulo/$slug'
     | '/hub/$country/'
+    | '/hub/$country/competicion/liga-nacional'
+    | '/hub/$country/competicion/'
+    | '/hub/$country/competicion/liga-nacional/calendario'
+    | '/hub/$country/competicion/liga-nacional/clasificaciones'
+    | '/hub/$country/competicion/liga-nacional/noticias'
+    | '/hub/$country/competicion/liga-nacional/resultados'
+    | '/hub/$country/competicion/liga-nacional/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1182,6 +1281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticiasArticuloSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hub/$country/competicion': {
+      id: '/hub/$country/competicion'
+      path: '/competicion'
+      fullPath: '/hub/$country/competicion'
+      preLoaderRoute: typeof HubCountryCompeticionRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
     '/hub/$country/$section': {
       id: '/hub/$country/$section'
       path: '/$section'
@@ -1195,6 +1301,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/og/premios-mvp.svg'
       preLoaderRoute: typeof ApiOgPremiosMvpDotsvgRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/hub/$country/competicion/': {
+      id: '/hub/$country/competicion/'
+      path: '/'
+      fullPath: '/hub/$country/competicion/'
+      preLoaderRoute: typeof HubCountryCompeticionIndexRouteImport
+      parentRoute: typeof HubCountryCompeticionRoute
+    }
+    '/hub/$country/competicion/liga-nacional': {
+      id: '/hub/$country/competicion/liga-nacional'
+      path: '/liga-nacional'
+      fullPath: '/hub/$country/competicion/liga-nacional'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalRouteImport
+      parentRoute: typeof HubCountryCompeticionRoute
+    }
+    '/hub/$country/competicion/liga-nacional/': {
+      id: '/hub/$country/competicion/liga-nacional/'
+      path: '/'
+      fullPath: '/hub/$country/competicion/liga-nacional/'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalIndexRouteImport
+      parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
+    }
+    '/hub/$country/competicion/liga-nacional/resultados': {
+      id: '/hub/$country/competicion/liga-nacional/resultados'
+      path: '/resultados'
+      fullPath: '/hub/$country/competicion/liga-nacional/resultados'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalResultadosRouteImport
+      parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
+    }
+    '/hub/$country/competicion/liga-nacional/noticias': {
+      id: '/hub/$country/competicion/liga-nacional/noticias'
+      path: '/noticias'
+      fullPath: '/hub/$country/competicion/liga-nacional/noticias'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalNoticiasRouteImport
+      parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
+    }
+    '/hub/$country/competicion/liga-nacional/clasificaciones': {
+      id: '/hub/$country/competicion/liga-nacional/clasificaciones'
+      path: '/clasificaciones'
+      fullPath: '/hub/$country/competicion/liga-nacional/clasificaciones'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalClasificacionesRouteImport
+      parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
+    }
+    '/hub/$country/competicion/liga-nacional/calendario': {
+      id: '/hub/$country/competicion/liga-nacional/calendario'
+      path: '/calendario'
+      fullPath: '/hub/$country/competicion/liga-nacional/calendario'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalCalendarioRouteImport
+      parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
     }
   }
 }
@@ -1273,13 +1428,58 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface HubCountryCompeticionLigaNacionalRouteChildren {
+  HubCountryCompeticionLigaNacionalCalendarioRoute: typeof HubCountryCompeticionLigaNacionalCalendarioRoute
+  HubCountryCompeticionLigaNacionalClasificacionesRoute: typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
+  HubCountryCompeticionLigaNacionalNoticiasRoute: typeof HubCountryCompeticionLigaNacionalNoticiasRoute
+  HubCountryCompeticionLigaNacionalResultadosRoute: typeof HubCountryCompeticionLigaNacionalResultadosRoute
+  HubCountryCompeticionLigaNacionalIndexRoute: typeof HubCountryCompeticionLigaNacionalIndexRoute
+}
+
+const HubCountryCompeticionLigaNacionalRouteChildren: HubCountryCompeticionLigaNacionalRouteChildren =
+  {
+    HubCountryCompeticionLigaNacionalCalendarioRoute:
+      HubCountryCompeticionLigaNacionalCalendarioRoute,
+    HubCountryCompeticionLigaNacionalClasificacionesRoute:
+      HubCountryCompeticionLigaNacionalClasificacionesRoute,
+    HubCountryCompeticionLigaNacionalNoticiasRoute:
+      HubCountryCompeticionLigaNacionalNoticiasRoute,
+    HubCountryCompeticionLigaNacionalResultadosRoute:
+      HubCountryCompeticionLigaNacionalResultadosRoute,
+    HubCountryCompeticionLigaNacionalIndexRoute:
+      HubCountryCompeticionLigaNacionalIndexRoute,
+  }
+
+const HubCountryCompeticionLigaNacionalRouteWithChildren =
+  HubCountryCompeticionLigaNacionalRoute._addFileChildren(
+    HubCountryCompeticionLigaNacionalRouteChildren,
+  )
+
+interface HubCountryCompeticionRouteChildren {
+  HubCountryCompeticionLigaNacionalRoute: typeof HubCountryCompeticionLigaNacionalRouteWithChildren
+  HubCountryCompeticionIndexRoute: typeof HubCountryCompeticionIndexRoute
+}
+
+const HubCountryCompeticionRouteChildren: HubCountryCompeticionRouteChildren = {
+  HubCountryCompeticionLigaNacionalRoute:
+    HubCountryCompeticionLigaNacionalRouteWithChildren,
+  HubCountryCompeticionIndexRoute: HubCountryCompeticionIndexRoute,
+}
+
+const HubCountryCompeticionRouteWithChildren =
+  HubCountryCompeticionRoute._addFileChildren(
+    HubCountryCompeticionRouteChildren,
+  )
+
 interface HubCountryRouteChildren {
   HubCountrySectionRoute: typeof HubCountrySectionRoute
+  HubCountryCompeticionRoute: typeof HubCountryCompeticionRouteWithChildren
   HubCountryIndexRoute: typeof HubCountryIndexRoute
 }
 
 const HubCountryRouteChildren: HubCountryRouteChildren = {
   HubCountrySectionRoute: HubCountrySectionRoute,
+  HubCountryCompeticionRoute: HubCountryCompeticionRouteWithChildren,
   HubCountryIndexRoute: HubCountryIndexRoute,
 }
 
