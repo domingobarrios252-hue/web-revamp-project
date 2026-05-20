@@ -48,8 +48,11 @@ export function CommunityPage({ country }: { country: string }) {
           </p>
         </header>
 
-        <Tabs defaultValue="calendario" className="w-full">
-          <TabsList className="bg-[#1a1a1a]">
+        <Tabs defaultValue="publicaciones" className="w-full">
+          <TabsList className="bg-[#1a1a1a] flex-wrap h-auto">
+            <TabsTrigger value="publicaciones">
+              <Newspaper className="mr-2 h-4 w-4" /> Publicaciones
+            </TabsTrigger>
             <TabsTrigger value="calendario">
               <Calendar className="mr-2 h-4 w-4" /> Calendario
             </TabsTrigger>
@@ -61,6 +64,9 @@ export function CommunityPage({ country }: { country: string }) {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="publicaciones" className="mt-6">
+            <CommunityFeed country={country} />
+          </TabsContent>
           <TabsContent value="calendario" className="mt-6">
             <CommunityCalendar country={country} />
           </TabsContent>
