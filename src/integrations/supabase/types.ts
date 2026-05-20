@@ -202,6 +202,57 @@ export type Database = {
         }
         Relationships: []
       }
+      country_hubs: {
+        Row: {
+          accent_color: string | null
+          active: boolean
+          active_sections: Json
+          country_code: string
+          created_at: string
+          federation_name: string | null
+          federation_url: string | null
+          flag_url: string | null
+          hero_image_url: string | null
+          id: string
+          name: string
+          sort_order: number
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          active?: boolean
+          active_sections?: Json
+          country_code: string
+          created_at?: string
+          federation_name?: string | null
+          federation_url?: string | null
+          flag_url?: string | null
+          hero_image_url?: string | null
+          id?: string
+          name: string
+          sort_order?: number
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          active?: boolean
+          active_sections?: Json
+          country_code?: string
+          created_at?: string
+          federation_name?: string | null
+          federation_url?: string | null
+          flag_url?: string | null
+          hero_image_url?: string | null
+          id?: string
+          name?: string
+          sort_order?: number
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       editor_countries: {
         Row: {
           country_code: string
