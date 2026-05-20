@@ -375,10 +375,11 @@ function SideCard({
   );
 }
 
-function QuickLink({ href, label }: { href: string; label: string }) {
+function QuickLink({ country, section, label }: { country: string; section: string; label: string }) {
   return (
     <Link
-      to={href}
+      to="/hub/$country/$section"
+      params={{ country, section }}
       className="font-ui text-[11px] font-bold uppercase tracking-wider text-[#B5B5B5] hover:text-[#1A1A1A] hover:bg-[#D4A017] border border-[#333] rounded px-3 py-2 text-center transition-colors"
     >
       {label}
