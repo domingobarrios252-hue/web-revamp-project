@@ -384,6 +384,133 @@ function CommunityForm({ country }: { country: string }) {
   );
 }
 
+type Publication = {
+  id: string;
+  submission_type: string;
+  name: string;
+  title: string;
+  description: string;
+  image_urls: string[] | null;
+  links: string[] | null;
+  status: string;
+  created_at: string;
+};
+
+function CommunityFeed({ country }: { country: string }) {
+  const [items, setItems] = useState<Publication[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [typeFilter, setTypeFilter] = useState<"todos" | "noticia" | "evento" | "otro">("todos");
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    supabase
+      .from("community_submissions")
+      .select("id,submission_type,name,title,description,image_urls,links,status,created_at")
+      .eq("country_code", country)
+      .eq("status", "aprobada")
+      .order("created_at", { ascending: false })
+      .limit(60)
+      .then(({ data }) => {
+        if (cancelled) return;
+        setItems((data as Publication[]) ?? []);
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [country]);
+
+  const filtered = typeFilter === "todos" ? items : items.filter((i) => i.submission_type === typeFilter);
+
+  return (
+    <div>
+      <div className="mb-5 flex flex-wrap items-center gap-2">
+        {(["todos", "noticia", "evento", "otro"] as const).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTypeFilter(t)}
+            className={`font-condensed px-3 py-1.5 text-[11px] uppercase tracking-widest transition-colors ${
+              typeFilter === t
+                ? "border border-gold bg-gold/10 text-gold"
+                : "border border-[#333] text-[#aaa] hover:border-gold/50"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+        <span className="ml-auto text-xs text-[#666]">
+          {filtered.length} publicación{filtered.length === 1 ? "" : "es"}
+        </span>
+      </div>
+
+      {loading ? (
+        <p className="text-sm text-[#888]">Cargando publicaciones…</p>
+      ) : filtered.length === 0 ? (
+        <Card className="border-[#222] bg-[#161616] p-8 text-center">
+          <p className="text-sm text-[#888]">
+            Todavía no hay publicaciones aprobadas en esta categoría.
+          </p>
+          <p className="mt-2 text-xs text-[#666]">
+            Envía la tuya desde la pestaña "Envía tu noticia".
+          </p>
+        </Card>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((it) => (
+            <article
+              key={it.id}
+              className="group flex flex-col overflow-hidden border border-[#222] bg-[#161616] transition-colors hover:border-gold/60"
+            >
+              {it.image_urls && it.image_urls.length > 0 ? (
+                <div className="aspect-video overflow-hidden bg-[#0a0a0a]">
+                  <img
+                    src={it.image_urls[0]}
+                    alt={it.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  />
+                </div>
+              ) : null}
+              <div className="flex flex-1 flex-col p-4">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="border-gold/40 uppercase text-gold">
+                    {it.submission_type}
+                  </Badge>
+                  <Badge className="gap-1 bg-green-700/20 text-green-400 hover:bg-green-700/20">
+                    <CheckCircle2 className="h-3 w-3" /> Aprobada
+                  </Badge>
+                </div>
+                <h3 className="font-display mt-2 line-clamp-2 text-lg tracking-wide">
+                  {it.title}
+                </h3>
+                <p className="mt-2 line-clamp-3 text-sm text-[#aaa]">{it.description}</p>
+                <div className="mt-auto flex items-center justify-between pt-3 text-[11px] text-[#666]">
+                  <span>Por {it.name}</span>
+                  <time>
+                    {new Date(it.created_at).toLocaleDateString("es-ES", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </time>
+                </div>
+                {it.image_urls && it.image_urls.length > 1 ? (
+                  <p className="mt-2 text-[10px] uppercase tracking-widest text-[#555]">
+                    +{it.image_urls.length - 1} imagen{it.image_urls.length - 1 === 1 ? "" : "es"}
+                  </p>
+                ) : null}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 function SponsorBlock() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
