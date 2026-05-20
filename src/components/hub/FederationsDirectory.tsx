@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Building2, MapPin } from "lucide-react";
+import { Building2, MapPin, ArrowRight } from "lucide-react";
 import { useFederations } from "@/lib/hub/useFederations";
 import { SpainMap } from "@/components/hub/SpainMap";
 
@@ -10,7 +10,7 @@ export function FederationsDirectory({ country }: { country: string }) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 md:px-6 py-8">
-      <header className="mb-8">
+      <header className="mb-6">
         <div className="font-ui text-[11px] font-bold uppercase tracking-[0.2em] text-[#D4A017]">
           Hub España
         </div>
@@ -21,6 +21,23 @@ export function FederationsDirectory({ country }: { country: string }) {
           Organismos rectores del patinaje en España: Real Federación Española y federaciones autonómicas.
         </p>
       </header>
+
+      {country === "es" && (
+        <Link
+          to="/hub/$country/rfep"
+          params={{ country }}
+          className="mb-6 flex items-center justify-between gap-4 rounded-md border border-gold/40 bg-gradient-to-r from-gold/10 to-transparent p-4 hover:border-gold"
+        >
+          <div className="flex items-center gap-3">
+            <Building2 className="h-8 w-8 text-gold" />
+            <div>
+              <div className="font-ui text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Portal institucional</div>
+              <div className="font-display text-base font-black uppercase text-[#F5F5F5]">RFEP · Normativa · Calendario · Licencias</div>
+            </div>
+          </div>
+          <ArrowRight className="h-5 w-5 text-gold" />
+        </Link>
+      )}
 
       {country === "es" && (
         <div className="mb-8">
