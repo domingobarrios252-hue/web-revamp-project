@@ -372,6 +372,39 @@ export type Database = {
           },
         ]
       }
+      event_federations: {
+        Row: {
+          created_at: string
+          event_id: string
+          federation_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          federation_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          federation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_federations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_federations_federation_id_fkey"
+            columns: ["federation_id"]
+            isOneToOne: false
+            referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_skaters: {
         Row: {
           created_at: string
@@ -487,6 +520,136 @@ export type Database = {
             columns: ["region_id"]
             isOneToOne: false
             referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      federation_documents: {
+        Row: {
+          created_at: string
+          description: string | null
+          doc_type: string
+          federation_id: string
+          file_url: string
+          id: string
+          published_at: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          doc_type?: string
+          federation_id: string
+          file_url: string
+          id?: string
+          published_at?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          doc_type?: string
+          federation_id?: string
+          file_url?: string
+          id?: string
+          published_at?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "federation_documents_federation_id_fkey"
+            columns: ["federation_id"]
+            isOneToOne: false
+            referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      federations: {
+        Row: {
+          address: string | null
+          city: string | null
+          country_code: string
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          featured: boolean
+          founded_year: number | null
+          id: string
+          logo_url: string | null
+          name: string
+          parent_id: string | null
+          phone: string | null
+          president: string | null
+          published: boolean
+          region_code: string | null
+          region_name: string | null
+          short_name: string | null
+          slug: string
+          social: Json
+          type: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country_code?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          featured?: boolean
+          founded_year?: number | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          parent_id?: string | null
+          phone?: string | null
+          president?: string | null
+          published?: boolean
+          region_code?: string | null
+          region_name?: string | null
+          short_name?: string | null
+          slug: string
+          social?: Json
+          type?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country_code?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          featured?: boolean
+          founded_year?: number | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          parent_id?: string | null
+          phone?: string | null
+          president?: string | null
+          published?: boolean
+          region_code?: string | null
+          region_name?: string | null
+          short_name?: string | null
+          slug?: string
+          social?: Json
+          type?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "federations_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "federations"
             referencedColumns: ["id"]
           },
         ]
@@ -1207,6 +1370,39 @@ export type Database = {
           },
           {
             foreignKeyName: "news_clubs_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_federations: {
+        Row: {
+          created_at: string
+          federation_id: string
+          news_id: string
+        }
+        Insert: {
+          created_at?: string
+          federation_id: string
+          news_id: string
+        }
+        Update: {
+          created_at?: string
+          federation_id?: string
+          news_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_federations_federation_id_fkey"
+            columns: ["federation_id"]
+            isOneToOne: false
+            referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_federations_news_id_fkey"
             columns: ["news_id"]
             isOneToOne: false
             referencedRelation: "news"
