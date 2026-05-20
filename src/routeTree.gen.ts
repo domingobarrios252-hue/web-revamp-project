@@ -72,6 +72,7 @@ import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
+import { Route as HubCountryTvRouteImport } from './routes/hub.$country.tv'
 import { Route as HubCountryRfepRouteImport } from './routes/hub.$country.rfep'
 import { Route as HubCountryPatinadoresRouteImport } from './routes/hub.$country.patinadores'
 import { Route as HubCountryFederacionesRouteImport } from './routes/hub.$country.federaciones'
@@ -409,6 +410,11 @@ const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   path: '/noticias/articulo/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HubCountryTvRoute = HubCountryTvRouteImport.update({
+  id: '/tv',
+  path: '/tv',
+  getParentRoute: () => HubCountryRoute,
+} as any)
 const HubCountryRfepRoute = HubCountryRfepRouteImport.update({
   id: '/rfep',
   path: '/rfep',
@@ -595,6 +601,7 @@ export interface FileRoutesByFullPath {
   '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/hub/$country/rfep': typeof HubCountryRfepRoute
+  '/hub/$country/tv': typeof HubCountryTvRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -674,6 +681,7 @@ export interface FileRoutesByTo {
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/rfep': typeof HubCountryRfepRoute
+  '/hub/$country/tv': typeof HubCountryTvRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -760,6 +768,7 @@ export interface FileRoutesById {
   '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/hub/$country/rfep': typeof HubCountryRfepRoute
+  '/hub/$country/tv': typeof HubCountryTvRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -848,6 +857,7 @@ export interface FileRouteTypes {
     | '/hub/$country/federaciones'
     | '/hub/$country/patinadores'
     | '/hub/$country/rfep'
+    | '/hub/$country/tv'
     | '/noticias/articulo/$slug'
     | '/hub/$country/'
     | '/hub/$country/clubes/$slug'
@@ -927,6 +937,7 @@ export interface FileRouteTypes {
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
     | '/hub/$country/rfep'
+    | '/hub/$country/tv'
     | '/noticias/articulo/$slug'
     | '/hub/$country'
     | '/hub/$country/clubes/$slug'
@@ -1012,6 +1023,7 @@ export interface FileRouteTypes {
     | '/hub/$country/federaciones'
     | '/hub/$country/patinadores'
     | '/hub/$country/rfep'
+    | '/hub/$country/tv'
     | '/noticias/articulo/$slug'
     | '/hub/$country/'
     | '/hub/$country/clubes/$slug'
@@ -1509,6 +1521,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticiasArticuloSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hub/$country/tv': {
+      id: '/hub/$country/tv'
+      path: '/tv'
+      fullPath: '/hub/$country/tv'
+      preLoaderRoute: typeof HubCountryTvRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
     '/hub/$country/rfep': {
       id: '/hub/$country/rfep'
       path: '/rfep'
@@ -1831,6 +1850,7 @@ interface HubCountryRouteChildren {
   HubCountryFederacionesRoute: typeof HubCountryFederacionesRouteWithChildren
   HubCountryPatinadoresRoute: typeof HubCountryPatinadoresRouteWithChildren
   HubCountryRfepRoute: typeof HubCountryRfepRoute
+  HubCountryTvRoute: typeof HubCountryTvRoute
   HubCountryIndexRoute: typeof HubCountryIndexRoute
   HubCountryRegionesCodeRoute: typeof HubCountryRegionesCodeRoute
 }
@@ -1842,6 +1862,7 @@ const HubCountryRouteChildren: HubCountryRouteChildren = {
   HubCountryFederacionesRoute: HubCountryFederacionesRouteWithChildren,
   HubCountryPatinadoresRoute: HubCountryPatinadoresRouteWithChildren,
   HubCountryRfepRoute: HubCountryRfepRoute,
+  HubCountryTvRoute: HubCountryTvRoute,
   HubCountryIndexRoute: HubCountryIndexRoute,
   HubCountryRegionesCodeRoute: HubCountryRegionesCodeRoute,
 }
