@@ -38,6 +38,7 @@ import { Route as HubCountryRouteImport } from './routes/hub.$country'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
 import { Route as EspanaPatinadoresRouteImport } from './routes/espana.patinadores'
+import { Route as EspanaFederacionesRouteImport } from './routes/espana.federaciones'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
@@ -71,14 +72,17 @@ import { Route as CountrySplatRouteImport } from './routes/$country.$'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as HubCountryPatinadoresRouteImport } from './routes/hub.$country.patinadores'
+import { Route as HubCountryFederacionesRouteImport } from './routes/hub.$country.federaciones'
 import { Route as HubCountryCompeticionRouteImport } from './routes/hub.$country.competicion'
 import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.clubes'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$country.patinadores.index'
+import { Route as HubCountryFederacionesIndexRouteImport } from './routes/hub.$country.federaciones.index'
 import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
 import { Route as HubCountryClubesIndexRouteImport } from './routes/hub.$country.clubes.index'
 import { Route as HubCountryPatinadoresSlugRouteImport } from './routes/hub.$country.patinadores.$slug'
+import { Route as HubCountryFederacionesSlugRouteImport } from './routes/hub.$country.federaciones.$slug'
 import { Route as HubCountryCompeticionLigaNacionalRouteImport } from './routes/hub.$country.competicion.liga-nacional'
 import { Route as HubCountryClubesSlugRouteImport } from './routes/hub.$country.clubes.$slug'
 import { Route as HubCountryCompeticionLigaNacionalIndexRouteImport } from './routes/hub.$country.competicion.liga-nacional.index'
@@ -230,6 +234,11 @@ const EventosSlugRoute = EventosSlugRouteImport.update({
 const EspanaPatinadoresRoute = EspanaPatinadoresRouteImport.update({
   id: '/espana/patinadores',
   path: '/espana/patinadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EspanaFederacionesRoute = EspanaFederacionesRouteImport.update({
+  id: '/espana/federaciones',
+  path: '/espana/federaciones',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EspanaClubesRoute = EspanaClubesRouteImport.update({
@@ -397,6 +406,11 @@ const HubCountryPatinadoresRoute = HubCountryPatinadoresRouteImport.update({
   path: '/patinadores',
   getParentRoute: () => HubCountryRoute,
 } as any)
+const HubCountryFederacionesRoute = HubCountryFederacionesRouteImport.update({
+  id: '/federaciones',
+  path: '/federaciones',
+  getParentRoute: () => HubCountryRoute,
+} as any)
 const HubCountryCompeticionRoute = HubCountryCompeticionRouteImport.update({
   id: '/competicion',
   path: '/competicion',
@@ -423,6 +437,12 @@ const HubCountryPatinadoresIndexRoute =
     path: '/',
     getParentRoute: () => HubCountryPatinadoresRoute,
   } as any)
+const HubCountryFederacionesIndexRoute =
+  HubCountryFederacionesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => HubCountryFederacionesRoute,
+  } as any)
 const HubCountryCompeticionIndexRoute =
   HubCountryCompeticionIndexRouteImport.update({
     id: '/',
@@ -439,6 +459,12 @@ const HubCountryPatinadoresSlugRoute =
     id: '/$slug',
     path: '/$slug',
     getParentRoute: () => HubCountryPatinadoresRoute,
+  } as any)
+const HubCountryFederacionesSlugRoute =
+  HubCountryFederacionesSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => HubCountryFederacionesRoute,
   } as any)
 const HubCountryCompeticionLigaNacionalRoute =
   HubCountryCompeticionLigaNacionalRouteImport.update({
@@ -526,6 +552,7 @@ export interface FileRoutesByFullPath {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/clubes': typeof EspanaClubesRoute
+  '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
@@ -546,14 +573,17 @@ export interface FileRoutesByFullPath {
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
   '/hub/$country/competicion': typeof HubCountryCompeticionRouteWithChildren
+  '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
+  '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/clubes/': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
+  '/hub/$country/federaciones/': typeof HubCountryFederacionesIndexRoute
   '/hub/$country/patinadores/': typeof HubCountryPatinadoresIndexRoute
   '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
   '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
@@ -603,6 +633,7 @@ export interface FileRoutesByTo {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/clubes': typeof EspanaClubesRoute
+  '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
@@ -623,9 +654,11 @@ export interface FileRoutesByTo {
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
+  '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/clubes': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion': typeof HubCountryCompeticionIndexRoute
+  '/hub/$country/federaciones': typeof HubCountryFederacionesIndexRoute
   '/hub/$country/patinadores': typeof HubCountryPatinadoresIndexRoute
   '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
   '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
@@ -678,6 +711,7 @@ export interface FileRoutesById {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/clubes': typeof EspanaClubesRoute
+  '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
@@ -698,14 +732,17 @@ export interface FileRoutesById {
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
   '/hub/$country/competicion': typeof HubCountryCompeticionRouteWithChildren
+  '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
+  '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/clubes/': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
+  '/hub/$country/federaciones/': typeof HubCountryFederacionesIndexRoute
   '/hub/$country/patinadores/': typeof HubCountryPatinadoresIndexRoute
   '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
   '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
@@ -759,6 +796,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/espana/clubes'
+    | '/espana/federaciones'
     | '/espana/patinadores'
     | '/eventos/$slug'
     | '/events/$slug'
@@ -779,14 +817,17 @@ export interface FileRouteTypes {
     | '/hub/$country/$section'
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
+    | '/hub/$country/federaciones'
     | '/hub/$country/patinadores'
     | '/noticias/articulo/$slug'
     | '/hub/$country/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
+    | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/clubes/'
     | '/hub/$country/competicion/'
+    | '/hub/$country/federaciones/'
     | '/hub/$country/patinadores/'
     | '/hub/$country/competicion/liga-nacional/calendario'
     | '/hub/$country/competicion/liga-nacional/clasificaciones'
@@ -836,6 +877,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/espana/clubes'
+    | '/espana/federaciones'
     | '/espana/patinadores'
     | '/eventos/$slug'
     | '/events/$slug'
@@ -856,9 +898,11 @@ export interface FileRouteTypes {
     | '/noticias/articulo/$slug'
     | '/hub/$country'
     | '/hub/$country/clubes/$slug'
+    | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
+    | '/hub/$country/federaciones'
     | '/hub/$country/patinadores'
     | '/hub/$country/competicion/liga-nacional/calendario'
     | '/hub/$country/competicion/liga-nacional/clasificaciones'
@@ -910,6 +954,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/entrevistas/$slug'
     | '/espana/clubes'
+    | '/espana/federaciones'
     | '/espana/patinadores'
     | '/eventos/$slug'
     | '/events/$slug'
@@ -930,14 +975,17 @@ export interface FileRouteTypes {
     | '/hub/$country/$section'
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
+    | '/hub/$country/federaciones'
     | '/hub/$country/patinadores'
     | '/noticias/articulo/$slug'
     | '/hub/$country/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
+    | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/clubes/'
     | '/hub/$country/competicion/'
+    | '/hub/$country/federaciones/'
     | '/hub/$country/patinadores/'
     | '/hub/$country/competicion/liga-nacional/calendario'
     | '/hub/$country/competicion/liga-nacional/clasificaciones'
@@ -963,6 +1011,7 @@ export interface RootRouteChildren {
   CountrySplatRoute: typeof CountrySplatRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EspanaClubesRoute: typeof EspanaClubesRoute
+  EspanaFederacionesRoute: typeof EspanaFederacionesRoute
   EspanaPatinadoresRoute: typeof EspanaPatinadoresRoute
   EventosSlugRoute: typeof EventosSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
@@ -1184,6 +1233,13 @@ declare module '@tanstack/react-router' {
       path: '/espana/patinadores'
       fullPath: '/espana/patinadores'
       preLoaderRoute: typeof EspanaPatinadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/federaciones': {
+      id: '/espana/federaciones'
+      path: '/espana/federaciones'
+      fullPath: '/espana/federaciones'
+      preLoaderRoute: typeof EspanaFederacionesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/espana/clubes': {
@@ -1417,6 +1473,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryPatinadoresRouteImport
       parentRoute: typeof HubCountryRoute
     }
+    '/hub/$country/federaciones': {
+      id: '/hub/$country/federaciones'
+      path: '/federaciones'
+      fullPath: '/hub/$country/federaciones'
+      preLoaderRoute: typeof HubCountryFederacionesRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
     '/hub/$country/competicion': {
       id: '/hub/$country/competicion'
       path: '/competicion'
@@ -1452,6 +1515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryPatinadoresIndexRouteImport
       parentRoute: typeof HubCountryPatinadoresRoute
     }
+    '/hub/$country/federaciones/': {
+      id: '/hub/$country/federaciones/'
+      path: '/'
+      fullPath: '/hub/$country/federaciones/'
+      preLoaderRoute: typeof HubCountryFederacionesIndexRouteImport
+      parentRoute: typeof HubCountryFederacionesRoute
+    }
     '/hub/$country/competicion/': {
       id: '/hub/$country/competicion/'
       path: '/'
@@ -1472,6 +1542,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/hub/$country/patinadores/$slug'
       preLoaderRoute: typeof HubCountryPatinadoresSlugRouteImport
       parentRoute: typeof HubCountryPatinadoresRoute
+    }
+    '/hub/$country/federaciones/$slug': {
+      id: '/hub/$country/federaciones/$slug'
+      path: '/$slug'
+      fullPath: '/hub/$country/federaciones/$slug'
+      preLoaderRoute: typeof HubCountryFederacionesSlugRouteImport
+      parentRoute: typeof HubCountryFederacionesRoute
     }
     '/hub/$country/competicion/liga-nacional': {
       id: '/hub/$country/competicion/liga-nacional'
@@ -1657,6 +1734,22 @@ const HubCountryCompeticionRouteWithChildren =
     HubCountryCompeticionRouteChildren,
   )
 
+interface HubCountryFederacionesRouteChildren {
+  HubCountryFederacionesSlugRoute: typeof HubCountryFederacionesSlugRoute
+  HubCountryFederacionesIndexRoute: typeof HubCountryFederacionesIndexRoute
+}
+
+const HubCountryFederacionesRouteChildren: HubCountryFederacionesRouteChildren =
+  {
+    HubCountryFederacionesSlugRoute: HubCountryFederacionesSlugRoute,
+    HubCountryFederacionesIndexRoute: HubCountryFederacionesIndexRoute,
+  }
+
+const HubCountryFederacionesRouteWithChildren =
+  HubCountryFederacionesRoute._addFileChildren(
+    HubCountryFederacionesRouteChildren,
+  )
+
 interface HubCountryPatinadoresRouteChildren {
   HubCountryPatinadoresSlugRoute: typeof HubCountryPatinadoresSlugRoute
   HubCountryPatinadoresIndexRoute: typeof HubCountryPatinadoresIndexRoute
@@ -1676,6 +1769,7 @@ interface HubCountryRouteChildren {
   HubCountrySectionRoute: typeof HubCountrySectionRoute
   HubCountryClubesRoute: typeof HubCountryClubesRouteWithChildren
   HubCountryCompeticionRoute: typeof HubCountryCompeticionRouteWithChildren
+  HubCountryFederacionesRoute: typeof HubCountryFederacionesRouteWithChildren
   HubCountryPatinadoresRoute: typeof HubCountryPatinadoresRouteWithChildren
   HubCountryIndexRoute: typeof HubCountryIndexRoute
 }
@@ -1684,6 +1778,7 @@ const HubCountryRouteChildren: HubCountryRouteChildren = {
   HubCountrySectionRoute: HubCountrySectionRoute,
   HubCountryClubesRoute: HubCountryClubesRouteWithChildren,
   HubCountryCompeticionRoute: HubCountryCompeticionRouteWithChildren,
+  HubCountryFederacionesRoute: HubCountryFederacionesRouteWithChildren,
   HubCountryPatinadoresRoute: HubCountryPatinadoresRouteWithChildren,
   HubCountryIndexRoute: HubCountryIndexRoute,
 }
@@ -1709,6 +1804,7 @@ const rootRouteChildren: RootRouteChildren = {
   CountrySplatRoute: CountrySplatRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EspanaClubesRoute: EspanaClubesRoute,
+  EspanaFederacionesRoute: EspanaFederacionesRoute,
   EspanaPatinadoresRoute: EspanaPatinadoresRoute,
   EventosSlugRoute: EventosSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
