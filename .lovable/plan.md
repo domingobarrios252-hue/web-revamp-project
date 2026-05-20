@@ -1,126 +1,151 @@
+## Resumen
 
-# Fase 2B — Clubes, Patinadores y Federaciones (Hub España)
+Voy a desarrollar las 5 secciones avanzadas del Hub España de forma modular y relacional, reutilizando al máximo lo que ya existe en la base de datos (videos, mvp_seasons/awards, live_results, live_stream, events, news, clubs, skaters) y añadiendo solo lo imprescindible para conectarlo todo.
 
-Construcción modular y relacional, reutilizable para Colombia/Venezuela/etc. simplemente cambiando `country_code`. Mantengo la ruta base `/hub/$country/...` (coherente con Fase 1 y 2A) y añado redirecciones `/espana/clubes`, `/espana/patinadores`, `/espana/federaciones` → `/hub/es/...` para las URLs SEO que pediste.
-
----
-
-## 1. Base de datos (modelo relacional)
-
-### Ampliar tablas existentes
-- `clubs` → añadir: `cover_url`, `address`, `city`, `province`, `email`, `phone`, `instagram_url`, `facebook_url`, `youtube_url`, `tiktok_url`, `description`, `history`, `school_type` (enum: `escuela` | `competicion` | `mixto`), `categories` (text[]), `coaches` (jsonb), `gallery` (text[]), `featured` (bool), `published` (bool).
-- `skaters` (ya existe parcial) → asegurar: `slug`, `full_name`, `photo_url`, `gallery`, `country_code`, `province`, `category`, `gender`, `specialty`, `bio`, `palmares` (jsonb), `records` (jsonb), `sponsors` (jsonb), `social` (jsonb), `club_id` (FK a clubs), `published`.
-
-### Nuevas tablas
-- `federations` — RFEP + autonómicas. Campos: `country_code`, `scope` (`nacional`|`autonomica`), `region_code` (FK a regions), `name`, `slug`, `logo_url`, `website`, `email`, `phone`, `address`, `description`, `social` (jsonb), `published`.
-- `federation_documents` — reglamentos/licencias/convocatorias por federación. Campos: `federation_id`, `category` (`reglamento`|`calendario`|`licencia`|`convocatoria`|`documento`|`enlace`), `title`, `url`, `published_date`, `sort_order`.
-- `news_skaters` — relación N:N entre `news` y `skaters`.
-- `news_clubs` — relación N:N entre `news` y `clubs`.
-- `news_federations` — relación N:N entre `news` y `federations`.
-- `event_clubs` — relación N:N entre `events` y `clubs` (clubes organizadores/participantes).
-- `event_federations` — relación N:N entre `events` y `federations`.
-- `result_skaters` — enlaza filas de `live_results` / `results` a `skater_id` y `club_id` (sin duplicar datos del atleta).
-- `videos` — galería de vídeos reutilizable. Campos: `entity_type` (`skater`|`club`|`federation`|`event`), `entity_id`, `title`, `youtube_id` o `url`, `thumbnail_url`, `sort_order`.
-
-Todas con RLS:
-- SELECT público para published=true.
-- INSERT/UPDATE/DELETE para admin + editor con `can_edit_country()`.
+Antes de tocar nada quiero confirmar el alcance porque algunas piezas ya existen parcialmente y conviene no duplicar.
 
 ---
 
-## 2. Rutas
+## Estado actual (lo que ya está)
 
-Base modular `/hub/$country/...` y alias `/espana/...`:
-
-```
-/hub/$country/clubes                       → directorio cards/lista + filtros
-/hub/$country/clubes/$slug                 → ficha club
-/hub/$country/patinadores                  → directorio atletas + filtros
-/hub/$country/patinadores/$slug            → ficha atleta
-/hub/$country/federaciones                 → landing (RFEP + mapa autonómicas)
-/hub/$country/federaciones/rfep            → página RFEP con accesos rápidos
-/hub/$country/federaciones/$slug           → ficha federación autonómica
-
-/espana/clubes        → redirect /hub/es/clubes
-/espana/patinadores   → redirect /hub/es/patinadores
-/espana/federaciones  → redirect /hub/es/federaciones
-```
-
-Cada ruta con `head()` SEO completo (title, description, og:image, JSON-LD `SportsOrganization` / `Person` / `SportsTeam`).
+- **Vídeos**: tabla `video_skaters` ya existe (N:N). Falta confirmar tabla `videos` base — la reviso antes de migrar.
+- **MVP**: `mvp_seasons` + `mvp_awards` ya existen con tiers (élite/estrella/promesa) × género. Hay admin `/admin/premios-mvp` y ruta pública `/premios-mvp`. **No hay ranking dinámico con puntos/evolución** — solo "premio ganador".
+- **Live Center**: `live_results` + `live_stream` + `schedule_items` + `LiveBar` + `LiveCenter` ya existen. Hay admin `/admin/live-center` y `/admin/live-results`. **Falta página dedicada `/live` y `/hub/es/live`** y modelo de "evento live" con timeline.
+- **Eventos**: tabla `events` completa, con `status` (upcoming/en_curso/finalizado), galería, redes, etc.
+- **Noticias / Archivo**: `news` con `published_at`, `country_code`, categorías y N:N a clubes/atletas/federaciones. El "archivo histórico" puede ser una vista filtrada de `news` + `interviews` + `events` finalizados, no necesita tabla nueva.
 
 ---
 
-## 3. Componentes nuevos (reutilizables, reciben `countryCode`)
+## Plan de trabajo
 
-`src/components/hub/`:
-- `ClubsDirectory.tsx` — grid/lista con filtros (CCAA, provincia, ciudad, categoría, tipo escuela, búsqueda).
-- `ClubCard.tsx` — tarjeta visual con logo, ciudad, badges.
-- `ClubProfile.tsx` — ficha completa con tabs (info, atletas, eventos, noticias, galería, vídeos).
-- `SkatersDirectory.tsx` — filtros (club, categoría, sexo, especialidad, CCAA, ranking MVP).
-- `SkaterCard.tsx` y `SkaterProfile.tsx` — ficha con palmarés, redes, vídeos, noticias, resultados, entrevistas.
-- `FederationsLanding.tsx` — bloque RFEP destacado + mapa SVG España interactivo.
-- `FederationsMapES.tsx` — SVG de las 17 CCAA + 2 ciudades autónomas, click → navega a `/hub/es/federaciones/$slug`.
-- `FederationProfile.tsx` — ficha federación + documentos categorizados.
-- `RfepHub.tsx` — landing institucional con accesos rápidos (reglamentos, calendarios, licencias…).
-- `RelatedNews.tsx`, `RelatedVideos.tsx`, `RelatedResults.tsx` — bloques reutilizables que reciben `entityType` + `entityId`.
+### 1. RollerZone TV España — `/hub/es/tv` (+ alias `/espana/rollerzone-tv`)
 
-Hooks `src/lib/hub/`:
-- `useClubs.ts` — listado con filtros + ficha por slug.
-- `useSkaters.ts` — listado + ficha + relaciones (noticias, resultados, entrevistas).
-- `useFederations.ts` — listado + ficha + documentos.
+**Migración mínima** (solo si no existe ya tabla `videos`):
+- `videos`: id, slug, title, description, video_url (YouTube/MP4), thumbnail_url, category (entrevista/directo/highlight/reportaje/resumen), published_at, featured, country_code, event_id (FK suave), club_id, news_id, published.
+- Relación N:N skaters ya existe (`video_skaters`).
+- RLS: público lee published=true; admin/editor CRUD.
+
+**Frontend**:
+- `/hub/$country/tv/index.tsx`: hero (vídeo destacado), carrusel destacados, grid últimos, filtros por categoría/atleta/club/evento.
+- `/hub/$country/tv/$slug.tsx`: ficha vídeo con embed (reutilizar `lib/youtube.ts`), metadatos, relaciones (atleta/club/evento/noticias), vídeos relacionados.
+- `/espana/rollerzone-tv.tsx`: redirect a `/hub/es/tv`.
+
+**Admin**: `/admin/videos.tsx` — CRUD + selector relaciones (EntityRelationsField ya existe).
+
+### 2. MVP España — ranking dinámico
+
+**Migración**:
+- Añadir a `mvp_awards` (o nueva tabla `mvp_rankings`): `points` (numeric), `previous_position` (int, evolución), `skater_id` (FK suave a `skaters` para enlazar ficha). Mantengo los premios actuales y añado modo "ranking" por tier×género ordenado por puntos.
+
+**Frontend**:
+- Renovar `/premios-mvp.tsx` y crear `/hub/$country/mvp` con tabla ranking por 6 categorías, evolución (↑↓), enlace a ficha skater. Mantengo el diseño awards actual como "Hall of Fame" + nueva pestaña "Ranking actual".
+
+**Admin**: extender `/admin/premios-mvp` con campo de puntos y skater_id.
+
+### 3. Live Center — `/live` + `/hub/es/live`
+
+**Migración**:
+- `live_events`: id, event_id (FK suave events), country_code, status, headline, timeline (jsonb array de entradas con timestamp+texto), streaming_url, is_active.
+- O reutilizo `events.status='en_curso'` + `live_stream` + `live_results` y solo añado tabla `live_timeline` (event_id, ts, text, type).
+
+**Frontend**:
+- `/live.tsx` (global) y `/hub/$country/live.tsx`: muestra evento activo, timeline en tiempo real (supabase realtime), resultados (`live_results`), stream embed, galería, vídeos relacionados (`videos` por event_id).
+- `LiveBar` ya existe y muestra schedule_items en_curso — la conecto al nuevo `/live`.
+
+**Admin**: `/admin/live-events.tsx` o extender `/admin/live-center` con activar/desactivar evento + editar timeline.
+
+### 4. Comunidad — `/hub/es/comunidad`
+
+**Migración**:
+- `community_submissions`: id, type (noticia/evento/otro), name, email, phone, title, description, image_urls[], links[], status (pendiente/aprobada/rechazada), created_at, country_code. RLS: INSERT público (con validación zod estricta), SELECT solo admin/editor.
+
+**Frontend**:
+- `/hub/$country/comunidad/index.tsx`: 3 bloques.
+  - A) Calendario comunidad: reutiliza `events` filtrando por tipo (`scope` o categoría "comunidad", trofeos, opens, campus, clinics, maratones).
+  - B) Formulario "Envía tu noticia" con validación zod + upload a bucket `media`.
+  - C) Página patrocinio: enlace a `/patrocinadores` (ya existe) + formulario contacto comercial.
+
+**Admin**: `/admin/comunidad-submissions.tsx` — moderar envíos, convertir en noticia/evento.
+
+### 5. Archivo histórico — `/hub/es/archivo`
+
+**Sin migración** — vista agregada de contenido ya existente.
+
+**Frontend**:
+- `/hub/$country/archivo/index.tsx`: tabs (Noticias / Resultados / Entrevistas / Reportajes / Leyendas).
+- Filtros: año (extraído de `published_at`/`event_date`), categoría, atleta, evento.
+- "Leyendas": skaters con flag `is_legend` (añado columna boolean a `skaters`).
+
+### 6. Sistema relacional
+
+Ya está cubierto por:
+- `news_clubs`, `news_skaters`, `news_federations`
+- `event_clubs`, `event_skaters`, `event_federations`
+- `video_skaters` + FKs sueltas `videos.event_id/club_id/news_id`
+- Nuevo `live_events.event_id` enlaza con todo el ecosistema del evento.
+
+### 7. Monetización
+
+Reutilizo `ad_banners` existente con nuevos `placement`:
+- `tv_top`, `tv_sidebar`, `mvp_sponsor`, `live_sidebar`, `community_top`, `archive_sidebar`.
+
+Sin tabla nueva — solo añadir los slots en los componentes y documentarlo en `/admin/banners`.
+
+### 8. Escalabilidad
+
+Todo se construye bajo `/hub/$country/*` con `country_code` como filtro. Los alias `/espana/*` son thin redirects. Clonar a CO/VE = añadir filas en `country_hubs` + seed mínimo, sin cambios de estructura.
 
 ---
 
-## 4. Admin
+## Detalles técnicos
 
-Nuevas pantallas en `/admin/`:
-- `/admin/hub-clubes` — CRUD clubes (ampliar el existente `/admin/clubes` con los nuevos campos + uploader de galería + multi-select atletas relacionados).
-- `/admin/hub-patinadores` — CRUD atletas (ampliar `/admin/patinadores` con club, palmarés, redes, vídeos, relaciones).
-- `/admin/hub-federaciones` — CRUD federaciones + documentos.
-- En cada formulario de noticia/evento/resultado existente: añadir multiselect para vincular clubes, atletas, federaciones (usa tablas N:N).
+**Migraciones** (en este orden, una sola llamada con todo):
+1. `videos` (si no existe) + RLS
+2. `mvp_awards`: añadir `points`, `previous_position`, `skater_id`
+3. `live_timeline` + RLS, o `live_events` según convenga al revisar `events.status`
+4. `community_submissions` + RLS (INSERT público con validación, SELECT staff)
+5. `skaters.is_legend` boolean default false
 
-Sidebar admin actualizada con enlaces nuevos.
+**Rutas nuevas**:
+- `src/routes/hub.$country.tv.tsx` (layout)
+- `src/routes/hub.$country.tv.index.tsx`
+- `src/routes/hub.$country.tv.$slug.tsx`
+- `src/routes/hub.$country.mvp.tsx`
+- `src/routes/hub.$country.live.tsx`
+- `src/routes/hub.$country.comunidad.tsx`
+- `src/routes/hub.$country.archivo.tsx`
+- `src/routes/live.tsx` (global)
+- `src/routes/espana.rollerzone-tv.tsx`, `espana.mvp.tsx`, `espana.live.tsx`, `espana.comunidad.tsx`, `espana.archivo.tsx` (redirects)
 
----
+**Admin nuevos**:
+- `src/routes/admin.videos.tsx`
+- `src/routes/admin.live-events.tsx` (o extender existente)
+- `src/routes/admin.comunidad.tsx`
+- Tab "Leyendas" en `/admin/patinadores`
 
-## 5. Datos demo realistas
+**Componentes Hub**:
+- `src/components/hub/VideosDirectory.tsx`, `VideoCard.tsx`, `VideoPlayer.tsx`
+- `src/components/hub/MvpRanking.tsx`
+- `src/components/hub/LiveCenterPage.tsx`, `LiveTimeline.tsx`
+- `src/components/hub/CommunityForm.tsx`, `CommunityCalendar.tsx`
+- `src/components/hub/ArchiveBrowser.tsx`
 
-Seed inicial:
-- ~10 clubes españoles representativos (CPV Reus, CPV Vall d'Hebron, Pelayo, Voltregà, Lalín, Alcobendas, Olot, Arteixo, El Vendrell, Astillero).
-- ~12 atletas con club asignado, palmarés y categorías.
-- RFEP + 8 federaciones autonómicas principales con datos públicos.
-- Relaciones de demo: 3-4 noticias vinculadas a atletas/clubes.
-
----
-
-## 6. Escalabilidad y SEO
-
-- Todas las consultas filtran por `country_code` recibido como parámetro de ruta → clonar a Colombia = 1 fila en `country_hubs` + datos cargados desde admin.
-- URLs slug + JSON-LD schema markup por tipo de entidad.
-- Sitemap dinámico cubrirá clubes/atletas/federaciones publicados (próxima micro-tarea).
-
----
-
-## Entrega propuesta en sub-fases
-
-Esto es enorme (~6 tablas nuevas, 11 rutas, 10+ componentes, 3 admins, mapa SVG, seed). Propongo dividir en **3 entregas pequeñas** revisables:
-
-- **2B-1 (esta entrega) — CLUBES completo**
-  Migración (ampliar `clubs` + tablas N:N news/event clubs), rutas directorio + ficha, admin ampliado, redirección `/espana/clubes`, seed 10 clubes, bloques de noticias/eventos relacionados.
-
-- **2B-2 — PATINADORES completo**
-  Ampliar `skaters`, tabla `news_skaters` + `result_skaters` + `videos`, rutas directorio + ficha con tabs, admin, redirección `/espana/patinadores`, seed 12 atletas con relaciones a clubes y noticias.
-
-- **2B-3 — FEDERACIONES completo**
-  Tablas `federations` + `federation_documents` + N:N, mapa SVG interactivo de España, RFEP hub, fichas autonómicas, admin, redirección `/espana/federaciones`, seed RFEP + 8 autonómicas.
-
-Las 3 sub-fases comparten patrones (RelatedNews, hooks, filtros) → la 2B-1 deja la "plantilla" hecha y las siguientes son mucho más rápidas.
+**Reutilización**:
+- `EntityRelationsField` para relaciones N:N en todos los admins nuevos.
+- `ImageUploadField` / `GalleryUploadField` para multimedia.
+- `useCountryHub`, `HubHero`, `HubSubNav` ya existentes.
+- Supabase Realtime ya integrado en `LiveBar` — extender al Live Center.
 
 ---
 
-## Confirmar antes de empezar
+## Pregunta antes de empezar
 
-1. ¿Apruebas el desglose en 3 sub-entregas (2B-1, 2B-2, 2B-3) o lo quieres todo en una sola entrega grande (más riesgo)?
-2. URLs públicas: ¿mantener `/hub/es/...` como canónica y `/espana/...` como redirección (mejor para no duplicar contenido SEO), o prefieres `/espana/...` como canónica?
-3. Mapa SVG de España: ¿uso uno open-source de las 17 CCAA + Ceuta/Melilla con estilo RollerZone, o tienes preferencia por algún proveedor concreto?
-4. Seed: ¿los datos demo realistas que propongo (clubes/atletas reales públicos) están bien, o prefieres datos ficticios para no tocar nombres reales sin permiso?
+Es bastante trabajo (5 secciones grandes). ¿Cómo lo prefieres?
+
+**A) Todo de una** — implemento las 5 secciones en una pasada larga. Riesgo: más superficie, más posibles ajustes después.
+
+**B) Por bloques** — empiezo por las 2 más estratégicas (te recomiendo **RollerZone TV + Live Center** porque son las que más impacto editorial y de tráfico tienen) y seguimos con MVP, Comunidad y Archivo en mensajes siguientes.
+
+**C) Otro orden** — me dices la prioridad.
+
+También: ¿el formulario "Envía tu noticia" de Comunidad debe permitir envío **anónimo sin login** (más fricción cero pero más spam) o requerir cuenta? Por defecto iría con envío público + validación zod estricta + moderación admin.
