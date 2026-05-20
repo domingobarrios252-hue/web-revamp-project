@@ -537,6 +537,21 @@ function NewsEditor({
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
           </div>
 
+          <div className="grid gap-3 border-t border-border pt-3 md:grid-cols-3">
+            <div>
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Clubes relacionados</span>
+              <EntityRelationsField kind="clubs" country="es" value={relClubs} onChange={setRelClubs} />
+            </div>
+            <div>
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Patinadores relacionados</span>
+              <EntityRelationsField kind="skaters" country="es" value={relSkaters} onChange={setRelSkaters} />
+            </div>
+            <div>
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Federaciones relacionadas</span>
+              <EntityRelationsField kind="federations" country="es" value={relFeds} onChange={setRelFeds} />
+            </div>
+          </div>
+
           <div className="flex justify-end gap-2 border-t border-border pt-3">
             <button
               type="button"
