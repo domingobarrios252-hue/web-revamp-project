@@ -80,6 +80,7 @@ import { Route as HubCountryCompeticionRouteImport } from './routes/hub.$country
 import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.clubes'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
+import { Route as HubCountryTvIndexRouteImport } from './routes/hub.$country.tv.index'
 import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$country.patinadores.index'
 import { Route as HubCountryFederacionesIndexRouteImport } from './routes/hub.$country.federaciones.index'
 import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
@@ -450,6 +451,11 @@ const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
   path: '/api/og/premios-mvp.svg',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HubCountryTvIndexRoute = HubCountryTvIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HubCountryTvRoute,
+} as any)
 const HubCountryPatinadoresIndexRoute =
   HubCountryPatinadoresIndexRouteImport.update({
     id: '/',
@@ -601,7 +607,7 @@ export interface FileRoutesByFullPath {
   '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/hub/$country/rfep': typeof HubCountryRfepRoute
-  '/hub/$country/tv': typeof HubCountryTvRoute
+  '/hub/$country/tv': typeof HubCountryTvRouteWithChildren
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -613,6 +619,7 @@ export interface FileRoutesByFullPath {
   '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones/': typeof HubCountryFederacionesIndexRoute
   '/hub/$country/patinadores/': typeof HubCountryPatinadoresIndexRoute
+  '/hub/$country/tv/': typeof HubCountryTvIndexRoute
   '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
   '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
   '/hub/$country/competicion/liga-nacional/noticias': typeof HubCountryCompeticionLigaNacionalNoticiasRoute
@@ -681,7 +688,6 @@ export interface FileRoutesByTo {
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/rfep': typeof HubCountryRfepRoute
-  '/hub/$country/tv': typeof HubCountryTvRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -692,6 +698,7 @@ export interface FileRoutesByTo {
   '/hub/$country/competicion': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones': typeof HubCountryFederacionesIndexRoute
   '/hub/$country/patinadores': typeof HubCountryPatinadoresIndexRoute
+  '/hub/$country/tv': typeof HubCountryTvIndexRoute
   '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
   '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
   '/hub/$country/competicion/liga-nacional/noticias': typeof HubCountryCompeticionLigaNacionalNoticiasRoute
@@ -768,7 +775,7 @@ export interface FileRoutesById {
   '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/hub/$country/rfep': typeof HubCountryRfepRoute
-  '/hub/$country/tv': typeof HubCountryTvRoute
+  '/hub/$country/tv': typeof HubCountryTvRouteWithChildren
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -780,6 +787,7 @@ export interface FileRoutesById {
   '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones/': typeof HubCountryFederacionesIndexRoute
   '/hub/$country/patinadores/': typeof HubCountryPatinadoresIndexRoute
+  '/hub/$country/tv/': typeof HubCountryTvIndexRoute
   '/hub/$country/competicion/liga-nacional/calendario': typeof HubCountryCompeticionLigaNacionalCalendarioRoute
   '/hub/$country/competicion/liga-nacional/clasificaciones': typeof HubCountryCompeticionLigaNacionalClasificacionesRoute
   '/hub/$country/competicion/liga-nacional/noticias': typeof HubCountryCompeticionLigaNacionalNoticiasRoute
@@ -869,6 +877,7 @@ export interface FileRouteTypes {
     | '/hub/$country/competicion/'
     | '/hub/$country/federaciones/'
     | '/hub/$country/patinadores/'
+    | '/hub/$country/tv/'
     | '/hub/$country/competicion/liga-nacional/calendario'
     | '/hub/$country/competicion/liga-nacional/clasificaciones'
     | '/hub/$country/competicion/liga-nacional/noticias'
@@ -937,7 +946,6 @@ export interface FileRouteTypes {
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
     | '/hub/$country/rfep'
-    | '/hub/$country/tv'
     | '/noticias/articulo/$slug'
     | '/hub/$country'
     | '/hub/$country/clubes/$slug'
@@ -948,6 +956,7 @@ export interface FileRouteTypes {
     | '/hub/$country/competicion'
     | '/hub/$country/federaciones'
     | '/hub/$country/patinadores'
+    | '/hub/$country/tv'
     | '/hub/$country/competicion/liga-nacional/calendario'
     | '/hub/$country/competicion/liga-nacional/clasificaciones'
     | '/hub/$country/competicion/liga-nacional/noticias'
@@ -1035,6 +1044,7 @@ export interface FileRouteTypes {
     | '/hub/$country/competicion/'
     | '/hub/$country/federaciones/'
     | '/hub/$country/patinadores/'
+    | '/hub/$country/tv/'
     | '/hub/$country/competicion/liga-nacional/calendario'
     | '/hub/$country/competicion/liga-nacional/clasificaciones'
     | '/hub/$country/competicion/liga-nacional/noticias'
@@ -1577,6 +1587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOgPremiosMvpDotsvgRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hub/$country/tv/': {
+      id: '/hub/$country/tv/'
+      path: '/'
+      fullPath: '/hub/$country/tv/'
+      preLoaderRoute: typeof HubCountryTvIndexRouteImport
+      parentRoute: typeof HubCountryTvRoute
+    }
     '/hub/$country/patinadores/': {
       id: '/hub/$country/patinadores/'
       path: '/'
@@ -1843,6 +1860,18 @@ const HubCountryPatinadoresRouteWithChildren =
     HubCountryPatinadoresRouteChildren,
   )
 
+interface HubCountryTvRouteChildren {
+  HubCountryTvIndexRoute: typeof HubCountryTvIndexRoute
+}
+
+const HubCountryTvRouteChildren: HubCountryTvRouteChildren = {
+  HubCountryTvIndexRoute: HubCountryTvIndexRoute,
+}
+
+const HubCountryTvRouteWithChildren = HubCountryTvRoute._addFileChildren(
+  HubCountryTvRouteChildren,
+)
+
 interface HubCountryRouteChildren {
   HubCountrySectionRoute: typeof HubCountrySectionRoute
   HubCountryClubesRoute: typeof HubCountryClubesRouteWithChildren
@@ -1850,7 +1879,7 @@ interface HubCountryRouteChildren {
   HubCountryFederacionesRoute: typeof HubCountryFederacionesRouteWithChildren
   HubCountryPatinadoresRoute: typeof HubCountryPatinadoresRouteWithChildren
   HubCountryRfepRoute: typeof HubCountryRfepRoute
-  HubCountryTvRoute: typeof HubCountryTvRoute
+  HubCountryTvRoute: typeof HubCountryTvRouteWithChildren
   HubCountryIndexRoute: typeof HubCountryIndexRoute
   HubCountryRegionesCodeRoute: typeof HubCountryRegionesCodeRoute
 }
@@ -1862,7 +1891,7 @@ const HubCountryRouteChildren: HubCountryRouteChildren = {
   HubCountryFederacionesRoute: HubCountryFederacionesRouteWithChildren,
   HubCountryPatinadoresRoute: HubCountryPatinadoresRouteWithChildren,
   HubCountryRfepRoute: HubCountryRfepRoute,
-  HubCountryTvRoute: HubCountryTvRoute,
+  HubCountryTvRoute: HubCountryTvRouteWithChildren,
   HubCountryIndexRoute: HubCountryIndexRoute,
   HubCountryRegionesCodeRoute: HubCountryRegionesCodeRoute,
 }
