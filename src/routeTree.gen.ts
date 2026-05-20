@@ -34,6 +34,7 @@ import { Route as ResultadosEventoRouteImport } from './routes/resultados.$event
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
+import { Route as HubCountryRouteImport } from './routes/hub.$country'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
@@ -64,7 +65,9 @@ import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
+import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
+import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 
 const TvRoute = TvRouteImport.update({
@@ -190,6 +193,11 @@ const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
 const LegalSlugRoute = LegalSlugRouteImport.update({
   id: '/legal/$slug',
   path: '/legal/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HubCountryRoute = HubCountryRouteImport.update({
+  id: '/hub/$country',
+  path: '/hub/$country',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsSlugRoute = EventsSlugRouteImport.update({
@@ -342,10 +350,20 @@ const CountrySplatRoute = CountrySplatRouteImport.update({
   path: '/$country/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HubCountryRoute,
+} as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const HubCountrySectionRoute = HubCountrySectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => HubCountryRoute,
 } as any)
 const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
   id: '/api/og/premios-mvp.svg',
@@ -397,6 +415,7 @@ export interface FileRoutesByFullPath {
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
+  '/hub/$country': typeof HubCountryRouteWithChildren
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
@@ -410,7 +429,9 @@ export interface FileRoutesByFullPath {
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/hub/$country/$section': typeof HubCountrySectionRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/hub/$country/': typeof HubCountryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -467,7 +488,9 @@ export interface FileRoutesByTo {
   '/noticias': typeof NoticiasIndexRoute
   '/resultados': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/hub/$country/$section': typeof HubCountrySectionRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/hub/$country': typeof HubCountryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -514,6 +537,7 @@ export interface FileRoutesById {
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
+  '/hub/$country': typeof HubCountryRouteWithChildren
   '/legal/$slug': typeof LegalSlugRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
@@ -527,7 +551,9 @@ export interface FileRoutesById {
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/hub/$country/$section': typeof HubCountrySectionRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/hub/$country/': typeof HubCountryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -575,6 +601,7 @@ export interface FileRouteTypes {
     | '/entrevistas/$slug'
     | '/eventos/$slug'
     | '/events/$slug'
+    | '/hub/$country'
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
@@ -588,7 +615,9 @@ export interface FileRouteTypes {
     | '/noticias/'
     | '/resultados/'
     | '/api/og/premios-mvp.svg'
+    | '/hub/$country/$section'
     | '/noticias/articulo/$slug'
+    | '/hub/$country/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -645,7 +674,9 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/resultados'
     | '/api/og/premios-mvp.svg'
+    | '/hub/$country/$section'
     | '/noticias/articulo/$slug'
+    | '/hub/$country'
   id:
     | '__root__'
     | '/'
@@ -691,6 +722,7 @@ export interface FileRouteTypes {
     | '/entrevistas/$slug'
     | '/eventos/$slug'
     | '/events/$slug'
+    | '/hub/$country'
     | '/legal/$slug'
     | '/noticias/$slug'
     | '/patinadores/$slug'
@@ -704,7 +736,9 @@ export interface FileRouteTypes {
     | '/noticias/'
     | '/resultados/'
     | '/api/og/premios-mvp.svg'
+    | '/hub/$country/$section'
     | '/noticias/articulo/$slug'
+    | '/hub/$country/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -725,6 +759,7 @@ export interface RootRouteChildren {
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EventosSlugRoute: typeof EventosSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
+  HubCountryRoute: typeof HubCountryRouteWithChildren
   LegalSlugRoute: typeof LegalSlugRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
@@ -914,6 +949,13 @@ declare module '@tanstack/react-router' {
       path: '/legal/$slug'
       fullPath: '/legal/$slug'
       preLoaderRoute: typeof LegalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hub/$country': {
+      id: '/hub/$country'
+      path: '/hub/$country'
+      fullPath: '/hub/$country'
+      preLoaderRoute: typeof HubCountryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events/$slug': {
@@ -1126,12 +1168,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountrySplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hub/$country/': {
+      id: '/hub/$country/'
+      path: '/'
+      fullPath: '/hub/$country/'
+      preLoaderRoute: typeof HubCountryIndexRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
     '/noticias/articulo/$slug': {
       id: '/noticias/articulo/$slug'
       path: '/noticias/articulo/$slug'
       fullPath: '/noticias/articulo/$slug'
       preLoaderRoute: typeof NoticiasArticuloSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/hub/$country/$section': {
+      id: '/hub/$country/$section'
+      path: '/$section'
+      fullPath: '/hub/$country/$section'
+      preLoaderRoute: typeof HubCountrySectionRouteImport
+      parentRoute: typeof HubCountryRoute
     }
     '/api/og/premios-mvp.svg': {
       id: '/api/og/premios-mvp.svg'
@@ -1217,6 +1273,20 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface HubCountryRouteChildren {
+  HubCountrySectionRoute: typeof HubCountrySectionRoute
+  HubCountryIndexRoute: typeof HubCountryIndexRoute
+}
+
+const HubCountryRouteChildren: HubCountryRouteChildren = {
+  HubCountrySectionRoute: HubCountrySectionRoute,
+  HubCountryIndexRoute: HubCountryIndexRoute,
+}
+
+const HubCountryRouteWithChildren = HubCountryRoute._addFileChildren(
+  HubCountryRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
@@ -1235,6 +1305,7 @@ const rootRouteChildren: RootRouteChildren = {
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EventosSlugRoute: EventosSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
+  HubCountryRoute: HubCountryRouteWithChildren,
   LegalSlugRoute: LegalSlugRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
