@@ -24,7 +24,7 @@ type AwardRow = {
   skater_id: string | null;
   published: boolean;
 };
-type SkaterOpt = { id: string; full_name: string; club: string | null };
+type SkaterOpt = { id: string; full_name: string; club: { name: string } | null };
 
 const TIERS = ["elite", "estrella", "promesa"] as const;
 const GENDERS = ["masculino", "femenino"] as const;
@@ -290,11 +290,11 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
   useEffect(() => {
     supabase
       .from("skaters")
-      .select("id,full_name,club")
+      .select("id,full_name,club:clubs(name)")
       .eq("country_code", "es")
       .order("full_name")
       .limit(500)
-      .then(({ data }) => setSkaters((data as SkaterOpt[]) ?? []));
+      .then(({ data }) => setSkaters((data as unknown as SkaterOpt[]) ?? []));
   }, []);
 
   // When linking to a skater, prefill name/club/photo if empty.
@@ -303,14 +303,15 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
     const s = skaters.find((x) => x.id === skaterId);
     if (!s) return;
     if (!fullName) setFullName(s.full_name);
-    if (!club && s.club) setClub(s.club);
+    if (!club && s.club?.name) setClub(s.club.name);
   }, [skaterId, skaters]);
 
   const filteredSkaters = useMemo(() => {
     const q = skaterSearch.trim().toLowerCase();
-    if (!q) return skaters.slice(0, 30);
-    return skaters
-      .filter((s) => s.full_name.toLowerCase().includes(q) || (s.club ?? "").toLowerCase().includes(q))
+    const arr = skaters;
+    if (!q) return arr.slice(0, 30);
+    return arr
+      .filter((s) => s.full_name.toLowerCase().includes(q) || (s.club?.name ?? "").toLowerCase().includes(q))
       .slice(0, 30);
   }, [skaters, skaterSearch]);
 
