@@ -372,6 +372,39 @@ export type Database = {
           },
         ]
       }
+      event_skaters: {
+        Row: {
+          created_at: string
+          event_id: string
+          skater_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          skater_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          skater_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_skaters_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_skaters_skater_id_fkey"
+            columns: ["skater_id"]
+            isOneToOne: false
+            referencedRelation: "skaters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           categories: string[]
@@ -1181,6 +1214,39 @@ export type Database = {
           },
         ]
       }
+      news_skaters: {
+        Row: {
+          created_at: string
+          news_id: string
+          skater_id: string
+        }
+        Insert: {
+          created_at?: string
+          news_id: string
+          skater_id: string
+        }
+        Update: {
+          created_at?: string
+          news_id?: string
+          skater_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_skaters_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_skaters_skater_id_fkey"
+            columns: ["skater_id"]
+            isOneToOne: false
+            referencedRelation: "skaters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news_views: {
         Row: {
           id: string
@@ -1420,6 +1486,39 @@ export type Database = {
         }
         Relationships: []
       }
+      result_skaters: {
+        Row: {
+          created_at: string
+          result_id: string
+          skater_id: string
+        }
+        Insert: {
+          created_at?: string
+          result_id: string
+          skater_id: string
+        }
+        Update: {
+          created_at?: string
+          result_id?: string
+          skater_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "result_skaters_result_id_fkey"
+            columns: ["result_id"]
+            isOneToOne: false
+            referencedRelation: "results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "result_skaters_skater_id_fkey"
+            columns: ["skater_id"]
+            isOneToOne: false
+            referencedRelation: "skaters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       results: {
         Row: {
           athlete_name: string
@@ -1571,17 +1670,28 @@ export type Database = {
           category: string | null
           club_id: string | null
           country_code: string
+          cover_url: string | null
           created_at: string
+          dominant_foot: string | null
           featured: boolean
           full_name: string
+          gallery: Json
           gender: string | null
+          height_cm: number | null
           id: string
+          palmares: Json
           personal_records: Json
           photo_url: string | null
+          province: string | null
+          published: boolean
           region_id: string | null
           slug: string
+          social: Json
+          specialty: string | null
+          sponsors: Json
           total_points: number
           updated_at: string
+          weight_kg: number | null
         }
         Insert: {
           active?: boolean
@@ -1590,17 +1700,28 @@ export type Database = {
           category?: string | null
           club_id?: string | null
           country_code?: string
+          cover_url?: string | null
           created_at?: string
+          dominant_foot?: string | null
           featured?: boolean
           full_name: string
+          gallery?: Json
           gender?: string | null
+          height_cm?: number | null
           id?: string
+          palmares?: Json
           personal_records?: Json
           photo_url?: string | null
+          province?: string | null
+          published?: boolean
           region_id?: string | null
           slug: string
+          social?: Json
+          specialty?: string | null
+          sponsors?: Json
           total_points?: number
           updated_at?: string
+          weight_kg?: number | null
         }
         Update: {
           active?: boolean
@@ -1609,17 +1730,28 @@ export type Database = {
           category?: string | null
           club_id?: string | null
           country_code?: string
+          cover_url?: string | null
           created_at?: string
+          dominant_foot?: string | null
           featured?: boolean
           full_name?: string
+          gallery?: Json
           gender?: string | null
+          height_cm?: number | null
           id?: string
+          palmares?: Json
           personal_records?: Json
           photo_url?: string | null
+          province?: string | null
+          published?: boolean
           region_id?: string | null
           slug?: string
+          social?: Json
+          specialty?: string | null
+          sponsors?: Json
           total_points?: number
           updated_at?: string
+          weight_kg?: number | null
         }
         Relationships: [
           {
@@ -1899,6 +2031,93 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      video_skaters: {
+        Row: {
+          created_at: string
+          skater_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          skater_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          skater_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_skaters_skater_id_fkey"
+            columns: ["skater_id"]
+            isOneToOne: false
+            referencedRelation: "skaters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_skaters_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      videos: {
+        Row: {
+          category: string | null
+          country_code: string
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          featured: boolean
+          id: string
+          published: boolean
+          published_at: string
+          slug: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+          youtube_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          country_code?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          published_at?: string
+          slug: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+          youtube_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          country_code?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          published_at?: string
+          slug?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+          youtube_id?: string | null
         }
         Relationships: []
       }
