@@ -279,6 +279,9 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
           <span className="font-condensed text-xs uppercase tracking-widest">Publicado</span>
         </label>
+        <Field label="Clubes participantes" full><EntityRelationsField kind="clubs" country={country_code} value={relClubs} onChange={setRelClubs} /></Field>
+        <Field label="Patinadores destacados" full><EntityRelationsField kind="skaters" country={country_code} value={relSkaters} onChange={setRelSkaters} /></Field>
+        <Field label="Federaciones organizadoras" full><EntityRelationsField kind="federations" country={country_code} value={relFeds} onChange={setRelFeds} /></Field>
       </div>
       <div className="mt-5 flex gap-2">
         <button onClick={onSave} disabled={saving} className="font-condensed bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50">{saving ? "Guardando…" : initial ? "Guardar" : "Crear evento"}</button>
