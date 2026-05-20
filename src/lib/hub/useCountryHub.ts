@@ -22,6 +22,7 @@ export type HubSectionKey =
   | "patinadores"
   | "federaciones"
   | "tv"
+  | "live"
   | "mvp"
   | "archivo"
   | "comunidad";
