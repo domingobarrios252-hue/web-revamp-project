@@ -4,13 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Search, Calendar, Trophy, Mic, Newspaper, Crown } from "lucide-react";
+import { Search, Calendar, Trophy, Mic, Newspaper, Crown, X } from "lucide-react";
 
 type NewsRow = {
   id: string;
   slug: string;
   title: string;
   excerpt: string | null;
+  content: string | null;
   image_url: string | null;
   published_at: string | null;
 };
@@ -37,30 +38,37 @@ type LegendRow = {
   photo_url: string | null;
   category: string | null;
 };
+type FilterOption = { id: string; label: string };
 
 export function ArchiveBrowser({ country }: { country: string }) {
   const [tab, setTab] = useState("noticias");
   const [search, setSearch] = useState("");
   const [year, setYear] = useState<string>("");
+  const [skaterFilter, setSkaterFilter] = useState<string>("");
+  const [clubFilter, setClubFilter] = useState<string>("");
+  const [eventFilter, setEventFilter] = useState<string>("");
 
   const [news, setNews] = useState<NewsRow[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
   const [interviews, setInterviews] = useState<InterviewRow[]>([]);
   const [legends, setLegends] = useState<LegendRow[]>([]);
+  const [skaterOpts, setSkaterOpts] = useState<FilterOption[]>([]);
+  const [clubOpts, setClubOpts] = useState<FilterOption[]>([]);
+  const [eventOpts, setEventOpts] = useState<FilterOption[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     (async () => {
-      const [n, e, i, l] = await Promise.all([
+      const [n, e, i, l, sk, cl] = await Promise.all([
         supabase
           .from("news")
-          .select("id,slug,title,excerpt,image_url,published_at")
+          .select("id,slug,title,excerpt,content,image_url,published_at")
           .eq("published", true)
           .eq("country_code", country)
           .order("published_at", { ascending: false })
-          .limit(120),
+          .limit(300),
         supabase
           .from("events")
           .select("id,slug,name,start_date,location,cover_url")
@@ -68,27 +76,54 @@ export function ArchiveBrowser({ country }: { country: string }) {
           .eq("country_code", country)
           .lt("start_date", new Date().toISOString().slice(0, 10))
           .order("start_date", { ascending: false })
-          .limit(120),
+          .limit(300),
         supabase
           .from("interviews")
           .select("id,slug,title,interviewee_name,cover_url,created_at")
           .eq("published", true)
           .eq("country_code", country)
           .order("created_at", { ascending: false })
-          .limit(120),
+          .limit(200),
         supabase
           .from("skaters")
           .select("id,slug,full_name,photo_url,category")
           .eq("country_code", country)
           .eq("is_legend", true)
           .order("full_name", { ascending: true })
-          .limit(60),
+          .limit(100),
+        supabase
+          .from("skaters")
+          .select("id,full_name")
+          .eq("country_code", country)
+          .order("full_name", { ascending: true })
+          .limit(500),
+        supabase
+          .from("clubs")
+          .select("id,name")
+          .eq("country_code", country)
+          .eq("published", true)
+          .order("name", { ascending: true })
+          .limit(500),
       ]);
       if (cancelled) return;
       setNews((n.data as NewsRow[]) ?? []);
-      setEvents((e.data as EventRow[]) ?? []);
+      const evList = (e.data as EventRow[]) ?? [];
+      setEvents(evList);
       setInterviews((i.data as InterviewRow[]) ?? []);
       setLegends((l.data as LegendRow[]) ?? []);
+      setSkaterOpts(
+        ((sk.data as { id: string; full_name: string }[]) ?? []).map((s) => ({
+          id: s.id,
+          label: s.full_name,
+        }))
+      );
+      setClubOpts(
+        ((cl.data as { id: string; name: string }[]) ?? []).map((c) => ({
+          id: c.id,
+          label: c.name,
+        }))
+      );
+      setEventOpts(evList.map((ev) => ({ id: ev.id, label: ev.name })));
       setLoading(false);
     })();
     return () => {
@@ -100,28 +135,64 @@ export function ArchiveBrowser({ country }: { country: string }) {
     const set = new Set<string>();
     news.forEach((n) => n.published_at && set.add(n.published_at.slice(0, 4)));
     events.forEach((ev) => ev.start_date && set.add(ev.start_date.slice(0, 4)));
+    interviews.forEach((it) => it.created_at && set.add(it.created_at.slice(0, 4)));
     return Array.from(set).sort((a, b) => b.localeCompare(a));
-  }, [news, events]);
+  }, [news, events, interviews]);
+
+  const skaterName = skaterFilter
+    ? skaterOpts.find((s) => s.id === skaterFilter)?.label ?? ""
+    : "";
+  const clubName = clubFilter
+    ? clubOpts.find((c) => c.id === clubFilter)?.label ?? ""
+    : "";
+  const eventName = eventFilter
+    ? eventOpts.find((e) => e.id === eventFilter)?.label ?? ""
+    : "";
 
   const fSearch = search.trim().toLowerCase();
   const matchesYear = (date: string | null) =>
     !year || (date && date.startsWith(year));
-  const matchesSearch = (txt: string) => !fSearch || txt.toLowerCase().includes(fSearch);
+  const matchesSearch = (txt: string) =>
+    !fSearch || txt.toLowerCase().includes(fSearch);
+  const matchesEntity = (txt: string) => {
+    const t = txt.toLowerCase();
+    if (skaterName && !t.includes(skaterName.toLowerCase())) return false;
+    if (clubName && !t.includes(clubName.toLowerCase())) return false;
+    if (eventName && !t.includes(eventName.toLowerCase())) return false;
+    return true;
+  };
 
-  const filteredNews = news.filter(
-    (n) => matchesYear(n.published_at) && matchesSearch(n.title + " " + (n.excerpt ?? ""))
-  );
-  const filteredEvents = events.filter(
-    (e) => matchesYear(e.start_date) && matchesSearch(e.name + " " + (e.location ?? ""))
-  );
-  const filteredInterviews = interviews.filter(
-    (i) =>
-      matchesYear(i.created_at) &&
-      matchesSearch(i.title + " " + (i.interviewee_name ?? ""))
-  );
-  const filteredLegends = legends.filter((l) =>
-    matchesSearch(l.full_name + " " + (l.category ?? ""))
-  );
+  const filteredNews = news.filter((n) => {
+    const blob = `${n.title} ${n.excerpt ?? ""} ${n.content ?? ""}`;
+    return matchesYear(n.published_at) && matchesSearch(blob) && matchesEntity(blob);
+  });
+  const filteredEvents = events.filter((e) => {
+    const blob = `${e.name} ${e.location ?? ""}`;
+    const eventOk = !eventFilter || e.id === eventFilter;
+    const restOk =
+      (!skaterName || blob.toLowerCase().includes(skaterName.toLowerCase())) &&
+      (!clubName || blob.toLowerCase().includes(clubName.toLowerCase()));
+    return matchesYear(e.start_date) && matchesSearch(blob) && eventOk && restOk;
+  });
+  const filteredInterviews = interviews.filter((i) => {
+    const blob = `${i.title} ${i.interviewee_name ?? ""}`;
+    return matchesYear(i.created_at) && matchesSearch(blob) && matchesEntity(blob);
+  });
+  const filteredLegends = legends.filter((l) => {
+    const blob = `${l.full_name} ${l.category ?? ""}`;
+    const skaterOk = !skaterFilter || l.id === skaterFilter;
+    return matchesSearch(blob) && skaterOk;
+  });
+
+  const hasFilters =
+    !!year || !!skaterFilter || !!clubFilter || !!eventFilter || !!fSearch;
+  const clearAll = () => {
+    setYear("");
+    setSkaterFilter("");
+    setClubFilter("");
+    setEventFilter("");
+    setSearch("");
+  };
 
   return (
     <div className="bg-[#111] text-white">
@@ -134,36 +205,95 @@ export function ArchiveBrowser({ country }: { country: string }) {
             Memoria del patinaje
           </h1>
           <p className="mt-3 max-w-2xl text-sm text-[#aaa] md:text-base">
-            Todo el contenido publicado en RollerZone, organizado y buscable.
+            Navega por años, atletas, clubes y eventos. Cada ficha enlaza con noticias y resultados.
           </p>
         </header>
 
-        <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
-          <div className="relative flex-1">
+        {/* Year timeline */}
+        {years.length > 0 && (
+          <div className="mb-5 -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+            <div className="flex min-w-max items-center gap-2 border-b border-[#222] pb-3">
+              <button
+                onClick={() => setYear("")}
+                className={`font-condensed px-3 py-1.5 text-[11px] uppercase tracking-widest transition-colors ${
+                  year === ""
+                    ? "bg-gold text-[#111]"
+                    : "border border-[#333] text-[#aaa] hover:border-gold/60 hover:text-white"
+                }`}
+              >
+                Todos
+              </button>
+              {years.map((y) => (
+                <button
+                  key={y}
+                  onClick={() => setYear(y)}
+                  className={`font-display px-3 py-1.5 text-sm tracking-wider transition-colors ${
+                    year === y
+                      ? "bg-gold text-[#111]"
+                      : "border border-[#333] text-[#ccc] hover:border-gold/60 hover:text-white"
+                  }`}
+                >
+                  {y}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Filters */}
+        <div className="mb-4 grid gap-3 md:grid-cols-4">
+          <div className="relative md:col-span-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#666]" />
             <Input
-              placeholder="Buscar por título, atleta, lugar…"
+              placeholder="Buscar…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="border-[#333] bg-[#0e0e0e] pl-9"
             />
           </div>
-          <select
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            className="border border-[#333] bg-[#0e0e0e] px-3 py-2 text-sm"
-          >
-            <option value="">Todos los años</option>
-            {years.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
+          <FilterSelect
+            label="Atleta"
+            value={skaterFilter}
+            onChange={setSkaterFilter}
+            options={skaterOpts}
+          />
+          <FilterSelect
+            label="Club"
+            value={clubFilter}
+            onChange={setClubFilter}
+            options={clubOpts}
+          />
+          <FilterSelect
+            label="Evento"
+            value={eventFilter}
+            onChange={setEventFilter}
+            options={eventOpts}
+          />
         </div>
 
+        {hasFilters && (
+          <div className="mb-6 flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-[#888]">Filtros activos:</span>
+            {year && <Chip label={year} onClear={() => setYear("")} />}
+            {skaterName && (
+              <Chip label={`Atleta: ${skaterName}`} onClear={() => setSkaterFilter("")} />
+            )}
+            {clubName && <Chip label={`Club: ${clubName}`} onClear={() => setClubFilter("")} />}
+            {eventName && (
+              <Chip label={`Evento: ${eventName}`} onClear={() => setEventFilter("")} />
+            )}
+            {fSearch && <Chip label={`"${fSearch}"`} onClear={() => setSearch("")} />}
+            <button
+              onClick={clearAll}
+              className="font-condensed ml-2 text-[10px] uppercase tracking-widest text-gold hover:underline"
+            >
+              Limpiar todo
+            </button>
+          </div>
+        )}
+
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="flex w-full flex-wrap justify-start bg-[#1a1a1a]">
+          <TabsList className="flex h-auto w-full flex-wrap justify-start bg-[#1a1a1a]">
             <TabsTrigger value="noticias">
               <Newspaper className="mr-2 h-4 w-4" /> Noticias ({filteredNews.length})
             </TabsTrigger>
@@ -229,8 +359,8 @@ export function ArchiveBrowser({ country }: { country: string }) {
                 {filteredEvents.map((ev) => (
                   <Link
                     key={ev.id}
-                    to="/eventos/$slug"
-                    params={{ slug: ev.slug }}
+                    to="/resultados/$evento"
+                    params={{ evento: ev.slug }}
                     className="flex items-center gap-4 border border-[#222] bg-[#161616] p-3 transition-colors hover:border-gold/60"
                   >
                     {ev.cover_url ? (
@@ -256,6 +386,9 @@ export function ArchiveBrowser({ country }: { country: string }) {
                         <p className="text-xs text-[#888]">{ev.location}</p>
                       ) : null}
                     </div>
+                    <span className="font-condensed hidden text-[10px] uppercase tracking-widest text-[#888] md:inline">
+                      Ver resultados →
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -345,6 +478,48 @@ export function ArchiveBrowser({ country }: { country: string }) {
         </Tabs>
       </div>
     </div>
+  );
+}
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: FilterOption[];
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full border border-[#333] bg-[#0e0e0e] px-3 py-2 text-sm text-white focus:border-gold focus:outline-none"
+    >
+      <option value="">Todos los {label.toLowerCase()}s</option>
+      {options.map((o) => (
+        <option key={o.id} value={o.id}>
+          {o.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function Chip({ label, onClear }: { label: string; onClear: () => void }) {
+  return (
+    <span className="inline-flex items-center gap-1 border border-gold/40 bg-gold/10 px-2 py-1 text-[11px] text-gold">
+      {label}
+      <button
+        onClick={onClear}
+        aria-label={`Quitar ${label}`}
+        className="text-gold hover:text-white"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </span>
   );
 }
 
