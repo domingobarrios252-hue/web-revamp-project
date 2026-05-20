@@ -17,19 +17,26 @@ export function HubSubNav({ country, activeSections }: { country: string; active
         <ul className="flex h-12 items-center gap-1 md:gap-2 whitespace-nowrap">
           {sections.map((s) => {
             const active = isActive(s.key);
-            const to = s.key === "inicio" ? `/hub/${country}` : `/hub/${country}/${s.key}`;
+            const cls = `font-ui inline-flex items-center px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition-colors rounded-[4px] ${
+              active
+                ? "bg-[#D4A017] text-[#1A1A1A]"
+                : "text-[#B5B5B5] hover:text-[#F5F5F5] hover:bg-[#242424]"
+            }`;
             return (
               <li key={s.key}>
-                <Link
-                  to={to}
-                  className={`font-ui inline-flex items-center px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition-colors rounded-[4px] ${
-                    active
-                      ? "bg-[#D4A017] text-[#1A1A1A]"
-                      : "text-[#B5B5B5] hover:text-[#F5F5F5] hover:bg-[#242424]"
-                  }`}
-                >
-                  {s.label}
-                </Link>
+                {s.key === "inicio" ? (
+                  <Link to="/hub/$country" params={{ country }} className={cls}>
+                    {s.label}
+                  </Link>
+                ) : (
+                  <Link
+                    to="/hub/$country/$section"
+                    params={{ country, section: s.key }}
+                    className={cls}
+                  >
+                    {s.label}
+                  </Link>
+                )}
               </li>
             );
           })}
