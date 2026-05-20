@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Building2, MapPin } from "lucide-react";
 import { useFederations } from "@/lib/hub/useFederations";
+import { SpainMap } from "@/components/hub/SpainMap";
 
 export function FederationsDirectory({ country }: { country: string }) {
   const { federations, loading } = useFederations(country);
@@ -20,6 +21,12 @@ export function FederationsDirectory({ country }: { country: string }) {
           Organismos rectores del patinaje en España: Real Federación Española y federaciones autonómicas.
         </p>
       </header>
+
+      {country === "es" && (
+        <div className="mb-8">
+          <SpainMap country={country} />
+        </div>
+      )}
 
       {loading ? (
         <p className="text-sm text-[#888]">Cargando federaciones…</p>
