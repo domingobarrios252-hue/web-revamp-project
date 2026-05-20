@@ -1,114 +1,78 @@
 
-# Plataforma multi-país RollerZone
+# Hub España — Microsite editorial premium
 
-Evolución de la web actual a una plataforma internacional manteniendo identidad y contenido. Se añaden Colombia y Venezuela como secciones oficiales, dejando preparada la expansión (MX, AR, CL, EC, PE) sin crear sitios separados.
-
-El plan se ejecutará en **5 fases incrementales**, cada una entregable y verificable. Pido confirmación antes de empezar la Fase 1.
+Construir un "portal dentro del portal" para España, totalmente modular y reutilizable para Colombia, Venezuela y otros países más adelante. Dada la magnitud (9 secciones + decenas de subsecciones + admin completo), propongo construirlo por **fases incrementales**, no todo de golpe. Cada fase es entregable y revisable.
 
 ---
 
-## Fase 1 — Base de datos multi-país y visibilidad multicanal
+## Arquitectura base (reutilizable por país)
 
-Sin tocar todavía la UI pública. Es el cimiento.
+**Ruta raíz dinámica**: `/hub/$country` (ej: `/hub/es`, `/hub/co`, `/hub/ve`)
+- Layout propio con sub-header de navegación específico del hub (independiente del header global)
+- Provider de contexto `CountryHubContext` que inyecta: código país, colores, federación, idioma, etc.
+- Configuración por país en tabla `country_hubs` (nombre, bandera, colores acento, federación principal, secciones activas)
 
-**Nuevas tablas / cambios (vía migration):**
+**Componentes reutilizables** (`src/components/hub/`):
+- `HubSubNav` — menú de las 9 secciones
+- `HubDashboard` — bloques editoriales (noticias, eventos, vídeo, atleta semana…)
+- `RankingTable`, `CalendarList`, `ResultsArchive`
+- `ClubDirectory`, `SchoolDirectory`, `ClubCard`
+- `AthleteDirectory`, `AthleteCard`, `AthleteProfile`
+- `MvpRanking`, `FederationMap`, `MediaGrid`
+- `NewsSubmissionForm`
 
-- `countries` — catálogo: `code` (es, co, ve, mx, ar, cl, ec, pe), `name`, `flag_url`, `accent_color`, `active`, `sort_order`. Seed inicial: ES (activo), CO (activo), VE (activo), resto inactivos pero presentes para expansión.
-- `news.country_code` (text, FK lógica a `countries.code`, nullable) — país de origen editorial de la noticia (default 'es' para contenido existente).
-- `news_visibility` — tabla many-to-many:
-  - `news_id` (FK news)
-  - `channel` enum: `global_home`, `featured`, `breaking`, `country`
-  - `country_code` (nullable, sólo si channel='country')
-  - PK compuesta `(news_id, channel, country_code)`
-- Migración de datos: cada noticia actual con `featured=true` → fila en `news_visibility (channel='featured')`; todas → `(channel='global_home')` y `(channel='country', 'es')`.
-- Mantener `news.featured` y `news.hero_order` por compatibilidad, pero la fuente de verdad pasa a ser `news_visibility`.
+Todos aceptan `countryCode` como prop → mismo código sirve para cualquier país.
 
-**Roles editoriales por país:**
-
-- Ampliar enum `app_role` o reutilizar `editor` + nueva tabla `editor_countries (user_id, country_code)`.
-- Helper SQL `can_edit_country(_user_id, _country)` (security definer) para RLS.
-- RLS de `news`: editor sólo puede insert/update si `country_code` está en sus países asignados. Admin sigue con acceso total.
-- Helpers paralelos para `events`, `interviews`, `skaters`, `clubs` (añadir `country_code` a cada uno con default 'es').
-
-**Tablas de contenido por país (añadir `country_code`):**
-
-- `events`, `interviews`, `skaters`, `clubs`, `tv_broadcasts`, `tv_highlights`, `sponsors`, `medal_standings` — todas con `country_code text default 'es'`.
+**Diseño visual**: mantener tokens existentes (gris oscuro/negro + oro `#D4A017`), tipografías ya definidas, animaciones suaves estilo MARCA/AS.
 
 ---
 
-## Fase 2 — Rutas públicas por país
+## Fases propuestas
 
-Estructura de rutas TanStack (no creamos webs separadas, son sub-secciones):
+### Fase 1 — Cimientos + Inicio España (esta entrega)
+- Crear esquema de base de datos para hubs (tabla `country_hubs`, ampliar `news`, `events`, `skaters`, `clubs` con filtros por país/sección hub)
+- Rutas `hub/$country` (layout) e `hub/$country/index` (dashboard editorial)
+- Sub-navegación de las 9 secciones (la mayoría llevan a páginas "próximamente" en esta fase)
+- Componente `HubDashboard` con: ticker hub, noticias destacadas país, próximos eventos, resultados fin de semana, vídeo destacado, entrevista, patinador semana, club destacado
+- Reaprovecha datos existentes filtrados por `country_code = 'es'`
 
-```text
-/{-$country}            -> home país (o home global si vacío)
-/                       -> home global actual
-/paises                 -> selector visual ES/CO/VE
-/colombia               -> home editorial Colombia
-/colombia/noticias
-/colombia/eventos
-/colombia/entrevistas
-/colombia/clubes
-/colombia/atletas
-/colombia/galeria
-/colombia/calendario
-/venezuela/...          (idéntica estructura)
-/espana/...             (idéntica estructura, alias del contenido ES)
-```
+### Fase 2 — Competición (Liga + Campeonatos)
+- Tablas: `league_seasons`, `league_standings`, `championships`, `championship_results`
+- Páginas: clasificaciones con filtros, calendario con mapa, archivo de jornadas, campeonatos históricos
+- Admin: gestión de jornadas, importación de resultados
 
-Implementación: route layout `src/routes/$country.tsx` que valida el slug contra `countries`, expone contexto `{ country }` a los hijos vía `Outlet`, y `head()` por país con SEO propio.
+### Fase 3 — Clubs & Escuelas + Patinadores
+- Ampliar `clubs` y `skaters` con campos hub (provincia, escuela vs competición, especialidad)
+- Directorios filtrables + fichas detalladas
+- Admin de fichas
 
-**Home de país (componente reutilizable parametrizado por country_code):**
+### Fase 4 — Federaciones + RollerZone TV España + MVP España
+- Tabla `federations` (nacional + autonómicas) con mapa interactivo SVG España
+- Vista TV filtrada por país
+- MVP España reusando tablas `mvp_seasons` y `mvp_awards`
 
-Hero destacado · Últimas noticias · Entrevistas · Próximos eventos · Calendario · Clubes destacados · Atletas destacados · Galería · Rankings · Patrocinadores. Todas las consultas filtran por `news_visibility.country_code = X` (para noticias) o `country_code = X` (para el resto).
-
-**Header:** nuevo dropdown "PAÍSES" con bandera + nombre, marca activo el país actual. Identidad global se mantiene; cada país añade un acento sutil (banda superior con sus colores) sin romper el negro/amarillo RollerZone.
-
----
-
-## Fase 3 — Admin: visibilidad multicanal y país
-
-Editor de noticia (admin) gana un bloque **"Publicar en"** con checkboxes:
-
-- Home global
-- Noticias destacadas
-- Breaking ticker
-- España / Colombia / Venezuela (los países que el editor pueda gestionar)
-
-Guardado: una sola fila en `news` + N filas en `news_visibility`. Sin duplicación.
-
-Listado admin: filtro por país y por canal de visibilidad. Editores de país sólo ven/editan noticias de su(s) país(es).
-
-Nuevo admin `/admin/paises` (sólo super-admin): activar/desactivar país, color de acento, asignar editores a países.
-
----
-
-## Fase 4 — Buscador global, RollerZone TV por país, SEO técnico
-
-- Buscador con filtros: país, categoría, fecha, tipo (noticia/atleta/club/evento).
-- `/tv` con tabs Global / Colombia / Venezuela (filtra por `country_code`).
-- Sitemap dinámico que incluye rutas de país y contenido por país.
-- `head()` por ruta: title/description/og/twitter/canonical y JSON-LD `NewsArticle` con `inLanguage` + `contentLocation` por país.
-
----
-
-## Fase 5 — Migración de contenido y QA responsive
-
-- Script de migración (insert tool) que asigna `country_code='es'` a todo el contenido existente y crea las filas de `news_visibility` correspondientes.
-- QA en móvil/tablet/desktop de las nuevas homes de país.
-- Verificación de RLS con cuenta editor de prueba por país.
+### Fase 5 — Archivo + Comunidad
+- Archivo histórico (vistas filtradas de news/results)
+- Calendario comunidad + formulario "Envía tu noticia"
+- Sistema de roles colaborador por país (ampliar `editor_countries`)
 
 ---
 
 ## Detalles técnicos
 
-- **Sin duplicación de noticias:** garantizado por `news_visibility` (PK compuesta) + RLS que impide a un editor de Colombia tocar noticias cuyo `country_code` no esté entre sus permisos, pero sí puede *añadir visibilidad* a Colombia sobre una noticia global (regla a definir: por defecto sólo el autor/admin marca visibilidad cross-país; el editor de país sólo marca su propio país).
-- **Compatibilidad:** las páginas actuales (`/`, `/noticias`, `/eventos`, etc.) siguen funcionando. La home global lee `news_visibility.channel='global_home'`. Si una noticia no tiene fila de visibilidad (legacy), fallback al comportamiento actual durante la transición.
-- **Expansión futura:** añadir un país = insertar fila en `countries` + activarlo. La ruta `/$country` y los componentes ya lo soportan.
-- **Identidad:** tokens existentes intactos. Cada país añade variables CSS `--country-accent-1/2/3` aplicadas sólo a una banda decorativa y badges.
+- **Escalabilidad**: TODA la lógica recibe `countryCode`. Duplicar para Colombia = añadir fila en `country_hubs` + activar secciones. Cero código nuevo.
+- **Admin**: cada fase añade su panel correspondiente en `/admin/hub/...` con RLS por rol `editor` + país asignado (`editor_countries` ya existe).
+- **Acceso desde header**: el menú "España" actual del header pasará a apuntar a `/hub/es`.
+- **SEO**: cada ruta hub con su `head()` (title, description, og:image).
+- **Sin romper lo existente**: las páginas actuales (`/noticias`, `/eventos`, `/resultados`, etc.) siguen funcionando; el hub las complementa con vistas filtradas.
 
 ---
 
-## Pregunta de alcance antes de empezar
+## Qué necesito confirmar antes de empezar Fase 1
 
-El plan completo es grande (5 fases, ~3-4 iteraciones por fase). Propongo empezar por **Fase 1 + Fase 2** en esta tanda (base de datos + rutas públicas de país funcionando con el contenido existente marcado como España), y dejar Fase 3-5 para iteraciones siguientes. ¿Confirmas o prefieres otro alcance inicial?
+1. **¿Apruebas avanzar por fases?** (5 fases ≈ 5 entregas revisables). Si quieres todo de golpe, será mucho más arriesgado y difícil de revisar.
+2. **¿La sección "España" del header debe seguir existiendo separada, o se sustituye por el nuevo Hub `/hub/es`?**
+3. **Datos iniciales**: ¿quieres que pueble España con los datos ya existentes (filtrando `country_code='es'`) o empezamos vacío y vas cargando desde admin?
+4. **Federaciones autonómicas**: ¿tienes ya un listado oficial (17 CCAA + 2 ciudades autónomas) con webs, o lo dejo con placeholders editables?
+
+Cuando confirmes estos 4 puntos, ejecuto **Fase 1** completa (migración DB + rutas + dashboard editorial + sub-nav).
