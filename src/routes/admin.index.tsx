@@ -408,17 +408,24 @@ function NewsEditor({
         status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
       };
+      let newsId = item?.id ?? null;
       if (item) {
         const { error } = await supabase.from("news").update(payload).eq("id", item.id);
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        if (error) { toast.error(error.message); return; }
       } else {
-        const { error } = await supabase.from("news").insert(payload);
-        if (error) {
-          toast.error(error.message);
-          return;
+        const { data, error } = await supabase.from("news").insert(payload).select("id").single();
+        if (error) { toast.error(error.message); return; }
+        newsId = (data as { id: string }).id;
+      }
+      if (newsId) {
+        try {
+          await Promise.all([
+            saveRelations("news", "clubs", newsId, relClubs),
+            saveRelations("news", "skaters", newsId, relSkaters),
+            saveRelations("news", "federations", newsId, relFeds),
+          ]);
+        } catch (e) {
+          toast.error(`Relaciones no guardadas: ${(e as Error).message}`);
         }
       }
 
