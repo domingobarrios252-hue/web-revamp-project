@@ -270,19 +270,56 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
   const isEdit = !!initial?.id;
   const [tier, setTier] = useState<AwardRow["tier"]>(initial?.tier ?? "elite");
   const [gender, setGender] = useState<AwardRow["gender"]>(initial?.gender ?? "masculino");
+  const [position, setPosition] = useState<number>(initial?.position ?? 1);
   const [fullName, setFullName] = useState(initial?.full_name ?? "");
   const [photoUrl, setPhotoUrl] = useState(initial?.photo_url ?? "");
   const [club, setClub] = useState(initial?.club ?? "");
   const [region, setRegion] = useState(initial?.region ?? "");
   const [categoryAge, setCategoryAge] = useState(initial?.category_age ?? "");
   const [merit, setMerit] = useState(initial?.merit ?? "");
+  const [points, setPoints] = useState<number>(initial?.points ?? 0);
+  const [previousPosition, setPreviousPosition] = useState<string>(
+    initial?.previous_position != null ? String(initial.previous_position) : ""
+  );
+  const [skaterId, setSkaterId] = useState<string>(initial?.skater_id ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
   const [saving, setSaving] = useState(false);
+  const [skaterSearch, setSkaterSearch] = useState("");
+  const [skaters, setSkaters] = useState<SkaterOpt[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("skaters")
+      .select("id,full_name,club")
+      .eq("country_code", "es")
+      .order("full_name")
+      .limit(500)
+      .then(({ data }) => setSkaters((data as SkaterOpt[]) ?? []));
+  }, []);
+
+  // When linking to a skater, prefill name/club/photo if empty.
+  useEffect(() => {
+    if (!skaterId) return;
+    const s = skaters.find((x) => x.id === skaterId);
+    if (!s) return;
+    if (!fullName) setFullName(s.full_name);
+    if (!club && s.club) setClub(s.club);
+  }, [skaterId, skaters]);
+
+  const filteredSkaters = useMemo(() => {
+    const q = skaterSearch.trim().toLowerCase();
+    if (!q) return skaters.slice(0, 30);
+    return skaters
+      .filter((s) => s.full_name.toLowerCase().includes(q) || (s.club ?? "").toLowerCase().includes(q))
+      .slice(0, 30);
+  }, [skaters, skaterSearch]);
 
   const save = async () => {
     const parsed = awardSchema.safeParse({
-      season_id: seasonId, tier, gender, position: 1, full_name: fullName,
-      photo_url: photoUrl, club, region, category_age: categoryAge, merit, published,
+      season_id: seasonId, tier, gender, position, full_name: fullName,
+      photo_url: photoUrl, club, region, category_age: categoryAge, merit,
+      points, previous_position: previousPosition === "" ? undefined : Number(previousPosition),
+      skater_id: skaterId, published,
     });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
@@ -293,13 +330,16 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
       season_id: seasonId,
       tier,
       gender,
-      position: 1,
+      position,
       full_name: fullName.trim(),
       photo_url: photoUrl.trim() || null,
       club: club.trim() || null,
       region: region.trim() || null,
       category_age: categoryAge.trim() || null,
       merit: merit.trim() || null,
+      points,
+      previous_position: previousPosition === "" ? null : Number(previousPosition),
+      skater_id: skaterId || null,
       published,
     };
     const res = isEdit
@@ -338,11 +378,56 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
               {GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}
             </select>
           </Field>
+          <Field label="Posición">
+            <select value={position} onChange={(e) => setPosition(Number(e.target.value))} className="input">
+              {POSITIONS.map((p) => <option key={p} value={p}>{p}º</option>)}
+            </select>
+          </Field>
+          <Field label="Puntos *">
+            <input
+              type="number" min={0} step={0.01}
+              value={points}
+              onChange={(e) => setPoints(Number(e.target.value))}
+              className="input"
+              placeholder="125"
+            />
+          </Field>
+          <Field label="Posición anterior (para tendencia)">
+            <input
+              type="number" min={0}
+              value={previousPosition}
+              onChange={(e) => setPreviousPosition(e.target.value)}
+              className="input"
+              placeholder="Vacío = NEW"
+            />
+          </Field>
           <Field label="Estado">
             <label className="flex h-9 items-center gap-2 text-sm">
               <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
               Publicado
             </label>
+          </Field>
+          <Field label="Patinador vinculado (opcional)" full>
+            <div className="space-y-2">
+              <input
+                value={skaterSearch}
+                onChange={(e) => setSkaterSearch(e.target.value)}
+                className="input"
+                placeholder="Buscar patinador por nombre o club…"
+              />
+              <select
+                value={skaterId}
+                onChange={(e) => setSkaterId(e.target.value)}
+                className="input"
+              >
+                <option value="">— Sin vincular —</option>
+                {filteredSkaters.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.full_name}{s.club ? ` · ${s.club}` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
           </Field>
           <Field label="Nombre completo *" full>
             <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="input" placeholder="Ana García López" />
