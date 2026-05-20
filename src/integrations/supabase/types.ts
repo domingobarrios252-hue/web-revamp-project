@@ -220,6 +220,57 @@ export type Database = {
           },
         ]
       }
+      community_submissions: {
+        Row: {
+          admin_notes: string | null
+          country_code: string
+          created_at: string
+          description: string
+          email: string
+          id: string
+          image_urls: string[]
+          links: string[]
+          name: string
+          phone: string | null
+          status: string
+          submission_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          country_code?: string
+          created_at?: string
+          description: string
+          email: string
+          id?: string
+          image_urls?: string[]
+          links?: string[]
+          name: string
+          phone?: string | null
+          status?: string
+          submission_type?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          country_code?: string
+          created_at?: string
+          description?: string
+          email?: string
+          id?: string
+          image_urls?: string[]
+          links?: string[]
+          name?: string
+          phone?: string | null
+          status?: string
+          submission_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       countries: {
         Row: {
           accent_color_1: string | null
@@ -1026,6 +1077,36 @@ export type Database = {
         }
         Relationships: []
       }
+      live_timeline: {
+        Row: {
+          created_at: string
+          entry_type: string
+          event_id: string
+          id: string
+          message: string
+          occurred_at: string
+          published: boolean
+        }
+        Insert: {
+          created_at?: string
+          entry_type?: string
+          event_id: string
+          id?: string
+          message: string
+          occurred_at?: string
+          published?: boolean
+        }
+        Update: {
+          created_at?: string
+          entry_type?: string
+          event_id?: string
+          id?: string
+          message?: string
+          occurred_at?: string
+          published?: boolean
+        }
+        Relationships: []
+      }
       magazines: {
         Row: {
           cover_url: string | null
@@ -1120,48 +1201,60 @@ export type Database = {
         Row: {
           category_age: string | null
           club: string | null
+          country_code: string
           created_at: string
           full_name: string
           gender: Database["public"]["Enums"]["mvp_gender"]
           id: string
           merit: string | null
           photo_url: string | null
+          points: number
           position: number
+          previous_position: number | null
           published: boolean
           region: string | null
           season_id: string
+          skater_id: string | null
           tier: Database["public"]["Enums"]["mvp_tier"]
           updated_at: string
         }
         Insert: {
           category_age?: string | null
           club?: string | null
+          country_code?: string
           created_at?: string
           full_name: string
           gender: Database["public"]["Enums"]["mvp_gender"]
           id?: string
           merit?: string | null
           photo_url?: string | null
+          points?: number
           position: number
+          previous_position?: number | null
           published?: boolean
           region?: string | null
           season_id: string
+          skater_id?: string | null
           tier: Database["public"]["Enums"]["mvp_tier"]
           updated_at?: string
         }
         Update: {
           category_age?: string | null
           club?: string | null
+          country_code?: string
           created_at?: string
           full_name?: string
           gender?: Database["public"]["Enums"]["mvp_gender"]
           id?: string
           merit?: string | null
           photo_url?: string | null
+          points?: number
           position?: number
+          previous_position?: number | null
           published?: boolean
           region?: string | null
           season_id?: string
+          skater_id?: string | null
           tier?: Database["public"]["Enums"]["mvp_tier"]
           updated_at?: string
         }
@@ -1875,6 +1968,7 @@ export type Database = {
           gender: string | null
           height_cm: number | null
           id: string
+          is_legend: boolean
           palmares: Json
           personal_records: Json
           photo_url: string | null
@@ -1905,6 +1999,7 @@ export type Database = {
           gender?: string | null
           height_cm?: number | null
           id?: string
+          is_legend?: boolean
           palmares?: Json
           personal_records?: Json
           photo_url?: string | null
@@ -1935,6 +2030,7 @@ export type Database = {
           gender?: string | null
           height_cm?: number | null
           id?: string
+          is_legend?: boolean
           palmares?: Json
           personal_records?: Json
           photo_url?: string | null
@@ -2266,15 +2362,19 @@ export type Database = {
       videos: {
         Row: {
           category: string | null
+          club_id: string | null
           country_code: string
           created_at: string
           description: string | null
           duration_seconds: number | null
+          event_id: string | null
           featured: boolean
           id: string
+          news_id: string | null
           published: boolean
           published_at: string
           slug: string
+          sort_order: number
           thumbnail_url: string | null
           title: string
           updated_at: string
@@ -2283,15 +2383,19 @@ export type Database = {
         }
         Insert: {
           category?: string | null
+          club_id?: string | null
           country_code?: string
           created_at?: string
           description?: string | null
           duration_seconds?: number | null
+          event_id?: string | null
           featured?: boolean
           id?: string
+          news_id?: string | null
           published?: boolean
           published_at?: string
           slug: string
+          sort_order?: number
           thumbnail_url?: string | null
           title: string
           updated_at?: string
@@ -2300,15 +2404,19 @@ export type Database = {
         }
         Update: {
           category?: string | null
+          club_id?: string | null
           country_code?: string
           created_at?: string
           description?: string | null
           duration_seconds?: number | null
+          event_id?: string | null
           featured?: boolean
           id?: string
+          news_id?: string | null
           published?: boolean
           published_at?: string
           slug?: string
+          sort_order?: number
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
