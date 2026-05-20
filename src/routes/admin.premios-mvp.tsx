@@ -157,7 +157,7 @@ function AdminPremiosMvp() {
         )}
       </div>
 
-      {/* Awards grid by tier × gender */}
+      {/* Awards ranking by tier × gender (positions 1-3) */}
       {activeSeasonId && (
         <div className="space-y-8">
           {TIERS.map((tier) => (
@@ -165,45 +165,77 @@ function AdminPremiosMvp() {
               <h3 className="font-display mb-3 text-lg tracking-widest text-gold">{TIER_LABEL[tier]}</h3>
               <div className="grid gap-4 lg:grid-cols-2">
                 {GENDERS.map((gender) => {
-                  const a = filteredAwards.find((x) => x.tier === tier && x.gender === gender && x.position === 1);
+                  const ranking = filteredAwards
+                    .filter((x) => x.tier === tier && x.gender === gender)
+                    .sort((a, b) => a.position - b.position);
+                  const takenPositions = new Set(ranking.map((r) => r.position));
+                  const nextPosition = [1, 2, 3].find((p) => !takenPositions.has(p));
                   return (
                     <div key={gender} className="border border-border bg-surface p-4">
-                      <div className="font-condensed mb-3 text-xs uppercase tracking-widest text-muted-foreground">{gender}</div>
-                      {a ? (
-                        <button
-                          onClick={() => { setEditing(a); setShowForm(true); }}
-                          className="group flex w-full items-center gap-3 border border-border bg-background p-3 text-left hover:border-gold"
-                        >
-                          <div className="h-20 w-20 shrink-0 overflow-hidden border border-border bg-surface">
-                            {a.photo_url ? (
-                              <img src={a.photo_url} alt={a.full_name} className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">Sin foto</div>
-                            )}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="font-display text-sm tracking-wider text-foreground">{a.full_name}</div>
-                            {a.club && <div className="font-condensed mt-0.5 text-[11px] uppercase tracking-widest text-gold">{a.club}</div>}
-                            {(a.region || a.category_age) && (
-                              <div className="font-condensed mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-                                {[a.region, a.category_age].filter(Boolean).join(" · ")}
+                      <div className="font-condensed mb-3 flex items-center justify-between text-xs uppercase tracking-widest text-muted-foreground">
+                        <span>{gender}</span>
+                        <span className="text-[10px] text-muted-foreground/70">Top 3</span>
+                      </div>
+                      <div className="space-y-2">
+                        {ranking.map((a) => {
+                          const delta =
+                            a.previous_position != null ? a.previous_position - a.position : null;
+                          return (
+                            <button
+                              key={a.id}
+                              onClick={() => { setEditing(a); setShowForm(true); }}
+                              className="group flex w-full items-center gap-3 border border-border bg-background p-2.5 text-left hover:border-gold"
+                            >
+                              <div className="font-display w-6 shrink-0 text-center text-base text-gold">
+                                {a.position}
                               </div>
-                            )}
-                            {!a.published && (
-                              <span className="font-condensed mt-1 inline-block border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-muted-foreground">Borrador</span>
-                            )}
-                          </div>
-                          <Pencil className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-gold" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => { setEditing({ id: "", season_id: activeSeasonId, tier, gender, position: 1, full_name: "", photo_url: null, club: null, region: null, category_age: null, merit: null, published: true }); setShowForm(true); }}
-                          className="flex h-24 w-full flex-col items-center justify-center gap-1 border border-dashed border-border bg-background text-muted-foreground hover:border-gold hover:text-gold"
-                        >
-                          <Plus className="h-5 w-5" />
-                          <span className="font-condensed text-[10px] uppercase tracking-widest">Asignar MVP</span>
-                        </button>
-                      )}
+                              <div className="h-12 w-12 shrink-0 overflow-hidden border border-border bg-surface">
+                                {a.photo_url ? (
+                                  <img src={a.photo_url} alt={a.full_name} className="h-full w-full object-cover" />
+                                ) : null}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="font-display truncate text-sm tracking-wider text-foreground">{a.full_name}</div>
+                                <div className="font-condensed mt-0.5 flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                                  <span className="text-gold">{Number(a.points).toLocaleString("es-ES")} pts</span>
+                                  {a.club && <span className="truncate">· {a.club}</span>}
+                                  {delta != null && delta !== 0 && (
+                                    <span className={delta > 0 ? "text-emerald-500" : "text-destructive"}>
+                                      {delta > 0 ? `↑${delta}` : `↓${Math.abs(delta)}`}
+                                    </span>
+                                  )}
+                                  {a.previous_position == null && (
+                                    <span className="text-sky-500">NEW</span>
+                                  )}
+                                </div>
+                              </div>
+                              {!a.published && (
+                                <span className="font-condensed border border-border px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-muted-foreground">Borrador</span>
+                              )}
+                              <Pencil className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-gold" />
+                            </button>
+                          );
+                        })}
+                        {nextPosition && (
+                          <button
+                            onClick={() => {
+                              setEditing({
+                                id: "", season_id: activeSeasonId, tier, gender, position: nextPosition,
+                                full_name: "", photo_url: null, club: null, region: null,
+                                category_age: null, merit: null, points: 0, previous_position: null,
+                                skater_id: null, published: true,
+                              });
+                              setShowForm(true);
+                            }}
+                            className="flex w-full items-center justify-center gap-1 border border-dashed border-border bg-background py-2 text-muted-foreground hover:border-gold hover:text-gold"
+                          >
+                            <Plus className="h-4 w-4" />
+                            <span className="font-condensed text-[10px] uppercase tracking-widest">
+                              Añadir posición {nextPosition}
+                            </span>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
