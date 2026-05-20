@@ -317,12 +317,12 @@ export function HubDashboard({ country }: { country: string }) {
 
         <SideCard title="Accesos rápidos">
           <div className="grid grid-cols-2 gap-2">
-            <QuickLink href={`/hub/${country}/competicion`} label="Liga Nacional" />
-            <QuickLink href={`/hub/${country}/competicion`} label="Campeonatos" />
-            <QuickLink href={`/hub/${country}/clubes`} label="Clubs" />
-            <QuickLink href={`/hub/${country}/patinadores`} label="Patinadores" />
-            <QuickLink href={`/hub/${country}/mvp`} label="MVP" />
-            <QuickLink href={`/hub/${country}/tv`} label="TV" />
+            <QuickLink country={country} section="competicion" label="Liga Nacional" />
+            <QuickLink country={country} section="competicion" label="Campeonatos" />
+            <QuickLink country={country} section="clubes" label="Clubs" />
+            <QuickLink country={country} section="patinadores" label="Patinadores" />
+            <QuickLink country={country} section="mvp" label="MVP" />
+            <QuickLink country={country} section="tv" label="TV" />
           </div>
         </SideCard>
       </aside>
