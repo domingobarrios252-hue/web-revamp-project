@@ -424,7 +424,7 @@ function AwardForm({ initial, seasonId, onClose, onSaved }: { initial: AwardRow 
                 <option value="">— Sin vincular —</option>
                 {filteredSkaters.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.full_name}{s.club ? ` · ${s.club}` : ""}
+                    {s.full_name}{s.club?.name ? ` · ${s.club.name}` : ""}
                   </option>
                 ))}
               </select>
