@@ -209,11 +209,27 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
       gallery: parsed.data.gallery,
       country_code,
     };
-    const { error } = initial
-      ? await supabase.from("events").update(payload).eq("id", initial.id)
-      : await supabase.from("events").insert(payload);
+    let eventId = initial?.id ?? null;
+    if (initial) {
+      const { error } = await supabase.from("events").update(payload).eq("id", initial.id);
+      if (error) { setSaving(false); return toast.error(error.message); }
+    } else {
+      const { data, error } = await supabase.from("events").insert(payload).select("id").single();
+      if (error) { setSaving(false); return toast.error(error.message); }
+      eventId = (data as { id: string }).id;
+    }
+    if (eventId) {
+      try {
+        await Promise.all([
+          saveRelations("events", "clubs", eventId, relClubs),
+          saveRelations("events", "skaters", eventId, relSkaters),
+          saveRelations("events", "federations", eventId, relFeds),
+        ]);
+      } catch (e) {
+        toast.error(`Relaciones no guardadas: ${(e as Error).message}`);
+      }
+    }
     setSaving(false);
-    if (error) return toast.error(error.message);
     toast.success(initial ? "Evento actualizado" : "Evento creado");
     onSaved();
   };
