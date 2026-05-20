@@ -19,24 +19,32 @@ type AwardRow = {
   region: string | null;
   category_age: string | null;
   merit: string | null;
+  points: number;
+  previous_position: number | null;
+  skater_id: string | null;
   published: boolean;
 };
+type SkaterOpt = { id: string; full_name: string; club: string | null };
 
 const TIERS = ["elite", "estrella", "promesa"] as const;
 const GENDERS = ["masculino", "femenino"] as const;
+const POSITIONS = [1, 2, 3] as const;
 const TIER_LABEL: Record<string, string> = { elite: "Élite", estrella: "Estrella", promesa: "Promesa" };
 
 const awardSchema = z.object({
   season_id: z.string().uuid(),
   tier: z.enum(TIERS),
   gender: z.enum(GENDERS),
-  position: z.literal(1),
+  position: z.coerce.number().int().min(1).max(3),
   full_name: z.string().trim().min(2).max(160),
   photo_url: z.string().trim().url().optional().or(z.literal("")),
   club: z.string().trim().max(120).optional().or(z.literal("")),
   region: z.string().trim().max(120).optional().or(z.literal("")),
   category_age: z.string().trim().max(60).optional().or(z.literal("")),
   merit: z.string().trim().max(500).optional().or(z.literal("")),
+  points: z.coerce.number().min(0).max(99999),
+  previous_position: z.coerce.number().int().min(0).max(999).optional(),
+  skater_id: z.string().uuid().optional().or(z.literal("")),
   published: z.boolean(),
 });
 
