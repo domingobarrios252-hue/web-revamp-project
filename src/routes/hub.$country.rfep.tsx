@@ -14,25 +14,12 @@ export const Route = createFileRoute("/hub/$country/rfep")({
 });
 
 type Federation = {
-  id: string;
-  name: string;
-  short_name: string | null;
-  slug: string;
-  logo_url: string | null;
-  cover_url: string | null;
-  description: string | null;
-  president: string | null;
-  email: string | null;
-  phone: string | null;
-  website: string | null;
-  city: string | null;
-  address: string | null;
-  founded_year: number | null;
-  social: Record<string, string | undefined>;
+  id: string; name: string; short_name: string | null; slug: string;
+  logo_url: string | null; cover_url: string | null; description: string | null;
+  president: string | null; email: string | null; phone: string | null;
+  website: string | null; city: string | null; founded_year: number | null;
 };
-
 type Doc = { id: string; title: string; doc_type: string; file_url: string; description: string | null; published_at: string };
-
 type AutonomicaLite = { id: string; name: string; short_name: string | null; slug: string; region_name: string | null; logo_url: string | null };
 
 const TABS: { key: string; label: string; icon: typeof FileText }[] = [
@@ -54,21 +41,9 @@ function RfepHub() {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const supa = supabase as unknown as {
-        from: (t: string) => {
-          select: (s: string) => {
-            eq: (c: string, v: string) => {
-              eq?: (c: string, v: string) => { maybeSingle: () => Promise<{ data: unknown }>; order: (c: string, o?: { ascending?: boolean }) => Promise<{ data: unknown }> };
-              order?: (c: string, o?: { ascending?: boolean }) => Promise<{ data: unknown }>;
-              maybeSingle: () => Promise<{ data: unknown }>;
-            };
-          };
-        };
-      };
-
-      const fedRes = await (supabase as unknown as {
-        from: (t: string) => { select: (s: string) => { eq: (c: string, v: string) => { eq: (c: string, v: string) => { order: (c: string, o?: { ascending?: boolean }) => { limit: (n: number) => { maybeSingle: () => Promise<{ data: unknown }> } } } } } };
-      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const supa = supabase as any;
+      const fedRes = await supa
         .from("federations")
         .select("*")
         .eq("country_code", country)
@@ -80,15 +55,14 @@ function RfepHub() {
 
       let docsRows: Doc[] = [];
       if (fedRow) {
-        const r = await (supabase as unknown as { from: (t: string) => { select: (s: string) => { eq: (c: string, v: string) => { order: (c: string, o?: { ascending?: boolean }) => Promise<{ data: unknown }> } } } })
+        const r = await supa
           .from("federation_documents")
           .select("id, title, doc_type, file_url, description, published_at")
           .eq("federation_id", fedRow.id)
           .order("published_at", { ascending: false });
-        docsRows = ((r.data as Doc[]) ?? []);
+        docsRows = (r.data ?? []) as Doc[];
       }
-
-      const auRes = await (supabase as unknown as { from: (t: string) => { select: (s: string) => { eq: (c: string, v: string) => { eq: (c: string, v: string) => { order: (c: string) => Promise<{ data: unknown }> } } } } })
+      const auRes = await supa
         .from("federations")
         .select("id, name, short_name, slug, region_name, logo_url")
         .eq("country_code", country)
@@ -98,9 +72,8 @@ function RfepHub() {
       if (cancelled) return;
       setFed(fedRow);
       setDocs(docsRows);
-      setAutonomicas(((auRes.data as AutonomicaLite[]) ?? []));
+      setAutonomicas((auRes.data ?? []) as AutonomicaLite[]);
       setLoading(false);
-      void supa; // satisfy ts
     })();
     return () => { cancelled = true; };
   }, [country]);
@@ -125,7 +98,6 @@ function RfepHub() {
 
   return (
     <div>
-      {/* Hero */}
       <div className="relative border-b border-[#222] bg-[#0d0d0d]">
         {fed.cover_url && (
           <div className="absolute inset-0 opacity-30">
@@ -164,7 +136,6 @@ function RfepHub() {
           <div className="mb-8 max-w-3xl text-sm leading-relaxed text-[#B5B5B5] whitespace-pre-line">{fed.description}</div>
         )}
 
-        {/* Tabs */}
         <div className="mb-6 flex flex-wrap gap-1 border-b border-[#222]">
           {TABS.map((t) => {
             const Icon = t.icon;
@@ -208,7 +179,6 @@ function RfepHub() {
           )}
         </div>
 
-        {/* Autonómicas */}
         {autonomicas.length > 0 && (
           <section className="mt-12">
             <h2 className="font-display mb-4 text-xl font-black uppercase text-[#F5F5F5]">Federaciones autonómicas ({autonomicas.length})</h2>
