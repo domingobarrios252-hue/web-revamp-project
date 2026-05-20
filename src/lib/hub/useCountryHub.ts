@@ -22,6 +22,7 @@ export type HubSectionKey =
   | "patinadores"
   | "federaciones"
   | "tv"
+  | "live"
   | "mvp"
   | "archivo"
   | "comunidad";
@@ -33,6 +34,7 @@ export const HUB_SECTIONS: { key: HubSectionKey; label: string }[] = [
   { key: "patinadores", label: "Patinadores" },
   { key: "federaciones", label: "Federaciones" },
   { key: "tv", label: "RollerZone TV" },
+  { key: "live", label: "Live" },
   { key: "mvp", label: "MVP" },
   { key: "archivo", label: "Archivo" },
   { key: "comunidad", label: "Comunidad" },
