@@ -37,6 +37,7 @@ import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as HubCountryRouteImport } from './routes/hub.$country'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
+import { Route as EspanaRollerzoneTvRouteImport } from './routes/espana.rollerzone-tv'
 import { Route as EspanaPatinadoresRouteImport } from './routes/espana.patinadores'
 import { Route as EspanaFederacionesRouteImport } from './routes/espana.federaciones'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
@@ -85,6 +86,7 @@ import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$co
 import { Route as HubCountryFederacionesIndexRouteImport } from './routes/hub.$country.federaciones.index'
 import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
 import { Route as HubCountryClubesIndexRouteImport } from './routes/hub.$country.clubes.index'
+import { Route as HubCountryTvSlugRouteImport } from './routes/hub.$country.tv.$slug'
 import { Route as HubCountryRegionesCodeRouteImport } from './routes/hub.$country.regiones.$code'
 import { Route as HubCountryPatinadoresSlugRouteImport } from './routes/hub.$country.patinadores.$slug'
 import { Route as HubCountryFederacionesSlugRouteImport } from './routes/hub.$country.federaciones.$slug'
@@ -234,6 +236,11 @@ const EventsSlugRoute = EventsSlugRouteImport.update({
 const EventosSlugRoute = EventosSlugRouteImport.update({
   id: '/eventos/$slug',
   path: '/eventos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EspanaRollerzoneTvRoute = EspanaRollerzoneTvRouteImport.update({
+  id: '/espana/rollerzone-tv',
+  path: '/espana/rollerzone-tv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EspanaPatinadoresRoute = EspanaPatinadoresRouteImport.update({
@@ -479,6 +486,11 @@ const HubCountryClubesIndexRoute = HubCountryClubesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HubCountryClubesRoute,
 } as any)
+const HubCountryTvSlugRoute = HubCountryTvSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => HubCountryTvRoute,
+} as any)
 const HubCountryRegionesCodeRoute = HubCountryRegionesCodeRouteImport.update({
   id: '/regiones/$code',
   path: '/regiones/$code',
@@ -585,6 +597,7 @@ export interface FileRoutesByFullPath {
   '/espana/clubes': typeof EspanaClubesRoute
   '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
+  '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
@@ -615,6 +628,7 @@ export interface FileRoutesByFullPath {
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/regiones/$code': typeof HubCountryRegionesCodeRoute
+  '/hub/$country/tv/$slug': typeof HubCountryTvSlugRoute
   '/hub/$country/clubes/': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones/': typeof HubCountryFederacionesIndexRoute
@@ -671,6 +685,7 @@ export interface FileRoutesByTo {
   '/espana/clubes': typeof EspanaClubesRoute
   '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
+  '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
@@ -694,6 +709,7 @@ export interface FileRoutesByTo {
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/regiones/$code': typeof HubCountryRegionesCodeRoute
+  '/hub/$country/tv/$slug': typeof HubCountryTvSlugRoute
   '/hub/$country/clubes': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones': typeof HubCountryFederacionesIndexRoute
@@ -753,6 +769,7 @@ export interface FileRoutesById {
   '/espana/clubes': typeof EspanaClubesRoute
   '/espana/federaciones': typeof EspanaFederacionesRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
+  '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
@@ -783,6 +800,7 @@ export interface FileRoutesById {
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/regiones/$code': typeof HubCountryRegionesCodeRoute
+  '/hub/$country/tv/$slug': typeof HubCountryTvSlugRoute
   '/hub/$country/clubes/': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones/': typeof HubCountryFederacionesIndexRoute
@@ -843,6 +861,7 @@ export interface FileRouteTypes {
     | '/espana/clubes'
     | '/espana/federaciones'
     | '/espana/patinadores'
+    | '/espana/rollerzone-tv'
     | '/eventos/$slug'
     | '/events/$slug'
     | '/hub/$country'
@@ -873,6 +892,7 @@ export interface FileRouteTypes {
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/regiones/$code'
+    | '/hub/$country/tv/$slug'
     | '/hub/$country/clubes/'
     | '/hub/$country/competicion/'
     | '/hub/$country/federaciones/'
@@ -929,6 +949,7 @@ export interface FileRouteTypes {
     | '/espana/clubes'
     | '/espana/federaciones'
     | '/espana/patinadores'
+    | '/espana/rollerzone-tv'
     | '/eventos/$slug'
     | '/events/$slug'
     | '/legal/$slug'
@@ -952,6 +973,7 @@ export interface FileRouteTypes {
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/regiones/$code'
+    | '/hub/$country/tv/$slug'
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
     | '/hub/$country/federaciones'
@@ -1010,6 +1032,7 @@ export interface FileRouteTypes {
     | '/espana/clubes'
     | '/espana/federaciones'
     | '/espana/patinadores'
+    | '/espana/rollerzone-tv'
     | '/eventos/$slug'
     | '/events/$slug'
     | '/hub/$country'
@@ -1040,6 +1063,7 @@ export interface FileRouteTypes {
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/regiones/$code'
+    | '/hub/$country/tv/$slug'
     | '/hub/$country/clubes/'
     | '/hub/$country/competicion/'
     | '/hub/$country/federaciones/'
@@ -1071,6 +1095,7 @@ export interface RootRouteChildren {
   EspanaClubesRoute: typeof EspanaClubesRoute
   EspanaFederacionesRoute: typeof EspanaFederacionesRoute
   EspanaPatinadoresRoute: typeof EspanaPatinadoresRoute
+  EspanaRollerzoneTvRoute: typeof EspanaRollerzoneTvRoute
   EventosSlugRoute: typeof EventosSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
   HubCountryRoute: typeof HubCountryRouteWithChildren
@@ -1284,6 +1309,13 @@ declare module '@tanstack/react-router' {
       path: '/eventos/$slug'
       fullPath: '/eventos/$slug'
       preLoaderRoute: typeof EventosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/rollerzone-tv': {
+      id: '/espana/rollerzone-tv'
+      path: '/espana/rollerzone-tv'
+      fullPath: '/espana/rollerzone-tv'
+      preLoaderRoute: typeof EspanaRollerzoneTvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/espana/patinadores': {
@@ -1622,6 +1654,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryClubesIndexRouteImport
       parentRoute: typeof HubCountryClubesRoute
     }
+    '/hub/$country/tv/$slug': {
+      id: '/hub/$country/tv/$slug'
+      path: '/$slug'
+      fullPath: '/hub/$country/tv/$slug'
+      preLoaderRoute: typeof HubCountryTvSlugRouteImport
+      parentRoute: typeof HubCountryTvRoute
+    }
     '/hub/$country/regiones/$code': {
       id: '/hub/$country/regiones/$code'
       path: '/regiones/$code'
@@ -1861,10 +1900,12 @@ const HubCountryPatinadoresRouteWithChildren =
   )
 
 interface HubCountryTvRouteChildren {
+  HubCountryTvSlugRoute: typeof HubCountryTvSlugRoute
   HubCountryTvIndexRoute: typeof HubCountryTvIndexRoute
 }
 
 const HubCountryTvRouteChildren: HubCountryTvRouteChildren = {
+  HubCountryTvSlugRoute: HubCountryTvSlugRoute,
   HubCountryTvIndexRoute: HubCountryTvIndexRoute,
 }
 
@@ -1919,6 +1960,7 @@ const rootRouteChildren: RootRouteChildren = {
   EspanaClubesRoute: EspanaClubesRoute,
   EspanaFederacionesRoute: EspanaFederacionesRoute,
   EspanaPatinadoresRoute: EspanaPatinadoresRoute,
+  EspanaRollerzoneTvRoute: EspanaRollerzoneTvRoute,
   EventosSlugRoute: EventosSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
   HubCountryRoute: HubCountryRouteWithChildren,
@@ -1938,3 +1980,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
