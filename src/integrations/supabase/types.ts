@@ -121,37 +121,94 @@ export type Database = {
       }
       clubs: {
         Row: {
+          address: string | null
+          categories: string[]
+          city: string | null
+          coaches: Json
           country_code: string
+          cover_url: string | null
           created_at: string
+          description: string | null
+          email: string | null
+          facebook_url: string | null
+          featured: boolean
+          founded_year: number | null
+          gallery: string[]
+          history: string | null
           id: string
+          instagram_url: string | null
           logo_url: string | null
           name: string
+          phone: string | null
+          province: string | null
+          published: boolean
           region_id: string | null
+          school_type: string
           slug: string
+          tiktok_url: string | null
           updated_at: string
           website: string | null
+          youtube_url: string | null
         }
         Insert: {
+          address?: string | null
+          categories?: string[]
+          city?: string | null
+          coaches?: Json
           country_code?: string
+          cover_url?: string | null
           created_at?: string
+          description?: string | null
+          email?: string | null
+          facebook_url?: string | null
+          featured?: boolean
+          founded_year?: number | null
+          gallery?: string[]
+          history?: string | null
           id?: string
+          instagram_url?: string | null
           logo_url?: string | null
           name: string
+          phone?: string | null
+          province?: string | null
+          published?: boolean
           region_id?: string | null
+          school_type?: string
           slug: string
+          tiktok_url?: string | null
           updated_at?: string
           website?: string | null
+          youtube_url?: string | null
         }
         Update: {
+          address?: string | null
+          categories?: string[]
+          city?: string | null
+          coaches?: Json
           country_code?: string
+          cover_url?: string | null
           created_at?: string
+          description?: string | null
+          email?: string | null
+          facebook_url?: string | null
+          featured?: boolean
+          founded_year?: number | null
+          gallery?: string[]
+          history?: string | null
           id?: string
+          instagram_url?: string | null
           logo_url?: string | null
           name?: string
+          phone?: string | null
+          province?: string | null
+          published?: boolean
           region_id?: string | null
+          school_type?: string
           slug?: string
+          tiktok_url?: string | null
           updated_at?: string
           website?: string | null
+          youtube_url?: string | null
         }
         Relationships: [
           {
@@ -276,6 +333,42 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "countries"
             referencedColumns: ["code"]
+          },
+        ]
+      }
+      event_clubs: {
+        Row: {
+          club_id: string
+          created_at: string
+          event_id: string
+          role: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          event_id: string
+          role?: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          event_id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_clubs_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_clubs_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1054,6 +1147,39 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      news_clubs: {
+        Row: {
+          club_id: string
+          created_at: string
+          news_id: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          news_id: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          news_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_clubs_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_clubs_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       news_views: {
         Row: {
