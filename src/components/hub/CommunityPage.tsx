@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Send, Megaphone, Upload, MapPin, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, Send, Megaphone, Upload, MapPin, X, Newspaper, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 const submissionSchema = z.object({
