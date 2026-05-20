@@ -10,14 +10,14 @@ import { toast } from "sonner";
 
 type Submission = {
   id: string;
-  type: string;
+  submission_type: string;
   name: string;
   email: string;
   phone: string | null;
   title: string;
   description: string;
   image_urls: string[] | null;
-  links: unknown;
+  links: string[] | null;
   status: string;
   country_code: string;
   admin_notes: string | null;
@@ -115,7 +115,7 @@ function CommunityAdmin() {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge variant="outline" className="uppercase">
-                        {it.type}
+                        {it.submission_type}
                       </Badge>
                       <Badge variant="secondary">{it.country_code}</Badge>
                       <span className="text-xs text-muted-foreground">

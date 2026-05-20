@@ -27,7 +27,7 @@ type EventRow = {
   start_date: string | null;
   location: string | null;
   cover_url: string | null;
-  event_type: string | null;
+  scope: string | null;
 };
 
 export function CommunityPage({ country }: { country: string }) {
@@ -84,7 +84,7 @@ function CommunityCalendar({ country }: { country: string }) {
     setLoading(true);
     supabase
       .from("events")
-      .select("id,name,slug,start_date,location,cover_url,event_type")
+      .select("id,name,slug,start_date,location,cover_url,scope")
       .eq("published", true)
       .eq("country_code", country)
       .gte("start_date", new Date().toISOString().slice(0, 10))
@@ -132,7 +132,7 @@ function CommunityCalendar({ country }: { country: string }) {
           ) : null}
           <div className="p-4">
             <p className="font-condensed text-[10px] uppercase tracking-widest text-gold">
-              {ev.event_type ?? "Evento"} ·{" "}
+              {ev.scope ?? "Evento"} ·{" "}
               {ev.start_date
                 ? new Date(ev.start_date).toLocaleDateString("es-ES", {
                     day: "2-digit",
@@ -212,12 +212,15 @@ function CommunityForm({ country }: { country: string }) {
       return;
     }
     setSubmitting(true);
+    const { type, ...rest } = parsed.data;
     const { error } = await supabase.from("community_submissions").insert({
-      ...parsed.data,
+      ...rest,
+      submission_type: type,
       country_code: country,
       image_urls: images,
+      links: [],
       status: "pendiente",
-    });
+    } as never);
     setSubmitting(false);
     if (error) {
       toast.error("No se pudo enviar: " + error.message);
