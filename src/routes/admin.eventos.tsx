@@ -164,6 +164,21 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
   const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [saving, setSaving] = useState(false);
+  const [relClubs, setRelClubs] = useState<string[]>([]);
+  const [relSkaters, setRelSkaters] = useState<string[]>([]);
+  const [relFeds, setRelFeds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!initial) { setRelClubs([]); setRelSkaters([]); setRelFeds([]); return; }
+    (async () => {
+      const [c, s, f] = await Promise.all([
+        loadRelations("events", "clubs", initial.id),
+        loadRelations("events", "skaters", initial.id),
+        loadRelations("events", "federations", initial.id),
+      ]);
+      setRelClubs(c); setRelSkaters(s); setRelFeds(f);
+    })();
+  }, [initial]);
 
   const onSave = async () => {
     const categories = categoriesText.split(",").map((c) => c.trim()).filter(Boolean);
