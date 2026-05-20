@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
 
 type Region = { id: string; name: string };
 type EventRow = {
@@ -163,6 +164,21 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
   const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
   const [saving, setSaving] = useState(false);
+  const [relClubs, setRelClubs] = useState<string[]>([]);
+  const [relSkaters, setRelSkaters] = useState<string[]>([]);
+  const [relFeds, setRelFeds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!initial) { setRelClubs([]); setRelSkaters([]); setRelFeds([]); return; }
+    (async () => {
+      const [c, s, f] = await Promise.all([
+        loadRelations("events", "clubs", initial.id),
+        loadRelations("events", "skaters", initial.id),
+        loadRelations("events", "federations", initial.id),
+      ]);
+      setRelClubs(c); setRelSkaters(s); setRelFeds(f);
+    })();
+  }, [initial]);
 
   const onSave = async () => {
     const categories = categoriesText.split(",").map((c) => c.trim()).filter(Boolean);
@@ -193,11 +209,27 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
       gallery: parsed.data.gallery,
       country_code,
     };
-    const { error } = initial
-      ? await supabase.from("events").update(payload).eq("id", initial.id)
-      : await supabase.from("events").insert(payload);
+    let eventId = initial?.id ?? null;
+    if (initial) {
+      const { error } = await supabase.from("events").update(payload).eq("id", initial.id);
+      if (error) { setSaving(false); return toast.error(error.message); }
+    } else {
+      const { data, error } = await supabase.from("events").insert(payload).select("id").single();
+      if (error) { setSaving(false); return toast.error(error.message); }
+      eventId = (data as { id: string }).id;
+    }
+    if (eventId) {
+      try {
+        await Promise.all([
+          saveRelations("events", "clubs", eventId, relClubs),
+          saveRelations("events", "skaters", eventId, relSkaters),
+          saveRelations("events", "federations", eventId, relFeds),
+        ]);
+      } catch (e) {
+        toast.error(`Relaciones no guardadas: ${(e as Error).message}`);
+      }
+    }
     setSaving(false);
-    if (error) return toast.error(error.message);
     toast.success(initial ? "Evento actualizado" : "Evento creado");
     onSaved();
   };
@@ -247,6 +279,9 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
           <span className="font-condensed text-xs uppercase tracking-widest">Publicado</span>
         </label>
+        <Field label="Clubes participantes" full><EntityRelationsField kind="clubs" country={country_code} value={relClubs} onChange={setRelClubs} /></Field>
+        <Field label="Patinadores destacados" full><EntityRelationsField kind="skaters" country={country_code} value={relSkaters} onChange={setRelSkaters} /></Field>
+        <Field label="Federaciones organizadoras" full><EntityRelationsField kind="federations" country={country_code} value={relFeds} onChange={setRelFeds} /></Field>
       </div>
       <div className="mt-5 flex gap-2">
         <button onClick={onSave} disabled={saving} className="font-condensed bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50">{saving ? "Guardando…" : initial ? "Guardar" : "Crear evento"}</button>

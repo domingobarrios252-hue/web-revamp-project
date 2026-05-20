@@ -11,6 +11,8 @@ export function ClubsDirectory({ country }: { country: string }) {
   const [regionId, setRegionId] = useState("");
   const [schoolType, setSchoolType] = useState("");
   const [category, setCategory] = useState("");
+  const [province, setProvince] = useState("");
+  const [city, setCity] = useState("");
   const [regions, setRegions] = useState<Region[]>([]);
 
   useEffect(() => {
@@ -25,13 +27,35 @@ export function ClubsDirectory({ country }: { country: string }) {
     () => ({ search, regionId, schoolType, category }),
     [search, regionId, schoolType, category],
   );
-  const { clubs, loading } = useClubs(country, filters);
+  const { clubs: rawClubs, loading } = useClubs(country, filters);
 
   const allCategories = useMemo(() => {
     const set = new Set<string>();
-    clubs.forEach((c) => c.categories.forEach((cat) => set.add(cat)));
+    rawClubs.forEach((c) => c.categories.forEach((cat) => set.add(cat)));
     return Array.from(set).sort();
-  }, [clubs]);
+  }, [rawClubs]);
+
+  const allProvinces = useMemo(() => {
+    const set = new Set<string>();
+    rawClubs.forEach((c) => c.province && set.add(c.province));
+    return Array.from(set).sort();
+  }, [rawClubs]);
+
+  const allCities = useMemo(() => {
+    const set = new Set<string>();
+    rawClubs.forEach((c) => {
+      if (!province || c.province === province) c.city && set.add(c.city);
+    });
+    return Array.from(set).sort();
+  }, [rawClubs, province]);
+
+  const clubs = useMemo(() => {
+    return rawClubs.filter((c) => {
+      if (province && c.province !== province) return false;
+      if (city && c.city !== city) return false;
+      return true;
+    });
+  }, [rawClubs, province, city]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 md:px-6 py-8">
@@ -43,13 +67,13 @@ export function ClubsDirectory({ country }: { country: string }) {
           Clubes & Escuelas
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-[#B5B5B5]">
-          Directorio nacional de clubes de patinaje de velocidad. Filtra por comunidad autónoma,
+          Directorio nacional de clubes de patinaje de velocidad. Filtra por CCAA, provincia, ciudad,
           categoría o tipo de escuela.
         </p>
       </header>
 
-      <div className="mb-6 grid gap-2 md:grid-cols-[1fr_auto_auto_auto]">
-        <div className="relative">
+      <div className="mb-6 grid gap-2 md:grid-cols-3 lg:grid-cols-6">
+        <div className="relative lg:col-span-2">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#666]" />
           <input
             value={search}
@@ -58,39 +82,27 @@ export function ClubsDirectory({ country }: { country: string }) {
             className="w-full rounded-[4px] border border-[#333] bg-[#1A1A1A] py-2 pl-9 pr-3 text-sm text-[#F5F5F5] placeholder:text-[#666] focus:border-[#D4A017] focus:outline-none"
           />
         </div>
-        <select
-          value={regionId}
-          onChange={(e) => setRegionId(e.target.value)}
-          className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]"
-        >
+        <select value={regionId} onChange={(e) => setRegionId(e.target.value)} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
           <option value="">Todas las CCAA</option>
-          {regions.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
-            </option>
-          ))}
+          {regions.map((r) => (<option key={r.id} value={r.id}>{r.name}</option>))}
         </select>
-        <select
-          value={schoolType}
-          onChange={(e) => setSchoolType(e.target.value)}
-          className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]"
-        >
+        <select value={province} onChange={(e) => { setProvince(e.target.value); setCity(""); }} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
+          <option value="">Provincia</option>
+          {allProvinces.map((p) => (<option key={p} value={p}>{p}</option>))}
+        </select>
+        <select value={city} onChange={(e) => setCity(e.target.value)} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
+          <option value="">Ciudad</option>
+          {allCities.map((c) => (<option key={c} value={c}>{c}</option>))}
+        </select>
+        <select value={schoolType} onChange={(e) => setSchoolType(e.target.value)} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
           <option value="">Tipo</option>
           <option value="escuela">Escuela</option>
           <option value="competicion">Competición</option>
           <option value="mixto">Mixto</option>
         </select>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]"
-        >
+        <select value={category} onChange={(e) => setCategory(e.target.value)} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
           <option value="">Categoría</option>
-          {allCategories.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
+          {allCategories.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
       </div>
 

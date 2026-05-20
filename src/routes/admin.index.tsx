@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
+import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
@@ -336,6 +337,21 @@ function NewsEditor({
   const [status, setStatus] = useState<News["status"]>(item?.status ?? "draft");
   const [publishedAt, setPublishedAt] = useState<string>(toLocalInput(item?.published_at));
   const [saving, setSaving] = useState(false);
+  const [relClubs, setRelClubs] = useState<string[]>([]);
+  const [relSkaters, setRelSkaters] = useState<string[]>([]);
+  const [relFeds, setRelFeds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!item) return;
+    (async () => {
+      const [c, s, f] = await Promise.all([
+        loadRelations("news", "clubs", item.id),
+        loadRelations("news", "skaters", item.id),
+        loadRelations("news", "federations", item.id),
+      ]);
+      setRelClubs(c); setRelSkaters(s); setRelFeds(f);
+    })();
+  }, [item]);
 
   // Auto-slug for new
   useEffect(() => {
@@ -392,17 +408,24 @@ function NewsEditor({
         status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
       };
+      let newsId = item?.id ?? null;
       if (item) {
         const { error } = await supabase.from("news").update(payload).eq("id", item.id);
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+        if (error) { toast.error(error.message); return; }
       } else {
-        const { error } = await supabase.from("news").insert(payload);
-        if (error) {
-          toast.error(error.message);
-          return;
+        const { data, error } = await supabase.from("news").insert(payload).select("id").single();
+        if (error) { toast.error(error.message); return; }
+        newsId = (data as { id: string }).id;
+      }
+      if (newsId) {
+        try {
+          await Promise.all([
+            saveRelations("news", "clubs", newsId, relClubs),
+            saveRelations("news", "skaters", newsId, relSkaters),
+            saveRelations("news", "federations", newsId, relFeds),
+          ]);
+        } catch (e) {
+          toast.error(`Relaciones no guardadas: ${(e as Error).message}`);
         }
       }
 
@@ -512,6 +535,21 @@ function NewsEditor({
               ]}
             />
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
+          </div>
+
+          <div className="grid gap-3 border-t border-border pt-3 md:grid-cols-3">
+            <div>
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Clubes relacionados</span>
+              <EntityRelationsField kind="clubs" country="es" value={relClubs} onChange={setRelClubs} />
+            </div>
+            <div>
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Patinadores relacionados</span>
+              <EntityRelationsField kind="skaters" country="es" value={relSkaters} onChange={setRelSkaters} />
+            </div>
+            <div>
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Federaciones relacionadas</span>
+              <EntityRelationsField kind="federations" country="es" value={relFeds} onChange={setRelFeds} />
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 border-t border-border pt-3">
