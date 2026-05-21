@@ -117,7 +117,7 @@ function CommunityAdmin() {
   }, []);
 
   async function logAction(submissionId: string, action: string, details: Record<string, unknown> = {}) {
-    await supabase.from("community_submission_logs").insert({
+    await (supabase.from("community_submission_logs") as any).insert({
       submission_id: submissionId,
       action,
       details,
@@ -365,7 +365,7 @@ function CommunityAdmin() {
           if (!editing) return;
           const { error } = await supabase
             .from("community_submissions")
-            .update(changes)
+            .update(changes as never)
             .eq("id", editing.id);
           if (error) {
             toast.error(error.message);
