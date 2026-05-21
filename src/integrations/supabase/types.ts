@@ -220,6 +220,41 @@ export type Database = {
           },
         ]
       }
+      community_submission_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json
+          id: string
+          submission_id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json
+          id?: string
+          submission_id: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          submission_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_submission_logs_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "community_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_submissions: {
         Row: {
           admin_notes: string | null
@@ -231,6 +266,7 @@ export type Database = {
           image_urls: string[]
           links: string[]
           name: string
+          news_id: string | null
           phone: string | null
           status: string
           submission_type: string
@@ -247,6 +283,7 @@ export type Database = {
           image_urls?: string[]
           links?: string[]
           name: string
+          news_id?: string | null
           phone?: string | null
           status?: string
           submission_type?: string
@@ -263,6 +300,7 @@ export type Database = {
           image_urls?: string[]
           links?: string[]
           name?: string
+          news_id?: string | null
           phone?: string | null
           status?: string
           submission_type?: string
