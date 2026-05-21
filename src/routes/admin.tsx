@@ -84,6 +84,9 @@ function AdminLayout() {
           <AdminLink to="/admin/hub-liga" icon={<Trophy className="h-4 w-4" />}>
             Hub Liga Nacional
           </AdminLink>
+          <AdminLink to="/admin/clasificaciones" icon={<Trophy className="h-4 w-4" />}>
+            Clasificaciones (home)
+          </AdminLink>
           <AdminLink to="/admin/eventos" icon={<Calendar className="h-4 w-4" />}>
             Eventos
           </AdminLink>
@@ -159,7 +162,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/federaciones" | "/admin/premios-mvp" | "/admin/hub-liga" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/live-center" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/admin/comunidad" | "/dashboard";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/federaciones" | "/admin/premios-mvp" | "/admin/hub-liga" | "/admin/clasificaciones" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/live-center" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/admin/comunidad" | "/dashboard";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
