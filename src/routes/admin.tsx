@@ -84,6 +84,9 @@ function AdminLayout() {
           <AdminLink to="/admin/hub-liga" icon={<Trophy className="h-4 w-4" />}>
             Hub Liga Nacional
           </AdminLink>
+          <AdminLink to="/admin/clasificaciones" icon={<Trophy className="h-4 w-4" />}>
+            Clasificaciones (home)
+          </AdminLink>
           <AdminLink to="/admin/eventos" icon={<Calendar className="h-4 w-4" />}>
             Eventos
           </AdminLink>
