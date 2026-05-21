@@ -743,6 +743,80 @@ export type Database = {
           },
         ]
       }
+      home_standings_groups: {
+        Row: {
+          competition_group: string
+          created_at: string
+          display_order: number
+          division_name: string
+          id: string
+          season: string
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          competition_group: string
+          created_at?: string
+          display_order?: number
+          division_name: string
+          id?: string
+          season?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          competition_group?: string
+          created_at?: string
+          display_order?: number
+          division_name?: string
+          id?: string
+          season?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Relationships: []
+      }
+      home_standings_rows: {
+        Row: {
+          club_logo: string | null
+          club_name: string
+          created_at: string
+          group_id: string
+          id: string
+          points: number
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          club_logo?: string | null
+          club_name: string
+          created_at?: string
+          group_id: string
+          id?: string
+          points?: number
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          club_logo?: string | null
+          club_name?: string
+          created_at?: string
+          group_id?: string
+          id?: string
+          points?: number
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "home_standings_rows_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "home_standings_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interviews: {
         Row: {
           content: string | null
