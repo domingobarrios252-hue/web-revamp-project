@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Calendar, Eye, ArrowRight, Trophy, Mic } from "lucide-react";
+import { Calendar, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
 
@@ -40,7 +40,6 @@ type InterviewRow = {
   interviewee_name: string;
   cover_url: string | null;
 };
-
 
 export function HubDashboard({ country }: { country: string }) {
   const [news, setNews] = useState<NewsRow[]>([]);
@@ -98,212 +97,237 @@ export function HubDashboard({ country }: { country: string }) {
   const rest = news.slice(1);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 md:px-6 py-8 md:py-10 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-      {/* MAIN COLUMN */}
-      <div className="lg:col-span-2 space-y-8">
-        {featured && (
-          <Link
-            to="/noticias/$slug"
-            params={{ slug: featured.slug }}
-            className="group block overflow-hidden rounded-[6px] border border-[#2A2A2A] bg-[#1A1A1A] hover:border-[#D4A017]/60 transition-colors"
-          >
-            {featured.image_url && (
-              <div className="aspect-[16/9] overflow-hidden bg-[#0d0d0d]">
-                <img
-                  src={featured.image_url}
-                  alt={featured.title}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  loading="eager"
-                />
-              </div>
-            )}
-            <div className="p-5 md:p-6">
-              <span className="font-ui text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4A017]">
-                Destacado
-              </span>
-              <h2 className="mt-2 font-display text-2xl md:text-3xl font-black leading-tight text-[#F5F5F5] group-hover:text-[#D4A017] transition-colors">
-                {featured.title}
-              </h2>
-              {featured.excerpt && (
-                <p className="mt-2 text-sm md:text-base text-[#B5B5B5] line-clamp-2">{featured.excerpt}</p>
-              )}
-              <div className="mt-3 flex items-center gap-4 text-[11px] text-[#888]">
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {formatShortDate(featured.published_at, "es")}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <Eye className="h-3 w-3" />
-                  {featured.views_count}
-                </span>
-              </div>
-            </div>
-          </Link>
-        )}
-
-        {/* Secondary news grid */}
-        {rest.length > 0 && (
-          <div>
-            <SectionHeading title="Última hora" href="/noticias" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              {rest.map((n) => (
-                <Link
-                  key={n.id}
-                  to="/noticias/$slug"
-                  params={{ slug: n.slug }}
-                  className="group flex gap-3 rounded-[6px] border border-[#2A2A2A] bg-[#1A1A1A] p-3 hover:border-[#D4A017]/60 transition-colors"
-                >
-                  {n.image_url && (
-                    <div className="h-20 w-28 flex-shrink-0 overflow-hidden rounded-[4px] bg-[#0d0d0d]">
-                      <img src={n.image_url} alt="" className="h-full w-full object-cover" loading="lazy" />
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <h3 className="font-display text-sm font-bold leading-snug text-[#F5F5F5] group-hover:text-[#D4A017] line-clamp-2">
-                      {n.title}
-                    </h3>
-                    <div className="mt-1 text-[10px] text-[#888]">
-                      {formatShortDate(n.published_at, "es")}
+    <div className="mx-auto max-w-7xl px-4 md:px-8 py-10 md:py-14">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+        {/* MAIN COLUMN */}
+        <div className="lg:col-span-8 space-y-12 md:space-y-16">
+          {/* Featured */}
+          {featured && (
+            <article>
+              <Link
+                to="/noticias/$slug"
+                params={{ slug: featured.slug }}
+                className="group block rounded-2xl overflow-hidden bg-[#242424] border border-[#333] transition-all duration-300 hover:border-[#D4A017]/40 hover:shadow-2xl"
+              >
+                {featured.image_url && (
+                  <div className="aspect-video relative overflow-hidden bg-[#0d0d0d]">
+                    <img
+                      src={featured.image_url}
+                      alt={featured.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      loading="eager"
+                    />
+                    <div className="absolute top-6 left-6">
+                      <span className="px-3 py-1 bg-[#D4A017] text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest rounded-[3px]">
+                        Destacado
+                      </span>
                     </div>
                   </div>
+                )}
+                <div className="p-6 md:p-10 space-y-4 md:space-y-5">
+                  <div className="flex items-center gap-3 text-[10px] font-bold text-[#888] uppercase tracking-widest">
+                    <span>{formatShortDate(featured.published_at, "es")}</span>
+                    <span className="w-1 h-1 rounded-full bg-[#444]" />
+                    <span>{featured.views_count} vistas</span>
+                  </div>
+                  <h2 className="font-display text-2xl md:text-4xl font-extrabold leading-tight text-white group-hover:text-[#D4A017] transition-colors">
+                    {featured.title}
+                  </h2>
+                  {featured.excerpt && (
+                    <p className="text-[#A0A0A0] leading-relaxed text-base md:text-lg line-clamp-3">
+                      {featured.excerpt}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            </article>
+          )}
+
+          {/* Última hora */}
+          {rest.length > 0 && (
+            <section className="space-y-6 md:space-y-8">
+              <div className="flex items-center justify-between border-b border-[#333] pb-4">
+                <h3 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-white">
+                  Última hora
+                </h3>
+                <Link
+                  to="/noticias"
+                  className="text-[10px] font-bold text-[#D4A017] uppercase tracking-[0.2em] hover:text-white transition-colors"
+                >
+                  Ver todo el archivo
                 </Link>
-              ))}
-            </div>
-          </div>
-        )}
+              </div>
 
-        {/* Results */}
-        {results.length > 0 && (
-          <div>
-            <SectionHeading title="Resultados recientes" href="/resultados" icon={<Trophy className="h-4 w-4" />} />
-            <div className="mt-4 overflow-hidden rounded-[6px] border border-[#2A2A2A]">
-              <table className="w-full text-sm">
-                <thead className="bg-[#222]">
-                  <tr className="text-left text-[10px] uppercase tracking-wider text-[#888]">
-                    <th className="px-3 py-2">#</th>
-                    <th className="px-3 py-2">Atleta</th>
-                    <th className="px-3 py-2 hidden md:table-cell">Prueba</th>
-                    <th className="px-3 py-2">Tiempo</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {results.slice(0, 6).map((r) => (
-                    <tr key={r.id} className="border-t border-[#2A2A2A] text-[#F5F5F5]">
-                      <td className="px-3 py-2 font-bold text-[#D4A017]">{r.position}</td>
-                      <td className="px-3 py-2">{r.athlete_name}</td>
-                      <td className="px-3 py-2 hidden md:table-cell text-[#B5B5B5]">{r.event_name}</td>
-                      <td className="px-3 py-2 text-[#B5B5B5]">{r.race_time ?? "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {!featured && results.length === 0 && events.length === 0 && (
-          <div className="rounded-[6px] border border-dashed border-[#333] p-8 text-center text-sm text-[#888]">
-            Aún no hay contenido publicado para este país.
-          </div>
-        )}
-      </div>
-
-      {/* SIDEBAR */}
-      <aside className="space-y-6">
-        {events.length > 0 && (
-          <SideCard title="Próximos eventos" icon={<Calendar className="h-4 w-4" />} href="/eventos">
-            <ul className="divide-y divide-[#2A2A2A]">
-              {events.map((ev) => (
-                <li key={ev.id} className="py-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+                {rest.map((n) => (
                   <Link
-                    to="/eventos/$slug"
-                    params={{ slug: ev.slug }}
-                    className="block hover:text-[#D4A017]"
+                    key={n.id}
+                    to="/noticias/$slug"
+                    params={{ slug: n.slug }}
+                    className="group flex gap-5 cursor-pointer"
                   >
-                    <div className="font-display text-sm font-bold text-[#F5F5F5]">{ev.name}</div>
-                    <div className="mt-1 text-[11px] text-[#888]">
-                      {formatShortDate(ev.start_date, "es")} {ev.location ? `· ${ev.location}` : ""}
+                    {n.image_url && (
+                      <div className="w-32 md:w-36 h-24 shrink-0 rounded-lg overflow-hidden border border-[#333] bg-[#0d0d0d]">
+                        <img
+                          src={n.image_url}
+                          alt=""
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+                    <div className="min-w-0 space-y-2">
+                      <span className="text-[10px] font-bold text-[#888] uppercase tracking-wider">
+                        {formatShortDate(n.published_at, "es")}
+                      </span>
+                      <h4 className="font-display text-sm md:text-base font-bold leading-snug text-white group-hover:text-[#D4A017] transition-colors line-clamp-3">
+                        {n.title}
+                      </h4>
                     </div>
                   </Link>
-                </li>
-              ))}
-            </ul>
-          </SideCard>
-        )}
-
-
-        {interview && (
-          <SideCard title="Entrevista" icon={<Mic className="h-4 w-4" />} href="/entrevistas">
-            <Link to="/entrevistas/$slug" params={{ slug: interview.slug }} className="block group">
-              {interview.cover_url && (
-                <div className="aspect-video overflow-hidden rounded mb-2 bg-[#0d0d0d]">
-                  <img src={interview.cover_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
-                </div>
-              )}
-              <div className="font-display text-sm font-bold text-[#F5F5F5] group-hover:text-[#D4A017]">
-                {interview.title}
+                ))}
               </div>
-              <div className="text-[11px] text-[#888] mt-1">{interview.interviewee_name}</div>
-            </Link>
-          </SideCard>
-        )}
+            </section>
+          )}
 
-        <SideCard title="Accesos rápidos">
-          <div className="grid grid-cols-2 gap-2">
-            <QuickLink country={country} section="competicion" label="Liga Nacional" />
-            <QuickLink country={country} section="competicion" label="Campeonatos" />
-            <QuickLink country={country} section="clubes" label="Clubs" />
-            <QuickLink country={country} section="patinadores" label="Patinadores" />
-            <QuickLink country={country} section="mvp" label="MVP" />
-            <QuickLink country={country} section="tv" label="TV" />
-          </div>
-        </SideCard>
-      </aside>
-    </div>
-  );
-}
+          {/* Resultados */}
+          {results.length > 0 && (
+            <section className="space-y-6">
+              <div className="flex items-center justify-between border-b border-[#333] pb-4">
+                <h3 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-white flex items-center gap-3">
+                  <Trophy className="h-5 w-5 text-[#D4A017]" />
+                  Resultados recientes
+                </h3>
+                <Link
+                  to="/resultados"
+                  className="text-[10px] font-bold text-[#D4A017] uppercase tracking-[0.2em] hover:text-white transition-colors"
+                >
+                  Ver todos
+                </Link>
+              </div>
+              <div className="overflow-hidden rounded-2xl border border-[#333] bg-[#242424]">
+                <table className="w-full text-sm">
+                  <thead className="bg-[#2E2E2E]">
+                    <tr className="text-left text-[10px] uppercase tracking-wider text-[#888]">
+                      <th className="px-4 py-3">#</th>
+                      <th className="px-4 py-3">Atleta</th>
+                      <th className="px-4 py-3 hidden md:table-cell">Prueba</th>
+                      <th className="px-4 py-3 text-right">Tiempo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.slice(0, 6).map((r) => (
+                      <tr key={r.id} className="border-t border-[#333] text-white">
+                        <td className="px-4 py-3 font-bold text-[#D4A017]">{r.position}</td>
+                        <td className="px-4 py-3">{r.athlete_name}</td>
+                        <td className="px-4 py-3 hidden md:table-cell text-[#A0A0A0]">{r.event_name}</td>
+                        <td className="px-4 py-3 text-right text-[#A0A0A0]">{r.race_time ?? "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
 
-function SectionHeading({ title, href, icon }: { title: string; href?: string; icon?: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-between border-b border-[#2A2A2A] pb-2">
-      <h2 className="font-display text-lg font-black uppercase tracking-wide text-[#F5F5F5] flex items-center gap-2">
-        {icon}
-        {title}
-      </h2>
-      {href && (
-        <Link to={href} className="text-[11px] uppercase tracking-wider text-[#D4A017] hover:underline inline-flex items-center gap-1">
-          Ver todo <ArrowRight className="h-3 w-3" />
-        </Link>
-      )}
-    </div>
-  );
-}
+          {!featured && results.length === 0 && events.length === 0 && (
+            <div className="rounded-2xl border border-dashed border-[#333] p-10 text-center text-sm text-[#888]">
+              Aún no hay contenido publicado para este país.
+            </div>
+          )}
+        </div>
 
-function SideCard({
-  title,
-  icon,
-  href,
-  children,
-}: {
-  title: string;
-  icon?: React.ReactNode;
-  href?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-[6px] border border-[#2A2A2A] bg-[#1A1A1A] overflow-hidden">
-      <div className="flex items-center justify-between border-b border-[#2A2A2A] px-4 py-3">
-        <h3 className="font-display text-sm font-black uppercase tracking-wide text-[#F5F5F5] flex items-center gap-2">
-          {icon}
-          {title}
-        </h3>
-        {href && (
-          <Link to={href} className="text-[10px] uppercase text-[#D4A017] hover:underline">
-            Ver +
-          </Link>
-        )}
+        {/* SIDEBAR */}
+        <aside className="lg:col-span-4 space-y-10 md:space-y-12">
+          {/* Próximos eventos */}
+          {events.length > 0 && (
+            <section className="bg-[#242424] rounded-2xl border border-[#333] p-6 md:p-8 space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-xs font-black uppercase tracking-widest text-white flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-[#D4A017]" />
+                  Próximos eventos
+                </h3>
+                <Link
+                  to="/eventos"
+                  className="px-2 py-0.5 rounded bg-[#D4A017]/10 text-[#D4A017] text-[9px] font-bold tracking-wider hover:bg-[#D4A017]/20 transition-colors"
+                >
+                  CALENDARIO
+                </Link>
+              </div>
+              <ul className="space-y-5">
+                {events.map((ev, idx) => (
+                  <li key={ev.id}>
+                    <Link
+                      to="/eventos/$slug"
+                      params={{ slug: ev.slug }}
+                      className="block group"
+                    >
+                      <h4 className="font-display text-sm font-extrabold text-white group-hover:text-[#D4A017] transition-colors leading-snug">
+                        {ev.name}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-2 text-[10px] text-[#888] font-medium uppercase">
+                        <span className="text-[#D4A017]">{formatShortDate(ev.start_date, "es")}</span>
+                        {ev.location && (
+                          <>
+                            <span className="opacity-30">·</span>
+                            <span>{ev.location}</span>
+                          </>
+                        )}
+                      </div>
+                    </Link>
+                    {idx < events.length - 1 && <div className="h-px bg-[#333] mt-5" />}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Perfil destacado / Entrevista */}
+          {interview && (
+            <section className="rounded-2xl overflow-hidden border border-[#333] bg-[#242424] shadow-xl">
+              <Link to="/entrevistas/$slug" params={{ slug: interview.slug }} className="block group">
+                <div className="aspect-square relative overflow-hidden bg-[#0d0d0d]">
+                  {interview.cover_url && (
+                    <img
+                      src={interview.cover_url}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                      loading="lazy"
+                    />
+                  )}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1A1A1A] via-[#1A1A1A]/60 to-transparent h-2/3" />
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <span className="text-[9px] font-black uppercase text-[#D4A017] tracking-[0.25em]">
+                      Perfil destacado
+                    </span>
+                    <h3 className="font-display text-xl md:text-2xl font-black text-white mt-1 group-hover:text-[#D4A017] transition-colors leading-tight">
+                      {interview.interviewee_name}
+                    </h3>
+                  </div>
+                </div>
+                <div className="px-6 md:px-8 py-5">
+                  <p className="text-xs text-[#A0A0A0] leading-relaxed line-clamp-3">{interview.title}</p>
+                </div>
+              </Link>
+            </section>
+          )}
+
+          {/* Accesos rápidos */}
+          <section className="space-y-5">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#666]">
+              Accesos rápidos
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <QuickLink country={country} section="competicion" label="Liga Nacional" />
+              <QuickLink country={country} section="competicion" label="Campeonatos" />
+              <QuickLink country={country} section="clubes" label="Clubs" />
+              <QuickLink country={country} section="patinadores" label="Patinadores" />
+              <QuickLink country={country} section="mvp" label="MVP" />
+              <QuickLink country={country} section="tv" label="TV" />
+            </div>
+          </section>
+        </aside>
       </div>
-      <div className="p-4">{children}</div>
     </div>
   );
 }
@@ -313,7 +337,7 @@ function QuickLink({ country, section, label }: { country: string; section: stri
     <Link
       to="/hub/$country/$section"
       params={{ country, section }}
-      className="font-ui text-[11px] font-bold uppercase tracking-wider text-[#B5B5B5] hover:text-[#1A1A1A] hover:bg-[#D4A017] border border-[#333] rounded px-3 py-2 text-center transition-colors"
+      className="h-12 flex items-center justify-center bg-[#2E2E2E] border border-[#333] rounded-lg text-[10px] font-bold uppercase tracking-wider text-[#F5F5F5] hover:bg-[#D4A017] hover:text-[#1A1A1A] hover:border-[#D4A017] transition-all duration-300"
     >
       {label}
     </Link>
