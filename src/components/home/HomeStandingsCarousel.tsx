@@ -94,7 +94,7 @@ export function HomeStandingsCarousel() {
           <div className="flex items-center gap-3">
             <Trophy className="h-5 w-5 text-gold" />
             <h2 className="font-display text-2xl uppercase tracking-widest md:text-3xl">
-              Clasificaciones
+              Liga Nacional
             </h2>
           </div>
           <div className="mt-2 h-[3px] w-20 bg-gold" aria-hidden="true" />
