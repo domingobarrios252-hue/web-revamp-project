@@ -1,151 +1,116 @@
-## Resumen
+# Plan: HOME CONTROL CENTER + LIVE EVENT CENTER
 
-Voy a desarrollar las 5 secciones avanzadas del Hub España de forma modular y relacional, reutilizando al máximo lo que ya existe en la base de datos (videos, mvp_seasons/awards, live_results, live_stream, events, news, clubs, skaters) y añadiendo solo lo imprescindible para conectarlo todo.
-
-Antes de tocar nada quiero confirmar el alcance porque algunas piezas ya existen parcialmente y conviene no duplicar.
+Transformar la home de RollerZone en un sistema dinámico modular tipo Olympics/F1/ESPN, manteniendo 100% la identidad visual actual (dark + oro #D4A017, tipografía editorial) y sin romper nada existente.
 
 ---
 
-## Estado actual (lo que ya está)
+## 1. Arquitectura de base de datos (Supabase)
 
-- **Vídeos**: tabla `video_skaters` ya existe (N:N). Falta confirmar tabla `videos` base — la reviso antes de migrar.
-- **MVP**: `mvp_seasons` + `mvp_awards` ya existen con tiers (élite/estrella/promesa) × género. Hay admin `/admin/premios-mvp` y ruta pública `/premios-mvp`. **No hay ranking dinámico con puntos/evolución** — solo "premio ganador".
-- **Live Center**: `live_results` + `live_stream` + `schedule_items` + `LiveBar` + `LiveCenter` ya existen. Hay admin `/admin/live-center` y `/admin/live-results`. **Falta página dedicada `/live` y `/hub/es/live`** y modelo de "evento live" con timeline.
-- **Eventos**: tabla `events` completa, con `status` (upcoming/en_curso/finalizado), galería, redes, etc.
-- **Noticias / Archivo**: `news` con `published_at`, `country_code`, categorías y N:N a clubes/atletas/federaciones. El "archivo histórico" puede ser una vista filtrada de `news` + `interviews` + `events` finalizados, no necesita tabla nueva.
+Nuevas tablas:
 
----
+- **`home_modules`** — control de la zona dinámica de la home
+  - `key` ('dynamic_zone_mode'), `value` ('liga' | 'live' | 'both' | 'none'), `updated_at`
+- **`league_tables`** — clasificaciones administrables
+  - `id`, `competition_group` ('absoluta' | 'sub15'), `division` ('1M','1F','2M','2F','3M','3F'), `season`, `title`, `subtitle`, `visible`, `display_order`, `autoplay`, `max_cards`
+- **`league_table_rows`**
+  - `id`, `table_id` (FK), `position`, `club_name`, `club_logo`, `points`, `full_url`, `display_order`
+- **`event_tests`** (pruebas de cada evento)
+  - `id`, `event_id` (FK a `events`), `name`, `category`, `gender`, `scheduled_at`, `status` ('pending'|'upcoming'|'call_room'|'live'|'finished'|'official'), `description`, `display_order`
+- **`event_results`** (resultados de cada prueba)
+  - `id`, `test_id` (FK), `position`, `athlete_name`, `club`, `country`, `race_time`, `points`, `is_highlighted`
 
-## Plan de trabajo
+Extender tabla `events` con: `event_type`, `logo_url`, `banner_url`, `organizer`, `season`, `city`, `venue`, `show_in_home`, `is_featured`, `live_center_enabled`, `show_in_calendar`, `show_in_results`. Trigger para garantizar un único evento con `is_featured + live_center_enabled` activos a la vez.
 
-### 1. RollerZone TV España — `/hub/es/tv` (+ alias `/espana/rollerzone-tv`)
+RLS:
+- Lectura pública (`true`) en todas las tablas de cara al público.
+- Escritura solo para `admin` (vía `has_role`).
 
-**Migración mínima** (solo si no existe ya tabla `videos`):
-- `videos`: id, slug, title, description, video_url (YouTube/MP4), thumbnail_url, category (entrevista/directo/highlight/reportaje/resumen), published_at, featured, country_code, event_id (FK suave), club_id, news_id, published.
-- Relación N:N skaters ya existe (`video_skaters`).
-- RLS: público lee published=true; admin/editor CRUD.
-
-**Frontend**:
-- `/hub/$country/tv/index.tsx`: hero (vídeo destacado), carrusel destacados, grid últimos, filtros por categoría/atleta/club/evento.
-- `/hub/$country/tv/$slug.tsx`: ficha vídeo con embed (reutilizar `lib/youtube.ts`), metadatos, relaciones (atleta/club/evento/noticias), vídeos relacionados.
-- `/espana/rollerzone-tv.tsx`: redirect a `/hub/es/tv`.
-
-**Admin**: `/admin/videos.tsx` — CRUD + selector relaciones (EntityRelationsField ya existe).
-
-### 2. MVP España — ranking dinámico
-
-**Migración**:
-- Añadir a `mvp_awards` (o nueva tabla `mvp_rankings`): `points` (numeric), `previous_position` (int, evolución), `skater_id` (FK suave a `skaters` para enlazar ficha). Mantengo los premios actuales y añado modo "ranking" por tier×género ordenado por puntos.
-
-**Frontend**:
-- Renovar `/premios-mvp.tsx` y crear `/hub/$country/mvp` con tabla ranking por 6 categorías, evolución (↑↓), enlace a ficha skater. Mantengo el diseño awards actual como "Hall of Fame" + nueva pestaña "Ranking actual".
-
-**Admin**: extender `/admin/premios-mvp` con campo de puntos y skater_id.
-
-### 3. Live Center — `/live` + `/hub/es/live`
-
-**Migración**:
-- `live_events`: id, event_id (FK suave events), country_code, status, headline, timeline (jsonb array de entradas con timestamp+texto), streaming_url, is_active.
-- O reutilizo `events.status='en_curso'` + `live_stream` + `live_results` y solo añado tabla `live_timeline` (event_id, ts, text, type).
-
-**Frontend**:
-- `/live.tsx` (global) y `/hub/$country/live.tsx`: muestra evento activo, timeline en tiempo real (supabase realtime), resultados (`live_results`), stream embed, galería, vídeos relacionados (`videos` por event_id).
-- `LiveBar` ya existe y muestra schedule_items en_curso — la conecto al nuevo `/live`.
-
-**Admin**: `/admin/live-events.tsx` o extender `/admin/live-center` con activar/desactivar evento + editar timeline.
-
-### 4. Comunidad — `/hub/es/comunidad`
-
-**Migración**:
-- `community_submissions`: id, type (noticia/evento/otro), name, email, phone, title, description, image_urls[], links[], status (pendiente/aprobada/rechazada), created_at, country_code. RLS: INSERT público (con validación zod estricta), SELECT solo admin/editor.
-
-**Frontend**:
-- `/hub/$country/comunidad/index.tsx`: 3 bloques.
-  - A) Calendario comunidad: reutiliza `events` filtrando por tipo (`scope` o categoría "comunidad", trofeos, opens, campus, clinics, maratones).
-  - B) Formulario "Envía tu noticia" con validación zod + upload a bucket `media`.
-  - C) Página patrocinio: enlace a `/patrocinadores` (ya existe) + formulario contacto comercial.
-
-**Admin**: `/admin/comunidad-submissions.tsx` — moderar envíos, convertir en noticia/evento.
-
-### 5. Archivo histórico — `/hub/es/archivo`
-
-**Sin migración** — vista agregada de contenido ya existente.
-
-**Frontend**:
-- `/hub/$country/archivo/index.tsx`: tabs (Noticias / Resultados / Entrevistas / Reportajes / Leyendas).
-- Filtros: año (extraído de `published_at`/`event_date`), categoría, atleta, evento.
-- "Leyendas": skaters con flag `is_legend` (añado columna boolean a `skaters`).
-
-### 6. Sistema relacional
-
-Ya está cubierto por:
-- `news_clubs`, `news_skaters`, `news_federations`
-- `event_clubs`, `event_skaters`, `event_federations`
-- `video_skaters` + FKs sueltas `videos.event_id/club_id/news_id`
-- Nuevo `live_events.event_id` enlaza con todo el ecosistema del evento.
-
-### 7. Monetización
-
-Reutilizo `ad_banners` existente con nuevos `placement`:
-- `tv_top`, `tv_sidebar`, `mvp_sponsor`, `live_sidebar`, `community_top`, `archive_sidebar`.
-
-Sin tabla nueva — solo añadir los slots en los componentes y documentarlo en `/admin/banners`.
-
-### 8. Escalabilidad
-
-Todo se construye bajo `/hub/$country/*` con `country_code` como filtro. Los alias `/espana/*` son thin redirects. Clonar a CO/VE = añadir filas en `country_hubs` + seed mínimo, sin cambios de estructura.
+Realtime habilitado en `event_tests`, `event_results`, `home_modules`, `league_tables`, `league_table_rows`.
 
 ---
 
-## Detalles técnicos
+## 2. Panel de administración
 
-**Migraciones** (en este orden, una sola llamada con todo):
-1. `videos` (si no existe) + RLS
-2. `mvp_awards`: añadir `points`, `previous_position`, `skater_id`
-3. `live_timeline` + RLS, o `live_events` según convenga al revisar `events.status`
-4. `community_submissions` + RLS (INSERT público con validación, SELECT staff)
-5. `skaters.is_legend` boolean default false
+Nueva entrada en sidebar: **HOME CONTROL CENTER** (`/admin/home-control`).
 
-**Rutas nuevas**:
-- `src/routes/hub.$country.tv.tsx` (layout)
-- `src/routes/hub.$country.tv.index.tsx`
-- `src/routes/hub.$country.tv.$slug.tsx`
-- `src/routes/hub.$country.mvp.tsx`
-- `src/routes/hub.$country.live.tsx`
-- `src/routes/hub.$country.comunidad.tsx`
-- `src/routes/hub.$country.archivo.tsx`
-- `src/routes/live.tsx` (global)
-- `src/routes/espana.rollerzone-tv.tsx`, `espana.mvp.tsx`, `espana.live.tsx`, `espana.comunidad.tsx`, `espana.archivo.tsx` (redirects)
+Pantallas:
 
-**Admin nuevos**:
-- `src/routes/admin.videos.tsx`
-- `src/routes/admin.live-events.tsx` (o extender existente)
-- `src/routes/admin.comunidad.tsx`
-- Tab "Leyendas" en `/admin/patinadores`
+- **`/admin/home-control`** — selector de modo (Liga / Live / Both / None) con preview en vivo del resultado.
+- **`/admin/liga-tablas`** — CRUD de las 14 clasificaciones (Absoluta + Sub15, 3 divisiones × 2 sexos). Por tabla: título, subtítulo, visible, orden, autoplay, nº cards; editor inline de filas (posición, club, logo, puntos, URL completa) con drag & drop.
+- **`/admin/event-manager`** — CRUD de eventos enriquecido (campos nuevos, estados, badges live/featured). Botón "Activar Live" único excluyente.
+- **`/admin/eventos/$id/pruebas`** — gestor de pruebas de un evento. Crear, editar, ordenar, cambiar estado.
+- **`/admin/eventos/$id/pruebas/$testId`** — editor de resultados con dos modos:
+  - **Rápido**: Top 3 inline.
+  - **Completo**: tabla editable con cualquier número de filas.
+  - **Import CSV/Excel**: parser con mapeo de columnas (`position,name,club,country,time,points`).
 
-**Componentes Hub**:
-- `src/components/hub/VideosDirectory.tsx`, `VideoCard.tsx`, `VideoPlayer.tsx`
-- `src/components/hub/MvpRanking.tsx`
-- `src/components/hub/LiveCenterPage.tsx`, `LiveTimeline.tsx`
-- `src/components/hub/CommunityForm.tsx`, `CommunityCalendar.tsx`
-- `src/components/hub/ArchiveBrowser.tsx`
-
-**Reutilización**:
-- `EntityRelationsField` para relaciones N:N en todos los admins nuevos.
-- `ImageUploadField` / `GalleryUploadField` para multimedia.
-- `useCountryHub`, `HubHero`, `HubSubNav` ya existentes.
-- Supabase Realtime ya integrado en `LiveBar` — extender al Live Center.
+Todas las pantallas reutilizan los componentes existentes (`AdminLink`, layout `admin.tsx`, tokens `gold/surface/border`).
 
 ---
 
-## Pregunta antes de empezar
+## 3. Frontend público — Home
 
-Es bastante trabajo (5 secciones grandes). ¿Cómo lo prefieres?
+Reemplazar el bloque actual `HomeStandingsCarousel` por un componente orquestador `HomeDynamicZone`:
 
-**A) Todo de una** — implemento las 5 secciones en una pasada larga. Riesgo: más superficie, más posibles ajustes después.
+```text
+[Ticker EN VIVO]
+[HomeDynamicZone] ← lee home_modules.dynamic_zone_mode
+  ├─ mode='liga'  → <LeagueTablesCarousel />
+  ├─ mode='live'  → <LiveEventCenter />
+  ├─ mode='both'  → ambos apilados (Live arriba, Liga debajo)
+  └─ mode='none'  → null
+[Publicidad / Revista]
+```
 
-**B) Por bloques** — empiezo por las 2 más estratégicas (te recomiendo **RollerZone TV + Live Center** porque son las que más impacto editorial y de tráfico tienen) y seguimos con MVP, Comunidad y Archivo en mensajes siguientes.
+- **`LeagueTablesCarousel`** — carrusel premium de las tablas visibles, con tabs por grupo (Absoluta / Sub15) y por división. Mantiene el look actual.
+- **`LiveEventCenter`** — módulo cinemático tipo Olympics:
+  - Header con logo evento + hero + badge LIVE pulsante + sede + fechas.
+  - Grid de cards por prueba: nombre, categoría, hora, estado (icono + badge LIVE/FINAL/UPCOMING), top 3 resultados, botón "Ver resultados".
+  - Contador regresivo para pruebas `upcoming`.
+  - Suscripción realtime a `event_tests` y `event_results`.
 
-**C) Otro orden** — me dices la prioridad.
+---
 
-También: ¿el formulario "Envía tu noticia" de Comunidad debe permitir envío **anónimo sin login** (más fricción cero pero más spam) o requerir cuenta? Por defecto iría con envío público + validación zod estricta + moderación admin.
+## 4. Páginas públicas
+
+- **`/eventos/$slug`** (ya existe — enriquecer): hero image, datos, programa, pruebas con resultados live, streaming opcional, noticias relacionadas. Meta SEO + OpenGraph + JSON-LD `SportsEvent`.
+- **`/resultados`** (ya existe — rediseñar como archivo histórico): filtros por año, evento, país, categoría, sexo, tipo prueba, club, atleta + buscador global.
+- **`/resultados/$evento/$prueba`** — clasificación completa de una prueba. URL limpia tipo `/resultados/campeonato-espana-pista-2026/200m-senior-femenino`.
+
+---
+
+## 5. Realtime
+
+Suscripciones Supabase Realtime en `LiveEventCenter` y `HomeDynamicZone` para refrescar sin recargar cuando cambian: `home_modules`, `event_tests`, `event_results`, evento activo.
+
+---
+
+## 6. SEO
+
+- Meta dinámica por evento/prueba (`head()` en cada route).
+- Canonical, og:image desde `banner_url`/`logo_url`.
+- JSON-LD: `SportsEvent` en evento, `SportsResults` en prueba.
+
+---
+
+## 7. Detalles técnicos
+
+- TanStack Start file-routes nuevos en `src/routes/admin.home-control.tsx`, `src/routes/admin.liga-tablas.tsx`, `src/routes/admin.event-manager.tsx`, `src/routes/admin.eventos.$id.pruebas.tsx`, `src/routes/admin.eventos.$id.pruebas.$testId.tsx`, `src/routes/resultados.$evento.$prueba.tsx`.
+- Hooks en `src/lib/hub/`: `useHomeMode`, `useLeagueTables`, `useLiveFeaturedEvent`, `useEventTests`, `useEventResults`.
+- Componentes en `src/components/home/`: `HomeDynamicZone`, `LeagueTablesCarousel` (refactor del actual), `LiveEventCenter`, `LiveTestCard`, `LiveCountdown`.
+- CSV import con librería `papaparse` (ligera, edge-compatible).
+- Cero cambios en auth, ticker, header, footer, hubs de país, secciones de noticias.
+
+---
+
+## Entregables
+
+1. Migración SQL (1 sola) con todas las tablas, RLS, realtime publication, trigger del live único.
+2. Panel admin completo (5 pantallas nuevas).
+3. Componentes home (`HomeDynamicZone` + `LiveEventCenter` + refactor del carrusel actual).
+4. Páginas públicas (`/eventos/$slug` enriquecido, `/resultados` rediseñado, `/resultados/$evento/$prueba` nuevo).
+5. SEO + JSON-LD.
+
+Identidad visual y código existente intactos. La sección actual "Liga Nacional" se preserva como uno de los modos del nuevo sistema.
+
+¿Apruebas el plan para empezar?
