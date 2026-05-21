@@ -4,7 +4,7 @@ import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookO
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { Ticker } from "@/components/site/Ticker";
-import { HomeStandingsCarousel } from "@/components/home/HomeStandingsCarousel";
+import { HomeDynamicZone } from "@/components/home/HomeDynamicZone";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
@@ -110,7 +110,7 @@ function HomePage() {
 
       <Ticker />
 
-      <HomeStandingsCarousel />
+      <HomeDynamicZone />
 
       <AdBannerWithMagazine placement="home_top" />
 

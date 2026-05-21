@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, Info, Timer, Layers, Inbox, MessageSquare } from "lucide-react";
+import { FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen, Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Clock, Medal, Info, Timer, Layers, Inbox, MessageSquare, LayoutDashboard } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -59,6 +59,9 @@ function AdminLayout() {
         <nav className="flex flex-col gap-1">
           <AdminLink to="/admin" exact icon={<FileText className="h-4 w-4" />}>
             Noticias
+          </AdminLink>
+          <AdminLink to="/admin/home-control" icon={<LayoutDashboard className="h-4 w-4" />}>
+            Home Control Center
           </AdminLink>
           <AdminLink to="/admin/pendientes" icon={<Inbox className="h-4 w-4" />}>
             Cola de revisión
@@ -162,7 +165,7 @@ function AdminLink({
   icon,
   children,
 }: {
-  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/federaciones" | "/admin/premios-mvp" | "/admin/hub-liga" | "/admin/clasificaciones" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/live-center" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/admin/comunidad" | "/dashboard";
+  to: "/admin" | "/admin/categorias" | "/admin/usuarios" | "/admin/patinadores" | "/admin/clubes" | "/admin/federaciones" | "/admin/premios-mvp" | "/admin/hub-liga" | "/admin/clasificaciones" | "/admin/eventos" | "/admin/revistas" | "/admin/revista-cta" | "/admin/patrocinadores" | "/admin/entrevistas" | "/admin/equipo" | "/admin/redactores" | "/admin/tv" | "/admin/live-center" | "/admin/tv-emisiones" | "/admin/tv-highlights" | "/admin/ticker" | "/admin/banners" | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule" | "/admin/medallero" | "/admin/live-results" | "/admin/sections" | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control" | "/dashboard";
   exact?: boolean;
   icon: React.ReactNode;
   children: React.ReactNode;
