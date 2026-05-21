@@ -12,35 +12,32 @@ export function HubSubNav({ country, activeSections }: { country: string; active
   };
 
   return (
-    <nav className="sticky top-14 z-40 border-b border-[#2A2A2A] bg-[#1A1A1A]/90 backdrop-blur-md">
-      <div className="mx-auto max-w-7xl overflow-x-auto px-4 md:px-6">
-        <ul className="flex h-12 items-center gap-1 md:gap-2 whitespace-nowrap">
+    <nav className="sticky top-14 z-40 bg-[#1A1A1A]/95 backdrop-blur-md border-b border-[#333]">
+      <div className="mx-auto max-w-7xl px-4 md:px-8">
+        <div className="flex items-center gap-8 md:gap-10 overflow-x-auto hide-scrollbar py-4 md:py-5">
           {sections.map((s) => {
             const active = isActive(s.key);
-            const cls = `font-ui inline-flex items-center px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition-colors rounded-[4px] ${
-              active
-                ? "bg-[#D4A017] text-[#1A1A1A]"
-                : "text-[#B5B5B5] hover:text-[#F5F5F5] hover:bg-[#242424]"
-            }`;
-            return (
-              <li key={s.key}>
-                {s.key === "inicio" ? (
-                  <Link to="/hub/$country" params={{ country }} className={cls}>
-                    {s.label}
-                  </Link>
-                ) : (
-                  <Link
-                    to="/hub/$country/$section"
-                    params={{ country, section: s.key }}
-                    className={cls}
-                  >
-                    {s.label}
-                  </Link>
-                )}
-              </li>
+            const base =
+              "text-[11px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap transition-colors pb-3 -mb-[17px] md:-mb-[21px] border-b-2";
+            const cls = active
+              ? `${base} text-[#D4A017] border-[#D4A017]`
+              : `${base} text-[#888] hover:text-white border-transparent`;
+            return s.key === "inicio" ? (
+              <Link key={s.key} to="/hub/$country" params={{ country }} className={cls}>
+                {s.label}
+              </Link>
+            ) : (
+              <Link
+                key={s.key}
+                to="/hub/$country/$section"
+                params={{ country, section: s.key }}
+                className={cls}
+              >
+                {s.label}
+              </Link>
             );
           })}
-        </ul>
+        </div>
       </div>
     </nav>
   );
