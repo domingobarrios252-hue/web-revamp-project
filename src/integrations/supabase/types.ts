@@ -529,78 +529,114 @@ export type Database = {
       }
       events: {
         Row: {
+          banner_url: string | null
           categories: string[]
+          city: string | null
           country_code: string
           cover_url: string | null
           created_at: string
           description: string | null
           end_date: string | null
+          event_type: string | null
           facebook_url: string | null
           gallery: string[]
           id: string
           instagram_url: string | null
+          is_featured: boolean
+          live_center_enabled: boolean
           location: string | null
+          logo_url: string | null
           name: string
           organizer: string | null
           published: boolean
           region_id: string | null
           registration_url: string | null
           scope: string
+          season: string | null
+          show_in_calendar: boolean
+          show_in_home: boolean
+          show_in_results: boolean
           slug: string
           sort_order: number
           start_date: string
           status: Database["public"]["Enums"]["live_center_status"]
+          streaming_url: string | null
           updated_at: string
+          venue: string | null
           website_url: string | null
         }
         Insert: {
+          banner_url?: string | null
           categories?: string[]
+          city?: string | null
           country_code?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
           end_date?: string | null
+          event_type?: string | null
           facebook_url?: string | null
           gallery?: string[]
           id?: string
           instagram_url?: string | null
+          is_featured?: boolean
+          live_center_enabled?: boolean
           location?: string | null
+          logo_url?: string | null
           name: string
           organizer?: string | null
           published?: boolean
           region_id?: string | null
           registration_url?: string | null
           scope?: string
+          season?: string | null
+          show_in_calendar?: boolean
+          show_in_home?: boolean
+          show_in_results?: boolean
           slug: string
           sort_order?: number
           start_date: string
           status?: Database["public"]["Enums"]["live_center_status"]
+          streaming_url?: string | null
           updated_at?: string
+          venue?: string | null
           website_url?: string | null
         }
         Update: {
+          banner_url?: string | null
           categories?: string[]
+          city?: string | null
           country_code?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
           end_date?: string | null
+          event_type?: string | null
           facebook_url?: string | null
           gallery?: string[]
           id?: string
           instagram_url?: string | null
+          is_featured?: boolean
+          live_center_enabled?: boolean
           location?: string | null
+          logo_url?: string | null
           name?: string
           organizer?: string | null
           published?: boolean
           region_id?: string | null
           registration_url?: string | null
           scope?: string
+          season?: string | null
+          show_in_calendar?: boolean
+          show_in_home?: boolean
+          show_in_results?: boolean
           slug?: string
           sort_order?: number
           start_date?: string
           status?: Database["public"]["Enums"]["live_center_status"]
+          streaming_url?: string | null
           updated_at?: string
+          venue?: string | null
           website_url?: string | null
         }
         Relationships: [
@@ -743,34 +779,70 @@ export type Database = {
           },
         ]
       }
+      home_modules: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       home_standings_groups: {
         Row: {
+          autoplay: boolean
           competition_group: string
           created_at: string
           display_order: number
           division_name: string
+          full_url: string | null
           id: string
+          max_cards: number
           season: string
+          subtitle: string | null
+          title: string | null
           updated_at: string
           visible: boolean
         }
         Insert: {
+          autoplay?: boolean
           competition_group: string
           created_at?: string
           display_order?: number
           division_name: string
+          full_url?: string | null
           id?: string
+          max_cards?: number
           season?: string
+          subtitle?: string | null
+          title?: string | null
           updated_at?: string
           visible?: boolean
         }
         Update: {
+          autoplay?: boolean
           competition_group?: string
           created_at?: string
           display_order?: number
           division_name?: string
+          full_url?: string | null
           id?: string
+          max_cards?: number
           season?: string
+          subtitle?: string | null
+          title?: string | null
           updated_at?: string
           visible?: boolean
         }
@@ -781,6 +853,7 @@ export type Database = {
           club_logo: string | null
           club_name: string
           created_at: string
+          full_url: string | null
           group_id: string
           id: string
           points: number
@@ -791,6 +864,7 @@ export type Database = {
           club_logo?: string | null
           club_name: string
           created_at?: string
+          full_url?: string | null
           group_id: string
           id?: string
           points?: number
@@ -801,6 +875,7 @@ export type Database = {
           club_logo?: string | null
           club_name?: string
           created_at?: string
+          full_url?: string | null
           group_id?: string
           id?: string
           points?: number
@@ -1772,7 +1847,10 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          description: string | null
+          display_order: number
           event_id: string
+          gender: string | null
           id: string
           race_name: string
           scheduled_time: string
@@ -1782,7 +1860,10 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string
+          description?: string | null
+          display_order?: number
           event_id: string
+          gender?: string | null
           id?: string
           race_name: string
           scheduled_time?: string
@@ -1792,7 +1873,10 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string
+          description?: string | null
+          display_order?: number
           event_id?: string
+          gender?: string | null
           id?: string
           race_name?: string
           scheduled_time?: string

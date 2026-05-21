@@ -28,6 +28,8 @@ type EventRow = {
   published: boolean;
   gallery: string[];
   country_code: string | null;
+  is_featured: boolean | null;
+  live_center_enabled: boolean | null;
   regions: { name: string } | null;
 };
 
@@ -116,6 +118,7 @@ function AdminEventos() {
                 <th className="px-3 py-2 text-left">Fecha</th>
                 <th className="px-3 py-2 text-left">Categorías</th>
                 <th className="px-3 py-2 text-left">Estado</th>
+                <th className="px-3 py-2 text-left">Live destacado</th>
                 <th className="px-3 py-2"></th>
               </tr>
             </thead>
@@ -130,6 +133,27 @@ function AdminEventos() {
                   <td className="px-3 py-2 text-xs">{e.start_date}{e.end_date && e.end_date !== e.start_date ? ` → ${e.end_date}` : ""}</td>
                   <td className="px-3 py-2 text-xs">{e.categories?.join(", ") || "—"}</td>
                   <td className="px-3 py-2 text-xs">{e.published ? <span className="text-gold">Publicado</span> : <span className="text-muted-foreground">Borrador</span>}</td>
+                  <td className="px-3 py-2 text-xs">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const next = !(e.is_featured && e.live_center_enabled);
+                        await (supabase as any)
+                          .from("events")
+                          .update({ is_featured: next, live_center_enabled: next })
+                          .eq("id", e.id);
+                        load();
+                      }}
+                      className={
+                        "font-condensed rounded-sm border px-2 py-1 text-[10px] font-bold uppercase tracking-widest transition-colors " +
+                        (e.is_featured && e.live_center_enabled
+                          ? "border-red-500 bg-red-600 text-white"
+                          : "border-border text-muted-foreground hover:border-gold hover:text-gold")
+                      }
+                    >
+                      {e.is_featured && e.live_center_enabled ? "● LIVE" : "Activar"}
+                    </button>
+                  </td>
                   <td className="px-3 py-2 text-right">
                     <button onClick={() => { setEditing(e); setShowForm(true); }} className="mr-2 text-muted-foreground hover:text-gold"><Pencil className="h-3.5 w-3.5" /></button>
                     <button onClick={() => onDelete(e.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></button>
