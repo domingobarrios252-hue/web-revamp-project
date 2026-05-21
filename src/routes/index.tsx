@@ -110,6 +110,8 @@ function HomePage() {
 
       <Ticker />
 
+      <HomeStandingsCarousel />
+
       <AdBannerWithMagazine placement="home_top" />
 
       <div id="live-center"><LiveCenter /></div>
