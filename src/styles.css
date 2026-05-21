@@ -125,6 +125,25 @@
 .font-ui { font-family: var(--font-ui); }
 .font-brand { font-family: var(--font-brand); }
 
+/* ===== Hub readable typography (España y demás hubs país) ===== */
+/* Sustituye la display condensada (Bebas Neue) por una sans clara
+   y mejora el interletraje para mejorar la legibilidad dentro del hub. */
+.hub-readable .font-display {
+  font-family: var(--font-ui);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+.hub-readable h1.font-display,
+.hub-readable h2.font-display,
+.hub-readable h3.font-display {
+  letter-spacing: -0.015em;
+}
+.hub-readable .font-condensed {
+  font-family: var(--font-ui);
+  letter-spacing: 0.02em;
+}
+
 /* ===== TICKER ===== */
 @keyframes ticker {
   0% { transform: translateX(0); }

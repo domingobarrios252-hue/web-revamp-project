@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Calendar, Eye, ArrowRight, Trophy, Mic, Users } from "lucide-react";
+import { Calendar, Eye, ArrowRight, Trophy, Mic } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
 
@@ -41,33 +41,17 @@ type InterviewRow = {
   cover_url: string | null;
 };
 
-type SkaterRow = {
-  id: string;
-  full_name: string;
-  slug: string;
-  photo_url: string | null;
-  category: string | null;
-};
-
-type ClubRow = {
-  id: string;
-  name: string;
-  slug: string;
-  logo_url: string | null;
-};
 
 export function HubDashboard({ country }: { country: string }) {
   const [news, setNews] = useState<NewsRow[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
   const [results, setResults] = useState<ResultRow[]>([]);
   const [interview, setInterview] = useState<InterviewRow | null>(null);
-  const [skater, setSkater] = useState<SkaterRow | null>(null);
-  const [club, setClub] = useState<ClubRow | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [n, e, r, i, s, c] = await Promise.all([
+      const [n, e, r, i] = await Promise.all([
         supabase
           .from("news")
           .select("id,title,slug,excerpt,image_url,published_at,views_count,featured")
@@ -98,29 +82,12 @@ export function HubDashboard({ country }: { country: string }) {
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle(),
-        supabase
-          .from("skaters")
-          .select("id,full_name,slug,photo_url,category")
-          .eq("country_code", country)
-          .eq("featured", true)
-          .order("total_points", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        supabase
-          .from("clubs")
-          .select("id,name,slug,logo_url")
-          .eq("country_code", country)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
       ]);
       if (cancelled) return;
       setNews((n.data as NewsRow[]) ?? []);
       setEvents((e.data as EventRow[]) ?? []);
       setResults((r.data as ResultRow[]) ?? []);
       setInterview((i.data as InterviewRow) ?? null);
-      setSkater((s.data as SkaterRow) ?? null);
-      setClub((c.data as ClubRow) ?? null);
     })();
     return () => {
       cancelled = true;
@@ -264,40 +231,6 @@ export function HubDashboard({ country }: { country: string }) {
           </SideCard>
         )}
 
-        {skater && (
-          <SideCard title="Patinador destacado" icon={<Users className="h-4 w-4" />}>
-            <div className="flex items-center gap-3">
-              {skater.photo_url ? (
-                <img
-                  src={skater.photo_url}
-                  alt={skater.full_name}
-                  className="h-16 w-16 rounded-full object-cover border-2 border-[#D4A017]"
-                />
-              ) : (
-                <div className="h-16 w-16 rounded-full bg-[#222] border-2 border-[#D4A017]" />
-              )}
-              <div>
-                <div className="font-display font-bold text-[#F5F5F5]">{skater.full_name}</div>
-                {skater.category && (
-                  <div className="text-[11px] text-[#888] uppercase tracking-wider">{skater.category}</div>
-                )}
-              </div>
-            </div>
-          </SideCard>
-        )}
-
-        {club && (
-          <SideCard title="Club destacado" icon={<Trophy className="h-4 w-4" />}>
-            <div className="flex items-center gap-3">
-              {club.logo_url ? (
-                <img src={club.logo_url} alt={club.name} className="h-14 w-14 object-contain" />
-              ) : (
-                <div className="h-14 w-14 rounded bg-[#222]" />
-              )}
-              <div className="font-display font-bold text-[#F5F5F5]">{club.name}</div>
-            </div>
-          </SideCard>
-        )}
 
         {interview && (
           <SideCard title="Entrevista" icon={<Mic className="h-4 w-4" />} href="/entrevistas">
