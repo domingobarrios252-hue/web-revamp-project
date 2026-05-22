@@ -99,6 +99,13 @@ export function HubDashboard({ country }: { country: string }) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 md:px-8 py-10 md:py-14">
+      {/* Podios slider for this country */}
+      <div className="mb-10 -mx-4 md:-mx-8">
+        <HomeResultsSlider
+          placement={country === "es" ? "spain" : country}
+          tag={`Podios ${country.toUpperCase()}`}
+        />
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
         {/* MAIN COLUMN */}
         <div className="lg:col-span-8 space-y-12 md:space-y-16">
