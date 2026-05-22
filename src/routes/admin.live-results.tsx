@@ -1007,7 +1007,10 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
   const [eventName, setEventName] = useState("");
   const [race, setRace] = useState("");
   const [category, setCategory] = useState("");
+  const [gender, setGender] = useState("");
+  const [round, setRound] = useState("Final");
   const [status, setStatus] = useState<Status>("finalizado");
+  const [featured, setFeatured] = useState(false);
   const [rowsDraft, setRowsDraft] = useState<BulkRow[]>(() =>
     Array.from({ length: 6 }, emptyBulkRow),
   );
@@ -1037,21 +1040,41 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
   const removeRow = (i: number) =>
     setRowsDraft((prev) => prev.filter((_, idx) => idx !== i));
 
+  const parseCsvText = (text: string): BulkRow[] => {
+    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) return [];
+    const splitter = lines[0].includes("\t") ? /\t/ : lines[0].includes(";") ? /;/ : /,/;
+    const first = lines[0].split(splitter).map((c) => c.trim().toLowerCase());
+    const hasHeader = ["pos", "posicion", "posición", "position", "#", "rank"].some((h) => first[0]?.startsWith(h));
+    const body = hasHeader ? lines.slice(1) : lines;
+    return body.map((line) => {
+      const cols = line.split(splitter).map((c) => c.trim());
+      let off = 0;
+      if (/^\d+$/.test(cols[0] ?? "")) off = 1;
+      return {
+        athlete_name: cols[off] ?? "",
+        club: cols[off + 1] ?? "",
+        race_time: cols[off + 2] ?? "",
+        points: cols[off + 3] ?? "",
+      };
+    }).filter((r) => r.athlete_name);
+  };
+
   const onPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const text = e.clipboardData.getData("text");
     if (!text.includes("\n") && !text.includes("\t")) return;
     e.preventDefault();
-    const lines = text.split(/\r?\n/).filter((l) => l.trim());
-    const parsed: BulkRow[] = lines.map((line) => {
-      const cols = line.split(/\t|;|,/).map((c) => c.trim());
-      return {
-        athlete_name: cols[0] ?? "",
-        club: cols[1] ?? "",
-        race_time: cols[2] ?? "",
-        points: cols[3] ?? "",
-      };
-    });
+    const parsed = parseCsvText(text);
     if (parsed.length) setRowsDraft(parsed);
+  };
+
+  const onFileSelect = async (file: File | null) => {
+    if (!file) return;
+    const text = await file.text();
+    const parsed = parseCsvText(text);
+    if (parsed.length === 0) return toast.error("CSV vacío o formato no reconocido");
+    setRowsDraft(parsed);
+    toast.success(`${parsed.length} filas cargadas del CSV`);
   };
 
   const onSave = async () => {
@@ -1064,6 +1087,8 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
       event_slug: eventSlug,
       race: race.trim() || null,
       category: category.trim() || null,
+      gender: gender.trim() || null,
+      round: round.trim() || null,
       position: i + 1,
       athlete_name: r.athlete_name.trim(),
       club: r.club.trim() || null,
@@ -1071,15 +1096,17 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
       points: r.points.trim() === "" ? null : Number(r.points),
       status,
       published: true,
+      featured_in_live_center: featured,
       sort_order: i,
     }));
     const { error } = await supabase.from("live_results").insert(payload);
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success(`${valid.length} clasificaciones añadidas`);
+    toast.success(`${valid.length} clasificaciones añadidas a "${eventName}"`);
     setRowsDraft(Array.from({ length: 6 }, emptyBulkRow));
     setRace("");
     setCategory("");
+    setGender("");
     onSaved();
   };
 
