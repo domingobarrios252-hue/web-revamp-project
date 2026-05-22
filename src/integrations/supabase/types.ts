@@ -1162,16 +1162,20 @@ export type Database = {
           event_name: string
           event_slug: string | null
           featured_in_live_center: boolean
+          federation: string | null
           gap: string | null
           gender: string | null
+          home_sort_order: number
           id: string
           is_highlighted: boolean
           news_id: string | null
+          notes: string | null
           points: number | null
           position: number
           published: boolean
           race: string | null
           race_time: string | null
+          round: string | null
           sort_order: number
           status: Database["public"]["Enums"]["live_result_status"]
           updated_at: string
@@ -1186,16 +1190,20 @@ export type Database = {
           event_name: string
           event_slug?: string | null
           featured_in_live_center?: boolean
+          federation?: string | null
           gap?: string | null
           gender?: string | null
+          home_sort_order?: number
           id?: string
           is_highlighted?: boolean
           news_id?: string | null
+          notes?: string | null
           points?: number | null
           position?: number
           published?: boolean
           race?: string | null
           race_time?: string | null
+          round?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["live_result_status"]
           updated_at?: string
@@ -1210,16 +1218,20 @@ export type Database = {
           event_name?: string
           event_slug?: string | null
           featured_in_live_center?: boolean
+          federation?: string | null
           gap?: string | null
           gender?: string | null
+          home_sort_order?: number
           id?: string
           is_highlighted?: boolean
           news_id?: string | null
+          notes?: string | null
           points?: number | null
           position?: number
           published?: boolean
           race?: string | null
           race_time?: string | null
+          round?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["live_result_status"]
           updated_at?: string
