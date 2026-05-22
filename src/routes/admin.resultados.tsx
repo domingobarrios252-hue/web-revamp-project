@@ -78,6 +78,7 @@ function AdminResultados() {
       published: draft.published,
       featured_in_live_center: draft.featured_in_live_center,
       sort_order: Number(draft.sort_order) || 0,
+      placements: draft.placements?.length ? draft.placements : ["home"],
     };
     const { error } = "id" in draft && draft.id
       ? await supabase.from("result_events").update(payload).eq("id", draft.id)
