@@ -1,116 +1,134 @@
-# Plan: HOME CONTROL CENTER + LIVE EVENT CENTER
+# Plan: Sistema profesional de resultados agrupados por evento
 
-Transformar la home de RollerZone en un sistema dinámico modular tipo Olympics/F1/ESPN, manteniendo 100% la identidad visual actual (dark + oro #D4A017, tipografía editorial) y sin romper nada existente.
-
----
-
-## 1. Arquitectura de base de datos (Supabase)
-
-Nuevas tablas:
-
-- **`home_modules`** — control de la zona dinámica de la home
-  - `key` ('dynamic_zone_mode'), `value` ('liga' | 'live' | 'both' | 'none'), `updated_at`
-- **`league_tables`** — clasificaciones administrables
-  - `id`, `competition_group` ('absoluta' | 'sub15'), `division` ('1M','1F','2M','2F','3M','3F'), `season`, `title`, `subtitle`, `visible`, `display_order`, `autoplay`, `max_cards`
-- **`league_table_rows`**
-  - `id`, `table_id` (FK), `position`, `club_name`, `club_logo`, `points`, `full_url`, `display_order`
-- **`event_tests`** (pruebas de cada evento)
-  - `id`, `event_id` (FK a `events`), `name`, `category`, `gender`, `scheduled_at`, `status` ('pending'|'upcoming'|'call_room'|'live'|'finished'|'official'), `description`, `display_order`
-- **`event_results`** (resultados de cada prueba)
-  - `id`, `test_id` (FK), `position`, `athlete_name`, `club`, `country`, `race_time`, `points`, `is_highlighted`
-
-Extender tabla `events` con: `event_type`, `logo_url`, `banner_url`, `organizer`, `season`, `city`, `venue`, `show_in_home`, `is_featured`, `live_center_enabled`, `show_in_calendar`, `show_in_results`. Trigger para garantizar un único evento con `is_featured + live_center_enabled` activos a la vez.
-
-RLS:
-- Lectura pública (`true`) en todas las tablas de cara al público.
-- Escritura solo para `admin` (vía `has_role`).
-
-Realtime habilitado en `event_tests`, `event_results`, `home_modules`, `league_tables`, `league_table_rows`.
+## Objetivo
+Reorganizar todo el sistema de resultados para que funcione como un archivo deportivo profesional: todos los resultados de un mismo campeonato quedan agrupados dentro del mismo evento, con filtros, navegación clara, slider de Home controlable y archivo histórico permanente.
 
 ---
 
-## 2. Panel de administración
+## 1. Base de datos (Supabase)
 
-Nueva entrada en sidebar: **HOME CONTROL CENTER** (`/admin/home-control`).
+El esquema actual ya tiene `result_events` (eventos) y `live_results` (filas individuales con `event_slug`, `race`, `category`, `gender`, etc.). Lo aprovecho añadiendo solo lo que falta:
 
-Pantallas:
+**Ampliar `live_results`:**
+- `round` (text) — Final / Semifinal / Serie / Clasificatoria
+- `federation` (text) — para filtro por federación
+- `notes` (text) — observaciones libres
+- `home_sort_order` (int) — orden específico del slider Home (independiente de `sort_order` del evento)
 
-- **`/admin/home-control`** — selector de modo (Liga / Live / Both / None) con preview en vivo del resultado.
-- **`/admin/liga-tablas`** — CRUD de las 14 clasificaciones (Absoluta + Sub15, 3 divisiones × 2 sexos). Por tabla: título, subtítulo, visible, orden, autoplay, nº cards; editor inline de filas (posición, club, logo, puntos, URL completa) con drag & drop.
-- **`/admin/event-manager`** — CRUD de eventos enriquecido (campos nuevos, estados, badges live/featured). Botón "Activar Live" único excluyente.
-- **`/admin/eventos/$id/pruebas`** — gestor de pruebas de un evento. Crear, editar, ordenar, cambiar estado.
-- **`/admin/eventos/$id/pruebas/$testId`** — editor de resultados con dos modos:
-  - **Rápido**: Top 3 inline.
-  - **Completo**: tabla editable con cualquier número de filas.
-  - **Import CSV/Excel**: parser con mapeo de columnas (`position,name,club,country,time,points`).
+**Índices:**
+- `(event_slug, race, category, gender, round)` para filtros rápidos
+- `(featured_in_live_center, home_sort_order)` para el slider
 
-Todas las pantallas reutilizan los componentes existentes (`AdminLink`, layout `admin.tsx`, tokens `gold/surface/border`).
+Se mantienen RLS actuales (lectura pública, escritura admin/editor).
 
 ---
 
-## 3. Frontend público — Home
+## 2. Importación CSV mejorada (`/admin/live-results`)
 
-Reemplazar el bloque actual `HomeStandingsCarousel` por un componente orquestador `HomeDynamicZone`:
+Nuevo flujo: **subir CSV ya asignado a un evento + metadatos comunes**.
 
-```text
-[Ticker EN VIVO]
-[HomeDynamicZone] ← lee home_modules.dynamic_zone_mode
-  ├─ mode='liga'  → <LeagueTablesCarousel />
-  ├─ mode='live'  → <LiveEventCenter />
-  ├─ mode='both'  → ambos apilados (Live arriba, Liga debajo)
-  └─ mode='none'  → null
-[Publicidad / Revista]
+Antes de subir el CSV, el admin selecciona:
+- **Evento existente** (dropdown desde `result_events`) — obligatorio, evita duplicados
+- **Prueba** (200 m, 500 m sprint, eliminación, puntos…) — texto libre o sugerencias
+- **Categoría** (Senior / Junior / Juvenil / Cadete…)
+- **Sexo** (Masculino / Femenino / Mixto)
+- **Ronda** (Final / Semifinal / Serie…)
+- **Estado** (`en_vivo` / `finalizado` / `proxima`)
+
+El CSV solo necesita columnas de resultados (posición, atleta, club, tiempo, puntos, país, federación). Los metadatos se aplican a todas las filas al insertar. Nunca se crea un evento desde el CSV.
+
+Modo manual: mismo formulario con tabla editable inline (añadir/eliminar filas) sin CSV.
+
+---
+
+## 3. Páginas públicas
+
+### `/resultados` (index)
+Listado de eventos (`result_events`) como cards: banner, nombre, fecha, país, estado. Click → página del evento.
+
+### `/resultados/$evento` (rediseño)
+- Hero del evento (banner, nombre, fecha, lugar, estado)
+- **Barra de filtros** sticky: Prueba · Categoría · Sexo · Ronda · Estado · Club · Federación (multi-select; opciones derivadas dinámicamente de las filas del evento)
+- **Listado de pruebas** agrupadas: cada bloque = una combinación única (prueba + categoría + sexo + ronda) con su tabla completa de clasificación, podio destacado arriba (Top 3 con medallas), tabla limpia debajo
+- Soporta query params: `?prueba=200m&categoria=senior&sexo=masculino&ronda=final` → autoselecciona filtros y hace scroll a la sección
+- Diseño premium actual mantenido (fondo oscuro, oro, cards)
+
+---
+
+## 4. Slider Home (`HomeResultsSlider`)
+
+Lectura desde `live_results` con `featured_in_live_center = true`, ordenado por `home_sort_order`. Sin cambios visuales mayores.
+
+**Cambio clave en el link de cada slide:**
+Actualmente apunta a `/resultados/$evento`. Pasa a apuntar a la prueba concreta:
+`/resultados/$evento?prueba=...&categoria=...&sexo=...&ronda=...`
+
+Así el usuario aterriza con el filtro ya aplicado en la prueba correspondiente.
+
+---
+
+## 5. Panel admin
+
+### `/admin/resultados` (eventos) — ya existe
+Sin cambios estructurales. Solo añado botón **"Gestionar pruebas y resultados →"** por evento que abre la nueva pantalla.
+
+### `/admin/resultados/$slug` (NUEVO — gestión interna de un evento)
+Una sola pantalla con todo el control del evento:
+
+- **Lista de pruebas** del evento agrupadas por (prueba + categoría + sexo + ronda) con:
+  - Toggle "Mostrar en Home" (`featured_in_live_center`)
+  - Input de orden Home (`home_sort_order`)
+  - Badge de estado (Live / Final / Próx.) editable inline
+  - Contador de filas
+  - Botón "Editar filas" / "Eliminar prueba completa" / "Duplicar"
+- **Subir CSV a este evento** (formulario con metadatos descritos en sección 2)
+- **Crear prueba manual** (mismo formulario sin CSV)
+- **Editor de filas inline** (al desplegar una prueba): posición, atleta, club, federación, país, tiempo, puntos, observaciones, eliminar fila individual
+- **Acción peligrosa:** "Eliminar todos los resultados del evento" con confirmación
+
+### `/admin/live-results` actual
+Se mantiene como editor global (búsqueda transversal) pero se recomienda usar la nueva pantalla por evento.
+
+---
+
+## 6. Navegación final
+
+```
+/resultados                                    → todos los eventos
+/resultados/campeonato-espana-pista-2026       → evento + filtros + todas las pruebas
+/resultados/campeonato-espana-pista-2026?prueba=200m&categoria=senior&sexo=masculino
+                                               → vista filtrada (desde slider Home)
+
+/admin/resultados                              → CRUD eventos
+/admin/resultados/campeonato-espana-pista-2026 → gestión pruebas/filas/Home de ese evento
 ```
 
-- **`LeagueTablesCarousel`** — carrusel premium de las tablas visibles, con tabs por grupo (Absoluta / Sub15) y por división. Mantiene el look actual.
-- **`LiveEventCenter`** — módulo cinemático tipo Olympics:
-  - Header con logo evento + hero + badge LIVE pulsante + sede + fechas.
-  - Grid de cards por prueba: nombre, categoría, hora, estado (icono + badge LIVE/FINAL/UPCOMING), top 3 resultados, botón "Ver resultados".
-  - Contador regresivo para pruebas `upcoming`.
-  - Suscripción realtime a `event_tests` y `event_results`.
+---
+
+## 7. Reglas clave garantizadas
+
+- **Nunca se duplica un evento** desde un CSV. El evento siempre se elige antes de subir.
+- **Archivo histórico:** quitar `featured_in_live_center` solo lo retira del slider Home; no borra nada.
+- **Agrupación:** todas las pruebas de un mismo campeonato comparten `event_slug` y aparecen juntas en `/resultados/$slug`.
+- **Diseño:** se mantiene la identidad RollerZone (fondo oscuro, acentos oro, podios, tablas limpias, tipografía actual).
 
 ---
 
-## 4. Páginas públicas
+## Archivos a crear/editar
 
-- **`/eventos/$slug`** (ya existe — enriquecer): hero image, datos, programa, pruebas con resultados live, streaming opcional, noticias relacionadas. Meta SEO + OpenGraph + JSON-LD `SportsEvent`.
-- **`/resultados`** (ya existe — rediseñar como archivo histórico): filtros por año, evento, país, categoría, sexo, tipo prueba, club, atleta + buscador global.
-- **`/resultados/$evento/$prueba`** — clasificación completa de una prueba. URL limpia tipo `/resultados/campeonato-espana-pista-2026/200m-senior-femenino`.
+**Migración SQL:**
+- Añadir columnas `round`, `federation`, `notes`, `home_sort_order` a `live_results` + índices
 
----
+**Frontend público:**
+- `src/routes/resultados.$evento.tsx` — rediseño completo con filtros y agrupación
+- `src/components/home/HomeResultsSlider.tsx` — link con query params
+- (opcional) `src/routes/resultados.index.tsx` — verificación del grid de eventos
 
-## 5. Realtime
+**Admin:**
+- `src/routes/admin.resultados.$slug.tsx` — NUEVO gestor por evento
+- `src/routes/admin.live-results.tsx` — nuevo bloque "Subir CSV a evento existente" con selector de evento + metadatos
+- `src/routes/admin.resultados.tsx` — botón "Gestionar pruebas" en cada evento
 
-Suscripciones Supabase Realtime en `LiveEventCenter` y `HomeDynamicZone` para refrescar sin recargar cuando cambian: `home_modules`, `event_tests`, `event_results`, evento activo.
-
----
-
-## 6. SEO
-
-- Meta dinámica por evento/prueba (`head()` en cada route).
-- Canonical, og:image desde `banner_url`/`logo_url`.
-- JSON-LD: `SportsEvent` en evento, `SportsResults` en prueba.
-
----
-
-## 7. Detalles técnicos
-
-- TanStack Start file-routes nuevos en `src/routes/admin.home-control.tsx`, `src/routes/admin.liga-tablas.tsx`, `src/routes/admin.event-manager.tsx`, `src/routes/admin.eventos.$id.pruebas.tsx`, `src/routes/admin.eventos.$id.pruebas.$testId.tsx`, `src/routes/resultados.$evento.$prueba.tsx`.
-- Hooks en `src/lib/hub/`: `useHomeMode`, `useLeagueTables`, `useLiveFeaturedEvent`, `useEventTests`, `useEventResults`.
-- Componentes en `src/components/home/`: `HomeDynamicZone`, `LeagueTablesCarousel` (refactor del actual), `LiveEventCenter`, `LiveTestCard`, `LiveCountdown`.
-- CSV import con librería `papaparse` (ligera, edge-compatible).
-- Cero cambios en auth, ticker, header, footer, hubs de país, secciones de noticias.
-
----
-
-## Entregables
-
-1. Migración SQL (1 sola) con todas las tablas, RLS, realtime publication, trigger del live único.
-2. Panel admin completo (5 pantallas nuevas).
-3. Componentes home (`HomeDynamicZone` + `LiveEventCenter` + refactor del carrusel actual).
-4. Páginas públicas (`/eventos/$slug` enriquecido, `/resultados` rediseñado, `/resultados/$evento/$prueba` nuevo).
-5. SEO + JSON-LD.
-
-Identidad visual y código existente intactos. La sección actual "Liga Nacional" se preserva como uno de los modos del nuevo sistema.
+**Sin cambios:** auth, CMS general, ticker, header/footer, hubs de países, sección de noticias.
 
 ¿Apruebas el plan para empezar?

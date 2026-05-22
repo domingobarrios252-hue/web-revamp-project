@@ -1007,7 +1007,10 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
   const [eventName, setEventName] = useState("");
   const [race, setRace] = useState("");
   const [category, setCategory] = useState("");
+  const [gender, setGender] = useState("");
+  const [round, setRound] = useState("Final");
   const [status, setStatus] = useState<Status>("finalizado");
+  const [featured, setFeatured] = useState(false);
   const [rowsDraft, setRowsDraft] = useState<BulkRow[]>(() =>
     Array.from({ length: 6 }, emptyBulkRow),
   );
@@ -1037,21 +1040,41 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
   const removeRow = (i: number) =>
     setRowsDraft((prev) => prev.filter((_, idx) => idx !== i));
 
+  const parseCsvText = (text: string): BulkRow[] => {
+    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) return [];
+    const splitter = lines[0].includes("\t") ? /\t/ : lines[0].includes(";") ? /;/ : /,/;
+    const first = lines[0].split(splitter).map((c) => c.trim().toLowerCase());
+    const hasHeader = ["pos", "posicion", "posición", "position", "#", "rank"].some((h) => first[0]?.startsWith(h));
+    const body = hasHeader ? lines.slice(1) : lines;
+    return body.map((line) => {
+      const cols = line.split(splitter).map((c) => c.trim());
+      let off = 0;
+      if (/^\d+$/.test(cols[0] ?? "")) off = 1;
+      return {
+        athlete_name: cols[off] ?? "",
+        club: cols[off + 1] ?? "",
+        race_time: cols[off + 2] ?? "",
+        points: cols[off + 3] ?? "",
+      };
+    }).filter((r) => r.athlete_name);
+  };
+
   const onPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const text = e.clipboardData.getData("text");
     if (!text.includes("\n") && !text.includes("\t")) return;
     e.preventDefault();
-    const lines = text.split(/\r?\n/).filter((l) => l.trim());
-    const parsed: BulkRow[] = lines.map((line) => {
-      const cols = line.split(/\t|;|,/).map((c) => c.trim());
-      return {
-        athlete_name: cols[0] ?? "",
-        club: cols[1] ?? "",
-        race_time: cols[2] ?? "",
-        points: cols[3] ?? "",
-      };
-    });
+    const parsed = parseCsvText(text);
     if (parsed.length) setRowsDraft(parsed);
+  };
+
+  const onFileSelect = async (file: File | null) => {
+    if (!file) return;
+    const text = await file.text();
+    const parsed = parseCsvText(text);
+    if (parsed.length === 0) return toast.error("CSV vacío o formato no reconocido");
+    setRowsDraft(parsed);
+    toast.success(`${parsed.length} filas cargadas del CSV`);
   };
 
   const onSave = async () => {
@@ -1064,6 +1087,8 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
       event_slug: eventSlug,
       race: race.trim() || null,
       category: category.trim() || null,
+      gender: gender.trim() || null,
+      round: round.trim() || null,
       position: i + 1,
       athlete_name: r.athlete_name.trim(),
       club: r.club.trim() || null,
@@ -1071,15 +1096,17 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
       points: r.points.trim() === "" ? null : Number(r.points),
       status,
       published: true,
+      featured_in_live_center: featured,
       sort_order: i,
     }));
     const { error } = await supabase.from("live_results").insert(payload);
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success(`${valid.length} clasificaciones añadidas`);
+    toast.success(`${valid.length} clasificaciones añadidas a "${eventName}"`);
     setRowsDraft(Array.from({ length: 6 }, emptyBulkRow));
     setRace("");
     setCategory("");
+    setGender("");
     onSaved();
   };
 
@@ -1101,48 +1128,57 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
         <div className="space-y-3 border-t border-gold/20 p-4">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Evento *">
-              <select
-                value={eventSlug}
-                onChange={(e) => onPickEvent(e.target.value)}
-                className="input"
-              >
+              <select value={eventSlug} onChange={(e) => onPickEvent(e.target.value)} className="input">
                 <option value="">— Selecciona evento —</option>
-                {eventOpts.map((e) => (
-                  <option key={e.slug} value={e.slug}>
-                    {e.name}
-                  </option>
-                ))}
+                {eventOpts.map((e) => (<option key={e.slug} value={e.slug}>{e.name}</option>))}
               </select>
             </Field>
-            <Field label="Carrera (ej: 500m)">
+            <Field label="Prueba (ej: 200m)">
               <input value={race} onChange={(e) => setRace(e.target.value)} className="input" />
             </Field>
-            <Field label="Categoría (ej: Senior M)">
-              <input
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="input"
-              />
+            <Field label="Categoría (ej: Senior)">
+              <input value={category} onChange={(e) => setCategory(e.target.value)} className="input" />
+            </Field>
+            <Field label="Sexo">
+              <select value={gender} onChange={(e) => setGender(e.target.value)} className="input">
+                <option value="">—</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Mixto">Mixto</option>
+              </select>
+            </Field>
+            <Field label="Ronda">
+              <select value={round} onChange={(e) => setRound(e.target.value)} className="input">
+                <option value="Final">Final</option>
+                <option value="Semifinal">Semifinal</option>
+                <option value="Cuartos">Cuartos</option>
+                <option value="Serie">Serie</option>
+                <option value="Clasificatoria">Clasificatoria</option>
+              </select>
             </Field>
             <Field label="Estado">
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as Status)}
-                className="input"
-              >
+              <select value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
                 <option value="finalizado">✓ Final</option>
                 <option value="en_vivo">🔴 Live</option>
                 <option value="proxima">⏳ Próxima</option>
               </select>
             </Field>
+            <Field label="Subir CSV">
+              <input type="file" accept=".csv,text/csv" onChange={(e) => onFileSelect(e.target.files?.[0] ?? null)} className="input" />
+            </Field>
+            <label className="flex items-end gap-2 pb-2">
+              <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-4 w-4" />
+              <span className="font-condensed text-[11px] uppercase tracking-widest">★ Mostrar en slider Home</span>
+            </label>
           </div>
 
           <div className="rounded border border-border bg-background/40 p-2">
             <p className="font-condensed mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-              💡 Tip: pega filas desde Excel (Atleta · Club · Tiempo · Puntos) en cualquier campo Atleta.
+              💡 Tip: sube un CSV o pega filas desde Excel (Atleta · Club · Tiempo · Puntos) en cualquier campo Atleta.
             </p>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px] text-sm">
+
                 <thead>
                   <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
                     <th className="px-2 py-1 w-10">#</th>

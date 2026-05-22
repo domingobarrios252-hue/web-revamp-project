@@ -12,11 +12,13 @@ type Row = {
   race: string | null;
   category: string | null;
   gender: string | null;
+  round: string | null;
   position: number;
   athlete_name: string;
   club: string | null;
   country: string | null;
   race_time: string | null;
+  home_sort_order: number;
 };
 
 type EventMeta = {
@@ -33,6 +35,9 @@ type Group = {
   eventName: string;
   race: string;
   category: string;
+  gender: string;
+  round: string;
+  homeOrder: number;
   rows: Row[];
 };
 
@@ -47,24 +52,19 @@ export function HomeResultsSlider() {
         .from("result_events")
         .select("slug, name, event_date, country, banner_url")
         .eq("published", true)
-        .eq("featured_in_live_center", true)
-        .order("sort_order", { ascending: true })
         .order("event_date", { ascending: false });
-      const slugs = (evs ?? []).map((e: { slug: string }) => e.slug);
       const evMap: Record<string, EventMeta> = {};
       (evs ?? []).forEach((e: EventMeta) => { evMap[e.slug] = e; });
 
-      let query = supabase
+      const { data } = await supabase
         .from("live_results")
-        .select("id, event_name, event_slug, race, category, gender, position, athlete_name, club, country, race_time")
+        .select("id, event_name, event_slug, race, category, gender, round, position, athlete_name, club, country, race_time, home_sort_order")
         .eq("published", true)
         .eq("featured_in_live_center", true)
         .lte("position", 3)
-        .order("sort_order", { ascending: true })
+        .order("home_sort_order", { ascending: true })
         .order("position", { ascending: true });
-      if (slugs.length) query = query.in("event_slug", slugs);
 
-      const { data } = await query;
       if (cancelled) return;
       setEvents(evMap);
       setRows((data as Row[]) ?? []);
@@ -83,7 +83,7 @@ export function HomeResultsSlider() {
     const map = new Map<string, Group>();
     for (const r of rows) {
       const slug = r.event_slug ?? "evento";
-      const key = `${slug}::${r.race ?? ""}::${r.category ?? ""}`;
+      const key = `${slug}::${r.race ?? ""}::${r.category ?? ""}::${r.gender ?? ""}::${r.round ?? ""}`;
       if (!map.has(key)) {
         map.set(key, {
           key,
@@ -91,15 +91,17 @@ export function HomeResultsSlider() {
           eventName: r.event_name,
           race: r.race ?? "",
           category: r.category ?? "",
+          gender: r.gender ?? "",
+          round: r.round ?? "",
+          homeOrder: r.home_sort_order ?? 0,
           rows: [],
         });
       }
       map.get(key)!.rows.push(r);
     }
-    return Array.from(map.values()).map((g) => ({
-      ...g,
-      rows: g.rows.sort((a, b) => a.position - b.position).slice(0, 3),
-    }));
+    return Array.from(map.values())
+      .map((g) => ({ ...g, rows: g.rows.sort((a, b) => a.position - b.position).slice(0, 3) }))
+      .sort((a, b) => a.homeOrder - b.homeOrder);
   }, [rows]);
 
   const [emblaRef] = useEmblaCarousel(
@@ -119,7 +121,7 @@ export function HomeResultsSlider() {
               <Trophy className="h-3 w-3" /> Resultados destacados
             </div>
             <h2 className="font-display mt-2 text-2xl uppercase tracking-widest md:text-3xl">
-              Podios <span className="text-gold">200&nbsp;m</span>
+              Podios <span className="text-gold">en directo</span>
             </h2>
           </div>
           <Link
@@ -148,18 +150,26 @@ export function HomeResultsSlider() {
 }
 
 function PodiumCard({ group, event }: { group: Group; event?: EventMeta }) {
+  const search: Record<string, string> = {};
+  if (group.race) search.prueba = group.race;
+  if (group.category) search.categoria = group.category;
+  if (group.gender) search.sexo = group.gender;
+  if (group.round) search.ronda = group.round;
+
   return (
     <Link
       to="/resultados/$evento"
       params={{ evento: group.eventSlug }}
+      search={search}
       className="group block h-full overflow-hidden rounded-xl border border-border bg-surface transition-all hover:border-gold hover:shadow-xl"
     >
       <div className="border-b border-border bg-gradient-to-b from-gold/10 to-transparent px-4 py-3">
-        <div className="font-condensed text-[10px] uppercase tracking-[2.5px] text-gold">
-          {group.race || "Resultados"}
+        <div className="font-condensed flex items-center gap-2 text-[10px] uppercase tracking-[2.5px] text-gold">
+          <span>{group.race || "Resultados"}</span>
+          {group.round && <span className="text-muted-foreground">· {group.round}</span>}
         </div>
         <div className="font-display mt-1 line-clamp-1 text-lg uppercase tracking-wider text-foreground">
-          {group.category || group.eventName}
+          {[group.category, group.gender].filter(Boolean).join(" · ") || group.eventName}
         </div>
         <div className="font-condensed mt-1 line-clamp-1 text-[10px] uppercase tracking-widest text-muted-foreground">
           {group.eventName}
