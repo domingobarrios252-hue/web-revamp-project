@@ -145,6 +145,36 @@ function AdminResultados() {
               <input type="checkbox" checked={draft.featured_in_live_center} onChange={(e) => setDraft({ ...draft, featured_in_live_center: e.target.checked })} /> Destacado en Live Center
             </label>
           </div>
+          <div className="md:col-span-2">
+            <span className="font-condensed mb-2 block text-[10px] uppercase tracking-widest text-muted-foreground">Mostrar slider de podios en</span>
+            <div className="flex flex-wrap gap-2">
+              {PLACEMENT_OPTIONS.map((opt) => {
+                const checked = (draft.placements ?? []).includes(opt.value);
+                return (
+                  <label
+                    key={opt.value}
+                    className={
+                      "font-condensed flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-[11px] uppercase tracking-widest " +
+                      (checked ? "border-gold bg-gold/10 text-gold" : "border-border text-muted-foreground hover:border-gold/60")
+                    }
+                  >
+                    <input
+                      type="checkbox"
+                      className="accent-gold"
+                      checked={checked}
+                      onChange={(e) => {
+                        const cur = new Set(draft.placements ?? []);
+                        if (e.target.checked) cur.add(opt.value); else cur.delete(opt.value);
+                        setDraft({ ...draft, placements: Array.from(cur) });
+                      }}
+                    />
+                    <span>{opt.label}</span>
+                    <span className="text-[9px] normal-case tracking-normal text-muted-foreground">{opt.help}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
         </div>
         <div className="mt-4 flex gap-2">
           <button onClick={save} className="font-condensed inline-flex items-center gap-2 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
