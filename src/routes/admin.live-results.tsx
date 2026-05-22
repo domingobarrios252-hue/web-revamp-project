@@ -1128,48 +1128,57 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
         <div className="space-y-3 border-t border-gold/20 p-4">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Evento *">
-              <select
-                value={eventSlug}
-                onChange={(e) => onPickEvent(e.target.value)}
-                className="input"
-              >
+              <select value={eventSlug} onChange={(e) => onPickEvent(e.target.value)} className="input">
                 <option value="">— Selecciona evento —</option>
-                {eventOpts.map((e) => (
-                  <option key={e.slug} value={e.slug}>
-                    {e.name}
-                  </option>
-                ))}
+                {eventOpts.map((e) => (<option key={e.slug} value={e.slug}>{e.name}</option>))}
               </select>
             </Field>
-            <Field label="Carrera (ej: 500m)">
+            <Field label="Prueba (ej: 200m)">
               <input value={race} onChange={(e) => setRace(e.target.value)} className="input" />
             </Field>
-            <Field label="Categoría (ej: Senior M)">
-              <input
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="input"
-              />
+            <Field label="Categoría (ej: Senior)">
+              <input value={category} onChange={(e) => setCategory(e.target.value)} className="input" />
+            </Field>
+            <Field label="Sexo">
+              <select value={gender} onChange={(e) => setGender(e.target.value)} className="input">
+                <option value="">—</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Mixto">Mixto</option>
+              </select>
+            </Field>
+            <Field label="Ronda">
+              <select value={round} onChange={(e) => setRound(e.target.value)} className="input">
+                <option value="Final">Final</option>
+                <option value="Semifinal">Semifinal</option>
+                <option value="Cuartos">Cuartos</option>
+                <option value="Serie">Serie</option>
+                <option value="Clasificatoria">Clasificatoria</option>
+              </select>
             </Field>
             <Field label="Estado">
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as Status)}
-                className="input"
-              >
+              <select value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
                 <option value="finalizado">✓ Final</option>
                 <option value="en_vivo">🔴 Live</option>
                 <option value="proxima">⏳ Próxima</option>
               </select>
             </Field>
+            <Field label="Subir CSV">
+              <input type="file" accept=".csv,text/csv" onChange={(e) => onFileSelect(e.target.files?.[0] ?? null)} className="input" />
+            </Field>
+            <label className="flex items-end gap-2 pb-2">
+              <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-4 w-4" />
+              <span className="font-condensed text-[11px] uppercase tracking-widest">★ Mostrar en slider Home</span>
+            </label>
           </div>
 
           <div className="rounded border border-border bg-background/40 p-2">
             <p className="font-condensed mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-              💡 Tip: pega filas desde Excel (Atleta · Club · Tiempo · Puntos) en cualquier campo Atleta.
+              💡 Tip: sube un CSV o pega filas desde Excel (Atleta · Club · Tiempo · Puntos) en cualquier campo Atleta.
             </p>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px] text-sm">
+
                 <thead>
                   <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
                     <th className="px-2 py-1 w-10">#</th>
