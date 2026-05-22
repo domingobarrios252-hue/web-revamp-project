@@ -25,7 +25,6 @@ type EventMeta = {
   event_date: string | null;
   country: string | null;
   banner_url: string | null;
-  placements: string[] | null;
 };
 
 type Group = {
@@ -37,65 +36,49 @@ type Group = {
   rows: Row[];
 };
 
-export type HomeResultsSliderProps = {
-  /** Placement filter: 'home' (default), 'spain', 'general', or any custom tag */
-  placement?: string;
-  /** Override the title shown above the slider */
-  title?: React.ReactNode;
-  /** Override the small tag pill */
-  tag?: string;
-};
-
-export function HomeResultsSlider({
-  placement = "home",
-  title,
-  tag = "Resultados destacados",
-}: HomeResultsSliderProps = {}) {
+export function HomeResultsSlider() {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [events, setEvents] = useState<Record<string, EventMeta>>({});
-  const [activeCategory, setActiveCategory] = useState<string>("");
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
       const { data: evs } = await supabase
         .from("result_events")
-        .select("slug, name, event_date, country, banner_url, placements")
+        .select("slug, name, event_date, country, banner_url")
         .eq("published", true)
-        .contains("placements", [placement])
+        .eq("featured_in_live_center", true)
         .order("sort_order", { ascending: true })
         .order("event_date", { ascending: false });
       const slugs = (evs ?? []).map((e: { slug: string }) => e.slug);
       const evMap: Record<string, EventMeta> = {};
       (evs ?? []).forEach((e: EventMeta) => { evMap[e.slug] = e; });
 
-      if (slugs.length === 0) {
-        if (!cancelled) { setEvents({}); setRows([]); }
-        return;
-      }
-
-      const { data } = await supabase
+      let query = supabase
         .from("live_results")
         .select("id, event_name, event_slug, race, category, gender, position, athlete_name, club, country, race_time")
         .eq("published", true)
+        .eq("featured_in_live_center", true)
         .lte("position", 3)
-        .in("event_slug", slugs)
         .order("sort_order", { ascending: true })
         .order("position", { ascending: true });
+      if (slugs.length) query = query.in("event_slug", slugs);
+
+      const { data } = await query;
       if (cancelled) return;
       setEvents(evMap);
       setRows((data as Row[]) ?? []);
     };
     load();
     const ch = supabase
-      .channel(`home-results-slider-${placement}`)
+      .channel("home-results-slider")
       .on("postgres_changes", { event: "*", schema: "public", table: "live_results" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "result_events" }, load)
       .subscribe();
     return () => { cancelled = true; supabase.removeChannel(ch); };
-  }, [placement]);
+  }, []);
 
-  const allGroups: Group[] = useMemo(() => {
+  const groups: Group[] = useMemo(() => {
     if (!rows) return [];
     const map = new Map<string, Group>();
     for (const r of rows) {
@@ -119,37 +102,24 @@ export function HomeResultsSlider({
     }));
   }, [rows]);
 
-  const categories = useMemo(
-    () => Array.from(new Set(allGroups.map((g) => g.category).filter(Boolean))).sort(),
-    [allGroups],
-  );
-
-  const groups = useMemo(
-    () => (activeCategory ? allGroups.filter((g) => g.category === activeCategory) : allGroups),
-    [allGroups, activeCategory],
-  );
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
+  const [emblaRef] = useEmblaCarousel(
     { align: "start", loop: groups.length > 3, slidesToScroll: 1 },
-    [Autoplay({ delay: 5500, stopOnInteraction: true, stopOnMouseEnter: true })],
+    [Autoplay({ delay: 5500, stopOnInteraction: true, stopOnMouseEnter: true })]
   );
-
-  // Reset carousel when filter changes
-  useEffect(() => { emblaApi?.reInit(); }, [emblaApi, groups.length]);
 
   if (rows === null) return null;
-  if (allGroups.length === 0) return null;
+  if (groups.length === 0) return null;
 
   return (
     <section className="border-y border-border bg-background py-10 md:py-12">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
+        <div className="mb-6 flex items-end justify-between border-b border-border pb-4">
           <div>
             <div className="font-condensed inline-flex items-center gap-2 bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
-              <Trophy className="h-3 w-3" /> {tag}
+              <Trophy className="h-3 w-3" /> Resultados destacados
             </div>
             <h2 className="font-display mt-2 text-2xl uppercase tracking-widest md:text-3xl">
-              {title ?? <>Podios <span className="text-gold">por categoría</span></>}
+              Podios <span className="text-gold">200&nbsp;m</span>
             </h2>
           </div>
           <Link
@@ -160,53 +130,20 @@ export function HomeResultsSlider({
           </Link>
         </div>
 
-        {/* Category filter chips */}
-        {categories.length > 1 && (
-          <div className="mb-5 flex flex-wrap gap-2">
-            <Chip active={activeCategory === ""} onClick={() => setActiveCategory("")} label="Todas" />
-            {categories.map((c) => (
-              <Chip key={c} active={activeCategory === c} onClick={() => setActiveCategory(c)} label={c} />
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex gap-4">
+            {groups.map((g) => (
+              <div
+                key={g.key}
+                className="min-w-0 flex-[0_0_85%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
+              >
+                <PodiumCard group={g} event={events[g.eventSlug]} />
+              </div>
             ))}
           </div>
-        )}
-
-        {groups.length === 0 ? (
-          <p className="font-condensed py-6 text-center text-xs uppercase tracking-widest text-muted-foreground">
-            Sin podios para esta categoría
-          </p>
-        ) : (
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-4">
-              {groups.map((g) => (
-                <div
-                  key={g.key}
-                  className="min-w-0 flex-[0_0_85%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
-                >
-                  <PodiumCard group={g} event={events[g.eventSlug]} />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </section>
-  );
-}
-
-function Chip({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={
-        "font-condensed rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-widest transition-colors " +
-        (active
-          ? "border-gold bg-gold text-background"
-          : "border-border bg-surface text-muted-foreground hover:border-gold hover:text-gold")
-      }
-    >
-      {label}
-    </button>
   );
 }
 

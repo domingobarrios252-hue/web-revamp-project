@@ -1935,7 +1935,6 @@ export type Database = {
           featured_in_live_center: boolean
           id: string
           name: string
-          placements: string[]
           published: boolean
           slug: string
           sort_order: number
@@ -1950,7 +1949,6 @@ export type Database = {
           featured_in_live_center?: boolean
           id?: string
           name: string
-          placements?: string[]
           published?: boolean
           slug: string
           sort_order?: number
@@ -1965,7 +1963,6 @@ export type Database = {
           featured_in_live_center?: boolean
           id?: string
           name?: string
-          placements?: string[]
           published?: boolean
           slug?: string
           sort_order?: number
