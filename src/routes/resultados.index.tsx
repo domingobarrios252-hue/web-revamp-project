@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Calendar, MapPin, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { HomeResultsSlider } from "@/components/home/HomeResultsSlider";
 import { formatDate } from "@/lib/i18n/format";
 
 type ResultEvent = {
@@ -97,6 +98,13 @@ function ResultadosIndex() {
         </h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">{t("results.indexLead")}</p>
       </header>
+
+      {/* Podios destacados */}
+      <div className="mt-8 -mx-5 md:-mx-6">
+        <HomeResultsSlider placement="general" tag="Podios destacados" />
+      </div>
+
+
 
       {/* Filters */}
       {all.length > 0 && (

@@ -17,7 +17,14 @@ type ResultEvent = {
   published: boolean;
   featured_in_live_center: boolean;
   sort_order: number;
+  placements: string[];
 };
+
+const PLACEMENT_OPTIONS: { value: string; label: string; help: string }[] = [
+  { value: "home", label: "Home", help: "Página principal" },
+  { value: "spain", label: "España", help: "Hub /hub/es" },
+  { value: "general", label: "Resultados", help: "Cabecera /resultados" },
+];
 
 const empty: Omit<ResultEvent, "id"> = {
   slug: "",
@@ -29,6 +36,7 @@ const empty: Omit<ResultEvent, "id"> = {
   published: true,
   featured_in_live_center: false,
   sort_order: 0,
+  placements: ["home"],
 };
 
 export const Route = createFileRoute("/admin/resultados")({
@@ -70,6 +78,7 @@ function AdminResultados() {
       published: draft.published,
       featured_in_live_center: draft.featured_in_live_center,
       sort_order: Number(draft.sort_order) || 0,
+      placements: draft.placements?.length ? draft.placements : ["home"],
     };
     const { error } = "id" in draft && draft.id
       ? await supabase.from("result_events").update(payload).eq("id", draft.id)
@@ -136,6 +145,36 @@ function AdminResultados() {
               <input type="checkbox" checked={draft.featured_in_live_center} onChange={(e) => setDraft({ ...draft, featured_in_live_center: e.target.checked })} /> Destacado en Live Center
             </label>
           </div>
+          <div className="md:col-span-2">
+            <span className="font-condensed mb-2 block text-[10px] uppercase tracking-widest text-muted-foreground">Mostrar slider de podios en</span>
+            <div className="flex flex-wrap gap-2">
+              {PLACEMENT_OPTIONS.map((opt) => {
+                const checked = (draft.placements ?? []).includes(opt.value);
+                return (
+                  <label
+                    key={opt.value}
+                    className={
+                      "font-condensed flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-[11px] uppercase tracking-widest " +
+                      (checked ? "border-gold bg-gold/10 text-gold" : "border-border text-muted-foreground hover:border-gold/60")
+                    }
+                  >
+                    <input
+                      type="checkbox"
+                      className="accent-gold"
+                      checked={checked}
+                      onChange={(e) => {
+                        const cur = new Set(draft.placements ?? []);
+                        if (e.target.checked) cur.add(opt.value); else cur.delete(opt.value);
+                        setDraft({ ...draft, placements: Array.from(cur) });
+                      }}
+                    />
+                    <span>{opt.label}</span>
+                    <span className="text-[9px] normal-case tracking-normal text-muted-foreground">{opt.help}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
         </div>
         <div className="mt-4 flex gap-2">
           <button onClick={save} className="font-condensed inline-flex items-center gap-2 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
@@ -166,6 +205,7 @@ function AdminResultados() {
                   <th className="px-3 py-2">Estado</th>
                   <th className="px-3 py-2">Pub</th>
                   <th className="px-3 py-2">LC</th>
+                  <th className="px-3 py-2">Slider en</th>
                   <th className="px-3 py-2"></th>
                 </tr>
               </thead>
@@ -179,6 +219,9 @@ function AdminResultados() {
                     <td className="px-3 py-2"><span className="text-gold">{e.status}</span></td>
                     <td className="px-3 py-2">{e.published ? "✓" : "—"}</td>
                     <td className="px-3 py-2">{e.featured_in_live_center ? "★" : "—"}</td>
+                    <td className="px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                      {(e.placements ?? []).length ? (e.placements ?? []).join(", ") : "—"}
+                    </td>
                     <td className="px-3 py-2 text-right">
                       <div className="inline-flex gap-2">
                         <a href={`/resultados/${e.slug}`} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-gold" title="Ver"><ExternalLink className="h-4 w-4" /></a>
