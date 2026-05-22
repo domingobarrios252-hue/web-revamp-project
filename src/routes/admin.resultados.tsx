@@ -17,7 +17,14 @@ type ResultEvent = {
   published: boolean;
   featured_in_live_center: boolean;
   sort_order: number;
+  placements: string[];
 };
+
+const PLACEMENT_OPTIONS: { value: string; label: string; help: string }[] = [
+  { value: "home", label: "Home", help: "Página principal" },
+  { value: "spain", label: "España", help: "Hub /hub/es" },
+  { value: "general", label: "Resultados", help: "Cabecera /resultados" },
+];
 
 const empty: Omit<ResultEvent, "id"> = {
   slug: "",
@@ -29,6 +36,7 @@ const empty: Omit<ResultEvent, "id"> = {
   published: true,
   featured_in_live_center: false,
   sort_order: 0,
+  placements: ["home"],
 };
 
 export const Route = createFileRoute("/admin/resultados")({
