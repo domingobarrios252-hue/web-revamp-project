@@ -113,8 +113,6 @@ function HomePage() {
 
       <HomeDynamicZone />
 
-      <HomeResultsSlider />
-
       <AdBannerWithMagazine placement="home_top" />
 
       <div id="live-center"><LiveCenter /></div>
