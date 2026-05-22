@@ -205,6 +205,7 @@ function AdminResultados() {
                   <th className="px-3 py-2">Estado</th>
                   <th className="px-3 py-2">Pub</th>
                   <th className="px-3 py-2">LC</th>
+                  <th className="px-3 py-2">Slider en</th>
                   <th className="px-3 py-2"></th>
                 </tr>
               </thead>
@@ -218,6 +219,9 @@ function AdminResultados() {
                     <td className="px-3 py-2"><span className="text-gold">{e.status}</span></td>
                     <td className="px-3 py-2">{e.published ? "✓" : "—"}</td>
                     <td className="px-3 py-2">{e.featured_in_live_center ? "★" : "—"}</td>
+                    <td className="px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                      {(e.placements ?? []).length ? (e.placements ?? []).join(", ") : "—"}
+                    </td>
                     <td className="px-3 py-2 text-right">
                       <div className="inline-flex gap-2">
                         <a href={`/resultados/${e.slug}`} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-gold" title="Ver"><ExternalLink className="h-4 w-4" /></a>
