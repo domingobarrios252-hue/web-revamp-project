@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Calendar, MapPin, Star, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
@@ -20,6 +20,9 @@ type ResultRow = {
   points: number | null;
   distance: string | null;
   gender: string | null;
+  round: string | null;
+  federation: string | null;
+  notes: string | null;
   is_highlighted: boolean;
   status: "en_vivo" | "finalizado" | "proxima";
   sort_order: number;
@@ -33,26 +36,47 @@ type EventMeta = {
   status: "en_vivo" | "finalizado" | "proxima";
 };
 
+type SearchParams = {
+  prueba?: string;
+  categoria?: string;
+  sexo?: string;
+  ronda?: string;
+  club?: string;
+  federacion?: string;
+};
+
+function pickString(v: unknown): string | undefined {
+  return typeof v === "string" && v.trim() !== "" ? v : undefined;
+}
+
 export const Route = createFileRoute("/resultados/$evento")({
+  validateSearch: (s: Record<string, unknown>): SearchParams => ({
+    prueba: pickString(s.prueba),
+    categoria: pickString(s.categoria),
+    sexo: pickString(s.sexo),
+    ronda: pickString(s.ronda),
+    club: pickString(s.club),
+    federacion: pickString(s.federacion),
+  }),
   loader: async ({ params }) => {
-    const [{ data: rows, error }, { data: meta }] = await Promise.all([
-      supabase
-        .from("live_results")
-        .select("id, event_name, event_slug, race, category, position, athlete_name, club, country, race_time, gap, points, distance, gender, is_highlighted, status, sort_order")
-        .eq("event_slug", params.evento)
-        .eq("published", true)
-        .order("sort_order", { ascending: true })
-        .order("position", { ascending: true }),
+    const [{ data: meta }, { data: rows, error }] = await Promise.all([
       supabase
         .from("result_events")
         .select("name, event_date, country, banner_url, status")
         .eq("slug", params.evento)
         .maybeSingle(),
+      supabase
+        .from("live_results")
+        .select("id, event_name, event_slug, race, category, position, athlete_name, club, country, race_time, gap, points, distance, gender, round, federation, notes, is_highlighted, status, sort_order")
+        .eq("event_slug", params.evento)
+        .eq("published", true)
+        .order("sort_order", { ascending: true })
+        .order("position", { ascending: true }),
     ]);
     if (error) throw error;
-    if (!rows || rows.length === 0) throw notFound();
+    if (!meta && (!rows || rows.length === 0)) throw notFound();
     return {
-      rows: rows as ResultRow[],
+      rows: (rows ?? []) as ResultRow[],
       evento: params.evento,
       meta: (meta as EventMeta | null) ?? null,
     };
@@ -86,35 +110,51 @@ export const Route = createFileRoute("/resultados/$evento")({
 
 function ResultadosEventoPage() {
   const data = Route.useLoaderData();
+  const search = Route.useSearch();
   const rows: ResultRow[] = data.rows;
   const meta = data.meta;
   const { t, lang } = useLanguage();
   const eventName = meta?.name ?? rows[0]?.event_name ?? "Resultados";
 
-  const [fCat, setFCat] = useState("");
-  const [fDist, setFDist] = useState("");
-  const [fGender, setFGender] = useState("");
-  const [fClub, setFClub] = useState("");
-  const [fCountry, setFCountry] = useState("");
+  const [fRace, setFRace] = useState(search.prueba ?? "");
+  const [fCat, setFCat] = useState(search.categoria ?? "");
+  const [fGender, setFGender] = useState(search.sexo ?? "");
+  const [fRound, setFRound] = useState(search.ronda ?? "");
+  const [fClub, setFClub] = useState(search.club ?? "");
+  const [fFed, setFFed] = useState(search.federacion ?? "");
+
+  // Sync from URL search params (e.g. when navigating from Home slider)
+  useEffect(() => {
+    setFRace(search.prueba ?? "");
+    setFCat(search.categoria ?? "");
+    setFGender(search.sexo ?? "");
+    setFRound(search.ronda ?? "");
+    setFClub(search.club ?? "");
+    setFFed(search.federacion ?? "");
+  }, [search.prueba, search.categoria, search.sexo, search.ronda, search.club, search.federacion]);
 
   const opts = useMemo(() => ({
+    races: uniq(rows.map((r: ResultRow) => r.race ?? r.distance)),
     categories: uniq(rows.map((r: ResultRow) => r.category)),
-    distances: uniq(rows.map((r: ResultRow) => r.distance ?? r.race)),
     genders: uniq(rows.map((r: ResultRow) => r.gender)),
+    rounds: uniq(rows.map((r: ResultRow) => r.round)),
     clubs: uniq(rows.map((r: ResultRow) => r.club)),
-    countries: uniq(rows.map((r: ResultRow) => r.country)),
+    federations: uniq(rows.map((r: ResultRow) => r.federation)),
   }), [rows]);
 
   const filtered = rows.filter((r: ResultRow) =>
+    (!fRace || (r.race ?? r.distance) === fRace) &&
     (!fCat || r.category === fCat) &&
-    (!fDist || (r.distance ?? r.race) === fDist) &&
     (!fGender || r.gender === fGender) &&
+    (!fRound || r.round === fRound) &&
     (!fClub || r.club === fClub) &&
-    (!fCountry || r.country === fCountry),
+    (!fFed || r.federation === fFed),
   );
 
   const groups = groupRows(filtered);
   const isLive = (meta?.status ?? rows[0]?.status) === "en_vivo";
+  const clearFilters = () => { setFRace(""); setFCat(""); setFGender(""); setFRound(""); setFClub(""); setFFed(""); };
+  const anyFilter = fRace || fCat || fGender || fRound || fClub || fFed;
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 md:px-6">
@@ -145,22 +185,36 @@ function ResultadosEventoPage() {
           <div className="font-condensed mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
             {meta?.event_date && (<span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> {formatDate(meta.event_date, lang)}</span>)}
             {meta?.country && (<span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {meta.country}</span>)}
+            <span className="flex items-center gap-1.5">📋 {rows.length} resultados · {groups.length} pruebas</span>
           </div>
         </div>
       </header>
 
       {/* Filters */}
-      <section className="mt-6 grid gap-2 rounded-xl border border-border bg-surface p-3 sm:grid-cols-2 lg:grid-cols-5">
-        <FilterSelect value={fCat} onChange={setFCat} placeholder={t("results.allCategories")} options={opts.categories} />
-        <FilterSelect value={fDist} onChange={setFDist} placeholder={t("results.allDistances")} options={opts.distances} />
-        <FilterSelect value={fGender} onChange={setFGender} placeholder={t("results.allGenders")} options={opts.genders} />
-        <FilterSelect value={fClub} onChange={setFClub} placeholder={t("results.allClubs")} options={opts.clubs} />
-        <FilterSelect value={fCountry} onChange={setFCountry} placeholder={t("results.allCountries")} options={opts.countries} />
+      <section className="sticky top-0 z-20 mt-6 grid gap-2 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur sm:grid-cols-2 lg:grid-cols-7">
+        <FilterSelect value={fRace} onChange={setFRace} placeholder="Prueba" options={opts.races} />
+        <FilterSelect value={fCat} onChange={setFCat} placeholder="Categoría" options={opts.categories} />
+        <FilterSelect value={fGender} onChange={setFGender} placeholder="Sexo" options={opts.genders} />
+        <FilterSelect value={fRound} onChange={setFRound} placeholder="Ronda" options={opts.rounds} />
+        <FilterSelect value={fClub} onChange={setFClub} placeholder="Club" options={opts.clubs} />
+        <FilterSelect value={fFed} onChange={setFFed} placeholder="Federación" options={opts.federations} />
+        <button
+          type="button"
+          onClick={clearFilters}
+          disabled={!anyFilter}
+          className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold disabled:opacity-40"
+        >
+          Limpiar filtros
+        </button>
       </section>
 
       {/* Tables */}
       <section className="mt-6 grid gap-5">
-        {groups.length === 0 ? (
+        {rows.length === 0 ? (
+          <div className="rounded-xl border border-border bg-surface p-10 text-center text-muted-foreground">
+            Aún no hay resultados publicados para este evento.
+          </div>
+        ) : groups.length === 0 ? (
           <p className="text-muted-foreground">{t("results.noRows")}</p>
         ) : groups.map((group) => {
           const podium = group.rows.slice(0, 3);
@@ -170,7 +224,9 @@ function ResultadosEventoPage() {
             <div className="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="font-display text-2xl uppercase tracking-wider">{group.title}</h2>
-                <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">{group.category || "—"}</p>
+                <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                  {[group.category, group.gender, group.round].filter(Boolean).join(" · ") || "—"}
+                </p>
               </div>
               <StatusPill status={group.rows[0]?.status ?? "finalizado"} t={t} />
             </div>
@@ -225,6 +281,7 @@ function ResultadosEventoPage() {
                     <th className="px-4 py-2 w-12">{t("results.cols.position")}</th>
                     <th className="px-4 py-2">{t("results.cols.athlete")}</th>
                     <th className="px-4 py-2">{t("results.cols.club")}</th>
+                    <th className="px-4 py-2">Fed.</th>
                     <th className="px-4 py-2">{t("results.cols.country")}</th>
                     <th className="px-4 py-2">{t("results.cols.time")}</th>
                     <th className="px-4 py-2">{t("results.cols.gap")}</th>
@@ -244,6 +301,7 @@ function ResultadosEventoPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">{row.club || "—"}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{row.federation || "—"}</td>
                       <td className="px-4 py-3 text-muted-foreground">{row.country || "—"}</td>
                       <td className="px-4 py-3 font-mono">{row.race_time || "—"}</td>
                       <td className="px-4 py-3 font-mono text-muted-foreground">{row.gap || "—"}</td>
@@ -266,7 +324,7 @@ function FilterSelect({ value, onChange, placeholder, options }: { value: string
   if (options.length === 0) return null;
   return (
     <select value={value} onChange={(e) => onChange(e.target.value)} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
-      <option value="">{placeholder}</option>
+      <option value="">Todas · {placeholder}</option>
       {options.map((o) => (<option key={o} value={o}>{o}</option>))}
     </select>
   );
@@ -283,10 +341,17 @@ function uniq(arr: (string | null | undefined)[]): string[] {
 }
 
 function groupRows(rows: ResultRow[]) {
-  const map = new Map<string, { key: string; title: string; category: string; rows: ResultRow[] }>();
+  const map = new Map<string, { key: string; title: string; category: string; gender: string; round: string; rows: ResultRow[] }>();
   for (const row of rows) {
-    const key = `${row.race ?? "General"}::${row.category ?? ""}`;
-    if (!map.has(key)) map.set(key, { key, title: row.race || "General", category: row.category || "", rows: [] });
+    const key = `${row.race ?? "General"}::${row.category ?? ""}::${row.gender ?? ""}::${row.round ?? ""}`;
+    if (!map.has(key)) map.set(key, {
+      key,
+      title: row.race || "General",
+      category: row.category || "",
+      gender: row.gender || "",
+      round: row.round || "",
+      rows: [],
+    });
     map.get(key)!.rows.push(row);
   }
   return Array.from(map.values()).map((g) => ({ ...g, rows: g.rows.sort((a, b) => a.position - b.position) }));
