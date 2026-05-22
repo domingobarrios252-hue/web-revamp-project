@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Calendar, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
+import { HomeResultsSlider } from "@/components/home/HomeResultsSlider";
 
 type NewsRow = {
   id: string;
