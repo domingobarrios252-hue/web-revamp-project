@@ -99,6 +99,13 @@ function ResultadosIndex() {
         <p className="mt-3 max-w-2xl text-muted-foreground">{t("results.indexLead")}</p>
       </header>
 
+      {/* Podios destacados */}
+      <div className="mt-8 -mx-5 md:-mx-6">
+        <HomeResultsSlider placement="general" tag="Podios destacados" />
+      </div>
+
+
+
       {/* Filters */}
       {all.length > 0 && (
         <section className="mt-6 grid gap-2 rounded-xl border border-border bg-surface p-3 sm:grid-cols-2 lg:grid-cols-4">
