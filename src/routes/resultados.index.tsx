@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Calendar, MapPin, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { HomeResultsSlider } from "@/components/home/HomeResultsSlider";
 import { formatDate } from "@/lib/i18n/format";
 
 type ResultEvent = {
