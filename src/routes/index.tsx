@@ -5,7 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { Ticker } from "@/components/site/Ticker";
 import { HomeDynamicZone } from "@/components/home/HomeDynamicZone";
-import { HomeResultsSlider } from "@/components/home/HomeResultsSlider";
+
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
