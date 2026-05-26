@@ -174,11 +174,13 @@ function ArticlePage() {
       </header>
 
       {article.image_url && (
-        <img
-          src={article.image_url}
-          alt={article.title}
-          className="mb-8 aspect-[16/9] w-full object-cover"
-        />
+        <figure className="mb-8 flex max-h-[70vh] w-full items-center justify-center overflow-hidden border border-border bg-black">
+          <img
+            src={article.image_url}
+            alt={article.title}
+            className="max-h-[70vh] w-full object-contain"
+          />
+        </figure>
       )}
 
       <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
@@ -203,13 +205,13 @@ function ArticlePage() {
                 href={src}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block overflow-hidden border border-border bg-surface"
+                className="group flex aspect-[4/3] items-center justify-center overflow-hidden border border-border bg-black"
               >
                 <img
                   src={src}
                   alt={`${article.title} — foto ${i + 1}`}
                   loading="lazy"
-                  className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               </a>
             ))}
