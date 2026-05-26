@@ -187,6 +187,25 @@ function AdminClubs() {
   );
 }
 
+function Field({
+  label,
+  children,
+  full,
+}: {
+  label: string;
+  children: React.ReactNode;
+  full?: boolean;
+}) {
+  return (
+    <label className={`block ${full ? "md:col-span-2" : ""}`}>
+      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      {children}
+    </label>
+  );
+}
+
 function ClubForm({
   initial,
   regions,
@@ -289,15 +308,6 @@ function ClubForm({
     toast.success(initial ? "Club actualizado" : "Club creado");
     onSaved();
   };
-
-  const Field = ({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) => (
-    <label className={`block ${full ? "md:col-span-2" : ""}`}>
-      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-        {label}
-      </span>
-      {children}
-    </label>
-  );
 
   return (
     <div className="mb-6 border border-gold bg-surface p-4">
