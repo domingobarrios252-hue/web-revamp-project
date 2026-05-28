@@ -3,7 +3,11 @@ import { HUB_SECTIONS, type HubSectionKey } from "@/lib/hub/useCountryHub";
 
 export function HubSubNav({ country, activeSections }: { country: string; activeSections: string[] }) {
   const location = useLocation();
-  const sections = HUB_SECTIONS.filter((s) => activeSections.includes(s.key));
+  // Respect the order defined in activeSections (admin can reorder)
+  const byKey = new Map(HUB_SECTIONS.map((s) => [s.key, s] as const));
+  const sections = activeSections
+    .map((k) => byKey.get(k as HubSectionKey))
+    .filter((s): s is (typeof HUB_SECTIONS)[number] => Boolean(s));
 
   const isActive = (key: HubSectionKey) => {
     const base = `/hub/${country}`;
