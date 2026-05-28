@@ -70,6 +70,7 @@ import { Route as AdminHubLigaRouteImport } from './routes/admin.hub-liga'
 import { Route as AdminHomeControlRouteImport } from './routes/admin.home-control'
 import { Route as AdminFederacionesRouteImport } from './routes/admin.federaciones'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
+import { Route as AdminEspanaRouteImport } from './routes/admin.espana'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
 import { Route as AdminComunidadRouteImport } from './routes/admin.comunidad'
@@ -414,6 +415,11 @@ const AdminEventosRoute = AdminEventosRouteImport.update({
   path: '/eventos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEspanaRoute = AdminEspanaRouteImport.update({
+  id: '/espana',
+  path: '/espana',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEquipoRoute = AdminEquipoRouteImport.update({
   id: '/equipo',
   path: '/equipo',
@@ -638,6 +644,7 @@ export interface FileRoutesByFullPath {
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
+  '/admin/espana': typeof AdminEspanaRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/home-control': typeof AdminHomeControlRoute
@@ -737,6 +744,7 @@ export interface FileRoutesByTo {
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
+  '/admin/espana': typeof AdminEspanaRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/home-control': typeof AdminHomeControlRoute
@@ -832,6 +840,7 @@ export interface FileRoutesById {
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
+  '/admin/espana': typeof AdminEspanaRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/home-control': typeof AdminHomeControlRoute
@@ -935,6 +944,7 @@ export interface FileRouteTypes {
     | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
+    | '/admin/espana'
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/home-control'
@@ -1034,6 +1044,7 @@ export interface FileRouteTypes {
     | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
+    | '/admin/espana'
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/home-control'
@@ -1128,6 +1139,7 @@ export interface FileRouteTypes {
     | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
+    | '/admin/espana'
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/home-control'
@@ -1678,6 +1690,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEventosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/espana': {
+      id: '/admin/espana'
+      path: '/espana'
+      fullPath: '/admin/espana'
+      preLoaderRoute: typeof AdminEspanaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/equipo': {
       id: '/admin/equipo'
       path: '/equipo'
@@ -1955,6 +1974,7 @@ interface AdminRouteChildren {
   AdminComunidadRoute: typeof AdminComunidadRoute
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
   AdminEquipoRoute: typeof AdminEquipoRoute
+  AdminEspanaRoute: typeof AdminEspanaRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminFederacionesRoute: typeof AdminFederacionesRoute
   AdminHomeControlRoute: typeof AdminHomeControlRoute
@@ -1990,6 +2010,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminComunidadRoute: AdminComunidadRoute,
   AdminEntrevistasRoute: AdminEntrevistasRoute,
   AdminEquipoRoute: AdminEquipoRoute,
+  AdminEspanaRoute: AdminEspanaRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminFederacionesRoute: AdminFederacionesRoute,
   AdminHomeControlRoute: AdminHomeControlRoute,

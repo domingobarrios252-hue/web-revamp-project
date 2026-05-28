@@ -63,6 +63,9 @@ function AdminLayout() {
           <AdminLink to="/admin/home-control" icon={<LayoutDashboard className="h-4 w-4" />}>
             Home Control Center
           </AdminLink>
+          <AdminLink to="/admin/espana" icon={<LayoutDashboard className="h-4 w-4" />}>
+            Control de España
+          </AdminLink>
           <AdminLink to="/admin/pendientes" icon={<Inbox className="h-4 w-4" />}>
             Cola de revisión
           </AdminLink>
