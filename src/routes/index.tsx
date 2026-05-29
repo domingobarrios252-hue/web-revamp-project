@@ -68,6 +68,7 @@ function HomePage() {
   const { t, lang } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
   const [heroCfg, setHeroCfg] = useState<HeroSettings>(HERO_DEFAULTS);
+  const { visibility } = useHomeSectionVisibility();
 
   useEffect(() => {
     let cancelled = false;
