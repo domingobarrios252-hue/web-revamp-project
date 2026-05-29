@@ -6,6 +6,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { Ticker } from "@/components/site/Ticker";
 import { HomeDynamicZone } from "@/components/home/HomeDynamicZone";
 import { HomeResultsSlider } from "@/components/home/HomeResultsSlider";
+import { useHomeSectionVisibility } from "@/lib/home/useHomeSectionVisibility";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
@@ -67,6 +68,7 @@ function HomePage() {
   const { t, lang } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
   const [heroCfg, setHeroCfg] = useState<HeroSettings>(HERO_DEFAULTS);
+  const { visibility } = useHomeSectionVisibility();
 
   useEffect(() => {
     let cancelled = false;
@@ -113,7 +115,7 @@ function HomePage() {
 
       <HomeDynamicZone />
 
-      <HomeResultsSlider />
+      {visibility.podios && <HomeResultsSlider />}
 
       <AdBannerWithMagazine placement="home_top" />
 
@@ -150,13 +152,13 @@ function HomePage() {
 
       <MostReadAndSocialSection />
 
-      <FeaturedAthletesSection />
-      <RankingPreviewSection />
-      <InterviewsPreviewSection />
-      <EventsPreviewSection />
-      <MagazinePreviewSection />
-      <SponsorsCarouselSection />
-      <TeamSection />
+      {visibility.atletas && <FeaturedAthletesSection />}
+      {visibility.ranking && <RankingPreviewSection />}
+      {visibility.entrevistas && <InterviewsPreviewSection />}
+      {visibility.eventos && <EventsPreviewSection />}
+      {visibility.revista && <MagazinePreviewSection />}
+      {visibility.patrocinadores && <SponsorsCarouselSection />}
+      {visibility.equipo && <TeamSection />}
     </>
   );
 }
