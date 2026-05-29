@@ -115,7 +115,7 @@ function HomePage() {
 
       <HomeDynamicZone />
 
-      <HomeResultsSlider />
+      {visibility.podios && <HomeResultsSlider />}
 
       <AdBannerWithMagazine placement="home_top" />
 
@@ -152,13 +152,13 @@ function HomePage() {
 
       <MostReadAndSocialSection />
 
-      <FeaturedAthletesSection />
-      <RankingPreviewSection />
-      <InterviewsPreviewSection />
-      <EventsPreviewSection />
-      <MagazinePreviewSection />
-      <SponsorsCarouselSection />
-      <TeamSection />
+      {visibility.atletas && <FeaturedAthletesSection />}
+      {visibility.ranking && <RankingPreviewSection />}
+      {visibility.entrevistas && <InterviewsPreviewSection />}
+      {visibility.eventos && <EventsPreviewSection />}
+      {visibility.revista && <MagazinePreviewSection />}
+      {visibility.patrocinadores && <SponsorsCarouselSection />}
+      {visibility.equipo && <TeamSection />}
     </>
   );
 }
