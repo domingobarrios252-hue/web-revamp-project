@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import {
   Instagram,
   Facebook,
@@ -9,75 +8,17 @@ import {
   Tv,
   Trophy,
   BookOpen,
-  Users,
-  PenTool,
-  Handshake,
-  Megaphone,
   Shield,
   FileText,
   Cookie,
-  Info,
-  Heart,
-  Star,
-  type LucideIcon,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
-import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "./NewsletterForm";
 
 const CONTACT_EMAIL = "rollerzonespain@gmail.com";
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  Info,
-  Users,
-  PenTool,
-  Handshake,
-  Megaphone,
-  Mail,
-  FileText,
-  Heart,
-  Star,
-  Newspaper,
-};
-
-type AboutLink = {
-  id: string;
-  label: string;
-  link_type: "internal" | "external" | "email";
-  target: string;
-  icon: string;
-};
-
-const KNOWN_INTERNAL: Record<string, string> = {
-  redactores: "/redactores",
-  patrocinadores: "/patrocinadores",
-  noticias: "/noticias",
-  eventos: "/eventos",
-  tv: "/tv",
-  revista: "/revista",
-  "premios-mvp": "/premios-mvp",
-  equipo: "/#equipo",
-  Equipo: "/#equipo",
-};
-
 export function SiteFooter() {
   const { t } = useLanguage();
-  const [aboutLinks, setAboutLinks] = useState<AboutLink[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const { data } = await supabase
-        .from("about_links")
-        .select("id, label, link_type, target, icon")
-        .eq("active", true)
-        .order("sort_order");
-      if (!cancelled && data) setAboutLinks(data as AboutLink[]);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const navLinks = [
     { to: "/noticias", label: t("nav.news"), Icon: Newspaper },
@@ -105,22 +46,8 @@ export function SiteFooter() {
         Pie de página
       </h2>
       <div className="mx-auto max-w-7xl px-6 py-12">
-        {/* Subscription bar */}
-        <div className="mb-10 flex flex-col gap-4 border border-[#333] bg-[#1A1A1A] p-5 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="font-display text-base tracking-widest text-[#F5F5F5]">
-              {t("footer.newsletter")}
-            </div>
-            <p className="mt-1 text-xs text-[#A0A0A0]">
-              {t("footer.newsletterDesc")}
-            </p>
-          </div>
-          <NewsletterForm source="footer" />
-
-        </div>
-
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          {/* 1. Logo + redes */}
+          {/* 1. Logo + descripción */}
           <div>
             <div className="font-display text-3xl tracking-widest">
               <span className="text-[#D4A017]">Roller</span>
@@ -129,38 +56,6 @@ export function SiteFooter() {
             <p className="font-condensed mt-3 max-w-xs text-sm uppercase tracking-wider text-[#A0A0A0]">
               {t("footer.tagline")}
             </p>
-            <div className="mt-5">
-              <span className="font-condensed mb-3 block text-[11px] uppercase tracking-widest text-[#D4A017]">
-                {t("footer.followUs")}
-              </span>
-              <div className="flex gap-2">
-                <a
-                  href="https://instagram.com/rollerzone_spain"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram @rollerzone_spain"
-                  className="flex h-10 w-10 items-center justify-center border border-[#333] bg-transparent text-[#A0A0A0] transition-colors hover:border-[#D4A017] hover:text-[#D4A017]"
-                >
-                  <Instagram className="h-4 w-4" aria-hidden="true" />
-                </a>
-                <a
-                  href="https://facebook.com/rollerzone.spain"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook @rollerzone.spain"
-                  className="flex h-10 w-10 items-center justify-center border border-[#333] bg-transparent text-[#A0A0A0] transition-colors hover:border-[#D4A017] hover:text-[#D4A017]"
-                >
-                  <Facebook className="h-4 w-4" aria-hidden="true" />
-                </a>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  aria-label={`Enviar email a ${CONTACT_EMAIL}`}
-                  className="flex h-10 w-10 items-center justify-center border border-[#333] bg-transparent text-[#A0A0A0] transition-colors hover:border-[#D4A017] hover:text-[#D4A017]"
-                >
-                  <Mail className="h-4 w-4" aria-hidden="true" />
-                </a>
-              </div>
-            </div>
           </div>
 
           {/* 2. Navegación */}
@@ -180,66 +75,53 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* 3. Sobre nosotros */}
+          {/* 3. Comunidad */}
           <div>
             <h3 className="font-display mb-4 text-base tracking-widest text-[#D4A017]">
-              {t("footer.aboutUs")}
+              Comunidad
             </h3>
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
-              {aboutLinks.map((item) => {
-                const Icon = ICON_MAP[item.icon] ?? Info;
-                const inner = (
-                  <>
-                    <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                    <span>{item.label}</span>
-                  </>
-                );
-                if (item.link_type === "external") {
-                  return (
-                    <li key={item.id}>
-                      <a
-                        href={item.target}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={linkClass}
-                      >
-                        {inner}
-                      </a>
-                    </li>
-                  );
-                }
-                if (item.link_type === "email") {
-                  return (
-                    <li key={item.id}>
-                      <a href={`mailto:${item.target}`} className={linkClass}>
-                        {inner}
-                      </a>
-                    </li>
-                  );
-                }
-                const knownPath = KNOWN_INTERNAL[item.target];
-                if (knownPath) {
-                  return (
-                    <li key={item.id}>
-                      <a href={knownPath} className={linkClass}>
-                        {inner}
-                      </a>
-                    </li>
-                  );
-                }
-                return (
-                  <li key={item.id}>
-                    <Link
-                      to="/sobre/$slug"
-                      params={{ slug: item.target }}
-                      className={linkClass}
-                    >
-                      {inner}
-                    </Link>
-                  </li>
-                );
-              })}
+              <li>
+                <a
+                  href="https://instagram.com/rollerzone_spain"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram @rollerzone_spain"
+                  className={linkClass}
+                >
+                  <Instagram className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                  <span>Instagram</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://facebook.com/rollerzone.spain"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook @rollerzone.spain"
+                  className={linkClass}
+                >
+                  <Facebook className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                  <span>Facebook</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  aria-label={`Enviar email a ${CONTACT_EMAIL}`}
+                  className={linkClass}
+                >
+                  <Mail className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                  <span>Email</span>
+                </a>
+              </li>
             </ul>
+            <div className="mt-5">
+              <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-[#D4A017]">
+                Newsletter
+              </span>
+              <NewsletterForm source="footer" />
+            </div>
           </div>
 
           {/* 4. Legal */}
@@ -263,11 +145,7 @@ export function SiteFooter() {
         {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center gap-2 border-t border-[#333] pt-6 text-center">
           <p className="text-xs text-[#A0A0A0]">
-            © {new Date().getFullYear()}{" "}
-            <span className="text-[#D4A017]">RollerZone</span> — {t("footer.rights")}
-          </p>
-          <p className="font-condensed text-[11px] uppercase tracking-widest text-[#666]">
-            {t("footer.madeWith")}
+            © 2026 <span className="text-[#D4A017]">RollerZone</span> — {t("footer.rights")}
           </p>
         </div>
       </div>
