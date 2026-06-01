@@ -221,9 +221,6 @@ export function LiveCenter() {
     return null;
   }
 
-  // Filter events carousel to next 48h only
-  const upcomingEvents = events.filter((e) => new Date(e.start_date) <= cutoff48h);
-
   const embed = getEmbedUrl(stream?.embed_url, stream?.autoplay);
   const eventSlug = featured?.slug ?? liveGroup?.slug;
 
