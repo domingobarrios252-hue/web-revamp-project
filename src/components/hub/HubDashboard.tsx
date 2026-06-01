@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Calendar, Trophy } from "lucide-react";
+import { Calendar, Newspaper, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
+import { EmptyState } from "@/components/site/EmptyState";
 
 type NewsRow = {
   id: string;
