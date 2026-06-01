@@ -232,9 +232,11 @@ export function HubDashboard({ country }: { country: string }) {
           )}
 
           {!featured && results.length === 0 && events.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-[#333] p-10 text-center text-sm text-[#888]">
-              Aún no hay contenido publicado para este país.
-            </div>
+            <EmptyState
+              icon={Newspaper}
+              title="Próximamente"
+              message="Aún no hay contenido publicado para este país. Estamos preparando las primeras noticias, eventos y resultados."
+            />
           )}
         </div>
 
