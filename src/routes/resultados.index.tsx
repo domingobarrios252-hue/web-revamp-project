@@ -4,6 +4,7 @@ import { ArrowRight, Calendar, MapPin, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
+import { EmptyState } from "@/components/site/EmptyState";
 
 type ResultEvent = {
   id: string;
