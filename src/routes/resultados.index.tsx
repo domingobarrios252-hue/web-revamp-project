@@ -116,9 +116,14 @@ function ResultadosIndex() {
       )}
 
       {events === null ? (
-        <p className="mt-10 text-muted-foreground">{t("common.loading")}</p>
+        <ResultsSkeleton />
       ) : filtered.length === 0 ? (
-        <p className="mt-10 text-muted-foreground">{t("results.empty")}</p>
+        <EmptyState
+          icon={Trophy}
+          title="Próximamente"
+          message="Aún no hay resultados publicados. En cuanto arranquen las próximas competiciones, los verás aquí en vivo."
+          className="mt-10"
+        />
       ) : (
         <section className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((e) => (
