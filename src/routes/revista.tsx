@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BookOpen, Calendar, Download, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { EmptyState } from "@/components/site/EmptyState";
 
 type Magazine = {
   id: string;
