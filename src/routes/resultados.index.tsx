@@ -116,7 +116,18 @@ function ResultadosIndex() {
       )}
 
       {events === null ? (
-        <ResultsSkeleton />
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="overflow-hidden rounded-xl border border-border bg-surface">
+              <div className="aspect-[16/9] animate-pulse bg-surface-2" />
+              <div className="space-y-3 p-4">
+                <div className="h-3 w-24 animate-pulse bg-surface-2" />
+                <div className="h-4 w-3/4 animate-pulse bg-surface-2" />
+                <div className="h-3 w-1/2 animate-pulse bg-surface-2" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={Trophy}
