@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Trophy, Star, Sparkles, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { EmptyState } from "@/components/site/EmptyState";
 import { z } from "zod";
 
 type Season = { id: string; year: number; label: string; is_current: boolean };
@@ -133,7 +134,11 @@ function PremiosMvpPage() {
       <AdBannerSmall placement="mvp_side" className="mb-10" />
 
       {!activeSeason ? (
-        <p className="py-20 text-center text-muted-foreground">Aún no hay temporadas configuradas. Pide al admin que añada una desde el panel.</p>
+        <EmptyState
+          icon={Crown}
+          title="Próximamente"
+          message="Los Premios MVP llegarán muy pronto. Estamos preparando la primera temporada — vuelve para descubrir a los protagonistas."
+        />
       ) : awards === null ? (
         <div className="space-y-12">
           {TIERS.map((t) => (
@@ -141,9 +146,11 @@ function PremiosMvpPage() {
           ))}
         </div>
       ) : awards.length === 0 ? (
-        <p className="py-20 text-center text-muted-foreground">
-          Aún no hay premios publicados para {activeSeason.label}.
-        </p>
+        <EmptyState
+          icon={Trophy}
+          title="Sin contenido aún"
+          message={`Todavía no hay premios publicados para ${activeSeason.label}. Estamos cerrando la lista de galardonados.`}
+        />
       ) : (
         <div className="space-y-16">
           {TIERS.map((t) => (

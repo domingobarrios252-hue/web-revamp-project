@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar, Eye, User as UserIcon, Newspaper, Inbox } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { EmptyState } from "@/components/site/EmptyState";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
 
@@ -172,23 +173,19 @@ function NewsSkeleton() {
 
 function EmptyNews() {
   return (
-    <div className="flex flex-col items-center justify-center border border-dashed border-border bg-surface px-6 py-16 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-gold/40 bg-background">
-        <Inbox className="h-7 w-7 text-gold" aria-hidden="true" />
-      </div>
-      <h2 className="font-display text-2xl tracking-widest text-foreground">
-        Sin noticias por ahora
-      </h2>
-      <p className="font-condensed mt-2 max-w-sm text-sm uppercase tracking-wider text-muted-foreground">
-        Aún no hay noticias publicadas en esta sección. Vuelve pronto o explora el resto del sitio.
-      </p>
-      <Link
-        to="/"
-        className="font-condensed mt-6 inline-flex items-center gap-2 border border-gold px-4 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
-      >
-        <Newspaper className="h-4 w-4" /> Volver al inicio
-      </Link>
-    </div>
+    <EmptyState
+      icon={Inbox}
+      title="Próximamente"
+      message="Aún no hay noticias publicadas en esta sección. Vuelve pronto o explora el resto del sitio."
+      action={
+        <Link
+          to="/"
+          className="font-condensed inline-flex items-center gap-2 border border-gold px-4 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+        >
+          <Newspaper className="h-4 w-4" /> Volver al inicio
+        </Link>
+      }
+    />
   );
 }
 

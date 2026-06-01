@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Calendar, Trophy } from "lucide-react";
+import { Calendar, Newspaper, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
+import { EmptyState } from "@/components/site/EmptyState";
 
 type NewsRow = {
   id: string;
@@ -231,9 +232,11 @@ export function HubDashboard({ country }: { country: string }) {
           )}
 
           {!featured && results.length === 0 && events.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-[#333] p-10 text-center text-sm text-[#888]">
-              Aún no hay contenido publicado para este país.
-            </div>
+            <EmptyState
+              icon={Newspaper}
+              title="Próximamente"
+              message="Aún no hay contenido publicado para este país. Estamos preparando las primeras noticias, eventos y resultados."
+            />
           )}
         </div>
 

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BookOpen, Calendar, Download, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { EmptyState } from "@/components/site/EmptyState";
 
 type Magazine = {
   id: string;
@@ -56,9 +57,23 @@ function RevistaPage() {
       </div>
 
       {issues === null ? (
-        <p className="text-muted-foreground">Cargando ediciones…</p>
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="flex flex-col">
+              <div className="aspect-[3/4] animate-pulse border border-border bg-surface-2" />
+              <div className="mt-3 space-y-2">
+                <div className="h-4 w-3/4 animate-pulse bg-surface-2" />
+                <div className="h-3 w-1/2 animate-pulse bg-surface-2" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : issues.length === 0 ? (
-        <p className="text-muted-foreground">Aún no hay ediciones publicadas.</p>
+        <EmptyState
+          icon={BookOpen}
+          title="Próximamente"
+          message="Aún no hay ediciones publicadas. Estamos preparando el primer número — vuelve pronto para hojearlo."
+        />
       ) : (
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {issues.map((m) => (

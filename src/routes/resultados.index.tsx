@@ -4,6 +4,7 @@ import { ArrowRight, Calendar, MapPin, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
+import { EmptyState } from "@/components/site/EmptyState";
 
 type ResultEvent = {
   id: string;
@@ -115,9 +116,25 @@ function ResultadosIndex() {
       )}
 
       {events === null ? (
-        <p className="mt-10 text-muted-foreground">{t("common.loading")}</p>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="overflow-hidden rounded-xl border border-border bg-surface">
+              <div className="aspect-[16/9] animate-pulse bg-surface-2" />
+              <div className="space-y-3 p-4">
+                <div className="h-3 w-24 animate-pulse bg-surface-2" />
+                <div className="h-4 w-3/4 animate-pulse bg-surface-2" />
+                <div className="h-3 w-1/2 animate-pulse bg-surface-2" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : filtered.length === 0 ? (
-        <p className="mt-10 text-muted-foreground">{t("results.empty")}</p>
+        <EmptyState
+          icon={Trophy}
+          title="Próximamente"
+          message="Aún no hay resultados publicados. En cuanto arranquen las próximas competiciones, los verás aquí en vivo."
+          className="mt-10"
+        />
       ) : (
         <section className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((e) => (
