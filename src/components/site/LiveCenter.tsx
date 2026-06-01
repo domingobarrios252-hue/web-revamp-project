@@ -204,9 +204,25 @@ export function LiveCenter() {
   const isLiveBroadcast = !!stream?.is_active;
   const hasLiveRace = (liveGroup?.rows ?? []).some((r) => r.status === "en_vivo");
 
-  if (!loading && streams.length === 0 && schedule.length === 0 && results.length === 0 && events.length === 0 && !featured) {
+  // Show LiveCenter only if there's a live broadcast, live results, featured event,
+  // or something scheduled within the next 48 hours
+  const cutoff48h = useMemo(() => {
+    const d = new Date();
+    d.setTime(d.getTime() + 48 * 60 * 60 * 1000);
+    return d;
+  }, []);
+
+  const hasLiveContent = streams.length > 0 || hasLiveRace || !!featured;
+  const hasUpcomingIn48h =
+    schedule.some((s) => new Date(s.scheduled_at) <= cutoff48h) ||
+    events.some((e) => new Date(e.start_date) <= cutoff48h);
+
+  if (!loading && !hasLiveContent && !hasUpcomingIn48h) {
     return null;
   }
+
+  // Filter events carousel to next 48h only
+  const upcomingEvents = events.filter((e) => new Date(e.start_date) <= cutoff48h);
 
   const embed = getEmbedUrl(stream?.embed_url, stream?.autoplay);
   const eventSlug = featured?.slug ?? liveGroup?.slug;
