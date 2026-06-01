@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Trophy, Star, Sparkles, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { EmptyState } from "@/components/site/EmptyState";
 import { z } from "zod";
 
 type Season = { id: string; year: number; label: string; is_current: boolean };
