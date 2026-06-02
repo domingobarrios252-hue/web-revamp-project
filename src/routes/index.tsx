@@ -113,6 +113,46 @@ function HomePage() {
 
       <Ticker />
 
+      {/* ¿QUÉ ES ROLLERZONE? — presentación del medio */}
+      <section className="mx-auto max-w-7xl px-5 py-14 md:px-6 md:py-20">
+        <div className="mb-10 text-center md:mb-14">
+          <h2 className="font-display text-3xl uppercase tracking-widest text-foreground md:text-4xl">
+            ¿Qué es <span className="text-gold">RollerZone</span>?
+          </h2>
+          <div className="mx-auto mt-3 h-[2px] w-16 bg-gold md:mt-4 md:w-20" />
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+            El medio de referencia del patinaje de velocidad. Noticias, eventos, resultados en directo y contenido exclusivo para la comunidad del patín.
+          </p>
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <WhatIsCard
+            icon={<Newspaper className="h-7 w-7" />}
+            title="Noticias"
+            description="Lo último del patinaje nacional e internacional."
+            to="/noticias"
+          />
+          <WhatIsCard
+            icon={<CalendarDays className="h-7 w-7" />}
+            title="Eventos"
+            description="Calendario de competiciones y actividades."
+            to="/eventos"
+          />
+          <WhatIsCard
+            icon={<BookOpen className="h-7 w-7" />}
+            title="Revista Digital"
+            description="Reportajes, entrevistas y análisis en profundidad."
+            to="/revista"
+          />
+          <WhatIsCard
+            icon={<MonitorPlay className="h-7 w-7" />}
+            title="RollerZone TV"
+            description="Streaming y vídeos exclusivos de competiciones."
+            to="/tv"
+          />
+        </div>
+      </section>
+
       <HomeDynamicZone />
 
       {visibility.podios && <HomeResultsSlider />}
