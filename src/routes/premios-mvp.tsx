@@ -67,7 +67,8 @@ function PremiosMvpPage() {
       .from("mvp_seasons")
       .select("id, year, label, is_current")
       .order("year", { ascending: false })
-      .then(({ data }) => { if (!cancelled) setSeasons((data as Season[]) ?? []); });
+      .then(({ data, error }) => { if (!cancelled) setSeasons(error ? [] : ((data as Season[]) ?? [])); })
+      .catch(() => { if (!cancelled) setSeasons([]); });
     return () => { cancelled = true; };
   }, []);
 
