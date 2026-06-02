@@ -43,8 +43,8 @@ function RevistaPage() {
       .eq("published", true)
       .order("created_at", { ascending: false })
       .limit(100)
-      .then(({ data }) => {
-        if (!cancelled) setIssues((data as Magazine[]) ?? []);
+      .then(({ data, error }) => {
+        if (!cancelled) setIssues(error ? [] : ((data as Magazine[]) ?? []));
       });
     return () => { cancelled = true; };
   }, []);
