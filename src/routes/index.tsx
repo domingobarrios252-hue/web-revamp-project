@@ -203,6 +203,38 @@ function HomePage() {
   );
 }
 
+function WhatIsCard({
+  icon,
+  title,
+  description,
+  to,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  to: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="group flex flex-col items-center rounded-2xl border border-border bg-surface p-6 text-center shadow-lg transition-all duration-300 hover:border-gold hover:bg-surface-2 hover:shadow-xl md:p-8"
+    >
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/10 text-gold transition-colors group-hover:bg-gold/20">
+        {icon}
+      </div>
+      <h3 className="font-display text-xl uppercase tracking-wider text-foreground">
+        {title}
+      </h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        {description}
+      </p>
+      <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold transition-transform group-hover:translate-x-1">
+        Explorar <ArrowRight className="h-3.5 w-3.5" />
+      </span>
+    </Link>
+  );
+}
+
 /* ===================== HERO CARRUSEL PREMIUM ===================== */
 
 function HeroCarousel({
