@@ -153,6 +153,23 @@ function HomePage() {
         </div>
       </section>
 
+      {/* HUBS POR PAÍS */}
+      <section className="mx-auto max-w-7xl px-5 py-12 md:px-6 md:py-16">
+        <div className="mb-8 text-center md:mb-10">
+          <h2 className="font-display text-3xl uppercase tracking-widest text-foreground md:text-4xl">
+            <span className="text-gold">Hubs</span> por país
+          </h2>
+          <div className="mx-auto mt-3 h-[2px] w-16 bg-gold md:w-20" />
+          <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground md:text-base">
+            Explora el patinaje de velocidad en cada país con su portal dedicado.
+          </p>
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <HubCard country="es" flag="🇪🇸" name="España" tagline="Liga Nacional, clubes y federaciones" />
+          <HubCard country="co" flag="🇨🇴" name="Colombia" tagline="Patinaje colombiano de velocidad" />
+        </div>
+      </section>
+
       <HomeDynamicZone />
 
       {visibility.podios && <HomeResultsSlider />}
