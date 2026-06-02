@@ -55,13 +55,13 @@ function NoticiasIndexPage() {
       )
       .eq("published", true)
       .order("published_at", { ascending: false })
-      .then(({ data }) => setNews((data as unknown as News[]) ?? []));
+      .then(({ data, error }) => setNews(error ? [] : ((data as unknown as News[]) ?? [])));
 
     supabase
       .from("news_categories")
       .select("id, name, slug, scope")
       .order("sort_order", { ascending: true })
-      .then(({ data }) => setCategories((data as Category[]) ?? []));
+      .then(({ data, error }) => setCategories(error ? [] : ((data as Category[]) ?? [])));
   }, []);
 
   const filtered = useMemo(() => {
