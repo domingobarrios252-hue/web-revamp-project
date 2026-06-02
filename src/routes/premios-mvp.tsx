@@ -67,7 +67,7 @@ function PremiosMvpPage() {
       .from("mvp_seasons")
       .select("id, year, label, is_current")
       .order("year", { ascending: false })
-      .then(({ data }) => { if (!cancelled) setSeasons((data as Season[]) ?? []); });
+      .then(({ data, error }) => { if (!cancelled) setSeasons(error ? [] : ((data as Season[]) ?? [])); });
     return () => { cancelled = true; };
   }, []);
 
@@ -88,7 +88,7 @@ function PremiosMvpPage() {
       .select("id, season_id, tier, gender, position, full_name, photo_url, club, region, category_age, merit")
       .eq("season_id", activeSeason.id)
       .eq("published", true)
-      .then(({ data }) => { if (!cancelled) setAwards((data as Award[]) ?? []); });
+      .then(({ data, error }) => { if (!cancelled) setAwards(error ? [] : ((data as Award[]) ?? [])); });
     return () => { cancelled = true; };
   }, [activeSeason]);
 

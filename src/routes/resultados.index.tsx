@@ -39,31 +39,37 @@ function ResultadosIndex() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data }, { data: legacyData }] = await Promise.all([
-        supabase
-          .from("result_events")
-          .select("id, slug, name, event_date, country, banner_url, status, sort_order")
-          .eq("published", true)
-          .order("sort_order", { ascending: true })
-          .order("event_date", { ascending: false }),
-        supabase
-          .from("live_results")
-          .select("event_slug, event_name")
-          .eq("published", true)
-          .not("event_slug", "is", null)
-          .limit(500),
-      ]);
-      if (cancelled) return;
-      setEvents((data as ResultEvent[]) ?? []);
-      // legacy events not in result_events
-      const seen = new Set((data ?? []).map((e: { slug: string }) => e.slug));
-      const map = new Map<string, string>();
-      (legacyData ?? []).forEach((r: { event_slug: string | null; event_name: string }) => {
-        if (r.event_slug && !seen.has(r.event_slug) && !map.has(r.event_slug)) {
-          map.set(r.event_slug, r.event_name);
+      try {
+        const [{ data }, { data: legacyData }] = await Promise.all([
+          supabase
+            .from("result_events")
+            .select("id, slug, name, event_date, country, banner_url, status, sort_order")
+            .eq("published", true)
+            .order("sort_order", { ascending: true })
+            .order("event_date", { ascending: false }),
+          supabase
+            .from("live_results")
+            .select("event_slug, event_name")
+            .eq("published", true)
+            .not("event_slug", "is", null)
+            .limit(500),
+        ]);
+        if (cancelled) return;
+        setEvents((data as ResultEvent[]) ?? []);
+        const seen = new Set((data ?? []).map((e: { slug: string }) => e.slug));
+        const map = new Map<string, string>();
+        (legacyData ?? []).forEach((r: { event_slug: string | null; event_name: string }) => {
+          if (r.event_slug && !seen.has(r.event_slug) && !map.has(r.event_slug)) {
+            map.set(r.event_slug, r.event_name);
+          }
+        });
+        setLegacy(Array.from(map, ([slug, name]) => ({ slug, name })));
+      } catch {
+        if (!cancelled) {
+          setEvents([]);
+          setLegacy([]);
         }
-      });
-      setLegacy(Array.from(map, ([slug, name]) => ({ slug, name })));
+      }
     })();
     return () => { cancelled = true; };
   }, []);

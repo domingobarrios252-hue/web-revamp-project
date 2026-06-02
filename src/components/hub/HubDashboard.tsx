@@ -51,43 +51,52 @@ export function HubDashboard({ country }: { country: string }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [n, e, r, i] = await Promise.all([
-        supabase
-          .from("news")
-          .select("id,title,slug,excerpt,image_url,published_at,views_count,featured")
-          .eq("published", true)
-          .eq("country_code", country)
-          .order("featured", { ascending: false })
-          .order("published_at", { ascending: false })
-          .limit(6),
-        supabase
-          .from("events")
-          .select("id,name,slug,start_date,location,cover_url")
-          .eq("published", true)
-          .eq("country_code", country)
-          .gte("start_date", new Date().toISOString().slice(0, 10))
-          .order("start_date", { ascending: true })
-          .limit(4),
-        supabase
-          .from("live_results")
-          .select("id,athlete_name,position,event_name,category,race_time")
-          .eq("published", true)
-          .order("created_at", { ascending: false })
-          .limit(8),
-        supabase
-          .from("interviews")
-          .select("id,title,slug,interviewee_name,cover_url")
-          .eq("published", true)
-          .eq("country_code", country)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ]);
-      if (cancelled) return;
-      setNews((n.data as NewsRow[]) ?? []);
-      setEvents((e.data as EventRow[]) ?? []);
-      setResults((r.data as ResultRow[]) ?? []);
-      setInterview((i.data as InterviewRow) ?? null);
+      try {
+        const [n, e, r, i] = await Promise.all([
+          supabase
+            .from("news")
+            .select("id,title,slug,excerpt,image_url,published_at,views_count,featured")
+            .eq("published", true)
+            .eq("country_code", country)
+            .order("featured", { ascending: false })
+            .order("published_at", { ascending: false })
+            .limit(6),
+          supabase
+            .from("events")
+            .select("id,name,slug,start_date,location,cover_url")
+            .eq("published", true)
+            .eq("country_code", country)
+            .gte("start_date", new Date().toISOString().slice(0, 10))
+            .order("start_date", { ascending: true })
+            .limit(4),
+          supabase
+            .from("live_results")
+            .select("id,athlete_name,position,event_name,category,race_time")
+            .eq("published", true)
+            .order("created_at", { ascending: false })
+            .limit(8),
+          supabase
+            .from("interviews")
+            .select("id,title,slug,interviewee_name,cover_url")
+            .eq("published", true)
+            .eq("country_code", country)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+        ]);
+        if (cancelled) return;
+        setNews((n.data as NewsRow[]) ?? []);
+        setEvents((e.data as EventRow[]) ?? []);
+        setResults((r.data as ResultRow[]) ?? []);
+        setInterview((i.data as InterviewRow) ?? null);
+      } catch {
+        if (!cancelled) {
+          setNews([]);
+          setEvents([]);
+          setResults([]);
+          setInterview(null);
+        }
+      }
     })();
     return () => {
       cancelled = true;
