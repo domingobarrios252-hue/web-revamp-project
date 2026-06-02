@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Clock, Flame, Instagram, Facebook, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Calendar, User as UserIcon, ArrowRight, Trophy, Mic, MapPin, BookOpen, Heart, ExternalLink, UsersRound, Clock, Flame, Instagram, Facebook, ChevronLeft, ChevronRight, Newspaper, CalendarDays, MonitorPlay } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { Ticker } from "@/components/site/Ticker";
@@ -113,6 +113,46 @@ function HomePage() {
 
       <Ticker />
 
+      {/* ¿QUÉ ES ROLLERZONE? — presentación del medio */}
+      <section className="mx-auto max-w-7xl px-5 py-14 md:px-6 md:py-20">
+        <div className="mb-10 text-center md:mb-14">
+          <h2 className="font-display text-3xl uppercase tracking-widest text-foreground md:text-4xl">
+            ¿Qué es <span className="text-gold">RollerZone</span>?
+          </h2>
+          <div className="mx-auto mt-3 h-[2px] w-16 bg-gold md:mt-4 md:w-20" />
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+            El medio de referencia del patinaje de velocidad. Noticias, eventos, resultados en directo y contenido exclusivo para la comunidad del patín.
+          </p>
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <WhatIsCard
+            icon={<Newspaper className="h-7 w-7" />}
+            title="Noticias"
+            description="Lo último del patinaje nacional e internacional."
+            to="/noticias"
+          />
+          <WhatIsCard
+            icon={<CalendarDays className="h-7 w-7" />}
+            title="Eventos"
+            description="Calendario de competiciones y actividades."
+            to="/eventos"
+          />
+          <WhatIsCard
+            icon={<BookOpen className="h-7 w-7" />}
+            title="Revista Digital"
+            description="Reportajes, entrevistas y análisis en profundidad."
+            to="/revista"
+          />
+          <WhatIsCard
+            icon={<MonitorPlay className="h-7 w-7" />}
+            title="RollerZone TV"
+            description="Streaming y vídeos exclusivos de competiciones."
+            to="/tv"
+          />
+        </div>
+      </section>
+
       <HomeDynamicZone />
 
       {visibility.podios && <HomeResultsSlider />}
@@ -160,6 +200,38 @@ function HomePage() {
       {visibility.patrocinadores && <SponsorsCarouselSection />}
       {visibility.equipo && <TeamSection />}
     </>
+  );
+}
+
+function WhatIsCard({
+  icon,
+  title,
+  description,
+  to,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  to: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="group flex flex-col items-center rounded-2xl border border-border bg-surface p-6 text-center shadow-lg transition-all duration-300 hover:border-gold hover:bg-surface-2 hover:shadow-xl md:p-8"
+    >
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/10 text-gold transition-colors group-hover:bg-gold/20">
+        {icon}
+      </div>
+      <h3 className="font-display text-xl uppercase tracking-wider text-foreground">
+        {title}
+      </h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        {description}
+      </p>
+      <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold transition-transform group-hover:translate-x-1">
+        Explorar <ArrowRight className="h-3.5 w-3.5" />
+      </span>
+    </Link>
   );
 }
 
