@@ -1,0 +1,3 @@
+INSERT INTO public.country_hubs (country_code, name, accent_color, active, active_sections, federation_name, federation_url, tagline, sort_order)
+VALUES ('co', 'Colombia', '#FCD116', true, '["inicio","competicion","clubes","federaciones","mvp","comunidad"]'::jsonb, 'Federación Colombiana de Patinaje', 'https://fedepatin.org.co', 'El portal de referencia del patinaje de velocidad en Colombia', 2)
+ON CONFLICT (country_code) DO NOTHING;
