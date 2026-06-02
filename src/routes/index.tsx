@@ -220,6 +220,26 @@ function HomePage() {
   );
 }
 
+function HubCard({ country, flag, name, tagline }: { country: string; flag: string; name: string; tagline: string }) {
+  return (
+    <Link
+      to="/hub/$country"
+      params={{ country }}
+      className="group relative flex items-center gap-5 overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-lg transition-all duration-300 hover:border-gold hover:bg-surface-2 hover:shadow-xl md:p-8"
+    >
+      <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-surface-2 text-5xl shadow-inner md:h-24 md:w-24 md:text-6xl">
+        {flag}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="font-condensed text-[10px] font-bold uppercase tracking-[3px] text-gold">Hub oficial</div>
+        <h3 className="mt-1 font-display text-2xl uppercase tracking-wider text-foreground md:text-3xl">{name}</h3>
+        <p className="mt-1 truncate text-sm text-muted-foreground">{tagline}</p>
+      </div>
+      <ArrowRight className="h-5 w-5 shrink-0 text-gold transition-transform group-hover:translate-x-1" />
+    </Link>
+  );
+}
+
 function WhatIsCard({
   icon,
   title,
