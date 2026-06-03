@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, X, Search, LayoutDashboard, LogOut, User as UserIcon } from "lucide-react";
+import { Menu, X, Search, LayoutDashboard, LogOut, User as UserIcon, BookOpen } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useAuthDialog } from "@/lib/auth-dialog-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -41,6 +42,7 @@ export function SiteHeader() {
   const [searchValue, setSearchValue] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const { user, isEditor, signOut } = useAuth();
+  const { openAuthDialog } = useAuthDialog();
   const navigate = useNavigate();
 
   useEffect(() => setMobileOpen(false), []);
@@ -150,6 +152,11 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem asChild>
+                  <Link to="/mi-biblioteca" className="cursor-pointer">
+                    <BookOpen className="mr-2 h-4 w-4" /> Mi biblioteca
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/dashboard" className="cursor-pointer">
                     <UserIcon className="mr-2 h-4 w-4" /> Mi panel
                   </Link>
@@ -167,9 +174,13 @@ export function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/auth" className={`${ACTION_BTN} hidden md:inline-flex`}>
-              Acceder
-            </Link>
+            <button
+              type="button"
+              onClick={openAuthDialog}
+              className={`${ACTION_BTN} hidden md:inline-flex`}
+            >
+              Acceder / Mi cuenta
+            </button>
           )}
 
           <button
