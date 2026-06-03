@@ -1306,15 +1306,56 @@ export type Database = {
         }
         Relationships: []
       }
+      magazine_purchases: {
+        Row: {
+          amount_paid: number
+          id: string
+          magazine_id: string
+          payment_id: string | null
+          purchased_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_paid?: number
+          id?: string
+          magazine_id: string
+          payment_id?: string | null
+          purchased_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_paid?: number
+          id?: string
+          magazine_id?: string
+          payment_id?: string | null
+          purchased_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "magazine_purchases_magazine_id_fkey"
+            columns: ["magazine_id"]
+            isOneToOne: false
+            referencedRelation: "magazines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       magazines: {
         Row: {
+          country: string
+          cover_image_url: string | null
           cover_url: string | null
           created_at: string
           description: string | null
           edition_date: string
+          edition_number: number | null
           id: string
+          is_active: boolean
+          is_free: boolean
           issue_number: string | null
           pdf_url: string | null
+          price: number
           published: boolean
           read_url: string | null
           slug: string
@@ -1323,13 +1364,19 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          country?: string
+          cover_image_url?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
           edition_date: string
+          edition_number?: number | null
           id?: string
+          is_active?: boolean
+          is_free?: boolean
           issue_number?: string | null
           pdf_url?: string | null
+          price?: number
           published?: boolean
           read_url?: string | null
           slug: string
@@ -1338,13 +1385,19 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          country?: string
+          cover_image_url?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
           edition_date?: string
+          edition_number?: number | null
           id?: string
+          is_active?: boolean
+          is_free?: boolean
           issue_number?: string | null
           pdf_url?: string | null
+          price?: number
           published?: boolean
           read_url?: string | null
           slug?: string
