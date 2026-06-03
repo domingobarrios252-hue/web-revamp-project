@@ -123,7 +123,7 @@ function RevistaPage() {
               items={spain}
               user={user}
               purchased={purchased}
-              onRequireAuth={() => setAuthOpen(true)}
+              onRequireAuth={openAuthDialog}
             />
           </TabsContent>
           <TabsContent value="colombia">
@@ -131,30 +131,11 @@ function RevistaPage() {
               items={colombia}
               user={user}
               purchased={purchased}
-              onRequireAuth={() => setAuthOpen(true)}
+              onRequireAuth={openAuthDialog}
             />
           </TabsContent>
         </Tabs>
       )}
-
-      <Dialog open={authOpen} onOpenChange={setAuthOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="font-display tracking-widest flex items-center gap-2">
-              <Lock className="h-5 w-5 text-gold" /> Inicia sesión para comprar
-            </DialogTitle>
-            <DialogDescription>
-              Necesitas una cuenta para comprar y leer las ediciones digitales de la revista RollerZone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-2">
-            <Button variant="outline" onClick={() => setAuthOpen(false)}>Cancelar</Button>
-            <Button asChild>
-              <Link to="/auth">Iniciar sesión / Registrarse</Link>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
