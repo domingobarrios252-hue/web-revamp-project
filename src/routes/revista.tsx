@@ -49,9 +49,9 @@ function formatPrice(p: number | null) {
 
 function RevistaPage() {
   const { user } = useAuth();
+  const { openAuthDialog } = useAuthDialog();
   const [issues, setIssues] = useState<Magazine[] | null>(null);
   const [purchased, setPurchased] = useState<Set<string>>(new Set());
-  const [authOpen, setAuthOpen] = useState(false);
   const [tab, setTab] = useState<"spain" | "colombia">("spain");
 
   useEffect(() => {
