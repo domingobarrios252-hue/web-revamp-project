@@ -262,6 +262,13 @@ export function SiteHeader() {
                       </Avatar>
                       <span className="truncate text-sm text-[#F5F5F5]">{displayName}</span>
                     </div>
+                    <Link
+                      to="/mi-biblioteca"
+                      onClick={() => setMobileOpen(false)}
+                      className="font-ui rounded-[6px] border border-[#333] px-3 py-2 text-center text-xs font-semibold tracking-wide text-[#F5F5F5]"
+                    >
+                      Mi biblioteca
+                    </Link>
                     {isEditor && (
                       <Link
                         to="/admin"
@@ -283,13 +290,13 @@ export function SiteHeader() {
                     </button>
                   </>
                 ) : (
-                  <Link
-                    to="/auth"
-                    onClick={() => setMobileOpen(false)}
+                  <button
+                    type="button"
+                    onClick={() => { setMobileOpen(false); openAuthDialog(); }}
                     className="font-ui rounded-[6px] border border-[#D4A017] px-3 py-2 text-center text-xs font-semibold tracking-wide text-[#D4A017] hover:bg-[#D4A017] hover:text-[#1A1A1A]"
                   >
-                    Acceder
-                  </Link>
+                    Acceder / Mi cuenta
+                  </button>
                 )}
               </div>
             </div>
