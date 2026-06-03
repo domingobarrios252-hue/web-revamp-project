@@ -1,17 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, Calendar, ShoppingCart, BookOpenCheck, Lock } from "lucide-react";
+import { BookOpen, Calendar, ShoppingCart, BookOpenCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useAuth } from "@/lib/auth-context";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useAuthDialog } from "@/lib/auth-dialog-context";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
@@ -56,9 +49,9 @@ function formatPrice(p: number | null) {
 
 function RevistaPage() {
   const { user } = useAuth();
+  const { openAuthDialog } = useAuthDialog();
   const [issues, setIssues] = useState<Magazine[] | null>(null);
   const [purchased, setPurchased] = useState<Set<string>>(new Set());
-  const [authOpen, setAuthOpen] = useState(false);
   const [tab, setTab] = useState<"spain" | "colombia">("spain");
 
   useEffect(() => {
@@ -130,7 +123,7 @@ function RevistaPage() {
               items={spain}
               user={user}
               purchased={purchased}
-              onRequireAuth={() => setAuthOpen(true)}
+              onRequireAuth={openAuthDialog}
             />
           </TabsContent>
           <TabsContent value="colombia">
@@ -138,30 +131,11 @@ function RevistaPage() {
               items={colombia}
               user={user}
               purchased={purchased}
-              onRequireAuth={() => setAuthOpen(true)}
+              onRequireAuth={openAuthDialog}
             />
           </TabsContent>
         </Tabs>
       )}
-
-      <Dialog open={authOpen} onOpenChange={setAuthOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="font-display tracking-widest flex items-center gap-2">
-              <Lock className="h-5 w-5 text-gold" /> Inicia sesión para comprar
-            </DialogTitle>
-            <DialogDescription>
-              Necesitas una cuenta para comprar y leer las ediciones digitales de la revista RollerZone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-2">
-            <Button variant="outline" onClick={() => setAuthOpen(false)}>Cancelar</Button>
-            <Button asChild>
-              <Link to="/auth">Iniciar sesión / Registrarse</Link>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

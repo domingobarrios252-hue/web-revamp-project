@@ -16,6 +16,7 @@ import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as PaisesRouteImport } from './routes/paises'
+import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
@@ -143,6 +144,11 @@ const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
 const PaisesRoute = PaisesRouteImport.update({
   id: '/paises',
   path: '/paises',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MiBibliotecaRoute = MiBibliotecaRouteImport.update({
+  id: '/mi-biblioteca',
+  path: '/mi-biblioteca',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -629,6 +635,7 @@ export interface FileRoutesByFullPath {
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
@@ -729,6 +736,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
+  '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
@@ -825,6 +833,7 @@ export interface FileRoutesById {
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
@@ -929,6 +938,7 @@ export interface FileRouteTypes {
     | '/aviso-legal'
     | '/cookies'
     | '/dashboard'
+    | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
     | '/premios-mvp'
@@ -1029,6 +1039,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
+    | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
     | '/premios-mvp'
@@ -1124,6 +1135,7 @@ export interface FileRouteTypes {
     | '/aviso-legal'
     | '/cookies'
     | '/dashboard'
+    | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
     | '/premios-mvp'
@@ -1227,6 +1239,7 @@ export interface RootRouteChildren {
   AvisoLegalRoute: typeof AvisoLegalRoute
   CookiesRoute: typeof CookiesRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  MiBibliotecaRoute: typeof MiBibliotecaRoute
   PaisesRoute: typeof PaisesRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
@@ -1310,6 +1323,13 @@ declare module '@tanstack/react-router' {
       path: '/paises'
       fullPath: '/paises'
       preLoaderRoute: typeof PaisesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mi-biblioteca': {
+      id: '/mi-biblioteca'
+      path: '/mi-biblioteca'
+      fullPath: '/mi-biblioteca'
+      preLoaderRoute: typeof MiBibliotecaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -2196,6 +2216,7 @@ const rootRouteChildren: RootRouteChildren = {
   AvisoLegalRoute: AvisoLegalRoute,
   CookiesRoute: CookiesRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  MiBibliotecaRoute: MiBibliotecaRoute,
   PaisesRoute: PaisesRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PremiosMvpRoute: PremiosMvpRoute,
