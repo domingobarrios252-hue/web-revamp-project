@@ -93,7 +93,7 @@ function AdminRevistas() {
   };
 
   const togglePatch = async (m: Magazine, patch: Partial<Magazine>) => {
-    const { error } = await supabase.from("magazines").update(patch).eq("id", m.id);
+    const { error } = await supabase.from("magazines").update(patch as never).eq("id", m.id);
     if (error) return toast.error(error.message);
     setItems((prev) => prev.map((x) => (x.id === m.id ? { ...x, ...patch } : x)));
   };
