@@ -75,6 +75,7 @@ import { Route as AdminEspanaRouteImport } from './routes/admin.espana'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
 import { Route as AdminComunidadRouteImport } from './routes/admin.comunidad'
+import { Route as AdminColombiaRouteImport } from './routes/admin.colombia'
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminClasificacionesRouteImport } from './routes/admin.clasificaciones'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
@@ -441,6 +442,11 @@ const AdminComunidadRoute = AdminComunidadRouteImport.update({
   path: '/comunidad',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminColombiaRoute = AdminColombiaRouteImport.update({
+  id: '/colombia',
+  path: '/colombia',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminClubesRoute = AdminClubesRouteImport.update({
   id: '/clubes',
   path: '/clubes',
@@ -648,6 +654,7 @@ export interface FileRoutesByFullPath {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
@@ -749,6 +756,7 @@ export interface FileRoutesByTo {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
@@ -846,6 +854,7 @@ export interface FileRoutesById {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
   '/admin/equipo': typeof AdminEquipoRoute
@@ -951,6 +960,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
@@ -1052,6 +1062,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
@@ -1148,6 +1159,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
     | '/admin/equipo'
@@ -1738,6 +1750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminComunidadRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/colombia': {
+      id: '/admin/colombia'
+      path: '/colombia'
+      fullPath: '/admin/colombia'
+      preLoaderRoute: typeof AdminColombiaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/clubes': {
       id: '/admin/clubes'
       path: '/clubes'
@@ -1991,6 +2010,7 @@ interface AdminRouteChildren {
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClasificacionesRoute: typeof AdminClasificacionesRoute
   AdminClubesRoute: typeof AdminClubesRoute
+  AdminColombiaRoute: typeof AdminColombiaRoute
   AdminComunidadRoute: typeof AdminComunidadRoute
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
   AdminEquipoRoute: typeof AdminEquipoRoute
@@ -2027,6 +2047,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClasificacionesRoute: AdminClasificacionesRoute,
   AdminClubesRoute: AdminClubesRoute,
+  AdminColombiaRoute: AdminColombiaRoute,
   AdminComunidadRoute: AdminComunidadRoute,
   AdminEntrevistasRoute: AdminEntrevistasRoute,
   AdminEquipoRoute: AdminEquipoRoute,
@@ -2253,12 +2274,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
