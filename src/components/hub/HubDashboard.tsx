@@ -52,15 +52,39 @@ export function HubDashboard({ country }: { country: string }) {
     let cancelled = false;
     (async () => {
       try {
+        // Map country code → news category slug(s) so the hub also shows
+        // "Internacional > <País>" news created from the editorial panel.
+        const CATEGORY_SLUGS_BY_COUNTRY: Record<string, string[]> = {
+          co: ["colombia", "internacional-colombia"],
+          ve: ["venezuela", "internacional-venezuela"],
+        };
+        const extraSlugs = CATEGORY_SLUGS_BY_COUNTRY[country] ?? [];
+        let extraCategoryIds: string[] = [];
+        if (extraSlugs.length) {
+          const { data: cats } = await supabase
+            .from("news_categories")
+            .select("id")
+            .in("slug", extraSlugs);
+          extraCategoryIds = (cats ?? []).map((c: { id: string }) => c.id);
+        }
+
+        const newsQuery = supabase
+          .from("news")
+          .select("id,title,slug,excerpt,image_url,published_at,views_count,featured,country_code,category_id")
+          .eq("published", true)
+          .order("featured", { ascending: false })
+          .order("published_at", { ascending: false })
+          .limit(6);
+        if (extraCategoryIds.length) {
+          newsQuery.or(
+            `country_code.eq.${country},category_id.in.(${extraCategoryIds.join(",")})`,
+          );
+        } else {
+          newsQuery.eq("country_code", country);
+        }
+
         const [n, e, r, i] = await Promise.all([
-          supabase
-            .from("news")
-            .select("id,title,slug,excerpt,image_url,published_at,views_count,featured")
-            .eq("published", true)
-            .eq("country_code", country)
-            .order("featured", { ascending: false })
-            .order("published_at", { ascending: false })
-            .limit(6),
+          newsQuery,
           supabase
             .from("events")
             .select("id,name,slug,start_date,location,cover_url")
@@ -84,6 +108,7 @@ export function HubDashboard({ country }: { country: string }) {
             .limit(1)
             .maybeSingle(),
         ]);
+
         if (cancelled) return;
         setNews((n.data as NewsRow[]) ?? []);
         setEvents((e.data as EventRow[]) ?? []);
