@@ -177,7 +177,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={openAuthDialog}
-              className={`${ACTION_BTN} hidden md:inline-flex`}
+              className={`${ACTION_BTN} hidden xl:inline-flex`}
             >
               Acceder / Mi cuenta
             </button>
