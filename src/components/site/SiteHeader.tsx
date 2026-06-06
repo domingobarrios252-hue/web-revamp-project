@@ -184,7 +184,7 @@ export function SiteHeader() {
           )}
 
           <button
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center text-[#F5F5F5]"
+            className="xl:hidden inline-flex h-9 w-9 items-center justify-center text-[#F5F5F5]"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Menú"
           >
