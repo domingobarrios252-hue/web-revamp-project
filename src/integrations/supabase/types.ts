@@ -2775,6 +2775,32 @@ export type Database = {
       }
     }
     Functions: {
+      admin_list_community_submissions: {
+        Args: never
+        Returns: {
+          admin_notes: string | null
+          country_code: string
+          created_at: string
+          description: string
+          email: string
+          id: string
+          image_urls: string[]
+          links: string[]
+          name: string
+          news_id: string | null
+          phone: string | null
+          status: string
+          submission_type: string
+          title: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "community_submissions"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       can_edit_country: {
         Args: { _country: string; _user_id: string }
         Returns: boolean
