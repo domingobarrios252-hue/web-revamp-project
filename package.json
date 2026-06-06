@@ -9,6 +9,7 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "test:editorial-flow": "node scripts/editorial-flow.test.mjs",
+    "test:community-rls": "node scripts/community-rls.test.mjs",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
