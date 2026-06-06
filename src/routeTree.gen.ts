@@ -82,6 +82,7 @@ import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
+import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as HubCountryTvRouteImport } from './routes/hub.$country.tv'
 import { Route as HubCountryRfepRouteImport } from './routes/hub.$country.rfep'
@@ -477,6 +478,11 @@ const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HubCountryRoute,
 } as any)
+const RevistaLeerIdRoute = RevistaLeerIdRouteImport.update({
+  id: '/leer/$id',
+  path: '/leer/$id',
+  getParentRoute: () => RevistaRoute,
+} as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
@@ -647,7 +653,7 @@ export interface FileRoutesByFullPath {
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
-  '/revista': typeof RevistaRoute
+  '/revista': typeof RevistaRouteWithChildren
   '/tv': typeof TvRoute
   '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -720,6 +726,7 @@ export interface FileRoutesByFullPath {
   '/hub/$country/rfep': typeof HubCountryRfepRoute
   '/hub/$country/tv': typeof HubCountryTvRouteWithChildren
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
@@ -749,7 +756,7 @@ export interface FileRoutesByTo {
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
-  '/revista': typeof RevistaRoute
+  '/revista': typeof RevistaRouteWithChildren
   '/tv': typeof TvRoute
   '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -816,6 +823,7 @@ export interface FileRoutesByTo {
   '/hub/$country/mvp': typeof HubCountryMvpRoute
   '/hub/$country/rfep': typeof HubCountryRfepRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -847,7 +855,7 @@ export interface FileRoutesById {
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRoute
-  '/revista': typeof RevistaRoute
+  '/revista': typeof RevistaRouteWithChildren
   '/tv': typeof TvRoute
   '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -920,6 +928,7 @@ export interface FileRoutesById {
   '/hub/$country/rfep': typeof HubCountryRfepRoute
   '/hub/$country/tv': typeof HubCountryTvRouteWithChildren
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
@@ -1026,6 +1035,7 @@ export interface FileRouteTypes {
     | '/hub/$country/rfep'
     | '/hub/$country/tv'
     | '/noticias/articulo/$slug'
+    | '/revista/leer/$id'
     | '/hub/$country/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
@@ -1122,6 +1132,7 @@ export interface FileRouteTypes {
     | '/hub/$country/mvp'
     | '/hub/$country/rfep'
     | '/noticias/articulo/$slug'
+    | '/revista/leer/$id'
     | '/hub/$country'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/federaciones/$slug'
@@ -1225,6 +1236,7 @@ export interface FileRouteTypes {
     | '/hub/$country/rfep'
     | '/hub/$country/tv'
     | '/noticias/articulo/$slug'
+    | '/revista/leer/$id'
     | '/hub/$country/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
@@ -1257,7 +1269,7 @@ export interface RootRouteChildren {
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
   RedactoresRoute: typeof RedactoresRoute
-  RevistaRoute: typeof RevistaRoute
+  RevistaRoute: typeof RevistaRouteWithChildren
   TvRoute: typeof TvRoute
   CountrySplatRoute: typeof CountrySplatRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
@@ -1799,6 +1811,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryIndexRouteImport
       parentRoute: typeof HubCountryRoute
     }
+    '/revista/leer/$id': {
+      id: '/revista/leer/$id'
+      path: '/leer/$id'
+      fullPath: '/revista/leer/$id'
+      preLoaderRoute: typeof RevistaLeerIdRouteImport
+      parentRoute: typeof RevistaRoute
+    }
     '/noticias/articulo/$slug': {
       id: '/noticias/articulo/$slug'
       path: '/noticias/articulo/$slug'
@@ -2093,6 +2112,17 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface RevistaRouteChildren {
+  RevistaLeerIdRoute: typeof RevistaLeerIdRoute
+}
+
+const RevistaRouteChildren: RevistaRouteChildren = {
+  RevistaLeerIdRoute: RevistaLeerIdRoute,
+}
+
+const RevistaRouteWithChildren =
+  RevistaRoute._addFileChildren(RevistaRouteChildren)
+
 interface HubCountryClubesRouteChildren {
   HubCountryClubesSlugRoute: typeof HubCountryClubesSlugRoute
   HubCountryClubesIndexRoute: typeof HubCountryClubesIndexRoute
@@ -2243,7 +2273,7 @@ const rootRouteChildren: RootRouteChildren = {
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
   RedactoresRoute: RedactoresRoute,
-  RevistaRoute: RevistaRoute,
+  RevistaRoute: RevistaRouteWithChildren,
   TvRoute: TvRoute,
   CountrySplatRoute: CountrySplatRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
