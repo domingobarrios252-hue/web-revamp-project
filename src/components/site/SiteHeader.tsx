@@ -112,7 +112,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-2 lg:gap-4 md:flex">
+        <ul className="hidden items-center gap-2 lg:gap-4 xl:flex">
           {NAV_ITEMS.map((item) => (
             <li key={item.label}>{renderNavLink(item)}</li>
           ))}
