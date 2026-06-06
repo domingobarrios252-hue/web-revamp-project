@@ -112,7 +112,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-2 lg:gap-4 md:flex">
+        <ul className="hidden items-center gap-2 lg:gap-4 xl:flex">
           {NAV_ITEMS.map((item) => (
             <li key={item.label}>{renderNavLink(item)}</li>
           ))}
@@ -131,7 +131,7 @@ export function SiteHeader() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="hidden md:inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40"
+                className="hidden xl:inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40"
                 aria-label="Cuenta de usuario"
               >
                 <Avatar className="h-9 w-9 border border-[#333]">
@@ -177,14 +177,14 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={openAuthDialog}
-              className={`${ACTION_BTN} hidden md:inline-flex`}
+              className={`${ACTION_BTN} hidden xl:inline-flex`}
             >
               Acceder / Mi cuenta
             </button>
           )}
 
           <button
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center text-[#F5F5F5]"
+            className="xl:hidden inline-flex h-9 w-9 items-center justify-center text-[#F5F5F5]"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Menú"
           >
@@ -214,9 +214,9 @@ export function SiteHeader() {
       {/* Mobile slide-in */}
       {mobileOpen && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/60 md:hidden" onClick={() => setMobileOpen(false)} aria-hidden />
+          <div className="fixed inset-0 z-40 bg-black/60 xl:hidden" onClick={() => setMobileOpen(false)} aria-hidden />
           <aside
-            className="fixed right-0 top-0 z-50 h-full w-[300px] border-l border-[#333] bg-[#1A1A1A] shadow-xl md:hidden overflow-y-auto"
+            className="fixed right-0 top-0 z-50 h-full w-[300px] max-w-[85vw] border-l border-[#333] bg-[#1A1A1A] shadow-xl xl:hidden overflow-y-auto"
             role="dialog"
             aria-label="Menú"
           >
