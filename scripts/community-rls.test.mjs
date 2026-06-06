@@ -53,6 +53,9 @@ async function createUser(email, role) {
   });
   if (error) throw error;
   const uid = data.user.id;
+  // El trigger handle_new_user asigna 'editor' por defecto. Lo limpiamos
+  // para empezar desde un estado conocido por usuario.
+  await admin.from("user_roles").delete().eq("user_id", uid);
   if (role) {
     const { error: rErr } = await admin
       .from("user_roles")
