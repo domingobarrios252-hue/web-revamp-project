@@ -253,6 +253,13 @@ export type Database = {
             referencedRelation: "community_submissions"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "community_submission_logs_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "community_submissions_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       community_submissions: {
@@ -2724,7 +2731,48 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      community_submissions_public: {
+        Row: {
+          country_code: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          image_urls: string[] | null
+          links: string[] | null
+          name: string | null
+          news_id: string | null
+          status: string | null
+          submission_type: string | null
+          title: string | null
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          image_urls?: string[] | null
+          links?: string[] | null
+          name?: string | null
+          news_id?: string | null
+          status?: string | null
+          submission_type?: string | null
+          title?: string | null
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          image_urls?: string[] | null
+          links?: string[] | null
+          name?: string | null
+          news_id?: string | null
+          status?: string | null
+          submission_type?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_edit_country: {

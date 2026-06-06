@@ -404,11 +404,10 @@ function CommunityFeed({ country }: { country: string }) {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    supabase
-      .from("community_submissions")
+    (supabase as unknown as { from: (t: string) => ReturnType<typeof supabase.from> })
+      .from("community_submissions_public")
       .select("id,submission_type,name,title,description,image_urls,links,status,created_at")
       .eq("country_code", country)
-      .eq("status", "aprobada")
       .order("created_at", { ascending: false })
       .limit(60)
       .then(({ data }) => {
