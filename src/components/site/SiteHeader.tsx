@@ -131,7 +131,7 @@ export function SiteHeader() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="hidden md:inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40"
+                className="hidden xl:inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40"
                 aria-label="Cuenta de usuario"
               >
                 <Avatar className="h-9 w-9 border border-[#333]">
