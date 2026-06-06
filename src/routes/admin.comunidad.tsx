@@ -103,10 +103,8 @@ function CommunityAdmin() {
 
   async function load() {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("community_submissions")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data, error } = await (supabase as unknown as { rpc: (n: string) => Promise<{ data: Submission[] | null; error: { message: string } | null }> })
+      .rpc("admin_list_community_submissions");
     if (error) toast.error(error.message);
     setItems((data as Submission[]) ?? []);
     setLoading(false);
