@@ -216,7 +216,8 @@ export function SiteHeader() {
         <>
           <div className="fixed inset-0 z-40 bg-black/60 xl:hidden" onClick={() => setMobileOpen(false)} aria-hidden />
           <aside
-            className="fixed right-0 top-0 z-50 h-full w-[300px] max-w-[85vw] border-l border-[#333] bg-[#1A1A1A] shadow-xl xl:hidden overflow-y-auto"
+            className="fixed right-0 top-0 z-50 h-screen w-[300px] max-w-[85vw] border-l border-[#333] shadow-xl xl:hidden overflow-y-auto"
+            style={{ backgroundColor: "#1A1A1A" }}
             role="dialog"
             aria-label="Menú"
           >
