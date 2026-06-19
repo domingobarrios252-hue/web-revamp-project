@@ -42,18 +42,33 @@ export function useFederations(countryCode: string) {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    supabase
-      .from("federations")
-      .select("*")
-      .eq("country_code", countryCode)
-      .eq("published", true)
-      .order("type", { ascending: true })
-      .order("name")
-      .then(({ data }) => {
-        if (cancelled) return;
-        setFederations((data as unknown as Federation[]) ?? []);
-        setLoading(false);
+    (async () => {
+      const [{ data: allFeds }, { data: hubRows }] = await Promise.all([
+        supabase
+          .from("federations")
+          .select("*")
+          .eq("published", true)
+          .order("type", { ascending: true })
+          .order("name"),
+        supabase.from("federation_hubs").select("federation_id, country_code"),
+      ]);
+      if (cancelled) return;
+
+      const hasAnyHub = new Set<string>();
+      const forThisHub = new Set<string>();
+      for (const r of (hubRows ?? []) as { federation_id: string; country_code: string }[]) {
+        hasAnyHub.add(r.federation_id);
+        if (r.country_code === countryCode) forThisHub.add(r.federation_id);
+      }
+
+      const filtered = ((allFeds as unknown as Federation[]) ?? []).filter((f) => {
+        if (forThisHub.has(f.id)) return true;
+        if (hasAnyHub.has(f.id)) return false;
+        return f.country_code === countryCode;
       });
+      setFederations(filtered);
+      setLoading(false);
+    })();
     return () => {
       cancelled = true;
     };

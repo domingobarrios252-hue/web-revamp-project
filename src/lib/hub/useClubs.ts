@@ -45,24 +45,40 @@ export function useClubs(countryCode: string, filters: ClubsFilters = {}) {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    let q = supabase
-      .from("clubs")
-      .select("*, regions(name, code)")
-      .eq("country_code", countryCode)
-      .eq("published", true)
-      .order("featured", { ascending: false })
-      .order("name");
+    (async () => {
+      let q = supabase
+        .from("clubs")
+        .select("*, regions(name, code)")
+        .eq("published", true)
+        .order("featured", { ascending: false })
+        .order("name");
 
-    if (filters.regionId) q = q.eq("region_id", filters.regionId);
-    if (filters.schoolType) q = q.eq("school_type", filters.schoolType);
-    if (filters.search) q = q.ilike("name", `%${filters.search}%`);
-    if (filters.category) q = q.contains("categories", [filters.category]);
+      if (filters.regionId) q = q.eq("region_id", filters.regionId);
+      if (filters.schoolType) q = q.eq("school_type", filters.schoolType);
+      if (filters.search) q = q.ilike("name", `%${filters.search}%`);
+      if (filters.category) q = q.contains("categories", [filters.category]);
 
-    q.then(({ data }) => {
+      const [{ data: allClubs }, { data: hubRows }] = await Promise.all([
+        q,
+        supabase.from("club_hubs").select("club_id, country_code"),
+      ]);
       if (cancelled) return;
-      setClubs((data as unknown as Club[]) ?? []);
+
+      const hasAnyHub = new Set<string>();
+      const forThisHub = new Set<string>();
+      for (const r of (hubRows ?? []) as { club_id: string; country_code: string }[]) {
+        hasAnyHub.add(r.club_id);
+        if (r.country_code === countryCode) forThisHub.add(r.club_id);
+      }
+
+      const filtered = ((allClubs as unknown as Club[]) ?? []).filter((c) => {
+        if (forThisHub.has(c.id)) return true;
+        if (hasAnyHub.has(c.id)) return false;
+        return c.country_code === countryCode;
+      });
+      setClubs(filtered);
       setLoading(false);
-    });
+    })();
     return () => {
       cancelled = true;
     };

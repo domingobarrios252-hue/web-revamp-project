@@ -201,7 +201,36 @@ function FederationForm({
   const [instagram, setInstagram] = useState(initial?.social?.instagram ?? "");
   const [facebook, setFacebook] = useState(initial?.social?.facebook ?? "");
   const [youtube, setYoutube] = useState(initial?.social?.youtube ?? "");
+  const [hubEs, setHubEs] = useState(false);
+  const [hubCo, setHubCo] = useState(false);
+  const [hubsLoaded, setHubsLoaded] = useState(!initial);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!initial) {
+      setHubEs(country_code === "es");
+      setHubCo(country_code === "co");
+      return;
+    }
+    let cancelled = false;
+    supabase
+      .from("federation_hubs")
+      .select("country_code")
+      .eq("federation_id", initial.id)
+      .then(({ data }) => {
+        if (cancelled) return;
+        const rows = (data ?? []) as { country_code: string }[];
+        if (rows.length === 0) {
+          setHubEs(initial.country_code === "es");
+          setHubCo(initial.country_code === "co");
+        } else {
+          setHubEs(rows.some((r) => r.country_code === "es"));
+          setHubCo(rows.some((r) => r.country_code === "co"));
+        }
+        setHubsLoaded(true);
+      });
+    return () => { cancelled = true; };
+  }, [initial]);
 
   const onSave = async () => {
     const parsed = schema.safeParse({
@@ -238,11 +267,29 @@ function FederationForm({
       published,
       social: { instagram: instagram || undefined, facebook: facebook || undefined, youtube: youtube || undefined },
     };
-    const { error } = initial
-      ? await supabase.from("federations").update(payload).eq("id", initial.id)
-      : await supabase.from("federations").insert(payload);
+    let fedId = initial?.id;
+    if (initial) {
+      const { error } = await supabase.from("federations").update(payload).eq("id", initial.id);
+      if (error) { setSaving(false); return toast.error(error.message); }
+    } else {
+      const { data, error } = await supabase.from("federations").insert(payload).select("id").single();
+      if (error || !data) { setSaving(false); return toast.error(error?.message ?? "Error"); }
+      fedId = (data as { id: string }).id;
+    }
+
+    if (fedId) {
+      const wanted: string[] = [];
+      if (hubEs) wanted.push("es");
+      if (hubCo) wanted.push("co");
+      await supabase.from("federation_hubs").delete().eq("federation_id", fedId);
+      if (wanted.length > 0) {
+        await supabase
+          .from("federation_hubs")
+          .insert(wanted.map((cc) => ({ federation_id: fedId!, country_code: cc })));
+      }
+    }
+
     setSaving(false);
-    if (error) return toast.error(error.message);
     toast.success(initial ? "Federación actualizada" : "Federación creada");
     onSaved();
   };
@@ -304,6 +351,23 @@ function FederationForm({
             <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} /> Aparece destacada
           </label>
         </Field>
+        <div className="md:col-span-2">
+          <Field label="Visible en hubs">
+            <div className="flex flex-wrap gap-4 pt-1">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={hubEs} onChange={(e) => setHubEs(e.target.checked)} disabled={!hubsLoaded} />
+                Hub España
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={hubCo} onChange={(e) => setHubCo(e.target.checked)} disabled={!hubsLoaded} />
+                Hub Colombia
+              </label>
+            </div>
+            <p className="font-condensed mt-1 text-[10px] text-muted-foreground">
+              Marca uno o ambos hubs donde debe aparecer esta federación.
+            </p>
+          </Field>
+        </div>
       </div>
 
       <div className="mt-5 flex gap-2">

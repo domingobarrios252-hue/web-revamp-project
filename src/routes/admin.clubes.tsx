@@ -240,9 +240,40 @@ function ClubForm({
   const [featured, setFeatured] = useState(initial?.featured ?? false);
   const [published, setPublished] = useState(initial?.published ?? true);
   const [founded_year, setFoundedYear] = useState(initial?.founded_year ? String(initial.founded_year) : "");
-  const [country_code] = useState(initial?.country_code ?? "es");
+  const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
+  const [hubEs, setHubEs] = useState(false);
+  const [hubCo, setHubCo] = useState(false);
+  const [hubsLoaded, setHubsLoaded] = useState(!initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<"logo" | "cover" | null>(null);
+
+  useEffect(() => {
+    if (!initial) {
+      // Default new club: visible in its own country hub
+      setHubEs(country_code === "es");
+      setHubCo(country_code === "co");
+      return;
+    }
+    let cancelled = false;
+    supabase
+      .from("club_hubs")
+      .select("country_code")
+      .eq("club_id", initial.id)
+      .then(({ data }) => {
+        if (cancelled) return;
+        const rows = (data ?? []) as { country_code: string }[];
+        if (rows.length === 0) {
+          // backwards-compat: assume hub matches club's country_code
+          setHubEs(initial.country_code === "es");
+          setHubCo(initial.country_code === "co");
+        } else {
+          setHubEs(rows.some((r) => r.country_code === "es"));
+          setHubCo(rows.some((r) => r.country_code === "co"));
+        }
+        setHubsLoaded(true);
+      });
+    return () => { cancelled = true; };
+  }, [initial]);
 
   const onUpload = async (e: React.ChangeEvent<HTMLInputElement>, kind: "logo" | "cover") => {
     const file = e.target.files?.[0];
@@ -300,11 +331,30 @@ function ClubForm({
       published,
       founded_year: founded_year ? Number(founded_year) : null,
     };
-    const { error } = initial
-      ? await supabase.from("clubs").update(payload).eq("id", initial.id)
-      : await supabase.from("clubs").insert(payload);
+    let clubId = initial?.id;
+    if (initial) {
+      const { error } = await supabase.from("clubs").update(payload).eq("id", initial.id);
+      if (error) { setSaving(false); return toast.error(error.message); }
+    } else {
+      const { data, error } = await supabase.from("clubs").insert(payload).select("id").single();
+      if (error || !data) { setSaving(false); return toast.error(error?.message ?? "Error"); }
+      clubId = (data as { id: string }).id;
+    }
+
+    // Sync hub visibility rows
+    if (clubId) {
+      const wanted: string[] = [];
+      if (hubEs) wanted.push("es");
+      if (hubCo) wanted.push("co");
+      await supabase.from("club_hubs").delete().eq("club_id", clubId);
+      if (wanted.length > 0) {
+        await supabase
+          .from("club_hubs")
+          .insert(wanted.map((cc) => ({ club_id: clubId!, country_code: cc })));
+      }
+    }
+
     setSaving(false);
-    if (error) return toast.error(error.message);
     toast.success(initial ? "Club actualizado" : "Club creado");
     onSaved();
   };
@@ -414,6 +464,28 @@ function ClubForm({
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} /> Destacado
         </label>
+
+        <Field label="País principal">
+          <select value={country_code} onChange={(e) => setCountryCode(e.target.value)} className="input">
+            <option value="es">España</option>
+            <option value="co">Colombia</option>
+          </select>
+        </Field>
+        <Field label="Visible en hubs" full>
+          <div className="flex flex-wrap gap-4 pt-1">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={hubEs} onChange={(e) => setHubEs(e.target.checked)} disabled={!hubsLoaded} />
+              Hub España
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={hubCo} onChange={(e) => setHubCo(e.target.checked)} disabled={!hubsLoaded} />
+              Hub Colombia
+            </label>
+          </div>
+          <p className="font-condensed mt-1 text-[10px] text-muted-foreground">
+            Marca uno o ambos hubs donde debe aparecer este club.
+          </p>
+        </Field>
       </div>
       <div className="mt-5 flex gap-2">
         <button onClick={onSave} disabled={saving} className="font-condensed bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50">
