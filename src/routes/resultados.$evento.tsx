@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Calendar, MapPin, Star, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
@@ -122,8 +122,11 @@ function ResultadosEventoPage() {
   const [fRound, setFRound] = useState(search.ronda ?? "");
   const [fClub, setFClub] = useState(search.club ?? "");
   const [fFed, setFFed] = useState(search.federacion ?? "");
+  const [fCountry, setFCountry] = useState("");
+  const [q, setQ] = useState("");
+  const [sortKey, setSortKey] = useState<"position" | "athlete_name" | "club" | "country" | "race_time" | "points">("position");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
-  // Sync from URL search params (e.g. when navigating from Home slider)
   useEffect(() => {
     setFRace(search.prueba ?? "");
     setFCat(search.categoria ?? "");
@@ -140,21 +143,32 @@ function ResultadosEventoPage() {
     rounds: uniq(rows.map((r: ResultRow) => r.round)),
     clubs: uniq(rows.map((r: ResultRow) => r.club)),
     federations: uniq(rows.map((r: ResultRow) => r.federation)),
+    countries: uniq(rows.map((r: ResultRow) => r.country)),
   }), [rows]);
 
+  const qLower = q.trim().toLowerCase();
   const filtered = rows.filter((r: ResultRow) =>
     (!fRace || (r.race ?? r.distance) === fRace) &&
     (!fCat || r.category === fCat) &&
     (!fGender || r.gender === fGender) &&
     (!fRound || r.round === fRound) &&
     (!fClub || r.club === fClub) &&
-    (!fFed || r.federation === fFed),
+    (!fFed || r.federation === fFed) &&
+    (!fCountry || r.country === fCountry) &&
+    (!qLower || r.athlete_name.toLowerCase().includes(qLower) || (r.club ?? "").toLowerCase().includes(qLower)),
   );
 
-  const groups = groupRows(filtered);
+  const groups = groupRows(filtered, sortKey, sortDir);
   const isLive = (meta?.status ?? rows[0]?.status) === "en_vivo";
-  const clearFilters = () => { setFRace(""); setFCat(""); setFGender(""); setFRound(""); setFClub(""); setFFed(""); };
-  const anyFilter = fRace || fCat || fGender || fRound || fClub || fFed;
+  const clearFilters = () => { setFRace(""); setFCat(""); setFGender(""); setFRound(""); setFClub(""); setFFed(""); setFCountry(""); setQ(""); };
+  const anyFilter = fRace || fCat || fGender || fRound || fClub || fFed || fCountry || q;
+
+  const toggleSort = (key: typeof sortKey) => {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(key); setSortDir("asc"); }
+  };
+  const sortIcon = (key: typeof sortKey) =>
+    sortKey !== key ? <ArrowUpDown className="h-3 w-3 opacity-50" /> : sortDir === "asc" ? <ArrowUp className="h-3 w-3 text-gold" /> : <ArrowDown className="h-3 w-3 text-gold" />;
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 md:px-6">
@@ -191,21 +205,35 @@ function ResultadosEventoPage() {
       </header>
 
       {/* Filters */}
-      <section className="sticky top-0 z-20 mt-6 grid gap-2 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur sm:grid-cols-2 lg:grid-cols-7">
-        <FilterSelect value={fRace} onChange={setFRace} placeholder="Prueba" options={opts.races} />
-        <FilterSelect value={fCat} onChange={setFCat} placeholder="Categoría" options={opts.categories} />
-        <FilterSelect value={fGender} onChange={setFGender} placeholder="Sexo" options={opts.genders} />
-        <FilterSelect value={fRound} onChange={setFRound} placeholder="Ronda" options={opts.rounds} />
-        <FilterSelect value={fClub} onChange={setFClub} placeholder="Club" options={opts.clubs} />
-        <FilterSelect value={fFed} onChange={setFFed} placeholder="Federación" options={opts.federations} />
-        <button
-          type="button"
-          onClick={clearFilters}
-          disabled={!anyFilter}
-          className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold disabled:opacity-40"
-        >
-          Limpiar filtros
-        </button>
+      <section className="sticky top-0 z-20 mt-6 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur">
+        <label className="mb-2 flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2">
+          <Search className="h-4 w-4 text-muted-foreground" aria-hidden />
+          <span className="sr-only">Buscar por patinador o club</span>
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Buscar patinador o club…"
+            className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          />
+        </label>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-8">
+          <FilterSelect value={fRace} onChange={setFRace} placeholder="Prueba" options={opts.races} />
+          <FilterSelect value={fCat} onChange={setFCat} placeholder="Categoría" options={opts.categories} />
+          <FilterSelect value={fGender} onChange={setFGender} placeholder="Género" options={opts.genders} />
+          <FilterSelect value={fRound} onChange={setFRound} placeholder="Ronda" options={opts.rounds} />
+          <FilterSelect value={fClub} onChange={setFClub} placeholder="Club" options={opts.clubs} />
+          <FilterSelect value={fFed} onChange={setFFed} placeholder="Federación" options={opts.federations} />
+          <FilterSelect value={fCountry} onChange={setFCountry} placeholder="País" options={opts.countries} />
+          <button
+            type="button"
+            onClick={clearFilters}
+            disabled={!anyFilter}
+            className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:opacity-40"
+          >
+            Limpiar
+          </button>
+        </div>
       </section>
 
       {/* Tables */}
@@ -278,14 +306,14 @@ function ResultadosEventoPage() {
               <table className="w-full min-w-[760px] text-sm">
                 <thead className="border-b border-border bg-background/60">
                   <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                    <th className="px-4 py-2 w-12">{t("results.cols.position")}</th>
-                    <th className="px-4 py-2">{t("results.cols.athlete")}</th>
-                    <th className="px-4 py-2">{t("results.cols.club")}</th>
+                    <SortableTh label={t("results.cols.position")} k="position" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} widthClass="w-12" />
+                    <SortableTh label={t("results.cols.athlete")} k="athlete_name" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
+                    <SortableTh label={t("results.cols.club")} k="club" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
                     <th className="px-4 py-2">Fed.</th>
-                    <th className="px-4 py-2">{t("results.cols.country")}</th>
-                    <th className="px-4 py-2">{t("results.cols.time")}</th>
+                    <SortableTh label={t("results.cols.country")} k="country" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
+                    <SortableTh label={t("results.cols.time")} k="race_time" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
                     <th className="px-4 py-2">{t("results.cols.gap")}</th>
-                    <th className="px-4 py-2">{t("results.cols.points")}</th>
+                    <SortableTh label={t("results.cols.points")} k="points" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
                   </tr>
                 </thead>
                 <tbody>
@@ -323,10 +351,29 @@ function ResultadosEventoPage() {
 function FilterSelect({ value, onChange, placeholder, options }: { value: string; onChange: (v: string) => void; placeholder: string; options: string[] }) {
   if (options.length === 0) return null;
   return (
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
+    <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={placeholder} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold">
       <option value="">Todas · {placeholder}</option>
       {options.map((o) => (<option key={o} value={o}>{o}</option>))}
     </select>
+  );
+}
+
+function SortableTh({ label, k, current, dir, onClick, icon, widthClass }: {
+  label: string; k: SortKey; current: SortKey; dir: "asc" | "desc";
+  onClick: (k: SortKey) => void; icon: (k: SortKey) => React.ReactNode; widthClass?: string;
+}) {
+  const isActive = current === k;
+  return (
+    <th className={`px-4 py-2 ${widthClass ?? ""}`} aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}>
+      <button
+        type="button"
+        onClick={() => onClick(k)}
+        className="inline-flex items-center gap-1 font-condensed uppercase tracking-widest hover:text-gold focus-visible:outline-none focus-visible:text-gold"
+      >
+        <span>{label}</span>
+        {icon(k)}
+      </button>
+    </th>
   );
 }
 
@@ -340,7 +387,9 @@ function uniq(arr: (string | null | undefined)[]): string[] {
   return Array.from(new Set(arr.filter((x): x is string => !!x && x.trim() !== ""))).sort();
 }
 
-function groupRows(rows: ResultRow[]) {
+type SortKey = "position" | "athlete_name" | "club" | "country" | "race_time" | "points";
+
+function groupRows(rows: ResultRow[], sortKey: SortKey = "position", sortDir: "asc" | "desc" = "asc") {
   const map = new Map<string, { key: string; title: string; category: string; gender: string; round: string; rows: ResultRow[] }>();
   for (const row of rows) {
     const key = `${row.race ?? "General"}::${row.category ?? ""}::${row.gender ?? ""}::${row.round ?? ""}`;
@@ -354,5 +403,14 @@ function groupRows(rows: ResultRow[]) {
     });
     map.get(key)!.rows.push(row);
   }
-  return Array.from(map.values()).map((g) => ({ ...g, rows: g.rows.sort((a, b) => a.position - b.position) }));
+  const cmp = (a: ResultRow, b: ResultRow) => {
+    const va = a[sortKey] ?? "";
+    const vb = b[sortKey] ?? "";
+    if (typeof va === "number" && typeof vb === "number") return va - vb;
+    return String(va).localeCompare(String(vb), undefined, { numeric: true });
+  };
+  return Array.from(map.values()).map((g) => ({
+    ...g,
+    rows: g.rows.sort((a, b) => (sortDir === "asc" ? cmp(a, b) : -cmp(a, b))),
+  }));
 }

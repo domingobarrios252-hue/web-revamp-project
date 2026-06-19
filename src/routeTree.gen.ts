@@ -57,6 +57,7 @@ import { Route as AdminSectionsRouteImport } from './routes/admin.sections'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
+import { Route as AdminResultadosImportarRouteImport } from './routes/admin.resultados-importar'
 import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
@@ -351,6 +352,11 @@ const AdminRevistasRoute = AdminRevistasRouteImport.update({
 const AdminRevistaCtaRoute = AdminRevistaCtaRouteImport.update({
   id: '/revista-cta',
   path: '/revista-cta',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultadosImportarRoute = AdminResultadosImportarRouteImport.update({
+  id: '/resultados-importar',
+  path: '/resultados-importar',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminResultadosRoute = AdminResultadosRouteImport.update({
@@ -679,6 +685,7 @@ export interface FileRoutesByFullPath {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
+  '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
@@ -782,6 +789,7 @@ export interface FileRoutesByTo {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
+  '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
@@ -881,6 +889,7 @@ export interface FileRoutesById {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
+  '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/schedule': typeof AdminScheduleRoute
@@ -988,6 +997,7 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/resultados'
+    | '/admin/resultados-importar'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
@@ -1091,6 +1101,7 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/resultados'
+    | '/admin/resultados-importar'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
@@ -1189,6 +1200,7 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/resultados'
+    | '/admin/resultados-importar'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/schedule'
@@ -1636,6 +1648,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRevistaCtaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/resultados-importar': {
+      id: '/admin/resultados-importar'
+      path: '/resultados-importar'
+      fullPath: '/admin/resultados-importar'
+      preLoaderRoute: typeof AdminResultadosImportarRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/resultados': {
       id: '/admin/resultados'
       path: '/resultados'
@@ -2048,6 +2067,7 @@ interface AdminRouteChildren {
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
   AdminResultadosRoute: typeof AdminResultadosRoute
+  AdminResultadosImportarRoute: typeof AdminResultadosImportarRoute
   AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
@@ -2085,6 +2105,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
   AdminResultadosRoute: AdminResultadosRoute,
+  AdminResultadosImportarRoute: AdminResultadosImportarRoute,
   AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminScheduleRoute: AdminScheduleRoute,

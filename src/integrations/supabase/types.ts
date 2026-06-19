@@ -1998,6 +1998,36 @@ export type Database = {
         }
         Relationships: []
       }
+      result_csv_mappings: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          defaults: Json
+          id: string
+          mapping: Json
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          defaults?: Json
+          id?: string
+          mapping?: Json
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          defaults?: Json
+          id?: string
+          mapping?: Json
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       result_events: {
         Row: {
           banner_url: string | null

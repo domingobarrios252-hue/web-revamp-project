@@ -29,7 +29,7 @@ type AdminPath =
   | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule"
   | "/admin/medallero" | "/admin/live-results" | "/admin/sections"
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
-  | "/admin/espana" | "/admin/colombia" | "/admin/resultados" | "/dashboard";
+  | "/admin/espana" | "/admin/colombia" | "/admin/resultados" | "/admin/resultados-importar" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
 type AdminGroup = { id: string; label: string; icon: React.ReactNode; links: AdminLinkDef[] };
@@ -70,6 +70,8 @@ const GROUPS: AdminGroup[] = [
     icon: <BarChart3 className="h-4 w-4" />,
     links: [
       { to: "/admin/eventos", label: "Eventos", icon: <Calendar className="h-4 w-4" /> },
+      { to: "/admin/live-results", label: "Resultados (manual)", icon: <BarChart3 className="h-4 w-4" /> },
+      { to: "/admin/resultados-importar", label: "Importar CSV", icon: <FileText className="h-4 w-4" /> },
       { to: "/admin/live-center", label: "Live Center", icon: <Radio className="h-4 w-4" /> },
       { to: "/admin/medallero", label: "Medallero (países)", icon: <Medal className="h-4 w-4" /> },
     ],
