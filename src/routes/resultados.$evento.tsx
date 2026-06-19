@@ -351,10 +351,29 @@ function ResultadosEventoPage() {
 function FilterSelect({ value, onChange, placeholder, options }: { value: string; onChange: (v: string) => void; placeholder: string; options: string[] }) {
   if (options.length === 0) return null;
   return (
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
+    <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={placeholder} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold">
       <option value="">Todas · {placeholder}</option>
       {options.map((o) => (<option key={o} value={o}>{o}</option>))}
     </select>
+  );
+}
+
+function SortableTh({ label, k, current, dir, onClick, icon, widthClass }: {
+  label: string; k: SortKey; current: SortKey; dir: "asc" | "desc";
+  onClick: (k: SortKey) => void; icon: (k: SortKey) => React.ReactNode; widthClass?: string;
+}) {
+  const isActive = current === k;
+  return (
+    <th className={`px-4 py-2 ${widthClass ?? ""}`} aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}>
+      <button
+        type="button"
+        onClick={() => onClick(k)}
+        className="inline-flex items-center gap-1 font-condensed uppercase tracking-widest hover:text-gold focus-visible:outline-none focus-visible:text-gold"
+      >
+        <span>{label}</span>
+        {icon(k)}
+      </button>
+    </th>
   );
 }
 
