@@ -81,17 +81,67 @@ export const Route = createFileRoute("/resultados/$evento")({
       meta: (meta as EventMeta | null) ?? null,
     };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const title = loaderData?.meta?.name ?? loaderData?.rows?.[0]?.event_name ?? "Resultados";
+    const url = `https://rollerzone.lovable.app/resultados/${params.evento}`;
+    const desc = `Clasificaciones completas de ${title} en RollerZone.`;
+    const status = loaderData?.meta?.status === "cancelled"
+      ? "https://schema.org/EventCancelled"
+      : loaderData?.meta?.status === "postponed"
+      ? "https://schema.org/EventPostponed"
+      : "https://schema.org/EventScheduled";
+    const scripts: { type: "application/ld+json"; children: string }[] = [];
+    if (loaderData?.meta) {
+      const m = loaderData.meta;
+      const eventLd = {
+        "@context": "https://schema.org",
+        "@type": "SportsEvent",
+        name: m.name,
+        startDate: m.event_date,
+        eventStatus: status,
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        url,
+        ...(m.banner_url ? { image: [m.banner_url] } : {}),
+        ...(m.country
+          ? { location: { "@type": "Place", name: m.country, address: m.country } }
+          : {}),
+      };
+      scripts.push({ type: "application/ld+json", children: JSON.stringify(eventLd) });
+    }
+    // Podium / top 3 as ItemList
+    const podium = (loaderData?.rows ?? [])
+      .filter((r) => typeof r.position === "number" && r.position! <= 3)
+      .slice(0, 10);
+    if (podium.length > 0) {
+      const listLd = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: `Podio — ${title}`,
+        itemListElement: podium.map((r) => ({
+          "@type": "ListItem",
+          position: r.position,
+          name: r.athlete_name,
+          ...(r.club ? { description: r.club } : {}),
+        })),
+      };
+      scripts.push({ type: "application/ld+json", children: JSON.stringify(listLd) });
+    }
     return {
       meta: [
         { title: `${title} — Resultados RollerZone` },
-        { name: "description", content: `Clasificaciones completas de ${title} en RollerZone.` },
+        { name: "description", content: desc },
         { property: "og:title", content: `${title} — Resultados RollerZone` },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
         ...(loaderData?.meta?.banner_url
-          ? [{ property: "og:image" as const, content: loaderData.meta.banner_url }]
+          ? [
+              { property: "og:image" as const, content: loaderData.meta.banner_url },
+              { name: "twitter:image" as const, content: loaderData.meta.banner_url },
+            ]
           : []),
       ],
+      links: [{ rel: "canonical", href: url }],
+      scripts,
     };
   },
   notFoundComponent: () => (
