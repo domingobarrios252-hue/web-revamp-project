@@ -201,7 +201,36 @@ function FederationForm({
   const [instagram, setInstagram] = useState(initial?.social?.instagram ?? "");
   const [facebook, setFacebook] = useState(initial?.social?.facebook ?? "");
   const [youtube, setYoutube] = useState(initial?.social?.youtube ?? "");
+  const [hubEs, setHubEs] = useState(false);
+  const [hubCo, setHubCo] = useState(false);
+  const [hubsLoaded, setHubsLoaded] = useState(!initial);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!initial) {
+      setHubEs(country_code === "es");
+      setHubCo(country_code === "co");
+      return;
+    }
+    let cancelled = false;
+    supabase
+      .from("federation_hubs")
+      .select("country_code")
+      .eq("federation_id", initial.id)
+      .then(({ data }) => {
+        if (cancelled) return;
+        const rows = (data ?? []) as { country_code: string }[];
+        if (rows.length === 0) {
+          setHubEs(initial.country_code === "es");
+          setHubCo(initial.country_code === "co");
+        } else {
+          setHubEs(rows.some((r) => r.country_code === "es"));
+          setHubCo(rows.some((r) => r.country_code === "co"));
+        }
+        setHubsLoaded(true);
+      });
+    return () => { cancelled = true; };
+  }, [initial]);
 
   const onSave = async () => {
     const parsed = schema.safeParse({
