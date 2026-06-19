@@ -70,6 +70,8 @@ const GROUPS: AdminGroup[] = [
     icon: <BarChart3 className="h-4 w-4" />,
     links: [
       { to: "/admin/eventos", label: "Eventos", icon: <Calendar className="h-4 w-4" /> },
+      { to: "/admin/live-results", label: "Resultados (manual)", icon: <BarChart3 className="h-4 w-4" /> },
+      { to: "/admin/resultados-importar", label: "Importar CSV", icon: <FileText className="h-4 w-4" /> },
       { to: "/admin/live-center", label: "Live Center", icon: <Radio className="h-4 w-4" /> },
       { to: "/admin/medallero", label: "Medallero (países)", icon: <Medal className="h-4 w-4" /> },
     ],
