@@ -340,16 +340,34 @@ function NewsEditor({
   const [relClubs, setRelClubs] = useState<string[]>([]);
   const [relSkaters, setRelSkaters] = useState<string[]>([]);
   const [relFeds, setRelFeds] = useState<string[]>([]);
+  const [visHome, setVisHome] = useState(true);
+  const [visES, setVisES] = useState(false);
+  const [visCO, setVisCO] = useState(false);
 
   useEffect(() => {
     if (!item) return;
     (async () => {
-      const [c, s, f] = await Promise.all([
+      const [c, s, f, v] = await Promise.all([
         loadRelations("news", "clubs", item.id),
         loadRelations("news", "skaters", item.id),
         loadRelations("news", "federations", item.id),
+        supabase
+          .from("news_visibility")
+          .select("channel, country_code")
+          .eq("news_id", item.id),
       ]);
       setRelClubs(c); setRelSkaters(s); setRelFeds(f);
+      const rows = (v.data ?? []) as { channel: string; country_code: string | null }[];
+      if (rows.length === 0) {
+        // Backwards compat: derive from country_code
+        setVisHome(true);
+        setVisES(item.section_id ? false : false);
+        setVisCO(false);
+      } else {
+        setVisHome(rows.some((r) => r.channel === "global_home"));
+        setVisES(rows.some((r) => r.channel === "country" && r.country_code === "es"));
+        setVisCO(rows.some((r) => r.channel === "country" && r.country_code === "co"));
+      }
     })();
   }, [item]);
 
