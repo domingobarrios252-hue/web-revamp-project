@@ -111,74 +111,7 @@ function HomePage() {
       {/* HERO — carrusel cinematográfico premium */}
       <HeroCarousel slides={heroSlides} liveActive={heroCfg.live_active} t={t} lang={lang} />
 
-      <Ticker />
-
-      {/* ¿QUÉ ES ROLLERZONE? — presentación del medio */}
-      <section className="mx-auto max-w-7xl px-5 py-14 md:px-6 md:py-20">
-        <div className="mb-10 text-center md:mb-14">
-          <h2 className="font-display text-3xl uppercase tracking-widest text-foreground md:text-4xl">
-            ¿Qué es <span className="text-gold">RollerZone</span>?
-          </h2>
-          <div className="mx-auto mt-3 h-[2px] w-16 bg-gold md:mt-4 md:w-20" />
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            El medio de referencia del patinaje de velocidad. Noticias, eventos, resultados en directo y contenido exclusivo para la comunidad del patín.
-          </p>
-        </div>
-
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <WhatIsCard
-            icon={<Newspaper className="h-7 w-7" />}
-            title="Noticias"
-            description="Lo último del patinaje nacional e internacional."
-            to="/noticias"
-          />
-          <WhatIsCard
-            icon={<CalendarDays className="h-7 w-7" />}
-            title="Eventos"
-            description="Calendario de competiciones y actividades."
-            to="/eventos"
-          />
-          <WhatIsCard
-            icon={<BookOpen className="h-7 w-7" />}
-            title="Revista Digital"
-            description="Reportajes, entrevistas y análisis en profundidad."
-            to="/revista"
-          />
-          <WhatIsCard
-            icon={<MonitorPlay className="h-7 w-7" />}
-            title="RollerZone TV"
-            description="Streaming y vídeos exclusivos de competiciones."
-            to="/tv"
-          />
-        </div>
-      </section>
-
-      {/* HUBS POR PAÍS */}
-      <section className="mx-auto max-w-7xl px-5 py-12 md:px-6 md:py-16">
-        <div className="mb-8 text-center md:mb-10">
-          <h2 className="font-display text-3xl uppercase tracking-widest text-foreground md:text-4xl">
-            <span className="text-gold">Hubs</span> por país
-          </h2>
-          <div className="mx-auto mt-3 h-[2px] w-16 bg-gold md:w-20" />
-          <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground md:text-base">
-            Explora el patinaje de velocidad en cada país con su portal dedicado.
-          </p>
-        </div>
-        <div className="grid gap-5 sm:grid-cols-2">
-          <HubCard country="es" flag="🇪🇸" name="España" tagline="Liga Nacional, clubes y federaciones" />
-          <HubCard country="co" flag="🇨🇴" name="Colombia" tagline="Patinaje colombiano de velocidad" />
-        </div>
-      </section>
-
-      <HomeDynamicZone />
-
-      {visibility.podios && <HomeResultsSlider />}
-
-      <AdBannerWithMagazine placement="home_top" />
-
-      <div id="live-center"><LiveCenter /></div>
-
-      {/* ÚLTIMAS NOTICIAS — grid 3/2/1 */}
+      {/* ÚLTIMAS NOTICIAS */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
         <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
           <h2 className="font-display text-2xl tracking-widest md:text-3xl">
@@ -186,7 +119,7 @@ function HomePage() {
           </h2>
           <Link
             to="/noticias"
-            className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-light"
+            className="font-condensed text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             {t("common.viewAllArrow")}
           </Link>
@@ -207,15 +140,11 @@ function HomePage() {
         )}
       </section>
 
-      <MostReadAndSocialSection />
+      {/* PRÓXIMOS EVENTOS */}
+      <EventsPreviewSection />
 
-      {visibility.atletas && <FeaturedAthletesSection />}
-      {visibility.ranking && <RankingPreviewSection />}
-      {visibility.entrevistas && <InterviewsPreviewSection />}
-      {visibility.eventos && <EventsPreviewSection />}
-      {visibility.revista && <MagazinePreviewSection />}
-      {visibility.patrocinadores && <SponsorsCarouselSection />}
-      {visibility.equipo && <TeamSection />}
+      {/* EDICIÓN DE LA REVISTA */}
+      <MagazinePreviewSection />
     </>
   );
 }
