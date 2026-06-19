@@ -8,18 +8,26 @@ export function FederationsDirectory({ country }: { country: string }) {
   const nacional = federations.filter((f) => f.type === "nacional");
   const autonomicas = federations.filter((f) => f.type === "autonomica");
 
+  const isCO = country === "co";
+  const hubLabel = isCO ? "Hub Colombia" : country === "es" ? "Hub España" : `Hub ${country.toUpperCase()}`;
+  const autonomicasTitle = isCO ? "Ligas Departamentales" : "Federaciones Autonómicas";
+  const introText = isCO
+    ? "Organismos rectores del patinaje en Colombia: FedepatinCol y ligas departamentales."
+    : "Organismos rectores del patinaje en España: Real Federación Española y federaciones autonómicas.";
+
   return (
     <div className="mx-auto max-w-7xl px-4 md:px-6 py-8">
       <header className="mb-6">
         <div className="font-ui text-[11px] font-bold uppercase tracking-[0.2em] text-[#D4A017]">
-          Hub España
+          {hubLabel}
         </div>
         <h1 className="font-display text-4xl md:text-5xl font-black uppercase text-[#F5F5F5]">
           Federaciones
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-[#B5B5B5]">
-          Organismos rectores del patinaje en España: Real Federación Española y federaciones autonómicas.
+          {introText}
         </p>
+
       </header>
 
       {country === "es" && (
@@ -64,8 +72,9 @@ export function FederationsDirectory({ country }: { country: string }) {
           {autonomicas.length > 0 && (
             <section>
               <h2 className="font-display text-xl font-black uppercase text-[#F5F5F5] mb-4">
-                Federaciones Autonómicas ({autonomicas.length})
+                {autonomicasTitle} ({autonomicas.length})
               </h2>
+
               <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {autonomicas.map((f) => (
                   <FederationCard key={f.id} federation={f} country={country} />

@@ -6,7 +6,13 @@ import { ClubCard } from "./ClubCard";
 
 type Region = { id: string; name: string; code: string };
 
+const COUNTRY_LABELS: Record<string, { hub: string; regionAll: string; regionLabel: string; midLabel: string | null; cityLabel: string }> = {
+  es: { hub: "Hub España", regionAll: "Todas las CCAA", regionLabel: "CCAA", midLabel: "Provincia", cityLabel: "Ciudad" },
+  co: { hub: "Hub Colombia", regionAll: "Todos los departamentos", regionLabel: "Departamento", midLabel: null, cityLabel: "Municipio" },
+};
+
 export function ClubsDirectory({ country }: { country: string }) {
+  const labels = COUNTRY_LABELS[country] ?? COUNTRY_LABELS.es;
   const [search, setSearch] = useState("");
   const [regionId, setRegionId] = useState("");
   const [schoolType, setSchoolType] = useState("");
@@ -18,10 +24,14 @@ export function ClubsDirectory({ country }: { country: string }) {
   useEffect(() => {
     supabase
       .from("regions")
-      .select("id, name, code")
+      .select("id, name, code, country_code")
+      .eq("country_code", country)
       .order("name")
       .then(({ data }) => setRegions((data as unknown as Region[]) ?? []));
-  }, []);
+    setRegionId("");
+    setProvince("");
+    setCity("");
+  }, [country]);
 
   const filters = useMemo(
     () => ({ search, regionId, schoolType, category }),
@@ -44,35 +54,38 @@ export function ClubsDirectory({ country }: { country: string }) {
   const allCities = useMemo(() => {
     const set = new Set<string>();
     rawClubs.forEach((c) => {
-      if (!province || c.province === province) c.city && set.add(c.city);
+      if (!labels.midLabel || !province || c.province === province) c.city && set.add(c.city);
     });
     return Array.from(set).sort();
-  }, [rawClubs, province]);
+  }, [rawClubs, province, labels.midLabel]);
 
   const clubs = useMemo(() => {
     return rawClubs.filter((c) => {
-      if (province && c.province !== province) return false;
+      if (labels.midLabel && province && c.province !== province) return false;
       if (city && c.city !== city) return false;
       return true;
     });
-  }, [rawClubs, province, city]);
+  }, [rawClubs, province, city, labels.midLabel]);
+
+  const showProvince = !!labels.midLabel;
+  const gridCols = showProvince ? "lg:grid-cols-6" : "lg:grid-cols-5";
 
   return (
     <div className="mx-auto max-w-7xl px-4 md:px-6 py-8">
       <header className="mb-6">
         <div className="font-ui text-[11px] font-bold uppercase tracking-[0.2em] text-[#D4A017]">
-          Hub España
+          {labels.hub}
         </div>
         <h1 className="font-display text-4xl md:text-5xl font-black uppercase text-[#F5F5F5]">
           Clubes & Escuelas
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-[#B5B5B5]">
-          Directorio nacional de clubes de patinaje de velocidad. Filtra por CCAA, provincia, ciudad,
-          categoría o tipo de escuela.
+          Directorio nacional de clubes de patinaje de velocidad. Filtra por {labels.regionLabel.toLowerCase()},{" "}
+          {showProvince ? `${labels.midLabel?.toLowerCase()}, ` : ""}{labels.cityLabel.toLowerCase()}, categoría o tipo de escuela.
         </p>
       </header>
 
-      <div className="mb-6 grid gap-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className={`mb-6 grid gap-2 md:grid-cols-3 ${gridCols}`}>
         <div className="relative lg:col-span-2">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#666]" />
           <input
@@ -83,15 +96,17 @@ export function ClubsDirectory({ country }: { country: string }) {
           />
         </div>
         <select value={regionId} onChange={(e) => setRegionId(e.target.value)} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
-          <option value="">Todas las CCAA</option>
+          <option value="">{labels.regionAll}</option>
           {regions.map((r) => (<option key={r.id} value={r.id}>{r.name}</option>))}
         </select>
-        <select value={province} onChange={(e) => { setProvince(e.target.value); setCity(""); }} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
-          <option value="">Provincia</option>
-          {allProvinces.map((p) => (<option key={p} value={p}>{p}</option>))}
-        </select>
+        {showProvince && (
+          <select value={province} onChange={(e) => { setProvince(e.target.value); setCity(""); }} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
+            <option value="">{labels.midLabel}</option>
+            {allProvinces.map((p) => (<option key={p} value={p}>{p}</option>))}
+          </select>
+        )}
         <select value={city} onChange={(e) => setCity(e.target.value)} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
-          <option value="">Ciudad</option>
+          <option value="">{labels.cityLabel}</option>
           {allCities.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
         <select value={schoolType} onChange={(e) => setSchoolType(e.target.value)} className="rounded-[4px] border border-[#333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5]">
