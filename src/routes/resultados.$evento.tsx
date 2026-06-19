@@ -205,21 +205,35 @@ function ResultadosEventoPage() {
       </header>
 
       {/* Filters */}
-      <section className="sticky top-0 z-20 mt-6 grid gap-2 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur sm:grid-cols-2 lg:grid-cols-7">
-        <FilterSelect value={fRace} onChange={setFRace} placeholder="Prueba" options={opts.races} />
-        <FilterSelect value={fCat} onChange={setFCat} placeholder="Categoría" options={opts.categories} />
-        <FilterSelect value={fGender} onChange={setFGender} placeholder="Sexo" options={opts.genders} />
-        <FilterSelect value={fRound} onChange={setFRound} placeholder="Ronda" options={opts.rounds} />
-        <FilterSelect value={fClub} onChange={setFClub} placeholder="Club" options={opts.clubs} />
-        <FilterSelect value={fFed} onChange={setFFed} placeholder="Federación" options={opts.federations} />
-        <button
-          type="button"
-          onClick={clearFilters}
-          disabled={!anyFilter}
-          className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold disabled:opacity-40"
-        >
-          Limpiar filtros
-        </button>
+      <section className="sticky top-0 z-20 mt-6 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur">
+        <label className="mb-2 flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2">
+          <Search className="h-4 w-4 text-muted-foreground" aria-hidden />
+          <span className="sr-only">Buscar por patinador o club</span>
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Buscar patinador o club…"
+            className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          />
+        </label>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-8">
+          <FilterSelect value={fRace} onChange={setFRace} placeholder="Prueba" options={opts.races} />
+          <FilterSelect value={fCat} onChange={setFCat} placeholder="Categoría" options={opts.categories} />
+          <FilterSelect value={fGender} onChange={setFGender} placeholder="Género" options={opts.genders} />
+          <FilterSelect value={fRound} onChange={setFRound} placeholder="Ronda" options={opts.rounds} />
+          <FilterSelect value={fClub} onChange={setFClub} placeholder="Club" options={opts.clubs} />
+          <FilterSelect value={fFed} onChange={setFFed} placeholder="Federación" options={opts.federations} />
+          <FilterSelect value={fCountry} onChange={setFCountry} placeholder="País" options={opts.countries} />
+          <button
+            type="button"
+            onClick={clearFilters}
+            disabled={!anyFilter}
+            className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:opacity-40"
+          >
+            Limpiar
+          </button>
+        </div>
       </section>
 
       {/* Tables */}
