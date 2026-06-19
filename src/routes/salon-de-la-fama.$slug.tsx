@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, Award, Crown, Trophy, MapPin } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, Award, Crown, Trophy, MapPin, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/salon-de-la-fama/$slug")({
