@@ -354,7 +354,9 @@ function uniq(arr: (string | null | undefined)[]): string[] {
   return Array.from(new Set(arr.filter((x): x is string => !!x && x.trim() !== ""))).sort();
 }
 
-function groupRows(rows: ResultRow[]) {
+type SortKey = "position" | "athlete_name" | "club" | "country" | "race_time" | "points";
+
+function groupRows(rows: ResultRow[], sortKey: SortKey = "position", sortDir: "asc" | "desc" = "asc") {
   const map = new Map<string, { key: string; title: string; category: string; gender: string; round: string; rows: ResultRow[] }>();
   for (const row of rows) {
     const key = `${row.race ?? "General"}::${row.category ?? ""}::${row.gender ?? ""}::${row.round ?? ""}`;
@@ -368,5 +370,14 @@ function groupRows(rows: ResultRow[]) {
     });
     map.get(key)!.rows.push(row);
   }
-  return Array.from(map.values()).map((g) => ({ ...g, rows: g.rows.sort((a, b) => a.position - b.position) }));
+  const cmp = (a: ResultRow, b: ResultRow) => {
+    const va = a[sortKey] ?? "";
+    const vb = b[sortKey] ?? "";
+    if (typeof va === "number" && typeof vb === "number") return va - vb;
+    return String(va).localeCompare(String(vb), undefined, { numeric: true });
+  };
+  return Array.from(map.values()).map((g) => ({
+    ...g,
+    rows: g.rows.sort((a, b) => (sortDir === "asc" ? cmp(a, b) : -cmp(a, b))),
+  }));
 }
