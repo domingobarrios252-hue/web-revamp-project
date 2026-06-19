@@ -5,7 +5,7 @@ import {
   FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen,
   Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Medal,
   Info, Layers, Inbox, MessageSquare, LayoutDashboard, ChevronDown, ChevronRight,
-  Flag, BarChart3, Newspaper, Globe2, Sparkles,
+  Flag, BarChart3, Newspaper, Globe2, Sparkles, Crown,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
