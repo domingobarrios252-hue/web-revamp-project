@@ -15,6 +15,7 @@ import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
+import { Route as PatinadoresDestacadosRouteImport } from './routes/patinadores-destacados'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -23,6 +24,7 @@ import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
@@ -31,6 +33,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CountryIndexRouteImport } from './routes/$country.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
+import { Route as SalonDeLaFamaSlugRouteImport } from './routes/salon-de-la-fama.$slug'
 import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
@@ -144,6 +147,11 @@ const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   path: '/patrocinadores',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatinadoresDestacadosRoute = PatinadoresDestacadosRouteImport.update({
+  id: '/patinadores-destacados',
+  path: '/patinadores-destacados',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PaisesRoute = PaisesRouteImport.update({
   id: '/paises',
   path: '/paises',
@@ -184,6 +192,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SalonDeLaFamaIndexRoute = SalonDeLaFamaIndexRouteImport.update({
+  id: '/salon-de-la-fama/',
+  path: '/salon-de-la-fama/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResultadosIndexRoute = ResultadosIndexRouteImport.update({
   id: '/resultados/',
   path: '/resultados/',
@@ -222,6 +235,11 @@ const CountryIndexRoute = CountryIndexRouteImport.update({
 const SobreSlugRoute = SobreSlugRouteImport.update({
   id: '/sobre/$slug',
   path: '/sobre/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalonDeLaFamaSlugRoute = SalonDeLaFamaSlugRouteImport.update({
+  id: '/salon-de-la-fama/$slug',
+  path: '/salon-de-la-fama/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultadosEventoRoute = ResultadosEventoRouteImport.update({
@@ -655,6 +673,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
+  '/patinadores-destacados': typeof PatinadoresDestacadosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
@@ -712,6 +731,7 @@ export interface FileRoutesByFullPath {
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
@@ -720,6 +740,7 @@ export interface FileRoutesByFullPath {
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
+  '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -759,6 +780,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
+  '/patinadores-destacados': typeof PatinadoresDestacadosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
@@ -815,6 +837,7 @@ export interface FileRoutesByTo {
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country': typeof CountryIndexRoute
   '/admin': typeof AdminIndexRoute
@@ -823,6 +846,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/resultados': typeof ResultadosIndexRoute
+  '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -859,6 +883,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
+  '/patinadores-destacados': typeof PatinadoresDestacadosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
@@ -916,6 +941,7 @@ export interface FileRoutesById {
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
@@ -924,6 +950,7 @@ export interface FileRoutesById {
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
+  '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -967,6 +994,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/mi-biblioteca'
     | '/paises'
+    | '/patinadores-destacados'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
@@ -1024,6 +1052,7 @@ export interface FileRouteTypes {
     | '/noticias/$slug'
     | '/patinadores/$slug'
     | '/resultados/$evento'
+    | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country/'
     | '/admin/'
@@ -1032,6 +1061,7 @@ export interface FileRouteTypes {
     | '/eventos/'
     | '/noticias/'
     | '/resultados/'
+    | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1071,6 +1101,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/mi-biblioteca'
     | '/paises'
+    | '/patinadores-destacados'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
@@ -1127,6 +1158,7 @@ export interface FileRouteTypes {
     | '/noticias/$slug'
     | '/patinadores/$slug'
     | '/resultados/$evento'
+    | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country'
     | '/admin'
@@ -1135,6 +1167,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/noticias'
     | '/resultados'
+    | '/salon-de-la-fama'
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1170,6 +1203,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/mi-biblioteca'
     | '/paises'
+    | '/patinadores-destacados'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
@@ -1227,6 +1261,7 @@ export interface FileRouteTypes {
     | '/noticias/$slug'
     | '/patinadores/$slug'
     | '/resultados/$evento'
+    | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country/'
     | '/admin/'
@@ -1235,6 +1270,7 @@ export interface FileRouteTypes {
     | '/eventos/'
     | '/noticias/'
     | '/resultados/'
+    | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1277,6 +1313,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   MiBibliotecaRoute: typeof MiBibliotecaRoute
   PaisesRoute: typeof PaisesRoute
+  PatinadoresDestacadosRoute: typeof PatinadoresDestacadosRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
@@ -1300,12 +1337,14 @@ export interface RootRouteChildren {
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
   ResultadosEventoRoute: typeof ResultadosEventoRoute
+  SalonDeLaFamaSlugRoute: typeof SalonDeLaFamaSlugRoute
   SobreSlugRoute: typeof SobreSlugRoute
   CountryIndexRoute: typeof CountryIndexRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
   ResultadosIndexRoute: typeof ResultadosIndexRoute
+  SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
 }
@@ -1352,6 +1391,13 @@ declare module '@tanstack/react-router' {
       path: '/patrocinadores'
       fullPath: '/patrocinadores'
       preLoaderRoute: typeof PatrocinadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patinadores-destacados': {
+      id: '/patinadores-destacados'
+      path: '/patinadores-destacados'
+      fullPath: '/patinadores-destacados'
+      preLoaderRoute: typeof PatinadoresDestacadosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/paises': {
@@ -1410,6 +1456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/salon-de-la-fama/': {
+      id: '/salon-de-la-fama/'
+      path: '/salon-de-la-fama'
+      fullPath: '/salon-de-la-fama/'
+      preLoaderRoute: typeof SalonDeLaFamaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resultados/': {
       id: '/resultados/'
       path: '/resultados'
@@ -1464,6 +1517,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre/$slug'
       fullPath: '/sobre/$slug'
       preLoaderRoute: typeof SobreSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salon-de-la-fama/$slug': {
+      id: '/salon-de-la-fama/$slug'
+      path: '/salon-de-la-fama/$slug'
+      fullPath: '/salon-de-la-fama/$slug'
+      preLoaderRoute: typeof SalonDeLaFamaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resultados/$evento': {
@@ -2290,6 +2350,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   MiBibliotecaRoute: MiBibliotecaRoute,
   PaisesRoute: PaisesRoute,
+  PatinadoresDestacadosRoute: PatinadoresDestacadosRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
@@ -2313,12 +2374,14 @@ const rootRouteChildren: RootRouteChildren = {
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
   ResultadosEventoRoute: ResultadosEventoRoute,
+  SalonDeLaFamaSlugRoute: SalonDeLaFamaSlugRoute,
   SobreSlugRoute: SobreSlugRoute,
   CountryIndexRoute: CountryIndexRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
   ResultadosIndexRoute: ResultadosIndexRoute,
+  SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
 }
