@@ -256,6 +256,22 @@ function LegendProfilePage() {
               </ul>
             </div>
           )}
+
+          {legend.clubs_history?.length > 0 && (
+            <div className="rounded-[8px] border border-[#2a2a2a] bg-[#161616] p-4">
+              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-[#D4A017] mb-3 flex items-center gap-2">
+                <Users className="h-4 w-4" /> Trayectoria por clubes
+              </h3>
+              <ul className="space-y-2 text-sm">
+                {legend.clubs_history.map((c, i) => (
+                  <li key={i} className="flex items-baseline justify-between gap-3 border-b border-[#2a2a2a] pb-1.5 last:border-0">
+                    <span className="text-[#F5F5F5] font-semibold">{c.name}</span>
+                    {c.years && <span className="text-[11px] text-[#888] whitespace-nowrap">{c.years}</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </aside>
       </div>
     </div>
