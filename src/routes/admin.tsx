@@ -5,7 +5,7 @@ import {
   FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen,
   Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Medal,
   Info, Layers, Inbox, MessageSquare, LayoutDashboard, ChevronDown, ChevronRight,
-  Flag, BarChart3, Newspaper, Globe2, Sparkles,
+  Flag, BarChart3, Newspaper, Globe2, Sparkles, Crown,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -29,7 +29,8 @@ type AdminPath =
   | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule"
   | "/admin/medallero" | "/admin/live-results" | "/admin/sections"
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
-  | "/admin/espana" | "/admin/colombia" | "/admin/resultados" | "/admin/resultados-importar" | "/dashboard";
+  | "/admin/espana" | "/admin/colombia" | "/admin/resultados"
+  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
 type AdminGroup = { id: string; label: string; icon: React.ReactNode; links: AdminLinkDef[] };
@@ -103,7 +104,8 @@ const GROUPS: AdminGroup[] = [
     label: "Directorio",
     icon: <Users className="h-4 w-4" />,
     links: [
-      { to: "/admin/patinadores", label: "Patinadores", icon: <Users className="h-4 w-4" /> },
+      { to: "/admin/patinadores", label: "Patinadores (destacados)", icon: <Users className="h-4 w-4" /> },
+      { to: "/admin/salon-de-la-fama", label: "Salón de la Fama", icon: <Crown className="h-4 w-4" /> },
       { to: "/admin/clubes", label: "Clubes", icon: <Building2 className="h-4 w-4" /> },
       { to: "/admin/federaciones", label: "Federaciones", icon: <Building2 className="h-4 w-4" /> },
     ],
