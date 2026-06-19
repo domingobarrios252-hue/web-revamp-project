@@ -14,6 +14,8 @@ type NewsRow = {
   published_at: string;
   views_count: number;
   featured: boolean;
+  country_code?: string | null;
+  category_id?: string | null;
 };
 
 type EventRow = {
