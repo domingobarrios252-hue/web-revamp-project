@@ -41,41 +41,46 @@ export function CookieBanner() {
 
   return (
     <div
-      role="dialog"
+      role="region"
       aria-live="polite"
       aria-label={t("cookies.title")}
-      className="fixed inset-x-0 bottom-0 z-[60] border-t border-gold/40 bg-background/98 shadow-2xl backdrop-blur"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 sm:justify-end sm:px-4 sm:pb-4"
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
-        <div className="flex items-start gap-3">
-          <Cookie className="mt-0.5 h-5 w-5 shrink-0 text-gold" aria-hidden />
-          <p className="font-ui text-sm leading-relaxed text-foreground/90">
-            {t("cookies.message")}{" "}
-            <Link to="/cookies" className="text-gold underline hover:text-gold-dark">
-              {t("cookies.learnMore")}
-            </Link>
-            .
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2 md:gap-3">
-          <button
-            onClick={() => decide("rejected")}
-            className="font-ui border border-border px-4 py-2 text-xs font-semibold tracking-wide text-foreground/85 transition-colors hover:text-foreground"
-          >
-            {t("cookies.reject")}
-          </button>
-          <button
-            onClick={() => decide("accepted")}
-            className="font-ui bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-dark"
-          >
-            {t("cookies.accept")}
-          </button>
+      <div className="pointer-events-auto w-full max-w-sm rounded-lg border border-border bg-background/95 p-3 shadow-lg backdrop-blur-md sm:p-4">
+        <div className="flex items-start gap-2.5">
+          <Cookie className="mt-0.5 h-4 w-4 shrink-0 text-gold" aria-hidden />
+          <div className="min-w-0 flex-1">
+            <p className="font-ui text-xs leading-relaxed text-foreground/90">
+              {t("cookies.message")}{" "}
+              <Link
+                to="/cookies"
+                className="text-gold underline underline-offset-2 hover:text-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {t("cookies.learnMore")}
+              </Link>
+              .
+            </p>
+            <div className="mt-2.5 flex items-center justify-end gap-2">
+              <button
+                onClick={() => decide("rejected")}
+                className="font-ui rounded border border-border px-2.5 py-1 text-[11px] font-semibold text-foreground/85 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              >
+                {t("cookies.reject")}
+              </button>
+              <button
+                onClick={() => decide("accepted")}
+                className="font-ui rounded bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-background transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {t("cookies.accept")}
+              </button>
+            </div>
+          </div>
           <button
             onClick={() => decide("rejected")}
             aria-label={t("cookies.reject")}
-            className="ml-1 text-muted-foreground hover:text-foreground md:hidden"
+            className="-mr-1 -mt-1 rounded p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
