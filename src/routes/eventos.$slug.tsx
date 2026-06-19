@@ -35,17 +35,60 @@ export const Route = createFileRoute("/eventos/$slug")({
     if (!data) throw notFound();
     return { event: data as EventDetail };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const e = loaderData?.event;
     if (!e) return { meta: [{ title: "Evento — RollerZone" }] };
     const desc = e.description?.slice(0, 160) ?? `${e.name} — ${e.location ?? ""}`;
+    const url = `https://rollerzone.lovable.app/eventos/${params.slug}`;
+    const now = new Date();
+    const startDt = new Date(e.start_date + "T00:00:00");
+    const endDt = e.end_date ? new Date(e.end_date + "T23:59:59") : startDt;
+    const status =
+      now < startDt
+        ? "https://schema.org/EventScheduled"
+        : now > endDt
+        ? "https://schema.org/EventScheduled"
+        : "https://schema.org/EventScheduled";
+    const eventLd = {
+      "@context": "https://schema.org",
+      "@type": "SportsEvent",
+      name: e.name,
+      description: desc,
+      startDate: e.start_date,
+      endDate: e.end_date ?? e.start_date,
+      eventStatus: status,
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      url,
+      ...(e.cover_url ? { image: [e.cover_url] } : {}),
+      ...(e.location
+        ? {
+            location: {
+              "@type": "Place",
+              name: e.location,
+              address: e.location,
+            },
+          }
+        : {}),
+      ...(e.organizer
+        ? { organizer: { "@type": "Organization", name: e.organizer } }
+        : {}),
+    };
     return {
       meta: [
         { title: `${e.name} — Eventos RollerZone` },
         { name: "description", content: desc },
         { property: "og:title", content: e.name },
         { property: "og:description", content: desc },
+        { property: "og:type", content: "event" },
+        { property: "og:url", content: url },
         ...(e.cover_url ? [{ property: "og:image", content: e.cover_url }, { name: "twitter:image", content: e.cover_url }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(eventLd),
+        },
       ],
     };
   },
