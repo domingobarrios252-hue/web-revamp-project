@@ -97,7 +97,7 @@ function FeaturedHero({ country, video }: { country: string; video: VideoRow }) 
             title={video.title}
           />
         ) : thumb ? (
-          <img src={thumb} alt={video.title} className="h-full w-full object-cover" />
+          <img loading="lazy" decoding="async" src={thumb} alt={video.title} className="h-full w-full object-cover" />
         ) : null}
       </div>
       <div className="flex flex-col justify-center space-y-3 border border-[#2A2A2A] bg-[#161616] p-5 rounded-[8px]">

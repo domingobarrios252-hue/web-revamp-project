@@ -54,9 +54,9 @@ export function SkaterProfile({ slug, country }: { slug: string; country: string
       {/* Hero */}
       <div className="relative h-[300px] md:h-[420px] overflow-hidden border-b border-[#333]">
         {skater.cover_url ? (
-          <img src={skater.cover_url} alt="" className="h-full w-full object-cover" />
+          <img loading="lazy" decoding="async" src={skater.cover_url} alt="" className="h-full w-full object-cover" />
         ) : skater.photo_url ? (
-          <img src={skater.photo_url} alt="" className="h-full w-full object-cover blur-2xl scale-110 opacity-40" />
+          <img loading="lazy" decoding="async" src={skater.photo_url} alt="" className="h-full w-full object-cover blur-2xl scale-110 opacity-40" />
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-[#1a1a1a] via-[#111] to-[#0a0a0a]" />
         )}
@@ -72,7 +72,7 @@ export function SkaterProfile({ slug, country }: { slug: string; country: string
           <div className="mt-3 flex items-end gap-4">
             {skater.photo_url && (
               <div className="h-24 w-24 md:h-32 md:w-32 shrink-0 overflow-hidden rounded-[8px] border border-[#333] bg-[#1A1A1A]">
-                <img src={skater.photo_url} alt={skater.full_name} className="h-full w-full object-cover" />
+                <img loading="lazy" decoding="async" src={skater.photo_url} alt={skater.full_name} className="h-full w-full object-cover" />
               </div>
             )}
             <div>
@@ -193,7 +193,7 @@ export function SkaterProfile({ slug, country }: { slug: string; country: string
                   >
                     {v.thumbnail_url && (
                       <div className="aspect-video overflow-hidden bg-[#0d0d0d]">
-                        <img src={v.thumbnail_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                        <img loading="lazy" decoding="async" src={v.thumbnail_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
                       </div>
                     )}
                     <div className="p-3">
@@ -222,7 +222,7 @@ export function SkaterProfile({ slug, country }: { slug: string; country: string
                   >
                     {n.image_url && (
                       <div className="aspect-[16/9] overflow-hidden bg-[#0d0d0d]">
-                        <img src={n.image_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                        <img loading="lazy" decoding="async" src={n.image_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
                       </div>
                     )}
                     <div className="p-3">

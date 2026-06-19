@@ -103,7 +103,7 @@ function SkaterPage() {
         <div>
           <div className="aspect-[3/4] w-full overflow-hidden border border-border bg-surface">
             {s.photo_url ? (
-              <img src={s.photo_url} alt={s.full_name} className="h-full w-full object-cover" />
+              <img loading="lazy" decoding="async" src={s.photo_url} alt={s.full_name} className="h-full w-full object-cover" />
             ) : (
               <div className="hero-grid-bg flex h-full w-full items-center justify-center">
                 <UserIcon className="h-16 w-16 text-gold/30" />
@@ -116,7 +116,7 @@ function SkaterPage() {
           {s.regions && (
             <div className="font-condensed mb-2 inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-gold">
               {s.regions.flag_url ? (
-                <img src={s.regions.flag_url} alt={s.regions.code} className="h-3 w-auto" />
+                <img loading="lazy" decoding="async" src={s.regions.flag_url} alt={s.regions.code} className="h-3 w-auto" />
               ) : (
                 <MapPin className="h-3 w-3" />
               )}

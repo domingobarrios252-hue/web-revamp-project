@@ -101,14 +101,14 @@ function RfepHub() {
       <div className="relative border-b border-[#222] bg-[#0d0d0d]">
         {fed.cover_url && (
           <div className="absolute inset-0 opacity-30">
-            <img src={fed.cover_url} alt="" className="h-full w-full object-cover" />
+            <img loading="lazy" decoding="async" src={fed.cover_url} alt="" className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d]/70 to-transparent" />
           </div>
         )}
         <div className="relative mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 md:flex-row md:items-end md:px-6 md:py-14">
           <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-md border border-[#333] bg-[#0d0d0d] md:h-32 md:w-32">
             {fed.logo_url ? (
-              <img src={fed.logo_url} alt={fed.name} className="h-full w-full object-contain p-2" />
+              <img loading="lazy" decoding="async" src={fed.logo_url} alt={fed.name} className="h-full w-full object-contain p-2" />
             ) : (
               <Building2 className="h-12 w-12 text-gold" />
             )}
@@ -191,7 +191,7 @@ function RfepHub() {
                   className="flex items-center gap-3 rounded-md border border-[#222] bg-[#141414] p-2.5 hover:border-gold"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded border border-[#333] bg-[#0d0d0d]">
-                    {a.logo_url ? <img src={a.logo_url} alt="" className="h-full w-full object-contain p-0.5" /> : <Building2 className="h-4 w-4 text-gold" />}
+                    {a.logo_url ? <img loading="lazy" decoding="async" src={a.logo_url} alt="" className="h-full w-full object-contain p-0.5" /> : <Building2 className="h-4 w-4 text-gold" />}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm text-[#F5F5F5]">{a.short_name ?? a.name}</div>

@@ -33,7 +33,7 @@ export function ClubCard({ club, country }: { club: Club; country: string }) {
         )}
         {club.logo_url && (
           <div className="absolute -bottom-6 left-4 h-12 w-12 rounded-[4px] border border-[#333] bg-[#1A1A1A] p-1">
-            <img src={club.logo_url} alt="" className="h-full w-full object-contain" />
+            <img loading="lazy" decoding="async" src={club.logo_url} alt="" className="h-full w-full object-contain" />
           </div>
         )}
       </div>

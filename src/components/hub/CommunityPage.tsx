@@ -338,7 +338,7 @@ function CommunityForm({ country }: { country: string }) {
         <div className="mt-2 flex flex-wrap gap-3">
           {images.map((url, i) => (
             <div key={i} className="relative h-24 w-24 overflow-hidden border border-[#333]">
-              <img src={url} alt="" className="h-full w-full object-cover" />
+              <img loading="lazy" decoding="async" src={url} alt="" className="h-full w-full object-cover" />
               <button
                 type="button"
                 onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}

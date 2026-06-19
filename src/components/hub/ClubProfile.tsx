@@ -73,7 +73,7 @@ export function ClubProfile({ slug, country }: { slug: string; country: string }
       {/* Hero */}
       <div className="relative h-[260px] md:h-[360px] overflow-hidden border-b border-[#333]">
         {club.cover_url ? (
-          <img src={club.cover_url} alt={club.name} className="h-full w-full object-cover" />
+          <img loading="lazy" decoding="async" src={club.cover_url} alt={club.name} className="h-full w-full object-cover" />
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-[#1a1a1a] via-[#111] to-[#0a0a0a]" />
         )}
@@ -89,7 +89,7 @@ export function ClubProfile({ slug, country }: { slug: string; country: string }
           <div className="mt-3 flex items-end gap-4">
             {club.logo_url && (
               <div className="h-20 w-20 shrink-0 rounded-[6px] border border-[#333] bg-[#1A1A1A] p-2">
-                <img src={club.logo_url} alt="" className="h-full w-full object-contain" />
+                <img loading="lazy" decoding="async" src={club.logo_url} alt="" className="h-full w-full object-contain" />
               </div>
             )}
             <div>
@@ -165,7 +165,7 @@ export function ClubProfile({ slug, country }: { slug: string; country: string }
                 {club.coaches.map((coach, i) => (
                   <div key={i} className="flex items-center gap-3 rounded-[6px] border border-[#333] bg-[#1A1A1A] p-3">
                     {coach.photo && (
-                      <img src={coach.photo} alt="" className="h-10 w-10 rounded-full object-cover" />
+                      <img loading="lazy" decoding="async" src={coach.photo} alt="" className="h-10 w-10 rounded-full object-cover" />
                     )}
                     <div>
                       <div className="font-semibold text-sm text-[#F5F5F5]">{coach.name}</div>
@@ -195,7 +195,7 @@ export function ClubProfile({ slug, country }: { slug: string; country: string }
                     className="flex items-center gap-3 rounded-[6px] border border-[#333] bg-[#1A1A1A] p-3 hover:border-[#D4A017]"
                   >
                     {s.photo_url ? (
-                      <img src={s.photo_url} alt="" className="h-12 w-12 rounded-full object-cover" />
+                      <img loading="lazy" decoding="async" src={s.photo_url} alt="" className="h-12 w-12 rounded-full object-cover" />
                     ) : (
                       <div className="h-12 w-12 rounded-full bg-[#0d0d0d]" />
                     )}
@@ -253,7 +253,7 @@ export function ClubProfile({ slug, country }: { slug: string; country: string }
                   >
                     {n.image_url && (
                       <div className="aspect-[16/9] overflow-hidden bg-[#0d0d0d]">
-                        <img src={n.image_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                        <img loading="lazy" decoding="async" src={n.image_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
                       </div>
                     )}
                     <div className="p-3">

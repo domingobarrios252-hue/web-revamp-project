@@ -180,7 +180,7 @@ function ResultadosEventoPage() {
       <header className="relative overflow-hidden rounded-2xl border border-border bg-surface">
         {meta?.banner_url && (
           <div className="absolute inset-0">
-            <img src={meta.banner_url} alt={eventName} className="h-full w-full object-cover opacity-40" />
+            <img loading="lazy" decoding="async" src={meta.banner_url} alt={eventName} className="h-full w-full object-cover opacity-40" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
           </div>
         )}
