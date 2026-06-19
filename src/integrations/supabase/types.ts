@@ -2026,6 +2026,7 @@ export type Database = {
       regions: {
         Row: {
           code: string
+          country_code: string
           created_at: string
           flag_url: string | null
           id: string
@@ -2036,6 +2037,7 @@ export type Database = {
         }
         Insert: {
           code: string
+          country_code?: string
           created_at?: string
           flag_url?: string | null
           id?: string
@@ -2046,6 +2048,7 @@ export type Database = {
         }
         Update: {
           code?: string
+          country_code?: string
           created_at?: string
           flag_url?: string | null
           id?: string
