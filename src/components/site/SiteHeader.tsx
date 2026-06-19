@@ -193,23 +193,8 @@ export function SiteHeader() {
         </div>
       </nav>
 
-      {searchOpen && (
-        <div className="border-t border-[#333] bg-[#242424]">
-          <form onSubmit={onSearchSubmit} className="mx-auto flex max-w-3xl items-center gap-2 px-4 py-3">
-            <Search className="h-4 w-4 text-[#A0A0A0]" />
-            <input
-              ref={searchRef}
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Buscar…"
-              className="flex-1 bg-transparent text-sm text-[#F5F5F5] placeholder:text-[#666] focus:outline-none"
-            />
-            <button type="button" onClick={() => setSearchOpen(false)} aria-label="Cerrar" className="text-[#A0A0A0] hover:text-[#F5F5F5]">
-              <X className="h-4 w-4" />
-            </button>
-          </form>
-        </div>
-      )}
+      <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
+
 
       {/* Mobile slide-in */}
       {mobileOpen && (
