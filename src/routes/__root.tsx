@@ -88,6 +88,7 @@ function RootComponent() {
         <AuthDialogProvider>
           <LiveBar />
           <SiteHeader />
+          <Breadcrumbs />
           <main className="min-h-[60vh]">
             <Outlet />
           </main>
