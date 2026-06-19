@@ -267,11 +267,29 @@ function FederationForm({
       published,
       social: { instagram: instagram || undefined, facebook: facebook || undefined, youtube: youtube || undefined },
     };
-    const { error } = initial
-      ? await supabase.from("federations").update(payload).eq("id", initial.id)
-      : await supabase.from("federations").insert(payload);
+    let fedId = initial?.id;
+    if (initial) {
+      const { error } = await supabase.from("federations").update(payload).eq("id", initial.id);
+      if (error) { setSaving(false); return toast.error(error.message); }
+    } else {
+      const { data, error } = await supabase.from("federations").insert(payload).select("id").single();
+      if (error || !data) { setSaving(false); return toast.error(error?.message ?? "Error"); }
+      fedId = (data as { id: string }).id;
+    }
+
+    if (fedId) {
+      const wanted: string[] = [];
+      if (hubEs) wanted.push("es");
+      if (hubCo) wanted.push("co");
+      await supabase.from("federation_hubs").delete().eq("federation_id", fedId);
+      if (wanted.length > 0) {
+        await supabase
+          .from("federation_hubs")
+          .insert(wanted.map((cc) => ({ federation_id: fedId!, country_code: cc })));
+      }
+    }
+
     setSaving(false);
-    if (error) return toast.error(error.message);
     toast.success(initial ? "Federación actualizada" : "Federación creada");
     onSaved();
   };
@@ -332,6 +350,21 @@ function FederationForm({
           <label className="flex h-9 items-center gap-2 text-sm">
             <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} /> Aparece destacada
           </label>
+        </Field>
+        <Field label="Visible en hubs" full>
+          <div className="flex flex-wrap gap-4 pt-1">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={hubEs} onChange={(e) => setHubEs(e.target.checked)} disabled={!hubsLoaded} />
+              Hub España
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={hubCo} onChange={(e) => setHubCo(e.target.checked)} disabled={!hubsLoaded} />
+              Hub Colombia
+            </label>
+          </div>
+          <p className="font-condensed mt-1 text-[10px] text-muted-foreground">
+            Marca uno o ambos hubs donde debe aparecer esta federación.
+          </p>
         </Field>
       </div>
 
