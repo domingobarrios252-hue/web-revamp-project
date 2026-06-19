@@ -86,10 +86,11 @@ function RootComponent() {
     <LanguageProvider>
       <AuthProvider>
         <AuthDialogProvider>
+          <a href="#main-content" className="skip-link">Saltar al contenido</a>
           <LiveBar />
           <SiteHeader />
           <Breadcrumbs />
-          <main className="min-h-[60vh]">
+          <main id="main-content" tabIndex={-1} className="min-h-[60vh]">
             <Outlet />
           </main>
           <SiteFooter />
