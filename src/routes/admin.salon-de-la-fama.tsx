@@ -241,6 +241,7 @@ function LegendForm({ initial, onClose, onSaved }: {
       achievements,
       highlights,
       gallery,
+      clubs_history,
     };
     const { error } = initial
       ? await supabase.from("hall_of_fame").update(payload).eq("id", initial.id)
