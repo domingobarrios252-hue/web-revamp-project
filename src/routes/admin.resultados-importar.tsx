@@ -29,7 +29,7 @@ const TARGET_FIELDS: ReadonlyArray<{ key: string; label: string; required?: bool
   { key: "notes", label: "Notas", kind: "text" },
 ] as const;
 
-type TargetKey = (typeof TARGET_FIELDS)[number]["key"];
+type TargetKey = "position" | "athlete_name" | "club" | "country" | "category" | "gender" | "race" | "round" | "race_time" | "gap" | "points" | "federation" | "notes";
 
 type EventOption = { id: string; slug: string; name: string };
 type Mapping = Partial<Record<TargetKey, string>>; // target -> csv column header
