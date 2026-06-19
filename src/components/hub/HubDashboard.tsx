@@ -14,6 +14,8 @@ type NewsRow = {
   published_at: string;
   views_count: number;
   featured: boolean;
+  country_code?: string | null;
+  category_id?: string | null;
 };
 
 type EventRow = {
@@ -68,20 +70,28 @@ export function HubDashboard({ country }: { country: string }) {
           extraCategoryIds = (cats ?? []).map((c: { id: string }) => c.id);
         }
 
+        // Visibility filter: news_visibility rows (when present) are authoritative;
+        // fall back to country_code when a news has no rows at all.
+        const { data: visAll } = await supabase
+          .from("news_visibility")
+          .select("news_id, channel, country_code")
+          .in("channel", ["global_home", "country"]);
+        const newsWithAnyRow = new Set<string>();
+        const newsForThisCountry = new Set<string>();
+        for (const r of (visAll ?? []) as { news_id: string; channel: string; country_code: string | null }[]) {
+          newsWithAnyRow.add(r.news_id);
+          if (r.channel === "country" && r.country_code === country) {
+            newsForThisCountry.add(r.news_id);
+          }
+        }
+
         const newsQuery = supabase
           .from("news")
           .select("id,title,slug,excerpt,image_url,published_at,views_count,featured,country_code,category_id")
           .eq("published", true)
           .order("featured", { ascending: false })
           .order("published_at", { ascending: false })
-          .limit(6);
-        if (extraCategoryIds.length) {
-          newsQuery.or(
-            `country_code.eq.${country},category_id.in.(${extraCategoryIds.join(",")})`,
-          );
-        } else {
-          newsQuery.eq("country_code", country);
-        }
+          .limit(50);
 
         const [n, e, r, i] = await Promise.all([
           newsQuery,
@@ -110,7 +120,18 @@ export function HubDashboard({ country }: { country: string }) {
         ]);
 
         if (cancelled) return;
-        setNews((n.data as NewsRow[]) ?? []);
+        const allNews = (n.data as NewsRow[]) ?? [];
+        const visibleNews = allNews
+          .filter((row) => {
+            if (newsForThisCountry.has(row.id)) return true;
+            if (newsWithAnyRow.has(row.id)) return false; // explicit rows excluded this country
+            // Backwards compat
+            if (row.country_code === country) return true;
+            if (extraCategoryIds.length && row.category_id && extraCategoryIds.includes(row.category_id)) return true;
+            return false;
+          })
+          .slice(0, 6);
+        setNews(visibleNews);
         setEvents((e.data as EventRow[]) ?? []);
         setResults((r.data as ResultRow[]) ?? []);
         setInterview((i.data as InterviewRow) ?? null);

@@ -55,7 +55,23 @@ function NoticiasIndexPage() {
       )
       .eq("published", true)
       .order("published_at", { ascending: false })
-      .then(({ data, error }) => setNews(error ? [] : ((data as unknown as News[]) ?? [])));
+      .then(async ({ data, error }) => {
+        if (error) { setNews([]); return; }
+        const rows = (data as unknown as (News & { id: string })[]) ?? [];
+        if (rows.length === 0) { setNews([]); return; }
+        const { data: visData } = await supabase
+          .from("news_visibility")
+          .select("news_id, channel")
+          .in("channel", ["global_home", "country"])
+          .in("news_id", rows.map((r) => r.id));
+        const withAnyRow = new Set<string>();
+        const onHome = new Set<string>();
+        for (const v of (visData ?? []) as { news_id: string; channel: string }[]) {
+          withAnyRow.add(v.news_id);
+          if (v.channel === "global_home") onHome.add(v.news_id);
+        }
+        setNews(rows.filter((r) => onHome.has(r.id) || !withAnyRow.has(r.id)));
+      });
 
     supabase
       .from("news_categories")

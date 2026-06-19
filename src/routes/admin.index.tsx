@@ -340,16 +340,34 @@ function NewsEditor({
   const [relClubs, setRelClubs] = useState<string[]>([]);
   const [relSkaters, setRelSkaters] = useState<string[]>([]);
   const [relFeds, setRelFeds] = useState<string[]>([]);
+  const [visHome, setVisHome] = useState(true);
+  const [visES, setVisES] = useState(false);
+  const [visCO, setVisCO] = useState(false);
 
   useEffect(() => {
     if (!item) return;
     (async () => {
-      const [c, s, f] = await Promise.all([
+      const [c, s, f, v] = await Promise.all([
         loadRelations("news", "clubs", item.id),
         loadRelations("news", "skaters", item.id),
         loadRelations("news", "federations", item.id),
+        supabase
+          .from("news_visibility")
+          .select("channel, country_code")
+          .eq("news_id", item.id),
       ]);
       setRelClubs(c); setRelSkaters(s); setRelFeds(f);
+      const rows = (v.data ?? []) as { channel: string; country_code: string | null }[];
+      if (rows.length === 0) {
+        // Backwards compat: derive from country_code
+        setVisHome(true);
+        setVisES(item.section_id ? false : false);
+        setVisCO(false);
+      } else {
+        setVisHome(rows.some((r) => r.channel === "global_home"));
+        setVisES(rows.some((r) => r.channel === "country" && r.country_code === "es"));
+        setVisCO(rows.some((r) => r.channel === "country" && r.country_code === "co"));
+      }
     })();
   }, [item]);
 
@@ -426,6 +444,24 @@ function NewsEditor({
           ]);
         } catch (e) {
           toast.error(`Relaciones no guardadas: ${(e as Error).message}`);
+        }
+        // Save visibility: replace global_home + country rows
+        try {
+          await supabase
+            .from("news_visibility")
+            .delete()
+            .eq("news_id", newsId)
+            .in("channel", ["global_home", "country"]);
+          const rows: { news_id: string; channel: "global_home" | "country"; country_code?: string }[] = [];
+          if (visHome) rows.push({ news_id: newsId, channel: "global_home" });
+          if (visES) rows.push({ news_id: newsId, channel: "country", country_code: "es" });
+          if (visCO) rows.push({ news_id: newsId, channel: "country", country_code: "co" });
+          if (rows.length > 0) {
+            const { error: visErr } = await supabase.from("news_visibility").insert(rows);
+            if (visErr) toast.error(`Visibilidad no guardada: ${visErr.message}`);
+          }
+        } catch (e) {
+          toast.error(`Visibilidad no guardada: ${(e as Error).message}`);
         }
       }
 
@@ -536,6 +572,24 @@ function NewsEditor({
             />
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
           </div>
+
+          <div className="border-t border-border pt-3">
+            <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Visibilidad — ¿dónde se mostrará esta noticia?
+            </span>
+            <div className="flex flex-wrap gap-4">
+              <Checkbox label="Portada general (home + /noticias)" checked={visHome} onChange={setVisHome} />
+              <Checkbox label="Hub España" checked={visES} onChange={setVisES} />
+              <Checkbox label="Hub Colombia" checked={visCO} onChange={setVisCO} />
+            </div>
+            {!visHome && !visES && !visCO && (
+              <p className="mt-2 text-xs text-amber-400">
+                Sin destino seleccionado: la noticia quedará oculta de todas las portadas y hubs.
+              </p>
+            )}
+          </div>
+
+
 
           <div className="grid gap-3 border-t border-border pt-3 md:grid-cols-3">
             <div>

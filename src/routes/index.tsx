@@ -81,9 +81,28 @@ function HomePage() {
       .order("featured", { ascending: false })
       .order("hero_order", { ascending: true })
       .order("published_at", { ascending: false })
-      .limit(12)
-      .then(({ data }) => {
-        if (!cancelled) setNews((data as unknown as News[]) ?? []);
+      .limit(40)
+      .then(async ({ data }) => {
+        if (cancelled) return;
+        const rows = (data as unknown as (News & { id: string })[]) ?? [];
+        if (rows.length === 0) {
+          setNews([]);
+          return;
+        }
+        // Visibility: include rows with global_home, or rows with no visibility config at all.
+        const { data: visData } = await supabase
+          .from("news_visibility")
+          .select("news_id, channel")
+          .in("channel", ["global_home", "country"])
+          .in("news_id", rows.map((r) => r.id));
+        const withAnyRow = new Set<string>();
+        const onHome = new Set<string>();
+        for (const v of (visData ?? []) as { news_id: string; channel: string }[]) {
+          withAnyRow.add(v.news_id);
+          if (v.channel === "global_home") onHome.add(v.news_id);
+        }
+        const visible = rows.filter((r) => onHome.has(r.id) || !withAnyRow.has(r.id)).slice(0, 12);
+        if (!cancelled) setNews(visible);
       });
 
     supabase
