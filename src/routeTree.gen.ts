@@ -58,6 +58,7 @@ import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nosotros'
 import { Route as AdminSectionsRouteImport } from './routes/admin.sections'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
+import { Route as AdminSalonDeLaFamaRouteImport } from './routes/admin.salon-de-la-fama'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
 import { Route as AdminResultadosImportarRouteImport } from './routes/admin.resultados-importar'
@@ -360,6 +361,11 @@ const AdminSectionsRoute = AdminSectionsRouteImport.update({
 const AdminScheduleRoute = AdminScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSalonDeLaFamaRoute = AdminSalonDeLaFamaRouteImport.update({
+  id: '/salon-de-la-fama',
+  path: '/salon-de-la-fama',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRevistasRoute = AdminRevistasRouteImport.update({
@@ -707,6 +713,7 @@ export interface FileRoutesByFullPath {
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
@@ -814,6 +821,7 @@ export interface FileRoutesByTo {
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
@@ -917,6 +925,7 @@ export interface FileRoutesById {
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
+  '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
@@ -1028,6 +1037,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-importar'
     | '/admin/revista-cta'
     | '/admin/revistas'
+    | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
     | '/admin/sobre-nosotros'
@@ -1135,6 +1145,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-importar'
     | '/admin/revista-cta'
     | '/admin/revistas'
+    | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
     | '/admin/sobre-nosotros'
@@ -1237,6 +1248,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-importar'
     | '/admin/revista-cta'
     | '/admin/revistas'
+    | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
     | '/admin/sobre-nosotros'
@@ -1694,6 +1706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminScheduleRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/salon-de-la-fama': {
+      id: '/admin/salon-de-la-fama'
+      path: '/salon-de-la-fama'
+      fullPath: '/admin/salon-de-la-fama'
+      preLoaderRoute: typeof AdminSalonDeLaFamaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/revistas': {
       id: '/admin/revistas'
       path: '/revistas'
@@ -2130,6 +2149,7 @@ interface AdminRouteChildren {
   AdminResultadosImportarRoute: typeof AdminResultadosImportarRoute
   AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
+  AdminSalonDeLaFamaRoute: typeof AdminSalonDeLaFamaRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
   AdminSectionsRoute: typeof AdminSectionsRoute
   AdminSobreNosotrosRoute: typeof AdminSobreNosotrosRoute
@@ -2168,6 +2188,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminResultadosImportarRoute: AdminResultadosImportarRoute,
   AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
+  AdminSalonDeLaFamaRoute: AdminSalonDeLaFamaRoute,
   AdminScheduleRoute: AdminScheduleRoute,
   AdminSectionsRoute: AdminSectionsRoute,
   AdminSobreNosotrosRoute: AdminSobreNosotrosRoute,
@@ -2388,12 +2409,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
