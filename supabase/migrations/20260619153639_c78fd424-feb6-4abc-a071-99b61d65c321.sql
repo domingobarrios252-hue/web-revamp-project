@@ -1,0 +1,1 @@
+ALTER TABLE public.hall_of_fame ADD COLUMN IF NOT EXISTS clubs_history jsonb NOT NULL DEFAULT '[]'::jsonb;

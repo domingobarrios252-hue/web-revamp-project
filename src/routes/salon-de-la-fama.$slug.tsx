@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, Award, Crown, Trophy, MapPin } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, Award, Crown, Trophy, MapPin, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/salon-de-la-fama/$slug")({
@@ -30,17 +30,40 @@ type Legend = {
   club: string | null;
   nationality: string | null;
   bio: string | null;
-  achievements: Array<{ year?: number; title: string; description?: string }>;
+  achievements: Array<{ year?: number; title: string; description?: string; category?: "mundial" | "europeo" | "nacional" | "otro" }>;
   highlights: string[];
   gallery: string[];
+  clubs_history: Array<{ name: string; years?: string }>;
   social: { instagram?: string; twitter?: string; facebook?: string; youtube?: string };
 };
+
+const CAT_LABEL: Record<string, string> = {
+  mundial: "Mundial",
+  europeo: "Europeo",
+  nacional: "Nacional",
+  otro: "Otro",
+};
+const CAT_ORDER = ["mundial", "europeo", "nacional", "otro"] as const;
 
 function LegendProfilePage() {
   const { slug } = Route.useParams();
   const [legend, setLegend] = useState<Legend | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
+  const [catFilter, setCatFilter] = useState<"todos" | "mundial" | "europeo" | "nacional" | "otro">("todos");
+
+  const availableCats = useMemo(() => {
+    if (!legend?.achievements?.length) return [] as string[];
+    const set = new Set<string>();
+    legend.achievements.forEach((a) => set.add(a.category ?? "otro"));
+    return CAT_ORDER.filter((c) => set.has(c));
+  }, [legend]);
+
+  const filteredAchievements = useMemo(() => {
+    if (!legend?.achievements) return [];
+    if (catFilter === "todos") return legend.achievements;
+    return legend.achievements.filter((a) => (a.category ?? "otro") === catFilter);
+  }, [legend, catFilter]);
 
   useEffect(() => {
     supabase
@@ -152,20 +175,45 @@ function LegendProfilePage() {
               <h2 className="font-display text-2xl font-black uppercase text-[#F5F5F5] mb-3">
                 Palmarés
               </h2>
+              {availableCats.length > 1 && (
+                <div className="mb-3 flex flex-wrap gap-1.5">
+                  {(["todos", ...availableCats] as const).map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCatFilter(c as typeof catFilter)}
+                      className={`px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest rounded border transition ${
+                        catFilter === c
+                          ? "border-[#D4A017] bg-[#D4A017]/20 text-[#D4A017]"
+                          : "border-[#2a2a2a] text-[#888] hover:text-[#F5F5F5]"
+                      }`}
+                    >
+                      {c === "todos" ? "Todos" : CAT_LABEL[c]}
+                    </button>
+                  ))}
+                </div>
+              )}
               <ul className="space-y-2">
-                {legend.achievements.map((a, i) => (
+                {filteredAchievements.map((a, i) => (
                   <li
                     key={i}
                     className="flex gap-3 rounded-[6px] border border-[#2a2a2a] bg-[#161616] p-3"
                   >
                     <Award className="h-5 w-5 text-[#D4A017] flex-shrink-0 mt-0.5" />
-                    <div>
-                      {a.year && (
-                        <div className="text-[11px] font-bold uppercase tracking-widest text-[#D4A017]">
-                          {a.year}
-                        </div>
-                      )}
-                      <div className="text-sm font-semibold text-[#F5F5F5]">{a.title}</div>
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {a.year && (
+                          <span className="text-[11px] font-bold uppercase tracking-widest text-[#D4A017]">
+                            {a.year}
+                          </span>
+                        )}
+                        {a.category && (
+                          <span className="text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border border-[#3a2e0d] bg-[#1a1610] text-[#D4A017]">
+                            {CAT_LABEL[a.category]}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-sm font-semibold text-[#F5F5F5] mt-0.5">{a.title}</div>
                       {a.description && (
                         <div className="text-xs text-[#888] mt-0.5">{a.description}</div>
                       )}
@@ -203,6 +251,22 @@ function LegendProfilePage() {
                   <li key={i} className="flex gap-2">
                     <span className="text-[#D4A017]">▸</span>
                     <span>{h}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {legend.clubs_history?.length > 0 && (
+            <div className="rounded-[8px] border border-[#2a2a2a] bg-[#161616] p-4">
+              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-[#D4A017] mb-3 flex items-center gap-2">
+                <Users className="h-4 w-4" /> Trayectoria por clubes
+              </h3>
+              <ul className="space-y-2 text-sm">
+                {legend.clubs_history.map((c, i) => (
+                  <li key={i} className="flex items-baseline justify-between gap-3 border-b border-[#2a2a2a] pb-1.5 last:border-0">
+                    <span className="text-[#F5F5F5] font-semibold">{c.name}</span>
+                    {c.years && <span className="text-[11px] text-[#888] whitespace-nowrap">{c.years}</span>}
                   </li>
                 ))}
               </ul>
