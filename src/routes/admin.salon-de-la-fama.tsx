@@ -7,7 +7,9 @@ import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 
-type Achievement = { year?: number; title: string; description?: string };
+type AchievementCategory = "mundial" | "europeo" | "nacional" | "otro";
+type Achievement = { year?: number; title: string; description?: string; category?: AchievementCategory };
+type ClubStint = { name: string; years?: string };
 type Legend = {
   id: string;
   full_name: string;
