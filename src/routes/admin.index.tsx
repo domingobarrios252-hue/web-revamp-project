@@ -587,6 +587,9 @@ function NewsEditor({
                 Sin destino seleccionado: la noticia quedará oculta de todas las portadas y hubs.
               </p>
             )}
+          </div>
+
+
 
           <div className="grid gap-3 border-t border-border pt-3 md:grid-cols-3">
             <div>
