@@ -50,6 +50,20 @@ function LegendProfilePage() {
   const [legend, setLegend] = useState<Legend | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
+  const [catFilter, setCatFilter] = useState<"todos" | "mundial" | "europeo" | "nacional" | "otro">("todos");
+
+  const availableCats = useMemo(() => {
+    if (!legend?.achievements?.length) return [] as string[];
+    const set = new Set<string>();
+    legend.achievements.forEach((a) => set.add(a.category ?? "otro"));
+    return CAT_ORDER.filter((c) => set.has(c));
+  }, [legend]);
+
+  const filteredAchievements = useMemo(() => {
+    if (!legend?.achievements) return [];
+    if (catFilter === "todos") return legend.achievements;
+    return legend.achievements.filter((a) => (a.category ?? "otro") === catFilter);
+  }, [legend, catFilter]);
 
   useEffect(() => {
     supabase
