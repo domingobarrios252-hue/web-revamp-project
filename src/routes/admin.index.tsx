@@ -452,8 +452,8 @@ function NewsEditor({
             .delete()
             .eq("news_id", newsId)
             .in("channel", ["global_home", "country"]);
-          const rows: { news_id: string; channel: "global_home" | "country"; country_code: string | null }[] = [];
-          if (visHome) rows.push({ news_id: newsId, channel: "global_home", country_code: null });
+          const rows: { news_id: string; channel: "global_home" | "country"; country_code?: string }[] = [];
+          if (visHome) rows.push({ news_id: newsId, channel: "global_home" });
           if (visES) rows.push({ news_id: newsId, channel: "country", country_code: "es" });
           if (visCO) rows.push({ news_id: newsId, channel: "country", country_code: "co" });
           if (rows.length > 0) {
