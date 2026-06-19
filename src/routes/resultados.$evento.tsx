@@ -306,14 +306,14 @@ function ResultadosEventoPage() {
               <table className="w-full min-w-[760px] text-sm">
                 <thead className="border-b border-border bg-background/60">
                   <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                    <th className="px-4 py-2 w-12">{t("results.cols.position")}</th>
-                    <th className="px-4 py-2">{t("results.cols.athlete")}</th>
-                    <th className="px-4 py-2">{t("results.cols.club")}</th>
+                    <SortableTh label={t("results.cols.position")} k="position" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} widthClass="w-12" />
+                    <SortableTh label={t("results.cols.athlete")} k="athlete_name" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
+                    <SortableTh label={t("results.cols.club")} k="club" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
                     <th className="px-4 py-2">Fed.</th>
-                    <th className="px-4 py-2">{t("results.cols.country")}</th>
-                    <th className="px-4 py-2">{t("results.cols.time")}</th>
+                    <SortableTh label={t("results.cols.country")} k="country" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
+                    <SortableTh label={t("results.cols.time")} k="race_time" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
                     <th className="px-4 py-2">{t("results.cols.gap")}</th>
-                    <th className="px-4 py-2">{t("results.cols.points")}</th>
+                    <SortableTh label={t("results.cols.points")} k="points" current={sortKey} dir={sortDir} onClick={toggleSort} icon={sortIcon} />
                   </tr>
                 </thead>
                 <tbody>
