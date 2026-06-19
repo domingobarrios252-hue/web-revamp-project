@@ -531,10 +531,10 @@ function SponsorBlock() {
         </p>
         <div className="mt-4 flex flex-col gap-2">
           <a
-            href="mailto:comercial@rollerzone.com"
+            href="mailto:rollerzonespain@gmail.com"
             className="font-condensed inline-flex items-center gap-2 border border-gold bg-gold/10 px-4 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold hover:text-black"
           >
-            comercial@rollerzone.com
+            rollerzonespain@gmail.com
           </a>
           <Link
             to="/patrocinadores"
