@@ -70,6 +70,9 @@ export function LiveEventCenter() {
             <img
               src={event.logo_url}
               alt={event.name}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
               className="h-20 w-20 rounded-xl border border-gold/40 bg-black/40 object-contain p-2 md:h-24 md:w-24"
             />
           ) : (
