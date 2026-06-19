@@ -844,6 +844,78 @@ export type Database = {
           },
         ]
       }
+      hall_of_fame: {
+        Row: {
+          achievements: Json
+          bio: string | null
+          birth_year: number | null
+          club: string | null
+          country_code: string
+          cover_url: string | null
+          created_at: string
+          death_year: number | null
+          full_name: string
+          gallery: Json
+          highlights: Json
+          id: string
+          induction_year: number | null
+          nationality: string | null
+          photo_url: string | null
+          published: boolean
+          slug: string
+          social: Json
+          sort_order: number
+          specialty: string | null
+          updated_at: string
+        }
+        Insert: {
+          achievements?: Json
+          bio?: string | null
+          birth_year?: number | null
+          club?: string | null
+          country_code?: string
+          cover_url?: string | null
+          created_at?: string
+          death_year?: number | null
+          full_name: string
+          gallery?: Json
+          highlights?: Json
+          id?: string
+          induction_year?: number | null
+          nationality?: string | null
+          photo_url?: string | null
+          published?: boolean
+          slug: string
+          social?: Json
+          sort_order?: number
+          specialty?: string | null
+          updated_at?: string
+        }
+        Update: {
+          achievements?: Json
+          bio?: string | null
+          birth_year?: number | null
+          club?: string | null
+          country_code?: string
+          cover_url?: string | null
+          created_at?: string
+          death_year?: number | null
+          full_name?: string
+          gallery?: Json
+          highlights?: Json
+          id?: string
+          induction_year?: number | null
+          nationality?: string | null
+          photo_url?: string | null
+          published?: boolean
+          slug?: string
+          social?: Json
+          sort_order?: number
+          specialty?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       home_modules: {
         Row: {
           id: string

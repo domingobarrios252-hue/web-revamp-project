@@ -30,6 +30,8 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Actualidad", to: "/noticias" },
   { label: "España", to: "/hub/$country", params: { country: "es" } },
   { label: "Colombia", to: "/hub/$country", params: { country: "co" } },
+  { label: "Destacados", to: "/patinadores-destacados" },
+  { label: "Salón de la Fama", to: "/salon-de-la-fama" },
   { label: "Eventos", to: "/eventos" },
   { label: "Resultados", to: "/resultados" },
   { label: "RollerZone TV", to: "/tv" },
