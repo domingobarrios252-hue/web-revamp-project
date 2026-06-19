@@ -29,7 +29,8 @@ type AdminPath =
   | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule"
   | "/admin/medallero" | "/admin/live-results" | "/admin/sections"
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
-  | "/admin/espana" | "/admin/colombia" | "/admin/resultados" | "/admin/resultados-importar" | "/dashboard";
+  | "/admin/espana" | "/admin/colombia" | "/admin/resultados"
+  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
 type AdminGroup = { id: string; label: string; icon: React.ReactNode; links: AdminLinkDef[] };
