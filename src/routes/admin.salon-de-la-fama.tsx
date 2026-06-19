@@ -330,7 +330,7 @@ function LegendForm({ initial, onClose, onSaved }: {
           </label>
           <div className="space-y-2">
             {achievements.map((a, i) => (
-              <div key={i} className="grid gap-2 md:grid-cols-[80px_1fr_1fr_auto] items-start">
+              <div key={i} className="grid gap-2 md:grid-cols-[80px_120px_1fr_1fr_auto] items-start">
                 <input
                   className={inp} type="number" placeholder="Año"
                   value={a.year ?? ""}
@@ -340,6 +340,16 @@ function LegendForm({ initial, onClose, onSaved }: {
                     setAchievements(v);
                   }}
                 />
+                <select
+                  className={inp}
+                  value={a.category ?? "otro"}
+                  onChange={(e) => { const v = [...achievements]; v[i] = { ...a, category: e.target.value as AchievementCategory }; setAchievements(v); }}
+                >
+                  <option value="mundial">Mundial</option>
+                  <option value="europeo">Europeo</option>
+                  <option value="nacional">Nacional</option>
+                  <option value="otro">Otro</option>
+                </select>
                 <input
                   className={inp} placeholder="Título"
                   value={a.title}
@@ -361,7 +371,7 @@ function LegendForm({ initial, onClose, onSaved }: {
             ))}
             <button
               type="button"
-              onClick={() => setAchievements([...achievements, { title: "" }])}
+              onClick={() => setAchievements([...achievements, { title: "", category: "otro" }])}
               className="font-condensed inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-xs uppercase tracking-widest hover:bg-background"
             >
               <Plus className="h-3 w-3" /> Añadir logro
