@@ -573,6 +573,21 @@ function NewsEditor({
             <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
           </div>
 
+          <div className="border-t border-border pt-3">
+            <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Visibilidad — ¿dónde se mostrará esta noticia?
+            </span>
+            <div className="flex flex-wrap gap-4">
+              <Checkbox label="Portada general (home + /noticias)" checked={visHome} onChange={setVisHome} />
+              <Checkbox label="Hub España" checked={visES} onChange={setVisES} />
+              <Checkbox label="Hub Colombia" checked={visCO} onChange={setVisCO} />
+            </div>
+            {!visHome && !visES && !visCO && (
+              <p className="mt-2 text-xs text-amber-400">
+                Sin destino seleccionado: la noticia quedará oculta de todas las portadas y hubs.
+              </p>
+            )}
+
           <div className="grid gap-3 border-t border-border pt-3 md:grid-cols-3">
             <div>
               <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Clubes relacionados</span>
