@@ -175,20 +175,45 @@ function LegendProfilePage() {
               <h2 className="font-display text-2xl font-black uppercase text-[#F5F5F5] mb-3">
                 Palmarés
               </h2>
+              {availableCats.length > 1 && (
+                <div className="mb-3 flex flex-wrap gap-1.5">
+                  {(["todos", ...availableCats] as const).map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCatFilter(c as typeof catFilter)}
+                      className={`px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest rounded border transition ${
+                        catFilter === c
+                          ? "border-[#D4A017] bg-[#D4A017]/20 text-[#D4A017]"
+                          : "border-[#2a2a2a] text-[#888] hover:text-[#F5F5F5]"
+                      }`}
+                    >
+                      {c === "todos" ? "Todos" : CAT_LABEL[c]}
+                    </button>
+                  ))}
+                </div>
+              )}
               <ul className="space-y-2">
-                {legend.achievements.map((a, i) => (
+                {filteredAchievements.map((a, i) => (
                   <li
                     key={i}
                     className="flex gap-3 rounded-[6px] border border-[#2a2a2a] bg-[#161616] p-3"
                   >
                     <Award className="h-5 w-5 text-[#D4A017] flex-shrink-0 mt-0.5" />
-                    <div>
-                      {a.year && (
-                        <div className="text-[11px] font-bold uppercase tracking-widest text-[#D4A017]">
-                          {a.year}
-                        </div>
-                      )}
-                      <div className="text-sm font-semibold text-[#F5F5F5]">{a.title}</div>
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {a.year && (
+                          <span className="text-[11px] font-bold uppercase tracking-widest text-[#D4A017]">
+                            {a.year}
+                          </span>
+                        )}
+                        {a.category && (
+                          <span className="text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border border-[#3a2e0d] bg-[#1a1610] text-[#D4A017]">
+                            {CAT_LABEL[a.category]}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-sm font-semibold text-[#F5F5F5] mt-0.5">{a.title}</div>
                       {a.description && (
                         <div className="text-xs text-[#888] mt-0.5">{a.description}</div>
                       )}
