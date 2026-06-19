@@ -63,7 +63,7 @@ export function FederationProfile({ slug, country }: { slug: string; country: st
 
       <div className="relative h-[240px] md:h-[320px] overflow-hidden border-b border-[#333]">
         {federation.cover_url ? (
-          <img src={federation.cover_url} alt={federation.name} className="h-full w-full object-cover" />
+          <img loading="lazy" decoding="async" src={federation.cover_url} alt={federation.name} className="h-full w-full object-cover" />
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-[#1a1a1a] via-[#111] to-[#0a0a0a]" />
         )}
@@ -79,7 +79,7 @@ export function FederationProfile({ slug, country }: { slug: string; country: st
           <div className="mt-3 flex items-end gap-4">
             <div className="h-20 w-20 shrink-0 rounded-[6px] border border-[#333] bg-[#1A1A1A] p-2 flex items-center justify-center">
               {federation.logo_url ? (
-                <img src={federation.logo_url} alt="" className="h-full w-full object-contain" />
+                <img loading="lazy" decoding="async" src={federation.logo_url} alt="" className="h-full w-full object-contain" />
               ) : (
                 <Building2 className="h-10 w-10 text-[#D4A017]" />
               )}
@@ -163,7 +163,7 @@ export function FederationProfile({ slug, country }: { slug: string; country: st
                   >
                     {n.image_url && (
                       <div className="aspect-[16/9] overflow-hidden bg-[#0d0d0d]">
-                        <img src={n.image_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                        <img loading="lazy" decoding="async" src={n.image_url} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
                       </div>
                     )}
                     <div className="p-3">

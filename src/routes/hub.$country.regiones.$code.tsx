@@ -63,7 +63,7 @@ function RegionPage() {
             >
               <div className="h-16 w-16 shrink-0 rounded-[6px] border border-[#333] bg-[#0d0d0d] flex items-center justify-center">
                 {federation.logo_url ? (
-                  <img src={federation.logo_url} alt="" className="h-full w-full object-contain p-1" />
+                  <img loading="lazy" decoding="async" src={federation.logo_url} alt="" className="h-full w-full object-contain p-1" />
                 ) : (
                   <Building2 className="h-8 w-8 text-[#D4A017]" />
                 )}
@@ -102,7 +102,7 @@ function RegionPage() {
                 >
                   <div className="h-12 w-12 shrink-0 rounded-[6px] border border-[#333] bg-[#0d0d0d] flex items-center justify-center">
                     {c.logo_url ? (
-                      <img src={c.logo_url} alt="" className="h-full w-full object-contain p-1" />
+                      <img loading="lazy" decoding="async" src={c.logo_url} alt="" className="h-full w-full object-contain p-1" />
                     ) : (
                       <Building2 className="h-6 w-6 text-[#D4A017]" />
                     )}
@@ -146,7 +146,7 @@ function RegionPage() {
                 >
                   <div className="h-12 w-12 shrink-0 rounded-[6px] border border-[#333] bg-[#0d0d0d] overflow-hidden flex items-center justify-center">
                     {s.photo_url ? (
-                      <img src={s.photo_url} alt="" className="h-full w-full object-cover" />
+                      <img loading="lazy" decoding="async" src={s.photo_url} alt="" className="h-full w-full object-cover" />
                     ) : (
                       <Users className="h-6 w-6 text-[#D4A017]" />
                     )}

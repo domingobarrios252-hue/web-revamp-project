@@ -125,7 +125,7 @@ function Card({ news }: { news: News }) {
     >
       <div className="aspect-[16/10] overflow-hidden bg-surface-2">
         {news.image_url ? (
-          <img src={news.image_url} alt={news.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <img loading="lazy" decoding="async" src={news.image_url} alt={news.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         ) : (
           <div className="hero-grid-bg flex h-full w-full items-center justify-center">
             <span className="font-display text-5xl tracking-widest text-gold/30">RZ</span>

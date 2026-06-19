@@ -96,7 +96,7 @@ function FederationCard({
     >
       <div className={`shrink-0 rounded-[6px] border border-[#333] bg-[#0d0d0d] flex items-center justify-center ${large ? "h-16 w-16" : "h-12 w-12"}`}>
         {federation.logo_url ? (
-          <img src={federation.logo_url} alt="" className="h-full w-full object-contain p-1" />
+          <img loading="lazy" decoding="async" src={federation.logo_url} alt="" className="h-full w-full object-contain p-1" />
         ) : (
           <Building2 className={`text-[#D4A017] ${large ? "h-8 w-8" : "h-6 w-6"}`} />
         )}

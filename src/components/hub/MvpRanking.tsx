@@ -114,7 +114,7 @@ function RankingCard({ title, rows }: { title: string; rows: RankingRow[] }) {
                 {pos}
               </span>
               {r.photo_url ? (
-                <img
+                <img loading="lazy" decoding="async"
                   src={r.photo_url}
                   alt={r.full_name}
                   className="h-10 w-10 rounded-full object-cover border border-[#2A2A2A]"
