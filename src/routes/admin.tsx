@@ -104,7 +104,8 @@ const GROUPS: AdminGroup[] = [
     label: "Directorio",
     icon: <Users className="h-4 w-4" />,
     links: [
-      { to: "/admin/patinadores", label: "Patinadores", icon: <Users className="h-4 w-4" /> },
+      { to: "/admin/patinadores", label: "Patinadores (destacados)", icon: <Users className="h-4 w-4" /> },
+      { to: "/admin/salon-de-la-fama", label: "Salón de la Fama", icon: <Crown className="h-4 w-4" /> },
       { to: "/admin/clubes", label: "Clubes", icon: <Building2 className="h-4 w-4" /> },
       { to: "/admin/federaciones", label: "Federaciones", icon: <Building2 className="h-4 w-4" /> },
     ],
