@@ -250,8 +250,8 @@ function ClubForm({
   useEffect(() => {
     if (!initial) {
       // Default new club: visible in its own country hub
-      setHubEs((initial?.country_code ?? "es") === "es");
-      setHubCo((initial?.country_code ?? "es") === "co");
+      setHubEs(country_code === "es");
+      setHubCo(country_code === "co");
       return;
     }
     let cancelled = false;
