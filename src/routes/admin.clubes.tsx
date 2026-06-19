@@ -331,11 +331,30 @@ function ClubForm({
       published,
       founded_year: founded_year ? Number(founded_year) : null,
     };
-    const { error } = initial
-      ? await supabase.from("clubs").update(payload).eq("id", initial.id)
-      : await supabase.from("clubs").insert(payload);
+    let clubId = initial?.id;
+    if (initial) {
+      const { error } = await supabase.from("clubs").update(payload).eq("id", initial.id);
+      if (error) { setSaving(false); return toast.error(error.message); }
+    } else {
+      const { data, error } = await supabase.from("clubs").insert(payload).select("id").single();
+      if (error || !data) { setSaving(false); return toast.error(error?.message ?? "Error"); }
+      clubId = (data as { id: string }).id;
+    }
+
+    // Sync hub visibility rows
+    if (clubId) {
+      const wanted: string[] = [];
+      if (hubEs) wanted.push("es");
+      if (hubCo) wanted.push("co");
+      await supabase.from("club_hubs").delete().eq("club_id", clubId);
+      if (wanted.length > 0) {
+        await supabase
+          .from("club_hubs")
+          .insert(wanted.map((cc) => ({ club_id: clubId!, country_code: cc })));
+      }
+    }
+
     setSaving(false);
-    if (error) return toast.error(error.message);
     toast.success(initial ? "Club actualizado" : "Club creado");
     onSaved();
   };
@@ -445,6 +464,28 @@ function ClubForm({
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} /> Destacado
         </label>
+
+        <Field label="País principal">
+          <select value={country_code} onChange={(e) => setCountryCode(e.target.value)} className="input">
+            <option value="es">España</option>
+            <option value="co">Colombia</option>
+          </select>
+        </Field>
+        <Field label="Visible en hubs" full>
+          <div className="flex flex-wrap gap-4 pt-1">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={hubEs} onChange={(e) => setHubEs(e.target.checked)} disabled={!hubsLoaded} />
+              Hub España
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={hubCo} onChange={(e) => setHubCo(e.target.checked)} disabled={!hubsLoaded} />
+              Hub Colombia
+            </label>
+          </div>
+          <p className="font-condensed mt-1 text-[10px] text-muted-foreground">
+            Marca uno o ambos hubs donde debe aparecer este club.
+          </p>
+        </Field>
       </div>
       <div className="mt-5 flex gap-2">
         <button onClick={onSave} disabled={saving} className="font-condensed bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50">
