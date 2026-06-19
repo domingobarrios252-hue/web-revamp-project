@@ -30,11 +30,20 @@ type Legend = {
   club: string | null;
   nationality: string | null;
   bio: string | null;
-  achievements: Array<{ year?: number; title: string; description?: string }>;
+  achievements: Array<{ year?: number; title: string; description?: string; category?: "mundial" | "europeo" | "nacional" | "otro" }>;
   highlights: string[];
   gallery: string[];
+  clubs_history: Array<{ name: string; years?: string }>;
   social: { instagram?: string; twitter?: string; facebook?: string; youtube?: string };
 };
+
+const CAT_LABEL: Record<string, string> = {
+  mundial: "Mundial",
+  europeo: "Europeo",
+  nacional: "Nacional",
+  otro: "Otro",
+};
+const CAT_ORDER = ["mundial", "europeo", "nacional", "otro"] as const;
 
 function LegendProfilePage() {
   const { slug } = Route.useParams();
