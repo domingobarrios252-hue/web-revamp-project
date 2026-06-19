@@ -118,7 +118,18 @@ export function HubDashboard({ country }: { country: string }) {
         ]);
 
         if (cancelled) return;
-        setNews((n.data as NewsRow[]) ?? []);
+        const allNews = (n.data as NewsRow[]) ?? [];
+        const visibleNews = allNews
+          .filter((row) => {
+            if (newsForThisCountry.has(row.id)) return true;
+            if (newsWithAnyRow.has(row.id)) return false; // explicit rows excluded this country
+            // Backwards compat
+            if (row.country_code === country) return true;
+            if (extraCategoryIds.length && row.category_id && extraCategoryIds.includes(row.category_id)) return true;
+            return false;
+          })
+          .slice(0, 6);
+        setNews(visibleNews);
         setEvents((e.data as EventRow[]) ?? []);
         setResults((r.data as ResultRow[]) ?? []);
         setInterview((i.data as InterviewRow) ?? null);
