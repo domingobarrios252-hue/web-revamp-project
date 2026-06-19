@@ -119,6 +119,35 @@ export type Database = {
         }
         Relationships: []
       }
+      club_hubs: {
+        Row: {
+          club_id: string
+          country_code: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          club_id: string
+          country_code: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          club_id?: string
+          country_code?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_hubs_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clubs: {
         Row: {
           address: string | null
@@ -690,6 +719,35 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "federation_documents_federation_id_fkey"
+            columns: ["federation_id"]
+            isOneToOne: false
+            referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      federation_hubs: {
+        Row: {
+          country_code: string
+          created_at: string
+          federation_id: string
+          id: string
+        }
+        Insert: {
+          country_code: string
+          created_at?: string
+          federation_id: string
+          id?: string
+        }
+        Update: {
+          country_code?: string
+          created_at?: string
+          federation_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "federation_hubs_federation_id_fkey"
             columns: ["federation_id"]
             isOneToOne: false
             referencedRelation: "federations"
