@@ -85,11 +85,7 @@ export const Route = createFileRoute("/resultados/$evento")({
     const title = loaderData?.meta?.name ?? loaderData?.rows?.[0]?.event_name ?? "Resultados";
     const url = `https://rollerzone.lovable.app/resultados/${params.evento}`;
     const desc = `Clasificaciones completas de ${title} en RollerZone.`;
-    const status = loaderData?.meta?.status === "cancelled"
-      ? "https://schema.org/EventCancelled"
-      : loaderData?.meta?.status === "postponed"
-      ? "https://schema.org/EventPostponed"
-      : "https://schema.org/EventScheduled";
+    const status = "https://schema.org/EventScheduled";
     const scripts: { type: "application/ld+json"; children: string }[] = [];
     if (loaderData?.meta) {
       const m = loaderData.meta;
