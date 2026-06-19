@@ -95,12 +95,12 @@ export function Breadcrumbs() {
                 {c.label}
               </span>
             ) : (
-              <Link
-                to={c.href}
+              <a
+                href={c.href}
                 className="rounded px-1 py-0.5 hover:text-[#D4A017] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]"
               >
                 {c.label}
-              </Link>
+              </a>
             )}
           </li>
         ))}
