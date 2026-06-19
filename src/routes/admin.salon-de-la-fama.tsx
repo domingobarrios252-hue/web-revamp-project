@@ -207,6 +207,7 @@ function LegendForm({ initial, onClose, onSaved }: {
   const [achievements, setAchievements] = useState<Achievement[]>(initial?.achievements ?? []);
   const [highlights, setHighlights] = useState<string[]>(initial?.highlights ?? []);
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
+  const [clubs_history, setClubsHistory] = useState<ClubStint[]>(initial?.clubs_history ?? []);
   const [sort_order, setSort] = useState<string>(initial?.sort_order?.toString() ?? "0");
   const [published, setPublished] = useState(initial?.published ?? true);
   const [saving, setSaving] = useState(false);
