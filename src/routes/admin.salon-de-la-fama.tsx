@@ -294,10 +294,10 @@ function LegendForm({ initial, onClose, onSaved }: {
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <Field label="Foto principal">
-            <ImageUploadField value={photo_url} onChange={setPhoto} bucket="skaters" />
+            <ImageUploadField value={photo_url} onChange={setPhoto} bucket="skaters" folder="hall-of-fame" />
           </Field>
           <Field label="Portada (cover)">
-            <ImageUploadField value={cover_url} onChange={setCover} bucket="skaters" />
+            <ImageUploadField value={cover_url} onChange={setCover} bucket="skaters" folder="hall-of-fame" />
           </Field>
         </div>
 
@@ -366,7 +366,7 @@ function LegendForm({ initial, onClose, onSaved }: {
 
         <div className="mt-4">
           <Field label="Galería de fotos">
-            <GalleryUploadField value={gallery} onChange={setGallery} bucket="skaters" />
+            <GalleryUploadField value={gallery} onChange={setGallery} bucket="skaters" folder="hall-of-fame" />
           </Field>
         </div>
 
