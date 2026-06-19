@@ -351,21 +351,23 @@ function FederationForm({
             <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} /> Aparece destacada
           </label>
         </Field>
-        <Field label="Visible en hubs" full>
-          <div className="flex flex-wrap gap-4 pt-1">
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={hubEs} onChange={(e) => setHubEs(e.target.checked)} disabled={!hubsLoaded} />
-              Hub España
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={hubCo} onChange={(e) => setHubCo(e.target.checked)} disabled={!hubsLoaded} />
-              Hub Colombia
-            </label>
-          </div>
-          <p className="font-condensed mt-1 text-[10px] text-muted-foreground">
-            Marca uno o ambos hubs donde debe aparecer esta federación.
-          </p>
-        </Field>
+        <div className="md:col-span-2">
+          <Field label="Visible en hubs">
+            <div className="flex flex-wrap gap-4 pt-1">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={hubEs} onChange={(e) => setHubEs(e.target.checked)} disabled={!hubsLoaded} />
+                Hub España
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={hubCo} onChange={(e) => setHubCo(e.target.checked)} disabled={!hubsLoaded} />
+                Hub Colombia
+              </label>
+            </div>
+            <p className="font-condensed mt-1 text-[10px] text-muted-foreground">
+              Marca uno o ambos hubs donde debe aparecer esta federación.
+            </p>
+          </Field>
+        </div>
       </div>
 
       <div className="mt-5 flex gap-2">
