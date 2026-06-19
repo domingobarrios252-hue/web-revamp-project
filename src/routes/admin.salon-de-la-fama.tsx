@@ -27,6 +27,7 @@ type Legend = {
   achievements: Achievement[];
   highlights: string[];
   gallery: string[];
+  clubs_history: ClubStint[];
   sort_order: number;
   published: boolean;
 };
