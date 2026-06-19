@@ -13,7 +13,7 @@ export const Route = createFileRoute("/admin/resultados-importar")({
 });
 
 // Target fields available in live_results
-const TARGET_FIELDS = [
+const TARGET_FIELDS: ReadonlyArray<{ key: string; label: string; required?: boolean; kind: "int" | "text" | "number" }> = [
   { key: "position", label: "Posición *", required: true, kind: "int" },
   { key: "athlete_name", label: "Atleta *", required: true, kind: "text" },
   { key: "club", label: "Club", kind: "text" },
