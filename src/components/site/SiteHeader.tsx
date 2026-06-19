@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import logoUrl from "@/assets/rollerzone-logo.png";
+import { GlobalSearch } from "@/components/site/GlobalSearch";
 
 const NAV_LINK =
   "font-ui relative inline-flex h-14 items-center px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#B5B5B5] transition-all duration-200 hover:text-[#F5F5F5] focus-visible:text-[#F5F5F5] focus-visible:outline-none after:absolute after:inset-x-1 after:bottom-3 after:h-[2px] after:scale-x-0 after:origin-left after:bg-[#D4A017] after:transition-transform after:duration-300 hover:after:scale-x-100 focus-visible:after:scale-x-100";
@@ -47,8 +48,15 @@ export function SiteHeader() {
 
   useEffect(() => setMobileOpen(false), []);
   useEffect(() => {
-    if (searchOpen) searchRef.current?.focus();
-  }, [searchOpen]);
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const onSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -193,23 +201,8 @@ export function SiteHeader() {
         </div>
       </nav>
 
-      {searchOpen && (
-        <div className="border-t border-[#333] bg-[#242424]">
-          <form onSubmit={onSearchSubmit} className="mx-auto flex max-w-3xl items-center gap-2 px-4 py-3">
-            <Search className="h-4 w-4 text-[#A0A0A0]" />
-            <input
-              ref={searchRef}
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Buscar…"
-              className="flex-1 bg-transparent text-sm text-[#F5F5F5] placeholder:text-[#666] focus:outline-none"
-            />
-            <button type="button" onClick={() => setSearchOpen(false)} aria-label="Cerrar" className="text-[#A0A0A0] hover:text-[#F5F5F5]">
-              <X className="h-4 w-4" />
-            </button>
-          </form>
-        </div>
-      )}
+      <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
+
 
       {/* Mobile slide-in */}
       {mobileOpen && (

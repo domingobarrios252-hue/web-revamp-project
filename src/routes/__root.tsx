@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { LiveBar } from "@/components/site/LiveBar";
 import { CookieBanner } from "@/components/site/CookieBanner";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -87,6 +88,7 @@ function RootComponent() {
         <AuthDialogProvider>
           <LiveBar />
           <SiteHeader />
+          <Breadcrumbs />
           <main className="min-h-[60vh]">
             <Outlet />
           </main>
