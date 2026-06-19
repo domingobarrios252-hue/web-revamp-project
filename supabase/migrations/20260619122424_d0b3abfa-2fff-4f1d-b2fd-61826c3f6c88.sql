@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Public can read approved community submissions" ON public.community_submissions;
