@@ -380,6 +380,42 @@ function LegendForm({ initial, onClose, onSaved }: {
         </div>
 
         <div className="mt-4">
+          <label className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground mb-2 block">
+            Trayectoria por clubes
+          </label>
+          <div className="space-y-2">
+            {clubs_history.map((c, i) => (
+              <div key={i} className="grid gap-2 md:grid-cols-[1fr_180px_auto] items-start">
+                <input
+                  className={inp} placeholder="Nombre del club"
+                  value={c.name}
+                  onChange={(e) => { const v = [...clubs_history]; v[i] = { ...c, name: e.target.value }; setClubsHistory(v); }}
+                />
+                <input
+                  className={inp} placeholder="Años (ej. 2010–2015)"
+                  value={c.years ?? ""}
+                  onChange={(e) => { const v = [...clubs_history]; v[i] = { ...c, years: e.target.value }; setClubsHistory(v); }}
+                />
+                <button
+                  type="button"
+                  className="rounded border border-destructive/40 px-2 py-1 text-xs text-destructive"
+                  onClick={() => setClubsHistory(clubs_history.filter((_, j) => j !== i))}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => setClubsHistory([...clubs_history, { name: "" }])}
+              className="font-condensed inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-xs uppercase tracking-widest hover:bg-background"
+            >
+              <Plus className="h-3 w-3" /> Añadir club
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4">
           <Field label="Galería de fotos">
             <GalleryUploadField value={gallery} onChange={setGallery} bucket="skaters" folder="hall-of-fame" />
           </Field>
