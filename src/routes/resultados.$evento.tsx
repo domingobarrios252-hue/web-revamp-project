@@ -122,8 +122,11 @@ function ResultadosEventoPage() {
   const [fRound, setFRound] = useState(search.ronda ?? "");
   const [fClub, setFClub] = useState(search.club ?? "");
   const [fFed, setFFed] = useState(search.federacion ?? "");
+  const [fCountry, setFCountry] = useState("");
+  const [q, setQ] = useState("");
+  const [sortKey, setSortKey] = useState<"position" | "athlete_name" | "club" | "country" | "race_time" | "points">("position");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
-  // Sync from URL search params (e.g. when navigating from Home slider)
   useEffect(() => {
     setFRace(search.prueba ?? "");
     setFCat(search.categoria ?? "");
@@ -140,21 +143,32 @@ function ResultadosEventoPage() {
     rounds: uniq(rows.map((r: ResultRow) => r.round)),
     clubs: uniq(rows.map((r: ResultRow) => r.club)),
     federations: uniq(rows.map((r: ResultRow) => r.federation)),
+    countries: uniq(rows.map((r: ResultRow) => r.country)),
   }), [rows]);
 
+  const qLower = q.trim().toLowerCase();
   const filtered = rows.filter((r: ResultRow) =>
     (!fRace || (r.race ?? r.distance) === fRace) &&
     (!fCat || r.category === fCat) &&
     (!fGender || r.gender === fGender) &&
     (!fRound || r.round === fRound) &&
     (!fClub || r.club === fClub) &&
-    (!fFed || r.federation === fFed),
+    (!fFed || r.federation === fFed) &&
+    (!fCountry || r.country === fCountry) &&
+    (!qLower || r.athlete_name.toLowerCase().includes(qLower) || (r.club ?? "").toLowerCase().includes(qLower)),
   );
 
-  const groups = groupRows(filtered);
+  const groups = groupRows(filtered, sortKey, sortDir);
   const isLive = (meta?.status ?? rows[0]?.status) === "en_vivo";
-  const clearFilters = () => { setFRace(""); setFCat(""); setFGender(""); setFRound(""); setFClub(""); setFFed(""); };
-  const anyFilter = fRace || fCat || fGender || fRound || fClub || fFed;
+  const clearFilters = () => { setFRace(""); setFCat(""); setFGender(""); setFRound(""); setFClub(""); setFFed(""); setFCountry(""); setQ(""); };
+  const anyFilter = fRace || fCat || fGender || fRound || fClub || fFed || fCountry || q;
+
+  const toggleSort = (key: typeof sortKey) => {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(key); setSortDir("asc"); }
+  };
+  const sortIcon = (key: typeof sortKey) =>
+    sortKey !== key ? <ArrowUpDown className="h-3 w-3 opacity-50" /> : sortDir === "asc" ? <ArrowUp className="h-3 w-3 text-gold" /> : <ArrowDown className="h-3 w-3 text-gold" />;
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 md:px-6">
