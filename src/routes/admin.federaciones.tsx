@@ -108,7 +108,7 @@ function AdminFederations() {
       {showForm && (
         <FederationForm
           initial={editing}
-          parents={items.filter((i) => i.type === "nacional")}
+          parents={items.filter((i) => i.type === "nacional" && ["RFEP", "FedDepainCol"].includes(i.short_name ?? ""))}
           onClose={() => { setShowForm(false); setEditing(null); }}
           onSaved={() => { setShowForm(false); setEditing(null); load(); }}
         />
