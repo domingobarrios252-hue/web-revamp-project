@@ -131,6 +131,13 @@ function HomePage() {
       {/* HERO — carrusel cinematográfico premium */}
       <HeroCarousel slides={heroSlides} liveActive={heroCfg.live_active} t={t} lang={lang} />
 
+      {/* TICKER EN DIRECTO */}
+      <Ticker />
+
+      {/* BANNER PUBLICITARIO */}
+      <AdBanner placement="home_top" />
+
+
       {/* ÚLTIMAS NOTICIAS */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
         <div className="mb-6 flex items-baseline justify-between border-b border-border pb-3">
