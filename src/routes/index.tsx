@@ -9,6 +9,7 @@ import { HomeResultsSlider } from "@/components/home/HomeResultsSlider";
 import { useHomeSectionVisibility } from "@/lib/home/useHomeSectionVisibility";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AdBanner } from "@/components/site/AdBanner";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
@@ -129,6 +130,13 @@ function HomePage() {
     <>
       {/* HERO — carrusel cinematográfico premium */}
       <HeroCarousel slides={heroSlides} liveActive={heroCfg.live_active} t={t} lang={lang} />
+
+      {/* TICKER EN DIRECTO */}
+      <Ticker />
+
+      {/* BANNER PUBLICITARIO */}
+      <AdBanner placement="home_top" />
+
 
       {/* ÚLTIMAS NOTICIAS */}
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
