@@ -9,6 +9,7 @@ import { HomeResultsSlider } from "@/components/home/HomeResultsSlider";
 import { useHomeSectionVisibility } from "@/lib/home/useHomeSectionVisibility";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AdBanner } from "@/components/site/AdBanner";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
