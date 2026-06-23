@@ -111,9 +111,9 @@ export function HubDashboard({ country }: { country: string }) {
             .limit(8),
           supabase
             .from("interviews")
-            .select("id,title,slug,interviewee_name,cover_url")
+            .select("id,title,slug,interviewee_name,cover_url,country_code,hub_countries")
             .eq("published", true)
-            .eq("country_code", country)
+            .or(`hub_countries.cs.{${country}},country_code.eq.${country}`)
             .order("created_at", { ascending: false })
             .limit(1)
             .maybeSingle(),
