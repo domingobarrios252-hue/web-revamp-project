@@ -12,6 +12,7 @@ export type CountryHub = {
   hero_image_url: string | null;
   tagline: string | null;
   active_sections: string[];
+  section_labels: Record<string, string> | null;
   active: boolean;
 };
 

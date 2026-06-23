@@ -1,0 +1,1 @@
+ALTER TABLE public.country_hubs ADD COLUMN IF NOT EXISTS section_labels jsonb NOT NULL DEFAULT '{}'::jsonb;

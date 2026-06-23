@@ -397,6 +397,7 @@ export type Database = {
           hero_image_url: string | null
           id: string
           name: string
+          section_labels: Json
           sort_order: number
           tagline: string | null
           updated_at: string
@@ -413,6 +414,7 @@ export type Database = {
           hero_image_url?: string | null
           id?: string
           name: string
+          section_labels?: Json
           sort_order?: number
           tagline?: string | null
           updated_at?: string
@@ -429,6 +431,7 @@ export type Database = {
           hero_image_url?: string | null
           id?: string
           name?: string
+          section_labels?: Json
           sort_order?: number
           tagline?: string | null
           updated_at?: string
