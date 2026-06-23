@@ -13,6 +13,7 @@ import { AdBanner } from "@/components/site/AdBanner";
 import { AdBannerWithMagazine } from "@/components/site/AdBannerWithMagazine";
 import { LiveCenter } from "@/components/site/LiveCenter";
 import { supabase } from "@/integrations/supabase/client";
+import { cropObjectPosition } from "@/lib/imageCrops";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate, formatShortDate } from "@/lib/i18n/format";
 
