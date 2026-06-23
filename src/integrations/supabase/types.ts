@@ -1042,6 +1042,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           excerpt: string | null
+          hub_countries: string[]
           id: string
           interview_date: string
           interviewee_bio: string | null
@@ -1059,6 +1060,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
+          hub_countries?: string[]
           id?: string
           interview_date: string
           interviewee_bio?: string | null
@@ -1076,6 +1078,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
+          hub_countries?: string[]
           id?: string
           interview_date?: string
           interviewee_bio?: string | null
