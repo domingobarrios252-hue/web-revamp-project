@@ -13,6 +13,8 @@ type Article = {
   excerpt: string | null;
   content: string | null;
   author: string;
+  writer_id: string | null;
+  writers: { id: string; full_name: string; published: boolean } | null;
   legacy_tag: string | null;
   image_url: string | null;
   gallery: string[] | null;
@@ -27,7 +29,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, legacy_tag, image_url, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .maybeSingle();
@@ -151,7 +153,17 @@ function ArticlePage() {
         <div className="font-condensed mt-5 flex flex-wrap items-center gap-4 border-y border-border py-3 text-xs uppercase tracking-widest text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <UserIcon className="h-3.5 w-3.5 text-gold" />
-            <span className="text-foreground">{article.author}</span>
+            {article.writers?.published && article.writer_id ? (
+              <Link
+                to="/redactores/$id"
+                params={{ id: article.writer_id }}
+                className="text-foreground hover:text-gold hover:underline"
+              >
+                {article.writers.full_name}
+              </Link>
+            ) : (
+              <span className="text-foreground">{article.author}</span>
+            )}
           </span>
           <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-gold" />

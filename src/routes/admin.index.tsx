@@ -410,6 +410,8 @@ function NewsEditor({
       if (featured) {
         await supabase.from("news").update({ featured: false }).eq("featured", true);
       }
+      // Visibility rows below are authoritative for hub/home filtering,
+      // so country_code is intentionally left untouched here.
       const payload = {
         title: parsed.data.title,
         slug: parsed.data.slug,
@@ -445,7 +447,8 @@ function NewsEditor({
         } catch (e) {
           toast.error(`Relaciones no guardadas: ${(e as Error).message}`);
         }
-        // Save visibility: replace global_home + country rows
+        // Save visibility: replace global_home + country rows.
+        // Insert one-by-one so a single RLS rejection doesn't drop them all.
         try {
           await supabase
             .from("news_visibility")
@@ -456,9 +459,15 @@ function NewsEditor({
           if (visHome) rows.push({ news_id: newsId, channel: "global_home" });
           if (visES) rows.push({ news_id: newsId, channel: "country", country_code: "es" });
           if (visCO) rows.push({ news_id: newsId, channel: "country", country_code: "co" });
-          if (rows.length > 0) {
-            const { error: visErr } = await supabase.from("news_visibility").insert(rows);
-            if (visErr) toast.error(`Visibilidad no guardada: ${visErr.message}`);
+          const failed: string[] = [];
+          for (const row of rows) {
+            const { error: visErr } = await supabase.from("news_visibility").insert(row);
+            if (visErr) {
+              failed.push(`${row.channel}${row.country_code ? `:${row.country_code}` : ""} (${visErr.message})`);
+            }
+          }
+          if (failed.length > 0) {
+            toast.error(`Visibilidad parcial — no se guardaron: ${failed.join(", ")}`);
           }
         } catch (e) {
           toast.error(`Visibilidad no guardada: ${(e as Error).message}`);
