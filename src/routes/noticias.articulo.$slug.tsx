@@ -6,6 +6,7 @@ import { getVisitorHash } from "@/lib/visitor";
 import { toast } from "sonner";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { CroppedImage } from "@/components/site/CroppedImage";
+import { Lightbox } from "@/components/site/Lightbox";
 
 type Article = {
   id: string;
