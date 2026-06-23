@@ -19,6 +19,7 @@ type Interview = {
   published: boolean;
   sort_order: number;
   country_code: string | null;
+  hub_countries: string[];
 };
 
 const schema = z.object({
