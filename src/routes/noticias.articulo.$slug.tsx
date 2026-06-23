@@ -189,13 +189,25 @@ function ArticlePage() {
       </header>
 
       {article.image_url && (
-        <figure className="mb-8 flex max-h-[70vh] w-full items-center justify-center overflow-hidden border border-border bg-black">
-          <img
-            src={article.image_url}
-            alt={article.title}
-            className="max-h-[70vh] w-full object-contain"
-          />
-        </figure>
+        article.hero_display_mode === "crop" ? (
+          <figure className="mb-8 overflow-hidden border border-border bg-black">
+            <CroppedImage
+              src={article.image_url}
+              alt={article.title}
+              crops={article.image_crops}
+              ratio="hero"
+              loading="eager"
+            />
+          </figure>
+        ) : (
+          <figure className="mb-8 flex max-h-[70vh] w-full items-center justify-center overflow-hidden border border-border bg-black">
+            <img
+              src={article.image_url}
+              alt={article.title}
+              className="max-h-[70vh] w-full object-contain"
+            />
+          </figure>
+        )
       )}
 
       <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
