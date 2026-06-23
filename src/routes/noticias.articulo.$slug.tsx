@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getVisitorHash } from "@/lib/visitor";
 import { toast } from "sonner";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { CroppedImage } from "@/components/site/CroppedImage";
 
 type Article = {
   id: string;
@@ -17,6 +18,8 @@ type Article = {
   writers: { id: string; full_name: string; published: boolean } | null;
   legacy_tag: string | null;
   image_url: string | null;
+  image_crops: import("@/lib/imageCrops").ImageCrops | null;
+  hero_display_mode: "crop" | "full" | null;
   gallery: string[] | null;
   read_minutes: number | null;
   views_count: number;
@@ -29,7 +32,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .maybeSingle();
@@ -186,13 +189,25 @@ function ArticlePage() {
       </header>
 
       {article.image_url && (
-        <figure className="mb-8 flex max-h-[70vh] w-full items-center justify-center overflow-hidden border border-border bg-black">
-          <img
-            src={article.image_url}
-            alt={article.title}
-            className="max-h-[70vh] w-full object-contain"
-          />
-        </figure>
+        article.hero_display_mode === "crop" ? (
+          <figure className="mb-8 overflow-hidden border border-border bg-black">
+            <CroppedImage
+              src={article.image_url}
+              alt={article.title}
+              crops={article.image_crops}
+              ratio="hero"
+              loading="eager"
+            />
+          </figure>
+        ) : (
+          <figure className="mb-8 flex max-h-[70vh] w-full items-center justify-center overflow-hidden border border-border bg-black">
+            <img
+              src={article.image_url}
+              alt={article.title}
+              className="max-h-[70vh] w-full object-contain"
+            />
+          </figure>
+        )
       )}
 
       <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">

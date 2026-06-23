@@ -22,6 +22,8 @@ type News = {
   category_id: string | null;
   legacy_tag: string | null;
   image_url: string | null;
+  image_crops: import("@/lib/imageCrops").ImageCrops | null;
+  hero_display_mode: "crop" | "full";
   gallery: string[];
   read_minutes: number | null;
   featured: boolean;
@@ -86,7 +88,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -332,6 +334,12 @@ function NewsEditor({
   const [categoryId, setCategoryId] = useState(item?.category_id ?? "");
   const [legacyTag, setLegacyTag] = useState(item?.legacy_tag ?? "");
   const [imageUrl, setImageUrl] = useState(item?.image_url ?? "");
+  const [imageCrops, setImageCrops] = useState<import("@/lib/imageCrops").ImageCrops>(
+    (item?.image_crops as import("@/lib/imageCrops").ImageCrops | null) ?? {}
+  );
+  const [heroDisplayMode, setHeroDisplayMode] = useState<"crop" | "full">(
+    item?.hero_display_mode ?? "crop"
+  );
   const [gallery, setGallery] = useState<string[]>(item?.gallery ?? []);
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
@@ -442,6 +450,8 @@ function NewsEditor({
         category_id: parsed.data.category_id ?? null,
         legacy_tag: parsed.data.legacy_tag ?? null,
         image_url: parsed.data.image_url || null,
+        image_crops: imageCrops as never,
+        hero_display_mode: heroDisplayMode,
         gallery: parsed.data.gallery,
         read_minutes: parsed.data.read_minutes ?? null,
         featured: parsed.data.featured,
@@ -556,7 +566,40 @@ function NewsEditor({
               folder="news"
               nameHint={slug || title}
               placeholder="URL o subir archivo"
+              crops={imageCrops}
+              onCropsChange={setImageCrops}
             />
+            {imageUrl && (
+              <div className="mt-3">
+                <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Imagen principal del artículo
+                </span>
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="hero-display-mode"
+                      value="crop"
+                      checked={heroDisplayMode === "crop"}
+                      onChange={() => setHeroDisplayMode("crop")}
+                      className="accent-[var(--gold,#caa15a)]"
+                    />
+                    Recortada (Hero 16:9)
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="hero-display-mode"
+                      value="full"
+                      checked={heroDisplayMode === "full"}
+                      onChange={() => setHeroDisplayMode("full")}
+                      className="accent-[var(--gold,#caa15a)]"
+                    />
+                    Completa (sin recorte)
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
           <div>
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
