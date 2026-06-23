@@ -1183,8 +1183,10 @@ function NewsCard({ news }: { news: News }) {
           <img
             src={news.image_url}
             alt={news.title}
+            style={{ objectPosition: cropObjectPosition(news.image_crops, "card") }}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+
         ) : (
           <div className="hero-grid-bg flex h-full w-full items-center justify-center">
             <span className="font-display text-5xl tracking-widest text-gold/30">RZ</span>
