@@ -4,6 +4,7 @@ import { Calendar, Newspaper, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
 import { EmptyState } from "@/components/site/EmptyState";
+import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
 
 type NewsRow = {
   id: string;
@@ -11,6 +12,7 @@ type NewsRow = {
   slug: string;
   excerpt: string | null;
   image_url: string | null;
+  image_crops: ImageCrops | null;
   published_at: string;
   views_count: number;
   featured: boolean;
@@ -87,7 +89,7 @@ export function HubDashboard({ country }: { country: string }) {
 
         const newsQuery = supabase
           .from("news")
-          .select("id,title,slug,excerpt,image_url,published_at,views_count,featured,country_code,category_id")
+          .select("id,title,slug,excerpt,image_url,image_crops,published_at,views_count,featured,country_code,category_id")
           .eq("published", true)
           .order("featured", { ascending: false })
           .order("published_at", { ascending: false })
@@ -170,9 +172,11 @@ export function HubDashboard({ country }: { country: string }) {
                     <img
                       src={featured.image_url}
                       alt={featured.title}
+                      style={{ objectPosition: cropObjectPosition(featured.image_crops, "card") }}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                       loading="eager"
                     />
+
                     <div className="absolute top-6 left-6">
                       <span className="px-3 py-1 bg-[#D4A017] text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest rounded-[3px]">
                         Destacado
@@ -227,9 +231,11 @@ export function HubDashboard({ country }: { country: string }) {
                         <img
                           src={n.image_url}
                           alt=""
+                          style={{ objectPosition: cropObjectPosition(n.image_crops, "thumb") }}
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
                         />
+
                       </div>
                     )}
                     <div className="min-w-0 space-y-2">
