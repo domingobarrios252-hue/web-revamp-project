@@ -1,13 +1,26 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { HUB_SECTIONS, type HubSectionKey } from "@/lib/hub/useCountryHub";
 
-export function HubSubNav({ country, activeSections }: { country: string; activeSections: string[] }) {
+export function HubSubNav({
+  country,
+  activeSections,
+  sectionLabels,
+}: {
+  country: string;
+  activeSections: string[];
+  sectionLabels?: Record<string, string> | null;
+}) {
   const location = useLocation();
   // Respect the order defined in activeSections (admin can reorder)
   const byKey = new Map(HUB_SECTIONS.map((s) => [s.key, s] as const));
   const sections = activeSections
     .map((k) => byKey.get(k as HubSectionKey))
     .filter((s): s is (typeof HUB_SECTIONS)[number] => Boolean(s));
+
+  const labelFor = (key: HubSectionKey, fallback: string) => {
+    const override = sectionLabels?.[key]?.trim();
+    return override && override.length > 0 ? override : fallback;
+  };
 
   const isActive = (key: HubSectionKey) => {
     const base = `/hub/${country}`;
@@ -26,9 +39,10 @@ export function HubSubNav({ country, activeSections }: { country: string; active
             const cls = active
               ? `${base} text-[#D4A017] border-[#D4A017]`
               : `${base} text-[#888] hover:text-white border-transparent`;
+            const label = labelFor(s.key, s.label);
             return s.key === "inicio" ? (
               <Link key={s.key} to="/hub/$country" params={{ country }} className={cls}>
-                {s.label}
+                {label}
               </Link>
             ) : (
               <Link
@@ -37,7 +51,7 @@ export function HubSubNav({ country, activeSections }: { country: string; active
                 params={{ country, section: s.key }}
                 className={cls}
               >
-                {s.label}
+                {label}
               </Link>
             );
           })}
