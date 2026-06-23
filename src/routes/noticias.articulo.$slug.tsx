@@ -13,6 +13,8 @@ type Article = {
   excerpt: string | null;
   content: string | null;
   author: string;
+  writer_id: string | null;
+  writers: { id: string; full_name: string; published: boolean } | null;
   legacy_tag: string | null;
   image_url: string | null;
   gallery: string[] | null;
@@ -27,7 +29,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, legacy_tag, image_url, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .maybeSingle();
