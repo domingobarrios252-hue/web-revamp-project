@@ -452,6 +452,29 @@ function InterviewForm({
           )}
         </div>
 
+        <div className="md:col-span-2 border border-border bg-background p-3">
+          <div className="font-condensed mb-2 text-[11px] font-bold uppercase tracking-widest text-gold">
+            Visibilidad en hubs
+          </div>
+          <div className="flex flex-wrap gap-4">
+            {[
+              { code: "es", label: "🇪🇸 España" },
+              { code: "co", label: "🇨🇴 Colombia" },
+            ].map((h) => (
+              <label key={h.code} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={hubCountries.includes(h.code)}
+                  onChange={() => toggleHub(h.code)}
+                />
+                <span className="font-condensed text-xs uppercase tracking-widest">{h.label}</span>
+              </label>
+            ))}
+          </div>
+          <p className="font-condensed mt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+            Marca uno o varios hubs donde debe aparecer la entrevista.
+          </p>
+        </div>
 
         <label className="flex items-center gap-2 md:col-span-2">
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
