@@ -25,6 +25,7 @@ export type HubSectionKey =
   | "tv"
   | "live"
   | "mvp"
+  | "entrevistas"
   | "archivo"
   | "comunidad";
 
@@ -37,6 +38,7 @@ export const HUB_SECTIONS: { key: HubSectionKey; label: string }[] = [
   { key: "tv", label: "RollerZone TV" },
   { key: "live", label: "Live" },
   { key: "mvp", label: "MVP" },
+  { key: "entrevistas", label: "Entrevistas" },
   { key: "archivo", label: "Archivo" },
   { key: "comunidad", label: "Comunidad" },
 ];
