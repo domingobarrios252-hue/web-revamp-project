@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { supabase } from "@/integrations/supabase/client";
+import { CroppedImage } from "@/components/site/CroppedImage";
+import { Lightbox } from "@/components/site/Lightbox";
+import type { ImageCrops } from "@/lib/imageCrops";
 
 type Interview = {
   id: string;
@@ -12,6 +15,8 @@ type Interview = {
   interviewee_bio: string | null;
   interview_date: string;
   cover_url: string | null;
+  cover_crops: ImageCrops | null;
+  cover_display_mode: "crop" | "full";
   photos: string[];
   content: string | null;
   excerpt: string | null;
@@ -63,7 +68,16 @@ function EntrevistaDetalle() {
   if (loading) return <div className="px-6 py-10 text-muted-foreground">Cargando…</div>;
   if (missing || !item) throw notFound();
 
-  const allPhotos = item.cover_url ? [item.cover_url, ...item.photos] : item.photos;
+  // In 'crop' mode the cover is shown framed (Hero 16:9) above and the
+  // carousel only carries the extra photos. In 'full' mode we keep the
+  // legacy behaviour: cover prepended into the carousel.
+  const showCoverAsHero = item.cover_display_mode === "crop" && !!item.cover_url;
+  const carouselPhotos = showCoverAsHero
+    ? item.photos
+    : item.cover_url
+      ? [item.cover_url, ...item.photos]
+      : item.photos;
+  const lightboxImages = item.cover_url ? [item.cover_url, ...item.photos] : item.photos;
 
   return (
     <article className="mx-auto max-w-4xl px-4 py-8 md:px-6">
@@ -94,7 +108,23 @@ function EntrevistaDetalle() {
         </div>
       </header>
 
-      {allPhotos.length > 0 && <PhotoCarousel photos={allPhotos} alt={item.interviewee_name} />}
+      {showCoverAsHero && item.cover_url && (
+        <CoverHero
+          src={item.cover_url}
+          alt={item.interviewee_name}
+          crops={item.cover_crops}
+          allImages={lightboxImages}
+        />
+      )}
+
+      {carouselPhotos.length > 0 && (
+        <PhotoCarousel
+          photos={carouselPhotos}
+          alt={item.interviewee_name}
+          lightboxImages={lightboxImages}
+          lightboxOffset={showCoverAsHero && item.cover_url ? 1 : 0}
+        />
+      )}
 
       {item.interviewee_bio && (
         <section className="my-8 border-l-2 border-gold bg-surface p-5">
