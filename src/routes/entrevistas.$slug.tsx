@@ -140,11 +140,11 @@ function PhotoCarousel({ photos, alt }: { photos: string[]; alt: string }) {
         <div className="flex">
           {photos.map((src, i) => (
             <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="aspect-[16/10] w-full bg-background">
+              <div className="flex max-h-[80vh] w-full items-center justify-center bg-background">
                 <img
                   src={src}
                   alt={`${alt} — foto ${i + 1}`}
-                  className="h-full w-full object-cover"
+                  className="h-auto max-h-[80vh] w-full object-contain"
                   loading={i === 0 ? "eager" : "lazy"}
                 />
               </div>
