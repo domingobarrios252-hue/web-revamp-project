@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Calendar, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
 
 type Interview = {
   id: string;
@@ -10,6 +11,7 @@ type Interview = {
   interviewee_name: string;
   interview_date: string;
   cover_url: string | null;
+  cover_crops: ImageCrops | null;
   excerpt: string | null;
 };
 
@@ -33,7 +35,7 @@ function EntrevistasIndex() {
     (async () => {
       const { data } = await supabase
         .from("interviews")
-        .select("id,title,slug,interviewee_name,interview_date,cover_url,excerpt")
+        .select("id,title,slug,interviewee_name,interview_date,cover_url,cover_crops,excerpt")
         .eq("published", true)
         .order("interview_date", { ascending: false });
       setItems((data as Interview[]) ?? []);
@@ -70,9 +72,11 @@ function EntrevistasIndex() {
                   <img
                     src={it.cover_url}
                     alt={it.interviewee_name}
+                    style={{ objectPosition: cropObjectPosition(it.cover_crops, "card") }}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
+
                 ) : (
                   <div className="flex h-full items-center justify-center text-xs uppercase text-muted-foreground">
                     Sin portada
