@@ -6,6 +6,7 @@ import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { EmptyState } from "@/components/site/EmptyState";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
+import { cropObjectPosition } from "@/lib/imageCrops";
 
 type News = {
   id: string;
@@ -15,6 +16,7 @@ type News = {
   author: string;
   legacy_tag: string | null;
   image_url: string | null;
+  image_crops: import("@/lib/imageCrops").ImageCrops | null;
   views_count: number;
   published_at: string;
   news_categories: { name: string; slug: string; scope: string } | null;
@@ -51,7 +53,7 @@ function NoticiasIndexPage() {
     supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, author, legacy_tag, image_url, views_count, published_at, news_categories(name, slug, scope)"
+        "id, title, slug, excerpt, author, legacy_tag, image_url, image_crops, views_count, published_at, news_categories(name, slug, scope)"
       )
       .eq("published", true)
       .order("published_at", { ascending: false })
@@ -220,8 +222,10 @@ function NewsListCard({ news }: { news: News }) {
             src={news.image_url}
             alt={news.title}
             loading="lazy"
+            style={{ objectPosition: cropObjectPosition(news.image_crops, "card") }}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+
         ) : (
           <div className="hero-grid-bg flex h-full w-full items-center justify-center">
             <span className="font-display text-5xl tracking-widest text-gold/30">RZ</span>
