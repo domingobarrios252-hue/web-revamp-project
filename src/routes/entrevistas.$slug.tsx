@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { supabase } from "@/integrations/supabase/client";
+import { CroppedImage } from "@/components/site/CroppedImage";
+import { Lightbox } from "@/components/site/Lightbox";
+import type { ImageCrops } from "@/lib/imageCrops";
 
 type Interview = {
   id: string;
@@ -12,6 +15,8 @@ type Interview = {
   interviewee_bio: string | null;
   interview_date: string;
   cover_url: string | null;
+  cover_crops: ImageCrops | null;
+  cover_display_mode: "crop" | "full";
   photos: string[];
   content: string | null;
   excerpt: string | null;
@@ -63,7 +68,16 @@ function EntrevistaDetalle() {
   if (loading) return <div className="px-6 py-10 text-muted-foreground">Cargando…</div>;
   if (missing || !item) throw notFound();
 
-  const allPhotos = item.cover_url ? [item.cover_url, ...item.photos] : item.photos;
+  // In 'crop' mode the cover is shown framed (Hero 16:9) above and the
+  // carousel only carries the extra photos. In 'full' mode we keep the
+  // legacy behaviour: cover prepended into the carousel.
+  const showCoverAsHero = item.cover_display_mode === "crop" && !!item.cover_url;
+  const carouselPhotos = showCoverAsHero
+    ? item.photos
+    : item.cover_url
+      ? [item.cover_url, ...item.photos]
+      : item.photos;
+  const lightboxImages = item.cover_url ? [item.cover_url, ...item.photos] : item.photos;
 
   return (
     <article className="mx-auto max-w-4xl px-4 py-8 md:px-6">
@@ -94,7 +108,23 @@ function EntrevistaDetalle() {
         </div>
       </header>
 
-      {allPhotos.length > 0 && <PhotoCarousel photos={allPhotos} alt={item.interviewee_name} />}
+      {showCoverAsHero && item.cover_url && (
+        <CoverHero
+          src={item.cover_url}
+          alt={item.interviewee_name}
+          crops={item.cover_crops}
+          allImages={lightboxImages}
+        />
+      )}
+
+      {carouselPhotos.length > 0 && (
+        <PhotoCarousel
+          photos={carouselPhotos}
+          alt={item.interviewee_name}
+          lightboxImages={lightboxImages}
+          lightboxOffset={showCoverAsHero && item.cover_url ? 1 : 0}
+        />
+      )}
 
       {item.interviewee_bio && (
         <section className="my-8 border-l-2 border-gold bg-surface p-5">
@@ -120,9 +150,55 @@ function EntrevistaDetalle() {
   );
 }
 
-function PhotoCarousel({ photos, alt }: { photos: string[]; alt: string }) {
+function CoverHero({
+  src,
+  alt,
+  crops,
+  allImages,
+}: {
+  src: string;
+  alt: string;
+  crops: ImageCrops | null;
+  allImages: string[];
+}) {
+  const [open, setOpen] = useState(false);
+  const idx = allImages.indexOf(src);
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="group mb-6 block w-full overflow-hidden border border-border bg-black"
+        aria-label="Ver portada completa"
+      >
+        <CroppedImage src={src} alt={alt} crops={crops} ratio="hero" loading="eager" />
+      </button>
+      {open && (
+        <Lightbox
+          images={allImages}
+          startIndex={idx >= 0 ? idx : 0}
+          alt={alt}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </>
+  );
+}
+
+function PhotoCarousel({
+  photos,
+  alt,
+  lightboxImages,
+  lightboxOffset = 0,
+}: {
+  photos: string[];
+  alt: string;
+  lightboxImages?: string[];
+  lightboxOffset?: number;
+}) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selected, setSelected] = useState(0);
+  const [lightbox, setLightbox] = useState<number | null>(null);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -140,18 +216,33 @@ function PhotoCarousel({ photos, alt }: { photos: string[]; alt: string }) {
         <div className="flex">
           {photos.map((src, i) => (
             <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="flex max-h-[80vh] w-full items-center justify-center bg-background">
+              <button
+                type="button"
+                onClick={() => setLightbox(i)}
+                className="flex max-h-[80vh] w-full items-center justify-center bg-background"
+                aria-label={`Ver foto ${i + 1} completa`}
+              >
                 <img
                   src={src}
                   alt={`${alt} — foto ${i + 1}`}
                   className="h-auto max-h-[80vh] w-full object-contain"
                   loading={i === 0 ? "eager" : "lazy"}
                 />
-              </div>
+              </button>
             </div>
           ))}
         </div>
       </div>
+
+      {lightbox !== null && (
+        <Lightbox
+          images={lightboxImages ?? photos}
+          startIndex={(lightboxImages ? lightboxOffset : 0) + lightbox}
+          alt={alt}
+          onClose={() => setLightbox(null)}
+        />
+      )}
+
 
       {photos.length > 1 && (
         <>
