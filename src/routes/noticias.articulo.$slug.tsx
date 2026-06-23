@@ -217,13 +217,13 @@ function ArticlePage() {
                 href={src}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex aspect-[4/3] items-center justify-center overflow-hidden border border-border bg-black"
+                className="group flex items-center justify-center overflow-hidden border border-border bg-black"
               >
                 <img
                   src={src}
                   alt={`${article.title} — foto ${i + 1}`}
                   loading="lazy"
-                  className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="h-auto max-h-[70vh] w-full object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               </a>
             ))}
