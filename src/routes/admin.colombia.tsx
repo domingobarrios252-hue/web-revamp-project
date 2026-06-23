@@ -29,6 +29,7 @@ type HubRow = {
   federation_name: string | null;
   federation_url: string | null;
   active_sections: string[];
+  section_labels: Record<string, string> | null;
   active: boolean;
 };
 
