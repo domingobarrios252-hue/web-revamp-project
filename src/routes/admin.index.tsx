@@ -410,13 +410,8 @@ function NewsEditor({
       if (featured) {
         await supabase.from("news").update({ featured: false }).eq("featured", true);
       }
-      // Derive country_code from selected hubs to avoid legacy fallbacks
-      // showing the news in hubs the editor didn't choose.
-      let derivedCountry: string | null = null;
-      if (visES && !visCO) derivedCountry = "es";
-      else if (visCO && !visES) derivedCountry = "co";
-      else derivedCountry = null; // both or neither → no implicit hub
-
+      // Visibility rows below are authoritative for hub/home filtering,
+      // so country_code is intentionally left untouched here.
       const payload = {
         title: parsed.data.title,
         slug: parsed.data.slug,
@@ -432,7 +427,6 @@ function NewsEditor({
         featured: parsed.data.featured,
         status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
-        country_code: derivedCountry,
       };
       let newsId = item?.id ?? null;
       if (item) {
