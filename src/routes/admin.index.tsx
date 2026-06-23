@@ -414,13 +414,24 @@ function NewsEditor({
       toast.error("Redactor no válido");
       return;
     }
+    // Validación de consistencia: el country_code se deriva siempre del hub
+    // seleccionado, y los hubs de país son excluyentes — nunca se mezclan.
+    if (!visHome && hubScope === "none") {
+      toast.error("Selecciona al menos un destino (Portada general o un Hub de país).");
+      return;
+    }
+    // country_code debe ser non-null en BD. Si no se elige hub de país,
+    // conservamos el valor actual (o 'es' por defecto en nuevas noticias).
+    const derivedCountry: string =
+      hubScope === "es" ? "es" : hubScope === "co" ? "co" : (item?.country_code ?? "es");
+
     setSaving(true);
     try {
       if (featured) {
         await supabase.from("news").update({ featured: false }).eq("featured", true);
       }
-      // Visibility rows below are authoritative for hub/home filtering,
-      // so country_code is intentionally left untouched here.
+      // country_code se sincroniza siempre con el hub seleccionado para que
+      // los fallbacks legacy no muestren la noticia en hubs equivocados.
       const payload = {
         title: parsed.data.title,
         slug: parsed.data.slug,
@@ -436,6 +447,7 @@ function NewsEditor({
         featured: parsed.data.featured,
         status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
+        country_code: derivedCountry,
       };
       let newsId = item?.id ?? null;
       if (item) {
