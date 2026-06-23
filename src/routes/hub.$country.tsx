@@ -35,7 +35,7 @@ function HubLayout() {
   return (
     <div className="hub-readable bg-[#111]">
       <HubHero hub={hub} />
-      <HubSubNav country={country} activeSections={hub.active_sections} />
+      <HubSubNav country={country} activeSections={hub.active_sections} sectionLabels={hub.section_labels} />
       <Outlet />
     </div>
   );
