@@ -4,6 +4,8 @@ import { Plus, Pencil, Trash2, Upload, X, GripVertical } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import type { ImageCrops } from "@/lib/imageCrops";
 
 type Interview = {
   id: string;
@@ -13,6 +15,8 @@ type Interview = {
   interviewee_bio: string | null;
   interview_date: string;
   cover_url: string | null;
+  cover_crops: ImageCrops | null;
+  cover_display_mode: "crop" | "full";
   photos: string[];
   content: string | null;
   excerpt: string | null;
@@ -195,6 +199,12 @@ function InterviewForm({
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
   const [cover_url, setCover] = useState(initial?.cover_url ?? "");
+  const [coverCrops, setCoverCrops] = useState<ImageCrops>(
+    (initial?.cover_crops as ImageCrops | null) ?? {}
+  );
+  const [coverDisplayMode, setCoverDisplayMode] = useState<"crop" | "full">(
+    initial?.cover_display_mode ?? "crop"
+  );
   const [photos, setPhotos] = useState<string[]>(initial?.photos ?? []);
   const [published, setPublished] = useState(initial?.published ?? true);
   const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
@@ -280,6 +290,8 @@ function InterviewForm({
       excerpt: parsed.data.excerpt || null,
       content: parsed.data.content || null,
       cover_url: parsed.data.cover_url || null,
+      cover_crops: coverCrops as never,
+      cover_display_mode: coverDisplayMode,
       photos,
       published: parsed.data.published,
       country_code: hubCountries[0] ?? country_code ?? "es",
