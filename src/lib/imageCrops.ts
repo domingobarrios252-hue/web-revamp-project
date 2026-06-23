@@ -17,20 +17,33 @@ export type CropArea = { x: number; y: number; width: number; height: number };
 export type ImageCrops = Partial<Record<CropRatio, CropArea>>;
 
 /**
- * Convert a stored CropArea (percent of original image) into CSS
- * { objectPosition, transform } that frames the original image inside a
- * fixed-aspect container. The container should already have the target ratio.
- *
- * Strategy: the visible window inside the original is (width%, height%) at
- * (x%, y%). Render the original at scale = 100/visibleW (so the cropped window
- * fills the container width), and translate so the crop's top-left aligns
- * with the container's top-left.
+ * For object-cover layouts, return an `object-position` value centered on
+ * the saved crop. Lets a single original adapt to arbitrary card aspects
+ * while still respecting the editor's framing choice.
  */
-export function cropToBackground(area: CropArea | undefined): React.CSSProperties {
-  if (!area || area.width <= 0 || area.height <= 0) {
-    return { objectFit: "cover", objectPosition: "center" };
-  }
-  // Use background-image style positioning instead — applied on a wrapper div.
-  // (We use the <img> + transform approach in CroppedImage.)
-  return {};
+export function cropObjectPosition(
+  crops: ImageCrops | null | undefined,
+  ratio: CropRatio
+): string {
+  const area = crops?.[ratio];
+  if (!area || area.width <= 0 || area.height <= 0) return "center";
+  const cx = area.x + area.width / 2;
+  const cy = area.y + area.height / 2;
+  return `${cx.toFixed(2)}% ${cy.toFixed(2)}%`;
 }
+
+/** Best-fit ratio for a container aspect (width / height). */
+export function bestRatioForAspect(aspect: number): CropRatio {
+  // Closest of our 4 ratios
+  let best: CropRatio = "card";
+  let bestDelta = Infinity;
+  for (const r of CROP_RATIOS) {
+    const d = Math.abs(Math.log(aspect) - Math.log(r.aspect));
+    if (d < bestDelta) {
+      bestDelta = d;
+      best = r.key;
+    }
+  }
+  return best;
+}
+
