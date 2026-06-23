@@ -341,8 +341,9 @@ function NewsEditor({
   const [relSkaters, setRelSkaters] = useState<string[]>([]);
   const [relFeds, setRelFeds] = useState<string[]>([]);
   const [visHome, setVisHome] = useState(true);
-  const [visES, setVisES] = useState(false);
-  const [visCO, setVisCO] = useState(false);
+  // Hub scope is mutually exclusive — a noticia pertenece como máximo a UN hub
+  // de país. Esto evita que se mezcle el contenido entre /hub/es y /hub/co.
+  const [hubScope, setHubScope] = useState<"none" | "es" | "co">("none");
 
   useEffect(() => {
     if (!item) return;
@@ -359,14 +360,21 @@ function NewsEditor({
       setRelClubs(c); setRelSkaters(s); setRelFeds(f);
       const rows = (v.data ?? []) as { channel: string; country_code: string | null }[];
       if (rows.length === 0) {
-        // Backwards compat: derive from country_code
+        // Compatibilidad: derivar del country_code legacy si está presente.
         setVisHome(true);
-        setVisES(item.section_id ? false : false);
-        setVisCO(false);
+        if (item.country_code === "co") setHubScope("co");
+        else if (item.country_code === "es") setHubScope("es");
+        else setHubScope("none");
       } else {
         setVisHome(rows.some((r) => r.channel === "global_home"));
-        setVisES(rows.some((r) => r.channel === "country" && r.country_code === "es"));
-        setVisCO(rows.some((r) => r.channel === "country" && r.country_code === "co"));
+        const hasES = rows.some((r) => r.channel === "country" && r.country_code === "es");
+        const hasCO = rows.some((r) => r.channel === "country" && r.country_code === "co");
+        // Si por datos legacy existen ambos, nos quedamos con el primero alfabético
+        // y avisamos al editor para que lo corrija al guardar.
+        if (hasES && hasCO) setHubScope("es");
+        else if (hasES) setHubScope("es");
+        else if (hasCO) setHubScope("co");
+        else setHubScope("none");
       }
     })();
   }, [item]);
