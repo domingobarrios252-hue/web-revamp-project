@@ -566,7 +566,40 @@ function NewsEditor({
               folder="news"
               nameHint={slug || title}
               placeholder="URL o subir archivo"
+              crops={imageCrops}
+              onCropsChange={setImageCrops}
             />
+            {imageUrl && (
+              <div className="mt-3">
+                <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Imagen principal del artículo
+                </span>
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="hero-display-mode"
+                      value="crop"
+                      checked={heroDisplayMode === "crop"}
+                      onChange={() => setHeroDisplayMode("crop")}
+                      className="accent-[var(--gold,#caa15a)]"
+                    />
+                    Recortada (Hero 16:9)
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="hero-display-mode"
+                      value="full"
+                      checked={heroDisplayMode === "full"}
+                      onChange={() => setHeroDisplayMode("full")}
+                      className="accent-[var(--gold,#caa15a)]"
+                    />
+                    Completa (sin recorte)
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
           <div>
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
