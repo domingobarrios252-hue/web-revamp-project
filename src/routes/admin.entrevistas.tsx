@@ -198,6 +198,17 @@ function InterviewForm({
   const [photos, setPhotos] = useState<string[]>(initial?.photos ?? []);
   const [published, setPublished] = useState(initial?.published ?? true);
   const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
+  const [hubCountries, setHubCountries] = useState<string[]>(
+    initial?.hub_countries && initial.hub_countries.length > 0
+      ? initial.hub_countries
+      : initial?.country_code
+        ? [initial.country_code]
+        : ["es"],
+  );
+  const toggleHub = (code: string) =>
+    setHubCountries((prev) =>
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code],
+    );
   const [saving, setSaving] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
