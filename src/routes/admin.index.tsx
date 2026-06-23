@@ -22,6 +22,8 @@ type News = {
   category_id: string | null;
   legacy_tag: string | null;
   image_url: string | null;
+  image_crops: import("@/lib/imageCrops").ImageCrops | null;
+  hero_display_mode: "crop" | "full";
   gallery: string[];
   read_minutes: number | null;
   featured: boolean;
@@ -86,7 +88,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -332,6 +334,12 @@ function NewsEditor({
   const [categoryId, setCategoryId] = useState(item?.category_id ?? "");
   const [legacyTag, setLegacyTag] = useState(item?.legacy_tag ?? "");
   const [imageUrl, setImageUrl] = useState(item?.image_url ?? "");
+  const [imageCrops, setImageCrops] = useState<import("@/lib/imageCrops").ImageCrops>(
+    (item?.image_crops as import("@/lib/imageCrops").ImageCrops | null) ?? {}
+  );
+  const [heroDisplayMode, setHeroDisplayMode] = useState<"crop" | "full">(
+    item?.hero_display_mode ?? "crop"
+  );
   const [gallery, setGallery] = useState<string[]>(item?.gallery ?? []);
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
