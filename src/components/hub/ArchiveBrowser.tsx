@@ -81,7 +81,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
           .from("interviews")
           .select("id,slug,title,interviewee_name,cover_url,created_at")
           .eq("published", true)
-          .eq("country_code", country)
+          .or(`hub_countries.cs.{${country}},country_code.eq.${country}`)
           .order("created_at", { ascending: false })
           .limit(200),
         supabase
