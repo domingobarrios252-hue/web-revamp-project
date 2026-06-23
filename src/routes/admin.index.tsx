@@ -466,8 +466,8 @@ function NewsEditor({
             .in("channel", ["global_home", "country"]);
           const rows: { news_id: string; channel: "global_home" | "country"; country_code?: string }[] = [];
           if (visHome) rows.push({ news_id: newsId, channel: "global_home" });
-          if (visES) rows.push({ news_id: newsId, channel: "country", country_code: "es" });
-          if (visCO) rows.push({ news_id: newsId, channel: "country", country_code: "co" });
+          if (hubScope === "es") rows.push({ news_id: newsId, channel: "country", country_code: "es" });
+          if (hubScope === "co") rows.push({ news_id: newsId, channel: "country", country_code: "co" });
           const failed: string[] = [];
           for (const row of rows) {
             const { error: visErr } = await supabase.from("news_visibility").insert(row);
