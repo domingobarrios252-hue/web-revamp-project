@@ -71,6 +71,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
 function ArticlePage() {
   const { article } = Route.useLoaderData();
   const [views, setViews] = useState(article.views_count);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const url = typeof window !== "undefined" ? window.location.href : "";
 
   // Register a unique view per visitor
@@ -226,26 +227,39 @@ function ArticlePage() {
           <h3 className="font-display mb-4 text-sm uppercase tracking-widest text-gold">
             Galería de fotos
           </h3>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
             {article.gallery.map((src: string, i: number) => (
-              <a
+              <button
+                type="button"
                 key={i}
-                href={src}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center justify-center overflow-hidden border border-border bg-black"
+                onClick={() => setLightboxIndex(i)}
+                className="group block aspect-square overflow-hidden border border-border bg-black"
+                aria-label={`Abrir foto ${i + 1}`}
               >
                 <img
                   src={src}
                   alt={`${article.title} — foto ${i + 1}`}
                   loading="lazy"
-                  className="h-auto max-h-[70vh] w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-              </a>
+              </button>
             ))}
           </div>
+          <p className="font-condensed mt-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+            Toca una miniatura para verla completa
+          </p>
         </section>
       )}
+
+      {lightboxIndex !== null && Array.isArray(article.gallery) && (
+        <Lightbox
+          images={article.gallery}
+          startIndex={lightboxIndex}
+          alt={article.title}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
+
 
       {/* Banner publicidad in-article */}
       <div className="mt-10">
