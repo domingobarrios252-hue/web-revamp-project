@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getVisitorHash } from "@/lib/visitor";
 import { toast } from "sonner";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { CroppedImage } from "@/components/site/CroppedImage";
 
 type Article = {
   id: string;
