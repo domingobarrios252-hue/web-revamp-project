@@ -597,12 +597,40 @@ function NewsEditor({
             </span>
             <div className="flex flex-wrap gap-4">
               <Checkbox label="Portada general (home + /noticias)" checked={visHome} onChange={setVisHome} />
-              <Checkbox label="Hub España" checked={visES} onChange={setVisES} />
-              <Checkbox label="Hub Colombia" checked={visCO} onChange={setVisCO} />
             </div>
-            {!visHome && !visES && !visCO && (
+            <div className="mt-3">
+              <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                Hub de país (excluyentes — solo uno)
+              </span>
+              <div className="flex flex-wrap gap-4 text-sm">
+                {([
+                  { value: "none", label: "Ninguno" },
+                  { value: "es", label: "Hub España" },
+                  { value: "co", label: "Hub Colombia" },
+                ] as const).map((opt) => (
+                  <label key={opt.value} className="inline-flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="hubScope"
+                      value={opt.value}
+                      checked={hubScope === opt.value}
+                      onChange={() => setHubScope(opt.value)}
+                      className="accent-gold"
+                    />
+                    <span>{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            {!visHome && hubScope === "none" && (
               <p className="mt-2 text-xs text-amber-400">
                 Sin destino seleccionado: la noticia quedará oculta de todas las portadas y hubs.
+              </p>
+            )}
+            {hubScope !== "none" && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Solo se publicará en el hub <strong>{hubScope === "es" ? "España" : "Colombia"}</strong>
+                {visHome ? " además de la portada general." : "."} El <code>country_code</code> se sincroniza automáticamente.
               </p>
             )}
           </div>
