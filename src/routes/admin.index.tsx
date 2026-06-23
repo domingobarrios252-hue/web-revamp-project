@@ -32,6 +32,7 @@ type News = {
   review_feedback: string | null;
   views_count: number;
   published_at: string;
+  country_code: string | null;
 };
 
 const newsSchema = z.object({
