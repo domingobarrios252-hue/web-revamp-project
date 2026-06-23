@@ -153,9 +153,18 @@ function ArticlePage() {
         <div className="font-condensed mt-5 flex flex-wrap items-center gap-4 border-y border-border py-3 text-xs uppercase tracking-widest text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <UserIcon className="h-3.5 w-3.5 text-gold" />
-            <span className="text-foreground">{article.author}</span>
+            {article.writers?.published && article.writer_id ? (
+              <Link
+                to="/redactores/$id"
+                params={{ id: article.writer_id }}
+                className="text-foreground hover:text-gold hover:underline"
+              >
+                {article.writers.full_name}
+              </Link>
+            ) : (
+              <span className="text-foreground">{article.author}</span>
+            )}
           </span>
-          <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-gold" />
             {new Date(article.published_at).toLocaleDateString("es-ES", {
               day: "2-digit",
