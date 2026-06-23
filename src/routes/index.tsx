@@ -35,6 +35,7 @@ type News = {
   author: string;
   legacy_tag: string | null;
   image_url: string | null;
+  image_crops: import("@/lib/imageCrops").ImageCrops | null;
   read_minutes: number | null;
   featured: boolean;
   views_count: number;
@@ -76,7 +77,7 @@ function HomePage() {
     supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, author, legacy_tag, image_url, read_minutes, featured, hero_order, views_count, published_at, news_categories(name, slug, scope)"
+        "id, title, slug, excerpt, author, legacy_tag, image_url, image_crops, read_minutes, featured, hero_order, views_count, published_at, news_categories(name, slug, scope)"
       )
       .eq("published", true)
       .order("featured", { ascending: false })
