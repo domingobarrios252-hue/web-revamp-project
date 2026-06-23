@@ -353,11 +353,13 @@ function HeroSlide({
             src={slide.image_url}
             alt={slide.title}
             loading="eager"
+            style={{ objectPosition: cropObjectPosition(slide.image_crops, "hero") }}
             className={
-              "h-full w-full object-cover object-center transition-transform ease-out " +
+              "h-full w-full object-cover transition-transform ease-out " +
               (active ? "scale-110 duration-[8000ms]" : "scale-100 duration-[1200ms]")
             }
           />
+
         ) : (
           <div className="hero-grid-bg h-full w-full" />
         )}
@@ -438,8 +440,10 @@ function NewsGridCard({ news }: { news: News }) {
             src={news.image_url}
             alt={news.title}
             loading="lazy"
+            style={{ objectPosition: cropObjectPosition(news.image_crops, "card") }}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+
         ) : (
           <div className="hero-grid-bg flex h-full w-full items-center justify-center">
             <span className="font-display text-5xl tracking-widest text-gold/30">RZ</span>
@@ -494,9 +498,11 @@ function BigNewsCard({ news }: { news: News }) {
         <img
           src={news.image_url}
           alt={news.title}
+          style={{ objectPosition: cropObjectPosition(news.image_crops, "portrait") }}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         />
+
       ) : (
         <div className="hero-grid-bg absolute inset-0" />
       )}
@@ -535,9 +541,11 @@ function SmallNewsCard({ news }: { news: News }) {
         <img
           src={news.image_url}
           alt={news.title}
+          style={{ objectPosition: cropObjectPosition(news.image_crops, "portrait") }}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
+
       ) : (
         <div className="hero-grid-bg absolute inset-0" />
       )}
