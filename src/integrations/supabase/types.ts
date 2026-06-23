@@ -1039,6 +1039,8 @@ export type Database = {
         Row: {
           content: string | null
           country_code: string
+          cover_crops: Json
+          cover_display_mode: string
           cover_url: string | null
           created_at: string
           excerpt: string | null
@@ -1057,6 +1059,8 @@ export type Database = {
         Insert: {
           content?: string | null
           country_code?: string
+          cover_crops?: Json
+          cover_display_mode?: string
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
@@ -1075,6 +1079,8 @@ export type Database = {
         Update: {
           content?: string | null
           country_code?: string
+          cover_crops?: Json
+          cover_display_mode?: string
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
