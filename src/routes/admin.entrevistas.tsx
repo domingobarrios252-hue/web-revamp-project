@@ -19,6 +19,7 @@ type Interview = {
   published: boolean;
   sort_order: number;
   country_code: string | null;
+  hub_countries: string[];
 };
 
 const schema = z.object({
@@ -197,6 +198,17 @@ function InterviewForm({
   const [photos, setPhotos] = useState<string[]>(initial?.photos ?? []);
   const [published, setPublished] = useState(initial?.published ?? true);
   const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
+  const [hubCountries, setHubCountries] = useState<string[]>(
+    initial?.hub_countries && initial.hub_countries.length > 0
+      ? initial.hub_countries
+      : initial?.country_code
+        ? [initial.country_code]
+        : ["es"],
+  );
+  const toggleHub = (code: string) =>
+    setHubCountries((prev) =>
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code],
+    );
   const [saving, setSaving] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -270,7 +282,8 @@ function InterviewForm({
       cover_url: parsed.data.cover_url || null,
       photos,
       published: parsed.data.published,
-      country_code,
+      country_code: hubCountries[0] ?? country_code ?? "es",
+      hub_countries: hubCountries,
     };
     const { error } = initial
       ? await supabase.from("interviews").update(payload).eq("id", initial.id)
@@ -439,6 +452,29 @@ function InterviewForm({
           )}
         </div>
 
+        <div className="md:col-span-2 border border-border bg-background p-3">
+          <div className="font-condensed mb-2 text-[11px] font-bold uppercase tracking-widest text-gold">
+            Visibilidad en hubs
+          </div>
+          <div className="flex flex-wrap gap-4">
+            {[
+              { code: "es", label: "🇪🇸 España" },
+              { code: "co", label: "🇨🇴 Colombia" },
+            ].map((h) => (
+              <label key={h.code} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={hubCountries.includes(h.code)}
+                  onChange={() => toggleHub(h.code)}
+                />
+                <span className="font-condensed text-xs uppercase tracking-widest">{h.label}</span>
+              </label>
+            ))}
+          </div>
+          <p className="font-condensed mt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+            Marca uno o varios hubs donde debe aparecer la entrevista.
+          </p>
+        </div>
 
         <label className="flex items-center gap-2 md:col-span-2">
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />

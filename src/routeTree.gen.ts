@@ -96,6 +96,7 @@ import { Route as HubCountryPatinadoresRouteImport } from './routes/hub.$country
 import { Route as HubCountryMvpRouteImport } from './routes/hub.$country.mvp'
 import { Route as HubCountryLiveRouteImport } from './routes/hub.$country.live'
 import { Route as HubCountryFederacionesRouteImport } from './routes/hub.$country.federaciones'
+import { Route as HubCountryEntrevistasRouteImport } from './routes/hub.$country.entrevistas'
 import { Route as HubCountryComunidadRouteImport } from './routes/hub.$country.comunidad'
 import { Route as HubCountryCompeticionRouteImport } from './routes/hub.$country.competicion'
 import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.clubes'
@@ -554,6 +555,11 @@ const HubCountryFederacionesRoute = HubCountryFederacionesRouteImport.update({
   path: '/federaciones',
   getParentRoute: () => HubCountryRoute,
 } as any)
+const HubCountryEntrevistasRoute = HubCountryEntrevistasRouteImport.update({
+  id: '/entrevistas',
+  path: '/entrevistas',
+  getParentRoute: () => HubCountryRoute,
+} as any)
 const HubCountryComunidadRoute = HubCountryComunidadRouteImport.update({
   id: '/comunidad',
   path: '/comunidad',
@@ -761,6 +767,7 @@ export interface FileRoutesByFullPath {
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
   '/hub/$country/competicion': typeof HubCountryCompeticionRouteWithChildren
   '/hub/$country/comunidad': typeof HubCountryComunidadRoute
+  '/hub/$country/entrevistas': typeof HubCountryEntrevistasRoute
   '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/live': typeof HubCountryLiveRoute
   '/hub/$country/mvp': typeof HubCountryMvpRoute
@@ -867,6 +874,7 @@ export interface FileRoutesByTo {
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/comunidad': typeof HubCountryComunidadRoute
+  '/hub/$country/entrevistas': typeof HubCountryEntrevistasRoute
   '/hub/$country/live': typeof HubCountryLiveRoute
   '/hub/$country/mvp': typeof HubCountryMvpRoute
   '/hub/$country/rfep': typeof HubCountryRfepRoute
@@ -975,6 +983,7 @@ export interface FileRoutesById {
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
   '/hub/$country/competicion': typeof HubCountryCompeticionRouteWithChildren
   '/hub/$country/comunidad': typeof HubCountryComunidadRoute
+  '/hub/$country/entrevistas': typeof HubCountryEntrevistasRoute
   '/hub/$country/federaciones': typeof HubCountryFederacionesRouteWithChildren
   '/hub/$country/live': typeof HubCountryLiveRoute
   '/hub/$country/mvp': typeof HubCountryMvpRoute
@@ -1088,6 +1097,7 @@ export interface FileRouteTypes {
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
     | '/hub/$country/comunidad'
+    | '/hub/$country/entrevistas'
     | '/hub/$country/federaciones'
     | '/hub/$country/live'
     | '/hub/$country/mvp'
@@ -1194,6 +1204,7 @@ export interface FileRouteTypes {
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
     | '/hub/$country/comunidad'
+    | '/hub/$country/entrevistas'
     | '/hub/$country/live'
     | '/hub/$country/mvp'
     | '/hub/$country/rfep'
@@ -1301,6 +1312,7 @@ export interface FileRouteTypes {
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
     | '/hub/$country/comunidad'
+    | '/hub/$country/entrevistas'
     | '/hub/$country/federaciones'
     | '/hub/$country/live'
     | '/hub/$country/mvp'
@@ -1984,6 +1996,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryFederacionesRouteImport
       parentRoute: typeof HubCountryRoute
     }
+    '/hub/$country/entrevistas': {
+      id: '/hub/$country/entrevistas'
+      path: '/entrevistas'
+      fullPath: '/hub/$country/entrevistas'
+      preLoaderRoute: typeof HubCountryEntrevistasRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
     '/hub/$country/comunidad': {
       id: '/hub/$country/comunidad'
       path: '/comunidad'
@@ -2363,6 +2382,7 @@ interface HubCountryRouteChildren {
   HubCountryClubesRoute: typeof HubCountryClubesRouteWithChildren
   HubCountryCompeticionRoute: typeof HubCountryCompeticionRouteWithChildren
   HubCountryComunidadRoute: typeof HubCountryComunidadRoute
+  HubCountryEntrevistasRoute: typeof HubCountryEntrevistasRoute
   HubCountryFederacionesRoute: typeof HubCountryFederacionesRouteWithChildren
   HubCountryLiveRoute: typeof HubCountryLiveRoute
   HubCountryMvpRoute: typeof HubCountryMvpRoute
@@ -2379,6 +2399,7 @@ const HubCountryRouteChildren: HubCountryRouteChildren = {
   HubCountryClubesRoute: HubCountryClubesRouteWithChildren,
   HubCountryCompeticionRoute: HubCountryCompeticionRouteWithChildren,
   HubCountryComunidadRoute: HubCountryComunidadRoute,
+  HubCountryEntrevistasRoute: HubCountryEntrevistasRoute,
   HubCountryFederacionesRoute: HubCountryFederacionesRouteWithChildren,
   HubCountryLiveRoute: HubCountryLiveRoute,
   HubCountryMvpRoute: HubCountryMvpRoute,
