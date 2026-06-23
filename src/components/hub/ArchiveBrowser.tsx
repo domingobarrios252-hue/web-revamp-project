@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Search, Calendar, Trophy, Mic, Newspaper, Crown, X } from "lucide-react";
+import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
 
 type NewsRow = {
   id: string;
@@ -13,6 +14,7 @@ type NewsRow = {
   excerpt: string | null;
   content: string | null;
   image_url: string | null;
+  image_crops: ImageCrops | null;
   published_at: string | null;
 };
 type EventRow = {
@@ -64,7 +66,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
       const [n, e, i, l, sk, cl] = await Promise.all([
         supabase
           .from("news")
-          .select("id,slug,title,excerpt,content,image_url,published_at")
+          .select("id,slug,title,excerpt,content,image_url,image_crops,published_at")
           .eq("published", true)
           .eq("country_code", country)
           .order("published_at", { ascending: false })
@@ -328,10 +330,12 @@ export function ArchiveBrowser({ country }: { country: string }) {
                           src={n.image_url}
                           alt={n.title}
                           loading="lazy"
+                          style={{ objectPosition: cropObjectPosition(n.image_crops, "card") }}
                           className="h-full w-full object-cover transition-transform group-hover:scale-105"
                         />
                       </div>
                     ) : null}
+
                     <div className="p-4">
                       <p className="font-condensed text-[10px] uppercase tracking-widest text-gold">
                         {n.published_at?.slice(0, 10)}
