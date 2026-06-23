@@ -383,29 +383,53 @@ function InterviewForm({
           />
         </label>
 
-        <label className="block md:col-span-2">
+        <div className="block md:col-span-2">
           <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
             Portada
           </span>
-          <div className="flex items-center gap-2">
-            <input
-              value={cover_url}
-              onChange={(e) => setCover(e.target.value)}
-              placeholder="URL o subir archivo"
-              className="input flex-1"
-            />
-            <label className="font-condensed inline-flex cursor-pointer items-center gap-1 border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold/10">
-              <Upload className="h-3.5 w-3.5" /> {uploadingCover ? "…" : "Subir"}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => e.target.files?.[0] && uploadCover(e.target.files[0])}
-                className="hidden"
-              />
-            </label>
-          </div>
-          {cover_url && <img src={cover_url} alt="" className="mt-2 h-32 w-48 object-cover" />}
-        </label>
+          <ImageUploadField
+            value={cover_url}
+            onChange={setCover}
+            folder="interviews"
+            nameHint={slug || title}
+            placeholder="URL o subir archivo"
+            previewClassName="mt-2 h-32 w-48 object-cover"
+            crops={coverCrops}
+            onCropsChange={setCoverCrops}
+          />
+          {cover_url && (
+            <div className="mt-3">
+              <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                Portada en la página de la entrevista
+              </span>
+              <div className="flex flex-wrap gap-3 text-sm">
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name={`cover-display-mode-${initial?.id ?? "new"}`}
+                    value="crop"
+                    checked={coverDisplayMode === "crop"}
+                    onChange={() => setCoverDisplayMode("crop")}
+                    className="accent-[var(--gold,#caa15a)]"
+                  />
+                  Recortada (Hero 16:9)
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name={`cover-display-mode-${initial?.id ?? "new"}`}
+                    value="full"
+                    checked={coverDisplayMode === "full"}
+                    onChange={() => setCoverDisplayMode("full")}
+                    className="accent-[var(--gold,#caa15a)]"
+                  />
+                  Completa (sin recorte)
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+
 
         <div className="md:col-span-2">
           <div className="font-condensed mb-2 flex items-center justify-between">
