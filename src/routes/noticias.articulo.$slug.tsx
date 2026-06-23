@@ -165,6 +165,7 @@ function ArticlePage() {
               <span className="text-foreground">{article.author}</span>
             )}
           </span>
+          <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-gold" />
             {new Date(article.published_at).toLocaleDateString("es-ES", {
               day: "2-digit",
