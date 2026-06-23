@@ -32,6 +32,7 @@ type News = {
   review_feedback: string | null;
   views_count: number;
   published_at: string;
+  country_code: string | null;
 };
 
 const newsSchema = z.object({
@@ -85,7 +86,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -341,8 +342,9 @@ function NewsEditor({
   const [relSkaters, setRelSkaters] = useState<string[]>([]);
   const [relFeds, setRelFeds] = useState<string[]>([]);
   const [visHome, setVisHome] = useState(true);
-  const [visES, setVisES] = useState(false);
-  const [visCO, setVisCO] = useState(false);
+  // Hub scope is mutually exclusive — a noticia pertenece como máximo a UN hub
+  // de país. Esto evita que se mezcle el contenido entre /hub/es y /hub/co.
+  const [hubScope, setHubScope] = useState<"none" | "es" | "co">("none");
 
   useEffect(() => {
     if (!item) return;
@@ -359,14 +361,21 @@ function NewsEditor({
       setRelClubs(c); setRelSkaters(s); setRelFeds(f);
       const rows = (v.data ?? []) as { channel: string; country_code: string | null }[];
       if (rows.length === 0) {
-        // Backwards compat: derive from country_code
+        // Compatibilidad: derivar del country_code legacy si está presente.
         setVisHome(true);
-        setVisES(item.section_id ? false : false);
-        setVisCO(false);
+        if (item.country_code === "co") setHubScope("co");
+        else if (item.country_code === "es") setHubScope("es");
+        else setHubScope("none");
       } else {
         setVisHome(rows.some((r) => r.channel === "global_home"));
-        setVisES(rows.some((r) => r.channel === "country" && r.country_code === "es"));
-        setVisCO(rows.some((r) => r.channel === "country" && r.country_code === "co"));
+        const hasES = rows.some((r) => r.channel === "country" && r.country_code === "es");
+        const hasCO = rows.some((r) => r.channel === "country" && r.country_code === "co");
+        // Si por datos legacy existen ambos, nos quedamos con el primero alfabético
+        // y avisamos al editor para que lo corrija al guardar.
+        if (hasES && hasCO) setHubScope("es");
+        else if (hasES) setHubScope("es");
+        else if (hasCO) setHubScope("co");
+        else setHubScope("none");
       }
     })();
   }, [item]);
@@ -405,13 +414,24 @@ function NewsEditor({
       toast.error("Redactor no válido");
       return;
     }
+    // Validación de consistencia: el country_code se deriva siempre del hub
+    // seleccionado, y los hubs de país son excluyentes — nunca se mezclan.
+    if (!visHome && hubScope === "none") {
+      toast.error("Selecciona al menos un destino (Portada general o un Hub de país).");
+      return;
+    }
+    // country_code debe ser non-null en BD. Si no se elige hub de país,
+    // conservamos el valor actual (o 'es' por defecto en nuevas noticias).
+    const derivedCountry: string =
+      hubScope === "es" ? "es" : hubScope === "co" ? "co" : (item?.country_code ?? "es");
+
     setSaving(true);
     try {
       if (featured) {
         await supabase.from("news").update({ featured: false }).eq("featured", true);
       }
-      // Visibility rows below are authoritative for hub/home filtering,
-      // so country_code is intentionally left untouched here.
+      // country_code se sincroniza siempre con el hub seleccionado para que
+      // los fallbacks legacy no muestren la noticia en hubs equivocados.
       const payload = {
         title: parsed.data.title,
         slug: parsed.data.slug,
@@ -427,6 +447,7 @@ function NewsEditor({
         featured: parsed.data.featured,
         status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
+        country_code: derivedCountry,
       };
       let newsId = item?.id ?? null;
       if (item) {
@@ -457,8 +478,8 @@ function NewsEditor({
             .in("channel", ["global_home", "country"]);
           const rows: { news_id: string; channel: "global_home" | "country"; country_code?: string }[] = [];
           if (visHome) rows.push({ news_id: newsId, channel: "global_home" });
-          if (visES) rows.push({ news_id: newsId, channel: "country", country_code: "es" });
-          if (visCO) rows.push({ news_id: newsId, channel: "country", country_code: "co" });
+          if (hubScope === "es") rows.push({ news_id: newsId, channel: "country", country_code: "es" });
+          if (hubScope === "co") rows.push({ news_id: newsId, channel: "country", country_code: "co" });
           const failed: string[] = [];
           for (const row of rows) {
             const { error: visErr } = await supabase.from("news_visibility").insert(row);
@@ -588,12 +609,40 @@ function NewsEditor({
             </span>
             <div className="flex flex-wrap gap-4">
               <Checkbox label="Portada general (home + /noticias)" checked={visHome} onChange={setVisHome} />
-              <Checkbox label="Hub España" checked={visES} onChange={setVisES} />
-              <Checkbox label="Hub Colombia" checked={visCO} onChange={setVisCO} />
             </div>
-            {!visHome && !visES && !visCO && (
+            <div className="mt-3">
+              <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                Hub de país (excluyentes — solo uno)
+              </span>
+              <div className="flex flex-wrap gap-4 text-sm">
+                {([
+                  { value: "none", label: "Ninguno" },
+                  { value: "es", label: "Hub España" },
+                  { value: "co", label: "Hub Colombia" },
+                ] as const).map((opt) => (
+                  <label key={opt.value} className="inline-flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="hubScope"
+                      value={opt.value}
+                      checked={hubScope === opt.value}
+                      onChange={() => setHubScope(opt.value)}
+                      className="accent-gold"
+                    />
+                    <span>{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            {!visHome && hubScope === "none" && (
               <p className="mt-2 text-xs text-amber-400">
                 Sin destino seleccionado: la noticia quedará oculta de todas las portadas y hubs.
+              </p>
+            )}
+            {hubScope !== "none" && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Solo se publicará en el hub <strong>{hubScope === "es" ? "España" : "Colombia"}</strong>
+                {visHome ? " además de la portada general." : "."} El <code>country_code</code> se sincroniza automáticamente.
               </p>
             )}
           </div>
