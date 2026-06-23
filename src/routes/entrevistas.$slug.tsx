@@ -150,9 +150,55 @@ function EntrevistaDetalle() {
   );
 }
 
-function PhotoCarousel({ photos, alt }: { photos: string[]; alt: string }) {
+function CoverHero({
+  src,
+  alt,
+  crops,
+  allImages,
+}: {
+  src: string;
+  alt: string;
+  crops: ImageCrops | null;
+  allImages: string[];
+}) {
+  const [open, setOpen] = useState(false);
+  const idx = allImages.indexOf(src);
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="group mb-6 block w-full overflow-hidden border border-border bg-black"
+        aria-label="Ver portada completa"
+      >
+        <CroppedImage src={src} alt={alt} crops={crops} ratio="hero" loading="eager" />
+      </button>
+      {open && (
+        <Lightbox
+          images={allImages}
+          startIndex={idx >= 0 ? idx : 0}
+          alt={alt}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </>
+  );
+}
+
+function PhotoCarousel({
+  photos,
+  alt,
+  lightboxImages,
+  lightboxOffset = 0,
+}: {
+  photos: string[];
+  alt: string;
+  lightboxImages?: string[];
+  lightboxOffset?: number;
+}) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selected, setSelected] = useState(0);
+  const [lightbox, setLightbox] = useState<number | null>(null);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -170,18 +216,33 @@ function PhotoCarousel({ photos, alt }: { photos: string[]; alt: string }) {
         <div className="flex">
           {photos.map((src, i) => (
             <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="flex max-h-[80vh] w-full items-center justify-center bg-background">
+              <button
+                type="button"
+                onClick={() => setLightbox(i)}
+                className="flex max-h-[80vh] w-full items-center justify-center bg-background"
+                aria-label={`Ver foto ${i + 1} completa`}
+              >
                 <img
                   src={src}
                   alt={`${alt} — foto ${i + 1}`}
                   className="h-auto max-h-[80vh] w-full object-contain"
                   loading={i === 0 ? "eager" : "lazy"}
                 />
-              </div>
+              </button>
             </div>
           ))}
         </div>
       </div>
+
+      {lightbox !== null && (
+        <Lightbox
+          images={lightboxImages ?? photos}
+          startIndex={(lightboxImages ? lightboxOffset : 0) + lightbox}
+          alt={alt}
+          onClose={() => setLightbox(null)}
+        />
+      )}
+
 
       {photos.length > 1 && (
         <>
