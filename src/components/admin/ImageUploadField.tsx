@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Upload } from "lucide-react";
+import { Upload, Crop as CropIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ImageCropEditor } from "@/components/admin/ImageCropEditor";
+import type { ImageCrops } from "@/lib/imageCrops";
 
 type Props = {
   /** Current public URL value */
@@ -20,6 +22,10 @@ type Props = {
   previewClassName?: string;
   /** Placeholder for the URL input */
   placeholder?: string;
+  /** Optional crop metadata. When provided, shows "Editar encuadre" button. */
+  crops?: ImageCrops | null;
+  /** Called when the user saves new crop metadata. */
+  onCropsChange?: (next: ImageCrops) => void;
 };
 
 function safeName(s?: string) {
@@ -41,8 +47,11 @@ export function ImageUploadField({
   accept = "image/*",
   previewClassName = "mt-2 h-24 w-40 object-cover",
   placeholder = "URL o subir archivo",
+  crops,
+  onCropsChange,
 }: Props) {
   const [uploading, setUploading] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,12 +71,16 @@ export function ImageUploadField({
       }
       const { data } = supabase.storage.from(bucket).getPublicUrl(path);
       onChange(data.publicUrl);
+      // Reset crops on new image — the previous framing no longer applies.
+      if (onCropsChange) onCropsChange({});
       toast.success("Imagen subida");
     } finally {
       setUploading(false);
       e.target.value = "";
     }
   };
+
+  const cropsCount = crops ? Object.keys(crops).length : 0;
 
   return (
     <div>
@@ -82,8 +95,29 @@ export function ImageUploadField({
           <Upload className="h-3.5 w-3.5" /> {uploading ? "Subiendo…" : "Subir"}
           <input type="file" accept={accept} onChange={handleFile} className="hidden" />
         </label>
+        {onCropsChange && value && (
+          <button
+            type="button"
+            onClick={() => setEditorOpen(true)}
+            className="font-condensed inline-flex items-center gap-1 border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold/10"
+            title="Definir recortes Hero, Card, Miniatura y Retrato"
+          >
+            <CropIcon className="h-3.5 w-3.5" /> Encuadre
+            {cropsCount > 0 && (
+              <span className="ml-1 rounded bg-gold/20 px-1 text-[10px]">{cropsCount}/4</span>
+            )}
+          </button>
+        )}
       </div>
       {value && <img src={value} alt="" className={previewClassName} />}
+      {editorOpen && onCropsChange && value && (
+        <ImageCropEditor
+          imageUrl={value}
+          value={crops ?? {}}
+          onChange={onCropsChange}
+          onClose={() => setEditorOpen(false)}
+        />
+      )}
     </div>
   );
 }
