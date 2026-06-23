@@ -218,6 +218,9 @@ function SectionsEditor({ hub, onSaved }: { hub: HubRow; onSaved: () => void }) 
     HUB_SECTIONS.some((s) => s.key === k),
   ) as HubSectionKey[];
   const [order, setOrder] = useState<HubSectionKey[]>(initial);
+  const [labels, setLabels] = useState<Record<string, string>>(
+    () => ({ ...(hub.section_labels ?? {}) }),
+  );
   const [saving, setSaving] = useState(false);
 
   const allKeys = HUB_SECTIONS.map((s) => s.key);
@@ -235,12 +238,29 @@ function SectionsEditor({ hub, onSaved }: { hub: HubRow; onSaved: () => void }) 
     setOrder(on ? [...order, key] : order.filter((k) => k !== key));
   };
 
+  const setLabel = (key: HubSectionKey, value: string) => {
+    setLabels((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const resetLabel = (key: HubSectionKey) => {
+    setLabels((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
   const save = async () => {
     setSaving(true);
+    const cleanLabels: Record<string, string> = {};
+    for (const k of order) {
+      const v = (labels[k] ?? "").trim();
+      if (v) cleanLabels[k] = v;
+    }
     const sb = supabase as any;
     const { error } = await sb
       .from("country_hubs")
-      .update({ active_sections: order })
+      .update({ active_sections: order, section_labels: cleanLabels })
       .eq("id", hub.id);
     setSaving(false);
     if (error) {
@@ -254,8 +274,8 @@ function SectionsEditor({ hub, onSaved }: { hub: HubRow; onSaved: () => void }) 
   return (
     <section className="rounded-xl border border-border bg-surface p-5">
       <SectionTitle
-        title="Subsecciones visibles"
-        hint="Activa/desactiva y arrastra el orden de la barra de navegación del hub."
+        title="Subsecciones del hub"
+        hint="Activa, oculta, reordena y renombra las pestañas que se publican en la barra de navegación."
       />
       <div className="mt-4 grid gap-6 md:grid-cols-2">
         <div>
@@ -268,24 +288,49 @@ function SectionsEditor({ hub, onSaved }: { hub: HubRow; onSaved: () => void }) 
             <ul className="space-y-1">
               {order.map((key, i) => {
                 const s = HUB_SECTIONS.find((x) => x.key === key)!;
+                const current = labels[key] ?? "";
                 return (
                   <li
                     key={key}
-                    className="flex items-center gap-2 rounded border border-border bg-background px-3 py-2"
+                    className="flex flex-col gap-2 rounded border border-border bg-background px-3 py-2 sm:flex-row sm:items-center"
                   >
                     <span className="font-condensed w-6 text-center text-xs font-bold text-gold">
                       {i + 1}
                     </span>
-                    <span className="flex-1 text-sm">{s.label}</span>
-                    <IconBtn title="Subir" onClick={() => move(i, -1)}>
-                      <ArrowUp className="h-4 w-4" />
-                    </IconBtn>
-                    <IconBtn title="Bajar" onClick={() => move(i, 1)}>
-                      <ArrowDown className="h-4 w-4" />
-                    </IconBtn>
-                    <IconBtn title="Ocultar" onClick={() => toggle(key, false)}>
-                      <EyeOff className="h-4 w-4 text-destructive" />
-                    </IconBtn>
+                    <div className="flex-1">
+                      <div className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">
+                        {s.label}
+                      </div>
+                      <div className="mt-1 flex items-center gap-1">
+                        <input
+                          value={current}
+                          onChange={(e) => setLabel(key, e.target.value)}
+                          placeholder={s.label}
+                          className="w-full rounded border border-border bg-background px-2 py-1 text-sm"
+                        />
+                        {current && (
+                          <button
+                            type="button"
+                            onClick={() => resetLabel(key)}
+                            className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground hover:text-gold"
+                            title="Restaurar nombre"
+                          >
+                            Reset
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <IconBtn title="Subir" onClick={() => move(i, -1)}>
+                        <ArrowUp className="h-4 w-4" />
+                      </IconBtn>
+                      <IconBtn title="Bajar" onClick={() => move(i, 1)}>
+                        <ArrowDown className="h-4 w-4" />
+                      </IconBtn>
+                      <IconBtn title="Eliminar de la barra" onClick={() => toggle(key, false)}>
+                        <EyeOff className="h-4 w-4 text-destructive" />
+                      </IconBtn>
+                    </div>
                   </li>
                 );
               })}
@@ -308,7 +353,7 @@ function SectionsEditor({ hub, onSaved }: { hub: HubRow; onSaved: () => void }) 
                     className="flex items-center gap-2 rounded border border-dashed border-border px-3 py-2"
                   >
                     <span className="flex-1 text-sm text-muted-foreground">{s.label}</span>
-                    <IconBtn title="Activar" onClick={() => toggle(key, true)}>
+                    <IconBtn title="Añadir a la barra" onClick={() => toggle(key, true)}>
                       <Eye className="h-4 w-4 text-gold" />
                     </IconBtn>
                   </li>
