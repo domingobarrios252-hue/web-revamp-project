@@ -1,10 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, X, ArrowUp, ArrowDown, Star, Eye, EyeOff } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  X,
+  Star,
+  Eye,
+  EyeOff,
+  GripVertical,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import type { ImageCrops } from "@/lib/imageCrops";
+import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type Piece = {
   id: string;
@@ -19,6 +47,7 @@ type Piece = {
   featured: boolean;
   visible: boolean;
   status: string;
+  crops: ImageCrops | null;
 };
 
 const SPECIALS = [
@@ -41,7 +70,7 @@ export const Route = createFileRoute("/admin/especiales")({
   component: AdminEspeciales,
 });
 
-const emptyForm: {
+type FormState = {
   slug: string;
   number: string;
   kicker: string;
@@ -52,7 +81,10 @@ const emptyForm: {
   featured: boolean;
   visible: boolean;
   status: string;
-} = {
+  crops: ImageCrops;
+};
+
+const emptyForm: FormState = {
   slug: "",
   number: "",
   kicker: "",
@@ -63,6 +95,7 @@ const emptyForm: {
   featured: false,
   visible: true,
   status: "live",
+  crops: {},
 };
 
 function AdminEspeciales() {
@@ -72,7 +105,12 @@ function AdminEspeciales() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Piece | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<FormState>(emptyForm);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
   const load = async () => {
     setLoading(true);
@@ -113,6 +151,7 @@ function AdminEspeciales() {
       featured: p.featured,
       visible: p.visible,
       status: p.status,
+      crops: (p.crops ?? {}) as ImageCrops,
     });
     setShowForm(true);
   };
@@ -136,6 +175,7 @@ function AdminEspeciales() {
       featured: form.featured,
       visible: form.visible,
       status: form.status,
+      crops: form.crops as unknown as Record<string, unknown>,
     };
     if (editing) {
       const { error } = await supabase
@@ -163,26 +203,6 @@ function AdminEspeciales() {
     load();
   };
 
-  const move = async (p: Piece, dir: -1 | 1) => {
-    const idx = items.findIndex((x) => x.id === p.id);
-    const swap = items[idx + dir];
-    if (!swap) return;
-    const a = supabase
-      .from("special_pieces")
-      .update({ sort_order: swap.sort_order })
-      .eq("id", p.id);
-    const b = supabase
-      .from("special_pieces")
-      .update({ sort_order: p.sort_order })
-      .eq("id", swap.id);
-    const [r1, r2] = await Promise.all([a, b]);
-    if (r1.error || r2.error) {
-      toast.error("No se pudo reordenar");
-      return;
-    }
-    load();
-  };
-
   const remove = async (p: Piece) => {
     if (!isAdmin) return toast.error("Solo administradores");
     if (!confirm(`¿Eliminar "${p.title}"?`)) return;
@@ -192,13 +212,39 @@ function AdminEspeciales() {
     load();
   };
 
+  const onDragEnd = async (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    const oldIdx = items.findIndex((x) => x.id === active.id);
+    const newIdx = items.findIndex((x) => x.id === over.id);
+    if (oldIdx < 0 || newIdx < 0) return;
+    const reordered = arrayMove(items, oldIdx, newIdx).map((it, i) => ({
+      ...it,
+      sort_order: (i + 1) * 10,
+    }));
+    setItems(reordered); // optimistic
+    const updates = reordered.map((it) =>
+      supabase
+        .from("special_pieces")
+        .update({ sort_order: it.sort_order })
+        .eq("id", it.id),
+    );
+    const results = await Promise.all(updates);
+    if (results.some((r) => r.error)) {
+      toast.error("No se pudo guardar el nuevo orden");
+      load();
+    } else {
+      toast.success("Orden actualizado");
+    }
+  };
+
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl tracking-widest">ESPECIALES EDITORIALES</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Gestiona piezas del dossier: orden, destacadas y visibilidad pública.
+            Arrastra para reordenar. Edita imagen y encuadre por pieza.
           </p>
         </div>
         <button
@@ -233,98 +279,26 @@ function AdminEspeciales() {
           Sin piezas. Crea la primera.
         </div>
       ) : (
-        <div className="border border-border bg-surface">
-          <table className="w-full">
-            <thead className="border-b border-border bg-background/50">
-              <tr className="font-condensed text-left text-[11px] uppercase tracking-widest text-muted-foreground">
-                <th className="px-3 py-2 w-24">Orden</th>
-                <th className="px-3 py-2 w-16">Nº</th>
-                <th className="px-3 py-2">Pieza</th>
-                <th className="px-3 py-2 w-28">Estado</th>
-                <th className="px-3 py-2 w-20 text-center">Destacada</th>
-                <th className="px-3 py-2 w-20 text-center">Visible</th>
-                <th className="px-3 py-2 w-32 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((p, i) => (
-                <tr key={p.id} className="border-b border-border last:border-b-0">
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => move(p, -1)}
-                        disabled={i === 0}
-                        className="rounded border border-border p-1 text-muted-foreground hover:text-gold disabled:opacity-30"
-                        aria-label="Subir"
-                      >
-                        <ArrowUp className="h-3 w-3" />
-                      </button>
-                      <button
-                        onClick={() => move(p, 1)}
-                        disabled={i === items.length - 1}
-                        className="rounded border border-border p-1 text-muted-foreground hover:text-gold disabled:opacity-30"
-                        aria-label="Bajar"
-                      >
-                        <ArrowDown className="h-3 w-3" />
-                      </button>
-                      <span className="ml-1 text-[11px] text-muted-foreground">{p.sort_order}</span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-2 font-display text-sm text-gold">{p.number}</td>
-                  <td className="px-3 py-2">
-                    <div className="font-condensed text-[10px] uppercase tracking-widest text-gold/80">
-                      {p.kicker}
-                    </div>
-                    <div className="text-sm text-foreground">{p.title}</div>
-                    <div className="mt-0.5 text-[11px] text-muted-foreground">/{p.slug}</div>
-                  </td>
-                  <td className="px-3 py-2 text-xs text-muted-foreground">
-                    {STATUS_OPTIONS.find((s) => s.value === p.status)?.label ?? p.status}
-                  </td>
-                  <td className="px-3 py-2 text-center">
-                    <button
-                      onClick={() => toggleField(p, "featured")}
-                      className={p.featured ? "text-gold" : "text-muted-foreground hover:text-gold"}
-                      aria-label="Destacada"
-                    >
-                      <Star className={"h-4 w-4 " + (p.featured ? "fill-gold" : "")} />
-                    </button>
-                  </td>
-                  <td className="px-3 py-2 text-center">
-                    <button
-                      onClick={() => toggleField(p, "visible")}
-                      className={p.visible ? "text-foreground" : "text-muted-foreground"}
-                      aria-label="Visible"
-                    >
-                      {p.visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                    </button>
-                  </td>
-                  <td className="px-3 py-2 text-right">
-                    <button
-                      onClick={() => openEdit(p)}
-                      className="mr-2 inline-flex items-center text-muted-foreground hover:text-gold"
-                      aria-label="Editar"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => remove(p)}
-                      className="inline-flex items-center text-muted-foreground hover:text-destructive"
-                      aria-label="Eliminar"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            <ul className="divide-y divide-border border border-border bg-surface">
+              {items.map((p) => (
+                <SortableRow
+                  key={p.id}
+                  piece={p}
+                  onEdit={() => openEdit(p)}
+                  onRemove={() => remove(p)}
+                  onToggle={(f) => toggleField(p, f)}
+                />
               ))}
-            </tbody>
-          </table>
-        </div>
+            </ul>
+          </SortableContext>
+        </DndContext>
       )}
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-auto border border-border bg-background p-6">
+          <div className="max-h-[92vh] w-full max-w-2xl overflow-auto border border-border bg-background p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-display text-xl tracking-widest">
                 {editing ? "EDITAR PIEZA" : "NUEVA PIEZA"}
@@ -372,7 +346,8 @@ function AdminEspeciales() {
                 />
                 {!editing && (
                   <div className="mt-1 text-[11px] text-muted-foreground">
-                    Debe coincidir con un archivo de ruta existente en /camino-al-europeo-2026/&lt;slug&gt;.
+                    Debe coincidir con un archivo de ruta existente en
+                    /camino-al-europeo-2026/&lt;slug&gt;.
                   </div>
                 )}
               </Field>
@@ -386,12 +361,15 @@ function AdminEspeciales() {
                 />
               </Field>
 
-              <Field label="Imagen (URL)">
-                <input
+              <Field label="Imagen">
+                <ImageUploadField
                   value={form.image_url}
-                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                  className="w-full border border-border bg-surface px-3 py-2 text-sm"
-                  placeholder="https://..."
+                  onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+                  folder="specials"
+                  nameHint={form.slug || form.title}
+                  previewClassName="mt-2 h-32 w-56 object-cover rounded"
+                  crops={form.crops}
+                  onCropsChange={(next) => setForm((f) => ({ ...f, crops: next }))}
                 />
               </Field>
 
@@ -460,6 +438,98 @@ function AdminEspeciales() {
         </div>
       )}
     </div>
+  );
+}
+
+function SortableRow({
+  piece,
+  onEdit,
+  onRemove,
+  onToggle,
+}: {
+  piece: Piece;
+  onEdit: () => void;
+  onRemove: () => void;
+  onToggle: (field: "featured" | "visible") => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: piece.id,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+  };
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-3 bg-surface px-3 py-3 hover:bg-surface-2"
+    >
+      <button
+        {...attributes}
+        {...listeners}
+        className="cursor-grab touch-none text-muted-foreground hover:text-gold active:cursor-grabbing"
+        aria-label="Arrastrar para reordenar"
+        type="button"
+      >
+        <GripVertical className="h-5 w-5" />
+      </button>
+
+      <div className="h-14 w-20 shrink-0 overflow-hidden rounded border border-border bg-background">
+        {piece.image_url ? (
+          <img src={piece.image_url} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
+            sin img
+          </div>
+        )}
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <span className="font-display text-sm text-gold">{piece.number}</span>
+          <span className="font-condensed text-[10px] uppercase tracking-widest text-gold/80">
+            {piece.kicker}
+          </span>
+        </div>
+        <div className="truncate text-sm text-foreground">{piece.title}</div>
+        <div className="truncate text-[11px] text-muted-foreground">/{piece.slug}</div>
+      </div>
+
+      <button
+        onClick={() => onToggle("featured")}
+        className={piece.featured ? "text-gold" : "text-muted-foreground hover:text-gold"}
+        aria-label="Destacada"
+        type="button"
+      >
+        <Star className={"h-4 w-4 " + (piece.featured ? "fill-gold" : "")} />
+      </button>
+      <button
+        onClick={() => onToggle("visible")}
+        className={piece.visible ? "text-foreground" : "text-muted-foreground"}
+        aria-label="Visible"
+        type="button"
+      >
+        {piece.visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+      </button>
+      <button
+        onClick={onEdit}
+        className="text-muted-foreground hover:text-gold"
+        aria-label="Editar"
+        type="button"
+      >
+        <Pencil className="h-4 w-4" />
+      </button>
+      <button
+        onClick={onRemove}
+        className="text-muted-foreground hover:text-destructive"
+        aria-label="Eliminar"
+        type="button"
+      >
+        <Trash2 className="h-4 w-4" />
+      </button>
+    </li>
   );
 }
 
