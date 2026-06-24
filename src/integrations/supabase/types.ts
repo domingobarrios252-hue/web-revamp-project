@@ -345,6 +345,57 @@ export type Database = {
         }
         Relationships: []
       }
+      contributor_signups: {
+        Row: {
+          admin_notes: string | null
+          club_or_federation: string | null
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          language: string
+          message: string | null
+          region: string | null
+          role_type: string
+          status: string
+          topics: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          club_or_federation?: string | null
+          country: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          language?: string
+          message?: string | null
+          region?: string | null
+          role_type?: string
+          status?: string
+          topics: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          club_or_federation?: string | null
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          language?: string
+          message?: string | null
+          region?: string | null
+          role_type?: string
+          status?: string
+          topics?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       countries: {
         Row: {
           accent_color_1: string | null
