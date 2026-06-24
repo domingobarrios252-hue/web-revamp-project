@@ -671,5 +671,3 @@ function MagazinePreviewSection() {
   );
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-const _keepUnused = { Clock };
