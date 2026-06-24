@@ -10,16 +10,19 @@ import { getPiece, SPAIN_CALLUP } from "@/lib/specials/europeo-2026";
 const PIECE = getPiece("convocatoria-seleccion-espanola");
 const CANON =
   "https://rollerzone.lovable.app/camino-al-europeo-2026/convocatoria-seleccion-espanola";
+const TITLE = "España ya tiene equipo para Cardano: convocatoria oficial para el Europeo 2026";
+const DESCRIPTION =
+  "Garikoitz Lerga da a conocer la convocatoria oficial de la selección española para el Europeo de Cardano al Campo 2026, con representación juvenil, júnior y sénior.";
 
 export const Route = createFileRoute(
   "/camino-al-europeo-2026/convocatoria-seleccion-espanola"
 )({
   head: () => ({
     meta: [
-      { title: `${PIECE.title} — Europeo 2026` },
-      { name: "description", content: PIECE.description },
-      { property: "og:title", content: PIECE.title },
-      { property: "og:description", content: PIECE.description },
+      { title: `${TITLE} — Europeo 2026` },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
       { property: "og:url", content: CANON },
       { property: "og:type", content: "article" },
       { property: "og:image", content: PIECE.image },
@@ -35,31 +38,51 @@ function Page() {
       <SpecialBreadcrumb current="Convocatoria" />
       <SpecialHero
         compact
-        title="Convocatoria oficial de España"
-        subtitle={`Los convocados por ${SPAIN_CALLUP.coach} para representar a España en el Europeo de Cardano al Campo 2026.`}
+        title={TITLE}
+        subtitle={DESCRIPTION}
         image={PIECE.image}
       />
       <SpecialSubNav active="convocatoria-seleccion-espanola" />
 
+      <article className="bg-background py-12 md:py-16">
+        <div className="mx-auto max-w-3xl space-y-5 px-4 text-base leading-relaxed text-foreground/90 md:px-6">
+          <p>
+            Ya no hay lugar para las especulaciones. España ya tiene definidos
+            los nombres que afrontarán una de las grandes citas del calendario
+            internacional. El Europeo de Cardano al Campo 2026 ya tiene acento
+            español y también una lista de protagonistas dispuestos a dejar su
+            huella en Italia.
+          </p>
+          <p>
+            La convocatoria anunciada por el seleccionador{" "}
+            <strong>{SPAIN_CALLUP.coach}</strong> refleja el presente y el
+            futuro del patinaje español: jóvenes con enorme proyección,
+            patinadores júnior llamados a dar un paso adelante y una categoría
+            sénior que mezcla experiencia, carácter competitivo y mucha
+            calidad.
+          </p>
+        </div>
+      </article>
+
+      <CallupRoster />
+
       <section className="bg-background py-12 md:py-16">
         <div className="mx-auto max-w-3xl space-y-5 px-4 text-base leading-relaxed text-foreground/90 md:px-6">
           <p>
-            La Real Federación Española de Patinaje, a través del seleccionador{" "}
-            <strong>{SPAIN_CALLUP.coach}</strong>, ha hecho pública la
-            convocatoria oficial de la selección española de patinaje de
-            velocidad para el Campeonato de Europa 2026.
+            La lista deja entrever una selección con profundidad, talento y
+            mucha variedad de perfiles, capaz de competir en diferentes frentes
+            dentro del campeonato. Desde RollerZone seguiremos muy de cerca la
+            evolución de cada uno de los convocados, la preparación final
+            antes del viaje a Italia y, por supuesto, el rendimiento de España
+            en una semana que puede dejar grandes momentos para nuestro
+            patinaje.
           </p>
-          <p>
-            La expedición española estará compuesta por las categorías{" "}
-            <strong>juvenil</strong>, <strong>júnior</strong> y{" "}
-            <strong>sénior</strong>, tanto en masculino como en femenino, con
-            opciones reales de medalla en varias pruebas de pista, ruta y
-            maratón.
+          <p className="font-display text-lg uppercase tracking-wider text-gold">
+            Cardano ya espera. Y España ya tiene nombres, caras y sueños para
+            intentarlo.
           </p>
         </div>
       </section>
-
-      <CallupRoster />
 
       <RelatedSelectionNews limit={4} />
 
