@@ -41,7 +41,18 @@ export const Route = createFileRoute("/admin/especiales")({
   component: AdminEspeciales,
 });
 
-const emptyForm = {
+const emptyForm: {
+  slug: string;
+  number: string;
+  kicker: string;
+  title: string;
+  description: string;
+  image_url: string;
+  sort_order: number;
+  featured: boolean;
+  visible: boolean;
+  status: string;
+} = {
   slug: "",
   number: "",
   kicker: "",
@@ -143,9 +154,10 @@ function AdminEspeciales() {
   };
 
   const toggleField = async (p: Piece, field: "featured" | "visible") => {
+    const update: Partial<Piece> = { [field]: !p[field] };
     const { error } = await supabase
       .from("special_pieces")
-      .update({ [field]: !p[field] })
+      .update(update)
       .eq("id", p.id);
     if (error) return toast.error(error.message);
     load();
