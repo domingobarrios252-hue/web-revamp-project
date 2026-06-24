@@ -12,6 +12,7 @@ import {
   FileText,
   Cookie,
   PenLine,
+  Info,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { NewsletterForm } from "./NewsletterForm";
@@ -27,8 +28,9 @@ export function SiteFooter() {
     { to: "/tv", label: "RollerZone TV", Icon: Tv },
     { to: "/premios-mvp", label: t("nav.mvpAwards"), Icon: Trophy },
     { to: "/revista", label: t("nav.magazine"), Icon: BookOpen },
-    { to: "/redactores", label: "Redactores", Icon: PenLine },
+    { to: "/sobre/quienes-somos", label: "Sobre nosotros", Icon: Info },
   ] as const;
+
 
   const legalLinks = [
     { slug: "aviso-legal", label: t("footer.legalNotice"), Icon: FileText },
