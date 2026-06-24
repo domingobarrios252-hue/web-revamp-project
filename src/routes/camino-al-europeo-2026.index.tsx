@@ -40,8 +40,8 @@ function SpecialLanding() {
         subtitle="Reportajes, entrevistas, convocatoria, calendario, información oficial y toda la actualidad de la selección española y del Europeo de Cardano al Campo 2026."
         image={EVENT.heroImage}
         ctas={[
-          { label: "Ver toda la cobertura", to: "#piezas", primary: true },
-          { label: "Ver convocatoria de España", to: piecePath("convocatoria-seleccion-espanola") },
+          { label: "Ver convocatoria de España", to: piecePath("convocatoria-seleccion-espanola"), primary: true },
+          { label: "Calendario y sedes", to: piecePath("calendario-y-sedes") },
         ]}
       />
 

@@ -20,6 +20,7 @@ import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as CaminoAlEuropeo2026RouteImport } from './routes/camino-al-europeo-2026'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -30,6 +31,7 @@ import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as CaminoAlEuropeo2026IndexRouteImport } from './routes/camino-al-europeo-2026.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CountryIndexRouteImport } from './routes/$country.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
@@ -51,6 +53,13 @@ import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
+import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
+import { Route as CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport } from './routes/camino-al-europeo-2026.presentacion-europeo-2026'
+import { Route as CaminoAlEuropeo2026InformacionCampeonatoRouteImport } from './routes/camino-al-europeo-2026.informacion-campeonato'
+import { Route as CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport } from './routes/camino-al-europeo-2026.galeria-rollerzone-tv'
+import { Route as CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport } from './routes/camino-al-europeo-2026.entrevista-seleccionador'
+import { Route as CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport } from './routes/camino-al-europeo-2026.convocatoria-seleccion-espanola'
+import { Route as CaminoAlEuropeo2026CalendarioYSedesRouteImport } from './routes/camino-al-europeo-2026.calendario-y-sedes'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlights'
 import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisiones'
@@ -175,6 +184,11 @@ const CookiesRoute = CookiesRouteImport.update({
   path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CaminoAlEuropeo2026Route = CaminoAlEuropeo2026RouteImport.update({
+  id: '/camino-al-europeo-2026',
+  path: '/camino-al-europeo-2026',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AvisoLegalRoute = AvisoLegalRouteImport.update({
   id: '/aviso-legal',
   path: '/aviso-legal',
@@ -225,6 +239,12 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const CaminoAlEuropeo2026IndexRoute =
+  CaminoAlEuropeo2026IndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -330,6 +350,48 @@ const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   path: '/entrevistas/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CaminoAlEuropeo2026ResultadosYMedalleroRoute =
+  CaminoAlEuropeo2026ResultadosYMedalleroRouteImport.update({
+    id: '/resultados-y-medallero',
+    path: '/resultados-y-medallero',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026PresentacionEuropeo2026Route =
+  CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport.update({
+    id: '/presentacion-europeo-2026',
+    path: '/presentacion-europeo-2026',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026InformacionCampeonatoRoute =
+  CaminoAlEuropeo2026InformacionCampeonatoRouteImport.update({
+    id: '/informacion-campeonato',
+    path: '/informacion-campeonato',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026GaleriaRollerzoneTvRoute =
+  CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport.update({
+    id: '/galeria-rollerzone-tv',
+    path: '/galeria-rollerzone-tv',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026EntrevistaSeleccionadorRoute =
+  CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport.update({
+    id: '/entrevista-seleccionador',
+    path: '/entrevista-seleccionador',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute =
+  CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport.update({
+    id: '/convocatoria-seleccion-espanola',
+    path: '/convocatoria-seleccion-espanola',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026CalendarioYSedesRoute =
+  CaminoAlEuropeo2026CalendarioYSedesRouteImport.update({
+    id: '/calendario-y-sedes',
+    path: '/calendario-y-sedes',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
 const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
@@ -687,6 +749,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
+  '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026RouteWithChildren
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/mi-biblioteca': typeof MiBibliotecaRoute
@@ -734,6 +797,13 @@ export interface FileRoutesByFullPath {
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/camino-al-europeo-2026/calendario-y-sedes': typeof CaminoAlEuropeo2026CalendarioYSedesRoute
+  '/camino-al-europeo-2026/convocatoria-seleccion-espanola': typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute
+  '/camino-al-europeo-2026/entrevista-seleccionador': typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRoute
+  '/camino-al-europeo-2026/galeria-rollerzone-tv': typeof CaminoAlEuropeo2026GaleriaRollerzoneTvRoute
+  '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
+  '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
+  '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -755,6 +825,7 @@ export interface FileRoutesByFullPath {
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
@@ -844,6 +915,13 @@ export interface FileRoutesByTo {
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/camino-al-europeo-2026/calendario-y-sedes': typeof CaminoAlEuropeo2026CalendarioYSedesRoute
+  '/camino-al-europeo-2026/convocatoria-seleccion-espanola': typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute
+  '/camino-al-europeo-2026/entrevista-seleccionador': typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRoute
+  '/camino-al-europeo-2026/galeria-rollerzone-tv': typeof CaminoAlEuropeo2026GaleriaRollerzoneTvRoute
+  '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
+  '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
+  '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -864,6 +942,7 @@ export interface FileRoutesByTo {
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country': typeof CountryIndexRoute
   '/admin': typeof AdminIndexRoute
+  '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026IndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
   '/eventos': typeof EventosIndexRoute
@@ -903,6 +982,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
+  '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026RouteWithChildren
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/mi-biblioteca': typeof MiBibliotecaRoute
@@ -950,6 +1030,13 @@ export interface FileRoutesById {
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/camino-al-europeo-2026/calendario-y-sedes': typeof CaminoAlEuropeo2026CalendarioYSedesRoute
+  '/camino-al-europeo-2026/convocatoria-seleccion-espanola': typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute
+  '/camino-al-europeo-2026/entrevista-seleccionador': typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRoute
+  '/camino-al-europeo-2026/galeria-rollerzone-tv': typeof CaminoAlEuropeo2026GaleriaRollerzoneTvRoute
+  '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
+  '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
+  '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -971,6 +1058,7 @@ export interface FileRoutesById {
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/eventos/': typeof EventosIndexRoute
@@ -1017,6 +1105,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/aviso-legal'
+    | '/camino-al-europeo-2026'
     | '/cookies'
     | '/dashboard'
     | '/mi-biblioteca'
@@ -1064,6 +1153,13 @@ export interface FileRouteTypes {
     | '/admin/tv-emisiones'
     | '/admin/tv-highlights'
     | '/admin/usuarios'
+    | '/camino-al-europeo-2026/calendario-y-sedes'
+    | '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
+    | '/camino-al-europeo-2026/entrevista-seleccionador'
+    | '/camino-al-europeo-2026/galeria-rollerzone-tv'
+    | '/camino-al-europeo-2026/informacion-campeonato'
+    | '/camino-al-europeo-2026/presentacion-europeo-2026'
+    | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1085,6 +1181,7 @@ export interface FileRouteTypes {
     | '/sobre/$slug'
     | '/$country/'
     | '/admin/'
+    | '/camino-al-europeo-2026/'
     | '/dashboard/'
     | '/entrevistas/'
     | '/eventos/'
@@ -1174,6 +1271,13 @@ export interface FileRouteTypes {
     | '/admin/tv-emisiones'
     | '/admin/tv-highlights'
     | '/admin/usuarios'
+    | '/camino-al-europeo-2026/calendario-y-sedes'
+    | '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
+    | '/camino-al-europeo-2026/entrevista-seleccionador'
+    | '/camino-al-europeo-2026/galeria-rollerzone-tv'
+    | '/camino-al-europeo-2026/informacion-campeonato'
+    | '/camino-al-europeo-2026/presentacion-europeo-2026'
+    | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1194,6 +1298,7 @@ export interface FileRouteTypes {
     | '/sobre/$slug'
     | '/$country'
     | '/admin'
+    | '/camino-al-europeo-2026'
     | '/dashboard'
     | '/entrevistas'
     | '/eventos'
@@ -1232,6 +1337,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/aviso-legal'
+    | '/camino-al-europeo-2026'
     | '/cookies'
     | '/dashboard'
     | '/mi-biblioteca'
@@ -1279,6 +1385,13 @@ export interface FileRouteTypes {
     | '/admin/tv-emisiones'
     | '/admin/tv-highlights'
     | '/admin/usuarios'
+    | '/camino-al-europeo-2026/calendario-y-sedes'
+    | '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
+    | '/camino-al-europeo-2026/entrevista-seleccionador'
+    | '/camino-al-europeo-2026/galeria-rollerzone-tv'
+    | '/camino-al-europeo-2026/informacion-campeonato'
+    | '/camino-al-europeo-2026/presentacion-europeo-2026'
+    | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1300,6 +1413,7 @@ export interface FileRouteTypes {
     | '/sobre/$slug'
     | '/$country/'
     | '/admin/'
+    | '/camino-al-europeo-2026/'
     | '/dashboard/'
     | '/entrevistas/'
     | '/eventos/'
@@ -1345,6 +1459,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
+  CaminoAlEuropeo2026Route: typeof CaminoAlEuropeo2026RouteWithChildren
   CookiesRoute: typeof CookiesRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   MiBibliotecaRoute: typeof MiBibliotecaRoute
@@ -1464,6 +1579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/camino-al-europeo-2026': {
+      id: '/camino-al-europeo-2026'
+      path: '/camino-al-europeo-2026'
+      fullPath: '/camino-al-europeo-2026'
+      preLoaderRoute: typeof CaminoAlEuropeo2026RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/aviso-legal': {
       id: '/aviso-legal'
       path: '/aviso-legal'
@@ -1533,6 +1655,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/camino-al-europeo-2026/': {
+      id: '/camino-al-europeo-2026/'
+      path: '/'
+      fullPath: '/camino-al-europeo-2026/'
+      preLoaderRoute: typeof CaminoAlEuropeo2026IndexRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
     }
     '/admin/': {
       id: '/admin/'
@@ -1680,6 +1809,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/entrevistas/$slug'
       preLoaderRoute: typeof EntrevistasSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/camino-al-europeo-2026/resultados-y-medallero': {
+      id: '/camino-al-europeo-2026/resultados-y-medallero'
+      path: '/resultados-y-medallero'
+      fullPath: '/camino-al-europeo-2026/resultados-y-medallero'
+      preLoaderRoute: typeof CaminoAlEuropeo2026ResultadosYMedalleroRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/presentacion-europeo-2026': {
+      id: '/camino-al-europeo-2026/presentacion-europeo-2026'
+      path: '/presentacion-europeo-2026'
+      fullPath: '/camino-al-europeo-2026/presentacion-europeo-2026'
+      preLoaderRoute: typeof CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/informacion-campeonato': {
+      id: '/camino-al-europeo-2026/informacion-campeonato'
+      path: '/informacion-campeonato'
+      fullPath: '/camino-al-europeo-2026/informacion-campeonato'
+      preLoaderRoute: typeof CaminoAlEuropeo2026InformacionCampeonatoRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/galeria-rollerzone-tv': {
+      id: '/camino-al-europeo-2026/galeria-rollerzone-tv'
+      path: '/galeria-rollerzone-tv'
+      fullPath: '/camino-al-europeo-2026/galeria-rollerzone-tv'
+      preLoaderRoute: typeof CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/entrevista-seleccionador': {
+      id: '/camino-al-europeo-2026/entrevista-seleccionador'
+      path: '/entrevista-seleccionador'
+      fullPath: '/camino-al-europeo-2026/entrevista-seleccionador'
+      preLoaderRoute: typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/convocatoria-seleccion-espanola': {
+      id: '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
+      path: '/convocatoria-seleccion-espanola'
+      fullPath: '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
+      preLoaderRoute: typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/calendario-y-sedes': {
+      id: '/camino-al-europeo-2026/calendario-y-sedes'
+      path: '/calendario-y-sedes'
+      fullPath: '/camino-al-europeo-2026/calendario-y-sedes'
+      preLoaderRoute: typeof CaminoAlEuropeo2026CalendarioYSedesRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
     }
     '/admin/usuarios': {
       id: '/admin/usuarios'
@@ -2240,6 +2418,38 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface CaminoAlEuropeo2026RouteChildren {
+  CaminoAlEuropeo2026CalendarioYSedesRoute: typeof CaminoAlEuropeo2026CalendarioYSedesRoute
+  CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute: typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute
+  CaminoAlEuropeo2026EntrevistaSeleccionadorRoute: typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRoute
+  CaminoAlEuropeo2026GaleriaRollerzoneTvRoute: typeof CaminoAlEuropeo2026GaleriaRollerzoneTvRoute
+  CaminoAlEuropeo2026InformacionCampeonatoRoute: typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
+  CaminoAlEuropeo2026PresentacionEuropeo2026Route: typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
+  CaminoAlEuropeo2026ResultadosYMedalleroRoute: typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
+  CaminoAlEuropeo2026IndexRoute: typeof CaminoAlEuropeo2026IndexRoute
+}
+
+const CaminoAlEuropeo2026RouteChildren: CaminoAlEuropeo2026RouteChildren = {
+  CaminoAlEuropeo2026CalendarioYSedesRoute:
+    CaminoAlEuropeo2026CalendarioYSedesRoute,
+  CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute:
+    CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute,
+  CaminoAlEuropeo2026EntrevistaSeleccionadorRoute:
+    CaminoAlEuropeo2026EntrevistaSeleccionadorRoute,
+  CaminoAlEuropeo2026GaleriaRollerzoneTvRoute:
+    CaminoAlEuropeo2026GaleriaRollerzoneTvRoute,
+  CaminoAlEuropeo2026InformacionCampeonatoRoute:
+    CaminoAlEuropeo2026InformacionCampeonatoRoute,
+  CaminoAlEuropeo2026PresentacionEuropeo2026Route:
+    CaminoAlEuropeo2026PresentacionEuropeo2026Route,
+  CaminoAlEuropeo2026ResultadosYMedalleroRoute:
+    CaminoAlEuropeo2026ResultadosYMedalleroRoute,
+  CaminoAlEuropeo2026IndexRoute: CaminoAlEuropeo2026IndexRoute,
+}
+
+const CaminoAlEuropeo2026RouteWithChildren =
+  CaminoAlEuropeo2026Route._addFileChildren(CaminoAlEuropeo2026RouteChildren)
+
 interface DashboardRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
@@ -2419,6 +2629,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
+  CaminoAlEuropeo2026Route: CaminoAlEuropeo2026RouteWithChildren,
   CookiesRoute: CookiesRoute,
   DashboardRoute: DashboardRouteWithChildren,
   MiBibliotecaRoute: MiBibliotecaRoute,
