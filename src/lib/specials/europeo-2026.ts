@@ -216,16 +216,51 @@ export type SpainCallup = {
 
 export const SPAIN_CALLUP: SpainCallup = {
   coach: "Garikoitz Lerga",
-  // TODO: imageUrl — sustituir por la imagen oficial de la convocatoria
   imageUrl: undefined,
   masculino: {
-    juvenil: [],
-    junior: [],
-    senior: [],
+    juvenil: [
+      "Yoel Álvarez — Novares",
+      "Adrià Fernández — CPV El Prat",
+      "Pablo González — M Urban",
+      "Adrián Portilla — Almassora",
+      "Iñaki Unanua — San Juan",
+    ],
+    junior: [
+      "Iker Bretón — Ciudad Turia",
+      "Raúl Couto — SCD Rabadeira",
+      "Oier Lara — CD Amaya",
+      "Marc Sales — Almassora",
+    ],
+    senior: [
+      "Adrián Alonso — Rolling Lemons",
+      "Chevi Guzmán — Celta Patín",
+      "Daniel Milagros — Ciudad Turia",
+      "Patxi Peula — Desliza Vitoria",
+      "Manuel Taibo — SCD Rabadeira",
+    ],
   },
   femenino: {
-    juvenil: [],
-    junior: [],
-    senior: [],
+    juvenil: [
+      "Greta Arriezu — Txantrea",
+      "Nora Carné — Paiporta",
+      "Uxue Cruz — Txantrea",
+      "Ane Miqueleiz — CD Amaya",
+      "Emilia Ranjel — CMP Arganda",
+      "Angélica Rosero — Ciudad Turia",
+    ],
+    junior: [
+      "Sara Bedia — Astur Patín",
+      "Leyre Montiel — Astur Patín",
+      "Carla Plana — Nàstic",
+      "Paula Rodríguez — San Juan",
+      "Uxue Sola — San Juan",
+    ],
+    senior: [
+      "Ruth Arza — Txantrea",
+      "Luisa González — CPV El Prat",
+      "Aura Quintana — Desliza Vitoria",
+      "Ona Rodríguez — CPV El Prat",
+      "Amaia Zubiri — Txantrea",
+    ],
   },
 };
