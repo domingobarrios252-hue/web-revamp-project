@@ -37,6 +37,14 @@ const LABELS: Record<string, string> = {
   dashboard: "Mi panel",
   "mi-biblioteca": "Mi biblioteca",
   auth: "Acceder",
+  "camino-al-europeo-2026": "Camino al Europeo 2026",
+  "presentacion-europeo-2026": "Presentación",
+  "convocatoria-seleccion-espanola": "Convocatoria de España",
+  "calendario-y-sedes": "Calendario y sedes",
+  "entrevista-seleccionador": "Entrevista al seleccionador",
+  "informacion-campeonato": "Información del campeonato",
+  "resultados-y-medallero": "Resultados y medallero",
+  "galeria-rollerzone-tv": "Galería / RollerZone TV",
 };
 
 const HIDDEN_PREFIXES = ["/admin", "/auth"];
