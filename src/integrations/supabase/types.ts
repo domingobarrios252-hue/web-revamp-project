@@ -2568,6 +2568,57 @@ export type Database = {
           },
         ]
       }
+      special_pieces: {
+        Row: {
+          created_at: string
+          description: string
+          featured: boolean
+          id: string
+          image_url: string
+          kicker: string
+          number: string
+          slug: string
+          sort_order: number
+          special_slug: string
+          status: string
+          title: string
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          featured?: boolean
+          id?: string
+          image_url?: string
+          kicker?: string
+          number?: string
+          slug: string
+          sort_order?: number
+          special_slug: string
+          status?: string
+          title: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          featured?: boolean
+          id?: string
+          image_url?: string
+          kicker?: string
+          number?: string
+          slug?: string
+          sort_order?: number
+          special_slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Relationships: []
+      }
       sponsors: {
         Row: {
           country_code: string
