@@ -2571,6 +2571,7 @@ export type Database = {
       special_pieces: {
         Row: {
           created_at: string
+          crops: Json
           description: string
           featured: boolean
           id: string
@@ -2587,6 +2588,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          crops?: Json
           description?: string
           featured?: boolean
           id?: string
@@ -2603,6 +2605,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          crops?: Json
           description?: string
           featured?: boolean
           id?: string
