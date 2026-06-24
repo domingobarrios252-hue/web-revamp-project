@@ -207,7 +207,15 @@ function HeroCarousel({
         <div className="flex">
           {slides.map((slide, idx) => (
             <div key={slide.id} className="relative min-w-0 flex-[0_0_100%]">
-              <HeroSlide slide={slide} liveActive={liveActive} active={idx === selected} t={t} lang={lang} />
+              <HeroSlide
+                slide={slide}
+                liveActive={liveActive}
+                active={idx === selected}
+                t={t}
+                lang={lang}
+                index={idx}
+                total={slides.length}
+              />
             </div>
           ))}
         </div>
@@ -263,15 +271,25 @@ function HeroSlide({
   active,
   t,
   lang,
+  index,
+  total,
 }: {
   slide: News;
   liveActive: boolean;
   active: boolean;
   t: (k: string) => string;
   lang: "es" | "en";
+  index: number;
+  total: number;
 }) {
+  const todayLabel = new Date().toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
   return (
-    <div className="relative block h-[72vh] min-h-[460px] max-h-[640px] w-full md:h-[68vh] md:min-h-[480px]">
+    <div className="relative block h-[78vh] min-h-[520px] max-h-[720px] w-full md:h-[72vh] md:min-h-[520px]">
       <div className="absolute inset-0 overflow-hidden">
         {slide.image_url ? (
           <img
@@ -289,10 +307,26 @@ function HeroSlide({
         )}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/65 to-black/15" aria-hidden="true" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/45 to-transparent md:from-black/85" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/20" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/50 to-transparent md:from-black/90" aria-hidden="true" />
 
-      <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-4 pb-16 pt-16 sm:px-6 md:pb-24 md:pt-24">
+      {/* Tira editorial superior */}
+      <div className="absolute inset-x-0 top-0 z-10 border-b border-white/10 bg-black/45 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
+          <div className="font-condensed flex items-center gap-3 text-[10px] uppercase tracking-[3px] text-white/70">
+            <span className="text-gold">Portada</span>
+            <span className="hidden sm:inline text-white/30">·</span>
+            <span className="hidden sm:inline capitalize">{todayLabel}</span>
+          </div>
+          <div className="font-condensed flex items-center gap-2 text-[10px] uppercase tracking-[3px] text-white/70">
+            <span className="text-gold">{String(index + 1).padStart(2, "0")}</span>
+            <span className="text-white/30">/</span>
+            <span>{String(total).padStart(2, "0")}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-4 pb-20 pt-20 sm:px-6 md:pb-28 md:pt-28">
         <div className="w-full max-w-3xl animate-fade-in">
           {/* Kicker de marca */}
           <div className="font-condensed mb-4 inline-flex items-center gap-2 bg-gold px-3 py-1.5 text-[10px] font-bold uppercase tracking-[3.5px] text-background shadow-lg md:text-[11px]">
