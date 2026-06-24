@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { PIECES, piecePath } from "@/lib/specials/europeo-2026";
+import { piecePath } from "@/lib/specials/europeo-2026";
+import { useSpecialPieces } from "@/lib/specials/useSpecialPieces";
 
 export function DossierPiecesGrid() {
+  const { pieces } = useSpecialPieces();
   return (
     <section className="bg-background py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
