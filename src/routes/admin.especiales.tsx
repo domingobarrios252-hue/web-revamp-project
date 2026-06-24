@@ -175,7 +175,7 @@ function AdminEspeciales() {
       featured: form.featured,
       visible: form.visible,
       status: form.status,
-      crops: form.crops as unknown as Record<string, unknown>,
+      crops: form.crops as unknown as never,
     };
     if (editing) {
       const { error } = await supabase
