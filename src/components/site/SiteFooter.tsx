@@ -11,8 +11,10 @@ import {
   Shield,
   FileText,
   Cookie,
-  Info,
-
+  Users,
+  PenLine,
+  Megaphone,
+  AtSign,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { NewsletterForm } from "./NewsletterForm";
@@ -28,9 +30,14 @@ export function SiteFooter() {
     { to: "/tv", label: "RollerZone TV", Icon: Tv },
     { to: "/premios-mvp", label: t("nav.mvpAwards"), Icon: Trophy },
     { to: "/revista", label: t("nav.magazine"), Icon: BookOpen },
-    { to: "/sobre/quienes-somos", label: "Sobre nosotros", Icon: Info },
   ] as const;
 
+  const aboutLinks = [
+    { to: "/sobre/$slug", params: { slug: "quienes-somos" }, label: "Quiénes somos", Icon: Users },
+    { to: "/redactores", params: undefined, label: "Redactores", Icon: PenLine },
+    { to: "/sobre/$slug", params: { slug: "publicidad" }, label: "Publicidad", Icon: Megaphone },
+    { to: "/sobre/$slug", params: { slug: "contacto" }, label: "Contacto", Icon: AtSign },
+  ] as const;
 
   const legalLinks = [
     { slug: "aviso-legal", label: t("footer.legalNotice"), Icon: FileText },
@@ -50,7 +57,7 @@ export function SiteFooter() {
         Pie de página
       </h2>
       <div className="mx-auto max-w-7xl px-6 py-12">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
           {/* 1. Logo + descripción */}
           <div>
             <div className="font-display text-3xl tracking-widest">
@@ -79,7 +86,31 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* 3. Comunidad */}
+          {/* 3. Sobre nosotros */}
+          <div>
+            <h3 className="font-display mb-4 text-base tracking-widest text-[#D4A017]">
+              Sobre nosotros
+            </h3>
+            <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
+              {aboutLinks.map(({ to, params, label, Icon }) => (
+                <li key={label}>
+                  {params ? (
+                    <Link to={to} params={params} className={linkClass}>
+                      <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                      <span>{label}</span>
+                    </Link>
+                  ) : (
+                    <Link to={to} className={linkClass}>
+                      <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                      <span>{label}</span>
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 4. Comunidad */}
           <div>
             <h3 className="font-display mb-4 text-base tracking-widest text-[#D4A017]">
               Comunidad
@@ -128,7 +159,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          {/* 4. Legal */}
+          {/* 5. Legal */}
           <div>
             <h3 className="font-display mb-4 text-base tracking-widest text-[#D4A017]">
               {t("footer.legal")}
@@ -156,3 +187,4 @@ export function SiteFooter() {
     </footer>
   );
 }
+
