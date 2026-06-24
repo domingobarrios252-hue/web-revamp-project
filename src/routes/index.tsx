@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Eye, Calendar, User as UserIcon, ArrowRight, MapPin, BookOpen, ExternalLink,
-  Clock, ChevronLeft, ChevronRight, Newspaper, UsersRound,
+  ChevronLeft, ChevronRight, Newspaper, UsersRound,
 } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
