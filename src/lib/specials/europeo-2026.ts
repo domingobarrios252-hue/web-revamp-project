@@ -191,7 +191,7 @@ export function getPiece(slug: PieceSlug): SpecialPiece {
   return p;
 }
 
-export function piecePath(slug: PieceSlug): string {
+export function piecePath(slug: PieceSlug | string): string {
   return `${SPECIAL_BASE_PATH}/${slug}`;
 }
 

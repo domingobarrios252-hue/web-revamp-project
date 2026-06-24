@@ -1,17 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Flame } from "lucide-react";
-import {
-  EVENT,
-  PIECES,
-  SPECIAL_BASE_PATH,
-  piecePath,
-} from "@/lib/specials/europeo-2026";
+import { EVENT, SPECIAL_BASE_PATH, piecePath } from "@/lib/specials/europeo-2026";
+import { useSpecialPieces } from "@/lib/specials/useSpecialPieces";
 
 /**
  * Bloque "Especial del momento" en la home.
  * Enlaza a la landing del especial y a cada subpágina del dossier.
  */
 export function SpecialCoverageBanner() {
+  const { pieces } = useSpecialPieces();
   return (
     <section className="relative overflow-hidden border-y border-gold/30 bg-background py-16 md:py-24">
       <div className="absolute inset-0">
@@ -73,7 +70,7 @@ export function SpecialCoverageBanner() {
               Piezas del dossier
             </span>
           </li>
-          {PIECES.map((p) => (
+          {pieces.map((p) => (
             <li key={p.slug}>
               <Link
                 to={piecePath(p.slug)}
