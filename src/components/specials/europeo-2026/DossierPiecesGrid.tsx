@@ -19,12 +19,12 @@ export function DossierPiecesGrid() {
             <div className="mt-3 h-[3px] w-24 bg-gold" aria-hidden="true" />
           </div>
           <span className="font-condensed hidden text-[10px] uppercase tracking-[3px] text-muted-foreground md:inline">
-            {PIECES.length} piezas
+            {pieces.length} piezas
           </span>
         </header>
 
         <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {PIECES.map((p) => (
+          {pieces.map((p) => (
             <li key={p.slug}>
               <Link
                 to={piecePath(p.slug)}
