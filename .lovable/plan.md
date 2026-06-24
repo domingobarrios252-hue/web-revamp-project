@@ -1,134 +1,108 @@
-# Plan: Sistema profesional de resultados agrupados por evento
 
-## Objetivo
-Reorganizar todo el sistema de resultados para que funcione como un archivo deportivo profesional: todos los resultados de un mismo campeonato quedan agrupados dentro del mismo evento, con filtros, navegación clara, slider de Home controlable y archivo histórico permanente.
+# Rediseño de la HOME — RollerZone como cabecera deportiva
 
----
+Mantengo la identidad de marca ya consolidada (Bebas Neue, paleta oro/negro, estética editorial) y reorganizo la portada por completo con mentalidad de medio digital deportivo especializado. Reutilizo los componentes existentes que aportan valor (`HeroCarousel`, `Ticker`, `HomeDynamicZone`, `HomeResultsSlider`, `LiveCenter`, `AdBanner`, secciones de eventos y revista) y construyo los bloques nuevos donde hace falta.
 
-## 1. Base de datos (Supabase)
+## Nueva estructura de la portada
 
-El esquema actual ya tiene `result_events` (eventos) y `live_results` (filas individuales con `event_slug`, `race`, `category`, `gender`, etc.). Lo aprovecho añadiendo solo lo que falta:
-
-**Ampliar `live_results`:**
-- `round` (text) — Final / Semifinal / Serie / Clasificatoria
-- `federation` (text) — para filtro por federación
-- `notes` (text) — observaciones libres
-- `home_sort_order` (int) — orden específico del slider Home (independiente de `sort_order` del evento)
-
-**Índices:**
-- `(event_slug, race, category, gender, round)` para filtros rápidos
-- `(featured_in_live_center, home_sort_order)` para el slider
-
-Se mantienen RLS actuales (lectura pública, escritura admin/editor).
-
----
-
-## 2. Importación CSV mejorada (`/admin/live-results`)
-
-Nuevo flujo: **subir CSV ya asignado a un evento + metadatos comunes**.
-
-Antes de subir el CSV, el admin selecciona:
-- **Evento existente** (dropdown desde `result_events`) — obligatorio, evita duplicados
-- **Prueba** (200 m, 500 m sprint, eliminación, puntos…) — texto libre o sugerencias
-- **Categoría** (Senior / Junior / Juvenil / Cadete…)
-- **Sexo** (Masculino / Femenino / Mixto)
-- **Ronda** (Final / Semifinal / Serie…)
-- **Estado** (`en_vivo` / `finalizado` / `proxima`)
-
-El CSV solo necesita columnas de resultados (posición, atleta, club, tiempo, puntos, país, federación). Los metadatos se aplican a todas las filas al insertar. Nunca se crea un evento desde el CSV.
-
-Modo manual: mismo formulario con tabla editable inline (añadir/eliminar filas) sin CSV.
-
----
-
-## 3. Páginas públicas
-
-### `/resultados` (index)
-Listado de eventos (`result_events`) como cards: banner, nombre, fecha, país, estado. Click → página del evento.
-
-### `/resultados/$evento` (rediseño)
-- Hero del evento (banner, nombre, fecha, lugar, estado)
-- **Barra de filtros** sticky: Prueba · Categoría · Sexo · Ronda · Estado · Club · Federación (multi-select; opciones derivadas dinámicamente de las filas del evento)
-- **Listado de pruebas** agrupadas: cada bloque = una combinación única (prueba + categoría + sexo + ronda) con su tabla completa de clasificación, podio destacado arriba (Top 3 con medallas), tabla limpia debajo
-- Soporta query params: `?prueba=200m&categoria=senior&sexo=masculino&ronda=final` → autoselecciona filtros y hace scroll a la sección
-- Diseño premium actual mantenido (fondo oscuro, oro, cards)
-
----
-
-## 4. Slider Home (`HomeResultsSlider`)
-
-Lectura desde `live_results` con `featured_in_live_center = true`, ordenado por `home_sort_order`. Sin cambios visuales mayores.
-
-**Cambio clave en el link de cada slide:**
-Actualmente apunta a `/resultados/$evento`. Pasa a apuntar a la prueba concreta:
-`/resultados/$evento?prueba=...&categoria=...&sexo=...&ronda=...`
-
-Así el usuario aterriza con el filtro ya aplicado en la prueba correspondiente.
-
----
-
-## 5. Panel admin
-
-### `/admin/resultados` (eventos) — ya existe
-Sin cambios estructurales. Solo añado botón **"Gestionar pruebas y resultados →"** por evento que abre la nueva pantalla.
-
-### `/admin/resultados/$slug` (NUEVO — gestión interna de un evento)
-Una sola pantalla con todo el control del evento:
-
-- **Lista de pruebas** del evento agrupadas por (prueba + categoría + sexo + ronda) con:
-  - Toggle "Mostrar en Home" (`featured_in_live_center`)
-  - Input de orden Home (`home_sort_order`)
-  - Badge de estado (Live / Final / Próx.) editable inline
-  - Contador de filas
-  - Botón "Editar filas" / "Eliminar prueba completa" / "Duplicar"
-- **Subir CSV a este evento** (formulario con metadatos descritos en sección 2)
-- **Crear prueba manual** (mismo formulario sin CSV)
-- **Editor de filas inline** (al desplegar una prueba): posición, atleta, club, federación, país, tiempo, puntos, observaciones, eliminar fila individual
-- **Acción peligrosa:** "Eliminar todos los resultados del evento" con confirmación
-
-### `/admin/live-results` actual
-Se mantiene como editor global (búsqueda transversal) pero se recomienda usar la nueva pantalla por evento.
-
----
-
-## 6. Navegación final
-
-```
-/resultados                                    → todos los eventos
-/resultados/campeonato-espana-pista-2026       → evento + filtros + todas las pruebas
-/resultados/campeonato-espana-pista-2026?prueba=200m&categoria=senior&sexo=masculino
-                                               → vista filtrada (desde slider Home)
-
-/admin/resultados                              → CRUD eventos
-/admin/resultados/campeonato-espana-pista-2026 → gestión pruebas/filas/Home de ese evento
+```text
+┌─────────────────────────────────────────────────┐
+│ 1. HERO CARRUSEL (existente, refinado)          │  Nivel 1 — Portada
+│    + chip "EL MEDIO DEL PATINAJE DE VELOCIDAD"  │
+│    + CTAs: Leer actualidad / Únete a RollerZone │
+├─────────────────────────────────────────────────┤
+│ 2. TICKER en directo (existente)                │
+├─────────────────────────────────────────────────┤
+│ 3. PORTADA EDITORIAL (NUEVO)                    │  Nivel 1
+│    ┌──────────────────────┬──────────────────┐  │
+│    │  Noticia principal   │  3 secundarias   │  │
+│    │  (grande, 2/3)       │  apiladas (1/3)  │  │
+│    └──────────────────────┴──────────────────┘  │
+├─────────────────────────────────────────────────┤
+│ 4. ESPECIAL DEL MOMENTO (NUEVO)                 │  Nivel 1
+│    Banner full-width con cobertura destacada    │
+│    + 3-4 enlaces a piezas relacionadas          │
+├─────────────────────────────────────────────────┤
+│ 5. ACTUALIDAD ROLLERZONE — grid 3×2 (refinado)  │  Nivel 2
+│    Cards con etiquetas de sección + jerarquía   │
+├─────────────────────────────────────────────────┤
+│ 6. RESULTADOS / LIVE CENTER (existente)         │  Nivel 2
+│    HomeDynamicZone + HomeResultsSlider          │
+├─────────────────────────────────────────────────┤
+│ 7. PRÓXIMOS EVENTOS (existente, refinado)       │  Nivel 2
+├─────────────────────────────────────────────────┤
+│ 8. ROLLERZONE TV (NUEVO en home)                │  Nivel 3
+│    Vídeo destacado + 3 miniaturas               │
+├─────────────────────────────────────────────────┤
+│ 9. REVISTA — última edición (existente)         │  Nivel 3
+├─────────────────────────────────────────────────┤
+│10. UNIVERSO ROLLERZONE (NUEVO)                  │  Nivel 3
+│    Tarjetas: MVP · Salón de la Fama · Hubs país │
+├─────────────────────────────────────────────────┤
+│11. CAPTACIÓN DE REDACTORES (NUEVO)              │  Nivel 4
+│    Bloque editorial con CTA "Quiero colaborar"  │
+├─────────────────────────────────────────────────┤
+│12. NEWSLETTER (NUEVO en home)                   │  Nivel 4
+│    Banda visual con NewsletterForm existente    │
+└─────────────────────────────────────────────────┘
 ```
 
----
+El footer ya cumple la función editorial pedida (navegación, comunidad, newsletter, legal); lo dejo intacto salvo retoques menores de copy si hace falta.
 
-## 7. Reglas clave garantizadas
+## Componentes nuevos a crear
 
-- **Nunca se duplica un evento** desde un CSV. El evento siempre se elige antes de subir.
-- **Archivo histórico:** quitar `featured_in_live_center` solo lo retira del slider Home; no borra nada.
-- **Agrupación:** todas las pruebas de un mismo campeonato comparten `event_slug` y aparecen juntas en `/resultados/$slug`.
-- **Diseño:** se mantiene la identidad RollerZone (fondo oscuro, acentos oro, podios, tablas limpias, tipografía actual).
+- `src/components/home/EditorialCover.tsx` — bloque "Portada editorial" (1 noticia grande + 3 secundarias apiladas, jerarquía clara).
+- `src/components/home/SpecialCoverageBanner.tsx` — bloque "Especial del momento" full-width con imagen, kicker, título, resumen, lista de enlaces y CTA. Configurable desde código en MVP (puede mover a admin en una fase posterior).
+- `src/components/home/RollerZoneTVHome.tsx` — bloque de vídeo destacado + miniaturas, leyendo de `tv_videos`/`tv_highlights` ya existentes.
+- `src/components/home/UniverseGrid.tsx` — tarjetas de MVP, Salón de la Fama, Hub España, Hub Colombia.
+- `src/components/home/JoinContributorsBlock.tsx` — bloque editorial de captación de redactores con dos CTA.
+- `src/components/home/NewsletterBand.tsx` — banda visual envolviendo `NewsletterForm`.
 
----
+## Componentes refinados (mismos archivos, mejor jerarquía visual)
 
-## Archivos a crear/editar
+- `HeroCarousel`/`HeroSlide` — añado kicker "El medio del patinaje de velocidad" y un segundo CTA "Únete a RollerZone".
+- `NewsGridCard` — tipografía de titular más editorial, etiqueta de categoría más visible, autor + fecha + tiempo de lectura en una sola línea condensada.
+- Encabezados de sección (`section-header` reutilizable inline) — kicker dorado + título display + filete dorado + enlace "Ver todo →" alineado, para que todos los bloques compartan ritmo visual.
 
-**Migración SQL:**
-- Añadir columnas `round`, `federation`, `notes`, `home_sort_order` a `live_results` + índices
+## Reorganización de `src/routes/index.tsx`
 
-**Frontend público:**
-- `src/routes/resultados.$evento.tsx` — rediseño completo con filtros y agrupación
-- `src/components/home/HomeResultsSlider.tsx` — link con query params
-- (opcional) `src/routes/resultados.index.tsx` — verificación del grid de eventos
+Sustituyo el JSX actual de `HomePage` por la nueva composición:
 
-**Admin:**
-- `src/routes/admin.resultados.$slug.tsx` — NUEVO gestor por evento
-- `src/routes/admin.live-results.tsx` — nuevo bloque "Subir CSV a evento existente" con selector de evento + metadatos
-- `src/routes/admin.resultados.tsx` — botón "Gestionar pruebas" en cada evento
+```tsx
+<HeroCarousel ... />
+<Ticker />
+<EditorialCover news={news} />
+<SpecialCoverageBanner />        // config inline (título, imagen, enlaces)
+<LatestNewsGrid news={news} />   // grid 3×2 actual extraída a sub-bloque
+<HomeDynamicZone /> + <HomeResultsSlider />
+<EventsPreviewSection />
+<RollerZoneTVHome />
+<MagazinePreviewSection />
+<UniverseGrid />
+<JoinContributorsBlock />
+<NewsletterBand />
+```
 
-**Sin cambios:** auth, CMS general, ticker, header/footer, hubs de países, sección de noticias.
+Mantengo la lógica de fetch de `news` y de `home_hero` tal cual; los nuevos bloques consumen las mismas filas (top-1 = principal, 2-4 = secundarias, 5-10 = grid de actualidad).
 
-¿Apruebas el plan para empezar?
+## Detalles editoriales y de marca
+
+- Kicker estándar en bloques: pequeño rectángulo dorado con texto condensado mayúsculas (ya existe en el hero, lo extiendo al resto).
+- Filete dorado de 3px bajo cada `h2` de sección, alineado a la izquierda — refuerza el aire de "cabecera deportiva".
+- Mayor uso de fondos `bg-surface`/`bg-surface-2` alternos entre secciones para separar bloques sin saturar.
+- En "Especial del momento" y "Captación de redactores", uso composición a sangre con overlay oscuro + gold-glow para diferenciarlos del resto.
+
+## Notas técnicas (para mí, no para el usuario)
+
+- Sin cambios de esquema en esta fase. El "Especial del momento" se configura por código (constantes editables) en el MVP; un panel admin se puede añadir después.
+- Sin cambios en backend, server functions ni RLS.
+- Mantengo `useHomeSectionVisibility` para que la visibilidad por sección siga respetándose.
+- Todo en frontend, tokens semánticos (`bg-gold`, `text-foreground`, `border-border`...), nada de colores hardcodeados.
+
+## Fuera de alcance de esta fase
+
+- Panel admin para el "Especial del momento" y para los vídeos destacados de la home (se puede añadir en una iteración siguiente).
+- Página `/colaborar` dedicada (el CTA del bloque de redactores enlazará a `/redactores`; podemos crear una landing específica más adelante).
+- Cambios en el header global y en rutas internas (entrevistas, noticias, etc.).
+
+¿Procedo a implementarlo tal cual?
