@@ -398,12 +398,12 @@ export function HubDashboard({ country }: { country: string }) {
 
 function QuickLink({ country, section, label }: { country: string; section: string; label: string }) {
   return (
-    <Link
-      to="/hub/$country/$section"
-      params={{ country, section }}
+    <HubSectionLink
+      country={country}
+      section={section as HubSectionKey}
       className="h-12 flex items-center justify-center bg-[#2E2E2E] border border-[#333] rounded-lg text-[10px] font-bold uppercase tracking-wider text-[#F5F5F5] hover:bg-[#D4A017] hover:text-[#1A1A1A] hover:border-[#D4A017] transition-all duration-300"
     >
       {label}
-    </Link>
+    </HubSectionLink>
   );
 }
