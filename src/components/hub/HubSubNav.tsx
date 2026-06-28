@@ -40,23 +40,113 @@ export function HubSubNav({
               ? `${base} text-[#D4A017] border-[#D4A017]`
               : `${base} text-[#888] hover:text-white border-transparent`;
             const label = labelFor(s.key, s.label);
-            return s.key === "inicio" ? (
-              <Link key={s.key} to="/hub/$country" params={{ country }} className={cls}>
-                {label}
-              </Link>
-            ) : (
-              <Link
+            return (
+              <HubSectionLink
                 key={s.key}
-                to="/hub/$country/$section"
-                params={{ country, section: s.key }}
+                country={country}
+                section={s.key}
                 className={cls}
               >
                 {label}
-              </Link>
+              </HubSectionLink>
             );
           })}
         </div>
       </div>
     </nav>
   );
+}
+
+export function HubSectionLink({
+  country,
+  section,
+  className,
+  children,
+}: {
+  country: string;
+  section: HubSectionKey;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  if (section === "inicio") {
+    return (
+      <Link to="/hub/$country" params={{ country }} className={className}>
+        {children}
+      </Link>
+    );
+  }
+  // Each section has its own dedicated route — link directly so we don't
+  // fall through to the generic "Próximamente" placeholder.
+  switch (section) {
+    case "competicion":
+      return (
+        <Link to="/hub/$country/competicion" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "clubes":
+      return (
+        <Link to="/hub/$country/clubes" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "patinadores":
+      return (
+        <Link to="/hub/$country/patinadores" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "federaciones":
+      return (
+        <Link to="/hub/$country/federaciones" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "tv":
+      return (
+        <Link to="/hub/$country/tv" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "live":
+      return (
+        <Link to="/hub/$country/live" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "mvp":
+      return (
+        <Link to="/hub/$country/mvp" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "entrevistas":
+      return (
+        <Link to="/hub/$country/entrevistas" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "archivo":
+      return (
+        <Link to="/hub/$country/archivo" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    case "comunidad":
+      return (
+        <Link to="/hub/$country/comunidad" params={{ country }} className={className}>
+          {children}
+        </Link>
+      );
+    default:
+      return (
+        <Link
+          to="/hub/$country/$section"
+          params={{ country, section }}
+          className={className}
+        >
+          {children}
+        </Link>
+      );
+  }
 }
