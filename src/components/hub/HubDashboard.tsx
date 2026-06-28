@@ -165,7 +165,7 @@ export function HubDashboard({ country }: { country: string }) {
           {featured && (
             <article>
               <Link
-                to="/noticias/$slug"
+                to="/noticias/articulo/$slug"
                 params={{ slug: featured.slug }}
                 className="group block rounded-2xl overflow-hidden bg-[#242424] border border-[#333] transition-all duration-300 hover:border-[#D4A017]/40 hover:shadow-2xl"
               >
@@ -224,7 +224,7 @@ export function HubDashboard({ country }: { country: string }) {
                 {rest.map((n) => (
                   <Link
                     key={n.id}
-                    to="/noticias/$slug"
+                    to="/noticias/articulo/$slug"
                     params={{ slug: n.slug }}
                     className="group flex gap-5 cursor-pointer"
                   >
