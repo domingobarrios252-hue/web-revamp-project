@@ -45,7 +45,7 @@ export function useFederations(countryCode: string) {
     (async () => {
       const [{ data: allFeds }, { data: hubRows }] = await Promise.all([
         supabase
-          .from("federations")
+          .from("federations_public")
           .select("*")
           .eq("published", true)
           .order("type", { ascending: true })
@@ -83,7 +83,7 @@ export function useFederation(slug: string) {
     let cancelled = false;
     setLoading(true);
     supabase
-      .from("federations")
+      .from("federations_public")
       .select("*")
       .eq("slug", slug)
       .maybeSingle()
