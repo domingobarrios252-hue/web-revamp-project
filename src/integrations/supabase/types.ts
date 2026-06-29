@@ -146,6 +146,13 @@ export type Database = {
             referencedRelation: "clubs"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "club_hubs_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       clubs: {
@@ -543,6 +550,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "event_clubs_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "event_clubs_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
@@ -580,6 +594,13 @@ export type Database = {
             columns: ["federation_id"]
             isOneToOne: false
             referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_federations_federation_id_fkey"
+            columns: ["federation_id"]
+            isOneToOne: false
+            referencedRelation: "federations_public"
             referencedColumns: ["id"]
           },
         ]
@@ -778,6 +799,13 @@ export type Database = {
             referencedRelation: "federations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "federation_documents_federation_id_fkey"
+            columns: ["federation_id"]
+            isOneToOne: false
+            referencedRelation: "federations_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       federation_hubs: {
@@ -805,6 +833,13 @@ export type Database = {
             columns: ["federation_id"]
             isOneToOne: false
             referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "federation_hubs_federation_id_fkey"
+            columns: ["federation_id"]
+            isOneToOne: false
+            referencedRelation: "federations_public"
             referencedColumns: ["id"]
           },
         ]
@@ -894,6 +929,13 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "federations_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "federations_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1923,6 +1965,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "news_clubs_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "news_clubs_news_id_fkey"
             columns: ["news_id"]
             isOneToOne: false
@@ -1953,6 +2002,13 @@ export type Database = {
             columns: ["federation_id"]
             isOneToOne: false
             referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_federations_federation_id_fkey"
+            columns: ["federation_id"]
+            isOneToOne: false
+            referencedRelation: "federations_public"
             referencedColumns: ["id"]
           },
           {
@@ -2560,6 +2616,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "skaters_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "skaters_region_id_fkey"
             columns: ["region_id"]
             isOneToOne: false
@@ -3020,6 +3083,101 @@ export type Database = {
       }
     }
     Views: {
+      clubs_public: {
+        Row: {
+          address: string | null
+          categories: string[] | null
+          city: string | null
+          coaches: Json | null
+          country_code: string | null
+          cover_url: string | null
+          created_at: string | null
+          description: string | null
+          facebook_url: string | null
+          featured: boolean | null
+          founded_year: number | null
+          gallery: string[] | null
+          history: string | null
+          id: string | null
+          instagram_url: string | null
+          logo_url: string | null
+          name: string | null
+          province: string | null
+          published: boolean | null
+          region_id: string | null
+          school_type: string | null
+          slug: string | null
+          tiktok_url: string | null
+          updated_at: string | null
+          website: string | null
+          youtube_url: string | null
+        }
+        Insert: {
+          address?: string | null
+          categories?: string[] | null
+          city?: string | null
+          coaches?: Json | null
+          country_code?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          facebook_url?: string | null
+          featured?: boolean | null
+          founded_year?: number | null
+          gallery?: string[] | null
+          history?: string | null
+          id?: string | null
+          instagram_url?: string | null
+          logo_url?: string | null
+          name?: string | null
+          province?: string | null
+          published?: boolean | null
+          region_id?: string | null
+          school_type?: string | null
+          slug?: string | null
+          tiktok_url?: string | null
+          updated_at?: string | null
+          website?: string | null
+          youtube_url?: string | null
+        }
+        Update: {
+          address?: string | null
+          categories?: string[] | null
+          city?: string | null
+          coaches?: Json | null
+          country_code?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          facebook_url?: string | null
+          featured?: boolean | null
+          founded_year?: number | null
+          gallery?: string[] | null
+          history?: string | null
+          id?: string | null
+          instagram_url?: string | null
+          logo_url?: string | null
+          name?: string | null
+          province?: string | null
+          published?: boolean | null
+          region_id?: string | null
+          school_type?: string | null
+          slug?: string | null
+          tiktok_url?: string | null
+          updated_at?: string | null
+          website?: string | null
+          youtube_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clubs_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_submissions_public: {
         Row: {
           country_code: string | null
@@ -3061,6 +3219,96 @@ export type Database = {
           title?: string | null
         }
         Relationships: []
+      }
+      federations_public: {
+        Row: {
+          address: string | null
+          city: string | null
+          country_code: string | null
+          cover_url: string | null
+          created_at: string | null
+          description: string | null
+          featured: boolean | null
+          founded_year: number | null
+          id: string | null
+          logo_url: string | null
+          name: string | null
+          parent_id: string | null
+          president: string | null
+          published: boolean | null
+          region_code: string | null
+          region_name: string | null
+          short_name: string | null
+          slug: string | null
+          social: Json | null
+          type: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country_code?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          founded_year?: number | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          parent_id?: string | null
+          president?: string | null
+          published?: boolean | null
+          region_code?: string | null
+          region_name?: string | null
+          short_name?: string | null
+          slug?: string | null
+          social?: Json | null
+          type?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country_code?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          founded_year?: number | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          parent_id?: string | null
+          president?: string | null
+          published?: boolean | null
+          region_code?: string | null
+          region_name?: string | null
+          short_name?: string | null
+          slug?: string | null
+          social?: Json | null
+          type?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "federations_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "federations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "federations_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "federations_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
