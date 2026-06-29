@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronRight, Home } from "lucide-react";
+import { toJsonLd } from "@/lib/jsonLd";
 
 const LABELS: Record<string, string> = {
   noticias: "Noticias",
@@ -113,7 +114,7 @@ export function Breadcrumbs() {
           </li>
         ))}
       </ol>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: toJsonLd(jsonLd) }} />
     </nav>
   );
 }

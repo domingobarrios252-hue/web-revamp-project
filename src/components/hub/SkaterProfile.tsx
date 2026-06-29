@@ -6,6 +6,7 @@ import {
   useSkaterVideos,
   useSkaterResults,
 } from "@/lib/hub/useSkaters";
+import { toJsonLd } from "@/lib/jsonLd";
 
 export function SkaterProfile({ slug, country }: { slug: string; country: string }) {
   const { skater, loading } = useSkater(slug);
@@ -38,7 +39,7 @@ export function SkaterProfile({ slug, country }: { slug: string; country: string
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: toJsonLd({
             "@context": "https://schema.org",
             "@type": "Person",
             name: skater.full_name,

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Building2, MapPin, Mail, Phone, Globe, FileText, Calendar, Instagram, Facebook, Youtube } from "lucide-react";
 import { useFederation, useFederationDocuments, useFederationNews } from "@/lib/hub/useFederations";
+import { toJsonLd } from "@/lib/jsonLd";
 
 const DOC_LABEL: Record<string, string> = {
   estatuto: "Estatutos",
@@ -38,7 +39,7 @@ export function FederationProfile({ slug, country }: { slug: string; country: st
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: toJsonLd({
             "@context": "https://schema.org",
             "@type": "SportsOrganization",
             name: federation.name,

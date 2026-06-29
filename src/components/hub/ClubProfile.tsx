@@ -11,6 +11,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useClub, useClubNews, useClubSkaters, useClubEvents } from "@/lib/hub/useClubs";
+import { toJsonLd } from "@/lib/jsonLd";
 
 const SCHOOL_LABEL: Record<string, string> = {
   escuela: "Escuela",
@@ -48,7 +49,7 @@ export function ClubProfile({ slug, country }: { slug: string; country: string }
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: toJsonLd({
             "@context": "https://schema.org",
             "@type": "SportsTeam",
             name: club.name,
