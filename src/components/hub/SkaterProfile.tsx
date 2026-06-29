@@ -39,7 +39,7 @@ export function SkaterProfile({ slug, country }: { slug: string; country: string
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: toJsonLd({
             "@context": "https://schema.org",
             "@type": "Person",
             name: skater.full_name,
