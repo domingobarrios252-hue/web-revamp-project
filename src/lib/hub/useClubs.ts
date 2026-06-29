@@ -47,7 +47,7 @@ export function useClubs(countryCode: string, filters: ClubsFilters = {}) {
     setLoading(true);
     (async () => {
       let q = supabase
-        .from("clubs")
+        .from("clubs_public")
         .select("*, regions(name, code)")
         .eq("published", true)
         .order("featured", { ascending: false })
@@ -95,7 +95,7 @@ export function useClub(slug: string) {
     let cancelled = false;
     setLoading(true);
     supabase
-      .from("clubs")
+      .from("clubs_public")
       .select("*, regions(name, code)")
       .eq("slug", slug)
       .maybeSingle()

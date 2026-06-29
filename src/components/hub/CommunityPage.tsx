@@ -412,7 +412,7 @@ function CommunityFeed({ country }: { country: string }) {
       .limit(60)
       .then(({ data }) => {
         if (cancelled) return;
-        setItems((data as Publication[]) ?? []);
+        setItems((data as unknown as Publication[]) ?? []);
         setLoading(false);
       });
     return () => {
