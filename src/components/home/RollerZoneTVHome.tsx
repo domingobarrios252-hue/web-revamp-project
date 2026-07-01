@@ -182,7 +182,7 @@ export function RollerZoneTVHome() {
           <div className="w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
             <div className="aspect-video overflow-hidden rounded-lg bg-black">
               <iframe
-                src={youTubeEmbedUrl(openUrl, { autoplay: true }) ?? undefined}
+                src={videoEmbedUrl(openUrl, { autoplay: true }) ?? undefined}
                 title="Vídeo"
                 className="h-full w-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
