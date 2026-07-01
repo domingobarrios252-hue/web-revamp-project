@@ -56,7 +56,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const wordCount = plain ? plain.split(" ").filter(Boolean).length : undefined;
     const bodySnippet = plain ? plain.slice(0, 500) : undefined;
     const lang = a.country_code === "co" ? "es-CO" : "es-ES";
-    const keywords = [a.news_categories?.name, a.legacy_tag, a.competition_tag ?? undefined]
+    const keywords = [a.news_categories?.name, a.legacy_tag]
       .filter((v): v is string => Boolean(v));
 
     const newsLd = {
