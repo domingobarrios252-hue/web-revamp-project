@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Play, Star } from "lucide-react";
-import { youTubeThumbnail } from "@/lib/youtube";
+import { videoThumbnail } from "@/lib/videoEmbed";
 import type { VideoRow } from "@/lib/hub/useVideos";
 
 export function VideoCard({ country, video }: { country: string; video: VideoRow }) {
-  const thumb = video.thumbnail_url ?? youTubeThumbnail(video.video_url) ?? null;
+  const thumb = video.thumbnail_url ?? videoThumbnail(video.video_url) ?? null;
   return (
     <Link
       to="/hub/$country/tv/$slug"

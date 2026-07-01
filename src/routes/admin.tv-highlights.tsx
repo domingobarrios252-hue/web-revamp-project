@@ -4,7 +4,7 @@ import { Plus, Pencil, Trash2, X, Upload, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
-import { youTubeThumbnail } from "@/lib/youtube";
+import { videoThumbnail } from "@/lib/videoEmbed";
 
 export const Route = createFileRoute("/admin/tv-highlights")({
   head: () => ({ meta: [{ title: "Admin · Highlights TV" }, { name: "robots", content: "noindex" }] }),
@@ -116,7 +116,7 @@ function AdminTvHighlights() {
             </thead>
             <tbody>
               {items.map((h) => {
-                const thumb = h.thumbnail_url || youTubeThumbnail(h.video_url);
+                const thumb = h.thumbnail_url || videoThumbnail(h.video_url);
                 return (
                   <tr key={h.id} className="border-b border-border/60 last:border-0">
                     <td className="px-3 py-2">
@@ -240,7 +240,7 @@ function HighlightForm({
     onSaved();
   };
 
-  const ytThumb = youTubeThumbnail(videoUrl);
+  const ytThumb = videoThumbnail(videoUrl);
 
   return (
     <div className="mb-6 border border-gold bg-surface p-4">

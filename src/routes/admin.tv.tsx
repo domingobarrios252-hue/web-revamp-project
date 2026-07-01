@@ -105,7 +105,7 @@ function AdminTv() {
     load();
   };
 
-  const previewEmbed = youTubeEmbedUrl(streamUrl);
+  const previewEmbed = videoEmbedUrl(streamUrl);
 
   if (loading) return <p className="text-muted-foreground">Cargando…</p>;
 
