@@ -5,7 +5,7 @@ export function JoinContributorsBlock() {
   return (
     <section
       id="colaborar"
-      className="relative overflow-hidden border-y border-gold/30 bg-background py-16 md:py-24"
+      className="relative scroll-mt-20 overflow-hidden border-y border-gold/30 bg-background py-16 md:py-24"
     >
       {/* Fondo editorial */}
       <div className="absolute inset-0 opacity-[0.07]" aria-hidden="true">
