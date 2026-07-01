@@ -61,6 +61,7 @@ import { Route as CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport } from './ro
 import { Route as CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport } from './routes/camino-al-europeo-2026.entrevista-seleccionador'
 import { Route as CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport } from './routes/camino-al-europeo-2026.convocatoria-seleccion-espanola'
 import { Route as CaminoAlEuropeo2026CalendarioYSedesRouteImport } from './routes/camino-al-europeo-2026.calendario-y-sedes'
+import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlights'
 import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisiones'
@@ -400,6 +401,11 @@ const CaminoAlEuropeo2026CalendarioYSedesRoute =
     path: '/calendario-y-sedes',
     getParentRoute: () => CaminoAlEuropeo2026Route,
   } as any)
+const AdminVideosRoute = AdminVideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
@@ -818,6 +824,7 @@ export interface FileRoutesByFullPath {
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/admin/videos': typeof AdminVideosRoute
   '/camino-al-europeo-2026/calendario-y-sedes': typeof CaminoAlEuropeo2026CalendarioYSedesRoute
   '/camino-al-europeo-2026/convocatoria-seleccion-espanola': typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute
   '/camino-al-europeo-2026/entrevista-seleccionador': typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRoute
@@ -939,6 +946,7 @@ export interface FileRoutesByTo {
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/admin/videos': typeof AdminVideosRoute
   '/camino-al-europeo-2026/calendario-y-sedes': typeof CaminoAlEuropeo2026CalendarioYSedesRoute
   '/camino-al-europeo-2026/convocatoria-seleccion-espanola': typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute
   '/camino-al-europeo-2026/entrevista-seleccionador': typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRoute
@@ -1057,6 +1065,7 @@ export interface FileRoutesById {
   '/admin/tv-emisiones': typeof AdminTvEmisionesRoute
   '/admin/tv-highlights': typeof AdminTvHighlightsRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/admin/videos': typeof AdminVideosRoute
   '/camino-al-europeo-2026/calendario-y-sedes': typeof CaminoAlEuropeo2026CalendarioYSedesRoute
   '/camino-al-europeo-2026/convocatoria-seleccion-espanola': typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute
   '/camino-al-europeo-2026/entrevista-seleccionador': typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRoute
@@ -1183,6 +1192,7 @@ export interface FileRouteTypes {
     | '/admin/tv-emisiones'
     | '/admin/tv-highlights'
     | '/admin/usuarios'
+    | '/admin/videos'
     | '/camino-al-europeo-2026/calendario-y-sedes'
     | '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
     | '/camino-al-europeo-2026/entrevista-seleccionador'
@@ -1304,6 +1314,7 @@ export interface FileRouteTypes {
     | '/admin/tv-emisiones'
     | '/admin/tv-highlights'
     | '/admin/usuarios'
+    | '/admin/videos'
     | '/camino-al-europeo-2026/calendario-y-sedes'
     | '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
     | '/camino-al-europeo-2026/entrevista-seleccionador'
@@ -1421,6 +1432,7 @@ export interface FileRouteTypes {
     | '/admin/tv-emisiones'
     | '/admin/tv-highlights'
     | '/admin/usuarios'
+    | '/admin/videos'
     | '/camino-al-europeo-2026/calendario-y-sedes'
     | '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
     | '/camino-al-europeo-2026/entrevista-seleccionador'
@@ -1902,6 +1914,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/camino-al-europeo-2026/calendario-y-sedes'
       preLoaderRoute: typeof CaminoAlEuropeo2026CalendarioYSedesRouteImport
       parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/admin/videos': {
+      id: '/admin/videos'
+      path: '/videos'
+      fullPath: '/admin/videos'
+      preLoaderRoute: typeof AdminVideosRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/usuarios': {
       id: '/admin/usuarios'
@@ -2434,6 +2453,7 @@ interface AdminRouteChildren {
   AdminTvEmisionesRoute: typeof AdminTvEmisionesRoute
   AdminTvHighlightsRoute: typeof AdminTvHighlightsRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
+  AdminVideosRoute: typeof AdminVideosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -2475,6 +2495,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminTvEmisionesRoute: AdminTvEmisionesRoute,
   AdminTvHighlightsRoute: AdminTvHighlightsRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
+  AdminVideosRoute: AdminVideosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
