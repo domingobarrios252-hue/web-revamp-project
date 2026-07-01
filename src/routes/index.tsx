@@ -376,12 +376,12 @@ function HeroSlide({
             >
               Leer actualidad <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link
-              to="/redactores"
+            <a
+              href="#colaborar"
               className="font-condensed inline-flex items-center justify-center gap-2 rounded-md border border-white/30 bg-black/30 px-6 py-3 text-[13px] font-bold uppercase tracking-wider text-foreground backdrop-blur-sm transition-all hover:border-gold hover:bg-black/50 hover:text-gold md:text-sm"
             >
               <UsersRound className="h-4 w-4" /> Únete a RollerZone
-            </Link>
+            </a>
           </div>
         </div>
       </div>
