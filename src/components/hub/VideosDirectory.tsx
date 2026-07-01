@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useVideos, VIDEO_CATEGORIES, type VideoRow } from "@/lib/hub/useVideos";
 import { VideoCard } from "./VideoCard";
-import { youTubeEmbedUrl, youTubeThumbnail } from "@/lib/youtube";
+import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { Link } from "@tanstack/react-router";
 import { Play } from "lucide-react";
 
@@ -83,8 +83,8 @@ export function VideosDirectory({ country }: { country: string }) {
 }
 
 function FeaturedHero({ country, video }: { country: string; video: VideoRow }) {
-  const embed = youTubeEmbedUrl(video.video_url);
-  const thumb = video.thumbnail_url ?? youTubeThumbnail(video.video_url);
+  const embed = videoEmbedUrl(video.video_url, { autoplay: true });
+  const thumb = video.thumbnail_url ?? videoThumbnail(video.video_url);
   return (
     <section className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-stretch">
       <div className="relative aspect-video overflow-hidden rounded-[8px] border border-[#2A2A2A] bg-black">

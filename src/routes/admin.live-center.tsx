@@ -349,7 +349,7 @@ function AdminLiveCenter() {
         <Panel title="Retransmisión" icon={<Radio className="h-4 w-4" />}>
           <div className="grid gap-3">
             <Field label="Título del directo"><input value={title} onChange={(e) => setTitle(e.target.value)} className="input" /></Field>
-            <Field label="URL YouTube, Twitch, embed o enlace externo"><textarea value={streamUrl} onChange={(e) => setStreamUrl(e.target.value)} className="input min-h-24" placeholder="Pega aquí el enlace o el iframe embed" /></Field>
+            <Field label="URL YouTube, Facebook, Twitch, embed o enlace externo"><textarea value={streamUrl} onChange={(e) => setStreamUrl(e.target.value)} className="input min-h-24" placeholder="Pega aquí el enlace (YouTube, Facebook Video/Live, Twitch) o un iframe embed" /></Field>
             <div className="flex flex-wrap gap-4">
               <Check label="Mostrar sección en directo" checked={active} onChange={setActive} />
               <Check label="Autoplay si es posible" checked={autoplay} onChange={setAutoplay} />

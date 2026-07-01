@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Play, Tv, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { youTubeEmbedUrl, extractYouTubeId } from "@/lib/youtube";
+import { canEmbedVideo, videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { SectionHeading } from "./SectionHeading";
 
 type Highlight = {
@@ -22,7 +22,7 @@ export function RollerZoneTVHome() {
 
   function openVideo(url: string | null) {
     if (!url) return;
-    if (extractYouTubeId(url)) setOpenUrl(url);
+    if (canEmbedVideo(url)) setOpenUrl(url);
     else window.open(url, "_blank", "noopener,noreferrer");
   }
 
@@ -182,7 +182,7 @@ export function RollerZoneTVHome() {
           <div className="w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
             <div className="aspect-video overflow-hidden rounded-lg bg-black">
               <iframe
-                src={youTubeEmbedUrl(openUrl, { autoplay: true }) ?? undefined}
+                src={videoEmbedUrl(openUrl, { autoplay: true }) ?? undefined}
                 title="Vídeo"
                 className="h-full w-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

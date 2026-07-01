@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
-import { youTubeEmbedUrl, youTubeThumbnail } from "@/lib/youtube";
+import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 
 export const Route = createFileRoute("/tv")({
   head: () => ({
@@ -119,7 +119,7 @@ function TvPage() {
     return t >= start && t <= end;
   }, [settings, now]);
 
-  const embedUrl = youTubeEmbedUrl(settings?.live_stream_url, { autoplay: false });
+  const embedUrl = videoEmbedUrl(settings?.live_stream_url, { autoplay: false });
 
   return (
     <div className="bg-background">
@@ -425,7 +425,7 @@ function BroadcastsCarousel({
 }
 
 function BroadcastCard({ b }: { b: Broadcast }) {
-  const cover = b.cover_url || youTubeThumbnail(b.stream_url);
+  const cover = b.cover_url || videoThumbnail(b.stream_url);
   const Wrapper = ({ children }: { children: React.ReactNode }) =>
     b.stream_url ? (
       <a
@@ -505,7 +505,7 @@ function HighlightsGrid({
           >
             <div className={`relative overflow-hidden bg-black ${isFeatured ? "aspect-[16/10]" : "aspect-video"}`}>
               {(() => {
-                const thumb = h.thumbnail_url || youTubeThumbnail(h.video_url);
+                const thumb = h.thumbnail_url || videoThumbnail(h.video_url);
                 return thumb ? (
                   <img
                     src={thumb}
@@ -558,7 +558,7 @@ function HighlightsGrid({
 }
 
 function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => void }) {
-  const embed = youTubeEmbedUrl(item.video_url, { autoplay: true });
+  const embed = videoEmbedUrl(item.video_url, { autoplay: true });
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);

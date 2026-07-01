@@ -4,7 +4,7 @@ import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
-import { youTubeThumbnail } from "@/lib/youtube";
+import { videoThumbnail } from "@/lib/videoEmbed";
 
 export const Route = createFileRoute("/admin/tv-emisiones")({
   head: () => ({ meta: [{ title: "Admin · Emisiones TV" }, { name: "robots", content: "noindex" }] }),
@@ -234,7 +234,7 @@ function BroadcastForm({
     onSaved();
   };
 
-  const ytThumb = youTubeThumbnail(streamUrl);
+  const ytThumb = videoThumbnail(streamUrl);
 
   return (
     <div className="mb-6 border border-gold bg-surface p-4">
@@ -280,6 +280,7 @@ function BroadcastForm({
           </span>
           <select value={platform} onChange={(e) => setPlatform(e.target.value)} className="input">
             <option>YouTube</option>
+            <option>Facebook</option>
             <option>Twitch</option>
             <option>Otro</option>
           </select>

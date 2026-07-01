@@ -4,7 +4,7 @@ import { Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
-import { youTubeEmbedUrl } from "@/lib/youtube";
+import { videoEmbedUrl } from "@/lib/videoEmbed";
 
 export const Route = createFileRoute("/admin/tv")({
   head: () => ({ meta: [{ title: "Admin · TV" }, { name: "robots", content: "noindex" }] }),
@@ -105,7 +105,7 @@ function AdminTv() {
     load();
   };
 
-  const previewEmbed = youTubeEmbedUrl(streamUrl);
+  const previewEmbed = videoEmbedUrl(streamUrl);
 
   if (loading) return <p className="text-muted-foreground">Cargando…</p>;
 
@@ -121,16 +121,16 @@ function AdminTv() {
 
           <label className="block">
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-              URL del directo de YouTube *
+              URL del directo (YouTube, Facebook Live o Twitch) *
             </span>
             <input
               value={streamUrl}
               onChange={(e) => setStreamUrl(e.target.value)}
-              placeholder="https://www.youtube.com/watch?v=... o /live/..."
+              placeholder="https://youtube.com/... · https://facebook.com/.../videos/... · https://twitch.tv/..."
               className="input"
             />
             <p className="font-condensed mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-              Pega cualquier URL de YouTube (watch, live, embed, youtu.be)
+              Detecta automáticamente YouTube (watch/live/embed/youtu.be), Facebook (video, live, fb.watch) y Twitch
             </p>
           </label>
 

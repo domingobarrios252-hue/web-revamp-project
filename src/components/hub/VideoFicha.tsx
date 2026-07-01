@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useVideo, useVideos } from "@/lib/hub/useVideos";
-import { youTubeEmbedUrl } from "@/lib/youtube";
+import { videoEmbedUrl } from "@/lib/videoEmbed";
 import { VideoCard } from "./VideoCard";
 
 type RelatedSkater = { id: string; full_name: string; slug: string };
@@ -84,7 +84,7 @@ export function VideoFicha({ country, slug }: { country: string; slug: string })
     );
   }
 
-  const embed = youTubeEmbedUrl(video.video_url);
+  const embed = videoEmbedUrl(video.video_url, { autoplay: true });
 
   return (
     <article className="mx-auto max-w-6xl px-4 md:px-6 py-8 space-y-8">
