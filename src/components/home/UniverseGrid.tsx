@@ -29,7 +29,7 @@ const TILES: Tile[] = [
   },
   {
     to: "/hub/$country",
-    params: { country: "espana" },
+    params: { country: "es" },
     kicker: "Hub oficial",
     title: "España",
     description: "Liga nacional, clubes, federaciones y selección absoluta.",
@@ -37,7 +37,7 @@ const TILES: Tile[] = [
   },
   {
     to: "/hub/$country",
-    params: { country: "colombia" },
+    params: { country: "co" },
     kicker: "Hub oficial",
     title: "Colombia",
     description: "Liga, ligas regionales y la potencia mundial del patinaje.",
