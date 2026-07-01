@@ -50,18 +50,39 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const desc = (a.excerpt ?? a.title).slice(0, 160);
     const author = a.writers?.full_name ?? a.author ?? "RollerZone Spain";
     const publishedIso = a.published_at ? new Date(a.published_at).toISOString() : undefined;
+    const modifiedIso = a.updated_at ? new Date(a.updated_at).toISOString() : publishedIso;
     const image = a.image_url ?? undefined;
+    const plain = (a.content ?? "").replace(/\s+/g, " ").trim();
+    const wordCount = plain ? plain.split(" ").filter(Boolean).length : undefined;
+    const bodySnippet = plain ? plain.slice(0, 500) : undefined;
+    const lang = a.country_code === "co" ? "es-CO" : "es-ES";
+    const keywords = [a.news_categories?.name, a.legacy_tag, a.competition_tag ?? undefined]
+      .filter((v): v is string => Boolean(v));
 
     const newsLd = {
       "@context": "https://schema.org",
       "@type": "NewsArticle",
-      headline: a.title,
+      headline: a.title.slice(0, 110),
       description: desc,
       mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
       url: canonical,
+      inLanguage: lang,
+      isAccessibleForFree: true,
       ...(image ? { image: [image] } : {}),
-      ...(publishedIso ? { datePublished: publishedIso, dateModified: publishedIso } : {}),
-      author: { "@type": "Person", name: author },
+      ...(publishedIso ? { datePublished: publishedIso } : {}),
+      ...(modifiedIso ? { dateModified: modifiedIso } : {}),
+      ...(wordCount ? { wordCount } : {}),
+      ...(bodySnippet ? { articleBody: bodySnippet } : {}),
+      ...(keywords.length ? { keywords: keywords.join(", ") } : {}),
+      author: [
+        {
+          "@type": "Person",
+          name: author,
+          ...(a.writers?.published && a.writer_id
+            ? { url: `https://rollerzone.es/redactores/${a.writer_id}` }
+            : {}),
+        },
+      ],
       publisher: {
         "@type": "Organization",
         name: "RollerZone",
@@ -72,6 +93,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
       },
       ...(a.news_categories?.name ? { articleSection: a.news_categories.name } : {}),
     };
+
     const crumbLd = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
