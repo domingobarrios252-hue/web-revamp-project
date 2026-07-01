@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
-import { youTubeEmbedUrl, youTubeThumbnail } from "@/lib/youtube";
+import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 
 export const Route = createFileRoute("/tv")({
   head: () => ({
