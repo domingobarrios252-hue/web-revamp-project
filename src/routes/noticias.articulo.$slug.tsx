@@ -40,23 +40,85 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     if (!data) throw notFound();
     return { article: data as unknown as Article };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.article.title} — RollerZone` },
-          { name: "description", content: loaderData.article.excerpt ?? "RollerZone" },
-          { property: "og:title", content: loaderData.article.title },
-          { property: "og:description", content: loaderData.article.excerpt ?? "" },
-          { property: "og:type", content: "article" },
-          ...(loaderData.article.image_url
-            ? ([
-                { property: "og:image", content: loaderData.article.image_url },
-                { name: "twitter:image", content: loaderData.article.image_url },
-              ] as const)
-            : []),
-        ]
-      : [],
-  }),
+  head: ({ loaderData, params }) => {
+    if (!loaderData) return { meta: [{ title: "Noticia — RollerZone" }] };
+    const a = loaderData.article;
+    const canonical = `https://rollerzone.es/noticias/articulo/${params.slug}`;
+    const desc = (a.excerpt ?? a.title).slice(0, 160);
+    const author = a.writers?.full_name ?? a.author ?? "RollerZone Spain";
+    const publishedIso = a.published_at ? new Date(a.published_at).toISOString() : undefined;
+    const image = a.image_url ?? undefined;
+
+    const newsLd = {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      headline: a.title,
+      description: desc,
+      mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+      url: canonical,
+      ...(image ? { image: [image] } : {}),
+      ...(publishedIso ? { datePublished: publishedIso, dateModified: publishedIso } : {}),
+      author: { "@type": "Person", name: author },
+      publisher: {
+        "@type": "Organization",
+        name: "RollerZone",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://rollerzone.es/favicon.ico",
+        },
+      },
+      ...(a.news_categories?.name ? { articleSection: a.news_categories.name } : {}),
+    };
+    const crumbLd = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: "https://rollerzone.es/" },
+        { "@type": "ListItem", position: 2, name: "Noticias", item: "https://rollerzone.es/noticias" },
+        ...(a.news_categories
+          ? [{
+              "@type": "ListItem",
+              position: 3,
+              name: a.news_categories.name,
+              item: `https://rollerzone.es/noticias/${a.news_categories.slug}`,
+            }]
+          : []),
+        { "@type": "ListItem", position: a.news_categories ? 4 : 3, name: a.title, item: canonical },
+      ],
+    };
+
+    return {
+      meta: [
+        { title: `${a.title} — RollerZone` },
+        { name: "description", content: desc },
+        { name: "author", content: author },
+        { property: "og:title", content: a.title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: canonical },
+        { property: "og:site_name", content: "RollerZone" },
+        { property: "og:locale", content: "es_ES" },
+        ...(publishedIso ? [{ property: "article:published_time", content: publishedIso }] : []),
+        { property: "article:author", content: author },
+        ...(a.news_categories ? [{ property: "article:section", content: a.news_categories.name }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: a.title },
+        { name: "twitter:description", content: desc },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { property: "og:image:alt", content: a.title },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: canonical }],
+      scripts: [
+        { type: "application/ld+json", children: JSON.stringify(newsLd).replace(/</g, "\\u003c") },
+        { type: "application/ld+json", children: JSON.stringify(crumbLd).replace(/</g, "\\u003c") },
+      ],
+    };
+  },
   notFoundComponent: () => (
     <div className="mx-auto max-w-3xl px-6 py-16 text-center">
       <h1 className="font-display text-4xl tracking-widest">Noticia no encontrada</h1>
