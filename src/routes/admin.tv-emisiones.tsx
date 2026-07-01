@@ -280,6 +280,7 @@ function BroadcastForm({
           </span>
           <select value={platform} onChange={(e) => setPlatform(e.target.value)} className="input">
             <option>YouTube</option>
+            <option>Facebook</option>
             <option>Twitch</option>
             <option>Otro</option>
           </select>
