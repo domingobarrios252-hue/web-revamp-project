@@ -25,6 +25,8 @@ type Article = {
   read_minutes: number | null;
   views_count: number;
   published_at: string;
+  updated_at: string | null;
+  country_code: string | null;
   news_categories: { id: string; name: string; slug: string; scope: string } | null;
 };
 
@@ -33,13 +35,14 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .maybeSingle();
     if (!data) throw notFound();
     return { article: data as unknown as Article };
   },
+
   head: ({ loaderData, params }) => {
     if (!loaderData) return { meta: [{ title: "Noticia — RollerZone" }] };
     const a = loaderData.article;
