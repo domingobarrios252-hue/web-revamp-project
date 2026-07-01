@@ -1066,23 +1066,11 @@ function getEmbedUrl(
 ): { type: "iframe"; src: string } | { type: "link"; href: string } | null {
   if (!value?.trim()) return null;
   const raw = value.trim();
-  const iframeSrc = raw.match(/src=["']([^"']+)["']/i)?.[1];
-  const source = iframeSrc || raw;
-  const youtube = youTubeEmbedUrl(source, { autoplay });
-  if (youtube) return { type: "iframe", src: youtube };
+  const embed = videoEmbedUrl(raw, { autoplay });
+  if (embed) return { type: "iframe", src: embed };
   try {
-    const url = new URL(source);
-    if (url.hostname.includes("twitch.tv")) {
-      const path = url.pathname.split("/").filter(Boolean);
-      const parent =
-        typeof window !== "undefined" ? window.location.hostname : "rollerzone.lovable.app";
-      if (path[0] === "videos" && path[1])
-        return { type: "iframe", src: `https://player.twitch.tv/?video=${path[1]}&parent=${parent}` };
-      if (path[0])
-        return { type: "iframe", src: `https://player.twitch.tv/?channel=${path[0]}&parent=${parent}` };
-    }
-    if (url.pathname.includes("/embed") || iframeSrc) return { type: "iframe", src: source };
-    return { type: "link", href: source };
+    const url = new URL(raw.match(/src=["']([^"']+)["']/i)?.[1] ?? raw);
+    return { type: "link", href: url.toString() };
   } catch {
     return null;
   }
