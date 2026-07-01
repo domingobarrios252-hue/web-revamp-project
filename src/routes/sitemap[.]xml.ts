@@ -156,6 +156,15 @@ export const Route = createFileRoute("/sitemap.xml")({
               priority: "0.6",
             });
           }
+          for (const m of magazinesRes.data ?? []) {
+            if (!m.id) continue;
+            entries.push({
+              path: `/revista/leer/${m.id}`,
+              lastmod: toIso(m.updated_at ?? m.edition_date),
+              changefreq: "monthly",
+              priority: "0.6",
+            });
+          }
         }
 
         const urls = entries.map((e) =>
