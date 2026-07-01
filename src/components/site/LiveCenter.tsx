@@ -844,7 +844,7 @@ function TvSidebar({
   return (
     <div className="space-y-2.5">
       {streams.slice(0, 4).map((s) => {
-        const thumb = youTubeThumbnail(s.embed_url);
+        const thumb = videoThumbnail(s.embed_url);
         const active = s.id === selectedId;
         return (
           <button
