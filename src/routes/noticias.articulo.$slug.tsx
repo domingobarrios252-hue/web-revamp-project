@@ -249,22 +249,39 @@ function ArticlePage() {
               <Link
                 to="/redactores/$id"
                 params={{ id: article.writer_id }}
+                rel="author"
                 className="text-foreground hover:text-gold hover:underline"
               >
-                {article.writers.full_name}
+                <span itemProp="author">{article.writers.full_name}</span>
               </Link>
             ) : (
-              <span className="text-foreground">{article.author}</span>
+              <span rel="author" itemProp="author" className="text-foreground">
+                {article.author}
+              </span>
             )}
           </span>
           <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-gold" />
-            {new Date(article.published_at).toLocaleDateString("es-ES", {
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-            })}
+            <time dateTime={new Date(article.published_at).toISOString()} itemProp="datePublished">
+              {new Date(article.published_at).toLocaleDateString("es-ES", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </time>
           </span>
+          {article.updated_at && article.updated_at !== article.published_at && (
+            <span className="text-muted-foreground/70">
+              Actualizado{" "}
+              <time dateTime={new Date(article.updated_at).toISOString()} itemProp="dateModified">
+                {new Date(article.updated_at).toLocaleDateString("es-ES", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </time>
+            </span>
+          )}
           <span className="flex items-center gap-1.5">
             <Eye className="h-3.5 w-3.5 text-gold" />
             {views} visita{views === 1 ? "" : "s"}
