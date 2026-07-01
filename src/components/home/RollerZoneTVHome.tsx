@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Play, Tv } from "lucide-react";
+import { Play, Tv, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { youTubeEmbedUrl, extractYouTubeId } from "@/lib/youtube";
 import { SectionHeading } from "./SectionHeading";
 
 type Highlight = {
