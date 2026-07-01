@@ -23,12 +23,93 @@ type Interview = {
 };
 
 export const Route = createFileRoute("/entrevistas/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Entrevista — ${params.slug} · RollerZone` },
-      { property: "og:type", content: "article" },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("interviews")
+      .select("title, slug, interviewee_name, interview_date, cover_url, excerpt, updated_at")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .maybeSingle();
+    return { seo: data };
+  },
+  head: ({ loaderData, params }) => {
+    const s = loaderData?.seo;
+    const canonical = `https://rollerzone.es/entrevistas/${params.slug}`;
+    if (!s) {
+      return {
+        meta: [
+          { title: "Entrevista — RollerZone" },
+          { property: "og:type", content: "article" },
+          { property: "og:url", content: canonical },
+        ],
+        links: [{ rel: "canonical", href: canonical }],
+      };
+    }
+    const title = `${s.title} — Entrevista a ${s.interviewee_name}`;
+    const desc = (s.excerpt ?? `Entrevista a ${s.interviewee_name} en RollerZone.`).slice(0, 160);
+    const dateIso = s.interview_date ? new Date(s.interview_date).toISOString() : undefined;
+    const modIso = s.updated_at ? new Date(s.updated_at).toISOString() : dateIso;
+    const image = s.cover_url ?? undefined;
+
+    const articleLd = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: s.title,
+      description: desc,
+      mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+      url: canonical,
+      ...(image ? { image: [image] } : {}),
+      ...(dateIso ? { datePublished: dateIso } : {}),
+      ...(modIso ? { dateModified: modIso } : {}),
+      author: { "@type": "Organization", name: "RollerZone Spain" },
+      about: { "@type": "Person", name: s.interviewee_name },
+      publisher: {
+        "@type": "Organization",
+        name: "RollerZone",
+        logo: { "@type": "ImageObject", url: "https://rollerzone.es/favicon.ico" },
+      },
+    };
+    const crumbLd = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: "https://rollerzone.es/" },
+        { "@type": "ListItem", position: 2, name: "Entrevistas", item: "https://rollerzone.es/entrevistas" },
+        { "@type": "ListItem", position: 3, name: s.interviewee_name, item: canonical },
+      ],
+    };
+
+    return {
+      meta: [
+        { title: `${title} · RollerZone` },
+        { name: "description", content: desc },
+        { name: "author", content: "RollerZone Spain" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: canonical },
+        { property: "og:site_name", content: "RollerZone" },
+        { property: "og:locale", content: "es_ES" },
+        ...(dateIso ? [{ property: "article:published_time", content: dateIso }] : []),
+        { property: "article:author", content: "RollerZone Spain" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { property: "og:image:alt", content: s.interviewee_name },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: canonical }],
+      scripts: [
+        { type: "application/ld+json", children: JSON.stringify(articleLd).replace(/</g, "\\u003c") },
+        { type: "application/ld+json", children: JSON.stringify(crumbLd).replace(/</g, "\\u003c") },
+      ],
+    };
+  },
   component: EntrevistaDetalle,
   notFoundComponent: () => (
     <div className="mx-auto max-w-2xl px-6 py-16 text-center">
