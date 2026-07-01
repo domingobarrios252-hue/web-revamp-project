@@ -239,11 +239,16 @@ function ArticlePage() {
             </span>
           )}
         </div>
-        <h1 className="font-display text-3xl uppercase leading-tight tracking-wider md:text-5xl">
+        <h1
+          itemProp="headline"
+          className="font-display text-3xl uppercase leading-tight tracking-wider md:text-5xl"
+        >
           {article.title}
         </h1>
         {article.excerpt && (
-          <p className="mt-3 text-base text-muted-foreground md:text-lg">{article.excerpt}</p>
+          <p itemProp="description" className="mt-3 text-base text-muted-foreground md:text-lg">
+            {article.excerpt}
+          </p>
         )}
 
         <div className="font-condensed mt-5 flex flex-wrap items-center gap-4 border-y border-border py-3 text-xs uppercase tracking-widest text-muted-foreground">
