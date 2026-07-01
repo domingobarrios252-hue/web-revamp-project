@@ -87,7 +87,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             },
           });
 
-          const [newsRes, interviewsRes, eventsRes, categoriesRes] =
+          const [newsRes, interviewsRes, eventsRes, categoriesRes, magazinesRes] =
             await Promise.all([
               supabase
                 .from("news")
@@ -111,6 +111,13 @@ export const Route = createFileRoute("/sitemap.xml")({
                 .from("news_categories")
                 .select("slug, updated_at")
                 .limit(200),
+              supabase
+                .from("magazines")
+                .select("id, updated_at, edition_date")
+                .eq("published", true)
+                .eq("is_active", true)
+                .order("edition_date", { ascending: false })
+                .limit(2000),
             ]);
 
           for (const n of newsRes.data ?? []) {
