@@ -16,7 +16,7 @@ import {
   Zap,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { youTubeEmbedUrl, youTubeThumbnail } from "@/lib/youtube";
+import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatTime as fmtTime, formatShortDate } from "@/lib/i18n/format";
 
