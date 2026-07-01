@@ -205,7 +205,11 @@ function ArticlePage() {
     .filter((p: string) => p.length > 0);
 
   return (
-    <article className="mx-auto max-w-4xl px-6 py-10">
+    <article
+      className="mx-auto max-w-4xl px-6 py-10"
+      itemScope
+      itemType="https://schema.org/NewsArticle"
+    >
       <nav className="font-condensed mb-3 text-xs uppercase tracking-widest text-muted-foreground">
         <Link to="/noticias" className="hover:text-gold">Noticias</Link>
         {article.news_categories && (
