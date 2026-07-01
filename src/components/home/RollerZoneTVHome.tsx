@@ -110,7 +110,7 @@ export function RollerZoneTVHome() {
                   )}
                 </div>
               </div>
-            </a>
+            </button>
 
             {/* Miniaturas */}
             <div className="flex flex-col gap-3">
