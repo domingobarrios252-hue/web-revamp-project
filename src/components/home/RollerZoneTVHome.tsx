@@ -151,7 +151,7 @@ export function RollerZoneTVHome() {
                       </div>
                     )}
                   </div>
-                </a>
+                </button>
               ))}
               <Link
                 to="/tv"
