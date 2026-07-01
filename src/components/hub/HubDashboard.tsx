@@ -403,21 +403,65 @@ export function HubDashboard({ country }: { country: string }) {
             </section>
           )}
 
-          {/* Accesos rápidos */}
-          <section className="space-y-5">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#666]">
-              Accesos rápidos
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              <QuickLink country={country} section="competicion" label="Liga Nacional" />
-              <QuickLink country={country} section="competicion" label="Campeonatos" />
-              <QuickLink country={country} section="clubes" label="Clubs" />
-              <QuickLink country={country} section="patinadores" label="Patinadores" />
-              <QuickLink country={country} section="mvp" label="MVP" />
-              <QuickLink country={country} section="tv" label="TV" />
-            </div>
-          </section>
-        </aside>
+          {/* Revista digital (Colombia u otros hubs con show_magazine) */}
+          {hub?.show_magazine && magazine && (
+            <section className="rounded-2xl overflow-hidden border border-[#333] bg-[#242424]">
+              <Link to="/revista" className="block group">
+                <div className="aspect-[3/4] relative overflow-hidden bg-[#0d0d0d]">
+                  {(magazine.cover_url || magazine.cover_image_url) && (
+                    <img
+                      src={magazine.cover_url ?? magazine.cover_image_url ?? ""}
+                      alt={magazine.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      loading="lazy"
+                    />
+                  )}
+                  <div className="absolute top-3 left-3">
+                    <span className="px-2 py-1 bg-[#D4A017] text-[#1A1A1A] text-[9px] font-black uppercase tracking-widest rounded-[3px]">
+                      Edición digital
+                    </span>
+                  </div>
+                </div>
+                <div className="px-5 py-4 flex items-center gap-3">
+                  <BookOpen className="h-5 w-5 text-[#D4A017] shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#888]">
+                      Revista RollerZone {country.toUpperCase()}
+                    </div>
+                    <div className="font-display text-sm font-bold text-white truncate group-hover:text-[#D4A017] transition-colors">
+                      {magazine.title}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </section>
+          )}
+
+          {/* Accesos rápidos (editables desde admin) */}
+          {(() => {
+            const links: QuickLink[] =
+              hub?.quick_links && hub.quick_links.length > 0
+                ? hub.quick_links
+                : [
+                    { section: "competicion", label: "Liga Nacional" },
+                    { section: "clubes", label: "Clubs" },
+                    { section: "patinadores", label: "Patinadores" },
+                    { section: "tv", label: "TV" },
+                  ];
+            if (links.length === 0) return null;
+            return (
+              <section className="space-y-5">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#666]">
+                  Accesos rápidos
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {links.map((l, idx) => (
+                    <QuickLink key={idx} country={country} section={l.section} label={l.label} />
+                  ))}
+                </div>
+              </section>
+            );
+          })()}
       </div>
     </div>
   );
