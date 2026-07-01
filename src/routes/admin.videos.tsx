@@ -273,7 +273,7 @@ function VideoForm({
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
 
-    const payload: Record<string, unknown> = {
+    const basePayload = {
       title: parsed.data.title,
       slug: parsed.data.slug,
       description: parsed.data.description || null,
@@ -285,12 +285,13 @@ function VideoForm({
       published: parsed.data.published,
       sort_order: parsed.data.sort_order,
     };
-    if (!initial) payload.published_at = new Date().toISOString();
 
     setSaving(true);
     const { error } = initial
-      ? await supabase.from("videos").update(payload).eq("id", initial.id)
-      : await supabase.from("videos").insert(payload);
+      ? await supabase.from("videos").update(basePayload).eq("id", initial.id)
+      : await supabase
+          .from("videos")
+          .insert({ ...basePayload, published_at: new Date().toISOString() });
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success(initial ? "Vídeo actualizado" : "Vídeo creado");
