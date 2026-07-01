@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Radio, MapPin, Calendar, ExternalLink, Clock } from "lucide-react";
 import { useActiveLiveEvent, useLiveTimeline, useLiveResults } from "@/lib/hub/useLive";
-import { youTubeEmbedUrl } from "@/lib/youtube";
+import { videoEmbedUrl } from "@/lib/videoEmbed";
 import { LiveResultsTable } from "@/components/site/LiveResultsTable";
 
 export function LiveCenterPage({ country }: { country: string }) {
@@ -36,7 +36,7 @@ export function LiveCenterPage({ country }: { country: string }) {
     );
   }
 
-  const embed = event.cover_url ? youTubeEmbedUrl(event.cover_url) : null;
+  const embed = event.cover_url ? videoEmbedUrl(event.cover_url) : null;
   const totalResults = results.length;
 
   return (
