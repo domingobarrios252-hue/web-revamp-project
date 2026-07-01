@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TvRouteImport } from './routes/tv'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RevistaRouteImport } from './routes/revista'
 import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
@@ -133,6 +134,11 @@ import { Route as HubCountryCompeticionLigaNacionalCalendarioRouteImport } from 
 const TvRoute = TvRouteImport.update({
   id: '/tv',
   path: '/tv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RevistaRoute = RevistaRouteImport.update({
@@ -766,6 +772,7 @@ export interface FileRoutesByFullPath {
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
   '/revista': typeof RevistaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tv': typeof TvRoute
   '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -885,6 +892,7 @@ export interface FileRoutesByTo {
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
   '/revista': typeof RevistaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tv': typeof TvRoute
   '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -1001,6 +1009,7 @@ export interface FileRoutesById {
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
   '/revista': typeof RevistaRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tv': typeof TvRoute
   '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
@@ -1125,6 +1134,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/redactores'
     | '/revista'
+    | '/sitemap.xml'
     | '/tv'
     | '/$country/$'
     | '/admin/banners'
@@ -1244,6 +1254,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/redactores'
     | '/revista'
+    | '/sitemap.xml'
     | '/tv'
     | '/$country/$'
     | '/admin/banners'
@@ -1359,6 +1370,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/redactores'
     | '/revista'
+    | '/sitemap.xml'
     | '/tv'
     | '/$country/$'
     | '/admin/banners'
@@ -1482,6 +1494,7 @@ export interface RootRouteChildren {
   PrivacidadRoute: typeof PrivacidadRoute
   RedactoresRoute: typeof RedactoresRouteWithChildren
   RevistaRoute: typeof RevistaRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TvRoute: typeof TvRoute
   CountrySplatRoute: typeof CountrySplatRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
@@ -1519,6 +1532,13 @@ declare module '@tanstack/react-router' {
       path: '/tv'
       fullPath: '/tv'
       preLoaderRoute: typeof TvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/revista': {
@@ -2661,6 +2681,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadRoute: PrivacidadRoute,
   RedactoresRoute: RedactoresRouteWithChildren,
   RevistaRoute: RevistaRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TvRoute: TvRoute,
   CountrySplatRoute: CountrySplatRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
