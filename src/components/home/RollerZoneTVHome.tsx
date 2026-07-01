@@ -72,11 +72,10 @@ export function RollerZoneTVHome() {
         ) : featured ? (
           <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
             {/* Destacado */}
-            <a
-              href={featured.video_url ?? "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative block overflow-hidden rounded-2xl border border-border bg-black shadow-xl transition-all hover:border-gold"
+            <button
+              type="button"
+              onClick={() => openVideo(featured.video_url)}
+              className="group relative block w-full overflow-hidden rounded-2xl border border-border bg-black text-left shadow-xl transition-all hover:border-gold"
             >
               <div className="relative aspect-video">
                 {featured.thumbnail_url ? (
