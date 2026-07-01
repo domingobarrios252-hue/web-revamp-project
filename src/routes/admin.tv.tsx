@@ -4,7 +4,7 @@ import { Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
-import { youTubeEmbedUrl } from "@/lib/youtube";
+import { videoEmbedUrl } from "@/lib/videoEmbed";
 
 export const Route = createFileRoute("/admin/tv")({
   head: () => ({ meta: [{ title: "Admin · TV" }, { name: "robots", content: "noindex" }] }),
