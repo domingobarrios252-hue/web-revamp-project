@@ -22,7 +22,7 @@ export function RollerZoneTVHome() {
 
   function openVideo(url: string | null) {
     if (!url) return;
-    if (extractYouTubeId(url)) setOpenUrl(url);
+    if (canEmbedVideo(url)) setOpenUrl(url);
     else window.open(url, "_blank", "noopener,noreferrer");
   }
 
