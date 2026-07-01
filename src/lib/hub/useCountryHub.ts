@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+export type QuickLink = { section: HubSectionKey; label: string };
+
 export type CountryHub = {
   id: string;
   country_code: string;
@@ -13,6 +15,8 @@ export type CountryHub = {
   tagline: string | null;
   active_sections: string[];
   section_labels: Record<string, string> | null;
+  quick_links: QuickLink[] | null;
+  show_magazine: boolean;
   active: boolean;
 };
 

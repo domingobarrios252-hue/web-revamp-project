@@ -4,7 +4,8 @@ import { ArrowDown, ArrowUp, Building2, Eye, EyeOff, Save, Star, Trophy, Users }
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
-import { HUB_SECTIONS, type HubSectionKey } from "@/lib/hub/useCountryHub";
+import { QuickLinksEditor } from "@/components/admin/QuickLinksEditor";
+import { HUB_SECTIONS, type HubSectionKey, type QuickLink } from "@/lib/hub/useCountryHub";
 
 export const Route = createFileRoute("/admin/espana")({
   head: () => ({
@@ -30,6 +31,7 @@ type HubRow = {
   federation_url: string | null;
   active_sections: string[];
   section_labels: Record<string, string> | null;
+  quick_links: QuickLink[] | null;
   active: boolean;
 };
 
@@ -98,6 +100,8 @@ function AdminEspanaPage() {
       <HeroEditor hub={hub} onSaved={reload} />
 
       <SectionsEditor hub={hub} onSaved={reload} />
+
+      <QuickLinksEditor hubId={hub.id} initial={hub.quick_links ?? []} onSaved={reload} />
 
       <FeaturedShortcuts />
 

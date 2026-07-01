@@ -30,7 +30,7 @@ type AdminPath =
   | "/admin/medallero" | "/admin/live-results" | "/admin/sections"
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
   | "/admin/espana" | "/admin/colombia" | "/admin/resultados"
-  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/dashboard";
+  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
 type AdminGroup = { id: string; label: string; icon: React.ReactNode; links: AdminLinkDef[] };
@@ -117,6 +117,7 @@ const GROUPS: AdminGroup[] = [
     icon: <Tv className="h-4 w-4" />,
     links: [
       { to: "/admin/tv", label: "TV — Directo", icon: <Tv className="h-4 w-4" /> },
+      { to: "/admin/videos", label: "TV — Vídeos (hub)", icon: <Film className="h-4 w-4" /> },
       { to: "/admin/tv-emisiones", label: "TV — Emisiones", icon: <Radio className="h-4 w-4" /> },
       { to: "/admin/tv-highlights", label: "TV — Highlights", icon: <Film className="h-4 w-4" /> },
     ],

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Calendar, Newspaper, Trophy } from "lucide-react";
+import { BookOpen, Calendar, Newspaper, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
 import { EmptyState } from "@/components/site/EmptyState";
 import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
 import { HubSectionLink } from "@/components/hub/HubSubNav";
-import type { HubSectionKey } from "@/lib/hub/useCountryHub";
+import { useCountryHub, type HubSectionKey, type QuickLink } from "@/lib/hub/useCountryHub";
 
 type NewsRow = {
   id: string;
@@ -48,11 +48,24 @@ type InterviewRow = {
   cover_url: string | null;
 };
 
+type MagazineRow = {
+  id: string;
+  title: string;
+  cover_url: string | null;
+  cover_image_url: string | null;
+  read_url: string | null;
+  edition_date: string | null;
+  issue_number: number | null;
+  is_free: boolean | null;
+};
+
 export function HubDashboard({ country }: { country: string }) {
+  const { hub } = useCountryHub(country);
   const [news, setNews] = useState<NewsRow[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
   const [results, setResults] = useState<ResultRow[]>([]);
   const [interview, setInterview] = useState<InterviewRow | null>(null);
+  const [magazine, setMagazine] = useState<MagazineRow | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,7 +110,8 @@ export function HubDashboard({ country }: { country: string }) {
           .order("published_at", { ascending: false })
           .limit(50);
 
-        const [n, e, r, i] = await Promise.all([
+        const magazineCountry = country === "co" ? "colombia" : country === "es" ? "espana" : country;
+        const [n, e, r, i, m] = await Promise.all([
           newsQuery,
           supabase
             .from("events")
@@ -121,6 +135,13 @@ export function HubDashboard({ country }: { country: string }) {
             .order("created_at", { ascending: false })
             .limit(1)
             .maybeSingle(),
+          supabase
+            .from("magazines")
+            .select("id,title,cover_url,cover_image_url,read_url,edition_date,issue_number,is_free,is_active,country,published")
+            .or(`country.eq.${magazineCountry},country.eq.${country}`)
+            .order("edition_date", { ascending: false, nullsFirst: false })
+            .order("issue_number", { ascending: false, nullsFirst: false })
+            .limit(5),
         ]);
 
         if (cancelled) return;
@@ -139,12 +160,16 @@ export function HubDashboard({ country }: { country: string }) {
         setEvents((e.data as EventRow[]) ?? []);
         setResults((r.data as ResultRow[]) ?? []);
         setInterview((i.data as InterviewRow) ?? null);
+        const mags = ((m.data as (MagazineRow & { is_active?: boolean; published?: boolean })[]) ?? [])
+          .filter((mg) => mg.is_active !== false && mg.published !== false);
+        setMagazine(mags[0] ?? null);
       } catch {
         if (!cancelled) {
           setNews([]);
           setEvents([]);
           setResults([]);
           setInterview(null);
+          setMagazine(null);
         }
       }
     })();
@@ -378,20 +403,65 @@ export function HubDashboard({ country }: { country: string }) {
             </section>
           )}
 
-          {/* Accesos rápidos */}
-          <section className="space-y-5">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#666]">
-              Accesos rápidos
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              <QuickLink country={country} section="competicion" label="Liga Nacional" />
-              <QuickLink country={country} section="competicion" label="Campeonatos" />
-              <QuickLink country={country} section="clubes" label="Clubs" />
-              <QuickLink country={country} section="patinadores" label="Patinadores" />
-              <QuickLink country={country} section="mvp" label="MVP" />
-              <QuickLink country={country} section="tv" label="TV" />
-            </div>
-          </section>
+          {/* Revista digital (Colombia u otros hubs con show_magazine) */}
+          {hub?.show_magazine && magazine && (
+            <section className="rounded-2xl overflow-hidden border border-[#333] bg-[#242424]">
+              <Link to="/revista" className="block group">
+                <div className="aspect-[3/4] relative overflow-hidden bg-[#0d0d0d]">
+                  {(magazine.cover_url || magazine.cover_image_url) && (
+                    <img
+                      src={magazine.cover_url ?? magazine.cover_image_url ?? ""}
+                      alt={magazine.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      loading="lazy"
+                    />
+                  )}
+                  <div className="absolute top-3 left-3">
+                    <span className="px-2 py-1 bg-[#D4A017] text-[#1A1A1A] text-[9px] font-black uppercase tracking-widest rounded-[3px]">
+                      Edición digital
+                    </span>
+                  </div>
+                </div>
+                <div className="px-5 py-4 flex items-center gap-3">
+                  <BookOpen className="h-5 w-5 text-[#D4A017] shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#888]">
+                      Revista RollerZone {country.toUpperCase()}
+                    </div>
+                    <div className="font-display text-sm font-bold text-white truncate group-hover:text-[#D4A017] transition-colors">
+                      {magazine.title}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </section>
+          )}
+
+          {/* Accesos rápidos (editables desde admin) */}
+          {(() => {
+            const links: QuickLink[] =
+              hub?.quick_links && hub.quick_links.length > 0
+                ? hub.quick_links
+                : [
+                    { section: "competicion", label: "Liga Nacional" },
+                    { section: "clubes", label: "Clubs" },
+                    { section: "patinadores", label: "Patinadores" },
+                    { section: "tv", label: "TV" },
+                  ];
+            if (links.length === 0) return null;
+            return (
+              <section className="space-y-5">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#666]">
+                  Accesos rápidos
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {links.map((l, idx) => (
+                    <QuickLink key={idx} country={country} section={l.section} label={l.label} />
+                  ))}
+                </div>
+              </section>
+            );
+          })()}
         </aside>
       </div>
     </div>
