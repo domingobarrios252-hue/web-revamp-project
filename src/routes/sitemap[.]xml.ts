@@ -87,7 +87,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             },
           });
 
-          const [newsRes, interviewsRes, eventsRes, categoriesRes] =
+          const [newsRes, interviewsRes, eventsRes, categoriesRes, magazinesRes] =
             await Promise.all([
               supabase
                 .from("news")
@@ -111,6 +111,13 @@ export const Route = createFileRoute("/sitemap.xml")({
                 .from("news_categories")
                 .select("slug, updated_at")
                 .limit(200),
+              supabase
+                .from("magazines")
+                .select("id, updated_at, edition_date")
+                .eq("published", true)
+                .eq("is_active", true)
+                .order("edition_date", { ascending: false })
+                .limit(2000),
             ]);
 
           for (const n of newsRes.data ?? []) {
@@ -146,6 +153,15 @@ export const Route = createFileRoute("/sitemap.xml")({
               path: `/noticias/${c.slug}`,
               lastmod: toIso(c.updated_at),
               changefreq: "daily",
+              priority: "0.6",
+            });
+          }
+          for (const m of magazinesRes.data ?? []) {
+            if (!m.id) continue;
+            entries.push({
+              path: `/revista/leer/${m.id}`,
+              lastmod: toIso(m.updated_at ?? m.edition_date),
+              changefreq: "monthly",
               priority: "0.6",
             });
           }
