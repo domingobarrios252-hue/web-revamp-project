@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Play, Tv, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { youTubeEmbedUrl, extractYouTubeId } from "@/lib/youtube";
+import { canEmbedVideo, videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { SectionHeading } from "./SectionHeading";
 
 type Highlight = {
