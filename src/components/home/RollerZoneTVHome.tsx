@@ -18,6 +18,13 @@ type Highlight = {
 
 export function RollerZoneTVHome() {
   const [items, setItems] = useState<Highlight[] | null>(null);
+  const [openUrl, setOpenUrl] = useState<string | null>(null);
+
+  function openVideo(url: string | null) {
+    if (!url) return;
+    if (extractYouTubeId(url)) setOpenUrl(url);
+    else window.open(url, "_blank", "noopener,noreferrer");
+  }
 
   useEffect(() => {
     let cancelled = false;
