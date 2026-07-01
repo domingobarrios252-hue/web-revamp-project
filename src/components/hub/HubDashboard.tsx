@@ -110,7 +110,8 @@ export function HubDashboard({ country }: { country: string }) {
           .order("published_at", { ascending: false })
           .limit(50);
 
-        const [n, e, r, i] = await Promise.all([
+        const magazineCountry = country === "co" ? "colombia" : country === "es" ? "espana" : country;
+        const [n, e, r, i, m] = await Promise.all([
           newsQuery,
           supabase
             .from("events")
@@ -134,6 +135,13 @@ export function HubDashboard({ country }: { country: string }) {
             .order("created_at", { ascending: false })
             .limit(1)
             .maybeSingle(),
+          supabase
+            .from("magazines")
+            .select("id,title,cover_url,cover_image_url,read_url,edition_date,issue_number,is_free,is_active,country,published")
+            .or(`country.eq.${magazineCountry},country.eq.${country}`)
+            .order("edition_date", { ascending: false, nullsFirst: false })
+            .order("issue_number", { ascending: false, nullsFirst: false })
+            .limit(5),
         ]);
 
         if (cancelled) return;
