@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { LiveBar } from "@/components/site/LiveBar";
 import { CookieBanner } from "@/components/site/CookieBanner";
+import { GoogleAnalytics } from "@/components/site/GoogleAnalytics";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -62,6 +63,14 @@ export const Route = createRootRoute({
       },
     ],
     scripts: [
+      {
+        src: "https://www.googletagmanager.com/gtag/js?id=G-2ZLN80RMTW",
+        async: true,
+      },
+      {
+        children:
+          "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','G-2ZLN80RMTW',{send_page_view:false});",
+      },
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -127,6 +136,7 @@ function RootComponent() {
           </main>
           <SiteFooter />
           <CookieBanner />
+          <GoogleAnalytics />
           <Toaster />
         </AuthDialogProvider>
       </AuthProvider>
