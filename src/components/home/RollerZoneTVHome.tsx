@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Play, Tv } from "lucide-react";
+import { Play, Tv, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { youTubeEmbedUrl, extractYouTubeId } from "@/lib/youtube";
 import { SectionHeading } from "./SectionHeading";
 
 type Highlight = {
@@ -17,6 +18,13 @@ type Highlight = {
 
 export function RollerZoneTVHome() {
   const [items, setItems] = useState<Highlight[] | null>(null);
+  const [openUrl, setOpenUrl] = useState<string | null>(null);
+
+  function openVideo(url: string | null) {
+    if (!url) return;
+    if (extractYouTubeId(url)) setOpenUrl(url);
+    else window.open(url, "_blank", "noopener,noreferrer");
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -64,11 +72,10 @@ export function RollerZoneTVHome() {
         ) : featured ? (
           <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
             {/* Destacado */}
-            <a
-              href={featured.video_url ?? "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative block overflow-hidden rounded-2xl border border-border bg-black shadow-xl transition-all hover:border-gold"
+            <button
+              type="button"
+              onClick={() => openVideo(featured.video_url)}
+              className="group relative block w-full overflow-hidden rounded-2xl border border-border bg-black text-left shadow-xl transition-all hover:border-gold"
             >
               <div className="relative aspect-video">
                 {featured.thumbnail_url ? (
@@ -103,17 +110,16 @@ export function RollerZoneTVHome() {
                   )}
                 </div>
               </div>
-            </a>
+            </button>
 
             {/* Miniaturas */}
             <div className="flex flex-col gap-3">
               {rest.map((h) => (
-                <a
+                <button
                   key={h.id}
-                  href={h.video_url ?? "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex gap-3 overflow-hidden rounded-xl border border-border bg-surface p-2 transition-all hover:border-gold"
+                  type="button"
+                  onClick={() => openVideo(h.video_url)}
+                  className="group flex gap-3 overflow-hidden rounded-xl border border-border bg-surface p-2 text-left transition-all hover:border-gold"
                 >
                   <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-md bg-black">
                     {h.thumbnail_url ? (
@@ -145,7 +151,7 @@ export function RollerZoneTVHome() {
                       </div>
                     )}
                   </div>
-                </a>
+                </button>
               ))}
               <Link
                 to="/tv"
@@ -157,6 +163,35 @@ export function RollerZoneTVHome() {
           </div>
         ) : null}
       </div>
+
+      {openUrl && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setOpenUrl(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            type="button"
+            onClick={() => setOpenUrl(null)}
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+            aria-label="Cerrar"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <div className="w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
+            <div className="aspect-video overflow-hidden rounded-lg bg-black">
+              <iframe
+                src={youTubeEmbedUrl(openUrl, { autoplay: true }) ?? undefined}
+                title="Vídeo"
+                className="h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
