@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useVideos, VIDEO_CATEGORIES, type VideoRow } from "@/lib/hub/useVideos";
 import { VideoCard } from "./VideoCard";
-import { youTubeEmbedUrl, youTubeThumbnail } from "@/lib/youtube";
+import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { Link } from "@tanstack/react-router";
 import { Play } from "lucide-react";
 
