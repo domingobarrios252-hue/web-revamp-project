@@ -84,7 +84,7 @@ export function VideoFicha({ country, slug }: { country: string; slug: string })
     );
   }
 
-  const embed = youTubeEmbedUrl(video.video_url);
+  const embed = videoEmbedUrl(video.video_url, { autoplay: true });
 
   return (
     <article className="mx-auto max-w-6xl px-4 md:px-6 py-8 space-y-8">
