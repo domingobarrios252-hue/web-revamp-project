@@ -160,12 +160,16 @@ export function HubDashboard({ country }: { country: string }) {
         setEvents((e.data as EventRow[]) ?? []);
         setResults((r.data as ResultRow[]) ?? []);
         setInterview((i.data as InterviewRow) ?? null);
+        const mags = ((m.data as (MagazineRow & { is_active?: boolean; published?: boolean })[]) ?? [])
+          .filter((mg) => mg.is_active !== false && mg.published !== false);
+        setMagazine(mags[0] ?? null);
       } catch {
         if (!cancelled) {
           setNews([]);
           setEvents([]);
           setResults([]);
           setInterview(null);
+          setMagazine(null);
         }
       }
     })();
