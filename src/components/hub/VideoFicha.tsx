@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useVideo, useVideos } from "@/lib/hub/useVideos";
-import { youTubeEmbedUrl } from "@/lib/youtube";
+import { videoEmbedUrl } from "@/lib/videoEmbed";
 import { VideoCard } from "./VideoCard";
 
 type RelatedSkater = { id: string; full_name: string; slug: string };
