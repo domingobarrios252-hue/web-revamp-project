@@ -127,6 +127,7 @@ const GROUPS: AdminGroup[] = [
     icon: <Heart className="h-4 w-4" />,
     links: [
       { to: "/admin/comunidad", label: "Comunidad", icon: <MessageSquare className="h-4 w-4" /> },
+      { to: "/admin/formularios", label: "Formularios (colab + newsletter)", icon: <Inbox className="h-4 w-4" /> },
       { to: "/admin/patrocinadores", label: "Patrocinadores", icon: <Heart className="h-4 w-4" /> },
       { to: "/admin/equipo", label: "Equipo", icon: <UsersRound className="h-4 w-4" /> },
     ],
