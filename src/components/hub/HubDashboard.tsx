@@ -48,11 +48,24 @@ type InterviewRow = {
   cover_url: string | null;
 };
 
+type MagazineRow = {
+  id: string;
+  title: string;
+  cover_url: string | null;
+  cover_image_url: string | null;
+  read_url: string | null;
+  edition_date: string | null;
+  issue_number: number | null;
+  is_free: boolean | null;
+};
+
 export function HubDashboard({ country }: { country: string }) {
+  const { hub } = useCountryHub(country);
   const [news, setNews] = useState<NewsRow[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
   const [results, setResults] = useState<ResultRow[]>([]);
   const [interview, setInterview] = useState<InterviewRow | null>(null);
+  const [magazine, setMagazine] = useState<MagazineRow | null>(null);
 
   useEffect(() => {
     let cancelled = false;
