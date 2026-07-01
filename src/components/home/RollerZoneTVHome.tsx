@@ -115,12 +115,11 @@ export function RollerZoneTVHome() {
             {/* Miniaturas */}
             <div className="flex flex-col gap-3">
               {rest.map((h) => (
-                <a
+                <button
                   key={h.id}
-                  href={h.video_url ?? "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex gap-3 overflow-hidden rounded-xl border border-border bg-surface p-2 transition-all hover:border-gold"
+                  type="button"
+                  onClick={() => openVideo(h.video_url)}
+                  className="group flex gap-3 overflow-hidden rounded-xl border border-border bg-surface p-2 text-left transition-all hover:border-gold"
                 >
                   <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-md bg-black">
                     {h.thumbnail_url ? (
