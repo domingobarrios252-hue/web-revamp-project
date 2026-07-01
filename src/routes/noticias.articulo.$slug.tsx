@@ -25,6 +25,8 @@ type Article = {
   read_minutes: number | null;
   views_count: number;
   published_at: string;
+  updated_at: string | null;
+  country_code: string | null;
   news_categories: { id: string; name: string; slug: string; scope: string } | null;
 };
 
@@ -33,13 +35,14 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, views_count, published_at, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .maybeSingle();
     if (!data) throw notFound();
     return { article: data as unknown as Article };
   },
+
   head: ({ loaderData, params }) => {
     if (!loaderData) return { meta: [{ title: "Noticia — RollerZone" }] };
     const a = loaderData.article;
@@ -47,18 +50,39 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const desc = (a.excerpt ?? a.title).slice(0, 160);
     const author = a.writers?.full_name ?? a.author ?? "RollerZone Spain";
     const publishedIso = a.published_at ? new Date(a.published_at).toISOString() : undefined;
+    const modifiedIso = a.updated_at ? new Date(a.updated_at).toISOString() : publishedIso;
     const image = a.image_url ?? undefined;
+    const plain = (a.content ?? "").replace(/\s+/g, " ").trim();
+    const wordCount = plain ? plain.split(" ").filter(Boolean).length : undefined;
+    const bodySnippet = plain ? plain.slice(0, 500) : undefined;
+    const lang = a.country_code === "co" ? "es-CO" : "es-ES";
+    const keywords = [a.news_categories?.name, a.legacy_tag]
+      .filter((v): v is string => Boolean(v));
 
     const newsLd = {
       "@context": "https://schema.org",
       "@type": "NewsArticle",
-      headline: a.title,
+      headline: a.title.slice(0, 110),
       description: desc,
       mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
       url: canonical,
+      inLanguage: lang,
+      isAccessibleForFree: true,
       ...(image ? { image: [image] } : {}),
-      ...(publishedIso ? { datePublished: publishedIso, dateModified: publishedIso } : {}),
-      author: { "@type": "Person", name: author },
+      ...(publishedIso ? { datePublished: publishedIso } : {}),
+      ...(modifiedIso ? { dateModified: modifiedIso } : {}),
+      ...(wordCount ? { wordCount } : {}),
+      ...(bodySnippet ? { articleBody: bodySnippet } : {}),
+      ...(keywords.length ? { keywords: keywords.join(", ") } : {}),
+      author: [
+        {
+          "@type": "Person",
+          name: author,
+          ...(a.writers?.published && a.writer_id
+            ? { url: `https://rollerzone.es/redactores/${a.writer_id}` }
+            : {}),
+        },
+      ],
       publisher: {
         "@type": "Organization",
         name: "RollerZone",
@@ -69,6 +93,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
       },
       ...(a.news_categories?.name ? { articleSection: a.news_categories.name } : {}),
     };
+
     const crumbLd = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
@@ -180,7 +205,11 @@ function ArticlePage() {
     .filter((p: string) => p.length > 0);
 
   return (
-    <article className="mx-auto max-w-4xl px-6 py-10">
+    <article
+      className="mx-auto max-w-4xl px-6 py-10"
+      itemScope
+      itemType="https://schema.org/NewsArticle"
+    >
       <nav className="font-condensed mb-3 text-xs uppercase tracking-widest text-muted-foreground">
         <Link to="/noticias" className="hover:text-gold">Noticias</Link>
         {article.news_categories && (
@@ -210,11 +239,16 @@ function ArticlePage() {
             </span>
           )}
         </div>
-        <h1 className="font-display text-3xl uppercase leading-tight tracking-wider md:text-5xl">
+        <h1
+          itemProp="headline"
+          className="font-display text-3xl uppercase leading-tight tracking-wider md:text-5xl"
+        >
           {article.title}
         </h1>
         {article.excerpt && (
-          <p className="mt-3 text-base text-muted-foreground md:text-lg">{article.excerpt}</p>
+          <p itemProp="description" className="mt-3 text-base text-muted-foreground md:text-lg">
+            {article.excerpt}
+          </p>
         )}
 
         <div className="font-condensed mt-5 flex flex-wrap items-center gap-4 border-y border-border py-3 text-xs uppercase tracking-widest text-muted-foreground">
@@ -224,22 +258,39 @@ function ArticlePage() {
               <Link
                 to="/redactores/$id"
                 params={{ id: article.writer_id }}
+                rel="author"
                 className="text-foreground hover:text-gold hover:underline"
               >
-                {article.writers.full_name}
+                <span itemProp="author">{article.writers.full_name}</span>
               </Link>
             ) : (
-              <span className="text-foreground">{article.author}</span>
+              <span rel="author" itemProp="author" className="text-foreground">
+                {article.author}
+              </span>
             )}
           </span>
           <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-gold" />
-            {new Date(article.published_at).toLocaleDateString("es-ES", {
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-            })}
+            <time dateTime={new Date(article.published_at).toISOString()} itemProp="datePublished">
+              {new Date(article.published_at).toLocaleDateString("es-ES", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </time>
           </span>
+          {article.updated_at && article.updated_at !== article.published_at && (
+            <span className="text-muted-foreground/70">
+              Actualizado{" "}
+              <time dateTime={new Date(article.updated_at).toISOString()} itemProp="dateModified">
+                {new Date(article.updated_at).toLocaleDateString("es-ES", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </time>
+            </span>
+          )}
           <span className="flex items-center gap-1.5">
             <Eye className="h-3.5 w-3.5 text-gold" />
             {views} visita{views === 1 ? "" : "s"}
