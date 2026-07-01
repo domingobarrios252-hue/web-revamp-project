@@ -462,6 +462,7 @@ export function HubDashboard({ country }: { country: string }) {
               </section>
             );
           })()}
+        </aside>
       </div>
     </div>
   );
