@@ -61,6 +61,38 @@ export const Route = createRootRoute({
         href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Audiowide&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "RollerZone",
+          alternateName: "RollerZone Spain",
+          url: "https://rollerzone.es",
+          logo: "https://rollerzone.es/favicon.ico",
+          sameAs: [
+            "https://www.instagram.com/rollerzone",
+            "https://www.facebook.com/rollerzone",
+          ],
+        }).replace(/</g, "\\u003c"),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "RollerZone",
+          url: "https://rollerzone.es",
+          inLanguage: "es-ES",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://rollerzone.es/noticias?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }).replace(/</g, "\\u003c"),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
