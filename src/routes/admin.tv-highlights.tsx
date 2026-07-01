@@ -271,7 +271,7 @@ function HighlightForm({
         </label>
         <label className="block md:col-span-2">
           <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-            URL del vídeo (YouTube o Twitch) *
+            URL del vídeo (YouTube, Facebook o Twitch) *
           </span>
           <input
             value={videoUrl}
