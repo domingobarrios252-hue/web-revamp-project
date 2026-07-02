@@ -129,6 +129,7 @@ function RootComponent() {
       <AuthProvider>
         <AuthDialogProvider>
           <a href="#main-content" className="skip-link">Saltar al contenido</a>
+          <AutoCanonical />
           <LiveBar />
           <SiteHeader />
           <Breadcrumbs />
