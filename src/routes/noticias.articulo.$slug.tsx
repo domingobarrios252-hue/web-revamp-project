@@ -303,12 +303,16 @@ function ArticlePage() {
         </div>
       </header>
 
-      {article.image_url && (
-        article.hero_display_mode === "crop" ? (
+      {article.image_url && (() => {
+        const catName = article.news_categories?.name;
+        const heroAlt = catName
+          ? `${article.title} — ${catName} · RollerZone`
+          : `${article.title} · RollerZone`;
+        return article.hero_display_mode === "crop" ? (
           <figure className="mb-8 overflow-hidden border border-border bg-black">
             <CroppedImage
               src={article.image_url}
-              alt={article.title}
+              alt={heroAlt}
               crops={article.image_crops}
               ratio="hero"
               loading="eager"
@@ -318,12 +322,15 @@ function ArticlePage() {
           <figure className="mb-8 flex max-h-[70vh] w-full items-center justify-center overflow-hidden border border-border bg-black">
             <img
               src={article.image_url}
-              alt={article.title}
+              alt={heroAlt}
+              title={heroAlt}
+              loading="eager"
+              decoding="async"
               className="max-h-[70vh] w-full object-contain"
             />
           </figure>
-        )
-      )}
+        );
+      })()}
 
       <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
         {paragraphs.length === 0 ? (
