@@ -358,8 +358,10 @@ function ArticlePage() {
               >
                 <img
                   src={src}
-                  alt={`${article.title} — foto ${i + 1}`}
+                  alt={`${article.title} — foto ${i + 1}${article.news_categories?.name ? ` · ${article.news_categories.name}` : ""}`}
+                  title={`${article.title} — foto ${i + 1}`}
                   loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               </button>
