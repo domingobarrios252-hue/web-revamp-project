@@ -8,6 +8,7 @@ import { LiveBar } from "@/components/site/LiveBar";
 import { CookieBanner } from "@/components/site/CookieBanner";
 import { GoogleAnalytics } from "@/components/site/GoogleAnalytics";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { AutoCanonical } from "@/components/site/AutoCanonical";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -128,6 +129,7 @@ function RootComponent() {
       <AuthProvider>
         <AuthDialogProvider>
           <a href="#main-content" className="skip-link">Saltar al contenido</a>
+          <AutoCanonical />
           <LiveBar />
           <SiteHeader />
           <Breadcrumbs />
