@@ -173,6 +173,25 @@ const SLUG_META: Record<string, SlugMeta> = {
       "Conecta tu marca con la comunidad del patinaje de velocidad en España y Latinoamérica.",
     cta: { label: "Solicitar tarifas", href: "mailto:rollerzonespain@gmail.com", external: true },
   },
+  "politica-editorial": {
+    Icon: Info,
+    eyebrow: "Centro editorial",
+    subtitle:
+      "Cómo verificamos las noticias, corregimos errores y aplicamos nuestros criterios de publicación.",
+  },
+  transparencia: {
+    Icon: Sparkles,
+    eyebrow: "Centro editorial",
+    subtitle:
+      "Quién está detrás de RollerZone, cómo nos financiamos y qué relación tenemos con clubes y federaciones.",
+  },
+  correcciones: {
+    Icon: ChevronRight,
+    eyebrow: "Centro editorial",
+    subtitle:
+      "Cómo reportar un error y cómo publicamos rectificaciones cuando algo no está bien.",
+    cta: { label: "Reportar un error", href: "mailto:rollerzonespain@gmail.com", external: true },
+  },
 };
 
 function AboutPage() {
