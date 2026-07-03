@@ -18,19 +18,22 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { NewsletterForm } from "./NewsletterForm";
+import { usePageSettings } from "@/lib/pageSettings";
 
 const CONTACT_EMAIL = "rollerzonespain@gmail.com";
 
 export function SiteFooter() {
   const { t } = useLanguage();
+  const { settings } = usePageSettings();
+  const isVisible = (slug: string) => settings[slug]?.status !== "hidden";
 
   const navLinks = [
-    { to: "/noticias", label: t("nav.news"), Icon: Newspaper },
-    { to: "/eventos", label: t("nav.events"), Icon: Calendar },
-    { to: "/tv", label: "RollerZone TV", Icon: Tv },
-    { to: "/premios-mvp", label: t("nav.mvpAwards"), Icon: Trophy },
-    { to: "/revista", label: t("nav.magazine"), Icon: BookOpen },
-  ] as const;
+    { to: "/noticias", label: t("nav.news"), Icon: Newspaper, slug: "noticias" },
+    { to: "/eventos", label: t("nav.events"), Icon: Calendar, slug: "eventos" },
+    { to: "/tv", label: "RollerZone TV", Icon: Tv, slug: "rollerzone-tv" },
+    { to: "/premios-mvp", label: t("nav.mvpAwards"), Icon: Trophy, slug: "premios-mvp" },
+    { to: "/revista", label: t("nav.magazine"), Icon: BookOpen, slug: "revista" },
+  ].filter((l) => isVisible(l.slug)) as const;
 
   const aboutLinks = [
     { to: "/sobre/$slug", params: { slug: "quienes-somos" }, label: "Quiénes somos", Icon: Users },
