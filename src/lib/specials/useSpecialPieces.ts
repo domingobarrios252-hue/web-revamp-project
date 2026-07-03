@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { PIECES, type SpecialPiece } from "@/lib/specials/europeo-2026";
+import { PIECES, SPECIAL_FALLBACK_IMAGE, type SpecialPiece } from "@/lib/specials/europeo-2026";
 
 export type DbSpecialPiece = {
   id: string;
@@ -24,7 +24,7 @@ function toSpecialPiece(r: DbSpecialPiece): SpecialPiece {
     kicker: r.kicker,
     title: r.title,
     description: r.description,
-    image: r.image_url,
+    image: r.image_url?.trim() ? r.image_url : SPECIAL_FALLBACK_IMAGE,
     featured: r.featured,
     status: (r.status as SpecialPiece["status"]) ?? "live",
   };
