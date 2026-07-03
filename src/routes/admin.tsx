@@ -42,6 +42,7 @@ const GROUPS: AdminGroup[] = [
     icon: <LayoutDashboard className="h-4 w-4" />,
     links: [
       { to: "/admin/home-control", label: "Home Control Center", icon: <Sparkles className="h-4 w-4" /> },
+      { to: "/admin/paginas", label: "Gestión de páginas", icon: <Layers className="h-4 w-4" /> },
       { to: "/admin/especiales", label: "Especiales editoriales", icon: <Flag className="h-4 w-4" /> },
       { to: "/admin/clasificaciones", label: "Clasificaciones (home)", icon: <Trophy className="h-4 w-4" /> },
       { to: "/admin/ticker", label: "Ticker en directo", icon: <Radio className="h-4 w-4" /> },
