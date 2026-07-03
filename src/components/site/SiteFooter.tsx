@@ -12,9 +12,12 @@ import {
   FileText,
   Cookie,
   Users,
-  PenLine,
   Megaphone,
   AtSign,
+  HandHeart,
+  ClipboardCheck,
+  BookOpenCheck,
+  Eye,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { NewsletterForm } from "./NewsletterForm";
@@ -36,10 +39,13 @@ export function SiteFooter() {
   ].filter((l) => isVisible(l.slug));
 
   const aboutLinks = [
-    { to: "/sobre/$slug", params: { slug: "quienes-somos" }, label: "Quiénes somos", Icon: Users },
-    { to: "/redactores", params: undefined, label: "Redactores", Icon: PenLine },
-    { to: "/sobre/$slug", params: { slug: "publicidad" }, label: "Publicidad", Icon: Megaphone },
-    { to: "/sobre/$slug", params: { slug: "contacto" }, label: "Contacto", Icon: AtSign },
+    { slug: "quienes-somos", label: "Quiénes somos", Icon: Users },
+    { slug: "colabora", label: "Colabora con RollerZone", Icon: HandHeart },
+    { slug: "contacto", label: "Contacto", Icon: AtSign },
+    { slug: "publicidad", label: "Publicidad en RollerZone", Icon: Megaphone },
+    { slug: "politica-editorial", label: "Política editorial", Icon: BookOpenCheck },
+    { slug: "correcciones", label: "Política de correcciones", Icon: ClipboardCheck },
+    { slug: "transparencia", label: "Transparencia", Icon: Eye },
   ] as const;
 
   const legalLinks = [
@@ -95,19 +101,12 @@ export function SiteFooter() {
               Sobre nosotros
             </h3>
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
-              {aboutLinks.map(({ to, params, label, Icon }) => (
-                <li key={label}>
-                  {params ? (
-                    <Link to={to} params={params} className={linkClass}>
-                      <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                      <span>{label}</span>
-                    </Link>
-                  ) : (
-                    <Link to={to} className={linkClass}>
-                      <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                      <span>{label}</span>
-                    </Link>
-                  )}
+              {aboutLinks.map(({ slug, label, Icon }) => (
+                <li key={slug}>
+                  <Link to="/sobre/$slug" params={{ slug }} className={linkClass}>
+                    <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                    <span>{label}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
