@@ -129,7 +129,7 @@ export function SiteHeader() {
 
         {/* Desktop nav */}
         <ul className="hidden items-center gap-2 lg:gap-4 xl:flex">
-          {NAV_ITEMS.map((item) => (
+          {visibleNav.map((item) => (
             <li key={item.label}>{renderNavLink(item)}</li>
           ))}
         </ul>
@@ -229,7 +229,7 @@ export function SiteHeader() {
               </button>
             </div>
             <div className="flex flex-col gap-1 px-4 py-4">
-              {NAV_ITEMS.map((item) => (
+              {visibleNav.map((item) => (
                 <div key={item.label} className="border-b border-[#333]">
                   {"params" in item ? (
                     <Link
