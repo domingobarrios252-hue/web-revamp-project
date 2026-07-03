@@ -70,7 +70,31 @@ export function AutoCanonical() {
       }
       autoOg.setAttribute("content", href);
     }
+
+    // robots noindex on private/admin surfaces --------------------------
+    const PRIVATE_PREFIXES = ["/admin", "/dashboard", "/auth", "/mi-biblioteca"];
+    const shouldNoindex = PRIVATE_PREFIXES.some(
+      (p) => pathname === p || pathname.startsWith(p + "/"),
+    );
+    const existingRobots = document.head.querySelector(
+      'meta[name="robots"][data-auto-robots="true"]',
+    ) as HTMLMetaElement | null;
+    if (shouldNoindex) {
+      if (existingRobots) {
+        existingRobots.setAttribute("content", "noindex, nofollow");
+      } else {
+        const m = document.createElement("meta");
+        m.setAttribute("name", "robots");
+        m.setAttribute("content", "noindex, nofollow");
+        m.setAttribute("data-auto-robots", "true");
+        document.head.appendChild(m);
+      }
+    } else if (existingRobots) {
+      existingRobots.remove();
+    }
   }, [pathname, search]);
+
+
 
   return null;
 }
