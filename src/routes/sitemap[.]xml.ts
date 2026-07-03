@@ -105,7 +105,7 @@ export const Route = createFileRoute("/sitemap.xml")({
                 .limit(5000),
               supabase
                 .from("events")
-                .select("slug, title, updated_at, start_date, cover_url")
+                .select("slug, name, updated_at, start_date, cover_url")
                 .eq("published", true)
                 .order("start_date", { ascending: false })
                 .limit(5000),
@@ -144,7 +144,7 @@ export const Route = createFileRoute("/sitemap.xml")({
               imageTitle: i.title ?? undefined,
             });
           }
-          for (const e of (eventsRes.data ?? []) as Array<{ slug: string | null; title: string | null; updated_at: string | null; start_date: string | null; cover_url: string | null }>) {
+          for (const e of (eventsRes.data ?? []) as Array<{ slug: string | null; name: string | null; updated_at: string | null; start_date: string | null; cover_url: string | null }>) {
             if (!e.slug) continue;
             entries.push({
               path: `/eventos/${e.slug}`,
@@ -152,7 +152,7 @@ export const Route = createFileRoute("/sitemap.xml")({
               changefreq: "weekly",
               priority: "0.7",
               image: e.cover_url ?? undefined,
-              imageTitle: e.title ?? undefined,
+              imageTitle: e.name ?? undefined,
             });
           }
           for (const c of categoriesRes.data ?? []) {
