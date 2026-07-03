@@ -10,7 +10,7 @@ type Banner = {
 };
 
 export function AdBanner({ placement = "home_top" }: { placement?: string }) {
-  const [banner, setBanner] = useState<Banner | null>(null);
+  const [banners, setBanners] = useState<Banner[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -21,10 +21,8 @@ export function AdBanner({ placement = "home_top" }: { placement?: string }) {
         .eq("active", true)
         .eq("placement", placement)
         .order("sort_order", { ascending: true })
-        .limit(1)
-        .maybeSingle()
         .then(({ data }) => {
-          if (!cancelled) setBanner((data as Banner) ?? null);
+          if (!cancelled) setBanners((data as Banner[]) ?? []);
         });
     };
     load();
