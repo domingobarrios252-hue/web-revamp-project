@@ -84,6 +84,22 @@ export const Route = createFileRoute("/sobre/$slug")({
     const url = `https://rollerzone.lovable.app/sobre/${slug}`;
     const ogImage =
       "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";
+    const articleLd = {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      name: fullTitle,
+      description,
+      url,
+      inLanguage: "es-ES",
+      isPartOf: { "@type": "WebSite", name: "RollerZone", url: "https://rollerzone.es" },
+      publisher: {
+        "@type": "NewsMediaOrganization",
+        name: "RollerZone",
+        url: "https://rollerzone.es",
+        logo: { "@type": "ImageObject", url: ogImage },
+      },
+      dateModified: loaderData?.page.updated_at,
+    };
     return {
       meta: [
         { title: fullTitle },
@@ -103,6 +119,9 @@ export const Route = createFileRoute("/sobre/$slug")({
         { name: "twitter:image", content: ogImage },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        { type: "application/ld+json", children: JSON.stringify(articleLd).replace(/</g, "\\u003c") },
+      ],
     };
   },
   component: AboutPage,
