@@ -307,6 +307,7 @@ function BannerEditor({
             />
             <NumberField label="Orden" value={sortOrder} onChange={setSortOrder} />
           </div>
+          <PlacementPreview placement={placement} imageUrl={imageUrl} alt={altText || name} />
           <div className="flex flex-wrap gap-4">
             <Checkbox label="Activo (visible en la web)" checked={active} onChange={setActive} />
           </div>
