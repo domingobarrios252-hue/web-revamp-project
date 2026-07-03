@@ -39,10 +39,13 @@ export function SiteFooter() {
   ].filter((l) => isVisible(l.slug));
 
   const aboutLinks = [
-    { to: "/sobre/$slug", params: { slug: "quienes-somos" }, label: "Quiénes somos", Icon: Users },
-    { to: "/redactores", params: undefined, label: "Redactores", Icon: PenLine },
-    { to: "/sobre/$slug", params: { slug: "publicidad" }, label: "Publicidad", Icon: Megaphone },
-    { to: "/sobre/$slug", params: { slug: "contacto" }, label: "Contacto", Icon: AtSign },
+    { slug: "quienes-somos", label: "Quiénes somos", Icon: Users },
+    { slug: "colabora", label: "Colabora con RollerZone", Icon: HandHeart },
+    { slug: "contacto", label: "Contacto", Icon: AtSign },
+    { slug: "publicidad", label: "Publicidad en RollerZone", Icon: Megaphone },
+    { slug: "politica-editorial", label: "Política editorial", Icon: BookOpenCheck },
+    { slug: "correcciones", label: "Política de correcciones", Icon: ClipboardCheck },
+    { slug: "transparencia", label: "Transparencia", Icon: Eye },
   ] as const;
 
   const legalLinks = [
