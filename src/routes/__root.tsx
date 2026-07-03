@@ -137,18 +137,20 @@ function RootComponent() {
     <LanguageProvider>
       <AuthProvider>
         <AuthDialogProvider>
-          <a href="#main-content" className="skip-link">Saltar al contenido</a>
-          <AutoCanonical />
-          <LiveBar />
-          <SiteHeader />
-          <Breadcrumbs />
-          <main id="main-content" tabIndex={-1} className="min-h-[60vh]">
-            <Outlet />
-          </main>
-          <SiteFooter />
-          <CookieBanner />
-          <GoogleAnalytics />
-          <Toaster />
+          <PageSettingsProvider>
+            <a href="#main-content" className="skip-link">Saltar al contenido</a>
+            <AutoCanonical />
+            <LiveBar />
+            <SiteHeader />
+            <Breadcrumbs />
+            <main id="main-content" tabIndex={-1} className="min-h-[60vh]">
+              <Outlet />
+            </main>
+            <SiteFooter />
+            <CookieBanner />
+            <GoogleAnalytics />
+            <Toaster />
+          </PageSettingsProvider>
         </AuthDialogProvider>
       </AuthProvider>
     </LanguageProvider>
