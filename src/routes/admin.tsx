@@ -30,7 +30,7 @@ type AdminPath =
   | "/admin/medallero" | "/admin/live-results" | "/admin/sections"
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
   | "/admin/espana" | "/admin/colombia" | "/admin/resultados"
-  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/dashboard";
+  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/paginas" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
 type AdminGroup = { id: string; label: string; icon: React.ReactNode; links: AdminLinkDef[] };
@@ -42,6 +42,7 @@ const GROUPS: AdminGroup[] = [
     icon: <LayoutDashboard className="h-4 w-4" />,
     links: [
       { to: "/admin/home-control", label: "Home Control Center", icon: <Sparkles className="h-4 w-4" /> },
+      { to: "/admin/paginas", label: "Gestión de páginas", icon: <Layers className="h-4 w-4" /> },
       { to: "/admin/especiales", label: "Especiales editoriales", icon: <Flag className="h-4 w-4" /> },
       { to: "/admin/clasificaciones", label: "Clasificaciones (home)", icon: <Trophy className="h-4 w-4" /> },
       { to: "/admin/ticker", label: "Ticker en directo", icon: <Radio className="h-4 w-4" /> },

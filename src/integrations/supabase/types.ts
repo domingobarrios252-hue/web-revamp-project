@@ -2138,6 +2138,42 @@ export type Database = {
         }
         Relationships: []
       }
+      page_settings: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          label: string
+          route: string | null
+          slug: string
+          sort_order: number
+          status: Database["public"]["Enums"]["page_status"]
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          label: string
+          route?: string | null
+          slug: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["page_status"]
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          label?: string
+          route?: string | null
+          slug?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["page_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -3370,6 +3406,7 @@ export type Database = {
       mvp_gender: "masculino" | "femenino"
       mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
+      page_status: "active" | "hidden" | "coming_soon"
       post_status: "draft" | "pending" | "published" | "rejected"
       schedule_status: "programada" | "en_curso" | "finalizada"
       visibility_channel: "global_home" | "featured" | "breaking" | "country"
@@ -3506,6 +3543,7 @@ export const Constants = {
       mvp_gender: ["masculino", "femenino"],
       mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
+      page_status: ["active", "hidden", "coming_soon"],
       post_status: ["draft", "pending", "published", "rejected"],
       schedule_status: ["programada", "en_curso", "finalizada"],
       visibility_channel: ["global_home", "featured", "breaking", "country"],

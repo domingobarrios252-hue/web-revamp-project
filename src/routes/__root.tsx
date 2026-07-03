@@ -10,6 +10,7 @@ import { GoogleAnalytics } from "@/components/site/GoogleAnalytics";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { AutoCanonical } from "@/components/site/AutoCanonical";
 import { Toaster } from "@/components/ui/sonner";
+import { PageSettingsProvider } from "@/lib/pageSettings";
 
 import appCss from "../styles.css?url";
 
@@ -136,18 +137,20 @@ function RootComponent() {
     <LanguageProvider>
       <AuthProvider>
         <AuthDialogProvider>
-          <a href="#main-content" className="skip-link">Saltar al contenido</a>
-          <AutoCanonical />
-          <LiveBar />
-          <SiteHeader />
-          <Breadcrumbs />
-          <main id="main-content" tabIndex={-1} className="min-h-[60vh]">
-            <Outlet />
-          </main>
-          <SiteFooter />
-          <CookieBanner />
-          <GoogleAnalytics />
-          <Toaster />
+          <PageSettingsProvider>
+            <a href="#main-content" className="skip-link">Saltar al contenido</a>
+            <AutoCanonical />
+            <LiveBar />
+            <SiteHeader />
+            <Breadcrumbs />
+            <main id="main-content" tabIndex={-1} className="min-h-[60vh]">
+              <Outlet />
+            </main>
+            <SiteFooter />
+            <CookieBanner />
+            <GoogleAnalytics />
+            <Toaster />
+          </PageSettingsProvider>
         </AuthDialogProvider>
       </AuthProvider>
     </LanguageProvider>
