@@ -1,4 +1,17 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /mi-biblioteca
+
+User-agent: Googlebot-News
+Allow: /noticias/
+Allow: /noticias/articulo/
+Disallow: /admin
+Disallow: /auth
+Disallow: /dashboard
 
 Sitemap: https://rollerzone.es/sitemap.xml
+Sitemap: https://rollerzone.es/sitemap-news.xml

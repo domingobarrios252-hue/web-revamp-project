@@ -17,6 +17,8 @@ interface SitemapEntry {
     | "yearly"
     | "never";
   priority?: string;
+  image?: string;
+  imageTitle?: string;
 }
 
 const STATIC_ENTRIES: SitemapEntry[] = [
@@ -91,19 +93,19 @@ export const Route = createFileRoute("/sitemap.xml")({
             await Promise.all([
               supabase
                 .from("news")
-                .select("slug, published_at, updated_at")
+                .select("slug, title, published_at, updated_at, image_url")
                 .eq("published", true)
                 .order("published_at", { ascending: false })
                 .limit(5000),
               supabase
                 .from("interviews")
-                .select("slug, updated_at, interview_date")
+                .select("slug, title, updated_at, interview_date, cover_url")
                 .eq("published", true)
                 .order("interview_date", { ascending: false })
                 .limit(5000),
               supabase
                 .from("events")
-                .select("slug, updated_at, start_date")
+                .select("slug, name, updated_at, start_date, cover_url")
                 .eq("published", true)
                 .order("start_date", { ascending: false })
                 .limit(5000),
@@ -113,38 +115,44 @@ export const Route = createFileRoute("/sitemap.xml")({
                 .limit(200),
               supabase
                 .from("magazines")
-                .select("id, updated_at, edition_date")
+                .select("id, updated_at, edition_date, cover_url, title")
                 .eq("published", true)
                 .eq("is_active", true)
                 .order("edition_date", { ascending: false })
                 .limit(2000),
             ]);
 
-          for (const n of newsRes.data ?? []) {
+          for (const n of (newsRes.data ?? []) as Array<{ slug: string | null; title: string | null; published_at: string | null; updated_at: string | null; image_url: string | null }>) {
             if (!n.slug) continue;
             entries.push({
               path: `/noticias/articulo/${n.slug}`,
               lastmod: toIso(n.updated_at ?? n.published_at),
               changefreq: "weekly",
               priority: "0.8",
+              image: n.image_url ?? undefined,
+              imageTitle: n.title ?? undefined,
             });
           }
-          for (const i of interviewsRes.data ?? []) {
+          for (const i of (interviewsRes.data ?? []) as Array<{ slug: string | null; title: string | null; updated_at: string | null; interview_date: string | null; cover_url: string | null }>) {
             if (!i.slug) continue;
             entries.push({
               path: `/entrevistas/${i.slug}`,
               lastmod: toIso(i.updated_at ?? i.interview_date),
               changefreq: "monthly",
               priority: "0.7",
+              image: i.cover_url ?? undefined,
+              imageTitle: i.title ?? undefined,
             });
           }
-          for (const e of eventsRes.data ?? []) {
+          for (const e of (eventsRes.data ?? []) as Array<{ slug: string | null; name: string | null; updated_at: string | null; start_date: string | null; cover_url: string | null }>) {
             if (!e.slug) continue;
             entries.push({
               path: `/eventos/${e.slug}`,
               lastmod: toIso(e.updated_at ?? e.start_date),
               changefreq: "weekly",
               priority: "0.7",
+              image: e.cover_url ?? undefined,
+              imageTitle: e.name ?? undefined,
             });
           }
           for (const c of categoriesRes.data ?? []) {
@@ -156,13 +164,15 @@ export const Route = createFileRoute("/sitemap.xml")({
               priority: "0.6",
             });
           }
-          for (const m of magazinesRes.data ?? []) {
+          for (const m of (magazinesRes.data ?? []) as Array<{ id: string | null; title: string | null; updated_at: string | null; edition_date: string | null; cover_url: string | null }>) {
             if (!m.id) continue;
             entries.push({
               path: `/revista/leer/${m.id}`,
               lastmod: toIso(m.updated_at ?? m.edition_date),
               changefreq: "monthly",
               priority: "0.6",
+              image: m.cover_url ?? undefined,
+              imageTitle: m.title ?? undefined,
             });
           }
         }
@@ -174,6 +184,9 @@ export const Route = createFileRoute("/sitemap.xml")({
             e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
+            e.image
+              ? `    <image:image><image:loc>${xmlEscape(e.image)}</image:loc>${e.imageTitle ? `<image:title>${xmlEscape(e.imageTitle)}</image:title>` : ""}</image:image>`
+              : null,
             `  </url>`,
           ]
             .filter(Boolean)
@@ -182,7 +195,8 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,
-          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"`,
+          `        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`,
           ...urls,
           `</urlset>`,
         ].join("\n");
