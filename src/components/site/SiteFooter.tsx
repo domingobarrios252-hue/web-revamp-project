@@ -101,19 +101,12 @@ export function SiteFooter() {
               Sobre nosotros
             </h3>
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
-              {aboutLinks.map(({ to, params, label, Icon }) => (
-                <li key={label}>
-                  {params ? (
-                    <Link to={to} params={params} className={linkClass}>
-                      <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                      <span>{label}</span>
-                    </Link>
-                  ) : (
-                    <Link to={to} className={linkClass}>
-                      <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                      <span>{label}</span>
-                    </Link>
-                  )}
+              {aboutLinks.map(({ slug, label, Icon }) => (
+                <li key={slug}>
+                  <Link to="/sobre/$slug" params={{ slug }} className={linkClass}>
+                    <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                    <span>{label}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
