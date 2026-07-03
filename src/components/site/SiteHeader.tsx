@@ -48,6 +48,11 @@ export function SiteHeader() {
   const { user, isEditor, signOut } = useAuth();
   const { openAuthDialog } = useAuthDialog();
   const navigate = useNavigate();
+  const { settings } = usePageSettings();
+
+  const visibleNav = NAV_ITEMS.filter(
+    (i) => !i.slug || settings[i.slug]?.status !== "hidden",
+  );
 
   useEffect(() => setMobileOpen(false), []);
   useEffect(() => {
