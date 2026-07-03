@@ -6,7 +6,12 @@
  * ruta correspondiente en src/routes/camino-al-europeo-2026.<slug>.tsx
  */
 
+import specialFallback from "@/assets/special-fallback.svg";
+
 export const SPECIAL_BASE_PATH = "/camino-al-europeo-2026" as const;
+
+/** Imagen de respaldo con identidad RollerZone cuando una pieza no tiene imagen destacada. */
+export const SPECIAL_FALLBACK_IMAGE = specialFallback as string;
 
 export const EVENT = {
   name: "Campeonato de Europa de Patinaje de Velocidad 2026",

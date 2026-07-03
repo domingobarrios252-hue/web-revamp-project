@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="60%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#2a2010"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d4a017" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#d4a017" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#d4a017" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity="0.15" stroke="#d4a017" stroke-width="1" fill="none">
+    <path d="M0,700 Q400,500 800,650 T1600,600"/>
+    <path d="M0,750 Q400,550 800,700 T1600,650"/>
+    <path d="M0,800 Q400,600 800,750 T1600,700"/>
+  </g>
+  <rect x="0" y="448" width="1600" height="4" fill="url(#gold)"/>
+  <text x="800" y="430" text-anchor="middle" font-family="Impact, 'Arial Narrow', sans-serif" font-size="90" fill="#d4a017" letter-spacing="12">ROLLERZONE</text>
+  <text x="800" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#e5e5e5" letter-spacing="8">COBERTURA ESPECIAL</text>
+</svg>

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { piecePath } from "@/lib/specials/europeo-2026";
+import { piecePath, SPECIAL_FALLBACK_IMAGE } from "@/lib/specials/europeo-2026";
 import { useSpecialPieces } from "@/lib/specials/useSpecialPieces";
 
 export function DossierPiecesGrid() {
@@ -32,9 +32,10 @@ export function DossierPiecesGrid() {
               >
                 <div className="relative aspect-[16/9] overflow-hidden bg-surface-2">
                   <img
-                    src={p.image}
-                    alt=""
+                    src={p.image?.trim() ? p.image : SPECIAL_FALLBACK_IMAGE}
+                    alt={`${p.kicker} — ${p.title} · Camino al Europeo 2026`}
                     loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <span className="font-condensed absolute left-3 top-3 inline-block bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background shadow-md">
