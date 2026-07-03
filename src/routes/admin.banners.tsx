@@ -307,6 +307,7 @@ function BannerEditor({
             />
             <NumberField label="Orden" value={sortOrder} onChange={setSortOrder} />
           </div>
+          <PlacementPreview placement={placement} imageUrl={imageUrl} alt={altText || name} />
           <div className="flex flex-wrap gap-4">
             <Checkbox label="Activo (visible en la web)" checked={active} onChange={setActive} />
           </div>
@@ -551,6 +552,59 @@ function ImageUploadField({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function PlacementPreview({
+  placement,
+  imageUrl,
+  alt,
+}: {
+  placement: string;
+  imageUrl: string;
+  alt: string;
+}) {
+  const isSide = placement.endsWith("_side");
+  const isHubHeader = placement.endsWith("_top") && !placement.startsWith("home_");
+  const isHomeLarge = placement.startsWith("home_");
+
+  const label = isSide
+    ? "Vista previa — lateral 300×100"
+    : isHubHeader
+    ? "Vista previa — cabecera de sección"
+    : isHomeLarge
+    ? "Vista previa — banner grande en Home"
+    : "Vista previa";
+
+  return (
+    <div>
+      <div className="font-condensed mb-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </div>
+      <div className="border border-border bg-background p-4">
+        <div className="font-condensed mb-2 text-[10px] uppercase tracking-widest text-muted-foreground/60">
+          Publicidad
+        </div>
+        {imageUrl ? (
+          isSide ? (
+            <div className="mx-auto flex items-center justify-center overflow-hidden border border-border bg-surface" style={{ width: 300, height: 100 }}>
+              <img src={imageUrl} alt={alt} className="h-full w-full object-cover" />
+            </div>
+          ) : (
+            <div className="overflow-hidden border border-border bg-surface">
+              <img src={imageUrl} alt={alt} className="mx-auto h-auto max-h-[120px] w-full object-contain md:max-h-[180px] md:object-cover" />
+            </div>
+          )
+        ) : (
+          <div className="font-condensed py-6 text-center text-[11px] uppercase tracking-widest text-muted-foreground">
+            Sube una imagen para ver la previsualización
+          </div>
+        )}
+        <div className="font-condensed mt-2 text-[10px] uppercase tracking-wider text-muted-foreground/70">
+          Ubicación: <span className="text-gold">{placement}</span>
+        </div>
+      </div>
     </div>
   );
 }
