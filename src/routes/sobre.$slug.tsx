@@ -33,6 +33,21 @@ const SLUG_SEO: Record<string, { description: string; keywords?: string }> = {
       "Publicidad y patrocinios en RollerZone: conecta tu marca con la comunidad del patinaje de velocidad.",
     keywords: "publicidad patinaje, patrocinio RollerZone, anunciarse patinaje",
   },
+  "politica-editorial": {
+    description:
+      "Política editorial de RollerZone: cómo verificamos, corregimos y publicamos las noticias del patinaje de velocidad.",
+    keywords: "política editorial RollerZone, verificación, ética periodística patinaje",
+  },
+  transparencia: {
+    description:
+      "Transparencia en RollerZone: propiedad, financiación, redacción y relación con patrocinadores y federaciones.",
+    keywords: "transparencia RollerZone, quiénes financian, redacción patinaje",
+  },
+  correcciones: {
+    description:
+      "Política de correcciones de RollerZone: cómo reportar errores y cómo publicamos rectificaciones.",
+    keywords: "correcciones RollerZone, rectificaciones, reportar error noticia",
+  },
 };
 
 function stripToDescription(content?: string | null): string | null {
