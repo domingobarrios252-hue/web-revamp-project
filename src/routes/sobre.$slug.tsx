@@ -33,6 +33,21 @@ const SLUG_SEO: Record<string, { description: string; keywords?: string }> = {
       "Publicidad y patrocinios en RollerZone: conecta tu marca con la comunidad del patinaje de velocidad.",
     keywords: "publicidad patinaje, patrocinio RollerZone, anunciarse patinaje",
   },
+  "politica-editorial": {
+    description:
+      "Política editorial de RollerZone: cómo verificamos, corregimos y publicamos las noticias del patinaje de velocidad.",
+    keywords: "política editorial RollerZone, verificación, ética periodística patinaje",
+  },
+  transparencia: {
+    description:
+      "Transparencia en RollerZone: propiedad, financiación, redacción y relación con patrocinadores y federaciones.",
+    keywords: "transparencia RollerZone, quiénes financian, redacción patinaje",
+  },
+  correcciones: {
+    description:
+      "Política de correcciones de RollerZone: cómo reportar errores y cómo publicamos rectificaciones.",
+    keywords: "correcciones RollerZone, rectificaciones, reportar error noticia",
+  },
 };
 
 function stripToDescription(content?: string | null): string | null {
@@ -69,6 +84,22 @@ export const Route = createFileRoute("/sobre/$slug")({
     const url = `https://rollerzone.lovable.app/sobre/${slug}`;
     const ogImage =
       "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";
+    const articleLd = {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      name: fullTitle,
+      description,
+      url,
+      inLanguage: "es-ES",
+      isPartOf: { "@type": "WebSite", name: "RollerZone", url: "https://rollerzone.es" },
+      publisher: {
+        "@type": "NewsMediaOrganization",
+        name: "RollerZone",
+        url: "https://rollerzone.es",
+        logo: { "@type": "ImageObject", url: ogImage },
+      },
+      dateModified: loaderData?.page.updated_at,
+    };
     return {
       meta: [
         { title: fullTitle },
@@ -88,6 +119,9 @@ export const Route = createFileRoute("/sobre/$slug")({
         { name: "twitter:image", content: ogImage },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        { type: "application/ld+json", children: JSON.stringify(articleLd).replace(/</g, "\\u003c") },
+      ],
     };
   },
   component: AboutPage,
@@ -138,6 +172,25 @@ const SLUG_META: Record<string, SlugMeta> = {
     subtitle:
       "Conecta tu marca con la comunidad del patinaje de velocidad en España y Latinoamérica.",
     cta: { label: "Solicitar tarifas", href: "mailto:rollerzonespain@gmail.com", external: true },
+  },
+  "politica-editorial": {
+    Icon: Info,
+    eyebrow: "Centro editorial",
+    subtitle:
+      "Cómo verificamos las noticias, corregimos errores y aplicamos nuestros criterios de publicación.",
+  },
+  transparencia: {
+    Icon: Sparkles,
+    eyebrow: "Centro editorial",
+    subtitle:
+      "Quién está detrás de RollerZone, cómo nos financiamos y qué relación tenemos con clubes y federaciones.",
+  },
+  correcciones: {
+    Icon: ChevronRight,
+    eyebrow: "Centro editorial",
+    subtitle:
+      "Cómo reportar un error y cómo publicamos rectificaciones cuando algo no está bien.",
+    cta: { label: "Reportar un error", href: "mailto:rollerzonespain@gmail.com", external: true },
   },
 };
 
