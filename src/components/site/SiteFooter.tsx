@@ -33,7 +33,7 @@ export function SiteFooter() {
     { to: "/tv", label: "RollerZone TV", Icon: Tv, slug: "rollerzone-tv" },
     { to: "/premios-mvp", label: t("nav.mvpAwards"), Icon: Trophy, slug: "premios-mvp" },
     { to: "/revista", label: t("nav.magazine"), Icon: BookOpen, slug: "revista" },
-  ].filter((l) => isVisible(l.slug)) as const;
+  ].filter((l) => isVisible(l.slug));
 
   const aboutLinks = [
     { to: "/sobre/$slug", params: { slug: "quienes-somos" }, label: "Quiénes somos", Icon: Users },
