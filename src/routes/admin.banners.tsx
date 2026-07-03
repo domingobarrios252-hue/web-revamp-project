@@ -275,17 +275,34 @@ function BannerEditor({
           <Field label="Texto alternativo (accesibilidad)" value={altText} onChange={setAltText} />
           <div className="grid gap-3 md:grid-cols-2">
             <SelectField
-              label="Ubicación"
+              label="Ubicación (¿dónde quieres mostrar este banner?)"
               value={placement}
               onChange={setPlacement}
               options={[
                 { value: "home_top", label: "Home — entre ticker y noticias (grande)" },
-                { value: "mvp_side", label: "Premios MVP — pequeño 300x100" },
-                { value: "tv_side", label: "RollerZone TV — pequeño 300x100" },
-                { value: "noticias_side", label: "Noticias (listado) — pequeño 300x100" },
-                { value: "noticias_article", label: "Noticias (dentro del artículo) — pequeño 300x100" },
-                { value: "eventos_side", label: "Eventos (listado) — pequeño 300x100" },
-                { value: "eventos_detail", label: "Eventos (detalle) — pequeño 300x100" },
+                { value: "home_middle", label: "Home — entre secciones (grande)" },
+                { value: "home_bottom", label: "Home — pie antes del footer (grande)" },
+                { value: "mvp_side", label: "Premios MVP — lateral 300×100" },
+                { value: "tv_side", label: "RollerZone TV — lateral 300×100" },
+                { value: "noticias_side", label: "Noticias (listado) — lateral 300×100" },
+                { value: "noticias_article", label: "Noticias (dentro del artículo) — 300×100" },
+                { value: "eventos_side", label: "Eventos (listado) — lateral 300×100" },
+                { value: "eventos_detail", label: "Eventos (detalle) — lateral 300×100" },
+                { value: "hub_espana_top", label: "Hub España — cabecera" },
+                { value: "hub_espana_side", label: "Hub España — lateral 300×100" },
+                { value: "hub_colombia_top", label: "Hub Colombia — cabecera" },
+                { value: "hub_colombia_side", label: "Hub Colombia — lateral 300×100" },
+                { value: "live_top", label: "Live Center — cabecera" },
+                { value: "live_side", label: "Live Center — lateral 300×100" },
+                { value: "clubes_side", label: "Clubes (listado) — lateral 300×100" },
+                { value: "clubes_detail", label: "Club (ficha) — lateral 300×100" },
+                { value: "patinadores_side", label: "Patinadores (listado) — lateral 300×100" },
+                { value: "patinadores_detail", label: "Patinador (ficha) — lateral 300×100" },
+                { value: "federaciones_side", label: "Federaciones — lateral 300×100" },
+                { value: "entrevistas_side", label: "Entrevistas — lateral 300×100" },
+                { value: "revista_side", label: "Revista — lateral 300×100" },
+                { value: "salon_fama_side", label: "Salón de la Fama — lateral 300×100" },
+                { value: "resultados_side", label: "Resultados — lateral 300×100" },
               ]}
             />
             <NumberField label="Orden" value={sortOrder} onChange={setSortOrder} />
