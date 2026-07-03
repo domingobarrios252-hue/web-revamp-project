@@ -4,7 +4,8 @@ import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav"
 import { EventKeyFacts } from "@/components/specials/europeo-2026/EventKeyFacts";
 import { DossierPiecesGrid } from "@/components/specials/europeo-2026/DossierPiecesGrid";
 import { RelatedSelectionNews } from "@/components/specials/europeo-2026/RelatedSelectionNews";
-import { EVENT, piecePath } from "@/lib/specials/europeo-2026";
+import { EVENT, piecePath, SPECIAL_FALLBACK_IMAGE } from "@/lib/specials/europeo-2026";
+import { useSpecialPieces } from "@/lib/specials/useSpecialPieces";
 
 const CANON = "https://rollerzone.lovable.app/camino-al-europeo-2026";
 
@@ -33,12 +34,15 @@ export const Route = createFileRoute("/camino-al-europeo-2026/")({
 });
 
 function SpecialLanding() {
+  const { pieces } = useSpecialPieces();
+  const featured = pieces.find((p) => p.featured) ?? pieces[0];
+  const heroImage = featured?.image?.trim() ? featured.image : SPECIAL_FALLBACK_IMAGE;
   return (
     <>
       <SpecialHero
         title="Camino al Europeo 2026"
         subtitle="Reportajes, entrevistas, convocatoria, calendario, información oficial y toda la actualidad de la selección española y del Europeo de Cardano al Campo 2026."
-        image={EVENT.heroImage}
+        image={heroImage}
         ctas={[
           { label: "Ver convocatoria de España", to: piecePath("convocatoria-seleccion-espanola"), primary: true },
           { label: "Calendario y sedes", to: piecePath("calendario-y-sedes") },
