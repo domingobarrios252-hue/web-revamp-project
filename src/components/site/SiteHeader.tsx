@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import logoUrl from "@/assets/rollerzone-logo.png";
 import { GlobalSearch } from "@/components/site/GlobalSearch";
+import { usePageSettings } from "@/lib/pageSettings";
 
 const NAV_LINK =
   "font-ui relative inline-flex h-14 items-center px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#B5B5B5] transition-all duration-200 hover:text-[#F5F5F5] focus-visible:text-[#F5F5F5] focus-visible:outline-none after:absolute after:inset-x-1 after:bottom-3 after:h-[2px] after:scale-x-0 after:origin-left after:bg-[#D4A017] after:transition-transform after:duration-300 hover:after:scale-x-100 focus-visible:after:scale-x-100";
@@ -22,21 +23,21 @@ const ACTION_BTN =
   "font-ui inline-flex items-center gap-1.5 rounded-[6px] border border-[#D4A017] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D4A017] transition-all duration-200 hover:bg-[#D4A017] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40";
 
 type NavItem =
-  | { label: string; to: string }
-  | { label: string; to: "/hub/$country"; params: { country: string } };
+  | { label: string; to: string; slug?: string }
+  | { label: string; to: "/hub/$country"; params: { country: string }; slug?: string };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Inicio", to: "/" },
-  { label: "Actualidad", to: "/noticias" },
-  { label: "España", to: "/hub/$country", params: { country: "es" } },
-  { label: "Colombia", to: "/hub/$country", params: { country: "co" } },
+  { label: "Inicio", to: "/", slug: "inicio" },
+  { label: "Actualidad", to: "/noticias", slug: "noticias" },
+  { label: "España", to: "/hub/$country", params: { country: "es" }, slug: "espana" },
+  { label: "Colombia", to: "/hub/$country", params: { country: "co" }, slug: "colombia" },
   { label: "Destacados", to: "/patinadores-destacados" },
-  { label: "Salón de la Fama", to: "/salon-de-la-fama" },
-  { label: "Eventos", to: "/eventos" },
-  { label: "Resultados", to: "/resultados" },
-  { label: "RollerZone TV", to: "/tv" },
-  { label: "Revista", to: "/revista" },
-  { label: "MVP", to: "/premios-mvp" },
+  { label: "Salón de la Fama", to: "/salon-de-la-fama", slug: "salon-de-la-fama" },
+  { label: "Eventos", to: "/eventos", slug: "eventos" },
+  { label: "Resultados", to: "/resultados", slug: "resultados" },
+  { label: "RollerZone TV", to: "/tv", slug: "rollerzone-tv" },
+  { label: "Revista", to: "/revista", slug: "revista" },
+  { label: "MVP", to: "/premios-mvp", slug: "premios-mvp" },
 ];
 
 export function SiteHeader() {
