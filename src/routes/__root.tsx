@@ -10,6 +10,7 @@ import { GoogleAnalytics } from "@/components/site/GoogleAnalytics";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { AutoCanonical } from "@/components/site/AutoCanonical";
 import { Toaster } from "@/components/ui/sonner";
+import { PageSettingsProvider } from "@/lib/pageSettings";
 
 import appCss from "../styles.css?url";
 

@@ -81,6 +81,7 @@ import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
+import { Route as AdminPaginasRouteImport } from './routes/admin.paginas'
 import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
 import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-results'
 import { Route as AdminLiveCenterRouteImport } from './routes/admin.live-center'
@@ -502,6 +503,11 @@ const AdminPatinadoresRoute = AdminPatinadoresRouteImport.update({
   path: '/patinadores',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPaginasRoute = AdminPaginasRouteImport.update({
+  id: '/paginas',
+  path: '/paginas',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMedalleroRoute = AdminMedalleroRouteImport.update({
   id: '/medallero',
   path: '/medallero',
@@ -813,6 +819,7 @@ export interface FileRoutesByFullPath {
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
+  '/admin/paginas': typeof AdminPaginasRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
@@ -936,6 +943,7 @@ export interface FileRoutesByTo {
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
+  '/admin/paginas': typeof AdminPaginasRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
@@ -1056,6 +1064,7 @@ export interface FileRoutesById {
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
+  '/admin/paginas': typeof AdminPaginasRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
@@ -1184,6 +1193,7 @@ export interface FileRouteTypes {
     | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
+    | '/admin/paginas'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
@@ -1307,6 +1317,7 @@ export interface FileRouteTypes {
     | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
+    | '/admin/paginas'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
@@ -1426,6 +1437,7 @@ export interface FileRouteTypes {
     | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
+    | '/admin/paginas'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
@@ -2068,6 +2080,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPatinadoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/paginas': {
+      id: '/admin/paginas'
+      path: '/paginas'
+      fullPath: '/admin/paginas'
+      preLoaderRoute: typeof AdminPaginasRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/medallero': {
       id: '/admin/medallero'
       path: '/medallero'
@@ -2455,6 +2474,7 @@ interface AdminRouteChildren {
   AdminLiveCenterRoute: typeof AdminLiveCenterRoute
   AdminLiveResultsRoute: typeof AdminLiveResultsRoute
   AdminMedalleroRoute: typeof AdminMedalleroRoute
+  AdminPaginasRoute: typeof AdminPaginasRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPendientesRoute: typeof AdminPendientesRoute
@@ -2497,6 +2517,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLiveCenterRoute: AdminLiveCenterRoute,
   AdminLiveResultsRoute: AdminLiveResultsRoute,
   AdminMedalleroRoute: AdminMedalleroRoute,
+  AdminPaginasRoute: AdminPaginasRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPendientesRoute: AdminPendientesRoute,
