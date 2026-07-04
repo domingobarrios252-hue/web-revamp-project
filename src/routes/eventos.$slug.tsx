@@ -21,7 +21,10 @@ type EventDetail = {
   facebook_url: string | null;
   registration_url: string | null;
   gallery: string[];
+  convocatoria_pdf_url: string | null;
+  convocatoria_pdf_name: string | null;
 };
+
 
 export const Route = createFileRoute("/eventos/$slug")({
   loader: async ({ params }) => {
