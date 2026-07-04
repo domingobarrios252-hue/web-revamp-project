@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { useAdBanners, type AdBanner } from "@/lib/useAdBanners";
 
-type Banner = {
-  id: string;
-  image_url: string;
-  link_url: string | null;
-  alt_text: string | null;
-  name: string;
-};
+type Banner = AdBanner;
 
 type Props = {
   autoplay: boolean;
@@ -18,32 +12,10 @@ type Props = {
 };
 
 export function TvPremiumBanner({ autoplay, intervalMs, showArrows, showDots }: Props) {
-  const [items, setItems] = useState<Banner[]>([]);
+  const items = useAdBanners("tv_premium");
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = () =>
-      supabase
-        .from("ad_banners")
-        .select("id, image_url, link_url, alt_text, name")
-        .eq("placement", "tv_premium")
-        .eq("active", true)
-        .order("sort_order", { ascending: true })
-        .then(({ data }) => {
-          if (!cancelled) setItems((data as Banner[]) ?? []);
-        });
-    load();
-    const ch = supabase
-      .channel("tv_premium_banners")
-      .on("postgres_changes", { event: "*", schema: "public", table: "ad_banners" }, load)
-      .subscribe();
-    return () => {
-      cancelled = true;
-      supabase.removeChannel(ch);
-    };
-  }, []);
 
   useEffect(() => {
     if (!autoplay || paused || items.length <= 1) return;

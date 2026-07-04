@@ -1,43 +1,11 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-
-type Banner = {
-  id: string;
-  image_url: string;
-  link_url: string | null;
-  alt_text: string | null;
-  name: string;
-};
+import { useAdBanners } from "@/lib/useAdBanners";
 
 export function TvSidebarBanners() {
-  const [items, setItems] = useState<Banner[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const load = () =>
-      supabase
-        .from("ad_banners")
-        .select("id, image_url, link_url, alt_text, name")
-        .eq("placement", "tv_sidebar")
-        .eq("active", true)
-        .order("sort_order", { ascending: true })
-        .then(({ data }) => {
-          if (!cancelled) setItems((data as Banner[]) ?? []);
-        });
-    load();
-    const ch = supabase
-      .channel("tv_sidebar_banners")
-      .on("postgres_changes", { event: "*", schema: "public", table: "ad_banners" }, load)
-      .subscribe();
-    return () => {
-      cancelled = true;
-      supabase.removeChannel(ch);
-    };
-  }, []);
+  const items = useAdBanners("tv_sidebar");
 
   if (items.length === 0) return null;
 
-  // Muestra un máximo de 3 banners laterales (300x250 recomendado)
+  // Muestra un máximo de 3 banners laterales (300×200 recomendado)
   const visible = items.slice(0, 3);
 
   return (

@@ -1,50 +1,11 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-
-type Banner = {
-  id: string;
-  name: string;
-  image_url: string;
-  link_url: string | null;
-  alt_text: string | null;
-};
+import { useAdBanners, type AdBanner as AdBannerType } from "@/lib/useAdBanners";
 
 export function AdBanner({ placement = "home_top" }: { placement?: string }) {
-  const [banners, setBanners] = useState<Banner[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const load = () => {
-      supabase
-        .from("ad_banners")
-        .select("id, name, image_url, link_url, alt_text")
-        .eq("active", true)
-        .eq("placement", placement)
-        .order("sort_order", { ascending: true })
-        .then(({ data }) => {
-          if (!cancelled) setBanners((data as Banner[]) ?? []);
-        });
-    };
-    load();
-
-    const channel = supabase
-      .channel(`ad-banners-${placement}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "ad_banners" },
-        () => load()
-      )
-      .subscribe();
-
-    return () => {
-      cancelled = true;
-      supabase.removeChannel(channel);
-    };
-  }, [placement]);
+  const banners = useAdBanners(placement);
 
   if (banners.length === 0) return null;
 
-  const renderBanner = (banner: Banner) => {
+  const renderBanner = (banner: AdBannerType) => {
     const img = (
       <img
         src={banner.image_url}
