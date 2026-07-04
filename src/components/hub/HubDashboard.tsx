@@ -4,6 +4,7 @@ import { BookOpen, Calendar, Newspaper, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
 import { EmptyState } from "@/components/site/EmptyState";
+import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
 import { HubSectionLink } from "@/components/hub/HubSubNav";
 import { useCountryHub, type HubSectionKey, type QuickLink } from "@/lib/hub/useCountryHub";
