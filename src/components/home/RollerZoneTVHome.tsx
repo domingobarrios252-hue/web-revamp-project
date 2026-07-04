@@ -243,3 +243,56 @@ export function RollerZoneTVHome() {
     </section>
   );
 }
+
+function LiveTvCard({ tv }: { tv: TvSettings }) {
+  const thumb = tv.live_thumbnail_url || videoThumbnail(tv.live_stream_url);
+  return (
+    <Link
+      to="/tv"
+      className="group relative block w-full overflow-hidden rounded-2xl border border-tv-red/70 bg-black shadow-xl transition-all hover:border-gold"
+    >
+      <div className="relative aspect-video">
+        {thumb ? (
+          <img
+            src={thumb}
+            alt={tv.live_title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="hero-grid-bg h-full w-full" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
+          <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+            </span>
+            EN DIRECTO
+          </span>
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="flex h-20 w-20 items-center justify-center rounded-full bg-gold text-primary-foreground shadow-2xl transition-transform group-hover:scale-110">
+            <Play className="ml-1 h-9 w-9 fill-current" />
+          </span>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+          <div className="font-condensed mb-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
+            <Radio className="h-3 w-3" /> RollerZone TV
+          </div>
+          <h3 className="font-display text-2xl uppercase leading-tight tracking-wider text-white drop-shadow-lg md:text-3xl">
+            {tv.live_title}
+          </h3>
+          {tv.live_subtitle && (
+            <p className="clamp-2 mt-2 max-w-2xl text-sm text-white/80">{tv.live_subtitle}</p>
+          )}
+          <span className="font-condensed mt-4 inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-primary-foreground">
+            Ver directo →
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
