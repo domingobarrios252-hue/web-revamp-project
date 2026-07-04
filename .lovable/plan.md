@@ -1,123 +1,86 @@
-# Especial "Camino al Europeo 2026"
 
-Convertir el bloque actual de la home en un hub editorial real, con landing, subpáginas individuales y un bloque dinámico de noticias relacionadas con la selección española.
+# Rediseño RollerZone TV
 
-## 1. Cambios en la home
+Rediseño completo de la página `/tv`, gestión ampliada en el admin y detección de directo en la home. Reutilizo las tablas existentes (`tv_settings`, `tv_highlights`, `tv_broadcasts`, `ad_banners`) y añado soporte para banners laterales/premium y bloque de suscripción.
 
-Editar `src/components/home/SpecialCoverageBanner.tsx`:
+## 1. Base de datos
 
-- Eliminar las piezas "Análisis de rivales" y "Seguimiento de la selección".
-- Reemplazar el listado lateral por las 7 piezas nuevas del dossier (presentación, convocatoria, calendario, entrevista, info, resultados, galería).
-- Cada item enlaza a su subpágina (`/camino-al-europeo-2026/<slug>`).
-- CTA "Ver toda la cobertura" → `/camino-al-europeo-2026`.
-- Añadir CTA secundario "Ver convocatoria de España" → subpágina de convocatoria.
+**Nuevos placements en `ad_banners`** (no requiere migración de estructura, solo convenciones):
+- `tv_sidebar` — banners verticales columna derecha (múltiples, ordenados).
+- `tv_premium` — banner premium horizontal ancho completo. Si hay varios activos → modo slider automático.
 
-## 2. Estructura de rutas (TanStack Start, file-based)
+**Migración**: extender `tv_settings` con:
+- `live_is_active` (bool) — override manual de "directo activo ahora".
+- `status_label` (text: `live`|`upcoming`|`finished`) — subestado editable.
+- `premium_slider_enabled` (bool, default true) — auto-slider si hay >1 premium.
+- `premium_interval_ms` (int, default 5000).
+- `premium_show_arrows` (bool), `premium_show_dots` (bool), `premium_autoplay` (bool).
+- `subscribe_title`, `subscribe_text`, `subscribe_button_text`, `subscribe_button_url`.
 
-Layout + landing + subpáginas con dot-routing:
+"Directo activo" se calcula así: `live_is_active === true` **o** (`live_starts_at ≤ now ≤ live_ends_at`).
+
+## 2. Página `/tv` rediseño
+
+Nuevo layout en `src/routes/tv.tsx`:
 
 ```text
-src/routes/
-  camino-al-europeo-2026.tsx                              (layout: <Outlet />)
-  camino-al-europeo-2026.index.tsx                        (landing del especial)
-  camino-al-europeo-2026.presentacion-europeo-2026.tsx
-  camino-al-europeo-2026.convocatoria-seleccion-espanola.tsx
-  camino-al-europeo-2026.calendario-y-sedes.tsx
-  camino-al-europeo-2026.entrevista-seleccionador.tsx
-  camino-al-europeo-2026.informacion-campeonato.tsx
-  camino-al-europeo-2026.resultados-y-medallero.tsx
-  camino-al-europeo-2026.galeria-rollerzone-tv.tsx
+┌──────────────────────────────────────────────┐
+│ ROLLERZONE TV · [● EN DIRECTO] · Título      │
+├─────────────────────────────┬────────────────┤
+│                             │ [Banner V]     │
+│      Reproductor 16:9       │ [Banner V]     │
+│                             │ [Banner V]     │
+├─────────────────────────────┴────────────────┤
+│      BANNER PREMIUM (estático o slider)      │
+├──────────────────────────────────────────────┤
+│  Próximas carreras (tv_broadcasts)           │
+├──────────────────────────────────────────────┤
+│  Highlights & momentos (tv_highlights)       │
+├──────────────────────────────────────────────┤
+│  Bloque suscripción CTA                      │
+└──────────────────────────────────────────────┘
 ```
 
-Cada subpágina usa `head()` propio (title, description, og:title/desc, og:image en leaf).
+Componentes nuevos en `src/components/tv/`:
+- `TvHero.tsx` — cabecera con estado + título.
+- `TvPlayer.tsx` — reproductor 16:9 (usa `videoEmbedUrl`).
+- `TvSidebarBanners.tsx` — lista vertical de `ad_banners` con placement `tv_sidebar`.
+- `TvPremiumBanner.tsx` — estático si 1 slide, carrusel fade con autoplay/arrows/dots si múltiples.
+- `TvUpcomingBroadcasts.tsx` — lista de `tv_broadcasts`.
+- `TvHighlightsGrid.tsx` — grid de `tv_highlights` con modal player.
+- `TvSubscribeCTA.tsx` — bloque final desde `tv_settings`.
 
-## 3. Componentes compartidos del especial
+Responsive: grid 2 columnas en `lg:`, columna única apilada en móvil (banners debajo del video).
 
-Crear `src/components/specials/europeo-2026/`:
+## 3. Home — detección de directo
 
-- `SpecialHero.tsx` — hero reutilizable (imagen, kicker "Cobertura especial", título, subtítulo, CTAs).
-- `SpecialSubNav.tsx` — navegación horizontal entre piezas del especial.
-- `SpecialBreadcrumb.tsx` — "Cobertura especial › Camino al Europeo 2026 › <pieza>".
-- `BackToSpecial.tsx` — CTA "Volver al especial".
-- `DossierPiecesGrid.tsx` — grid de tarjetas con las 7 piezas (kicker, número, título, descripción, link).
-- `EventKeyFacts.tsx` — bloque de datos clave (sede, fechas, disciplinas).
-- `EventCalendarTimeline.tsx` — timeline día a día (19–26 julio).
-- `CallupRoster.tsx` — bloque de convocados por categoría/género.
-- `RelatedSelectionNews.tsx` — bloque dinámico de noticias (ver §5).
-- `specialConfig.ts` — fuente única de verdad: array con las 7 piezas (slug, kicker, título, descripción, imagen, orden, destacado).
+Modifico `src/components/home/RollerZoneTVHome.tsx`:
+- Cargar `tv_settings` en paralelo.
+- Si hay directo activo → renderizar tarjeta destacada con badge rojo "EN DIRECTO", título del evento, preview (thumbnail o embed), botón "Ver directo" → `/tv`.
+- Si no → comportamiento actual (últimos highlights).
 
-## 4. Datos del campeonato (contenido estático inicial)
+## 4. Panel admin
 
-Hardcodear en `specialConfig.ts` los datos de la web oficial (euroskatingcardano2026.it):
+Reestructuro `src/routes/admin.tv.tsx` con pestañas/secciones:
+1. **Evento principal** — título, subtítulo, estado (live/upcoming/finished), toggle "En directo ahora", URL de stream, fechas inicio/fin (existente + nuevo).
+2. **Banners laterales** — link al admin de banners con filtro `placement=tv_sidebar` (reutiliza `admin.banners.tsx`).
+3. **Banner premium** — mismo, `placement=tv_premium`, más ajustes de slider (autoplay/velocidad/flechas/puntos) sobre `tv_settings`.
+4. **Suscripción** — 4 campos editables.
 
-- Evento, sede (Cardano al Campo, Varese, Italia), fechas (19–26 julio 2026).
-- Programa: 19 apertura · 20–22 pista · 23 descanso · 24–25 ruta · 26 maratón.
-- Disciplinas: pista, ruta, maratón.
+`admin.tv-emisiones.tsx` y `admin.tv-highlights.tsx` ya cubren próximas carreras y highlights — verifico que existen y añado enlaces de acceso rápido.
 
-Convocatoria de España: estructura por género (masculino/femenino) y categoría (juvenil/junior/sénior), seleccionador Garikoitz Lerga. Los nombres concretos se cargarán cuando el usuario suba la convocatoria; dejar arrays vacíos con placeholders y un comentario `// TODO: completar con la convocatoria adjunta`.
+En `src/routes/admin.banners.tsx` añado las nuevas opciones `tv_sidebar` y `tv_premium` al selector de placement.
 
-## 5. Bloque "Actualidad de la selección española" (dinámico)
+## 5. Diseño
 
-Estrategia sin migración nueva (reutilizando `news_categories` y la columna `tags` de `news` si existe, o filtrando por categoría):
+Se mantiene el sistema existente: fondo `bg-background`/`bg-surface`, acentos `text-gold`, tipografía `font-display`/`font-condensed`, bordes `border-border`. Sin colores hardcoded.
 
-- Server fn `getSeleccionEspanolaNews` en `src/lib/specials/europeo-2026.functions.ts`:
-  - Cliente publishable server-side (read-only anon).
-  - SELECT en `news` donde `published = true` AND (`category.slug = 'seleccion-espanola'` OR tags contiene `europeo-2026` / `camino-al-europeo-2026` / `seleccion-espanola`).
-  - ORDER BY `published_at DESC` LIMIT 12.
-- Componente `RelatedSelectionNews` consume vía `useSuspenseQuery` + `ensureQueryData` en el loader de la landing.
-- Si no hay resultados, mostrar `EmptyState` con CTA al admin de noticias.
+## Archivos
 
-Verificar primero el esquema real de `news` (columnas de tags/categoría) antes de escribir la query; ajustar el filtro a lo que exista. Si no hay categoría "Selección Española", instruir al usuario para crearla desde `/admin/categorias` (sin migración).
+**Migración** (1): añadir columnas a `tv_settings`.
 
-## 6. Landing del especial (`/camino-al-europeo-2026`)
+**Nuevos**: 7 componentes en `src/components/tv/`, hook `src/lib/tv/useTvState.ts`.
 
-Composición:
+**Editados**: `src/routes/tv.tsx`, `src/routes/admin.tv.tsx`, `src/routes/admin.banners.tsx`, `src/components/home/RollerZoneTVHome.tsx`, `src/integrations/supabase/types.ts` (auto tras migración).
 
-1. `SpecialHero` con imagen de fondo, título "Camino al Europeo 2026", subtítulo y CTAs.
-2. `SpecialSubNav` sticky.
-3. Bloque presentación (texto editorial introductorio).
-4. `EventKeyFacts` (sede, fechas, disciplinas).
-5. `DossierPiecesGrid` (7 piezas con enlaces a subpáginas).
-6. `RelatedSelectionNews` (bloque dinámico).
-7. Bloque "Últimas actualizaciones del especial" (placeholder, reutilizable cuando haya más piezas).
-8. CTA final (newsletter / volver a home).
-
-## 7. Subpáginas
-
-Patrón común para cada subpágina:
-
-- `SpecialBreadcrumb` arriba.
-- Hero compacto con kicker, título, imagen.
-- Contenido propio:
-  - **Presentación**: texto largo + `EventKeyFacts` + `EventCalendarTimeline`.
-  - **Convocatoria**: intro editorial + `CallupRoster` (masculino/femenino × juvenil/junior/sénior) + mención a Garikoitz Lerga + slot para imagen de la convocatoria.
-  - **Calendario y sedes**: `EventCalendarTimeline` extendido + ficha de la sede.
-  - **Entrevista al seleccionador**: layout de entrevista (placeholder con CTA "Próximamente") + link a `/entrevistas`.
-  - **Información del campeonato**: ficha técnica (fechas, sede, disciplinas, instalación, links útiles).
-  - **Resultados y medallero**: placeholder "Disponible durante el campeonato" + estructura preparada (tabla medallero, lista resultados).
-  - **Galería / RollerZone TV**: grid placeholder + link a `/tv`.
-- `SpecialSubNav` al final + `BackToSpecial`.
-- `RelatedSelectionNews` cuando tenga sentido (convocatoria, entrevista).
-
-## 8. SEO
-
-Cada ruta define `head()` con title/description únicos. La landing y las subpáginas con imagen real definen `og:image` (leaf only). Breadcrumbs JSON-LD se generan automáticamente por el componente `Breadcrumbs` ya existente si la ruta encaja con su lógica (verificar y, si no, añadir `LABELS`).
-
-## 9. Escalabilidad
-
-- `specialConfig.ts` centraliza piezas y orden → añadir una nueva pieza = añadir un objeto + crear su archivo de ruta.
-- `RelatedSelectionNews` se alimenta del CMS existente; el usuario solo crea noticias con la categoría/tag adecuado.
-- Los componentes (`SpecialHero`, `DossierPiecesGrid`, etc.) son reutilizables para futuros especiales cambiando el config.
-
-## 10. Detalles técnicos
-
-- Loaders públicos: usan server fn con cliente publishable (no `requireSupabaseAuth`) — la home y el especial son rutas públicas.
-- Imágenes: usar Unsplash temporales con prompt deportivo (patinaje/Italia) hasta que el usuario suba las definitivas; marcar con comentarios `// TODO: reemplazar imagen`.
-- Tokens de diseño: mantener `gold`, `font-display`, `font-condensed` ya en uso; nada de colores hardcoded.
-- No tocar `routeTree.gen.ts` (se regenera).
-
-## Fuera de alcance
-
-- No se crea migración nueva (se reutiliza `news` + `news_categories`).
-- No se sube la convocatoria con nombres reales: queda el esqueleto listo para pegarla después.
-- No se implementa admin específico del especial (se edita por código en `specialConfig.ts`); si más adelante se quiere CMS, se hará en otra iteración.
+¿Procedo?
