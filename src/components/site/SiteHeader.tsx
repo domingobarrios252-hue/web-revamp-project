@@ -31,7 +31,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Actualidad", to: "/noticias", slug: "noticias" },
   { label: "España", to: "/hub/$country", params: { country: "es" }, slug: "espana" },
   { label: "Colombia", to: "/hub/$country", params: { country: "co" }, slug: "colombia" },
-  
   { label: "Salón de la Fama", to: "/salon-de-la-fama", slug: "salon-de-la-fama" },
   { label: "Eventos", to: "/eventos", slug: "eventos" },
   { label: "Resultados", to: "/resultados", slug: "resultados" },
