@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Play, Tv, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Play, Tv, X, Radio } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { canEmbedVideo, videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { SectionHeading } from "./SectionHeading";
@@ -16,15 +16,33 @@ type Highlight = {
   featured: boolean;
 };
 
+type TvSettings = {
+  live_stream_url: string | null;
+  live_title: string;
+  live_subtitle: string | null;
+  live_starts_at: string | null;
+  live_ends_at: string | null;
+  live_is_active: boolean;
+  status_label: string;
+  live_thumbnail_url: string | null;
+};
+
 export function RollerZoneTVHome() {
   const [items, setItems] = useState<Highlight[] | null>(null);
+  const [tv, setTv] = useState<TvSettings | null>(null);
   const [openUrl, setOpenUrl] = useState<string | null>(null);
+  const [now, setNow] = useState(() => new Date());
 
   function openVideo(url: string | null) {
     if (!url) return;
     if (canEmbedVideo(url)) setOpenUrl(url);
     else window.open(url, "_blank", "noopener,noreferrer");
   }
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 30_000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,12 +57,40 @@ export function RollerZoneTVHome() {
       .then(({ data }) => {
         if (!cancelled) setItems((data as Highlight[]) ?? []);
       });
+    supabase
+      .from("tv_settings")
+      .select(
+        "live_stream_url, live_title, live_subtitle, live_starts_at, live_ends_at, live_is_active, status_label, live_thumbnail_url",
+      )
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .then(({ data }) => {
+        if (cancelled) return;
+        const row = Array.isArray(data) ? data[0] : data;
+        setTv((row as TvSettings) ?? null);
+      });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  if (items !== null && items.length === 0) return null;
+  const isLive = useMemo(() => {
+    if (!tv) return false;
+    if (tv.live_is_active) return true;
+    if (tv.status_label === "live") return true;
+    if (tv.live_starts_at) {
+      const start = new Date(tv.live_starts_at).getTime();
+      const end = tv.live_ends_at
+        ? new Date(tv.live_ends_at).getTime()
+        : start + 1000 * 60 * 60 * 4;
+      const t = now.getTime();
+      if (t >= start && t <= end) return true;
+    }
+    return false;
+  }, [tv, now]);
+
+  if (items !== null && items.length === 0 && !isLive) return null;
+
 
   const featured = items?.[0];
   const rest = items?.slice(1, 4) ?? [];
