@@ -2938,34 +2938,67 @@ export type Database = {
         Row: {
           id: string
           live_ends_at: string | null
+          live_is_active: boolean
           live_starts_at: string | null
           live_stream_url: string | null
           live_subtitle: string | null
+          live_thumbnail_url: string | null
           live_title: string
           next_event_at: string | null
           next_event_title: string | null
+          premium_autoplay: boolean
+          premium_interval_ms: number
+          premium_show_arrows: boolean
+          premium_show_dots: boolean
+          status_label: string
+          subscribe_button_text: string | null
+          subscribe_button_url: string | null
+          subscribe_text: string | null
+          subscribe_title: string | null
           updated_at: string
         }
         Insert: {
           id?: string
           live_ends_at?: string | null
+          live_is_active?: boolean
           live_starts_at?: string | null
           live_stream_url?: string | null
           live_subtitle?: string | null
+          live_thumbnail_url?: string | null
           live_title?: string
           next_event_at?: string | null
           next_event_title?: string | null
+          premium_autoplay?: boolean
+          premium_interval_ms?: number
+          premium_show_arrows?: boolean
+          premium_show_dots?: boolean
+          status_label?: string
+          subscribe_button_text?: string | null
+          subscribe_button_url?: string | null
+          subscribe_text?: string | null
+          subscribe_title?: string | null
           updated_at?: string
         }
         Update: {
           id?: string
           live_ends_at?: string | null
+          live_is_active?: boolean
           live_starts_at?: string | null
           live_stream_url?: string | null
           live_subtitle?: string | null
+          live_thumbnail_url?: string | null
           live_title?: string
           next_event_at?: string | null
           next_event_title?: string | null
+          premium_autoplay?: boolean
+          premium_interval_ms?: number
+          premium_show_arrows?: boolean
+          premium_show_dots?: boolean
+          status_label?: string
+          subscribe_button_text?: string | null
+          subscribe_button_url?: string | null
+          subscribe_text?: string | null
+          subscribe_title?: string | null
           updated_at?: string
         }
         Relationships: []
