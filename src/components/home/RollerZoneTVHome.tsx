@@ -106,7 +106,9 @@ export function RollerZoneTVHome() {
           action={{ to: "/tv", label: "Ver todos los vídeos" }}
         />
 
-        {items === null ? (
+        {isLive && tv ? (
+          <LiveTvCard tv={tv} />
+        ) : items === null ? (
           <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
             <div className="aspect-video animate-pulse rounded-xl bg-surface-2" />
             <div className="space-y-4">
