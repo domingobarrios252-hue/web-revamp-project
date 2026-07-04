@@ -87,7 +87,8 @@ export function TvPremiumBanner({ autoplay, intervalMs, showArrows, showDots }: 
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <div className="relative aspect-[8/1] min-h-[90px] w-full">
+        {/* Tamaño recomendado 1200x200 (relación 6:1) */}
+        <div className="relative aspect-[6/1] min-h-[120px] w-full">
           {items.map((b, i) => (
             <div
               key={b.id}
