@@ -1,0 +1,1 @@
+ALTER TABLE public.events ADD COLUMN IF NOT EXISTS convocatoria_pdf_url text, ADD COLUMN IF NOT EXISTS convocatoria_pdf_name text;

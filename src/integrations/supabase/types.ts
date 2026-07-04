@@ -687,6 +687,8 @@ export type Database = {
           banner_url: string | null
           categories: string[]
           city: string | null
+          convocatoria_pdf_name: string | null
+          convocatoria_pdf_url: string | null
           country_code: string
           cover_url: string | null
           created_at: string
@@ -724,6 +726,8 @@ export type Database = {
           banner_url?: string | null
           categories?: string[]
           city?: string | null
+          convocatoria_pdf_name?: string | null
+          convocatoria_pdf_url?: string | null
           country_code?: string
           cover_url?: string | null
           created_at?: string
@@ -761,6 +765,8 @@ export type Database = {
           banner_url?: string | null
           categories?: string[]
           city?: string | null
+          convocatoria_pdf_name?: string | null
+          convocatoria_pdf_url?: string | null
           country_code?: string
           cover_url?: string | null
           created_at?: string
