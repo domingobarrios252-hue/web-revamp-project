@@ -4,6 +4,7 @@ import { BookOpen, Calendar, Newspaper, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "@/lib/i18n/format";
 import { EmptyState } from "@/components/site/EmptyState";
+import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
 import { HubSectionLink } from "@/components/hub/HubSubNav";
 import { useCountryHub, type HubSectionKey, type QuickLink } from "@/lib/hub/useCountryHub";
@@ -330,6 +331,12 @@ export function HubDashboard({ country }: { country: string }) {
 
         {/* SIDEBAR */}
         <aside className="lg:col-span-4 space-y-10 md:space-y-12">
+          {/* Publicidad lateral del hub */}
+          {(country === "es" || country === "co") && (
+            <AdBannerSmall
+              placement={country === "es" ? "hub_espana_side" : "hub_colombia_side"}
+            />
+          )}
           {/* Próximos eventos */}
           {events.length > 0 && (
             <section className="bg-[#242424] rounded-2xl border border-[#333] p-6 md:p-8 space-y-6">
