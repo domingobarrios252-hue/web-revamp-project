@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
+import { TvSidebarBanners } from "@/components/tv/TvSidebarBanners";
+import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 
 export const Route = createFileRoute("/tv")({
   head: () => ({
@@ -30,8 +31,19 @@ type Settings = {
   live_subtitle: string | null;
   live_starts_at: string | null;
   live_ends_at: string | null;
+  live_is_active: boolean;
+  status_label: string;
+  live_thumbnail_url: string | null;
   next_event_title: string | null;
   next_event_at: string | null;
+  premium_autoplay: boolean;
+  premium_interval_ms: number;
+  premium_show_arrows: boolean;
+  premium_show_dots: boolean;
+  subscribe_title: string | null;
+  subscribe_text: string | null;
+  subscribe_button_text: string | null;
+  subscribe_button_url: string | null;
 };
 
 type Broadcast = {
@@ -63,15 +75,14 @@ function TvPage() {
   const [now, setNow] = useState(() => new Date());
   const [carouselIdx, setCarouselIdx] = useState(0);
   const [activeHighlight, setActiveHighlight] = useState<Highlight | null>(null);
+  const [playerActive, setPlayerActive] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     const hash = location.hash?.replace(/^#/, "");
     if (!hash) return;
     const el = document.getElementById(hash);
-    if (el) {
-      requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "start" }));
-    }
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "start" }));
   }, [location.hash]);
 
   useEffect(() => {
@@ -82,9 +93,7 @@ function TvPage() {
   useEffect(() => {
     supabase
       .from("tv_settings")
-      .select(
-        "live_stream_url, live_title, live_subtitle, live_starts_at, live_ends_at, next_event_title, next_event_at"
-      )
+      .select("*")
       .order("updated_at", { ascending: false })
       .limit(1)
       .then(({ data }) => {
@@ -112,24 +121,56 @@ function TvPage() {
   }, []);
 
   const isLive = useMemo(() => {
-    if (!settings?.live_starts_at) return false;
-    const start = new Date(settings.live_starts_at).getTime();
-    const end = settings.live_ends_at ? new Date(settings.live_ends_at).getTime() : start + 1000 * 60 * 60 * 4;
-    const t = now.getTime();
-    return t >= start && t <= end;
+    if (!settings) return false;
+    if (settings.live_is_active) return true;
+    if (settings.status_label === "live") return true;
+    if (settings.live_starts_at) {
+      const start = new Date(settings.live_starts_at).getTime();
+      const end = settings.live_ends_at
+        ? new Date(settings.live_ends_at).getTime()
+        : start + 1000 * 60 * 60 * 4;
+      const t = now.getTime();
+      if (t >= start && t <= end) return true;
+    }
+    return false;
   }, [settings, now]);
 
-  const embedUrl = videoEmbedUrl(settings?.live_stream_url, { autoplay: false });
+  const statusInfo = useMemo(() => {
+    if (isLive) return { label: "EN DIRECTO AHORA", tone: "live" as const };
+    if (settings?.status_label === "finished") return { label: "FINALIZADO", tone: "muted" as const };
+    return { label: "PRÓXIMAMENTE", tone: "gold" as const };
+  }, [isLive, settings]);
+
+  const embedUrl = videoEmbedUrl(settings?.live_stream_url, { autoplay: true });
+  const thumbnail =
+    settings?.live_thumbnail_url ||
+    videoThumbnail(settings?.live_stream_url) ||
+    null;
 
   return (
     <div className="bg-background">
-      {/* HERO PLAYER */}
-      <section id="directo" className="relative border-b border-gold/30 bg-background scroll-mt-20">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[1.5fr_1fr] lg:px-8 lg:py-12">
-          {/* Player */}
-          <div className="relative">
+      {/* HEADER */}
+      <section id="directo" className="scroll-mt-20 border-b border-gold/30 bg-background">
+        <div className="mx-auto max-w-7xl px-4 pt-8 lg:px-8 lg:pt-12">
+          <p className="font-condensed text-xs uppercase tracking-[3px] text-gold">RollerZone TV</p>
+          <div className="mt-2 flex flex-wrap items-center gap-4">
+            <h1 className="font-display text-3xl tracking-widest text-foreground md:text-5xl">
+              {settings?.live_title ?? "RollerZone TV"}
+            </h1>
+            <StatusBadge tone={statusInfo.tone} label={statusInfo.label} />
+          </div>
+          {settings?.live_subtitle && (
+            <p className="mt-3 max-w-3xl text-base text-muted-foreground md:text-lg">
+              {settings.live_subtitle}
+            </p>
+          )}
+        </div>
+
+        {/* MAIN GRID: player + sidebar */}
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 pb-8 pt-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 lg:pb-12">
+          <div className="relative min-w-0">
             <div className="relative aspect-video w-full overflow-hidden border border-gold/30 bg-black shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
-              {embedUrl ? (
+              {playerActive && embedUrl ? (
                 <iframe
                   src={embedUrl}
                   title={settings?.live_title ?? "RollerZone TV"}
@@ -137,6 +178,27 @@ function TvPage() {
                   allowFullScreen
                   className="h-full w-full"
                 />
+              ) : embedUrl ? (
+                <button
+                  type="button"
+                  onClick={() => setPlayerActive(true)}
+                  className="group relative flex h-full w-full items-center justify-center bg-black"
+                  aria-label="Reproducir"
+                >
+                  {thumbnail ? (
+                    <img
+                      src={thumbnail}
+                      alt={settings?.live_title ?? "Preview"}
+                      className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
+                    />
+                  ) : (
+                    <div className="hero-grid-bg h-full w-full" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <span className="absolute flex h-20 w-20 items-center justify-center rounded-full bg-gold text-primary-foreground shadow-2xl transition-transform group-hover:scale-110">
+                    <Play className="ml-1 h-9 w-9 fill-current" />
+                  </span>
+                </button>
               ) : (
                 <div className="flex h-full w-full flex-col items-center justify-center text-center text-muted-foreground">
                   <Radio className="mb-3 h-10 w-10 text-gold" />
@@ -146,73 +208,57 @@ function TvPage() {
                   </p>
                 </div>
               )}
+
+              {isLive && (
+                <div className="pointer-events-none absolute left-4 top-4 z-10">
+                  <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                    </span>
+                    EN DIRECTO
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Live status badge overlay (rojo universal de directo) */}
-            {isLive && (
-              <div className="absolute left-4 top-4 z-10">
-                <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-                  </span>
-                  EN DIRECTO
-                </span>
+            {settings?.next_event_title && !isLive && (
+              <div className="mt-4 border border-gold/30 bg-surface p-4">
+                <p className="font-condensed text-[11px] uppercase tracking-widest text-gold">
+                  Siguiente emisión
+                </p>
+                <p className="font-display mt-1 text-lg uppercase tracking-wider text-foreground">
+                  {settings.next_event_title}
+                </p>
+                {settings.next_event_at && (
+                  <p className="font-condensed mt-0.5 text-[11px] uppercase tracking-widest text-muted-foreground">
+                    {formatDateTime(settings.next_event_at)}
+                  </p>
+                )}
               </div>
             )}
           </div>
 
-          {/* Info side */}
-          <div className="flex flex-col justify-center">
-            <p className="font-condensed text-xs uppercase tracking-[3px] text-gold">
-              RollerZone TV
-            </p>
-            <h1 className="font-display mt-2 text-4xl tracking-widest text-foreground md:text-5xl">
-              {settings?.live_title ?? "RollerZone TV"}
-            </h1>
-            {settings?.live_subtitle && (
-              <p className="mt-3 max-w-xl text-base text-muted-foreground md:text-lg">
-                {settings.live_subtitle}
-              </p>
-            )}
+          <TvSidebarBanners />
+        </div>
 
-            <div className="mt-6 grid gap-3 border-t border-border/50 pt-5 sm:grid-cols-2">
-              <StatusBlock isLive={isLive} settings={settings} now={now} />
-              {settings?.next_event_title && (
-                <div className="border-l border-gold/40 pl-4">
-                  <p className="font-condensed text-[11px] uppercase tracking-widest text-gold">
-                    Siguiente
-                  </p>
-                  <p className="font-display mt-1 text-sm uppercase tracking-wider text-foreground">
-                    {settings.next_event_title}
-                  </p>
-                  {settings.next_event_at && (
-                    <p className="font-condensed mt-0.5 text-[11px] uppercase tracking-widest text-muted-foreground">
-                      {formatDateTime(settings.next_event_at)}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
+        {/* PREMIUM BANNER — ancho completo */}
+        <div className="border-t border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
+            <TvPremiumBanner
+              autoplay={settings?.premium_autoplay ?? true}
+              intervalMs={settings?.premium_interval_ms ?? 5000}
+              showArrows={settings?.premium_show_arrows ?? false}
+              showDots={settings?.premium_show_dots ?? true}
+            />
           </div>
         </div>
       </section>
 
-      <div className="border-b border-border bg-background">
-        <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
-          <AdBannerSmall placement="tv_side" />
-        </div>
-      </div>
-
-      {/* PRÓXIMAS CARRERAS — CARRUSEL */}
-      <section id="emisiones" className="border-b border-border bg-background scroll-mt-20">
+      {/* PRÓXIMAS CARRERAS */}
+      <section id="emisiones" className="scroll-mt-20 border-b border-border bg-background">
         <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-          <SectionHeader
-            kicker="Programación"
-            title="Próximas"
-            highlight="carreras"
-          />
-
+          <SectionHeader kicker="Programación" title="Próximas" highlight="carreras" />
           {broadcasts === null ? (
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[0, 1, 2].map((i) => (
@@ -222,24 +268,23 @@ function TvPage() {
           ) : broadcasts.length === 0 ? (
             <p className="mt-6 text-muted-foreground">Aún no hay próximas emisiones programadas.</p>
           ) : (
-            <BroadcastsCarousel
-              items={broadcasts}
-              index={carouselIdx}
-              setIndex={setCarouselIdx}
-            />
+            <BroadcastsCarousel items={broadcasts} index={carouselIdx} setIndex={setCarouselIdx} />
           )}
+          <div className="mt-6">
+            <Link
+              to="/eventos"
+              className="font-condensed inline-flex items-center gap-1 text-xs uppercase tracking-widest text-gold hover:underline"
+            >
+              Ver todos los eventos <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* HIGHLIGHTS GRID */}
-      <section id="highlights" className="bg-surface/40 scroll-mt-20">
+      {/* HIGHLIGHTS */}
+      <section id="highlights" className="scroll-mt-20 bg-surface/40">
         <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-          <SectionHeader
-            kicker="Lo mejor"
-            title="Highlights"
-            highlight="& momentos"
-          />
-
+          <SectionHeader kicker="Lo mejor" title="Highlights" highlight="& momentos" />
           {highlights === null ? (
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -254,39 +299,57 @@ function TvPage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA SUSCRIPCIÓN */}
       <section className="border-t border-gold/30 bg-background">
         <div className="mx-auto max-w-3xl px-4 py-12 text-center lg:px-8">
           <h2 className="font-display text-2xl tracking-widest text-foreground md:text-3xl">
-            ¿No te quieres perder <span className="text-gold">nada</span>?
+            {settings?.subscribe_title ?? "¿No te quieres perder nada?"}
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Suscríbete a nuestro canal y activa las notificaciones para no perderte ningún directo.
+            {settings?.subscribe_text ??
+              "Suscríbete a nuestro canal y activa las notificaciones para no perderte ningún directo."}
           </p>
           <a
-            href="https://www.youtube.com/@rollerzonespain?sub_confirmation=1"
+            href={settings?.subscribe_button_url ?? "https://www.youtube.com/@rollerzonespain?sub_confirmation=1"}
             target="_blank"
             rel="noopener noreferrer"
             className="font-condensed mt-5 inline-flex items-center gap-2 bg-gold px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground transition-colors hover:bg-gold-dark"
           >
-            Suscribirse al canal
+            {settings?.subscribe_button_text ?? "Suscribirse al canal"}
           </a>
-          <div className="mt-4">
-            <Link
-              to="/eventos"
-              className="font-condensed text-xs uppercase tracking-widest text-muted-foreground hover:text-gold"
-            >
-              Ver todos los eventos →
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* HIGHLIGHT MODAL */}
       {activeHighlight && (
         <HighlightModal item={activeHighlight} onClose={() => setActiveHighlight(null)} />
       )}
     </div>
+  );
+}
+
+function StatusBadge({ tone, label }: { tone: "live" | "gold" | "muted"; label: string }) {
+  if (tone === "live") {
+    return (
+      <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+        </span>
+        {label}
+      </span>
+    );
+  }
+  if (tone === "muted") {
+    return (
+      <span className="font-condensed inline-flex items-center gap-2 border border-border bg-surface px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
+    );
+  }
+  return (
+    <span className="font-condensed inline-flex items-center gap-2 border border-gold/60 bg-gold/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-gold">
+      {label}
+    </span>
   );
 }
 
@@ -305,57 +368,6 @@ function SectionHeader({
       <h2 className="font-display mt-1 text-3xl tracking-widest text-foreground md:text-4xl">
         {title} <span className="text-gold">{highlight}</span>
       </h2>
-    </div>
-  );
-}
-
-function StatusBlock({
-  isLive,
-  settings,
-  now,
-}: {
-  isLive: boolean;
-  settings: Settings | null;
-  now: Date;
-}) {
-  if (isLive) {
-    return (
-      <div className="border-l border-tv-red pl-4">
-        <p className="font-condensed text-[11px] uppercase tracking-widest text-tv-red">
-          Estado
-        </p>
-        <p className="font-display mt-1 flex items-center gap-2 text-sm uppercase tracking-wider text-foreground">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-tv-red opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-tv-red" />
-          </span>
-          EN DIRECTO AHORA
-        </p>
-      </div>
-    );
-  }
-  if (settings?.live_starts_at) {
-    const start = new Date(settings.live_starts_at);
-    const isFuture = start.getTime() > now.getTime();
-    return (
-      <div className="border-l border-gold/40 pl-4">
-        <p className="font-condensed text-[11px] uppercase tracking-widest text-gold">
-          {isFuture ? "Próxima emisión" : "Última emisión"}
-        </p>
-        <p className="font-display mt-1 text-sm uppercase tracking-wider text-foreground">
-          {formatDateTime(settings.live_starts_at)}
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className="border-l border-border pl-4">
-      <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-        Estado
-      </p>
-      <p className="font-display mt-1 text-sm uppercase tracking-wider text-muted-foreground">
-        Sin programación
-      </p>
     </div>
   );
 }
@@ -412,9 +424,7 @@ function BroadcastsCarousel({
                 key={i}
                 onClick={() => setIndex(i)}
                 aria-label={`Ir a ${i + 1}`}
-                className={`h-1 w-6 transition-colors ${
-                  i === safeIndex ? "bg-gold" : "bg-border"
-                }`}
+                className={`h-1 w-6 transition-colors ${i === safeIndex ? "bg-gold" : "bg-border"}`}
               />
             ))}
           </div>
@@ -476,9 +486,7 @@ function BroadcastCard({ b }: { b: Broadcast }) {
             <MapPin className="h-3 w-3" /> {b.location}
           </p>
         )}
-        {b.description && (
-          <p className="clamp-2 mt-2 text-sm text-muted-foreground">{b.description}</p>
-        )}
+        {b.description && <p className="clamp-2 mt-2 text-sm text-muted-foreground">{b.description}</p>}
       </div>
     </Wrapper>
   );
@@ -503,7 +511,9 @@ function HighlightsGrid({
               isFeatured ? "sm:col-span-2 lg:row-span-2" : ""
             }`}
           >
-            <div className={`relative overflow-hidden bg-black ${isFeatured ? "aspect-[16/10]" : "aspect-video"}`}>
+            <div
+              className={`relative overflow-hidden bg-black ${isFeatured ? "aspect-[16/10]" : "aspect-video"}`}
+            >
               {(() => {
                 const thumb = h.thumbnail_url || videoThumbnail(h.video_url);
                 return thumb ? (
@@ -574,10 +584,7 @@ function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => voi
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
       onClick={onClose}
     >
-      <div
-        className="relative w-full max-w-5xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="relative w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
           aria-label="Cerrar"
@@ -611,9 +618,7 @@ function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => voi
         </div>
         <div className="mt-3 text-foreground">
           <h3 className="font-display text-xl tracking-wide">{item.title}</h3>
-          {item.description && (
-            <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
-          )}
+          {item.description && <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>}
         </div>
       </div>
     </div>
