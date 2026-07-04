@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
 import { BookOpen, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdBanners, type AdBanner } from "@/lib/useAdBanners";
 
-type Banner = {
-  id: string;
-  name: string;
-  image_url: string;
-  link_url: string | null;
-  alt_text: string | null;
-};
+type Banner = AdBanner;
 
 type Magazine = {
   id: string;
@@ -47,26 +42,13 @@ const DEFAULT_CTA: CtaConfig = {
  * En móvil se apilan verticalmente.
  */
 export function AdBannerWithMagazine({ placement = "home_top" }: { placement?: string }) {
-  const [banner, setBanner] = useState<Banner | null>(null);
+  const bannersForPlacement = useAdBanners(placement);
+  const banner: Banner | null = bannersForPlacement[0] ?? null;
   const [magazine, setMagazine] = useState<Magazine | null>(null);
   const [cta, setCta] = useState<CtaConfig>(DEFAULT_CTA);
 
   useEffect(() => {
     let cancelled = false;
-
-    const loadBanner = () => {
-      supabase
-        .from("ad_banners")
-        .select("id, name, image_url, link_url, alt_text")
-        .eq("active", true)
-        .eq("placement", placement)
-        .order("sort_order", { ascending: true })
-        .limit(1)
-        .maybeSingle()
-        .then(({ data }) => {
-          if (!cancelled) setBanner((data as Banner) ?? null);
-        });
-    };
 
     const loadMagazine = () => {
       supabase
@@ -96,17 +78,11 @@ export function AdBannerWithMagazine({ placement = "home_top" }: { placement?: s
         });
     };
 
-    loadBanner();
     loadMagazine();
     loadCta();
 
     const channel = supabase
       .channel(`ad-banner-magazine-${placement}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "ad_banners" },
-        () => loadBanner()
-      )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "magazines" },
@@ -129,6 +105,7 @@ export function AdBannerWithMagazine({ placement = "home_top" }: { placement?: s
 
   // Si no hay nada que mostrar, ocultamos toda la sección
   if (!banner && !showMagazine) return null;
+
 
   return (
     <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 sm:pt-4 md:pt-6">
