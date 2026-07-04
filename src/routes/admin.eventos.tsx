@@ -190,10 +190,14 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [published, setPublished] = useState(initial?.published ?? true);
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
   const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
+  const [convocatoria_pdf_url, setConvocatoriaUrl] = useState(initial?.convocatoria_pdf_url ?? "");
+  const [convocatoria_pdf_name, setConvocatoriaName] = useState(initial?.convocatoria_pdf_name ?? "");
+  const [uploadingPdf, setUploadingPdf] = useState(false);
   const [saving, setSaving] = useState(false);
   const [relClubs, setRelClubs] = useState<string[]>([]);
   const [relSkaters, setRelSkaters] = useState<string[]>([]);
   const [relFeds, setRelFeds] = useState<string[]>([]);
+
 
   useEffect(() => {
     if (!initial) { setRelClubs([]); setRelSkaters([]); setRelFeds([]); return; }
