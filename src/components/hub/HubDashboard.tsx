@@ -331,6 +331,12 @@ export function HubDashboard({ country }: { country: string }) {
 
         {/* SIDEBAR */}
         <aside className="lg:col-span-4 space-y-10 md:space-y-12">
+          {/* Publicidad lateral del hub */}
+          {(country === "es" || country === "co") && (
+            <AdBannerSmall
+              placement={country === "es" ? "hub_espana_side" : "hub_colombia_side"}
+            />
+          )}
           {/* Próximos eventos */}
           {events.length > 0 && (
             <section className="bg-[#242424] rounded-2xl border border-[#333] p-6 md:p-8 space-y-6">
