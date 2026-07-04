@@ -37,18 +37,23 @@ export function TvSidebarBanners() {
 
   if (items.length === 0) return null;
 
+  // Muestra un máximo de 3 banners laterales (300x250 recomendado)
+  const visible = items.slice(0, 3);
+
   return (
     <aside aria-label="Publicidad" className="flex flex-col gap-4">
       <div className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground/60">
         Publicidad
       </div>
-      {items.map((b) => {
+      {visible.map((b) => {
         const img = (
           <img
             src={b.image_url}
             alt={b.alt_text ?? b.name}
             loading="lazy"
-            className="h-auto w-full object-contain"
+            width={300}
+            height={250}
+            className="block aspect-[6/5] w-full object-cover"
           />
         );
         return (
