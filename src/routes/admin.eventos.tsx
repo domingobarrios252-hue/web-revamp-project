@@ -239,7 +239,10 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
       published: parsed.data.published,
       gallery: parsed.data.gallery,
       country_code,
+      convocatoria_pdf_url: convocatoria_pdf_url || null,
+      convocatoria_pdf_name: convocatoria_pdf_name || null,
     };
+
     let eventId = initial?.id ?? null;
     if (initial) {
       const { error } = await supabase.from("events").update(payload).eq("id", initial.id);
