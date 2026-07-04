@@ -80,41 +80,79 @@ export type Database = {
         }
         Relationships: []
       }
+      ad_banner_placements: {
+        Row: {
+          banner_id: string
+          created_at: string
+          placement: string
+          sort_order: number
+        }
+        Insert: {
+          banner_id: string
+          created_at?: string
+          placement: string
+          sort_order?: number
+        }
+        Update: {
+          banner_id?: string
+          created_at?: string
+          placement?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_banner_placements_banner_id_fkey"
+            columns: ["banner_id"]
+            isOneToOne: false
+            referencedRelation: "ad_banners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ad_banners: {
         Row: {
           active: boolean
           alt_text: string | null
           created_at: string
+          ends_at: string | null
           id: string
           image_url: string
           link_url: string | null
           name: string
-          placement: string
+          placement: string | null
           sort_order: number
+          sponsor: string | null
+          starts_at: string | null
           updated_at: string
         }
         Insert: {
           active?: boolean
           alt_text?: string | null
           created_at?: string
+          ends_at?: string | null
           id?: string
           image_url: string
           link_url?: string | null
           name: string
-          placement?: string
+          placement?: string | null
           sort_order?: number
+          sponsor?: string | null
+          starts_at?: string | null
           updated_at?: string
         }
         Update: {
           active?: boolean
           alt_text?: string | null
           created_at?: string
+          ends_at?: string | null
           id?: string
           image_url?: string
           link_url?: string | null
           name?: string
-          placement?: string
+          placement?: string | null
           sort_order?: number
+          sponsor?: string | null
+          starts_at?: string | null
           updated_at?: string
         }
         Relationships: []
