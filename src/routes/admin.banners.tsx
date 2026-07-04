@@ -281,6 +281,8 @@ function BannerEditor({
               options={[
                 { value: "home_top", label: "Home — entre ticker y noticias (grande)" },
                 { value: "home_middle", label: "Home — entre secciones (grande)" },
+                { value: "tv_sidebar", label: "RollerZone TV — banner lateral vertical (300×250)" },
+                { value: "tv_premium", label: "RollerZone TV — banner premium horizontal ancho completo" },
                 { value: "home_bottom", label: "Home — pie antes del footer (grande)" },
                 { value: "mvp_side", label: "Premios MVP — lateral 300×100" },
                 { value: "tv_side", label: "RollerZone TV — lateral 300×100" },
