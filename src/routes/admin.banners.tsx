@@ -281,6 +281,8 @@ function BannerEditor({
               options={[
                 { value: "home_top", label: "Home — entre ticker y noticias (grande)" },
                 { value: "home_middle", label: "Home — entre secciones (grande)" },
+                { value: "tv_sidebar", label: "RollerZone TV — banner lateral vertical (300×250)" },
+                { value: "tv_premium", label: "RollerZone TV — banner premium horizontal ancho completo" },
                 { value: "home_bottom", label: "Home — pie antes del footer (grande)" },
                 { value: "mvp_side", label: "Premios MVP — lateral 300×100" },
                 { value: "tv_side", label: "RollerZone TV — lateral 300×100" },
@@ -565,12 +567,15 @@ function PlacementPreview({
   imageUrl: string;
   alt: string;
 }) {
-  const isSide = placement.endsWith("_side");
+  const isSide = placement.endsWith("_side") || placement === "tv_sidebar";
   const isHubHeader = placement.endsWith("_top") && !placement.startsWith("home_");
   const isHomeLarge = placement.startsWith("home_");
+  const isPremium = placement === "tv_premium";
 
-  const label = isSide
-    ? "Vista previa — lateral 300×100"
+  const label = isPremium
+    ? "Vista previa — banner premium horizontal"
+    : isSide
+    ? "Vista previa — banner lateral"
     : isHubHeader
     ? "Vista previa — cabecera de sección"
     : isHomeLarge
