@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users, Navigation, X, ZoomIn } from "lucide-react";
+import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users, Navigation, X, ZoomIn, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 
