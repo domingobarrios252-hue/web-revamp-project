@@ -30,8 +30,11 @@ type EventRow = {
   country_code: string | null;
   is_featured: boolean | null;
   live_center_enabled: boolean | null;
+  convocatoria_pdf_url: string | null;
+  convocatoria_pdf_name: string | null;
   regions: { name: string } | null;
 };
+
 
 const schema = z.object({
   name: z.string().trim().min(2).max(160),
@@ -187,10 +190,14 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
   const [published, setPublished] = useState(initial?.published ?? true);
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
   const [country_code, setCountryCode] = useState(initial?.country_code ?? "es");
+  const [convocatoria_pdf_url, setConvocatoriaUrl] = useState(initial?.convocatoria_pdf_url ?? "");
+  const [convocatoria_pdf_name, setConvocatoriaName] = useState(initial?.convocatoria_pdf_name ?? "");
+  const [uploadingPdf, setUploadingPdf] = useState(false);
   const [saving, setSaving] = useState(false);
   const [relClubs, setRelClubs] = useState<string[]>([]);
   const [relSkaters, setRelSkaters] = useState<string[]>([]);
   const [relFeds, setRelFeds] = useState<string[]>([]);
+
 
   useEffect(() => {
     if (!initial) { setRelClubs([]); setRelSkaters([]); setRelFeds([]); return; }
@@ -232,7 +239,10 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
       published: parsed.data.published,
       gallery: parsed.data.gallery,
       country_code,
+      convocatoria_pdf_url: convocatoria_pdf_url || null,
+      convocatoria_pdf_name: convocatoria_pdf_name || null,
     };
+
     let eventId = initial?.id ?? null;
     if (initial) {
       const { error } = await supabase.from("events").update(payload).eq("id", initial.id);
@@ -295,6 +305,54 @@ function EventForm({ initial, regions, onClose, onSaved }: { initial: EventRow |
         <Field label={`Galería (hasta 6 fotos · ${gallery.length}/6)`} full>
           <GalleryEditor value={gallery} onChange={setGallery} slug={slug || slugify(name)} />
         </Field>
+        <Field label="Convocatoria (PDF)" full>
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="font-condensed inline-flex cursor-pointer items-center gap-1 border border-border bg-background px-3 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold/10">
+              {uploadingPdf ? "Subiendo…" : convocatoria_pdf_url ? "Reemplazar PDF" : "Subir PDF"}
+              <input
+                type="file"
+                accept="application/pdf"
+                className="hidden"
+                disabled={uploadingPdf}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setUploadingPdf(true);
+                  try {
+                    const prefix = (slug || slugify(name) || crypto.randomUUID()).slice(0, 60);
+                    const path = `events/convocatorias/${prefix}-${Date.now()}.pdf`;
+                    const { error } = await supabase.storage
+                      .from("media")
+                      .upload(path, file, { cacheControl: "3600", upsert: false, contentType: "application/pdf" });
+                    if (error) { toast.error(error.message); return; }
+                    const { data } = supabase.storage.from("media").getPublicUrl(path);
+                    setConvocatoriaUrl(data.publicUrl);
+                    setConvocatoriaName(file.name);
+                    toast.success("PDF subido");
+                  } finally {
+                    setUploadingPdf(false);
+                    e.target.value = "";
+                  }
+                }}
+              />
+            </label>
+            {convocatoria_pdf_url && (
+              <>
+                <a href={convocatoria_pdf_url} target="_blank" rel="noopener noreferrer" className="text-xs text-gold underline">
+                  {convocatoria_pdf_name || "Ver PDF"}
+                </a>
+                <button
+                  type="button"
+                  onClick={() => { setConvocatoriaUrl(""); setConvocatoriaName(""); }}
+                  className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground hover:text-destructive"
+                >
+                  Quitar
+                </button>
+              </>
+            )}
+          </div>
+        </Field>
+
         <Field label="Web oficial"><input value={website_url} onChange={(e) => setWebsite(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Inscripción (URL)"><input value={registration_url} onChange={(e) => setRegistration(e.target.value)} placeholder="https://…" className="input" /></Field>
         <Field label="Instagram"><input value={instagram_url} onChange={(e) => setInstagram(e.target.value)} placeholder="https://instagram.com/…" className="input" /></Field>
