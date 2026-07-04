@@ -178,6 +178,18 @@ function EventoDetail() {
               Inscripción <ExternalLink className="h-3.5 w-3.5" />
             </a>
           )}
+          {event.convocatoria_pdf_url && (
+            <a
+              href={event.convocatoria_pdf_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              download={event.convocatoria_pdf_name ?? undefined}
+              className="font-condensed mt-3 flex w-full items-center justify-center gap-2 border border-gold px-5 py-3 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold/10"
+            >
+              <FileText className="h-3.5 w-3.5" /> Descargar convocatoria (PDF)
+            </a>
+          )}
+
           <div className="mt-6">
             <AdBannerSmall placement="eventos_detail" />
           </div>
