@@ -121,10 +121,18 @@ export function SiteHeader() {
       <nav className="flex h-14 items-center justify-between px-4 md:px-6">
         <Link
           to="/"
-          className="flex items-center transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40 rounded-sm"
+          className="group flex flex-col justify-center leading-none transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40 rounded-sm"
           aria-label="RollerZone — Inicio"
         >
-          <img src={logoUrl} alt="RollerZone" className="h-8 md:h-9 w-auto" loading="eager" />
+          <span className="font-display text-[20px] md:text-[26px] leading-none tracking-[0.03em] text-[#F5F5F5]">
+            ROLLERZONE<span className="text-[#D4A017]">.ES</span>
+          </span>
+          <span className="font-condensed mt-0.5 text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.18em] text-[#B0B0B0]">
+            Revista de patinaje de velocidad
+          </span>
+          <span className="font-ui mt-0.5 text-[9px] md:text-[10px] italic leading-tight text-[#8A8A8A]">
+            Donde la velocidad se convierte en historia
+          </span>
         </Link>
 
         {/* Desktop nav */}
