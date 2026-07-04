@@ -30,8 +30,11 @@ type EventRow = {
   country_code: string | null;
   is_featured: boolean | null;
   live_center_enabled: boolean | null;
+  convocatoria_pdf_url: string | null;
+  convocatoria_pdf_name: string | null;
   regions: { name: string } | null;
 };
+
 
 const schema = z.object({
   name: z.string().trim().min(2).max(160),
