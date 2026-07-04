@@ -29,7 +29,6 @@ const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/resultados", changefreq: "weekly", priority: "0.7" },
   { path: "/premios-mvp", changefreq: "weekly", priority: "0.7" },
   { path: "/salon-de-la-fama", changefreq: "monthly", priority: "0.6" },
-  { path: "/patinadores-destacados", changefreq: "weekly", priority: "0.6" },
   { path: "/redactores", changefreq: "monthly", priority: "0.5" },
   { path: "/patrocinadores", changefreq: "monthly", priority: "0.4" },
   { path: "/revista", changefreq: "weekly", priority: "0.6" },
