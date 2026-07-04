@@ -17,7 +17,6 @@ import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
-import { Route as PatinadoresDestacadosRouteImport } from './routes/patinadores-destacados'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -173,11 +172,6 @@ const PremiosMvpRoute = PremiosMvpRouteImport.update({
 const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   id: '/patrocinadores',
   path: '/patrocinadores',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PatinadoresDestacadosRoute = PatinadoresDestacadosRouteImport.update({
-  id: '/patinadores-destacados',
-  path: '/patinadores-destacados',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaisesRoute = PaisesRouteImport.update({
@@ -790,7 +784,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
-  '/patinadores-destacados': typeof PatinadoresDestacadosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
@@ -914,7 +907,6 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
-  '/patinadores-destacados': typeof PatinadoresDestacadosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
@@ -1035,7 +1027,6 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
-  '/patinadores-destacados': typeof PatinadoresDestacadosRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
@@ -1164,7 +1155,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/mi-biblioteca'
     | '/paises'
-    | '/patinadores-destacados'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
@@ -1288,7 +1278,6 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/mi-biblioteca'
     | '/paises'
-    | '/patinadores-destacados'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
@@ -1408,7 +1397,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/mi-biblioteca'
     | '/paises'
-    | '/patinadores-destacados'
     | '/patrocinadores'
     | '/premios-mvp'
     | '/privacidad'
@@ -1536,7 +1524,6 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   MiBibliotecaRoute: typeof MiBibliotecaRoute
   PaisesRoute: typeof PaisesRoute
-  PatinadoresDestacadosRoute: typeof PatinadoresDestacadosRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
@@ -1630,13 +1617,6 @@ declare module '@tanstack/react-router' {
       path: '/patrocinadores'
       fullPath: '/patrocinadores'
       preLoaderRoute: typeof PatrocinadoresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/patinadores-destacados': {
-      id: '/patinadores-destacados'
-      path: '/patinadores-destacados'
-      fullPath: '/patinadores-destacados'
-      preLoaderRoute: typeof PatinadoresDestacadosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/paises': {
@@ -2758,7 +2738,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   MiBibliotecaRoute: MiBibliotecaRoute,
   PaisesRoute: PaisesRoute,
-  PatinadoresDestacadosRoute: PatinadoresDestacadosRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
