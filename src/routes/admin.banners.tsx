@@ -567,12 +567,15 @@ function PlacementPreview({
   imageUrl: string;
   alt: string;
 }) {
-  const isSide = placement.endsWith("_side");
+  const isSide = placement.endsWith("_side") || placement === "tv_sidebar";
   const isHubHeader = placement.endsWith("_top") && !placement.startsWith("home_");
   const isHomeLarge = placement.startsWith("home_");
+  const isPremium = placement === "tv_premium";
 
-  const label = isSide
-    ? "Vista previa — lateral 300×100"
+  const label = isPremium
+    ? "Vista previa — banner premium horizontal"
+    : isSide
+    ? "Vista previa — banner lateral"
     : isHubHeader
     ? "Vista previa — cabecera de sección"
     : isHomeLarge
