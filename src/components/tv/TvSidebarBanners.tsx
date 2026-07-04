@@ -52,8 +52,8 @@ export function TvSidebarBanners() {
             alt={b.alt_text ?? b.name}
             loading="lazy"
             width={300}
-            height={250}
-            className="block aspect-[6/5] w-full object-cover"
+            height={200}
+            className="block aspect-[3/2] w-full object-cover"
           />
         );
         return (
