@@ -257,12 +257,19 @@ function ResultadosEventoPage() {
           </div>
           <h1 className="font-display mt-3 text-3xl uppercase leading-none tracking-widest md:text-5xl">{eventName}</h1>
           <div className="font-condensed mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-            {meta?.event_date && (<span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> {formatDate(meta.event_date, lang)}</span>)}
-            {meta?.country && (<span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {meta.country}</span>)}
+            {meta?.event_date && (<span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> {formatDate(meta.event_date, lang)}{meta.end_date && meta.end_date !== meta.event_date ? ` — ${formatDate(meta.end_date, lang)}` : ""}</span>)}
+            {(meta?.city || meta?.venue) && (<span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {[meta.city, meta.venue].filter(Boolean).join(" · ")}</span>)}
+            {meta?.country && (<span className="flex items-center gap-1.5">🌍 {meta.country}</span>)}
+            {meta?.organizer && (<span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5" /> {meta.organizer}</span>)}
+            {meta?.season && (<span>🗓 {meta.season}</span>)}
             <span className="flex items-center gap-1.5">📋 {rows.length} resultados · {groups.length} pruebas</span>
           </div>
+
+          {/* Botones de acción */}
+          <ActionButtons meta={meta} eventName={eventName} slug={data.evento} rows={rows} />
         </div>
       </header>
+
 
       {/* Filters */}
       <section className="sticky top-0 z-20 mt-6 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur">
