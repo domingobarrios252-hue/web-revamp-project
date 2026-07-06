@@ -11,11 +11,26 @@ type ResultEvent = {
   slug: string;
   name: string;
   event_date: string | null;
+  end_date: string | null;
   country: string | null;
+  region: string | null;
+  city: string | null;
+  venue: string | null;
   banner_url: string | null;
+  poster_url: string | null;
+  pdf_url: string | null;
+  stream_url: string | null;
+  organizer: string | null;
+  source_url: string | null;
+  season: string | null;
+  competition_type: string | null;
+  main_category: string | null;
   status: Status;
   published: boolean;
   featured_in_live_center: boolean;
+  featured: boolean;
+  show_in_home: boolean;
+  home_order: number;
   sort_order: number;
 };
 
@@ -23,13 +38,29 @@ const empty: Omit<ResultEvent, "id"> = {
   slug: "",
   name: "",
   event_date: null,
+  end_date: null,
   country: "",
+  region: "",
+  city: "",
+  venue: "",
   banner_url: "",
+  poster_url: "",
+  pdf_url: "",
+  stream_url: "",
+  organizer: "",
+  source_url: "",
+  season: "",
+  competition_type: "",
+  main_category: "",
   status: "proxima",
   published: true,
   featured_in_live_center: false,
+  featured: false,
+  show_in_home: false,
+  home_order: 0,
   sort_order: 0,
 };
+
 
 export const Route = createFileRoute("/admin/resultados")({
   head: () => ({ meta: [{ title: "Admin · Eventos de Resultados" }, { name: "robots", content: "noindex" }] }),
