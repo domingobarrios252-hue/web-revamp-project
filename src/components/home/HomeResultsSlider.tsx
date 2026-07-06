@@ -50,13 +50,20 @@ export function HomeResultsSlider() {
     const load = async () => {
       const { data: evs } = await supabase
         .from("result_events")
-        .select("slug, name, event_date, country, banner_url")
+        .select("slug, name, event_date, country, banner_url, show_in_home, home_order")
         .eq("published", true)
         .order("event_date", { ascending: false });
       const evMap: Record<string, EventMeta> = {};
       (evs ?? []).forEach((e: EventMeta) => { evMap[e.slug] = e; });
 
-      const { data } = await supabase
+      // Slugs marcados "Mostrar en Home" desde el admin de resultados.
+      const homeSlugs = (evs ?? [])
+        .filter((e: { show_in_home?: boolean }) => e.show_in_home === true)
+        .sort((a: { home_order?: number }, b: { home_order?: number }) => (a.home_order ?? 0) - (b.home_order ?? 0))
+        .map((e: { slug: string }) => e.slug);
+
+      // Podios: filas de eventos featured (bandera clásica) + eventos con show_in_home
+      const { data: rowsFeatured } = await supabase
         .from("live_results")
         .select("id, event_name, event_slug, race, category, gender, round, position, athlete_name, club, country, race_time, home_sort_order")
         .eq("published", true)
@@ -65,10 +72,32 @@ export function HomeResultsSlider() {
         .order("home_sort_order", { ascending: true })
         .order("position", { ascending: true });
 
+      let rowsHome: Row[] = [];
+      if (homeSlugs.length > 0) {
+        const { data } = await supabase
+          .from("live_results")
+          .select("id, event_name, event_slug, race, category, gender, round, position, athlete_name, club, country, race_time, home_sort_order")
+          .eq("published", true)
+          .in("event_slug", homeSlugs)
+          .lte("position", 3)
+          .order("position", { ascending: true });
+        rowsHome = (data as Row[]) ?? [];
+      }
+
+      // Merge deduplicando por id
+      const seen = new Set<string>();
+      const merged: Row[] = [];
+      for (const r of [...(rowsFeatured as Row[] ?? []), ...rowsHome]) {
+        if (seen.has(r.id)) continue;
+        seen.add(r.id);
+        merged.push(r);
+      }
+
       if (cancelled) return;
       setEvents(evMap);
-      setRows((data as Row[]) ?? []);
+      setRows(merged);
     };
+
     load();
     const ch = supabase
       .channel("home-results-slider")
