@@ -150,40 +150,54 @@ function AdminResultados() {
           <Plus className="h-4 w-4" /> {"id" in draft && draft.id ? "Editar evento" : "Nuevo evento"}
         </h2>
         <div className="grid gap-3 md:grid-cols-2">
-          <Field label="Nombre">
-            <input className="input" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value, slug: draft.slug || slugify(e.target.value) })} />
+          <Field label="Nombre"><input className="input" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value, slug: draft.slug || slugify(e.target.value) })} /></Field>
+          <Field label="Slug (URL)"><input className="input" value={draft.slug} onChange={(e) => setDraft({ ...draft, slug: slugify(e.target.value) })} /></Field>
+          <Field label="Tipo de competición"><input list="rz-comp-types" className="input" value={draft.competition_type ?? ""} onChange={(e) => setDraft({ ...draft, competition_type: e.target.value })} placeholder="Campeonato de España, Copa, Liga, Europeo…" />
+            <datalist id="rz-comp-types">
+              <option value="Campeonato de España" /><option value="Copa de España" /><option value="Liga Nacional" />
+              <option value="Europeo" /><option value="Mundial" /><option value="Panamericano" />
+              <option value="Torneo nacional" /><option value="Torneo internacional" />
+            </datalist>
           </Field>
-          <Field label="Slug (URL)">
-            <input className="input" value={draft.slug} onChange={(e) => setDraft({ ...draft, slug: slugify(e.target.value) })} />
-          </Field>
-          <Field label="Fecha">
-            <input type="date" className="input" value={draft.event_date ?? ""} onChange={(e) => setDraft({ ...draft, event_date: e.target.value || null })} />
-          </Field>
-          <Field label="País">
-            <input className="input" value={draft.country ?? ""} onChange={(e) => setDraft({ ...draft, country: e.target.value })} />
-          </Field>
-          <Field label="Banner URL (imagen)">
-            <input className="input" value={draft.banner_url ?? ""} onChange={(e) => setDraft({ ...draft, banner_url: e.target.value })} placeholder="https://..." />
-          </Field>
+          <Field label="Temporada"><input className="input" value={draft.season ?? ""} onChange={(e) => setDraft({ ...draft, season: e.target.value })} placeholder="2026" /></Field>
+          <Field label="Categoría principal"><input className="input" value={draft.main_category ?? ""} onChange={(e) => setDraft({ ...draft, main_category: e.target.value })} placeholder="Infantil, Junior, Senior…" /></Field>
+          <Field label="Fecha inicio"><input type="date" className="input" value={draft.event_date ?? ""} onChange={(e) => setDraft({ ...draft, event_date: e.target.value || null })} /></Field>
+          <Field label="Fecha fin"><input type="date" className="input" value={draft.end_date ?? ""} onChange={(e) => setDraft({ ...draft, end_date: e.target.value || null })} /></Field>
+          <Field label="País"><input className="input" value={draft.country ?? ""} onChange={(e) => setDraft({ ...draft, country: e.target.value })} /></Field>
+          <Field label="Comunidad / Región"><input className="input" value={draft.region ?? ""} onChange={(e) => setDraft({ ...draft, region: e.target.value })} /></Field>
+          <Field label="Ciudad"><input className="input" value={draft.city ?? ""} onChange={(e) => setDraft({ ...draft, city: e.target.value })} /></Field>
+          <Field label="Sede"><input className="input" value={draft.venue ?? ""} onChange={(e) => setDraft({ ...draft, venue: e.target.value })} /></Field>
+          <Field label="Organizador"><input className="input" value={draft.organizer ?? ""} onChange={(e) => setDraft({ ...draft, organizer: e.target.value })} /></Field>
+          <Field label="Banner URL (imagen fondo)"><input className="input" value={draft.banner_url ?? ""} onChange={(e) => setDraft({ ...draft, banner_url: e.target.value })} placeholder="https://..." /></Field>
+          <Field label="Cartel URL"><input className="input" value={draft.poster_url ?? ""} onChange={(e) => setDraft({ ...draft, poster_url: e.target.value })} placeholder="https://..." /></Field>
+          <Field label="PDF oficial de resultados"><input className="input" value={draft.pdf_url ?? ""} onChange={(e) => setDraft({ ...draft, pdf_url: e.target.value })} placeholder="https://..." /></Field>
+          <Field label="Streaming / vídeo URL"><input className="input" value={draft.stream_url ?? ""} onChange={(e) => setDraft({ ...draft, stream_url: e.target.value })} placeholder="https://youtube.com/..." /></Field>
+          <Field label="Fuente oficial (URL)"><input className="input" value={draft.source_url ?? ""} onChange={(e) => setDraft({ ...draft, source_url: e.target.value })} placeholder="https://..." /></Field>
           <Field label="Estado">
             <select className="input" value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as Status })}>
               <option value="proxima">Próximo</option>
-              <option value="en_vivo">En vivo</option>
+              <option value="en_vivo">En directo</option>
               <option value="finalizado">Finalizado</option>
             </select>
           </Field>
-          <Field label="Orden">
-            <input type="number" className="input" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} />
-          </Field>
-          <div className="flex flex-col gap-2 pt-5">
+          <Field label="Orden general"><input type="number" className="input" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} /></Field>
+          <Field label="Orden en Home"><input type="number" className="input" value={draft.home_order} onChange={(e) => setDraft({ ...draft, home_order: Number(e.target.value) })} /></Field>
+          <div className="md:col-span-2 grid gap-2 rounded-lg border border-border/60 bg-background/40 p-3 sm:grid-cols-2 lg:grid-cols-4">
             <label className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest">
-              <input type="checkbox" checked={draft.published} onChange={(e) => setDraft({ ...draft, published: e.target.checked })} /> Publicado
+              <input type="checkbox" checked={draft.published} onChange={(e) => setDraft({ ...draft, published: e.target.checked })} /> Visible en web
+            </label>
+            <label className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest">
+              <input type="checkbox" checked={draft.show_in_home} onChange={(e) => setDraft({ ...draft, show_in_home: e.target.checked })} /> Mostrar en Home
+            </label>
+            <label className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest">
+              <input type="checkbox" checked={draft.featured} onChange={(e) => setDraft({ ...draft, featured: e.target.checked })} /> Destacado
             </label>
             <label className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-widest">
               <input type="checkbox" checked={draft.featured_in_live_center} onChange={(e) => setDraft({ ...draft, featured_in_live_center: e.target.checked })} /> Destacado en Live Center
             </label>
           </div>
         </div>
+
         <div className="mt-4 flex gap-2">
           <button onClick={save} className="font-condensed inline-flex items-center gap-2 bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
             <Save className="h-4 w-4" /> Guardar
