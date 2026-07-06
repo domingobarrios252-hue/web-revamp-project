@@ -687,6 +687,7 @@ export type Database = {
           banner_url: string | null
           categories: string[]
           city: string | null
+          converted_result_event_id: string | null
           convocatoria_pdf_name: string | null
           convocatoria_pdf_url: string | null
           country_code: string
@@ -726,6 +727,7 @@ export type Database = {
           banner_url?: string | null
           categories?: string[]
           city?: string | null
+          converted_result_event_id?: string | null
           convocatoria_pdf_name?: string | null
           convocatoria_pdf_url?: string | null
           country_code?: string
@@ -765,6 +767,7 @@ export type Database = {
           banner_url?: string | null
           categories?: string[]
           city?: string | null
+          converted_result_event_id?: string | null
           convocatoria_pdf_name?: string | null
           convocatoria_pdf_url?: string | null
           country_code?: string
@@ -801,6 +804,13 @@ export type Database = {
           website_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "events_converted_result_event_id_fkey"
+            columns: ["converted_result_event_id"]
+            isOneToOne: false
+            referencedRelation: "result_events"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "events_region_id_fkey"
             columns: ["region_id"]
@@ -1449,6 +1459,7 @@ export type Database = {
       live_results: {
         Row: {
           athlete_name: string
+          bib: string | null
           category: string | null
           club: string | null
           country: string | null
@@ -1470,6 +1481,7 @@ export type Database = {
           published: boolean
           race: string | null
           race_time: string | null
+          result_status: string
           round: string | null
           sort_order: number
           status: Database["public"]["Enums"]["live_result_status"]
@@ -1477,6 +1489,7 @@ export type Database = {
         }
         Insert: {
           athlete_name?: string
+          bib?: string | null
           category?: string | null
           club?: string | null
           country?: string | null
@@ -1498,6 +1511,7 @@ export type Database = {
           published?: boolean
           race?: string | null
           race_time?: string | null
+          result_status?: string
           round?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["live_result_status"]
@@ -1505,6 +1519,7 @@ export type Database = {
         }
         Update: {
           athlete_name?: string
+          bib?: string | null
           category?: string | null
           club?: string | null
           country?: string | null
@@ -1526,6 +1541,7 @@ export type Database = {
           published?: boolean
           race?: string | null
           race_time?: string | null
+          result_status?: string
           round?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["live_result_status"]
@@ -2378,48 +2394,93 @@ export type Database = {
       result_events: {
         Row: {
           banner_url: string | null
+          city: string | null
+          competition_type: string | null
           country: string | null
           created_at: string
+          end_date: string | null
           event_date: string | null
+          featured: boolean
           featured_in_live_center: boolean
+          home_order: number
           id: string
+          main_category: string | null
           name: string
+          organizer: string | null
+          pdf_url: string | null
           placements: string[]
+          poster_url: string | null
           published: boolean
+          region: string | null
+          season: string | null
+          show_in_home: boolean
           slug: string
           sort_order: number
+          source_url: string | null
           status: Database["public"]["Enums"]["live_result_status"]
+          stream_url: string | null
           updated_at: string
+          venue: string | null
         }
         Insert: {
           banner_url?: string | null
+          city?: string | null
+          competition_type?: string | null
           country?: string | null
           created_at?: string
+          end_date?: string | null
           event_date?: string | null
+          featured?: boolean
           featured_in_live_center?: boolean
+          home_order?: number
           id?: string
+          main_category?: string | null
           name: string
+          organizer?: string | null
+          pdf_url?: string | null
           placements?: string[]
+          poster_url?: string | null
           published?: boolean
+          region?: string | null
+          season?: string | null
+          show_in_home?: boolean
           slug: string
           sort_order?: number
+          source_url?: string | null
           status?: Database["public"]["Enums"]["live_result_status"]
+          stream_url?: string | null
           updated_at?: string
+          venue?: string | null
         }
         Update: {
           banner_url?: string | null
+          city?: string | null
+          competition_type?: string | null
           country?: string | null
           created_at?: string
+          end_date?: string | null
           event_date?: string | null
+          featured?: boolean
           featured_in_live_center?: boolean
+          home_order?: number
           id?: string
+          main_category?: string | null
           name?: string
+          organizer?: string | null
+          pdf_url?: string | null
           placements?: string[]
+          poster_url?: string | null
           published?: boolean
+          region?: string | null
+          season?: string | null
+          show_in_home?: boolean
           slug?: string
           sort_order?: number
+          source_url?: string | null
           status?: Database["public"]["Enums"]["live_result_status"]
+          stream_url?: string | null
           updated_at?: string
+          venue?: string | null
         }
         Relationships: []
       }
@@ -3460,6 +3521,10 @@ export type Database = {
       can_edit_country: {
         Args: { _country: string; _user_id: string }
         Returns: boolean
+      }
+      convert_live_to_result_event: {
+        Args: { _event_id: string }
+        Returns: string
       }
       current_user_section_id: { Args: never; Returns: string }
       has_assigned_section: { Args: { _user_id: string }; Returns: boolean }

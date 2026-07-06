@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
-import { Trophy, Filter } from "lucide-react";
+import { Trophy, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import type { LeagueStanding } from "@/lib/hub/useLeague";
 
-export function StandingsTable({ standings, compact = false }: { standings: LeagueStanding[]; compact?: boolean }) {
+export function StandingsTable({ standings, compact = false, defaultDetailOpen = false }: { standings: LeagueStanding[]; compact?: boolean; defaultDetailOpen?: boolean }) {
+  const [detailOpen, setDetailOpen] = useState(defaultDetailOpen);
+  const showDetail = compact ? false : detailOpen;
+
   const categories = useMemo(
     () => Array.from(new Set(standings.map((s) => s.category).filter(Boolean))) as string[],
     [standings],
@@ -47,22 +50,23 @@ export function StandingsTable({ standings, compact = false }: { standings: Leag
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="w-full min-w-[520px] text-sm">
           <thead className="bg-[#1A1A1A]">
             <tr className="text-left text-[10px] uppercase tracking-widest text-[#888]">
               <th className="px-3 py-2.5 w-10">#</th>
               <th className="px-3 py-2.5">Club / Atleta</th>
               <th className="px-3 py-2.5 text-right">Pts</th>
-              {!compact && <th className="px-3 py-2.5 text-right">J</th>}
-              {!compact && <th className="px-3 py-2.5 text-right">V</th>}
-              {!compact && <th className="px-3 py-2.5 text-right">Pod</th>}
-              {!compact && <th className="px-3 py-2.5 text-right">Dif</th>}
+              {showDetail && <th className="px-3 py-2.5 text-right">J</th>}
+              {showDetail && <th className="px-3 py-2.5 text-right">V</th>}
+              {showDetail && <th className="px-3 py-2.5 text-right">Pod</th>}
+              {showDetail && <th className="px-3 py-2.5 text-right">Dif</th>}
             </tr>
           </thead>
+
           <tbody>
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={compact ? 3 : 7} className="px-3 py-8 text-center text-[#888]">
+                <td colSpan={showDetail ? 7 : 3} className="px-3 py-8 text-center text-[#888]">
                   Sin datos para esta selección
                 </td>
               </tr>
@@ -90,10 +94,10 @@ export function StandingsTable({ standings, compact = false }: { standings: Leag
                 <td className="px-3 py-2.5 text-right font-display font-black text-[#D4A017]">
                   {s.points.toFixed(1)}
                 </td>
-                {!compact && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.rounds_played}</td>}
-                {!compact && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.wins}</td>}
-                {!compact && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.podiums}</td>}
-                {!compact && (
+                {showDetail && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.rounds_played}</td>}
+                {showDetail && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.wins}</td>}
+                {showDetail && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.podiums}</td>}
+                {showDetail && (
                   <td className="px-3 py-2.5 text-right text-[#888]">
                     {s.point_diff != null ? s.point_diff.toFixed(1) : "—"}
                   </td>
@@ -103,9 +107,20 @@ export function StandingsTable({ standings, compact = false }: { standings: Leag
           </tbody>
         </table>
       </div>
+
+      {!compact && filtered.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setDetailOpen((v) => !v)}
+          className="font-condensed w-full border-t border-[#2A2A2A] bg-[#1A1A1A] px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#D4A017] hover:bg-[#212121] inline-flex items-center justify-center gap-2"
+        >
+          {showDetail ? (<><ChevronUp className="h-3 w-3" /> Ocultar detalle por jornadas y pruebas</>) : (<><ChevronDown className="h-3 w-3" /> Ver detalle por jornadas y pruebas</>)}
+        </button>
+      )}
     </div>
   );
 }
+
 
 function Pill({
   label,

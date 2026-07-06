@@ -1,9 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
+import { exportCsv, exportPdf, exportXlsx, type ExportRow } from "@/lib/resultsExport";
+import { toast } from "sonner";
+
 
 type ResultRow = {
   id: string;
@@ -31,10 +34,20 @@ type ResultRow = {
 type EventMeta = {
   name: string;
   event_date: string | null;
+  end_date: string | null;
   country: string | null;
   banner_url: string | null;
+  poster_url: string | null;
+  pdf_url: string | null;
+  stream_url: string | null;
+  city: string | null;
+  venue: string | null;
+  organizer: string | null;
+  season: string | null;
+  competition_type: string | null;
   status: "en_vivo" | "finalizado" | "proxima";
 };
+
 
 type SearchParams = {
   prueba?: string;
@@ -62,9 +75,10 @@ export const Route = createFileRoute("/resultados/$evento")({
     const [{ data: meta }, { data: rows, error }] = await Promise.all([
       supabase
         .from("result_events")
-        .select("name, event_date, country, banner_url, status")
+        .select("name, event_date, end_date, country, banner_url, poster_url, pdf_url, stream_url, city, venue, organizer, season, competition_type, status")
         .eq("slug", params.evento)
         .maybeSingle(),
+
       supabase
         .from("live_results")
         .select("id, event_name, event_slug, race, category, position, athlete_name, club, country, race_time, gap, points, distance, gender, round, federation, notes, is_highlighted, status, sort_order")
@@ -243,12 +257,19 @@ function ResultadosEventoPage() {
           </div>
           <h1 className="font-display mt-3 text-3xl uppercase leading-none tracking-widest md:text-5xl">{eventName}</h1>
           <div className="font-condensed mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-            {meta?.event_date && (<span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> {formatDate(meta.event_date, lang)}</span>)}
-            {meta?.country && (<span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {meta.country}</span>)}
+            {meta?.event_date && (<span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> {formatDate(meta.event_date, lang)}{meta.end_date && meta.end_date !== meta.event_date ? ` — ${formatDate(meta.end_date, lang)}` : ""}</span>)}
+            {(meta?.city || meta?.venue) && (<span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {[meta.city, meta.venue].filter(Boolean).join(" · ")}</span>)}
+            {meta?.country && (<span className="flex items-center gap-1.5">🌍 {meta.country}</span>)}
+            {meta?.organizer && (<span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5" /> {meta.organizer}</span>)}
+            {meta?.season && (<span>🗓 {meta.season}</span>)}
             <span className="flex items-center gap-1.5">📋 {rows.length} resultados · {groups.length} pruebas</span>
           </div>
+
+          {/* Botones de acción */}
+          <ActionButtons meta={meta} eventName={eventName} slug={data.evento} rows={rows} />
         </div>
       </header>
+
 
       {/* Filters */}
       <section className="sticky top-0 z-20 mt-6 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur">
@@ -460,3 +481,67 @@ function groupRows(rows: ResultRow[], sortKey: SortKey = "position", sortDir: "a
     rows: g.rows.sort((a, b) => (sortDir === "asc" ? cmp(a, b) : -cmp(a, b))),
   }));
 }
+
+function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null; eventName: string; slug: string; rows: ResultRow[] }) {
+  const url = typeof window !== "undefined" ? window.location.href : `https://rollerzone.es/resultados/${slug}`;
+  const exportRows: ExportRow[] = rows.map((r) => ({
+    Pos: r.position,
+    Patinador: r.athlete_name,
+    Club: r.club ?? "",
+    Federación: r.federation ?? "",
+    País: r.country ?? "",
+    Categoría: r.category ?? "",
+    Género: r.gender ?? "",
+    Prueba: r.race ?? r.distance ?? "",
+    Ronda: r.round ?? "",
+    Tiempo: r.race_time ?? "",
+    Gap: r.gap ?? "",
+    Puntos: r.points ?? "",
+  }));
+  const exportMeta = {
+    competition: eventName,
+    season: meta?.season ?? null,
+    date: meta?.event_date ?? null,
+    url,
+  };
+  const share = async () => {
+    const shareData = { title: eventName, text: `Resultados · ${eventName}`, url };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else { await navigator.clipboard.writeText(url); toast.success("Enlace copiado"); }
+    } catch { /* cancelled */ }
+  };
+  const btn = "font-condensed inline-flex items-center gap-1.5 rounded-md border border-border bg-background/60 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold transition-colors";
+  const btnPrimary = "font-condensed inline-flex items-center gap-1.5 rounded-md bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark transition-colors";
+  return (
+    <div className="mt-5 flex flex-wrap gap-2">
+      {meta?.pdf_url && (
+        <a href={meta.pdf_url} target="_blank" rel="noopener noreferrer" download className={btnPrimary}>
+          <FileText className="h-3.5 w-3.5" /> Descargar PDF oficial
+        </a>
+      )}
+      {meta?.stream_url && (
+        <a href={meta.stream_url} target="_blank" rel="noopener noreferrer" className={btn}>
+          <PlayCircle className="h-3.5 w-3.5" /> Ver retransmisión
+        </a>
+      )}
+      {rows.length > 0 && (
+        <>
+          <button type="button" onClick={() => exportPdf(exportRows, exportMeta)} className={btn}>
+            <FileDown className="h-3.5 w-3.5" /> PDF (RollerZone)
+          </button>
+          <button type="button" onClick={() => exportXlsx(exportRows, exportMeta)} className={btn}>
+            <FileSpreadsheet className="h-3.5 w-3.5" /> Excel
+          </button>
+          <button type="button" onClick={() => exportCsv(exportRows, exportMeta)} className={btn}>
+            <FileDown className="h-3.5 w-3.5" /> CSV
+          </button>
+        </>
+      )}
+      <button type="button" onClick={share} className={btn}>
+        <Share2 className="h-3.5 w-3.5" /> Compartir
+      </button>
+    </div>
+  );
+}
+
