@@ -66,7 +66,7 @@ export function StandingsTable({ standings, compact = false, defaultDetailOpen =
           <tbody>
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={compact ? 3 : 7} className="px-3 py-8 text-center text-[#888]">
+                <td colSpan={showDetail ? 7 : 3} className="px-3 py-8 text-center text-[#888]">
                   Sin datos para esta selección
                 </td>
               </tr>
@@ -94,10 +94,10 @@ export function StandingsTable({ standings, compact = false, defaultDetailOpen =
                 <td className="px-3 py-2.5 text-right font-display font-black text-[#D4A017]">
                   {s.points.toFixed(1)}
                 </td>
-                {!compact && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.rounds_played}</td>}
-                {!compact && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.wins}</td>}
-                {!compact && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.podiums}</td>}
-                {!compact && (
+                {showDetail && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.rounds_played}</td>}
+                {showDetail && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.wins}</td>}
+                {showDetail && <td className="px-3 py-2.5 text-right text-[#B5B5B5]">{s.podiums}</td>}
+                {showDetail && (
                   <td className="px-3 py-2.5 text-right text-[#888]">
                     {s.point_diff != null ? s.point_diff.toFixed(1) : "—"}
                   </td>
@@ -107,9 +107,20 @@ export function StandingsTable({ standings, compact = false, defaultDetailOpen =
           </tbody>
         </table>
       </div>
+
+      {!compact && filtered.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setDetailOpen((v) => !v)}
+          className="font-condensed w-full border-t border-[#2A2A2A] bg-[#1A1A1A] px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#D4A017] hover:bg-[#212121] inline-flex items-center justify-center gap-2"
+        >
+          {showDetail ? (<><ChevronUp className="h-3 w-3" /> Ocultar detalle por jornadas y pruebas</>) : (<><ChevronDown className="h-3 w-3" /> Ver detalle por jornadas y pruebas</>)}
+        </button>
+      )}
     </div>
   );
 }
+
 
 function Pill({
   label,
