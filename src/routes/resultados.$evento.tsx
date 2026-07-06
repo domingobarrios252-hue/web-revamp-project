@@ -75,9 +75,10 @@ export const Route = createFileRoute("/resultados/$evento")({
     const [{ data: meta }, { data: rows, error }] = await Promise.all([
       supabase
         .from("result_events")
-        .select("name, event_date, country, banner_url, status")
+        .select("name, event_date, end_date, country, banner_url, poster_url, pdf_url, stream_url, city, venue, organizer, season, competition_type, status")
         .eq("slug", params.evento)
         .maybeSingle(),
+
       supabase
         .from("live_results")
         .select("id, event_name, event_slug, race, category, position, athlete_name, club, country, race_time, gap, points, distance, gender, round, federation, notes, is_highlighted, status, sort_order")
