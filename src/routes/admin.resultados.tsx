@@ -95,13 +95,29 @@ function AdminResultados() {
       slug,
       name: draft.name.trim(),
       event_date: draft.event_date || null,
+      end_date: draft.end_date || null,
       country: draft.country?.trim() || null,
+      region: draft.region?.trim() || null,
+      city: draft.city?.trim() || null,
+      venue: draft.venue?.trim() || null,
       banner_url: draft.banner_url?.trim() || null,
+      poster_url: draft.poster_url?.trim() || null,
+      pdf_url: draft.pdf_url?.trim() || null,
+      stream_url: draft.stream_url?.trim() || null,
+      organizer: draft.organizer?.trim() || null,
+      source_url: draft.source_url?.trim() || null,
+      season: draft.season?.trim() || null,
+      competition_type: draft.competition_type?.trim() || null,
+      main_category: draft.main_category?.trim() || null,
       status: draft.status,
       published: draft.published,
       featured_in_live_center: draft.featured_in_live_center,
+      featured: draft.featured,
+      show_in_home: draft.show_in_home,
+      home_order: Number(draft.home_order) || 0,
       sort_order: Number(draft.sort_order) || 0,
     };
+
     const { error } = "id" in draft && draft.id
       ? await supabase.from("result_events").update(payload).eq("id", draft.id)
       : await supabase.from("result_events").insert(payload);
