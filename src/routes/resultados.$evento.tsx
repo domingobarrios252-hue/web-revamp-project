@@ -481,3 +481,67 @@ function groupRows(rows: ResultRow[], sortKey: SortKey = "position", sortDir: "a
     rows: g.rows.sort((a, b) => (sortDir === "asc" ? cmp(a, b) : -cmp(a, b))),
   }));
 }
+
+function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null; eventName: string; slug: string; rows: ResultRow[] }) {
+  const url = typeof window !== "undefined" ? window.location.href : `https://rollerzone.es/resultados/${slug}`;
+  const exportRows: ExportRow[] = rows.map((r) => ({
+    Pos: r.position,
+    Patinador: r.athlete_name,
+    Club: r.club ?? "",
+    Federación: r.federation ?? "",
+    País: r.country ?? "",
+    Categoría: r.category ?? "",
+    Género: r.gender ?? "",
+    Prueba: r.race ?? r.distance ?? "",
+    Ronda: r.round ?? "",
+    Tiempo: r.race_time ?? "",
+    Gap: r.gap ?? "",
+    Puntos: r.points ?? "",
+  }));
+  const exportMeta = {
+    competition: eventName,
+    season: meta?.season ?? null,
+    date: meta?.event_date ?? null,
+    url,
+  };
+  const share = async () => {
+    const shareData = { title: eventName, text: `Resultados · ${eventName}`, url };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else { await navigator.clipboard.writeText(url); toast.success("Enlace copiado"); }
+    } catch { /* cancelled */ }
+  };
+  const btn = "font-condensed inline-flex items-center gap-1.5 rounded-md border border-border bg-background/60 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold transition-colors";
+  const btnPrimary = "font-condensed inline-flex items-center gap-1.5 rounded-md bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark transition-colors";
+  return (
+    <div className="mt-5 flex flex-wrap gap-2">
+      {meta?.pdf_url && (
+        <a href={meta.pdf_url} target="_blank" rel="noopener noreferrer" download className={btnPrimary}>
+          <FileText className="h-3.5 w-3.5" /> Descargar PDF oficial
+        </a>
+      )}
+      {meta?.stream_url && (
+        <a href={meta.stream_url} target="_blank" rel="noopener noreferrer" className={btn}>
+          <PlayCircle className="h-3.5 w-3.5" /> Ver retransmisión
+        </a>
+      )}
+      {rows.length > 0 && (
+        <>
+          <button type="button" onClick={() => exportPdf(exportRows, exportMeta)} className={btn}>
+            <FileDown className="h-3.5 w-3.5" /> PDF (RollerZone)
+          </button>
+          <button type="button" onClick={() => exportXlsx(exportRows, exportMeta)} className={btn}>
+            <FileSpreadsheet className="h-3.5 w-3.5" /> Excel
+          </button>
+          <button type="button" onClick={() => exportCsv(exportRows, exportMeta)} className={btn}>
+            <FileDown className="h-3.5 w-3.5" /> CSV
+          </button>
+        </>
+      )}
+      <button type="button" onClick={share} className={btn}>
+        <Share2 className="h-3.5 w-3.5" /> Compartir
+      </button>
+    </div>
+  );
+}
+
