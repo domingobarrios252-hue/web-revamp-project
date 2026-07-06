@@ -50,18 +50,19 @@ export function StandingsTable({ standings, compact = false, defaultDetailOpen =
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="w-full min-w-[520px] text-sm">
           <thead className="bg-[#1A1A1A]">
             <tr className="text-left text-[10px] uppercase tracking-widest text-[#888]">
               <th className="px-3 py-2.5 w-10">#</th>
               <th className="px-3 py-2.5">Club / Atleta</th>
               <th className="px-3 py-2.5 text-right">Pts</th>
-              {!compact && <th className="px-3 py-2.5 text-right">J</th>}
-              {!compact && <th className="px-3 py-2.5 text-right">V</th>}
-              {!compact && <th className="px-3 py-2.5 text-right">Pod</th>}
-              {!compact && <th className="px-3 py-2.5 text-right">Dif</th>}
+              {showDetail && <th className="px-3 py-2.5 text-right">J</th>}
+              {showDetail && <th className="px-3 py-2.5 text-right">V</th>}
+              {showDetail && <th className="px-3 py-2.5 text-right">Pod</th>}
+              {showDetail && <th className="px-3 py-2.5 text-right">Dif</th>}
             </tr>
           </thead>
+
           <tbody>
             {filtered.length === 0 && (
               <tr>
