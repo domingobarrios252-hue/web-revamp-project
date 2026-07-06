@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
-import { Trophy, Filter } from "lucide-react";
+import { Trophy, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import type { LeagueStanding } from "@/lib/hub/useLeague";
 
-export function StandingsTable({ standings, compact = false }: { standings: LeagueStanding[]; compact?: boolean }) {
+export function StandingsTable({ standings, compact = false, defaultDetailOpen = false }: { standings: LeagueStanding[]; compact?: boolean; defaultDetailOpen?: boolean }) {
+  const [detailOpen, setDetailOpen] = useState(defaultDetailOpen);
+  const showDetail = compact ? false : detailOpen;
+
   const categories = useMemo(
     () => Array.from(new Set(standings.map((s) => s.category).filter(Boolean))) as string[],
     [standings],
