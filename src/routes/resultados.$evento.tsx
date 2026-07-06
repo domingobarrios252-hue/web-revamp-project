@@ -34,10 +34,20 @@ type ResultRow = {
 type EventMeta = {
   name: string;
   event_date: string | null;
+  end_date: string | null;
   country: string | null;
   banner_url: string | null;
+  poster_url: string | null;
+  pdf_url: string | null;
+  stream_url: string | null;
+  city: string | null;
+  venue: string | null;
+  organizer: string | null;
+  season: string | null;
+  competition_type: string | null;
   status: "en_vivo" | "finalizado" | "proxima";
 };
+
 
 type SearchParams = {
   prueba?: string;
