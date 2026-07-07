@@ -23,6 +23,7 @@ type Federation = {
   city: string | null;
   email: string | null;
   phone: string | null;
+  fax: string | null;
   website: string | null;
   social: { instagram?: string; facebook?: string; youtube?: string; twitter?: string } | null;
   parent_id: string | null;
@@ -55,6 +56,7 @@ const schema = z.object({
   city: z.string().trim().max(80).optional(),
   email: z.string().trim().email().optional().or(z.literal("")),
   phone: z.string().trim().max(40).optional(),
+  fax: z.string().trim().max(40).optional(),
   website: z.string().trim().url().optional().or(z.literal("")),
   founded_year: z.number().int().min(1800).max(2100).optional(),
 });
@@ -193,6 +195,7 @@ function FederationForm({
   const [city, setCity] = useState(initial?.city ?? "");
   const [email, setEmail] = useState(initial?.email ?? "");
   const [phone, setPhone] = useState(initial?.phone ?? "");
+  const [fax, setFax] = useState(initial?.fax ?? "");
   const [website, setWebsite] = useState(initial?.website ?? "");
   const [founded_year, setFoundedYear] = useState<string>(initial?.founded_year?.toString() ?? "");
   const [parent_id, setParentId] = useState(initial?.parent_id ?? "");
@@ -238,7 +241,7 @@ function FederationForm({
       region_code: region_code || undefined, region_name: region_name || undefined,
       description: description || undefined, president: president || undefined,
       address: address || undefined, city: city || undefined,
-      email: email || undefined, phone: phone || undefined, website: website || undefined,
+      email: email || undefined, phone: phone || undefined, fax: fax || undefined, website: website || undefined,
       founded_year: founded_year ? Number(founded_year) : undefined,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
@@ -260,6 +263,7 @@ function FederationForm({
       city: parsed.data.city ?? null,
       email: parsed.data.email || null,
       phone: parsed.data.phone ?? null,
+      fax: parsed.data.fax ?? null,
       website: parsed.data.website || null,
       founded_year: parsed.data.founded_year ?? null,
       parent_id: parent_id || null,
@@ -334,6 +338,7 @@ function FederationForm({
         <Field label="Ciudad"><input value={city} onChange={(e) => setCity(e.target.value)} className="input" /></Field>
         <Field label="Email"><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" /></Field>
         <Field label="Teléfono"><input value={phone} onChange={(e) => setPhone(e.target.value)} className="input" /></Field>
+        <Field label="Fax"><input value={fax} onChange={(e) => setFax(e.target.value)} className="input" /></Field>
         <Field label="Web"><input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://" className="input" /></Field>
         <Field label="Instagram (URL)"><input value={instagram} onChange={(e) => setInstagram(e.target.value)} className="input" /></Field>
         <Field label="Facebook (URL)"><input value={facebook} onChange={(e) => setFacebook(e.target.value)} className="input" /></Field>
