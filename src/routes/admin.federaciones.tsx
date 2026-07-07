@@ -241,7 +241,7 @@ function FederationForm({
       region_code: region_code || undefined, region_name: region_name || undefined,
       description: description || undefined, president: president || undefined,
       address: address || undefined, city: city || undefined,
-      email: email || undefined, phone: phone || undefined, website: website || undefined,
+      email: email || undefined, phone: phone || undefined, fax: fax || undefined, website: website || undefined,
       founded_year: founded_year ? Number(founded_year) : undefined,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
