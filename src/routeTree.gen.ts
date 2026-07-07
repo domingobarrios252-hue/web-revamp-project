@@ -30,6 +30,7 @@ import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fam
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
+import { Route as EspecialesIndexRouteImport } from './routes/especiales.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as CaminoAlEuropeo2026IndexRouteImport } from './routes/camino-al-europeo-2026.index'
@@ -238,6 +239,11 @@ const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
 const EventosIndexRoute = EventosIndexRouteImport.update({
   id: '/eventos/',
   path: '/eventos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EspecialesIndexRoute = EspecialesIndexRouteImport.update({
+  id: '/especiales/',
+  path: '/especiales/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntrevistasIndexRoute = EntrevistasIndexRouteImport.update({
@@ -871,6 +877,7 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
+  '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
@@ -994,6 +1001,7 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026IndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
+  '/especiales': typeof EspecialesIndexRoute
   '/eventos': typeof EventosIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/resultados': typeof ResultadosIndexRoute
@@ -1116,6 +1124,7 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
+  '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
@@ -1245,6 +1254,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/'
     | '/dashboard/'
     | '/entrevistas/'
+    | '/especiales/'
     | '/eventos/'
     | '/noticias/'
     | '/resultados/'
@@ -1368,6 +1378,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026'
     | '/dashboard'
     | '/entrevistas'
+    | '/especiales'
     | '/eventos'
     | '/noticias'
     | '/resultados'
@@ -1489,6 +1500,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/'
     | '/dashboard/'
     | '/entrevistas/'
+    | '/especiales/'
     | '/eventos/'
     | '/noticias/'
     | '/resultados/'
@@ -1567,6 +1579,7 @@ export interface RootRouteChildren {
   SobreSlugRoute: typeof SobreSlugRoute
   CountryIndexRoute: typeof CountryIndexRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
+  EspecialesIndexRoute: typeof EspecialesIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
   ResultadosIndexRoute: typeof ResultadosIndexRoute
@@ -1722,6 +1735,13 @@ declare module '@tanstack/react-router' {
       path: '/eventos'
       fullPath: '/eventos/'
       preLoaderRoute: typeof EventosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/especiales/': {
+      id: '/especiales/'
+      path: '/especiales'
+      fullPath: '/especiales/'
+      preLoaderRoute: typeof EspecialesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entrevistas/': {
@@ -2789,6 +2809,7 @@ const rootRouteChildren: RootRouteChildren = {
   SobreSlugRoute: SobreSlugRoute,
   CountryIndexRoute: CountryIndexRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
+  EspecialesIndexRoute: EspecialesIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
   ResultadosIndexRoute: ResultadosIndexRoute,
