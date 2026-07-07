@@ -913,6 +913,7 @@ export type Database = {
           created_at: string
           description: string | null
           email: string | null
+          fax: string | null
           featured: boolean
           founded_year: number | null
           id: string
@@ -939,6 +940,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          fax?: string | null
           featured?: boolean
           founded_year?: number | null
           id?: string
@@ -965,6 +967,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          fax?: string | null
           featured?: boolean
           founded_year?: number | null
           id?: string

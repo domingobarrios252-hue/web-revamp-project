@@ -1,0 +1,1 @@
+ALTER TABLE public.federations ADD COLUMN IF NOT EXISTS fax text;
