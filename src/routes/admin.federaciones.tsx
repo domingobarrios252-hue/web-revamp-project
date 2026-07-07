@@ -23,6 +23,7 @@ type Federation = {
   city: string | null;
   email: string | null;
   phone: string | null;
+  fax: string | null;
   website: string | null;
   social: { instagram?: string; facebook?: string; youtube?: string; twitter?: string } | null;
   parent_id: string | null;
