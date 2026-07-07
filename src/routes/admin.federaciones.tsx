@@ -56,6 +56,7 @@ const schema = z.object({
   city: z.string().trim().max(80).optional(),
   email: z.string().trim().email().optional().or(z.literal("")),
   phone: z.string().trim().max(40).optional(),
+  fax: z.string().trim().max(40).optional(),
   website: z.string().trim().url().optional().or(z.literal("")),
   founded_year: z.number().int().min(1800).max(2100).optional(),
 });
