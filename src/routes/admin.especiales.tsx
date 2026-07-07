@@ -88,9 +88,8 @@ const SPECIAL_STATUS = [
   { value: "draft", label: "Borrador" },
 ] as const;
 
-const db = supabase as unknown as {
-  from: (t: string) => ReturnType<typeof supabase.from>;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db: any = supabase;
 
 export const Route = createFileRoute("/admin/especiales")({
   head: () => ({
