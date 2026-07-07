@@ -195,6 +195,7 @@ function FederationForm({
   const [city, setCity] = useState(initial?.city ?? "");
   const [email, setEmail] = useState(initial?.email ?? "");
   const [phone, setPhone] = useState(initial?.phone ?? "");
+  const [fax, setFax] = useState(initial?.fax ?? "");
   const [website, setWebsite] = useState(initial?.website ?? "");
   const [founded_year, setFoundedYear] = useState<string>(initial?.founded_year?.toString() ?? "");
   const [parent_id, setParentId] = useState(initial?.parent_id ?? "");
