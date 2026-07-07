@@ -476,13 +476,24 @@ export function HubDashboard({ country }: { country: string }) {
 }
 
 function QuickLink({ country, section, label }: { country: string; section: string; label: string }) {
+  const cls =
+    "h-12 flex items-center justify-center bg-[#2E2E2E] border border-[#333] rounded-lg text-[10px] font-bold uppercase tracking-wider text-[#F5F5F5] hover:bg-[#D4A017] hover:text-[#1A1A1A] hover:border-[#D4A017] transition-all duration-300";
+  // Special case: "Liga Nacional" links go straight to the standings page.
+  if (section === "competicion" && /liga/i.test(label)) {
+    return (
+      <Link
+        to="/hub/$country/competicion/liga-nacional/clasificaciones"
+        params={{ country }}
+        className={cls}
+      >
+        {label}
+      </Link>
+    );
+  }
   return (
-    <HubSectionLink
-      country={country}
-      section={section as HubSectionKey}
-      className="h-12 flex items-center justify-center bg-[#2E2E2E] border border-[#333] rounded-lg text-[10px] font-bold uppercase tracking-wider text-[#F5F5F5] hover:bg-[#D4A017] hover:text-[#1A1A1A] hover:border-[#D4A017] transition-all duration-300"
-    >
+    <HubSectionLink country={country} section={section as HubSectionKey} className={cls}>
       {label}
     </HubSectionLink>
   );
 }
+
