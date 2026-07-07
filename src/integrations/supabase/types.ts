@@ -2778,54 +2778,129 @@ export type Database = {
           },
         ]
       }
+      special_editorials: {
+        Row: {
+          cover_url: string
+          created_at: string
+          description: string
+          end_date: string | null
+          featured_home: boolean
+          hero_image_url: string
+          id: string
+          slug: string
+          sort_order: number
+          start_date: string | null
+          status: string
+          subtitle: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          featured_home?: boolean
+          hero_image_url?: string
+          id?: string
+          slug: string
+          sort_order?: number
+          start_date?: string | null
+          status?: string
+          subtitle?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          featured_home?: boolean
+          hero_image_url?: string
+          id?: string
+          slug?: string
+          sort_order?: number
+          start_date?: string | null
+          status?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       special_pieces: {
         Row: {
+          category: string
+          content_md: string
           created_at: string
           crops: Json
           description: string
+          excerpt: string
+          external_url: string
           featured: boolean
           id: string
           image_url: string
           kicker: string
           number: string
+          related_news_ids: string[]
+          related_result_event_ids: string[]
+          related_video_ids: string[]
           slug: string
           sort_order: number
           special_slug: string
           status: string
+          thumbnail_url: string
           title: string
           updated_at: string
           visible: boolean
         }
         Insert: {
+          category?: string
+          content_md?: string
           created_at?: string
           crops?: Json
           description?: string
+          excerpt?: string
+          external_url?: string
           featured?: boolean
           id?: string
           image_url?: string
           kicker?: string
           number?: string
+          related_news_ids?: string[]
+          related_result_event_ids?: string[]
+          related_video_ids?: string[]
           slug: string
           sort_order?: number
           special_slug: string
           status?: string
+          thumbnail_url?: string
           title: string
           updated_at?: string
           visible?: boolean
         }
         Update: {
+          category?: string
+          content_md?: string
           created_at?: string
           crops?: Json
           description?: string
+          excerpt?: string
+          external_url?: string
           featured?: boolean
           id?: string
           image_url?: string
           kicker?: string
           number?: string
+          related_news_ids?: string[]
+          related_result_event_ids?: string[]
+          related_video_ids?: string[]
           slug?: string
           sort_order?: number
           special_slug?: string
           status?: string
+          thumbnail_url?: string
           title?: string
           updated_at?: string
           visible?: boolean
