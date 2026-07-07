@@ -522,6 +522,7 @@ const emptyPiece = (): Omit<Piece, "id" | "special_slug"> => ({
   visible: true,
   status: "published",
   crops: {},
+  gallery: [],
 });
 
 function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void }) {
