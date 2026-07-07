@@ -119,6 +119,7 @@ import { Route as HubCountryCompeticionRouteImport } from './routes/hub.$country
 import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.clubes'
 import { Route as HubCountryArchivoRouteImport } from './routes/hub.$country.archivo'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
+import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as HubCountryTvIndexRouteImport } from './routes/hub.$country.tv.index'
 import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$country.patinadores.index'
@@ -696,6 +697,11 @@ const HubCountrySectionRoute = HubCountrySectionRouteImport.update({
   path: '/$section',
   getParentRoute: () => HubCountryRoute,
 } as any)
+const EspecialesSlugPieceRoute = EspecialesSlugPieceRouteImport.update({
+  id: '/$piece',
+  path: '/$piece',
+  getParentRoute: () => EspecialesSlugRoute,
+} as any)
 const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
   id: '/api/og/premios-mvp.svg',
   path: '/api/og/premios-mvp.svg',
@@ -867,7 +873,7 @@ export interface FileRoutesByFullPath {
   '/espana/mvp': typeof EspanaMvpRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
-  '/especiales/$slug': typeof EspecialesSlugRoute
+  '/especiales/$slug': typeof EspecialesSlugRouteWithChildren
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
@@ -890,6 +896,7 @@ export interface FileRoutesByFullPath {
   '/resultados/': typeof ResultadosIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
@@ -993,7 +1000,7 @@ export interface FileRoutesByTo {
   '/espana/mvp': typeof EspanaMvpRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
-  '/especiales/$slug': typeof EspecialesSlugRoute
+  '/especiales/$slug': typeof EspecialesSlugRouteWithChildren
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
@@ -1015,6 +1022,7 @@ export interface FileRoutesByTo {
   '/resultados': typeof ResultadosIndexRoute
   '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/comunidad': typeof HubCountryComunidadRoute
@@ -1116,7 +1124,7 @@ export interface FileRoutesById {
   '/espana/mvp': typeof EspanaMvpRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
-  '/especiales/$slug': typeof EspecialesSlugRoute
+  '/especiales/$slug': typeof EspecialesSlugRouteWithChildren
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
@@ -1139,6 +1147,7 @@ export interface FileRoutesById {
   '/resultados/': typeof ResultadosIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
@@ -1270,6 +1279,7 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
+    | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
     | '/hub/$country/clubes'
@@ -1395,6 +1405,7 @@ export interface FileRouteTypes {
     | '/resultados'
     | '/salon-de-la-fama'
     | '/api/og/premios-mvp.svg'
+    | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
     | '/hub/$country/comunidad'
@@ -1518,6 +1529,7 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
+    | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
     | '/hub/$country/clubes'
@@ -1579,7 +1591,7 @@ export interface RootRouteChildren {
   EspanaMvpRoute: typeof EspanaMvpRoute
   EspanaPatinadoresRoute: typeof EspanaPatinadoresRoute
   EspanaRollerzoneTvRoute: typeof EspanaRollerzoneTvRoute
-  EspecialesSlugRoute: typeof EspecialesSlugRoute
+  EspecialesSlugRoute: typeof EspecialesSlugRouteWithChildren
   EventosSlugRoute: typeof EventosSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
   HubCountryRoute: typeof HubCountryRouteWithChildren
@@ -2373,6 +2385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountrySectionRouteImport
       parentRoute: typeof HubCountryRoute
     }
+    '/especiales/$slug/$piece': {
+      id: '/especiales/$slug/$piece'
+      path: '/$piece'
+      fullPath: '/especiales/$slug/$piece'
+      preLoaderRoute: typeof EspecialesSlugPieceRouteImport
+      parentRoute: typeof EspecialesSlugRoute
+    }
     '/api/og/premios-mvp.svg': {
       id: '/api/og/premios-mvp.svg'
       path: '/api/og/premios-mvp.svg'
@@ -2650,6 +2669,18 @@ const RevistaRouteChildren: RevistaRouteChildren = {
 const RevistaRouteWithChildren =
   RevistaRoute._addFileChildren(RevistaRouteChildren)
 
+interface EspecialesSlugRouteChildren {
+  EspecialesSlugPieceRoute: typeof EspecialesSlugPieceRoute
+}
+
+const EspecialesSlugRouteChildren: EspecialesSlugRouteChildren = {
+  EspecialesSlugPieceRoute: EspecialesSlugPieceRoute,
+}
+
+const EspecialesSlugRouteWithChildren = EspecialesSlugRoute._addFileChildren(
+  EspecialesSlugRouteChildren,
+)
+
 interface HubCountryClubesRouteChildren {
   HubCountryClubesSlugRoute: typeof HubCountryClubesSlugRoute
   HubCountryClubesIndexRoute: typeof HubCountryClubesIndexRoute
@@ -2817,7 +2848,7 @@ const rootRouteChildren: RootRouteChildren = {
   EspanaMvpRoute: EspanaMvpRoute,
   EspanaPatinadoresRoute: EspanaPatinadoresRoute,
   EspanaRollerzoneTvRoute: EspanaRollerzoneTvRoute,
-  EspecialesSlugRoute: EspecialesSlugRoute,
+  EspecialesSlugRoute: EspecialesSlugRouteWithChildren,
   EventosSlugRoute: EventosSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
   HubCountryRoute: HubCountryRouteWithChildren,
