@@ -47,6 +47,7 @@ import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as HubCountryRouteImport } from './routes/hub.$country'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
+import { Route as EspecialesSlugRouteImport } from './routes/especiales.$slug'
 import { Route as EspanaRollerzoneTvRouteImport } from './routes/espana.rollerzone-tv'
 import { Route as EspanaPatinadoresRouteImport } from './routes/espana.patinadores'
 import { Route as EspanaMvpRouteImport } from './routes/espana.mvp'
@@ -326,6 +327,11 @@ const EventsSlugRoute = EventsSlugRouteImport.update({
 const EventosSlugRoute = EventosSlugRouteImport.update({
   id: '/eventos/$slug',
   path: '/eventos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EspecialesSlugRoute = EspecialesSlugRouteImport.update({
+  id: '/especiales/$slug',
+  path: '/especiales/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EspanaRollerzoneTvRoute = EspanaRollerzoneTvRouteImport.update({
@@ -861,6 +867,7 @@ export interface FileRoutesByFullPath {
   '/espana/mvp': typeof EspanaMvpRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
+  '/especiales/$slug': typeof EspecialesSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
@@ -986,6 +993,7 @@ export interface FileRoutesByTo {
   '/espana/mvp': typeof EspanaMvpRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
+  '/especiales/$slug': typeof EspecialesSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
@@ -1108,6 +1116,7 @@ export interface FileRoutesById {
   '/espana/mvp': typeof EspanaMvpRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
+  '/especiales/$slug': typeof EspecialesSlugRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
@@ -1238,6 +1247,7 @@ export interface FileRouteTypes {
     | '/espana/mvp'
     | '/espana/patinadores'
     | '/espana/rollerzone-tv'
+    | '/especiales/$slug'
     | '/eventos/$slug'
     | '/events/$slug'
     | '/hub/$country'
@@ -1363,6 +1373,7 @@ export interface FileRouteTypes {
     | '/espana/mvp'
     | '/espana/patinadores'
     | '/espana/rollerzone-tv'
+    | '/especiales/$slug'
     | '/eventos/$slug'
     | '/events/$slug'
     | '/legal/$slug'
@@ -1484,6 +1495,7 @@ export interface FileRouteTypes {
     | '/espana/mvp'
     | '/espana/patinadores'
     | '/espana/rollerzone-tv'
+    | '/especiales/$slug'
     | '/eventos/$slug'
     | '/events/$slug'
     | '/hub/$country'
@@ -1567,6 +1579,7 @@ export interface RootRouteChildren {
   EspanaMvpRoute: typeof EspanaMvpRoute
   EspanaPatinadoresRoute: typeof EspanaPatinadoresRoute
   EspanaRollerzoneTvRoute: typeof EspanaRollerzoneTvRoute
+  EspecialesSlugRoute: typeof EspecialesSlugRoute
   EventosSlugRoute: typeof EventosSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
   HubCountryRoute: typeof HubCountryRouteWithChildren
@@ -1854,6 +1867,13 @@ declare module '@tanstack/react-router' {
       path: '/eventos/$slug'
       fullPath: '/eventos/$slug'
       preLoaderRoute: typeof EventosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/especiales/$slug': {
+      id: '/especiales/$slug'
+      path: '/especiales/$slug'
+      fullPath: '/especiales/$slug'
+      preLoaderRoute: typeof EspecialesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/espana/rollerzone-tv': {
@@ -2797,6 +2817,7 @@ const rootRouteChildren: RootRouteChildren = {
   EspanaMvpRoute: EspanaMvpRoute,
   EspanaPatinadoresRoute: EspanaPatinadoresRoute,
   EspanaRollerzoneTvRoute: EspanaRollerzoneTvRoute,
+  EspecialesSlugRoute: EspecialesSlugRoute,
   EventosSlugRoute: EventosSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
   HubCountryRoute: HubCountryRouteWithChildren,
