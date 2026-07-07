@@ -338,6 +338,7 @@ function FederationForm({
         <Field label="Ciudad"><input value={city} onChange={(e) => setCity(e.target.value)} className="input" /></Field>
         <Field label="Email"><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" /></Field>
         <Field label="Teléfono"><input value={phone} onChange={(e) => setPhone(e.target.value)} className="input" /></Field>
+        <Field label="Fax"><input value={fax} onChange={(e) => setFax(e.target.value)} className="input" /></Field>
         <Field label="Web"><input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://" className="input" /></Field>
         <Field label="Instagram (URL)"><input value={instagram} onChange={(e) => setInstagram(e.target.value)} className="input" /></Field>
         <Field label="Facebook (URL)"><input value={facebook} onChange={(e) => setFacebook(e.target.value)} className="input" /></Field>
