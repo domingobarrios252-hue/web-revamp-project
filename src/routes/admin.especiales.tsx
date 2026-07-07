@@ -825,6 +825,20 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
               </Field>
             </div>
 
+            <Field label="Galería de fotos (reportaje editorial)">
+              <p className="mb-2 text-[11px] text-muted-foreground">
+                Sube fotos desde tu ordenador para incluir en el cuerpo del reportaje. Se muestran a
+                continuación del texto en orden.
+              </p>
+              <GalleryUploadField
+                value={form.gallery ?? []}
+                onChange={(urls) => setForm((f) => ({ ...f, gallery: urls }))}
+                folder="specials"
+                nameHint={form.slug || form.title}
+              />
+            </Field>
+
+
             <Field label="Enlace externo (opcional)">
               <input
                 value={form.external_url}
