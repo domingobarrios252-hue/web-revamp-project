@@ -183,7 +183,8 @@ export function HomeStandingsCarousel() {
 function StandingCard({ group }: { group: GroupWithRows }) {
   return (
     <Link
-      to="/resultados"
+      to="/liga-nacional/clasificaciones"
+      hash={group.id}
       className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-gradient-to-b from-surface to-surface-2/40 shadow-[0_4px_24px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_32px_rgba(212,160,23,0.25)]"
     >
       {/* Header */}
