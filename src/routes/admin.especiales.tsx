@@ -74,6 +74,7 @@ type Piece = {
   visible: boolean;
   status: string;
   crops: ImageCrops | null;
+  gallery: string[];
 };
 
 const PIECE_STATUS = [
