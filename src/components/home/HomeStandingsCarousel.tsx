@@ -100,7 +100,7 @@ export function HomeStandingsCarousel() {
           <div className="mt-2 h-[3px] w-20 bg-gold" aria-hidden="true" />
         </div>
         <Link
-          to="/resultados"
+          to="/liga-nacional/clasificaciones"
           className="font-condensed group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold transition-all hover:text-gold-light hover:drop-shadow-[0_0_8px_rgba(212,160,23,0.6)]"
         >
           Ver todas las clasificaciones{" "}

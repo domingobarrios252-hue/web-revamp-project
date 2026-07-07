@@ -41,6 +41,7 @@ import { Route as ResultadosEventoRouteImport } from './routes/resultados.$event
 import { Route as RedactoresIdRouteImport } from './routes/redactores.$id'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
+import { Route as LigaNacionalClasificacionesRouteImport } from './routes/liga-nacional.clasificaciones'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as HubCountryRouteImport } from './routes/hub.$country'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
@@ -295,6 +296,12 @@ const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
   path: '/noticias/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LigaNacionalClasificacionesRoute =
+  LigaNacionalClasificacionesRouteImport.update({
+    id: '/liga-nacional/clasificaciones',
+    path: '/liga-nacional/clasificaciones',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LegalSlugRoute = LegalSlugRouteImport.update({
   id: '/legal/$slug',
   path: '/legal/$slug',
@@ -852,6 +859,7 @@ export interface FileRoutesByFullPath {
   '/events/$slug': typeof EventsSlugRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
   '/legal/$slug': typeof LegalSlugRoute
+  '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
@@ -974,6 +982,7 @@ export interface FileRoutesByTo {
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
@@ -1095,6 +1104,7 @@ export interface FileRoutesById {
   '/events/$slug': typeof EventsSlugRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
   '/legal/$slug': typeof LegalSlugRoute
+  '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
@@ -1223,6 +1233,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/hub/$country'
     | '/legal/$slug'
+    | '/liga-nacional/clasificaciones'
     | '/noticias/$slug'
     | '/patinadores/$slug'
     | '/redactores/$id'
@@ -1345,6 +1356,7 @@ export interface FileRouteTypes {
     | '/eventos/$slug'
     | '/events/$slug'
     | '/legal/$slug'
+    | '/liga-nacional/clasificaciones'
     | '/noticias/$slug'
     | '/patinadores/$slug'
     | '/redactores/$id'
@@ -1465,6 +1477,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/hub/$country'
     | '/legal/$slug'
+    | '/liga-nacional/clasificaciones'
     | '/noticias/$slug'
     | '/patinadores/$slug'
     | '/redactores/$id'
@@ -1546,6 +1559,7 @@ export interface RootRouteChildren {
   EventsSlugRoute: typeof EventsSlugRoute
   HubCountryRoute: typeof HubCountryRouteWithChildren
   LegalSlugRoute: typeof LegalSlugRoute
+  LigaNacionalClasificacionesRoute: typeof LigaNacionalClasificacionesRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
   ResultadosEventoRoute: typeof ResultadosEventoRoute
@@ -1785,6 +1799,13 @@ declare module '@tanstack/react-router' {
       path: '/noticias/$slug'
       fullPath: '/noticias/$slug'
       preLoaderRoute: typeof NoticiasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/liga-nacional/clasificaciones': {
+      id: '/liga-nacional/clasificaciones'
+      path: '/liga-nacional/clasificaciones'
+      fullPath: '/liga-nacional/clasificaciones'
+      preLoaderRoute: typeof LigaNacionalClasificacionesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/legal/$slug': {
@@ -2760,6 +2781,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsSlugRoute: EventsSlugRoute,
   HubCountryRoute: HubCountryRouteWithChildren,
   LegalSlugRoute: LegalSlugRoute,
+  LigaNacionalClasificacionesRoute: LigaNacionalClasificacionesRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
   ResultadosEventoRoute: ResultadosEventoRoute,
