@@ -100,7 +100,7 @@ export function HomeStandingsCarousel() {
           <div className="mt-2 h-[3px] w-20 bg-gold" aria-hidden="true" />
         </div>
         <Link
-          to="/resultados"
+          to="/liga-nacional/clasificaciones"
           className="font-condensed group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold transition-all hover:text-gold-light hover:drop-shadow-[0_0_8px_rgba(212,160,23,0.6)]"
         >
           Ver todas las clasificaciones{" "}
@@ -183,7 +183,8 @@ export function HomeStandingsCarousel() {
 function StandingCard({ group }: { group: GroupWithRows }) {
   return (
     <Link
-      to="/resultados"
+      to="/liga-nacional/clasificaciones"
+      hash={group.id}
       className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-gradient-to-b from-surface to-surface-2/40 shadow-[0_4px_24px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-[0_8px_32px_rgba(212,160,23,0.25)]"
     >
       {/* Header */}
