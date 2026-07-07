@@ -263,6 +263,7 @@ function FederationForm({
       city: parsed.data.city ?? null,
       email: parsed.data.email || null,
       phone: parsed.data.phone ?? null,
+      fax: parsed.data.fax ?? null,
       website: parsed.data.website || null,
       founded_year: parsed.data.founded_year ?? null,
       parent_id: parent_id || null,
