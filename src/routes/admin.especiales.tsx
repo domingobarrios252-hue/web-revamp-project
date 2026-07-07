@@ -19,6 +19,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import type { ImageCrops } from "@/lib/imageCrops";
 import {
   DndContext,
@@ -73,6 +74,7 @@ type Piece = {
   visible: boolean;
   status: string;
   crops: ImageCrops | null;
+  gallery: string[];
 };
 
 const PIECE_STATUS = [
@@ -520,6 +522,7 @@ const emptyPiece = (): Omit<Piece, "id" | "special_slug"> => ({
   visible: true,
   status: "published",
   crops: {},
+  gallery: [],
 });
 
 function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void }) {
@@ -821,6 +824,20 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
                 />
               </Field>
             </div>
+
+            <Field label="Galería de fotos (reportaje editorial)">
+              <p className="mb-2 text-[11px] text-muted-foreground">
+                Sube fotos desde tu ordenador para incluir en el cuerpo del reportaje. Se muestran a
+                continuación del texto en orden.
+              </p>
+              <GalleryUploadField
+                value={form.gallery ?? []}
+                onChange={(urls) => setForm((f) => ({ ...f, gallery: urls }))}
+                folder="specials"
+                nameHint={form.slug || form.title}
+              />
+            </Field>
+
 
             <Field label="Enlace externo (opcional)">
               <input

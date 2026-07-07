@@ -19,6 +19,7 @@ type Piece = {
   external_url: string;
   status: string;
   visible: boolean;
+  gallery?: string[] | null;
 };
 
 type SpecialLite = { slug: string; title: string };
@@ -165,7 +166,37 @@ function PiecePage() {
             </a>
           )}
         </div>
+
+        {Array.isArray(piece.gallery) && piece.gallery.length > 0 && (
+          <div className="mx-auto mt-14 max-w-5xl px-4 md:px-6">
+            <div className="mb-6 flex items-center gap-3">
+              <div className="h-[2px] w-10 bg-gold" />
+              <h2 className="font-condensed text-[11px] font-bold uppercase tracking-[3px] text-gold">
+                Galería del reportaje
+              </h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {piece.gallery.map((url, i) => (
+                <figure
+                  key={`${url}-${i}`}
+                  className={
+                    "overflow-hidden rounded-lg border border-border bg-surface " +
+                    (i % 3 === 0 ? "sm:col-span-2" : "")
+                  }
+                >
+                  <img
+                    src={url}
+                    alt=""
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                </figure>
+              ))}
+            </div>
+          </div>
+        )}
       </article>
+
 
       {siblings.length > 0 && (
         <section className="bg-surface py-12">

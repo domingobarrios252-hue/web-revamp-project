@@ -1,0 +1,1 @@
+ALTER TABLE public.special_pieces ADD COLUMN IF NOT EXISTS gallery jsonb NOT NULL DEFAULT '[]'::jsonb;

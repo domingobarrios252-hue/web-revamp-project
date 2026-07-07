@@ -113,7 +113,13 @@ function HomePage() {
   })();
 
   const coverNews = news?.slice(0, 4) ?? [];
-  const latestNews = news?.slice(4, 10) ?? [];
+  const latestNews = news
+    ? [...news]
+        .sort(
+          (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime(),
+        )
+        .slice(0, 6)
+    : [];
 
   return (
     <>

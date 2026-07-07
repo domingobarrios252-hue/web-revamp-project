@@ -2839,6 +2839,7 @@ export type Database = {
           excerpt: string
           external_url: string
           featured: boolean
+          gallery: Json
           id: string
           image_url: string
           kicker: string
@@ -2864,6 +2865,7 @@ export type Database = {
           excerpt?: string
           external_url?: string
           featured?: boolean
+          gallery?: Json
           id?: string
           image_url?: string
           kicker?: string
@@ -2889,6 +2891,7 @@ export type Database = {
           excerpt?: string
           external_url?: string
           featured?: boolean
+          gallery?: Json
           id?: string
           image_url?: string
           kicker?: string
