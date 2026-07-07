@@ -19,6 +19,7 @@ type Piece = {
   external_url: string;
   status: string;
   visible: boolean;
+  gallery?: string[] | null;
 };
 
 type SpecialLite = { slug: string; title: string };
