@@ -296,6 +296,10 @@ function ResultadosEventoPage() {
         </div>
       </header>
 
+      <OfficialDocsSection docs={data.documents ?? []} />
+
+
+
 
       {/* Filters */}
       <section className="sticky top-0 z-20 mt-6 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur">
