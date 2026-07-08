@@ -90,6 +90,12 @@ function AdminTv() {
   const [subBtnText, setSubBtnText] = useState("");
   const [subBtnUrl, setSubBtnUrl] = useState("");
 
+  const [lcEventSlug, setLcEventSlug] = useState("");
+  const [showLc, setShowLc] = useState(false);
+  const [lcPosition, setLcPosition] = useState<"right" | "bottom">("right");
+  const [showFullBtn, setShowFullBtn] = useState(true);
+  const [events, setEvents] = useState<EventOption[]>([]);
+
   const load = async () => {
     setLoading(true);
     const { data } = await supabase
