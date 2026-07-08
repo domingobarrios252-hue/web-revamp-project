@@ -45,6 +45,10 @@ type Settings = {
   subscribe_text: string | null;
   subscribe_button_text: string | null;
   subscribe_button_url: string | null;
+  live_center_event_slug: string | null;
+  show_live_center: boolean;
+  live_center_position: "right" | "bottom";
+  show_full_results_button: boolean;
 };
 
 type Broadcast = {
