@@ -2394,6 +2394,62 @@ export type Database = {
         }
         Relationships: []
       }
+      result_documents: {
+        Row: {
+          created_at: string
+          doc_type: Database["public"]["Enums"]["result_doc_type"]
+          event_id: string
+          file_path: string | null
+          file_size: number | null
+          file_url: string
+          id: string
+          jornada: string | null
+          name: string
+          sort_order: number
+          status: Database["public"]["Enums"]["result_doc_status"]
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          created_at?: string
+          doc_type?: Database["public"]["Enums"]["result_doc_type"]
+          event_id: string
+          file_path?: string | null
+          file_size?: number | null
+          file_url: string
+          id?: string
+          jornada?: string | null
+          name: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["result_doc_status"]
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          created_at?: string
+          doc_type?: Database["public"]["Enums"]["result_doc_type"]
+          event_id?: string
+          file_path?: string | null
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          jornada?: string | null
+          name?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["result_doc_status"]
+          updated_at?: string
+          visible?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "result_documents_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "result_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       result_events: {
         Row: {
           banner_url: string | null
@@ -3631,6 +3687,14 @@ export type Database = {
       news_scope: "General" | "Nacional" | "Internacional"
       page_status: "active" | "hidden" | "coming_soon"
       post_status: "draft" | "pending" | "published" | "rejected"
+      result_doc_status: "borrador" | "provisional" | "oficial" | "oculto"
+      result_doc_type:
+        | "clasificacion"
+        | "resultados"
+        | "acta"
+        | "medallero"
+        | "ranking"
+        | "otro"
       schedule_status: "programada" | "en_curso" | "finalizada"
       visibility_channel: "global_home" | "featured" | "breaking" | "country"
     }
@@ -3768,6 +3832,15 @@ export const Constants = {
       news_scope: ["General", "Nacional", "Internacional"],
       page_status: ["active", "hidden", "coming_soon"],
       post_status: ["draft", "pending", "published", "rejected"],
+      result_doc_status: ["borrador", "provisional", "oficial", "oculto"],
+      result_doc_type: [
+        "clasificacion",
+        "resultados",
+        "acta",
+        "medallero",
+        "ranking",
+        "otro",
+      ],
       schedule_status: ["programada", "en_curso", "finalizada"],
       visibility_channel: ["global_home", "featured", "breaking", "country"],
     },
