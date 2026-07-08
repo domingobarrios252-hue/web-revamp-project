@@ -5,11 +5,13 @@ import { Upload, Save, Trash2, FileText, Check, AlertTriangle, Loader2 } from "l
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+import { ResultadosHubTabs } from "@/components/admin/ResultadosHubTabs";
+
 export const Route = createFileRoute("/admin/resultados-importar")({
   head: () => ({
     meta: [{ title: "Admin · Importar resultados CSV" }, { name: "robots", content: "noindex" }],
   }),
-  component: AdminResultsImport,
+  component: () => (<><ResultadosHubTabs active="csv" /><AdminResultsImport /></>),
 });
 
 // Target fields available in live_results

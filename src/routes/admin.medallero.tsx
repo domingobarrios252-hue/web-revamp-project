@@ -6,9 +6,11 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
+import { ResultadosHubTabs } from "@/components/admin/ResultadosHubTabs";
+
 export const Route = createFileRoute("/admin/medallero")({
   head: () => ({ meta: [{ title: "Admin · Medallero" }, { name: "robots", content: "noindex" }] }),
-  component: AdminMedallero,
+  component: () => (<><ResultadosHubTabs active="medallero" /><AdminMedallero /></>),
 });
 
 const schema = z.object({
