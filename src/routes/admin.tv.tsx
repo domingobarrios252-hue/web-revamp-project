@@ -297,6 +297,47 @@ function AdminTv() {
             </div>
           </Card>
 
+          {/* LIVE CENTER */}
+          <Card title="Live Center asociado">
+            <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+              Vincula un evento de <span className="text-gold">Resultados</span> para mostrar su Live Center junto al vídeo (pruebas en directo, próximas, últimos resultados y clasificaciones rápidas).
+            </p>
+            <label className="block">
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                Evento asociado
+              </span>
+              <select value={lcEventSlug} onChange={(e) => setLcEventSlug(e.target.value)} className="input">
+                <option value="">— Sin evento asociado —</option>
+                {events.map((e) => (
+                  <option key={e.id} value={e.slug}>
+                    {e.name}
+                    {e.event_date ? ` · ${new Date(e.event_date).toLocaleDateString("es-ES")}` : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Toggle label="Mostrar Live Center en la página pública" checked={showLc} onChange={setShowLc} />
+              <SelectField
+                label="Posición del Live Center"
+                value={lcPosition}
+                onChange={(v) => setLcPosition(v as "right" | "bottom")}
+                options={[
+                  { value: "right", label: "Derecha del vídeo" },
+                  { value: "bottom", label: "Debajo del vídeo" },
+                ]}
+              />
+              <Toggle
+                label='Mostrar botón "Ver resultados completos"'
+                checked={showFullBtn}
+                onChange={setShowFullBtn}
+              />
+            </div>
+            <p className="font-condensed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Si no hay evento asociado o el Live Center está desactivado, la página /tv funciona como siempre (solo vídeo).
+            </p>
+          </Card>
+
           {/* BANNERS */}
           <Card title="Banners publicitarios">
             <div className="grid gap-3 sm:grid-cols-2">
