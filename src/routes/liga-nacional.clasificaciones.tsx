@@ -6,17 +6,17 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/liga-nacional/clasificaciones")({
   head: () => ({
     meta: [
-      { title: "Liga Nacional — Clasificaciones completas | RollerZone" },
+      { title: "Liga Nacional Absoluta y Liga Sub 15 — Clasificaciones completas | RollerZone" },
       {
         name: "description",
         content:
-          "Clasificaciones completas de la Liga Nacional de patinaje de velocidad por grupo y división.",
+          "Clasificaciones completas de la Liga Nacional Absoluta y la Liga Sub 15 de patinaje de velocidad por grupo y división.",
       },
-      { property: "og:title", content: "Liga Nacional — Clasificaciones completas" },
+      { property: "og:title", content: "Liga Nacional Absoluta y Liga Sub 15 — Clasificaciones completas" },
       {
         property: "og:description",
         content:
-          "Consulta todas las clasificaciones de la Liga Nacional por grupo y división en RollerZone.es.",
+          "Consulta todas las clasificaciones de la Liga Nacional Absoluta y la Liga Sub 15 por grupo y división en RollerZone.es.",
       },
     ],
   }),
