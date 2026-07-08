@@ -62,7 +62,7 @@ const empty: Omit<ResultEvent, "id"> = {
 };
 
 
-export const Route = createFileRoute("/admin/resultados")({
+export const Route = createFileRoute("/admin/resultados-eventos")({
   head: () => ({ meta: [{ title: "Admin · Eventos de Resultados" }, { name: "robots", content: "noindex" }] }),
   component: AdminResultados,
 });
