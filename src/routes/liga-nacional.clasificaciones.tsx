@@ -93,7 +93,7 @@ function LigaNacionalClasificaciones() {
         <div className="mt-3 flex items-center gap-3">
           <Trophy className="h-6 w-6 text-gold" />
           <h1 className="font-display text-3xl uppercase tracking-widest md:text-4xl">
-            Liga Nacional — Clasificaciones completas
+            Liga Nacional Absoluta y Liga Sub 15 — Clasificaciones completas
           </h1>
         </div>
         <div className="mt-2 h-[3px] w-24 bg-gold" aria-hidden="true" />
