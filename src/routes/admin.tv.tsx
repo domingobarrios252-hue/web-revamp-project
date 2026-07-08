@@ -191,6 +191,10 @@ function AdminTv() {
       subscribe_text: d.subscribe_text || null,
       subscribe_button_text: d.subscribe_button_text || null,
       subscribe_button_url: d.subscribe_button_url || null,
+      live_center_event_slug: d.live_center_event_slug || null,
+      show_live_center: d.show_live_center,
+      live_center_position: d.live_center_position,
+      show_full_results_button: d.show_full_results_button,
     };
 
     const { error } = row
