@@ -575,3 +575,73 @@ function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null
   );
 }
 
+const DOC_TYPE_LABEL: Record<OfficialDoc["doc_type"], string> = {
+  clasificacion: "Clasificación",
+  resultados: "Resultados completos",
+  acta: "Acta",
+  medallero: "Medallero",
+  ranking: "Ranking",
+  otro: "Otro",
+};
+
+function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
+  if (!docs || docs.length === 0) return null;
+  return (
+    <section className="mt-6 rounded-xl border border-border bg-surface p-4 md:p-6">
+      <div className="mb-4 flex items-center gap-2">
+        <FileText className="h-4 w-4 text-gold" />
+        <h2 className="font-display text-lg uppercase tracking-widest text-gold">Documentos oficiales</h2>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {docs.map((d) => (
+          <article key={d.id} className="flex flex-col justify-between rounded-lg border border-border bg-background/50 p-4 transition-colors hover:border-gold/60">
+            <div>
+              <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                <span className="font-condensed inline-flex items-center bg-gold/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold">
+                  {DOC_TYPE_LABEL[d.doc_type]}
+                </span>
+                <span
+                  className={`font-condensed inline-flex items-center px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${
+                    d.status === "oficial"
+                      ? "bg-emerald-500/15 text-emerald-400"
+                      : "bg-amber-500/15 text-amber-400"
+                  }`}
+                >
+                  {d.status === "oficial" ? "Oficial" : "Provisional"}
+                </span>
+                {d.jornada && (
+                  <span className="font-condensed inline-flex items-center bg-background px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                    {d.jornada}
+                  </span>
+                )}
+              </div>
+              <h3 className="font-display line-clamp-2 text-sm uppercase tracking-wider text-foreground">
+                {d.name}
+              </h3>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <a
+                href={d.file_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-condensed inline-flex flex-1 items-center justify-center gap-1.5 bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
+              >
+                <ExternalLink className="h-3 w-3" /> Ver PDF
+              </a>
+              <a
+                href={d.file_url}
+                download
+                className="font-condensed inline-flex items-center justify-center gap-1.5 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold"
+              >
+                <Download className="h-3 w-3" /> Descargar
+              </a>
+            </div>
+            <p className="mt-2 text-[10px] text-muted-foreground">Datos publicados por RollerZone.es</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+
