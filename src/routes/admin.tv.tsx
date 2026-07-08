@@ -125,12 +125,22 @@ function AdminTv() {
       setSubText(r.subscribe_text ?? "");
       setSubBtnText(r.subscribe_button_text ?? "");
       setSubBtnUrl(r.subscribe_button_url ?? "");
+      setLcEventSlug(r.live_center_event_slug ?? "");
+      setShowLc(r.show_live_center ?? false);
+      setLcPosition((r.live_center_position as "right" | "bottom") ?? "right");
+      setShowFullBtn(r.show_full_results_button ?? true);
     }
     setLoading(false);
   };
 
   useEffect(() => {
     load();
+    supabase
+      .from("result_events")
+      .select("id, slug, name, event_date")
+      .order("event_date", { ascending: false, nullsFirst: false })
+      .limit(200)
+      .then(({ data }) => setEvents((data as EventOption[]) ?? []));
   }, []);
 
   const onSave = async () => {
