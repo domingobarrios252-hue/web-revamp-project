@@ -163,6 +163,10 @@ function AdminTv() {
       subscribe_text: subText,
       subscribe_button_text: subBtnText,
       subscribe_button_url: subBtnUrl,
+      live_center_event_slug: lcEventSlug,
+      show_live_center: showLc,
+      live_center_position: lcPosition,
+      show_full_results_button: showFullBtn,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
 
