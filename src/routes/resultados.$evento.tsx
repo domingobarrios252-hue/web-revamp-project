@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2 } from "lucide-react";
+import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2, Download, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
@@ -32,6 +32,7 @@ type ResultRow = {
 };
 
 type EventMeta = {
+  id?: string;
   name: string;
   event_date: string | null;
   end_date: string | null;
@@ -46,6 +47,16 @@ type EventMeta = {
   season: string | null;
   competition_type: string | null;
   status: "en_vivo" | "finalizado" | "proxima";
+};
+
+type OfficialDoc = {
+  id: string;
+  name: string;
+  jornada: string | null;
+  doc_type: "clasificacion" | "resultados" | "acta" | "medallero" | "ranking" | "otro";
+  status: "oficial" | "provisional" | "borrador" | "oculto";
+  file_url: string;
+  sort_order: number;
 };
 
 
@@ -75,7 +86,7 @@ export const Route = createFileRoute("/resultados/$evento")({
     const [{ data: meta }, { data: rows, error }] = await Promise.all([
       supabase
         .from("result_events")
-        .select("name, event_date, end_date, country, banner_url, poster_url, pdf_url, stream_url, city, venue, organizer, season, competition_type, status")
+        .select("id, name, event_date, end_date, country, banner_url, poster_url, pdf_url, stream_url, city, venue, organizer, season, competition_type, status")
         .eq("slug", params.evento)
         .maybeSingle(),
 
@@ -89,10 +100,25 @@ export const Route = createFileRoute("/resultados/$evento")({
     ]);
     if (error) throw error;
     if (!meta && (!rows || rows.length === 0)) throw notFound();
+
+    let documents: OfficialDoc[] = [];
+    if (meta?.id) {
+      const { data: docs } = await supabase
+        .from("result_documents")
+        .select("id, name, jornada, doc_type, status, file_url, sort_order")
+        .eq("event_id", meta.id)
+        .eq("visible", true)
+        .in("status", ["oficial", "provisional"])
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false });
+      documents = (docs as OfficialDoc[]) ?? [];
+    }
+
     return {
       rows: (rows ?? []) as ResultRow[],
       evento: params.evento,
       meta: (meta as EventMeta | null) ?? null,
+      documents,
     };
   },
   head: ({ loaderData, params }) => {
