@@ -6,17 +6,17 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/liga-nacional/clasificaciones")({
   head: () => ({
     meta: [
-      { title: "Liga Nacional — Clasificaciones completas | RollerZone" },
+      { title: "Liga Nacional Absoluta y Liga Sub 15 — Clasificaciones completas | RollerZone" },
       {
         name: "description",
         content:
-          "Clasificaciones completas de la Liga Nacional de patinaje de velocidad por grupo y división.",
+          "Clasificaciones completas de la Liga Nacional Absoluta y la Liga Sub 15 de patinaje de velocidad por grupo y división.",
       },
-      { property: "og:title", content: "Liga Nacional — Clasificaciones completas" },
+      { property: "og:title", content: "Liga Nacional Absoluta y Liga Sub 15 — Clasificaciones completas" },
       {
         property: "og:description",
         content:
-          "Consulta todas las clasificaciones de la Liga Nacional por grupo y división en RollerZone.es.",
+          "Consulta todas las clasificaciones de la Liga Nacional Absoluta y la Liga Sub 15 por grupo y división en RollerZone.es.",
       },
     ],
   }),
@@ -93,7 +93,7 @@ function LigaNacionalClasificaciones() {
         <div className="mt-3 flex items-center gap-3">
           <Trophy className="h-6 w-6 text-gold" />
           <h1 className="font-display text-3xl uppercase tracking-widest md:text-4xl">
-            Liga Nacional — Clasificaciones completas
+            Liga Nacional Absoluta y Liga Sub 15 — Clasificaciones completas
           </h1>
         </div>
         <div className="mt-2 h-[3px] w-24 bg-gold" aria-hidden="true" />
