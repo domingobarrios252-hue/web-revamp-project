@@ -481,11 +481,7 @@ function QuickLink({ country, section, label }: { country: string; section: stri
   // Special case: "Liga Nacional" links go straight to the standings page.
   if (section === "competicion" && /liga/i.test(label)) {
     return (
-      <Link
-        to="/hub/$country/competicion/liga-nacional/clasificaciones"
-        params={{ country }}
-        className={cls}
-      >
+      <Link to="/liga-nacional/clasificaciones" className={cls}>
         {label}
       </Link>
     );
