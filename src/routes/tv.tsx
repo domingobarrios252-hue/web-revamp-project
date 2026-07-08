@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvSidebarBanners } from "@/components/tv/TvSidebarBanners";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
+import { TvEventLiveCenter } from "@/components/tv/TvEventLiveCenter";
 
 export const Route = createFileRoute("/tv")({
   head: () => ({
