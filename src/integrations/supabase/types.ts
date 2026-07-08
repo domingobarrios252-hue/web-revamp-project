@@ -3179,6 +3179,8 @@ export type Database = {
       tv_settings: {
         Row: {
           id: string
+          live_center_event_slug: string | null
+          live_center_position: string
           live_ends_at: string | null
           live_is_active: boolean
           live_starts_at: string | null
@@ -3192,6 +3194,8 @@ export type Database = {
           premium_interval_ms: number
           premium_show_arrows: boolean
           premium_show_dots: boolean
+          show_full_results_button: boolean
+          show_live_center: boolean
           status_label: string
           subscribe_button_text: string | null
           subscribe_button_url: string | null
@@ -3201,6 +3205,8 @@ export type Database = {
         }
         Insert: {
           id?: string
+          live_center_event_slug?: string | null
+          live_center_position?: string
           live_ends_at?: string | null
           live_is_active?: boolean
           live_starts_at?: string | null
@@ -3214,6 +3220,8 @@ export type Database = {
           premium_interval_ms?: number
           premium_show_arrows?: boolean
           premium_show_dots?: boolean
+          show_full_results_button?: boolean
+          show_live_center?: boolean
           status_label?: string
           subscribe_button_text?: string | null
           subscribe_button_url?: string | null
@@ -3223,6 +3231,8 @@ export type Database = {
         }
         Update: {
           id?: string
+          live_center_event_slug?: string | null
+          live_center_position?: string
           live_ends_at?: string | null
           live_is_active?: boolean
           live_starts_at?: string | null
@@ -3236,6 +3246,8 @@ export type Database = {
           premium_interval_ms?: number
           premium_show_arrows?: boolean
           premium_show_dots?: boolean
+          show_full_results_button?: boolean
+          show_live_center?: boolean
           status_label?: string
           subscribe_button_text?: string | null
           subscribe_button_url?: string | null

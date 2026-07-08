@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvSidebarBanners } from "@/components/tv/TvSidebarBanners";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
+import { TvEventLiveCenter } from "@/components/tv/TvEventLiveCenter";
 
 export const Route = createFileRoute("/tv")({
   head: () => ({
@@ -44,6 +45,10 @@ type Settings = {
   subscribe_text: string | null;
   subscribe_button_text: string | null;
   subscribe_button_url: string | null;
+  live_center_event_slug: string | null;
+  show_live_center: boolean;
+  live_center_position: "right" | "bottom";
+  show_full_results_button: boolean;
 };
 
 type Broadcast = {
@@ -237,9 +242,32 @@ function TvPage() {
                 )}
               </div>
             )}
+
+            {settings?.show_live_center &&
+              settings?.live_center_event_slug &&
+              settings?.live_center_position === "bottom" && (
+                <div className="mt-6">
+                  <TvEventLiveCenter
+                    eventSlug={settings.live_center_event_slug}
+                    layout="bottom"
+                    showFullResultsButton={settings.show_full_results_button}
+                  />
+                </div>
+              )}
           </div>
 
-          <TvSidebarBanners />
+          <div className="flex flex-col gap-4">
+            {settings?.show_live_center &&
+              settings?.live_center_event_slug &&
+              settings?.live_center_position === "right" && (
+                <TvEventLiveCenter
+                  eventSlug={settings.live_center_event_slug}
+                  layout="right"
+                  showFullResultsButton={settings.show_full_results_button}
+                />
+              )}
+            <TvSidebarBanners />
+          </div>
         </div>
 
         {/* PREMIUM BANNER — ancho completo */}

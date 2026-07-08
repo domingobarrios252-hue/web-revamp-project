@@ -30,6 +30,10 @@ const schema = z.object({
   subscribe_text: z.string().trim().max(500).optional().or(z.literal("")),
   subscribe_button_text: z.string().trim().max(80).optional().or(z.literal("")),
   subscribe_button_url: z.string().trim().url().optional().or(z.literal("")),
+  live_center_event_slug: z.string().trim().max(200).optional().or(z.literal("")),
+  show_live_center: z.boolean(),
+  live_center_position: z.enum(["right", "bottom"]),
+  show_full_results_button: z.boolean(),
 });
 
 type Row = {
@@ -52,7 +56,13 @@ type Row = {
   subscribe_text: string | null;
   subscribe_button_text: string | null;
   subscribe_button_url: string | null;
+  live_center_event_slug: string | null;
+  show_live_center: boolean;
+  live_center_position: "right" | "bottom";
+  show_full_results_button: boolean;
 };
+
+type EventOption = { id: string; slug: string; name: string; event_date: string | null };
 
 function AdminTv() {
   const [row, setRow] = useState<Row | null>(null);
@@ -79,6 +89,12 @@ function AdminTv() {
   const [subText, setSubText] = useState("");
   const [subBtnText, setSubBtnText] = useState("");
   const [subBtnUrl, setSubBtnUrl] = useState("");
+
+  const [lcEventSlug, setLcEventSlug] = useState("");
+  const [showLc, setShowLc] = useState(false);
+  const [lcPosition, setLcPosition] = useState<"right" | "bottom">("right");
+  const [showFullBtn, setShowFullBtn] = useState(true);
+  const [events, setEvents] = useState<EventOption[]>([]);
 
   const load = async () => {
     setLoading(true);
@@ -109,12 +125,22 @@ function AdminTv() {
       setSubText(r.subscribe_text ?? "");
       setSubBtnText(r.subscribe_button_text ?? "");
       setSubBtnUrl(r.subscribe_button_url ?? "");
+      setLcEventSlug(r.live_center_event_slug ?? "");
+      setShowLc(r.show_live_center ?? false);
+      setLcPosition((r.live_center_position as "right" | "bottom") ?? "right");
+      setShowFullBtn(r.show_full_results_button ?? true);
     }
     setLoading(false);
   };
 
   useEffect(() => {
     load();
+    supabase
+      .from("result_events")
+      .select("id, slug, name, event_date")
+      .order("event_date", { ascending: false, nullsFirst: false })
+      .limit(200)
+      .then(({ data }) => setEvents((data as EventOption[]) ?? []));
   }, []);
 
   const onSave = async () => {
@@ -137,6 +163,10 @@ function AdminTv() {
       subscribe_text: subText,
       subscribe_button_text: subBtnText,
       subscribe_button_url: subBtnUrl,
+      live_center_event_slug: lcEventSlug,
+      show_live_center: showLc,
+      live_center_position: lcPosition,
+      show_full_results_button: showFullBtn,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
 
@@ -161,6 +191,10 @@ function AdminTv() {
       subscribe_text: d.subscribe_text || null,
       subscribe_button_text: d.subscribe_button_text || null,
       subscribe_button_url: d.subscribe_button_url || null,
+      live_center_event_slug: d.live_center_event_slug || null,
+      show_live_center: d.show_live_center,
+      live_center_position: d.live_center_position,
+      show_full_results_button: d.show_full_results_button,
     };
 
     const { error } = row
@@ -261,6 +295,47 @@ function AdminTv() {
                 type="datetime-local"
               />
             </div>
+          </Card>
+
+          {/* LIVE CENTER */}
+          <Card title="Live Center asociado">
+            <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+              Vincula un evento de <span className="text-gold">Resultados</span> para mostrar su Live Center junto al vídeo (pruebas en directo, próximas, últimos resultados y clasificaciones rápidas).
+            </p>
+            <label className="block">
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                Evento asociado
+              </span>
+              <select value={lcEventSlug} onChange={(e) => setLcEventSlug(e.target.value)} className="input">
+                <option value="">— Sin evento asociado —</option>
+                {events.map((e) => (
+                  <option key={e.id} value={e.slug}>
+                    {e.name}
+                    {e.event_date ? ` · ${new Date(e.event_date).toLocaleDateString("es-ES")}` : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Toggle label="Mostrar Live Center en la página pública" checked={showLc} onChange={setShowLc} />
+              <SelectField
+                label="Posición del Live Center"
+                value={lcPosition}
+                onChange={(v) => setLcPosition(v as "right" | "bottom")}
+                options={[
+                  { value: "right", label: "Derecha del vídeo" },
+                  { value: "bottom", label: "Debajo del vídeo" },
+                ]}
+              />
+              <Toggle
+                label='Mostrar botón "Ver resultados completos"'
+                checked={showFullBtn}
+                onChange={setShowFullBtn}
+              />
+            </div>
+            <p className="font-condensed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Si no hay evento asociado o el Live Center está desactivado, la página /tv funciona como siempre (solo vídeo).
+            </p>
           </Card>
 
           {/* BANNERS */}
