@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, X, ArrowUp, ArrowDown, Sparkles, Eraser, Save, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { z } from "zod";
 import { ResultadosHubTabs } from "@/components/admin/ResultadosHubTabs";
 
 // Slug reservado para datos de ejemplo. Cualquier resultado con este event_slug
