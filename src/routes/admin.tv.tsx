@@ -30,6 +30,10 @@ const schema = z.object({
   subscribe_text: z.string().trim().max(500).optional().or(z.literal("")),
   subscribe_button_text: z.string().trim().max(80).optional().or(z.literal("")),
   subscribe_button_url: z.string().trim().url().optional().or(z.literal("")),
+  live_center_event_slug: z.string().trim().max(200).optional().or(z.literal("")),
+  show_live_center: z.boolean(),
+  live_center_position: z.enum(["right", "bottom"]),
+  show_full_results_button: z.boolean(),
 });
 
 type Row = {
