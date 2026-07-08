@@ -30,6 +30,7 @@ type AdminPath =
   | "/admin/medallero" | "/admin/live-results" | "/admin/sections"
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
   | "/admin/espana" | "/admin/colombia" | "/admin/resultados"
+  | "/admin/resultados-eventos" | "/admin/resultados-pdfs"
   | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/paginas" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
@@ -66,11 +67,14 @@ const GROUPS: AdminGroup[] = [
     label: "3 · Eventos y Resultados",
     icon: <BarChart3 className="h-4 w-4" />,
     links: [
-      { to: "/admin/eventos", label: "Eventos", icon: <Calendar className="h-4 w-4" /> },
+      { to: "/admin/resultados", label: "Gestor de Resultados", icon: <BarChart3 className="h-4 w-4" />, exact: true },
+      { to: "/admin/resultados-eventos", label: "Eventos", icon: <Calendar className="h-4 w-4" /> },
       { to: "/admin/live-results", label: "Resultados (manual)", icon: <BarChart3 className="h-4 w-4" /> },
       { to: "/admin/resultados-importar", label: "Importar CSV", icon: <FileText className="h-4 w-4" /> },
+      { to: "/admin/resultados-pdfs", label: "PDFs oficiales", icon: <FileText className="h-4 w-4" /> },
       { to: "/admin/live-center", label: "Live Center", icon: <Radio className="h-4 w-4" /> },
       { to: "/admin/medallero", label: "Medallero", icon: <Medal className="h-4 w-4" /> },
+      { to: "/admin/eventos", label: "Eventos (calendario)", icon: <Calendar className="h-4 w-4" /> },
       { to: "/admin/hub-liga", label: "Hub Liga Nacional", icon: <Trophy className="h-4 w-4" /> },
       { to: "/admin/clasificaciones", label: "Clasificaciones", icon: <Trophy className="h-4 w-4" /> },
       { to: "/admin/premios-mvp", label: "Premios MVP", icon: <Trophy className="h-4 w-4" /> },

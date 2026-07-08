@@ -76,7 +76,9 @@ import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminSalonDeLaFamaRouteImport } from './routes/admin.salon-de-la-fama'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
+import { Route as AdminResultadosPdfsRouteImport } from './routes/admin.resultados-pdfs'
 import { Route as AdminResultadosImportarRouteImport } from './routes/admin.resultados-importar'
+import { Route as AdminResultadosEventosRouteImport } from './routes/admin.resultados-eventos'
 import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
@@ -482,9 +484,19 @@ const AdminRevistaCtaRoute = AdminRevistaCtaRouteImport.update({
   path: '/revista-cta',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminResultadosPdfsRoute = AdminResultadosPdfsRouteImport.update({
+  id: '/resultados-pdfs',
+  path: '/resultados-pdfs',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminResultadosImportarRoute = AdminResultadosImportarRouteImport.update({
   id: '/resultados-importar',
   path: '/resultados-importar',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultadosEventosRoute = AdminResultadosEventosRouteImport.update({
+  id: '/resultados-eventos',
+  path: '/resultados-eventos',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminResultadosRoute = AdminResultadosRouteImport.update({
@@ -844,7 +856,9 @@ export interface FileRoutesByFullPath {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
+  '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
+  '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -971,7 +985,9 @@ export interface FileRoutesByTo {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
+  '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
+  '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -1095,7 +1111,9 @@ export interface FileRoutesById {
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
+  '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
+  '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -1227,7 +1245,9 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/resultados'
+    | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
+    | '/admin/resultados-pdfs'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -1354,7 +1374,9 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/resultados'
+    | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
+    | '/admin/resultados-pdfs'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -1477,7 +1499,9 @@ export interface FileRouteTypes {
     | '/admin/premios-mvp'
     | '/admin/redactores'
     | '/admin/resultados'
+    | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
+    | '/admin/resultados-pdfs'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -2084,11 +2108,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRevistaCtaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/resultados-pdfs': {
+      id: '/admin/resultados-pdfs'
+      path: '/resultados-pdfs'
+      fullPath: '/admin/resultados-pdfs'
+      preLoaderRoute: typeof AdminResultadosPdfsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/resultados-importar': {
       id: '/admin/resultados-importar'
       path: '/resultados-importar'
       fullPath: '/admin/resultados-importar'
       preLoaderRoute: typeof AdminResultadosImportarRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/resultados-eventos': {
+      id: '/admin/resultados-eventos'
+      path: '/resultados-eventos'
+      fullPath: '/admin/resultados-eventos'
+      preLoaderRoute: typeof AdminResultadosEventosRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/resultados': {
@@ -2541,7 +2579,9 @@ interface AdminRouteChildren {
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
   AdminResultadosRoute: typeof AdminResultadosRoute
+  AdminResultadosEventosRoute: typeof AdminResultadosEventosRoute
   AdminResultadosImportarRoute: typeof AdminResultadosImportarRoute
+  AdminResultadosPdfsRoute: typeof AdminResultadosPdfsRoute
   AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminSalonDeLaFamaRoute: typeof AdminSalonDeLaFamaRoute
@@ -2584,7 +2624,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
   AdminResultadosRoute: AdminResultadosRoute,
+  AdminResultadosEventosRoute: AdminResultadosEventosRoute,
   AdminResultadosImportarRoute: AdminResultadosImportarRoute,
+  AdminResultadosPdfsRoute: AdminResultadosPdfsRoute,
   AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminSalonDeLaFamaRoute: AdminSalonDeLaFamaRoute,
