@@ -267,7 +267,13 @@ function DocRowEditor({
           <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${st.cls}`}>{st.label}</span>
           {!draft.visible && <span className="bg-muted/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Oculto</span>}
         </div>
-        <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-gold hover:underline">
+        <a href="#" onClick={async (e) => {
+          e.preventDefault();
+          if (!doc.file_path) { window.open(doc.file_url, "_blank"); return; }
+          const { data, error } = await supabase.storage.from("result-documents").createSignedUrl(doc.file_path, 3600);
+          if (error || !data?.signedUrl) return toast.error("No se pudo generar el enlace");
+          window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+        }} className="inline-flex items-center gap-1 text-gold hover:underline">
           <ExternalLink className="h-3 w-3" /> Abrir PDF
         </a>
         <p className="mt-1 text-[10px] text-muted-foreground">
