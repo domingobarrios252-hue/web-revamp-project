@@ -81,6 +81,7 @@ import { Route as AdminResultadosImportarRouteImport } from './routes/admin.resu
 import { Route as AdminResultadosEventosRouteImport } from './routes/admin.resultados-eventos'
 import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
+import { Route as AdminRedRedactoresRouteImport } from './routes/admin.red-redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
@@ -509,6 +510,11 @@ const AdminRedactoresRoute = AdminRedactoresRouteImport.update({
   path: '/redactores',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRedRedactoresRoute = AdminRedRedactoresRouteImport.update({
+  id: '/red-redactores',
+  path: '/red-redactores',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
   id: '/premios-mvp',
   path: '/premios-mvp',
@@ -854,6 +860,7 @@ export interface FileRoutesByFullPath {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
+  '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
@@ -983,6 +990,7 @@ export interface FileRoutesByTo {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
+  '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
@@ -1109,6 +1117,7 @@ export interface FileRoutesById {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
+  '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
   '/admin/resultados': typeof AdminResultadosRoute
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
@@ -1243,6 +1252,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/premios-mvp'
+    | '/admin/red-redactores'
     | '/admin/redactores'
     | '/admin/resultados'
     | '/admin/resultados-eventos'
@@ -1372,6 +1382,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/premios-mvp'
+    | '/admin/red-redactores'
     | '/admin/redactores'
     | '/admin/resultados'
     | '/admin/resultados-eventos'
@@ -1497,6 +1508,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/premios-mvp'
+    | '/admin/red-redactores'
     | '/admin/redactores'
     | '/admin/resultados'
     | '/admin/resultados-eventos'
@@ -2143,6 +2155,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRedactoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/red-redactores': {
+      id: '/admin/red-redactores'
+      path: '/red-redactores'
+      fullPath: '/admin/red-redactores'
+      preLoaderRoute: typeof AdminRedRedactoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/premios-mvp': {
       id: '/admin/premios-mvp'
       path: '/premios-mvp'
@@ -2577,6 +2596,7 @@ interface AdminRouteChildren {
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPendientesRoute: typeof AdminPendientesRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
+  AdminRedRedactoresRoute: typeof AdminRedRedactoresRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
   AdminResultadosRoute: typeof AdminResultadosRoute
   AdminResultadosEventosRoute: typeof AdminResultadosEventosRoute
@@ -2622,6 +2642,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPendientesRoute: AdminPendientesRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
+  AdminRedRedactoresRoute: AdminRedRedactoresRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
   AdminResultadosRoute: AdminResultadosRoute,
   AdminResultadosEventosRoute: AdminResultadosEventosRoute,
