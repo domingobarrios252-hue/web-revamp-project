@@ -21,6 +21,15 @@ import { SpecialCoverageBanner } from "@/components/home/SpecialCoverageBanner";
 import { RollerZoneTVHome } from "@/components/home/RollerZoneTVHome";
 import { UniverseGrid } from "@/components/home/UniverseGrid";
 import { JoinContributorsBlock } from "@/components/home/JoinContributorsBlock";
+import { useHomeSectionVisibility } from "@/lib/home/useHomeSectionVisibility";
+
+function RedactoresGate() {
+  const { visibility, loading } = useHomeSectionVisibility();
+  if (loading) return null;
+  if (!visibility.redactores) return null;
+  return <JoinContributorsBlock />;
+}
+
 import { NewsletterBand } from "@/components/home/NewsletterBand";
 import { SectionHeading } from "@/components/home/SectionHeading";
 
