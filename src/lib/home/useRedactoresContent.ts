@@ -61,16 +61,19 @@ export const DEFAULT_REDACTORES: RedactoresContent = {
 const PREFIX = "redactores_home_";
 export const REDACTORES_FIELDS = Object.keys(DEFAULT_REDACTORES) as (keyof RedactoresContent)[];
 
-export function useRedactoresContent() {
-  const [content, setContent] = useState<RedactoresContent>(DEFAULT_REDACTORES);
-  const [loading, setLoading] = useState(true);
+// ---- Singleton store to avoid duplicate realtime channels across components ----
+let cached: RedactoresContent = DEFAULT_REDACTORES;
+let loaded = false;
+let loadingPromise: Promise<void> | null = null;
+const listeners = new Set<(c: RedactoresContent) => void>();
+let channelStarted = false;
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
+async function loadOnce() {
+  if (loadingPromise) return loadingPromise;
+  loadingPromise = (async () => {
+    try {
       const sb = supabase as any;
       const { data } = await sb.from("home_modules").select("key,value").like("key", `${PREFIX}%`);
-      if (cancelled) return;
       const next = { ...DEFAULT_REDACTORES };
       (data ?? []).forEach((row: { key: string; value: string }) => {
         const k = row.key.replace(PREFIX, "") as keyof RedactoresContent;
@@ -78,17 +81,56 @@ export function useRedactoresContent() {
           (next as any)[k] = row.value;
         }
       });
-      setContent(next);
-      setLoading(false);
-    };
-    load();
-    const ch = supabase
-      .channel(`redactores-content-${Math.random().toString(36).slice(2)}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "home_modules" }, load)
+      cached = next;
+      loaded = true;
+      listeners.forEach((l) => l(cached));
+    } catch {
+      // keep defaults
+    } finally {
+      loadingPromise = null;
+    }
+  })();
+  return loadingPromise;
+}
+
+function ensureChannel() {
+  if (channelStarted) return;
+  channelStarted = true;
+  try {
+    supabase
+      .channel("redactores-content-singleton")
+      .on("postgres_changes", { event: "*", schema: "public", table: "home_modules" }, () => {
+        loadOnce();
+      })
       .subscribe();
+  } catch {
+    // ignore realtime failures — content still loads via fetch
+  }
+}
+
+export function useRedactoresContent() {
+  const [content, setContent] = useState<RedactoresContent>(cached);
+  const [loading, setLoading] = useState(!loaded);
+
+  useEffect(() => {
+    let cancelled = false;
+    const listener = (c: RedactoresContent) => {
+      if (!cancelled) {
+        setContent(c);
+        setLoading(false);
+      }
+    };
+    listeners.add(listener);
+    if (loaded) {
+      setContent(cached);
+      setLoading(false);
+    } else {
+      loadOnce();
+    }
+    ensureChannel();
     return () => {
       cancelled = true;
-      supabase.removeChannel(ch);
+      listeners.delete(listener);
     };
   }, []);
 
