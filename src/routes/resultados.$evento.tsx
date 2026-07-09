@@ -56,6 +56,7 @@ type OfficialDoc = {
   doc_type: "clasificacion" | "resultados" | "acta" | "medallero" | "ranking" | "otro";
   status: "oficial" | "provisional" | "borrador" | "oculto";
   file_url: string;
+  file_path: string | null;
   sort_order: number;
 };
 
