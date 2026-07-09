@@ -83,7 +83,7 @@ export function useRedactoresContent() {
     };
     load();
     const ch = supabase
-      .channel("redactores-content")
+      .channel(`redactores-content-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "home_modules" }, load)
       .subscribe();
     return () => {
