@@ -9,7 +9,8 @@ export type HomeSectionKey =
   | "eventos"
   | "revista"
   | "patrocinadores"
-  | "equipo";
+  | "equipo"
+  | "redactores";
 
 export const HOME_SECTIONS: { key: HomeSectionKey; label: string; description: string }[] = [
   { key: "podios", label: "Podios destacados", description: "Carrusel de podios bajo la zona dinámica." },
@@ -20,6 +21,7 @@ export const HOME_SECTIONS: { key: HomeSectionKey; label: string; description: s
   { key: "revista", label: "Revista", description: "Previa de la revista digital." },
   { key: "patrocinadores", label: "Patrocinadores", description: "Carrusel de patrocinadores." },
   { key: "equipo", label: "Equipo", description: "Sección del equipo." },
+  { key: "redactores", label: "Red de Redactores RollerZone", description: "Bloque de captación de redactores y colaboradores." },
 ];
 
 const PREFIX = "home_section_";
