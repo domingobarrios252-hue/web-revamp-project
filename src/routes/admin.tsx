@@ -57,6 +57,7 @@ const GROUPS: AdminGroup[] = [
       { to: "/admin/pendientes", label: "Cola de revisión", icon: <Inbox className="h-4 w-4" /> },
       { to: "/admin/entrevistas", label: "Entrevistas", icon: <Mic className="h-4 w-4" /> },
       { to: "/admin/redactores", label: "Redactores", icon: <PenLine className="h-4 w-4" /> },
+      { to: "/admin/red-redactores", label: "Red de Redactores (home)", icon: <PenLine className="h-4 w-4" /> },
       { to: "/admin/especiales", label: "Especiales editoriales", icon: <Flag className="h-4 w-4" /> },
       { to: "/admin/sections", label: "Secciones", icon: <Layers className="h-4 w-4" /> },
       { to: "/admin/categorias", label: "Categorías", icon: <Tag className="h-4 w-4" /> },
