@@ -158,7 +158,8 @@ function HomePage() {
       <UniverseGrid />
 
       {/* 11. CAPTACIÓN DE REDACTORES */}
-      <JoinContributorsBlock />
+      <RedactoresGate />
+
 
       {/* 12. NEWSLETTER */}
       <NewsletterBand />
