@@ -56,6 +56,7 @@ type OfficialDoc = {
   doc_type: "clasificacion" | "resultados" | "acta" | "medallero" | "ranking" | "otro";
   status: "oficial" | "provisional" | "borrador" | "oculto";
   file_url: string;
+  file_path: string | null;
   sort_order: number;
 };
 
@@ -105,13 +106,23 @@ export const Route = createFileRoute("/resultados/$evento")({
     if (meta?.id) {
       const { data: docs } = await supabase
         .from("result_documents")
-        .select("id, name, jornada, doc_type, status, file_url, sort_order")
+        .select("id, name, jornada, doc_type, status, file_url, file_path, sort_order")
         .eq("event_id", meta.id)
         .eq("visible", true)
         .in("status", ["oficial", "provisional"])
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: false });
-      documents = (docs as OfficialDoc[]) ?? [];
+      const raw = (docs as OfficialDoc[]) ?? [];
+      // Bucket is private — resolve a signed URL per doc for public viewing/downloading.
+      documents = await Promise.all(
+        raw.map(async (d) => {
+          if (!d.file_path) return d;
+          const { data: signed } = await supabase.storage
+            .from("result-documents")
+            .createSignedUrl(d.file_path, 60 * 60);
+          return { ...d, file_url: signed?.signedUrl ?? d.file_url };
+        }),
+      );
     }
 
     return {
