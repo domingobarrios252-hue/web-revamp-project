@@ -23,6 +23,9 @@ type Article = {
   image_crops: import("@/lib/imageCrops").ImageCrops | null;
   hero_display_mode: "crop" | "full" | null;
   gallery: string[] | null;
+  video_url: string | null;
+  video_embed_url: string | null;
+  video_poster_url: string | null;
   read_minutes: number | null;
   views_count: number;
   published_at: string;
