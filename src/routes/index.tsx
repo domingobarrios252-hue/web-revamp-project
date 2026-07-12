@@ -370,12 +370,25 @@ function HeroSlide({
           </div>
 
           <div className="mb-3 flex flex-wrap items-center gap-2">
-            {liveActive && (
-              <span className="live-red-tag font-condensed inline-flex items-center gap-2 rounded-sm bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
-                <span className="live-dot-fast inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                EN DIRECTO
-              </span>
-            )}
+            {(() => {
+              const badge = computeHeroBadge(slide);
+              if (badge === "live") {
+                return (
+                  <span className="live-red-tag font-condensed inline-flex items-center gap-2 rounded-sm bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
+                    <span className="live-dot-fast inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                    EN DIRECTO
+                  </span>
+                );
+              }
+              if (badge === "new") {
+                return (
+                  <span className="font-condensed inline-flex items-center gap-2 rounded-sm bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-background shadow-lg">
+                    NUEVA NOTICIA
+                  </span>
+                );
+              }
+              return null;
+            })()}
             <span className="font-condensed inline-flex items-center border border-gold/60 bg-black/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur-sm md:px-3">
               {slide.news_categories?.name ?? t("home.featured")}
             </span>
