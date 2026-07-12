@@ -7,11 +7,13 @@ const corsHeaders = {
 };
 
 type Payload = {
+  action?: "create" | "delete";
   email?: string;
   password?: string;
   displayName?: string;
-  role?: "admin" | "editor";
+  role?: "admin" | "editor" | "lector";
   sectionId?: string | null;
+  userId?: string;
 };
 
 Deno.serve(async (req) => {
