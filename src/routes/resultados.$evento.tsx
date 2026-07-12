@@ -624,14 +624,16 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
                 href={d.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-condensed inline-flex flex-1 items-center justify-center gap-1.5 bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
+                aria-label={`Ver PDF: ${d.name}`}
+                className="font-condensed inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
               >
                 <ExternalLink className="h-3 w-3" /> Ver PDF
               </a>
               <a
                 href={d.file_url}
                 download
-                className="font-condensed inline-flex items-center justify-center gap-1.5 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold"
+                aria-label={`Descargar PDF: ${d.name}`}
+                className="font-condensed inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold"
               >
                 <Download className="h-3 w-3" /> Descargar
               </a>
