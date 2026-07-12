@@ -65,6 +65,25 @@ function toLocalInput(iso: string | null | undefined): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+function toLocalInputOptional(iso: string | null | undefined): string {
+  if (!iso) return "";
+  return toLocalInput(iso);
+}
+
+function computeLiveBadgeState(
+  active: boolean,
+  startIso: string,
+  endIso: string,
+): "live" | "scheduled" | "ended" | "off" {
+  if (!active) return "off";
+  const now = Date.now();
+  const start = startIso ? new Date(startIso).getTime() : null;
+  const end = endIso ? new Date(endIso).getTime() : null;
+  if (start !== null && now < start) return "scheduled";
+  if (end !== null && now > end) return "ended";
+  return "live";
+}
+
 function slugify(s: string) {
   return s
     .toLowerCase()
