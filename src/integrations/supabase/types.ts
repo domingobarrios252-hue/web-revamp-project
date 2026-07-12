@@ -1892,6 +1892,9 @@ export type Database = {
           status: Database["public"]["Enums"]["post_status"]
           title: string
           updated_at: string
+          video_embed_url: string | null
+          video_poster_url: string | null
+          video_url: string | null
           views_count: number
           writer_id: string | null
         }
@@ -1925,6 +1928,9 @@ export type Database = {
           status?: Database["public"]["Enums"]["post_status"]
           title: string
           updated_at?: string
+          video_embed_url?: string | null
+          video_poster_url?: string | null
+          video_url?: string | null
           views_count?: number
           writer_id?: string | null
         }
@@ -1958,6 +1964,9 @@ export type Database = {
           status?: Database["public"]["Enums"]["post_status"]
           title?: string
           updated_at?: string
+          video_embed_url?: string | null
+          video_poster_url?: string | null
+          video_url?: string | null
           views_count?: number
           writer_id?: string | null
         }
