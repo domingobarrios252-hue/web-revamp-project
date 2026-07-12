@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
+import { NewsVideoUploadField, deleteStoredVideo } from "@/components/admin/NewsVideoUploadField";
 import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
 
 type Category = { id: string; name: string; slug: string; scope: string };
@@ -25,6 +26,9 @@ type News = {
   image_crops: import("@/lib/imageCrops").ImageCrops | null;
   hero_display_mode: "crop" | "full";
   gallery: string[];
+  video_url: string | null;
+  video_embed_url: string | null;
+  video_poster_url: string | null;
   read_minutes: number | null;
   featured: boolean;
   hero_order: number;
@@ -52,6 +56,9 @@ const newsSchema = z.object({
   legacy_tag: z.string().trim().max(60).optional(),
   image_url: z.string().trim().url().optional().or(z.literal("")),
   gallery: z.array(z.string().trim().url()).max(50).default([]),
+  video_url: z.string().trim().url().optional().or(z.literal("")),
+  video_embed_url: z.string().trim().max(2000).optional().or(z.literal("")),
+  video_poster_url: z.string().trim().url().optional().or(z.literal("")),
   read_minutes: z.number().int().min(1).max(60).optional(),
   featured: z.boolean(),
   status: z.enum(["draft", "pending", "published", "rejected"]),
@@ -112,7 +119,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code, live_active, live_event_id, live_start_at, live_end_at"
+          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code, live_active, live_event_id, live_start_at, live_end_at"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -137,9 +144,14 @@ function AdminNewsList() {
 
   const onDelete = async (id: string, title: string) => {
     if (!confirm(`¿Borrar "${title}"?`)) return;
+    const target = news.find((n) => n.id === id);
     const { error } = await supabase.from("news").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
+      // Clean up the uploaded video file from storage if any.
+      if (target?.video_url) {
+        try { await deleteStoredVideo(target.video_url); } catch { /* ignore */ }
+      }
       toast.success("Noticia borrada");
       reload();
     }
@@ -365,6 +377,9 @@ function NewsEditor({
     item?.hero_display_mode ?? "crop"
   );
   const [gallery, setGallery] = useState<string[]>(item?.gallery ?? []);
+  const [videoUrl, setVideoUrl] = useState<string>(item?.video_url ?? "");
+  const [videoEmbedUrl, setVideoEmbedUrl] = useState<string>(item?.video_embed_url ?? "");
+  const [videoPosterUrl, setVideoPosterUrl] = useState<string>(item?.video_poster_url ?? "");
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
   const [status, setStatus] = useState<News["status"]>(item?.status ?? "draft");
@@ -447,6 +462,9 @@ function NewsEditor({
       legacy_tag: legacyTag || undefined,
       image_url: imageUrl || undefined,
       gallery,
+      video_url: videoUrl || undefined,
+      video_embed_url: videoEmbedUrl || undefined,
+      video_poster_url: videoPosterUrl || undefined,
       read_minutes: typeof readMinutes === "number" ? readMinutes : undefined,
       featured,
       status,
@@ -492,6 +510,9 @@ function NewsEditor({
         image_crops: imageCrops as never,
         hero_display_mode: heroDisplayMode,
         gallery: parsed.data.gallery,
+        video_url: parsed.data.video_url || null,
+        video_embed_url: parsed.data.video_embed_url || null,
+        video_poster_url: parsed.data.video_poster_url || null,
         read_minutes: parsed.data.read_minutes ?? null,
         featured: parsed.data.featured,
         status: parsed.data.status,
@@ -655,6 +676,51 @@ function NewsEditor({
               nameHint={slug || title}
             />
           </div>
+
+          <div className="border-t border-border pt-3">
+            <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Vídeo de la noticia (opcional)
+            </span>
+            <p className="mb-2 text-xs text-muted-foreground">
+              Sube un archivo de vídeo (MP4/WebM/MOV, máx. 200 MB) o pega una URL/embed de YouTube, Vimeo, Facebook o Twitch. Si añades ambos, se mostrará el vídeo subido. Se mostrará en la ficha pública entre la imagen principal y el texto.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Archivo de vídeo
+                </span>
+                <NewsVideoUploadField
+                  value={videoUrl}
+                  onChange={setVideoUrl}
+                  nameHint={slug || title}
+                />
+              </div>
+              <div>
+                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  URL o embed externo (YouTube, Vimeo, Facebook, Twitch…)
+                </span>
+                <input
+                  value={videoEmbedUrl}
+                  onChange={(e) => setVideoEmbedUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=…"
+                  className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                />
+              </div>
+              <div>
+                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Miniatura / portada del vídeo (opcional)
+                </span>
+                <ImageUploadField
+                  value={videoPosterUrl}
+                  onChange={setVideoPosterUrl}
+                  folder="news/video-posters"
+                  nameHint={slug || title}
+                  placeholder="URL o subir imagen de portada"
+                />
+              </div>
+            </div>
+          </div>
+
           <TextareaField label="Resumen" value={excerpt} onChange={setExcerpt} rows={3} />
           <TextareaField
             label="Contenido (un párrafo por línea)"

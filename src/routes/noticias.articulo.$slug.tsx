@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { CroppedImage } from "@/components/site/CroppedImage";
 import { Lightbox } from "@/components/site/Lightbox";
+import { NewsVideoPlayer } from "@/components/site/NewsVideoPlayer";
 
 type Article = {
   id: string;
@@ -22,6 +23,9 @@ type Article = {
   image_crops: import("@/lib/imageCrops").ImageCrops | null;
   hero_display_mode: "crop" | "full" | null;
   gallery: string[] | null;
+  video_url: string | null;
+  video_embed_url: string | null;
+  video_poster_url: string | null;
   read_minutes: number | null;
   views_count: number;
   published_at: string;
@@ -35,7 +39,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .maybeSingle();
@@ -331,6 +335,15 @@ function ArticlePage() {
           </figure>
         );
       })()}
+
+      <NewsVideoPlayer
+        fileUrl={article.video_url}
+        embedUrl={article.video_embed_url}
+        posterUrl={article.video_poster_url ?? article.image_url}
+        title={article.title}
+      />
+
+
 
       <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
         {paragraphs.length === 0 ? (
