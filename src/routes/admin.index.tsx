@@ -35,7 +35,12 @@ type News = {
   views_count: number;
   published_at: string;
   country_code: string | null;
+  live_active: boolean | null;
+  live_event_id: string | null;
+  live_start_at: string | null;
+  live_end_at: string | null;
 };
+type EventOpt = { id: string; name: string; start_date: string | null };
 
 const newsSchema = z.object({
   title: z.string().trim().min(3).max(200),
