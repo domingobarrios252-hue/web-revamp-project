@@ -331,7 +331,9 @@ function HeroSlide({
           <img
             src={slide.image_url}
             alt={slide.title}
-            loading="eager"
+            loading={active ? "eager" : "lazy"}
+            fetchPriority={active ? "high" : "auto"}
+            decoding="async"
             style={{ objectPosition: cropObjectPosition(slide.image_crops, "hero") }}
             className={
               "h-full w-full object-cover transition-transform ease-out " +
