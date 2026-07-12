@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { CroppedImage } from "@/components/site/CroppedImage";
 import { Lightbox } from "@/components/site/Lightbox";
+import { NewsVideoPlayer } from "@/components/site/NewsVideoPlayer";
 
 type Article = {
   id: string;
