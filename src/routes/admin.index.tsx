@@ -497,6 +497,10 @@ function NewsEditor({
         status: parsed.data.status,
         published_at: new Date(parsed.data.published_at).toISOString(),
         country_code: derivedCountry,
+        live_active: liveActive,
+        live_event_id: liveActive && liveEventId ? liveEventId : null,
+        live_start_at: liveActive && liveStartAt ? new Date(liveStartAt).toISOString() : null,
+        live_end_at: liveActive && liveEndAt ? new Date(liveEndAt).toISOString() : null,
       };
       let newsId = item?.id ?? null;
       if (item) {
