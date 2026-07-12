@@ -733,6 +733,99 @@ function NewsEditor({
             )}
           </div>
 
+          <div className="border-t border-border pt-3">
+            <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Distintivo del hero de portada — Directo
+            </span>
+            <Checkbox
+              label="Esta noticia pertenece a un directo"
+              checked={liveActive}
+              onChange={setLiveActive}
+            />
+            {liveActive && (
+              <div className="mt-3 space-y-3">
+                <SelectField
+                  label="Evento o streaming vinculado (opcional)"
+                  value={liveEventId}
+                  onChange={setLiveEventId}
+                  options={[
+                    { value: "", label: "— Sin evento vinculado —" },
+                    ...eventOptions.map((e) => ({
+                      value: e.id,
+                      label: e.start_date
+                        ? `${e.name} (${new Date(e.start_date).toLocaleDateString("es-ES")})`
+                        : e.name,
+                    })),
+                  ]}
+                />
+                <div className="grid gap-3 md:grid-cols-2">
+                  <label className="block">
+                    <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                      Inicio del directo (opcional)
+                    </span>
+                    <input
+                      type="datetime-local"
+                      value={liveStartAt}
+                      onChange={(e) => setLiveStartAt(e.target.value)}
+                      className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                      Fin del directo (opcional)
+                    </span>
+                    <input
+                      type="datetime-local"
+                      value={liveEndAt}
+                      onChange={(e) => setLiveEndAt(e.target.value)}
+                      className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                    />
+                  </label>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Si dejas las fechas vacías, el distintivo permanecerá activo mientras el interruptor esté encendido. Con fechas, aparecerá solo dentro de ese periodo y desaparecerá automáticamente al terminar.
+                </p>
+                <div>
+                  <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                    Vista previa del distintivo
+                  </span>
+                  {(() => {
+                    const state = computeLiveBadgeState(liveActive, liveStartAt, liveEndAt);
+                    if (state === "live") {
+                      return (
+                        <span className="inline-flex items-center gap-2 rounded-sm bg-[oklch(0.62_0.22_25)] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
+                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                          EN DIRECTO
+                        </span>
+                      );
+                    }
+                    if (state === "scheduled") {
+                      return (
+                        <span className="text-xs text-muted-foreground">
+                          Programado — el distintivo aparecerá cuando comience el directo.
+                        </span>
+                      );
+                    }
+                    if (state === "ended") {
+                      return (
+                        <span className="text-xs text-muted-foreground">
+                          El directo ya ha finalizado — no se mostrará distintivo.
+                        </span>
+                      );
+                    }
+                    return (
+                      <span className="text-xs text-muted-foreground">
+                        Interruptor desactivado.
+                      </span>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+            <p className="mt-3 text-xs text-muted-foreground">
+              Si la noticia no pertenece a un directo y fue publicada hace menos de 72 horas, se mostrará automáticamente el distintivo dorado <strong>NUEVA NOTICIA</strong>.
+            </p>
+          </div>
 
 
           <div className="grid gap-3 border-t border-border pt-3 md:grid-cols-3">
