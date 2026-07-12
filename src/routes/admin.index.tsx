@@ -144,7 +144,7 @@ function AdminNewsList() {
 
   const onDelete = async (id: string, title: string) => {
     if (!confirm(`¿Borrar "${title}"?`)) return;
-    const target = items.find((n) => n.id === id);
+    const target = news.find((n) => n.id === id);
     const { error } = await supabase.from("news").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
