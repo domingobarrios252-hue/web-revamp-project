@@ -55,7 +55,16 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const author = a.writers?.full_name ?? a.author ?? "RollerZone Spain";
     const publishedIso = a.published_at ? new Date(a.published_at).toISOString() : undefined;
     const modifiedIso = a.updated_at ? new Date(a.updated_at).toISOString() : publishedIso;
-    const image = a.image_url ?? undefined;
+    const FALLBACK_OG = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";
+    const rawImage = a.video_poster_url ?? a.image_url ?? null;
+    const toAbsolute = (u: string | null): string => {
+      if (!u) return FALLBACK_OG;
+      if (/^https?:\/\//i.test(u)) return u;
+      if (u.startsWith("//")) return `https:${u}`;
+      if (u.startsWith("/")) return `https://rollerzone.es${u}`;
+      return FALLBACK_OG;
+    };
+    const image = toAbsolute(rawImage);
     const plain = (a.content ?? "").replace(/\s+/g, " ").trim();
     const wordCount = plain ? plain.split(" ").filter(Boolean).length : undefined;
     const bodySnippet = plain ? plain.slice(0, 500) : undefined;
