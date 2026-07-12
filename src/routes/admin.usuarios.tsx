@@ -177,18 +177,25 @@ function AdminUsersPage() {
                 const isMe = p.user_id === me?.id;
                 const isEditor = userRoles.includes("editor") && !userRoles.includes("admin");
                 return (
-                  <tr key={p.user_id} className="border-b border-border/50 last:border-0">
+                  <tr key={p.user_id} className={`border-b border-border/50 last:border-0 ${p.suspended_at ? "bg-destructive/5" : ""}`}>
                     <td className="px-3 py-2">
                       <div className="font-semibold text-foreground">
                         {p.display_name ?? "Sin nombre"}{" "}
                         {isMe && <span className="text-xs text-gold">(tú)</span>}
+                        {p.suspended_at && (
+                          <span className="ml-2 rounded bg-destructive/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-destructive">
+                            Suspendido
+                          </span>
+                        )}
                       </div>
                       <div className="text-xs text-muted-foreground">{p.email ?? p.user_id}</div>
                     </td>
                     <td className="px-3 py-2">
                       <div className="flex flex-wrap gap-1.5">
                         {userRoles.length === 0 && (
-                          <span className="text-xs text-muted-foreground">—</span>
+                          <span className="font-condensed bg-muted px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                            lector
+                          </span>
                         )}
                         {userRoles.map((r) => (
                           <span
@@ -198,6 +205,8 @@ function AdminUsersPage() {
                                 ? "bg-gold/20 text-gold"
                                 : r === "editor"
                                 ? "bg-foreground/10 text-foreground"
+                                : r === "lector"
+                                ? "bg-blue-500/15 text-blue-400"
                                 : "bg-muted text-muted-foreground"
                             }`}
                           >
@@ -225,17 +234,46 @@ function AdminUsersPage() {
                     <td className="px-3 py-2">
                       <div className="flex flex-wrap justify-end gap-1.5">
                         <RoleToggle
+                          enabled={userRoles.includes("lector") || userRoles.length === 0}
+                          onClick={() => setPrimaryRole(p.user_id, "lector")}
+                          icon={<BookOpen className="h-3.5 w-3.5" />}
+                          label="Lector"
+                        />
+                        <RoleToggle
+                          enabled={userRoles.includes("editor") && !userRoles.includes("admin")}
+                          onClick={() => setPrimaryRole(p.user_id, "editor")}
+                          icon={<Shield className="h-3.5 w-3.5" />}
+                          label="Editor"
+                        />
+                        <RoleToggle
                           enabled={userRoles.includes("admin")}
                           onClick={() => setPrimaryRole(p.user_id, "admin")}
                           icon={<ShieldCheck className="h-3.5 w-3.5" />}
                           label="Admin"
                         />
-                        <RoleToggle
-                          enabled={userRoles.includes("editor")}
-                          onClick={() => setPrimaryRole(p.user_id, "editor")}
-                          icon={<Shield className="h-3.5 w-3.5" />}
-                          label="Editor"
-                        />
+                        {!isMe && (
+                          <>
+                            <button
+                              onClick={() => toggleSuspend(p)}
+                              className={`font-condensed inline-flex items-center gap-1 border px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+                                p.suspended_at
+                                  ? "border-green-600 bg-green-600/10 text-green-500 hover:bg-green-600/20"
+                                  : "border-yellow-600/60 bg-yellow-600/10 text-yellow-500 hover:bg-yellow-600/20"
+                              }`}
+                              title={p.suspended_at ? "Reactivar usuario" : "Suspender acceso"}
+                            >
+                              {p.suspended_at ? <RotateCcw className="h-3.5 w-3.5" /> : <Ban className="h-3.5 w-3.5" />}
+                              {p.suspended_at ? "Reactivar" : "Suspender"}
+                            </button>
+                            <button
+                              onClick={() => deleteUser(p)}
+                              className="font-condensed inline-flex items-center gap-1 border border-destructive/60 bg-destructive/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest text-destructive transition-colors hover:bg-destructive/20"
+                              title="Eliminar definitivamente"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" /> Eliminar
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
