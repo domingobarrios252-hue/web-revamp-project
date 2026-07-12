@@ -109,12 +109,12 @@ function RevistaPage() {
         />
       ) : (
         <Tabs value={tab} onValueChange={(v) => setTab(v as "spain" | "colombia")}>
-          <TabsList className="mb-8 bg-surface">
-            <TabsTrigger value="spain" className="font-condensed tracking-widest uppercase">
-              🇪🇸 RollerZone España <span className="ml-2 text-xs opacity-70">({spain.length})</span>
+          <TabsList className="mb-8 flex h-auto w-full flex-wrap gap-1 bg-surface p-1 sm:w-auto sm:inline-flex">
+            <TabsTrigger value="spain" className="font-condensed min-h-11 flex-1 whitespace-normal tracking-widest uppercase sm:flex-none">
+              🇪🇸 España <span className="ml-2 text-xs opacity-70">({spain.length})</span>
             </TabsTrigger>
-            <TabsTrigger value="colombia" className="font-condensed tracking-widest uppercase">
-              🇨🇴 RollerZone Colombia <span className="ml-2 text-xs opacity-70">({colombia.length})</span>
+            <TabsTrigger value="colombia" className="font-condensed min-h-11 flex-1 whitespace-normal tracking-widest uppercase sm:flex-none">
+              🇨🇴 Colombia <span className="ml-2 text-xs opacity-70">({colombia.length})</span>
             </TabsTrigger>
           </TabsList>
 
