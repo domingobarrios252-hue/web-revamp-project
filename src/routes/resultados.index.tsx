@@ -94,7 +94,7 @@ function ResultadosIndex() {
   );
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 md:px-6">
+    <div className="mx-auto max-w-7xl px-5 py-10 md:px-6">
       <header className="border-b border-border pb-6">
         <div className="font-condensed inline-flex items-center gap-2 bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
           <Trophy className="h-3.5 w-3.5" /> {t("results.headerTag")}
@@ -183,7 +183,7 @@ function ResultadosIndex() {
           ))}
         </section>
       )}
-    </main>
+    </div>
   );
 }
 

@@ -257,7 +257,7 @@ function ResultadosEventoPage() {
     sortKey !== key ? <ArrowUpDown className="h-3 w-3 opacity-50" /> : sortDir === "asc" ? <ArrowUp className="h-3 w-3 text-gold" /> : <ArrowDown className="h-3 w-3 text-gold" />;
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 md:px-6">
+    <div className="mx-auto max-w-7xl px-5 py-10 md:px-6">
       <Link to="/resultados" className="font-condensed mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-gold">
         <ArrowLeft className="h-4 w-4" /> {t("common.backTo")} {t("results.title")}
       </Link>
@@ -441,7 +441,7 @@ function ResultadosEventoPage() {
           );
         })}
       </section>
-    </main>
+    </div>
   );
 }
 
