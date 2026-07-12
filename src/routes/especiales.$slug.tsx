@@ -101,7 +101,7 @@ function SpecialLanding() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-surface">
         <div className="absolute inset-0">
-          <img
+          <img loading="lazy" decoding="async"
             src={heroImage}
             alt=""
             className="h-full w-full object-cover opacity-40"

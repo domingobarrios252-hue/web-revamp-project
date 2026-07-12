@@ -95,7 +95,7 @@ function LegendProfilePage() {
       <div className="relative overflow-hidden border-b border-[#2A2A2A]">
         {legend.cover_url && (
           <div className="absolute inset-0">
-            <img
+            <img loading="lazy" decoding="async"
               src={legend.cover_url}
               alt=""
               className="h-full w-full object-cover opacity-30"
@@ -114,7 +114,7 @@ function LegendProfilePage() {
           <div className="mt-6 grid gap-6 md:grid-cols-[260px_1fr] items-end">
             <div className="overflow-hidden rounded-[10px] border-2 border-[#D4A017] bg-[#1a1610] aspect-[4/5]">
               {legend.photo_url ? (
-                <img
+                <img loading="lazy" decoding="async"
                   src={legend.photo_url}
                   alt={legend.full_name}
                   className="h-full w-full object-cover"

@@ -109,7 +109,7 @@ export function ImageUploadField({
           </button>
         )}
       </div>
-      {value && <img src={value} alt="" className={previewClassName} />}
+      {value && <img loading="lazy" decoding="async" src={value} alt="" className={previewClassName} />}
       {editorOpen && onCropsChange && value && (
         <ImageCropEditor
           imageUrl={value}

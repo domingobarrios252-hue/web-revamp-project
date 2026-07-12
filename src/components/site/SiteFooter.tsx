@@ -18,6 +18,7 @@ import {
   ClipboardCheck,
   BookOpenCheck,
   Eye,
+  PenSquare,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { NewsletterForm } from "./NewsletterForm";
@@ -109,8 +110,15 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link to="/redactores" className={linkClass}>
+                  <PenSquare className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                  <span>Red de redactores</span>
+                </Link>
+              </li>
             </ul>
           </div>
+
 
           {/* 4. Comunidad */}
           <div>

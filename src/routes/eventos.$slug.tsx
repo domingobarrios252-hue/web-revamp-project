@@ -145,13 +145,13 @@ function EventoDetail() {
               aria-label={`Ampliar cartel de ${event.name}`}
               className="group relative block aspect-[1/1.414] w-full overflow-hidden border border-border bg-background shadow-2xl transition hover:border-gold focus:border-gold focus:outline-none"
             >
-              <img
+              <img loading="lazy" decoding="async"
                 src={event.cover_url}
                 alt=""
                 aria-hidden="true"
                 className="absolute inset-0 h-full w-full scale-110 object-cover opacity-25 blur-2xl"
               />
-              <img
+              <img loading="lazy" decoding="async"
                 src={event.cover_url}
                 alt={`Cartel de ${event.name}`}
                 className="relative h-full w-full object-contain"

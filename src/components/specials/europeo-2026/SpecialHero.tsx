@@ -31,7 +31,7 @@ export function SpecialHero({
       }
     >
       <div className="absolute inset-0">
-        <img
+        <img loading="lazy" decoding="async"
           src={image}
           alt=""
           aria-hidden="true"
