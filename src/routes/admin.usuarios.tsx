@@ -335,7 +335,7 @@ function CreateUserModal({
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"admin" | "editor">("editor");
+  const [role, setRole] = useState<"admin" | "editor" | "lector">("lector");
   const [sectionId, setSectionId] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -344,7 +344,14 @@ function CreateUserModal({
     if (role === "editor" && !sectionId) return toast.error("Asigna una sección al editor");
     setSaving(true);
     const { data, error } = await supabase.functions.invoke("admin-create-user", {
-      body: { email, password, displayName, role, sectionId: role === "editor" ? sectionId : null },
+      body: {
+        action: "create",
+        email,
+        password,
+        displayName,
+        role,
+        sectionId: role === "editor" ? sectionId : null,
+      },
     });
     setSaving(false);
     if (error) toast.error(error.message);
@@ -368,7 +375,8 @@ function CreateUserModal({
           <UserField label="Contraseña temporal" type="password" value={password} onChange={setPassword} required />
           <label className="block">
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Rol</span>
-            <select value={role} onChange={(e) => setRole(e.target.value as "admin" | "editor")} className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none">
+            <select value={role} onChange={(e) => setRole(e.target.value as "admin" | "editor" | "lector")} className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none">
+              <option value="lector">Lector</option>
               <option value="editor">Editor</option>
               <option value="admin">Admin</option>
             </select>
