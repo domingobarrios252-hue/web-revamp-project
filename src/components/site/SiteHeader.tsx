@@ -146,9 +146,9 @@ export function SiteHeader() {
           <button
             onClick={() => setSearchOpen((v) => !v)}
             aria-label="Buscar"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[6px] border border-transparent text-[#A0A0A0] hover:text-[#D4A017] hover:border-[#333] transition-colors"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-[6px] border border-transparent text-[#A0A0A0] hover:text-[#D4A017] hover:border-[#333] transition-colors"
           >
-            <Search className="h-4 w-4" />
+            <Search className="h-5 w-5" />
           </button>
 
           {user ? (
