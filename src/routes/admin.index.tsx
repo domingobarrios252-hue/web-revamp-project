@@ -25,6 +25,9 @@ type News = {
   image_crops: import("@/lib/imageCrops").ImageCrops | null;
   hero_display_mode: "crop" | "full";
   gallery: string[];
+  video_url: string | null;
+  video_embed_url: string | null;
+  video_poster_url: string | null;
   read_minutes: number | null;
   featured: boolean;
   hero_order: number;
