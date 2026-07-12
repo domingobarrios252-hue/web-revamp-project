@@ -128,16 +128,38 @@ function AdminUsersPage() {
       <div className="mb-4 flex items-start gap-2 border border-border bg-surface p-3 text-xs text-muted-foreground">
         <UserPlus className="mt-0.5 h-4 w-4 text-gold" />
         <p>
-          Los usuarios se registran desde <code className="text-gold">/auth</code>. Aquí asignas
-          roles: <strong>admin</strong> (control total) o <strong>editor</strong> (contenido limitado
-          a una única sección y siempre sujeto a aprobación).
+          Los usuarios se registran desde <code className="text-gold">/auth</code> y reciben por defecto el rol{" "}
+          <strong className="text-foreground">LECTOR</strong>. Aquí puedes ascender a{" "}
+          <strong>editor</strong> (contenido limitado a una sección, sujeto a aprobación) o{" "}
+          <strong>admin</strong> (control total), y también <strong>suspender</strong> o{" "}
+          <strong>eliminar</strong> cuentas.
         </p>
+      </div>
+
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {(["all", "admin", "editor", "lector", "suspended"] as Filter[]).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`font-condensed border px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+              filter === f ? "border-gold bg-gold/10 text-gold" : "border-border bg-background text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {f === "all" ? "Todos" : f === "suspended" ? "Suspendidos" : f}
+          </button>
+        ))}
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar por nombre o email…"
+          className="ml-auto min-w-[220px] border border-border bg-background px-3 py-1.5 text-xs focus:border-gold focus:outline-none"
+        />
       </div>
 
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
-      ) : profiles.length === 0 ? (
-        <p className="text-muted-foreground">Aún no hay usuarios registrados.</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-muted-foreground">Sin resultados con el filtro actual.</p>
       ) : (
         <div className="overflow-x-auto border border-border bg-surface">
           <table className="w-full text-sm">
@@ -146,11 +168,11 @@ function AdminUsersPage() {
                 <th className="px-3 py-2">Usuario</th>
                 <th className="px-3 py-2">Roles</th>
                 <th className="px-3 py-2">Sección</th>
-                <th className="px-3 py-2"></th>
+                <th className="px-3 py-2 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {profiles.map((p) => {
+              {filtered.map((p) => {
                 const userRoles = roles.filter((r) => r.user_id === p.user_id).map((r) => r.role);
                 const isMe = p.user_id === me?.id;
                 const isEditor = userRoles.includes("editor") && !userRoles.includes("admin");
