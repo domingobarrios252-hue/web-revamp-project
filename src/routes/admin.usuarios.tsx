@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Shield, ShieldCheck, ShieldOff, UserPlus } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Shield, ShieldCheck, ShieldOff, UserPlus, Ban, Trash2, RotateCcw, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
-type Profile = { user_id: string; display_name: string | null; email: string | null; section_id: string | null };
-type RoleRow = { user_id: string; role: "admin" | "editor" | "user" | "colaborador" };
+type AppRole = "admin" | "editor" | "user" | "colaborador" | "lector";
+type Profile = { user_id: string; display_name: string | null; email: string | null; section_id: string | null; suspended_at: string | null };
+type RoleRow = { user_id: string; role: AppRole };
 type Section = { id: string; name: string };
+type Filter = "all" | "admin" | "editor" | "lector" | "suspended";
 
 export const Route = createFileRoute("/admin/usuarios")({
   component: AdminUsersPage,
