@@ -66,7 +66,7 @@ export function CallupRoster() {
 
         {SPAIN_CALLUP.imageUrl && (
           <figure className="mb-10 overflow-hidden rounded-xl border border-border">
-            <img
+            <img loading="lazy" decoding="async"
               src={SPAIN_CALLUP.imageUrl}
               alt="Convocatoria oficial de la selección española"
               className="h-auto w-full object-cover"

@@ -12,7 +12,7 @@ export function SpecialCoverageBanner() {
   return (
     <section className="relative overflow-hidden border-y border-gold/30 bg-background py-16 md:py-24">
       <div className="absolute inset-0">
-        <img
+        <img loading="lazy" decoding="async"
           src={EVENT.heroImage}
           alt=""
           aria-hidden="true"

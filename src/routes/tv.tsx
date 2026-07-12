@@ -205,7 +205,7 @@ function TvPage() {
                   aria-label="Reproducir"
                 >
                   {thumbnail ? (
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={thumbnail}
                       alt={settings?.live_title ?? "Preview"}
                       className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100"

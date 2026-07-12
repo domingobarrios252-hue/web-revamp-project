@@ -100,7 +100,7 @@ function WriterDetailPage() {
       <header className="mt-6 grid gap-6 border border-border bg-surface p-5 md:grid-cols-[200px_1fr] md:p-8">
         <div className="aspect-square overflow-hidden border border-border bg-background">
           {writer.photo_url ? (
-            <img
+            <img loading="lazy" decoding="async"
               src={writer.photo_url}
               alt={writer.full_name}
               className="h-full w-full object-cover"

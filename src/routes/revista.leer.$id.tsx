@@ -198,7 +198,7 @@ function MagazineReader() {
         {loading || !currentUrl ? (
           <Loader2 className="h-8 w-8 animate-spin text-white/70" />
         ) : (
-          <img
+          <img loading="lazy" decoding="async"
             src={currentUrl}
             alt={`Página ${current + 1}`}
             draggable={false}
