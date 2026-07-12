@@ -676,6 +676,51 @@ function NewsEditor({
               nameHint={slug || title}
             />
           </div>
+
+          <div className="border-t border-border pt-3">
+            <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Vídeo de la noticia (opcional)
+            </span>
+            <p className="mb-2 text-xs text-muted-foreground">
+              Sube un archivo de vídeo (MP4/WebM/MOV, máx. 200 MB) o pega una URL/embed de YouTube, Vimeo, Facebook o Twitch. Si añades ambos, se mostrará el vídeo subido. Se mostrará en la ficha pública entre la imagen principal y el texto.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Archivo de vídeo
+                </span>
+                <NewsVideoUploadField
+                  value={videoUrl}
+                  onChange={setVideoUrl}
+                  nameHint={slug || title}
+                />
+              </div>
+              <div>
+                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  URL o embed externo (YouTube, Vimeo, Facebook, Twitch…)
+                </span>
+                <input
+                  value={videoEmbedUrl}
+                  onChange={(e) => setVideoEmbedUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=…"
+                  className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                />
+              </div>
+              <div>
+                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Miniatura / portada del vídeo (opcional)
+                </span>
+                <ImageUploadField
+                  value={videoPosterUrl}
+                  onChange={setVideoPosterUrl}
+                  folder="news/video-posters"
+                  nameHint={slug || title}
+                  placeholder="URL o subir imagen de portada"
+                />
+              </div>
+            </div>
+          </div>
+
           <TextareaField label="Resumen" value={excerpt} onChange={setExcerpt} rows={3} />
           <TextareaField
             label="Contenido (un párrafo por línea)"
