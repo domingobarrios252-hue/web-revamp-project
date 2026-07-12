@@ -109,7 +109,7 @@ function EventResultsPage() {
   const eventName = rows?.[0]?.event_name ?? slug;
 
   return (
-    <main className="mx-auto max-w-5xl px-5 py-10 md:px-6 md:py-14">
+    <div className="mx-auto max-w-5xl px-5 py-10 md:px-6 md:py-14">
       <Link
         to="/"
         className="font-condensed mb-5 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-gold"
@@ -151,53 +151,55 @@ function EventResultsPage() {
                   </span>
                 )}
               </div>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-                    <th className="px-3 py-2 text-center">#</th>
-                    <th className="px-3 py-2">Atleta</th>
-                    <th className="hidden px-3 py-2 sm:table-cell">Club</th>
-                    <th className="px-3 py-2 text-right">Tiempo</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {g.rows.map((r) => (
-                    <tr
-                      key={r.id}
-                      className="border-b border-border last:border-0 hover:bg-background/40"
-                    >
-                      <td className="px-3 py-2.5 text-center">
-                        <span
-                          className={`font-display inline-flex h-6 w-6 items-center justify-center text-[11px] ${
-                            r.position === 1
-                              ? "bg-gold text-background"
-                              : r.position === 2
-                                ? "bg-foreground/30 text-background"
-                                : r.position === 3
-                                  ? "bg-amber-700/70 text-background"
-                                  : "text-muted-foreground"
-                          }`}
-                        >
-                          {r.position}
-                        </span>
-                      </td>
-                      <td className="font-display px-3 py-2.5 uppercase tracking-wider">
-                        {r.athlete_name}
-                      </td>
-                      <td className="hidden px-3 py-2.5 text-xs text-muted-foreground sm:table-cell">
-                        {r.club ?? "—"}
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-mono text-xs text-gold">
-                        {r.race_time ?? "—"}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[420px] text-sm">
+                  <thead>
+                    <tr className="font-condensed border-b border-border bg-background/30 text-left text-[10px] uppercase tracking-widest text-muted-foreground">
+                      <th className="px-3 py-2 text-center">#</th>
+                      <th className="px-3 py-2">Atleta</th>
+                      <th className="hidden px-3 py-2 sm:table-cell">Club</th>
+                      <th className="px-3 py-2 text-right">Tiempo</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {g.rows.map((r) => (
+                      <tr
+                        key={r.id}
+                        className="border-b border-border last:border-0 hover:bg-background/40"
+                      >
+                        <td className="px-3 py-2.5 text-center">
+                          <span
+                            className={`font-display inline-flex h-6 w-6 items-center justify-center text-[11px] ${
+                              r.position === 1
+                                ? "bg-gold text-background"
+                                : r.position === 2
+                                  ? "bg-foreground/30 text-background"
+                                  : r.position === 3
+                                    ? "bg-amber-700/70 text-background"
+                                    : "text-muted-foreground"
+                            }`}
+                          >
+                            {r.position}
+                          </span>
+                        </td>
+                        <td className="font-display px-3 py-2.5 uppercase tracking-wider">
+                          {r.athlete_name}
+                        </td>
+                        <td className="hidden px-3 py-2.5 text-xs text-muted-foreground sm:table-cell">
+                          {r.club ?? "—"}
+                        </td>
+                        <td className="px-3 py-2.5 text-right font-mono text-xs text-gold">
+                          {r.race_time ?? "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </section>
           ))}
         </div>
       )}
-    </main>
+    </div>
   );
 }
