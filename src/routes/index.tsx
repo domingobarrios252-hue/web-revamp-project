@@ -37,7 +37,27 @@ type News = CoverNews & {
   legacy_tag: string | null;
   featured: boolean;
   views_count: number;
+  live_active: boolean | null;
+  live_event_id: string | null;
+  live_start_at: string | null;
+  live_end_at: string | null;
 };
+
+type HeroBadge = "live" | "new" | null;
+function computeHeroBadge(slide: News, now: number = Date.now()): HeroBadge {
+  if (slide.live_active) {
+    const start = slide.live_start_at ? new Date(slide.live_start_at).getTime() : null;
+    const end = slide.live_end_at ? new Date(slide.live_end_at).getTime() : null;
+    const afterStart = start === null || now >= start;
+    const beforeEnd = end === null || now <= end;
+    if (afterStart && beforeEnd) return "live";
+  }
+  if (slide.published_at) {
+    const pub = new Date(slide.published_at).getTime();
+    if (!Number.isNaN(pub) && now - pub <= 72 * 60 * 60 * 1000) return "new";
+  }
+  return null;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
