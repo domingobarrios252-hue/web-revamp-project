@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Play } from "lucide-react";
 import { videoEmbedUrl, detectVideoPlatform } from "@/lib/videoEmbed";
 
 type Props = {
@@ -13,9 +14,11 @@ type Props = {
 };
 
 export function NewsVideoPlayer({ fileUrl, embedUrl, posterUrl, title }: Props) {
+  const [activated, setActivated] = useState(false);
+
   const embedSrc = useMemo(
-    () => (embedUrl ? videoEmbedUrl(embedUrl, { autoplay: false }) : null),
-    [embedUrl],
+    () => (embedUrl ? videoEmbedUrl(embedUrl, { autoplay: activated }) : null),
+    [embedUrl, activated],
   );
 
   if (!fileUrl && !embedUrl) return null;
@@ -45,14 +48,36 @@ export function NewsVideoPlayer({ fileUrl, embedUrl, posterUrl, title }: Props) 
     return (
       <figure className="mb-8 overflow-hidden border border-border bg-black">
         <div className="relative aspect-video w-full">
-          <iframe
-            src={embedSrc}
-            title={title ?? "Vídeo"}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            loading="lazy"
-            className="absolute inset-0 h-full w-full"
-          />
+          {activated ? (
+            <iframe
+              src={embedSrc}
+              title={title ?? "Vídeo"}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+              className="absolute inset-0 h-full w-full"
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setActivated(true)}
+              className="group absolute inset-0 flex h-full w-full items-center justify-center bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              aria-label={`Reproducir ${title ?? "vídeo"}`}
+            >
+              {posterUrl ? (
+                <img
+                  src={posterUrl}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
+                />
+              ) : null}
+              <span className="relative z-10 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gold text-background shadow-xl transition-transform group-hover:scale-110">
+                <Play className="h-7 w-7 translate-x-[2px]" fill="currentColor" />
+              </span>
+            </button>
+          )}
         </div>
       </figure>
     );
