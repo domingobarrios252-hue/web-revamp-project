@@ -336,6 +336,15 @@ function ArticlePage() {
         );
       })()}
 
+      <NewsVideoPlayer
+        fileUrl={article.video_url}
+        embedUrl={article.video_embed_url}
+        posterUrl={article.video_poster_url ?? article.image_url}
+        title={article.title}
+      />
+
+
+
       <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
         {paragraphs.length === 0 ? (
           <p className="italic text-muted-foreground">
