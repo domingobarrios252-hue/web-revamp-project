@@ -92,7 +92,7 @@ function HomePage() {
     supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, author, legacy_tag, image_url, image_crops, read_minutes, featured, hero_order, views_count, published_at, news_categories(name, slug, scope)"
+        "id, title, slug, excerpt, author, legacy_tag, image_url, image_crops, read_minutes, featured, hero_order, views_count, published_at, live_active, live_event_id, live_start_at, live_end_at, news_categories(name, slug, scope)"
       )
       .eq("published", true)
       .order("featured", { ascending: false })
