@@ -1879,6 +1879,10 @@ export type Database = {
           image_crops: Json
           image_url: string | null
           legacy_tag: string | null
+          live_active: boolean
+          live_end_at: string | null
+          live_event_id: string | null
+          live_start_at: string | null
           published: boolean
           published_at: string
           read_minutes: number | null
@@ -1908,6 +1912,10 @@ export type Database = {
           image_crops?: Json
           image_url?: string | null
           legacy_tag?: string | null
+          live_active?: boolean
+          live_end_at?: string | null
+          live_event_id?: string | null
+          live_start_at?: string | null
           published?: boolean
           published_at?: string
           read_minutes?: number | null
@@ -1937,6 +1945,10 @@ export type Database = {
           image_crops?: Json
           image_url?: string | null
           legacy_tag?: string | null
+          live_active?: boolean
+          live_end_at?: string | null
+          live_event_id?: string | null
+          live_start_at?: string | null
           published?: boolean
           published_at?: string
           read_minutes?: number | null
@@ -1955,6 +1967,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "news_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_live_event_id_fkey"
+            columns: ["live_event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
           {
