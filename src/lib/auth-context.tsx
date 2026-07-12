@@ -102,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin: roles.includes("admin"),
         isEditor: roles.includes("admin") || roles.includes("editor"),
         isColaborador: roles.includes("colaborador"),
+        isLector: roles.includes("lector"),
         sectionId,
         loading,
         signIn,
