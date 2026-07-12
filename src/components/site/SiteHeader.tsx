@@ -230,7 +230,7 @@ export function SiteHeader() {
             aria-label="Menú"
           >
             <div className="flex h-14 items-center justify-between border-b border-[#333] px-4">
-              <img src={logoUrl} alt="RollerZone" className="h-7 w-auto" />
+              <img loading="lazy" decoding="async" src={logoUrl} alt="RollerZone" className="h-7 w-auto" />
               <button onClick={() => setMobileOpen(false)} aria-label="Cerrar" className="text-[#F5F5F5]">
                 <X className="h-6 w-6" />
               </button>

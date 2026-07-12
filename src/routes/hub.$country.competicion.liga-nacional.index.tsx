@@ -60,7 +60,7 @@ function LigaHome() {
           >
             {featured.image_url && (
               <div className="aspect-[16/9] overflow-hidden bg-[#0d0d0d]">
-                <img src={featured.image_url} alt={featured.title} className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-500" />
+                <img loading="lazy" decoding="async" src={featured.image_url} alt={featured.title} className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-500" />
               </div>
             )}
             <div className="p-5">

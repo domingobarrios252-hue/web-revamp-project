@@ -711,7 +711,7 @@ function MagazinePreviewSection() {
         <div className="grid gap-6 overflow-hidden rounded-2xl border border-border bg-surface shadow-xl md:grid-cols-[320px_1fr]">
           <div className="relative aspect-[3/4] overflow-hidden bg-background md:aspect-auto">
             {item.cover_url ? (
-              <img src={item.cover_url} alt={item.title} className="h-full w-full object-cover" />
+              <img loading="lazy" decoding="async" src={item.cover_url} alt={item.title} className="h-full w-full object-cover" />
             ) : (
               <div className="hero-grid-bg flex h-full w-full items-center justify-center">
                 <BookOpen className="h-12 w-12 text-gold/30" />
