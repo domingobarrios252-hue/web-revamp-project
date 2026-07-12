@@ -37,7 +37,27 @@ type News = CoverNews & {
   legacy_tag: string | null;
   featured: boolean;
   views_count: number;
+  live_active: boolean | null;
+  live_event_id: string | null;
+  live_start_at: string | null;
+  live_end_at: string | null;
 };
+
+type HeroBadge = "live" | "new" | null;
+function computeHeroBadge(slide: News, now: number = Date.now()): HeroBadge {
+  if (slide.live_active) {
+    const start = slide.live_start_at ? new Date(slide.live_start_at).getTime() : null;
+    const end = slide.live_end_at ? new Date(slide.live_end_at).getTime() : null;
+    const afterStart = start === null || now >= start;
+    const beforeEnd = end === null || now <= end;
+    if (afterStart && beforeEnd) return "live";
+  }
+  if (slide.published_at) {
+    const pub = new Date(slide.published_at).getTime();
+    if (!Number.isNaN(pub) && now - pub <= 72 * 60 * 60 * 1000) return "new";
+  }
+  return null;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -72,7 +92,7 @@ function HomePage() {
     supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, author, legacy_tag, image_url, image_crops, read_minutes, featured, hero_order, views_count, published_at, news_categories(name, slug, scope)"
+        "id, title, slug, excerpt, author, legacy_tag, image_url, image_crops, read_minutes, featured, hero_order, views_count, published_at, live_active, live_event_id, live_start_at, live_end_at, news_categories(name, slug, scope)"
       )
       .eq("published", true)
       .order("featured", { ascending: false })
@@ -350,12 +370,25 @@ function HeroSlide({
           </div>
 
           <div className="mb-3 flex flex-wrap items-center gap-2">
-            {liveActive && (
-              <span className="live-red-tag font-condensed inline-flex items-center gap-2 rounded-sm bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
-                <span className="live-dot-fast inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                EN DIRECTO
-              </span>
-            )}
+            {(() => {
+              const badge = computeHeroBadge(slide);
+              if (badge === "live") {
+                return (
+                  <span className="live-red-tag font-condensed inline-flex items-center gap-2 rounded-sm bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
+                    <span className="live-dot-fast inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                    EN DIRECTO
+                  </span>
+                );
+              }
+              if (badge === "new") {
+                return (
+                  <span className="font-condensed inline-flex items-center gap-2 rounded-sm bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-background shadow-lg">
+                    NUEVA NOTICIA
+                  </span>
+                );
+              }
+              return null;
+            })()}
             <span className="font-condensed inline-flex items-center border border-gold/60 bg-black/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur-sm md:px-3">
               {slide.news_categories?.name ?? t("home.featured")}
             </span>
