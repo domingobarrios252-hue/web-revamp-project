@@ -142,13 +142,13 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: a.title },
         { name: "twitter:description", content: desc },
-        ...(image
-          ? [
-              { property: "og:image", content: image },
-              { property: "og:image:alt", content: a.title },
-              { name: "twitter:image", content: image },
-            ]
-          : []),
+        { property: "og:image", content: image },
+        { property: "og:image:secure_url", content: image },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { property: "og:image:alt", content: a.title },
+        { name: "twitter:image", content: image },
+        { name: "twitter:image:alt", content: a.title },
       ],
       links: [{ rel: "canonical", href: canonical }],
       scripts: [
