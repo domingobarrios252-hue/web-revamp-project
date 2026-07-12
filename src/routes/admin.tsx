@@ -179,6 +179,11 @@ function AdminLayout() {
     }
     if (!loading && user && !isAdmin && (isEditor || isColaborador)) {
       navigate({ to: "/dashboard" });
+      return;
+    }
+    // Lectores (o cualquier usuario sin permisos editoriales) fuera de /admin.
+    if (!loading && user && !isAdmin && !isEditor && !isColaborador) {
+      navigate({ to: "/mi-biblioteca" });
     }
   }, [user, loading, isAdmin, isEditor, isColaborador, navigate]);
 
@@ -192,11 +197,13 @@ function AdminLayout() {
       <div className="mx-auto max-w-2xl px-6 py-16 text-center">
         <h1 className="font-display text-3xl tracking-widest">Sin permisos</h1>
         <p className="mt-3 text-muted-foreground">
-          Tu cuenta <span className="text-gold">{user.email}</span> aún no tiene rol de administrador.
+          Tu cuenta <span className="text-gold">{user.email}</span> no tiene permisos de administrador.
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
           Si eres editor, accede a tu panel desde{" "}
           <Link to="/dashboard" className="text-gold hover:underline">/dashboard</Link>.
+          Si solo eres lector, puedes ver tus revistas en{" "}
+          <Link to="/mi-biblioteca" className="text-gold hover:underline">Mi biblioteca</Link>.
         </p>
       </div>
     );
