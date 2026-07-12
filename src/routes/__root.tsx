@@ -51,8 +51,6 @@ export const Route = createRootRoute({
       { name: "description", content: "La pagina oficial de Rollerzone para las noticias del patinaje de Velocidad Nacional e internacional." },
       { property: "og:description", content: "La pagina oficial de Rollerzone para las noticias del patinaje de Velocidad Nacional e internacional." },
       { name: "twitter:description", content: "La pagina oficial de Rollerzone para las noticias del patinaje de Velocidad Nacional e internacional." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
