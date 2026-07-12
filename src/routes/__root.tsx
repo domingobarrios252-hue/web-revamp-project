@@ -124,7 +124,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="premium-noise-bg">
+      <body className="premium-noise-bg overflow-x-hidden">
         {children}
         <Scripts />
       </body>
