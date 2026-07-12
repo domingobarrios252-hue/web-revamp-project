@@ -81,7 +81,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
       url: canonical,
       inLanguage: lang,
       isAccessibleForFree: true,
-      ...(image ? { image: [image] } : {}),
+      image: [image],
       ...(publishedIso ? { datePublished: publishedIso } : {}),
       ...(modifiedIso ? { dateModified: modifiedIso } : {}),
       ...(wordCount ? { wordCount } : {}),
