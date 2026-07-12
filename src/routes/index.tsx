@@ -74,7 +74,18 @@ export const Route = createFileRoute("/")({
         content:
           "Noticias, resultados, eventos, entrevistas y revista del patinaje de velocidad. La casa del patinaje sobre ruedas.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://rollerzone.es/" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "RollerZone — Patinaje de velocidad" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "RollerZone — El medio del patinaje de velocidad" },
+      { name: "twitter:description", content: "Noticias, resultados, eventos, entrevistas y revista del patinaje de velocidad." },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/" }],
   }),
   component: HomePage,
 });

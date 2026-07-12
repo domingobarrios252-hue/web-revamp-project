@@ -55,7 +55,16 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const author = a.writers?.full_name ?? a.author ?? "RollerZone Spain";
     const publishedIso = a.published_at ? new Date(a.published_at).toISOString() : undefined;
     const modifiedIso = a.updated_at ? new Date(a.updated_at).toISOString() : publishedIso;
-    const image = a.image_url ?? undefined;
+    const FALLBACK_OG = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";
+    const rawImage = a.video_poster_url ?? a.image_url ?? null;
+    const toAbsolute = (u: string | null): string => {
+      if (!u) return FALLBACK_OG;
+      if (/^https?:\/\//i.test(u)) return u;
+      if (u.startsWith("//")) return `https:${u}`;
+      if (u.startsWith("/")) return `https://rollerzone.es${u}`;
+      return FALLBACK_OG;
+    };
+    const image = toAbsolute(rawImage);
     const plain = (a.content ?? "").replace(/\s+/g, " ").trim();
     const wordCount = plain ? plain.split(" ").filter(Boolean).length : undefined;
     const bodySnippet = plain ? plain.slice(0, 500) : undefined;
@@ -72,7 +81,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
       url: canonical,
       inLanguage: lang,
       isAccessibleForFree: true,
-      ...(image ? { image: [image] } : {}),
+      image: [image],
       ...(publishedIso ? { datePublished: publishedIso } : {}),
       ...(modifiedIso ? { dateModified: modifiedIso } : {}),
       ...(wordCount ? { wordCount } : {}),
@@ -133,13 +142,13 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: a.title },
         { name: "twitter:description", content: desc },
-        ...(image
-          ? [
-              { property: "og:image", content: image },
-              { property: "og:image:alt", content: a.title },
-              { name: "twitter:image", content: image },
-            ]
-          : []),
+        { property: "og:image", content: image },
+        { property: "og:image:secure_url", content: image },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { property: "og:image:alt", content: a.title },
+        { name: "twitter:image", content: image },
+        { name: "twitter:image:alt", content: a.title },
       ],
       links: [{ rel: "canonical", href: canonical }],
       scripts: [
