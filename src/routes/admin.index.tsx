@@ -372,6 +372,9 @@ function NewsEditor({
     item?.hero_display_mode ?? "crop"
   );
   const [gallery, setGallery] = useState<string[]>(item?.gallery ?? []);
+  const [videoUrl, setVideoUrl] = useState<string>(item?.video_url ?? "");
+  const [videoEmbedUrl, setVideoEmbedUrl] = useState<string>(item?.video_embed_url ?? "");
+  const [videoPosterUrl, setVideoPosterUrl] = useState<string>(item?.video_poster_url ?? "");
   const [readMinutes, setReadMinutes] = useState<number | "">(item?.read_minutes ?? 4);
   const [featured, setFeatured] = useState(item?.featured ?? false);
   const [status, setStatus] = useState<News["status"]>(item?.status ?? "draft");
