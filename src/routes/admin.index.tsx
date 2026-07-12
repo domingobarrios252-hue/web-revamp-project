@@ -377,6 +377,21 @@ function NewsEditor({
   // Hub scope is mutually exclusive — a noticia pertenece como máximo a UN hub
   // de país. Esto evita que se mezcle el contenido entre /hub/es y /hub/co.
   const [hubScope, setHubScope] = useState<"none" | "es" | "co">("none");
+  // Directo: distintivo EN DIRECTO en el hero de portada
+  const [liveActive, setLiveActive] = useState<boolean>(item?.live_active ?? false);
+  const [liveEventId, setLiveEventId] = useState<string>(item?.live_event_id ?? "");
+  const [liveStartAt, setLiveStartAt] = useState<string>(toLocalInputOptional(item?.live_start_at));
+  const [liveEndAt, setLiveEndAt] = useState<string>(toLocalInputOptional(item?.live_end_at));
+  const [eventOptions, setEventOptions] = useState<EventOpt[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("events")
+      .select("id, name, start_date")
+      .order("start_date", { ascending: false })
+      .limit(200)
+      .then(({ data }) => setEventOptions((data as EventOpt[]) ?? []));
+  }, []);
 
   useEffect(() => {
     if (!item) return;
