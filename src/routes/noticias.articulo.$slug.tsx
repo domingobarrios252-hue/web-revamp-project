@@ -39,7 +39,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .maybeSingle();
