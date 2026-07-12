@@ -8,6 +8,7 @@ type AuthState = {
   isAdmin: boolean;
   isEditor: boolean;
   isColaborador: boolean;
+  isLector: boolean;
   sectionId: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
