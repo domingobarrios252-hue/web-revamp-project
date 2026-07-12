@@ -22,11 +22,13 @@ function AdminUsersPage() {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [filter, setFilter] = useState<Filter>("all");
+  const [search, setSearch] = useState("");
 
   const reload = async () => {
     setLoading(true);
     const [{ data: p }, { data: r }, { data: s }] = await Promise.all([
-      supabase.from("profiles").select("user_id, display_name, email, section_id"),
+      supabase.from("profiles").select("user_id, display_name, email, section_id, suspended_at"),
       supabase.from("user_roles").select("user_id, role"),
       supabase.from("sections").select("id, name").order("sort_order"),
     ]);
@@ -40,20 +42,40 @@ function AdminUsersPage() {
     if (isAdmin) reload();
   }, [isAdmin]);
 
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return profiles.filter((p) => {
+      const userRoles = roles.filter((r) => r.user_id === p.user_id).map((r) => r.role);
+      if (filter === "admin" && !userRoles.includes("admin")) return false;
+      if (filter === "editor" && !(userRoles.includes("editor") && !userRoles.includes("admin"))) return false;
+      if (filter === "lector") {
+        const isLector = userRoles.includes("lector") || userRoles.length === 0;
+        const isPrivileged = userRoles.includes("admin") || userRoles.includes("editor") || userRoles.includes("colaborador");
+        if (!isLector || isPrivileged) return false;
+      }
+      if (filter === "suspended" && !p.suspended_at) return false;
+      if (q) {
+        const hay = `${p.display_name ?? ""} ${p.email ?? ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [profiles, roles, filter, search]);
+
   if (!isAdmin) {
     return <p className="text-muted-foreground">Solo administradores.</p>;
   }
 
-  const setPrimaryRole = async (
-    userId: string,
-    role: "admin" | "editor",
-  ) => {
+  const setPrimaryRole = async (userId: string, role: AppRole) => {
+    if (userId === me?.id && role !== "admin") {
+      if (!confirm("Vas a cambiar tu propio rol y perderás el acceso al panel. ¿Continuar?")) return;
+    }
     const { error: deleteError } = await supabase.from("user_roles").delete().eq("user_id", userId);
     if (deleteError) return toast.error(deleteError.message);
     const { error } = await supabase.from("user_roles").insert({ user_id: userId, role });
     if (error) toast.error(error.message);
     else toast.success(`Rol ${role} asignado`);
-    if (role === "admin") await setSection(userId, null);
+    if (role !== "editor") await setSection(userId, null);
     reload();
   };
 
@@ -64,10 +86,32 @@ function AdminUsersPage() {
       .eq("user_id", userId);
     if (error) toast.error(error.message);
     else {
-      toast.success("Sección actualizada");
+      if (sectionId !== null) toast.success("Sección actualizada");
       reload();
     }
   };
+
+  const toggleSuspend = async (p: Profile) => {
+    if (p.user_id === me?.id) return toast.error("No puedes suspenderte a ti mismo.");
+    const next = p.suspended_at ? null : new Date().toISOString();
+    const { error } = await supabase.from("profiles").update({ suspended_at: next }).eq("user_id", p.user_id);
+    if (error) return toast.error(error.message);
+    toast.success(next ? "Usuario suspendido" : "Suspensión retirada");
+    reload();
+  };
+
+  const deleteUser = async (p: Profile) => {
+    if (p.user_id === me?.id) return toast.error("No puedes eliminarte a ti mismo.");
+    if (!confirm(`¿Eliminar definitivamente a ${p.email ?? p.display_name}? Esta acción es irreversible.`)) return;
+    const { data, error } = await supabase.functions.invoke("admin-create-user", {
+      body: { action: "delete", userId: p.user_id },
+    });
+    if (error) return toast.error(error.message);
+    if ((data as { error?: string } | null)?.error) return toast.error((data as { error: string }).error);
+    toast.success("Usuario eliminado");
+    reload();
+  };
+
 
   return (
     <div>
