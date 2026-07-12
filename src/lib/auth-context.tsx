@@ -8,6 +8,7 @@ type AuthState = {
   isAdmin: boolean;
   isEditor: boolean;
   isColaborador: boolean;
+  isLector: boolean;
   sectionId: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
@@ -101,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin: roles.includes("admin"),
         isEditor: roles.includes("admin") || roles.includes("editor"),
         isColaborador: roles.includes("colaborador"),
+        isLector: roles.includes("lector"),
         sectionId,
         loading,
         signIn,

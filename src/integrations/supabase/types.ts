@@ -1655,6 +1655,41 @@ export type Database = {
           },
         ]
       }
+      magazine_reads: {
+        Row: {
+          first_read_at: string
+          id: string
+          last_read_at: string
+          magazine_id: string
+          read_count: number
+          user_id: string
+        }
+        Insert: {
+          first_read_at?: string
+          id?: string
+          last_read_at?: string
+          magazine_id: string
+          read_count?: number
+          user_id: string
+        }
+        Update: {
+          first_read_at?: string
+          id?: string
+          last_read_at?: string
+          magazine_id?: string
+          read_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "magazine_reads_magazine_id_fkey"
+            columns: ["magazine_id"]
+            isOneToOne: false
+            referencedRelation: "magazines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       magazines: {
         Row: {
           country: string
@@ -2273,6 +2308,7 @@ export type Database = {
           email: string | null
           id: string
           section_id: string | null
+          suspended_at: string | null
           updated_at: string
           user_id: string
         }
@@ -2283,6 +2319,7 @@ export type Database = {
           email?: string | null
           id?: string
           section_id?: string | null
+          suspended_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -2293,6 +2330,7 @@ export type Database = {
           email?: string | null
           id?: string
           section_id?: string | null
+          suspended_at?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -3719,7 +3757,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "editor" | "user" | "colaborador"
+      app_role: "admin" | "editor" | "user" | "colaborador" | "lector"
       live_center_status: "upcoming" | "live" | "finished"
       live_result_status: "en_vivo" | "finalizado" | "proxima"
       mvp_gender: "masculino" | "femenino"
@@ -3864,7 +3902,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "editor", "user", "colaborador"],
+      app_role: ["admin", "editor", "user", "colaborador", "lector"],
       live_center_status: ["upcoming", "live", "finished"],
       live_result_status: ["en_vivo", "finalizado", "proxima"],
       mvp_gender: ["masculino", "femenino"],

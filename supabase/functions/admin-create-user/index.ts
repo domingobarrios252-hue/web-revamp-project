@@ -7,11 +7,13 @@ const corsHeaders = {
 };
 
 type Payload = {
+  action?: "create" | "delete";
   email?: string;
   password?: string;
   displayName?: string;
-  role?: "admin" | "editor";
+  role?: "admin" | "editor" | "lector";
   sectionId?: string | null;
+  userId?: string;
 };
 
 Deno.serve(async (req) => {
@@ -54,10 +56,25 @@ Deno.serve(async (req) => {
     return json({ error: "Datos no válidos" }, 400);
   }
 
+  // --- Acción: eliminar usuario ---
+  if (payload.action === "delete") {
+    const uid = payload.userId;
+    if (!uid) return json({ error: "userId requerido" }, 400);
+    if (uid === authData.user.id) return json({ error: "No puedes eliminarte a ti mismo" }, 400);
+    const { error: delAuthErr } = await adminClient.auth.admin.deleteUser(uid);
+    if (delAuthErr) return json({ error: delAuthErr.message }, 400);
+    // Las tablas referenciadas cascadean por FK a auth.users; forzamos limpieza defensiva:
+    await adminClient.from("user_roles").delete().eq("user_id", uid);
+    await adminClient.from("profiles").delete().eq("user_id", uid);
+    return json({ ok: true });
+  }
+
+  // --- Acción por defecto: crear ---
   const email = payload.email?.trim().toLowerCase();
   const password = payload.password ?? "";
   const displayName = payload.displayName?.trim() || email?.split("@")[0] || "Usuario";
-  const role = payload.role === "admin" ? "admin" : "editor";
+  const role: "admin" | "editor" | "lector" =
+    payload.role === "admin" ? "admin" : payload.role === "lector" ? "lector" : "editor";
   const sectionId = role === "editor" ? payload.sectionId : null;
 
   if (!email || !/^\S+@\S+\.\S+$/.test(email)) return json({ error: "Email no válido" }, 400);
