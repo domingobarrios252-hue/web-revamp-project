@@ -257,7 +257,7 @@ function ResultadosEventoPage() {
     sortKey !== key ? <ArrowUpDown className="h-3 w-3 opacity-50" /> : sortDir === "asc" ? <ArrowUp className="h-3 w-3 text-gold" /> : <ArrowDown className="h-3 w-3 text-gold" />;
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 md:px-6">
+    <div className="mx-auto max-w-7xl px-5 py-10 md:px-6">
       <Link to="/resultados" className="font-condensed mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-gold">
         <ArrowLeft className="h-4 w-4" /> {t("common.backTo")} {t("results.title")}
       </Link>
@@ -441,7 +441,7 @@ function ResultadosEventoPage() {
           );
         })}
       </section>
-    </main>
+    </div>
   );
 }
 
@@ -624,14 +624,16 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
                 href={d.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-condensed inline-flex flex-1 items-center justify-center gap-1.5 bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
+                aria-label={`Ver PDF: ${d.name}`}
+                className="font-condensed inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
               >
                 <ExternalLink className="h-3 w-3" /> Ver PDF
               </a>
               <a
                 href={d.file_url}
                 download
-                className="font-condensed inline-flex items-center justify-center gap-1.5 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold"
+                aria-label={`Descargar PDF: ${d.name}`}
+                className="font-condensed inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold"
               >
                 <Download className="h-3 w-3" /> Descargar
               </a>
