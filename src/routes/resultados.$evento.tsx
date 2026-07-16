@@ -548,9 +548,13 @@ function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null
   return (
     <div className="mt-5 flex flex-wrap gap-2">
       {meta?.pdf_url && (
-        <a href={meta.pdf_url} target="_blank" rel="noopener noreferrer" download className={btnPrimary}>
-          <FileText className="h-3.5 w-3.5" /> Descargar PDF oficial
-        </a>
+        <SignedPdfLink
+          url={meta.pdf_url}
+          label="Descargar PDF oficial"
+          ariaLabel="Descargar PDF oficial del evento"
+          className={btnPrimary}
+          icon={<FileText className="h-3.5 w-3.5" />}
+        />
       )}
       {meta?.stream_url && (
         <a href={meta.stream_url} target="_blank" rel="noopener noreferrer" className={btn}>
@@ -576,6 +580,55 @@ function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null
     </div>
   );
 }
+
+function SignedPdfLink({
+  url,
+  label,
+  ariaLabel,
+  className,
+  icon,
+  download,
+}: {
+  url: string;
+  label: React.ReactNode;
+  ariaLabel: string;
+  className: string;
+  icon?: React.ReactNode;
+  download?: boolean;
+}) {
+  const [href, setHref] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getViewableStorageUrl(url)
+      .then((u) => { if (!cancelled) setHref(u); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [url]);
+
+  if (!href) {
+    return (
+      <span className={className + " pointer-events-none opacity-60"} aria-label={ariaLabel}>
+        {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : icon} {label}
+      </span>
+    );
+  }
+  return (
+    <a
+      href={href}
+      target={download ? undefined : "_blank"}
+      rel="noopener noreferrer"
+      {...(download ? { download: "" } : {})}
+      aria-label={ariaLabel}
+      className={className}
+    >
+      {icon} {label}
+    </a>
+  );
+}
+
 
 const DOC_TYPE_LABEL: Record<OfficialDoc["doc_type"], string> = {
   clasificacion: "Clasificación",
