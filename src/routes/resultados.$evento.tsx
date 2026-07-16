@@ -1,11 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2, Download, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2, Download, ExternalLink, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
 import { exportCsv, exportPdf, exportXlsx, type ExportRow } from "@/lib/resultsExport";
 import { toast } from "sonner";
+import { getViewableStorageUrl } from "@/lib/signedStorageUrl";
+
 
 
 type ResultRow = {
@@ -546,9 +548,13 @@ function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null
   return (
     <div className="mt-5 flex flex-wrap gap-2">
       {meta?.pdf_url && (
-        <a href={meta.pdf_url} target="_blank" rel="noopener noreferrer" download className={btnPrimary}>
-          <FileText className="h-3.5 w-3.5" /> Descargar PDF oficial
-        </a>
+        <SignedPdfLink
+          url={meta.pdf_url}
+          label="Descargar PDF oficial"
+          ariaLabel="Descargar PDF oficial del evento"
+          className={btnPrimary}
+          icon={<FileText className="h-3.5 w-3.5" />}
+        />
       )}
       {meta?.stream_url && (
         <a href={meta.stream_url} target="_blank" rel="noopener noreferrer" className={btn}>
@@ -574,6 +580,55 @@ function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null
     </div>
   );
 }
+
+function SignedPdfLink({
+  url,
+  label,
+  ariaLabel,
+  className,
+  icon,
+  download,
+}: {
+  url: string;
+  label: React.ReactNode;
+  ariaLabel: string;
+  className: string;
+  icon?: React.ReactNode;
+  download?: boolean;
+}) {
+  const [href, setHref] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getViewableStorageUrl(url)
+      .then((u) => { if (!cancelled) setHref(u); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [url]);
+
+  if (!href) {
+    return (
+      <span className={className + " pointer-events-none opacity-60"} aria-label={ariaLabel}>
+        {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : icon} {label}
+      </span>
+    );
+  }
+  return (
+    <a
+      href={href}
+      target={download ? undefined : "_blank"}
+      rel="noopener noreferrer"
+      {...(download ? { download: "" } : {})}
+      aria-label={ariaLabel}
+      className={className}
+    >
+      {icon} {label}
+    </a>
+  );
+}
+
 
 const DOC_TYPE_LABEL: Record<OfficialDoc["doc_type"], string> = {
   clasificacion: "Clasificación",
@@ -615,29 +670,29 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
                   </span>
                 )}
               </div>
-              <h3 className="font-display line-clamp-2 text-sm uppercase tracking-wider text-foreground">
+              <h3 className="font-display line-clamp-2 break-all text-sm uppercase tracking-wider text-foreground">
                 {d.name}
               </h3>
+
             </div>
             <div className="mt-4 flex items-center gap-2">
-              <a
-                href={d.file_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Ver PDF: ${d.name}`}
+              <SignedPdfLink
+                url={d.file_url}
+                label="Ver PDF"
+                ariaLabel={`Ver PDF: ${d.name}`}
                 className="font-condensed inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
-              >
-                <ExternalLink className="h-3 w-3" /> Ver PDF
-              </a>
-              <a
-                href={d.file_url}
-                download
-                aria-label={`Descargar PDF: ${d.name}`}
+                icon={<ExternalLink className="h-3 w-3" />}
+              />
+              <SignedPdfLink
+                url={d.file_url}
+                label="Descargar"
+                ariaLabel={`Descargar PDF: ${d.name}`}
                 className="font-condensed inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold"
-              >
-                <Download className="h-3 w-3" /> Descargar
-              </a>
+                icon={<Download className="h-3 w-3" />}
+                download
+              />
             </div>
+
             <p className="mt-2 text-[10px] text-muted-foreground">Datos publicados por RollerZone.es</p>
           </article>
         ))}
