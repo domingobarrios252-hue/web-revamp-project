@@ -675,24 +675,23 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
               </h3>
             </div>
             <div className="mt-4 flex items-center gap-2">
-              <a
-                href={d.file_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Ver PDF: ${d.name}`}
+              <SignedPdfLink
+                url={d.file_url}
+                label="Ver PDF"
+                ariaLabel={`Ver PDF: ${d.name}`}
                 className="font-condensed inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
-              >
-                <ExternalLink className="h-3 w-3" /> Ver PDF
-              </a>
-              <a
-                href={d.file_url}
-                download
-                aria-label={`Descargar PDF: ${d.name}`}
+                icon={<ExternalLink className="h-3 w-3" />}
+              />
+              <SignedPdfLink
+                url={d.file_url}
+                label="Descargar"
+                ariaLabel={`Descargar PDF: ${d.name}`}
                 className="font-condensed inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold"
-              >
-                <Download className="h-3 w-3" /> Descargar
-              </a>
+                icon={<Download className="h-3 w-3" />}
+                download
+              />
             </div>
+
             <p className="mt-2 text-[10px] text-muted-foreground">Datos publicados por RollerZone.es</p>
           </article>
         ))}
