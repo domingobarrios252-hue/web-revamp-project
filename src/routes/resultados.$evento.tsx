@@ -1,11 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2, Download, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2, Download, ExternalLink, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
 import { exportCsv, exportPdf, exportXlsx, type ExportRow } from "@/lib/resultsExport";
 import { toast } from "sonner";
+import { getViewableStorageUrl } from "@/lib/signedStorageUrl";
+
 
 
 type ResultRow = {
