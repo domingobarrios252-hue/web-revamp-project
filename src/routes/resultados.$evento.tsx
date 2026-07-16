@@ -670,9 +670,10 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
                   </span>
                 )}
               </div>
-              <h3 className="font-display line-clamp-2 text-sm uppercase tracking-wider text-foreground">
+              <h3 className="font-display line-clamp-2 break-all text-sm uppercase tracking-wider text-foreground">
                 {d.name}
               </h3>
+
             </div>
             <div className="mt-4 flex items-center gap-2">
               <SignedPdfLink
