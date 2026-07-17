@@ -39,6 +39,7 @@ function SpecialLanding() {
   const { pieces } = useSpecialPieces();
   const featured = pieces.find((p) => p.featured) ?? pieces[0];
   const heroImage = featured?.image?.trim() ? featured.image : SPECIAL_FALLBACK_IMAGE;
+  const isLive = useTvLiveStatus();
   return (
     <>
       <SpecialHero
@@ -55,7 +56,7 @@ function SpecialLanding() {
 
       <section className="border-b border-border bg-background py-12 md:py-16">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <WorldSkateEuropeLivePlayer isLive={false} />
+          <WorldSkateEuropeLivePlayer isLive={isLive} />
         </div>
       </section>
 
