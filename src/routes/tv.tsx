@@ -6,6 +6,7 @@ import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvSidebarBanners } from "@/components/tv/TvSidebarBanners";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 import { TvEventLiveCenter } from "@/components/tv/TvEventLiveCenter";
+import { WorldSkateEuropeLivePlayer } from "@/components/tv/WorldSkateEuropeLivePlayer";
 
 const TV_OG_IMAGE = "https://rollerzone.es/__l5e/assets-v1/57c70012-bbe9-4642-b766-6b243447cc73/og-rollerzone-tv.jpg";
 const TV_CANONICAL = "https://rollerzone.es/tv";
@@ -294,6 +295,13 @@ function TvPage() {
               showDots={settings?.premium_show_dots ?? true}
             />
           </div>
+        </div>
+      </section>
+
+      {/* EUROPEO 2026 — WORLD SKATE EUROPE TV */}
+      <section id="europeo-2026" className="scroll-mt-20 border-b border-gold/30 bg-surface/40">
+        <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
+          <WorldSkateEuropeLivePlayer isLive={isLive} />
         </div>
       </section>
 
