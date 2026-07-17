@@ -7,6 +7,7 @@ import { RelatedSelectionNews } from "@/components/specials/europeo-2026/Related
 import { EVENT, piecePath, SPECIAL_FALLBACK_IMAGE } from "@/lib/specials/europeo-2026";
 import { useSpecialPieces } from "@/lib/specials/useSpecialPieces";
 import { WorldSkateEuropeLivePlayer } from "@/components/tv/WorldSkateEuropeLivePlayer";
+import { useTvLiveStatus } from "@/lib/tv/useTvLiveStatus";
 
 const CANON = "https://rollerzone.lovable.app/camino-al-europeo-2026";
 
