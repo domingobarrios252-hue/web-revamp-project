@@ -47,7 +47,17 @@ export function WorldSkateEuropeLivePlayer({ isLive = false, className = "" }: P
             frameBorder={0}
             className="absolute inset-0 h-full w-full"
           />
-          {!isLive && (
+          {isLive ? (
+            <div className="pointer-events-none absolute left-4 top-4 z-10">
+              <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                </span>
+                EN DIRECTO
+              </span>
+            </div>
+          ) : (
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center bg-black/75 p-6 text-center">
               <Radio className="mb-3 h-10 w-10 text-gold" />
               <p className="font-display text-lg uppercase tracking-widest text-white md:text-xl">
