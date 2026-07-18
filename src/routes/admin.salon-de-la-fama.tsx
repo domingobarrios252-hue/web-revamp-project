@@ -7,22 +7,35 @@ import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 
-type AchievementCategory = "mundial" | "europeo" | "nacional" | "otro";
+type AchievementCategory =
+  | "mundial"
+  | "europeo"
+  | "nacional"
+  | "campeonato-mundial"
+  | "premio-individual"
+  | "maraton-internacional"
+  | "world-inline-cup"
+  | "otro";
 type Achievement = { year?: number; title: string; description?: string; category?: AchievementCategory };
 type ClubStint = { name: string; years?: string };
 type Legend = {
   id: string;
   full_name: string;
+  nickname: string | null;
   slug: string;
   photo_url: string | null;
   cover_url: string | null;
   country_code: string;
   birth_year: number | null;
+  birth_date: string | null;
+  birth_place: string | null;
   death_year: number | null;
   induction_year: number | null;
   specialty: string | null;
   club: string | null;
   nationality: string | null;
+  national_team: string | null;
+  career_years: string | null;
   bio: string | null;
   achievements: Achievement[];
   highlights: string[];
@@ -31,6 +44,18 @@ type Legend = {
   sort_order: number;
   published: boolean;
 };
+
+const CATEGORY_OPTIONS: { value: AchievementCategory; label: string }[] = [
+  { value: "campeonato-mundial", label: "Campeonato Mundial" },
+  { value: "mundial", label: "Mundial (general)" },
+  { value: "europeo", label: "Europeo" },
+  { value: "nacional", label: "Nacional" },
+  { value: "premio-individual", label: "Premio individual" },
+  { value: "maraton-internacional", label: "Maratón internacional" },
+  { value: "world-inline-cup", label: "World Inline Cup" },
+  { value: "otro", label: "Otro" },
+];
+
 
 const schema = z.object({
   full_name: z.string().trim().min(2).max(120),
