@@ -223,16 +223,21 @@ function LegendForm({ initial, onClose, onSaved }: {
   onSaved: () => void;
 }) {
   const [full_name, setFullName] = useState(initial?.full_name ?? "");
+  const [nickname, setNickname] = useState(initial?.nickname ?? "");
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [photo_url, setPhoto] = useState(initial?.photo_url ?? "");
   const [cover_url, setCover] = useState(initial?.cover_url ?? "");
   const [country_code, setCountry] = useState(initial?.country_code ?? "es");
   const [birth_year, setBirth] = useState<string>(initial?.birth_year?.toString() ?? "");
+  const [birth_date, setBirthDate] = useState<string>(initial?.birth_date ?? "");
+  const [birth_place, setBirthPlace] = useState(initial?.birth_place ?? "");
   const [death_year, setDeath] = useState<string>(initial?.death_year?.toString() ?? "");
   const [induction_year, setInduction] = useState<string>(initial?.induction_year?.toString() ?? "");
   const [specialty, setSpecialty] = useState(initial?.specialty ?? "");
   const [club, setClub] = useState(initial?.club ?? "");
   const [nationality, setNationality] = useState(initial?.nationality ?? "");
+  const [national_team, setNationalTeam] = useState(initial?.national_team ?? "");
+  const [career_years, setCareerYears] = useState(initial?.career_years ?? "");
   const [bio, setBio] = useState(initial?.bio ?? "");
   const [achievements, setAchievements] = useState<Achievement[]>(initial?.achievements ?? []);
   const [highlights, setHighlights] = useState<string[]>(initial?.highlights ?? []);
