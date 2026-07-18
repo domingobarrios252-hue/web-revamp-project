@@ -7,22 +7,35 @@ import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 
-type AchievementCategory = "mundial" | "europeo" | "nacional" | "otro";
+type AchievementCategory =
+  | "mundial"
+  | "europeo"
+  | "nacional"
+  | "campeonato-mundial"
+  | "premio-individual"
+  | "maraton-internacional"
+  | "world-inline-cup"
+  | "otro";
 type Achievement = { year?: number; title: string; description?: string; category?: AchievementCategory };
 type ClubStint = { name: string; years?: string };
 type Legend = {
   id: string;
   full_name: string;
+  nickname: string | null;
   slug: string;
   photo_url: string | null;
   cover_url: string | null;
   country_code: string;
   birth_year: number | null;
+  birth_date: string | null;
+  birth_place: string | null;
   death_year: number | null;
   induction_year: number | null;
   specialty: string | null;
   club: string | null;
   nationality: string | null;
+  national_team: string | null;
+  career_years: string | null;
   bio: string | null;
   achievements: Achievement[];
   highlights: string[];
@@ -32,19 +45,36 @@ type Legend = {
   published: boolean;
 };
 
+const CATEGORY_OPTIONS: { value: AchievementCategory; label: string }[] = [
+  { value: "campeonato-mundial", label: "Campeonato Mundial" },
+  { value: "mundial", label: "Mundial (general)" },
+  { value: "europeo", label: "Europeo" },
+  { value: "nacional", label: "Nacional" },
+  { value: "premio-individual", label: "Premio individual" },
+  { value: "maraton-internacional", label: "Maratón internacional" },
+  { value: "world-inline-cup", label: "World Inline Cup" },
+  { value: "otro", label: "Otro" },
+];
+
+
 const schema = z.object({
   full_name: z.string().trim().min(2).max(120),
+  nickname: z.string().trim().max(80).optional(),
   slug: z.string().trim().min(2).max(120).regex(/^[a-z0-9-]+$/, "Solo minúsculas, números y guiones"),
   photo_url: z.string().trim().url().optional().or(z.literal("")),
   cover_url: z.string().trim().url().optional().or(z.literal("")),
   country_code: z.string().trim().min(2).max(2),
   birth_year: z.number().int().min(1900).max(2030).optional(),
+  birth_date: z.string().trim().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato AAAA-MM-DD").optional().or(z.literal("")),
+  birth_place: z.string().trim().max(160).optional(),
   death_year: z.number().int().min(1900).max(2100).optional(),
   induction_year: z.number().int().min(1900).max(2100).optional(),
-  specialty: z.string().trim().max(80).optional(),
-  club: z.string().trim().max(120).optional(),
+  specialty: z.string().trim().max(120).optional(),
+  club: z.string().trim().max(160).optional(),
   nationality: z.string().trim().max(80).optional(),
-  bio: z.string().trim().max(5000).optional(),
+  national_team: z.string().trim().max(80).optional(),
+  career_years: z.string().trim().max(60).optional(),
+  bio: z.string().trim().max(10000).optional(),
   sort_order: z.number().int().min(0).max(9999),
   published: z.boolean(),
 });
@@ -193,16 +223,21 @@ function LegendForm({ initial, onClose, onSaved }: {
   onSaved: () => void;
 }) {
   const [full_name, setFullName] = useState(initial?.full_name ?? "");
+  const [nickname, setNickname] = useState(initial?.nickname ?? "");
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [photo_url, setPhoto] = useState(initial?.photo_url ?? "");
   const [cover_url, setCover] = useState(initial?.cover_url ?? "");
   const [country_code, setCountry] = useState(initial?.country_code ?? "es");
   const [birth_year, setBirth] = useState<string>(initial?.birth_year?.toString() ?? "");
+  const [birth_date, setBirthDate] = useState<string>(initial?.birth_date ?? "");
+  const [birth_place, setBirthPlace] = useState(initial?.birth_place ?? "");
   const [death_year, setDeath] = useState<string>(initial?.death_year?.toString() ?? "");
   const [induction_year, setInduction] = useState<string>(initial?.induction_year?.toString() ?? "");
   const [specialty, setSpecialty] = useState(initial?.specialty ?? "");
   const [club, setClub] = useState(initial?.club ?? "");
   const [nationality, setNationality] = useState(initial?.nationality ?? "");
+  const [national_team, setNationalTeam] = useState(initial?.national_team ?? "");
+  const [career_years, setCareerYears] = useState(initial?.career_years ?? "");
   const [bio, setBio] = useState(initial?.bio ?? "");
   const [achievements, setAchievements] = useState<Achievement[]>(initial?.achievements ?? []);
   const [highlights, setHighlights] = useState<string[]>(initial?.highlights ?? []);
@@ -218,11 +253,13 @@ function LegendForm({ initial, onClose, onSaved }: {
 
   const save = async () => {
     const parsed = schema.safeParse({
-      full_name, slug, photo_url, cover_url, country_code: country_code.toLowerCase(),
+      full_name, nickname, slug, photo_url, cover_url, country_code: country_code.toLowerCase(),
       birth_year: birth_year ? Number(birth_year) : undefined,
+      birth_date,
+      birth_place,
       death_year: death_year ? Number(death_year) : undefined,
       induction_year: induction_year ? Number(induction_year) : undefined,
-      specialty, club, nationality, bio,
+      specialty, club, nationality, national_team, career_years, bio,
       sort_order: Number(sort_order) || 0,
       published,
     });
@@ -232,11 +269,16 @@ function LegendForm({ initial, onClose, onSaved }: {
     setSaving(true);
     const payload = {
       ...parsed.data,
+      nickname: parsed.data.nickname || null,
       photo_url: parsed.data.photo_url || null,
       cover_url: parsed.data.cover_url || null,
+      birth_date: parsed.data.birth_date || null,
+      birth_place: parsed.data.birth_place || null,
       specialty: parsed.data.specialty || null,
       club: parsed.data.club || null,
       nationality: parsed.data.nationality || null,
+      national_team: parsed.data.national_team || null,
+      career_years: parsed.data.career_years || null,
       bio: parsed.data.bio || null,
       achievements,
       highlights,
@@ -271,23 +313,38 @@ function LegendForm({ initial, onClose, onSaved }: {
           <Field label="Slug *">
             <input className={inp} value={slug} onChange={(e) => setSlug(e.target.value)} />
           </Field>
+          <Field label="Apodo">
+            <input className={inp} value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="Ej. “Chechi” Baena" />
+          </Field>
           <Field label="País (código 2 letras)">
             <input className={inp} value={country_code} onChange={(e) => setCountry(e.target.value)} maxLength={2} />
           </Field>
           <Field label="Nacionalidad (texto)">
             <input className={inp} value={nationality} onChange={(e) => setNationality(e.target.value)} />
           </Field>
+          <Field label="Selección nacional">
+            <input className={inp} value={national_team} onChange={(e) => setNationalTeam(e.target.value)} placeholder="Ej. Colombia" />
+          </Field>
           <Field label="Especialidad">
-            <input className={inp} value={specialty} onChange={(e) => setSpecialty(e.target.value)} placeholder="Velocidad, Artístico…" />
+            <input className={inp} value={specialty} onChange={(e) => setSpecialty(e.target.value)} placeholder="Pista, Ruta, Maratón…" />
           </Field>
           <Field label="Club">
             <input className={inp} value={club} onChange={(e) => setClub(e.target.value)} />
           </Field>
-          <Field label="Año nacimiento">
+          <Field label="Fecha de nacimiento (AAAA-MM-DD)">
+            <input className={inp} type="date" value={birth_date} onChange={(e) => setBirthDate(e.target.value)} />
+          </Field>
+          <Field label="Lugar de nacimiento">
+            <input className={inp} value={birth_place} onChange={(e) => setBirthPlace(e.target.value)} placeholder="Ciudad, País" />
+          </Field>
+          <Field label="Año nacimiento (solo año)">
             <input className={inp} type="number" value={birth_year} onChange={(e) => setBirth(e.target.value)} />
           </Field>
           <Field label="Año fallecimiento">
             <input className={inp} type="number" value={death_year} onChange={(e) => setDeath(e.target.value)} />
+          </Field>
+          <Field label="Años de competición">
+            <input className={inp} value={career_years} onChange={(e) => setCareerYears(e.target.value)} placeholder="Ej. 1996–2014" />
           </Field>
           <Field label="Año inducción">
             <input className={inp} type="number" value={induction_year} onChange={(e) => setInduction(e.target.value)} />
@@ -296,6 +353,7 @@ function LegendForm({ initial, onClose, onSaved }: {
             <input className={inp} type="number" value={sort_order} onChange={(e) => setSort(e.target.value)} />
           </Field>
         </div>
+
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <Field label="Foto principal">
@@ -345,10 +403,9 @@ function LegendForm({ initial, onClose, onSaved }: {
                   value={a.category ?? "otro"}
                   onChange={(e) => { const v = [...achievements]; v[i] = { ...a, category: e.target.value as AchievementCategory }; setAchievements(v); }}
                 >
-                  <option value="mundial">Mundial</option>
-                  <option value="europeo">Europeo</option>
-                  <option value="nacional">Nacional</option>
-                  <option value="otro">Otro</option>
+                  {CATEGORY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
                 </select>
                 <input
                   className={inp} placeholder="Título"

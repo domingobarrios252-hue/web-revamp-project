@@ -16,21 +16,36 @@ export const Route = createFileRoute("/salon-de-la-fama/$slug")({
   component: LegendProfilePage,
 });
 
+type AchievementCategory =
+  | "mundial"
+  | "europeo"
+  | "nacional"
+  | "campeonato-mundial"
+  | "premio-individual"
+  | "maraton-internacional"
+  | "world-inline-cup"
+  | "otro";
+
 type Legend = {
   id: string;
   slug: string;
   full_name: string;
+  nickname: string | null;
   photo_url: string | null;
   cover_url: string | null;
   country_code: string;
   birth_year: number | null;
+  birth_date: string | null;
+  birth_place: string | null;
   death_year: number | null;
   induction_year: number | null;
   specialty: string | null;
   club: string | null;
   nationality: string | null;
+  national_team: string | null;
+  career_years: string | null;
   bio: string | null;
-  achievements: Array<{ year?: number; title: string; description?: string; category?: "mundial" | "europeo" | "nacional" | "otro" }>;
+  achievements: Array<{ year?: number; title: string; description?: string; category?: AchievementCategory }>;
   highlights: string[];
   gallery: string[];
   clubs_history: Array<{ name: string; years?: string }>;
@@ -38,19 +53,32 @@ type Legend = {
 };
 
 const CAT_LABEL: Record<string, string> = {
+  "campeonato-mundial": "Campeonato Mundial",
   mundial: "Mundial",
   europeo: "Europeo",
   nacional: "Nacional",
+  "premio-individual": "Premio individual",
+  "maraton-internacional": "Maratón internacional",
+  "world-inline-cup": "World Inline Cup",
   otro: "Otro",
 };
-const CAT_ORDER = ["mundial", "europeo", "nacional", "otro"] as const;
+const CAT_ORDER = [
+  "campeonato-mundial",
+  "mundial",
+  "europeo",
+  "nacional",
+  "premio-individual",
+  "maraton-internacional",
+  "world-inline-cup",
+  "otro",
+] as const;
 
 function LegendProfilePage() {
   const { slug } = Route.useParams();
   const [legend, setLegend] = useState<Legend | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
-  const [catFilter, setCatFilter] = useState<"todos" | "mundial" | "europeo" | "nacional" | "otro">("todos");
+  const [catFilter, setCatFilter] = useState<"todos" | AchievementCategory>("todos");
 
   const availableCats = useMemo(() => {
     if (!legend?.achievements?.length) return [] as string[];
@@ -133,6 +161,11 @@ function LegendProfilePage() {
               <h1 className="mt-2 font-display text-4xl md:text-6xl font-black uppercase text-[#F5F5F5]">
                 {legend.full_name}
               </h1>
+              {legend.nickname && (
+                <div className="mt-1 font-display text-lg md:text-xl italic text-[#D4A017]">
+                  {legend.nickname}
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[#B5B5B5]">
                 {legend.nationality && (
                   <span className="inline-flex items-center gap-1">
@@ -145,7 +178,8 @@ function LegendProfilePage() {
                   </span>
                 )}
                 {legend.club && <span>· {legend.club}</span>}
-                {(legend.birth_year || legend.death_year) && (
+                {legend.career_years && <span className="text-[#888]">· {legend.career_years}</span>}
+                {!legend.career_years && (legend.birth_year || legend.death_year) && (
                   <span className="text-[#888]">
                     {legend.birth_year ?? "?"}
                     {legend.death_year ? ` — ${legend.death_year}` : ""}
@@ -241,6 +275,52 @@ function LegendProfilePage() {
         </div>
 
         <aside className="space-y-6">
+          {(legend.nickname || legend.birth_date || legend.birth_place || legend.national_team || legend.career_years || legend.induction_year) && (
+            <div className="rounded-[8px] border border-[#2a2a2a] bg-[#161616] p-4">
+              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-[#D4A017] mb-3">
+                Ficha personal
+              </h3>
+              <dl className="space-y-2 text-sm">
+                {legend.nickname && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Apodo</dt>
+                    <dd className="text-[#F5F5F5] text-right">{legend.nickname}</dd>
+                  </div>
+                )}
+                {legend.birth_date && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Nacimiento</dt>
+                    <dd className="text-[#F5F5F5] text-right">{new Date(legend.birth_date + "T00:00:00").toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}</dd>
+                  </div>
+                )}
+                {legend.birth_place && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Lugar</dt>
+                    <dd className="text-[#F5F5F5] text-right">{legend.birth_place}</dd>
+                  </div>
+                )}
+                {legend.national_team && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Selección</dt>
+                    <dd className="text-[#F5F5F5] text-right">{legend.national_team}</dd>
+                  </div>
+                )}
+                {legend.career_years && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Trayectoria</dt>
+                    <dd className="text-[#F5F5F5] text-right">{legend.career_years}</dd>
+                  </div>
+                )}
+                {legend.induction_year && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Inducción</dt>
+                    <dd className="text-[#D4A017] font-semibold text-right">{legend.induction_year}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          )}
+
           {legend.highlights?.length > 0 && (
             <div className="rounded-[8px] border border-[#3a2e0d] bg-[#1a1610] p-4">
               <h3 className="font-display text-sm font-bold uppercase tracking-widest text-[#D4A017] mb-3">
