@@ -78,7 +78,7 @@ function LegendProfilePage() {
   const [legend, setLegend] = useState<Legend | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
-  const [catFilter, setCatFilter] = useState<"todos" | "mundial" | "europeo" | "nacional" | "otro">("todos");
+  const [catFilter, setCatFilter] = useState<"todos" | AchievementCategory>("todos");
 
   const availableCats = useMemo(() => {
     if (!legend?.achievements?.length) return [] as string[];
