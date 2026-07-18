@@ -253,11 +253,13 @@ function LegendForm({ initial, onClose, onSaved }: {
 
   const save = async () => {
     const parsed = schema.safeParse({
-      full_name, slug, photo_url, cover_url, country_code: country_code.toLowerCase(),
+      full_name, nickname, slug, photo_url, cover_url, country_code: country_code.toLowerCase(),
       birth_year: birth_year ? Number(birth_year) : undefined,
+      birth_date,
+      birth_place,
       death_year: death_year ? Number(death_year) : undefined,
       induction_year: induction_year ? Number(induction_year) : undefined,
-      specialty, club, nationality, bio,
+      specialty, club, nationality, national_team, career_years, bio,
       sort_order: Number(sort_order) || 0,
       published,
     });
@@ -267,11 +269,16 @@ function LegendForm({ initial, onClose, onSaved }: {
     setSaving(true);
     const payload = {
       ...parsed.data,
+      nickname: parsed.data.nickname || null,
       photo_url: parsed.data.photo_url || null,
       cover_url: parsed.data.cover_url || null,
+      birth_date: parsed.data.birth_date || null,
+      birth_place: parsed.data.birth_place || null,
       specialty: parsed.data.specialty || null,
       club: parsed.data.club || null,
       nationality: parsed.data.nationality || null,
+      national_team: parsed.data.national_team || null,
+      career_years: parsed.data.career_years || null,
       bio: parsed.data.bio || null,
       achievements,
       highlights,
