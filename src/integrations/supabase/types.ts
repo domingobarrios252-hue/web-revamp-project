@@ -1007,7 +1007,10 @@ export type Database = {
         Row: {
           achievements: Json
           bio: string | null
+          birth_date: string | null
+          birth_place: string | null
           birth_year: number | null
+          career_years: string | null
           club: string | null
           clubs_history: Json
           country_code: string
@@ -1019,7 +1022,9 @@ export type Database = {
           highlights: Json
           id: string
           induction_year: number | null
+          national_team: string | null
           nationality: string | null
+          nickname: string | null
           photo_url: string | null
           published: boolean
           slug: string
@@ -1031,7 +1036,10 @@ export type Database = {
         Insert: {
           achievements?: Json
           bio?: string | null
+          birth_date?: string | null
+          birth_place?: string | null
           birth_year?: number | null
+          career_years?: string | null
           club?: string | null
           clubs_history?: Json
           country_code?: string
@@ -1043,7 +1051,9 @@ export type Database = {
           highlights?: Json
           id?: string
           induction_year?: number | null
+          national_team?: string | null
           nationality?: string | null
+          nickname?: string | null
           photo_url?: string | null
           published?: boolean
           slug: string
@@ -1055,7 +1065,10 @@ export type Database = {
         Update: {
           achievements?: Json
           bio?: string | null
+          birth_date?: string | null
+          birth_place?: string | null
           birth_year?: number | null
+          career_years?: string | null
           club?: string | null
           clubs_history?: Json
           country_code?: string
@@ -1067,7 +1080,9 @@ export type Database = {
           highlights?: Json
           id?: string
           induction_year?: number | null
+          national_team?: string | null
           nationality?: string | null
+          nickname?: string | null
           photo_url?: string | null
           published?: boolean
           slug?: string
