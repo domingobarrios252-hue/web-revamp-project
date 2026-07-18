@@ -313,23 +313,38 @@ function LegendForm({ initial, onClose, onSaved }: {
           <Field label="Slug *">
             <input className={inp} value={slug} onChange={(e) => setSlug(e.target.value)} />
           </Field>
+          <Field label="Apodo">
+            <input className={inp} value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="Ej. “Chechi” Baena" />
+          </Field>
           <Field label="País (código 2 letras)">
             <input className={inp} value={country_code} onChange={(e) => setCountry(e.target.value)} maxLength={2} />
           </Field>
           <Field label="Nacionalidad (texto)">
             <input className={inp} value={nationality} onChange={(e) => setNationality(e.target.value)} />
           </Field>
+          <Field label="Selección nacional">
+            <input className={inp} value={national_team} onChange={(e) => setNationalTeam(e.target.value)} placeholder="Ej. Colombia" />
+          </Field>
           <Field label="Especialidad">
-            <input className={inp} value={specialty} onChange={(e) => setSpecialty(e.target.value)} placeholder="Velocidad, Artístico…" />
+            <input className={inp} value={specialty} onChange={(e) => setSpecialty(e.target.value)} placeholder="Pista, Ruta, Maratón…" />
           </Field>
           <Field label="Club">
             <input className={inp} value={club} onChange={(e) => setClub(e.target.value)} />
           </Field>
-          <Field label="Año nacimiento">
+          <Field label="Fecha de nacimiento (AAAA-MM-DD)">
+            <input className={inp} type="date" value={birth_date} onChange={(e) => setBirthDate(e.target.value)} />
+          </Field>
+          <Field label="Lugar de nacimiento">
+            <input className={inp} value={birth_place} onChange={(e) => setBirthPlace(e.target.value)} placeholder="Ciudad, País" />
+          </Field>
+          <Field label="Año nacimiento (solo año)">
             <input className={inp} type="number" value={birth_year} onChange={(e) => setBirth(e.target.value)} />
           </Field>
           <Field label="Año fallecimiento">
             <input className={inp} type="number" value={death_year} onChange={(e) => setDeath(e.target.value)} />
+          </Field>
+          <Field label="Años de competición">
+            <input className={inp} value={career_years} onChange={(e) => setCareerYears(e.target.value)} placeholder="Ej. 1996–2014" />
           </Field>
           <Field label="Año inducción">
             <input className={inp} type="number" value={induction_year} onChange={(e) => setInduction(e.target.value)} />
@@ -338,6 +353,7 @@ function LegendForm({ initial, onClose, onSaved }: {
             <input className={inp} type="number" value={sort_order} onChange={(e) => setSort(e.target.value)} />
           </Field>
         </div>
+
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <Field label="Foto principal">
