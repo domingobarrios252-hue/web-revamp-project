@@ -16,21 +16,36 @@ export const Route = createFileRoute("/salon-de-la-fama/$slug")({
   component: LegendProfilePage,
 });
 
+type AchievementCategory =
+  | "mundial"
+  | "europeo"
+  | "nacional"
+  | "campeonato-mundial"
+  | "premio-individual"
+  | "maraton-internacional"
+  | "world-inline-cup"
+  | "otro";
+
 type Legend = {
   id: string;
   slug: string;
   full_name: string;
+  nickname: string | null;
   photo_url: string | null;
   cover_url: string | null;
   country_code: string;
   birth_year: number | null;
+  birth_date: string | null;
+  birth_place: string | null;
   death_year: number | null;
   induction_year: number | null;
   specialty: string | null;
   club: string | null;
   nationality: string | null;
+  national_team: string | null;
+  career_years: string | null;
   bio: string | null;
-  achievements: Array<{ year?: number; title: string; description?: string; category?: "mundial" | "europeo" | "nacional" | "otro" }>;
+  achievements: Array<{ year?: number; title: string; description?: string; category?: AchievementCategory }>;
   highlights: string[];
   gallery: string[];
   clubs_history: Array<{ name: string; years?: string }>;
@@ -38,12 +53,25 @@ type Legend = {
 };
 
 const CAT_LABEL: Record<string, string> = {
+  "campeonato-mundial": "Campeonato Mundial",
   mundial: "Mundial",
   europeo: "Europeo",
   nacional: "Nacional",
+  "premio-individual": "Premio individual",
+  "maraton-internacional": "Maratón internacional",
+  "world-inline-cup": "World Inline Cup",
   otro: "Otro",
 };
-const CAT_ORDER = ["mundial", "europeo", "nacional", "otro"] as const;
+const CAT_ORDER = [
+  "campeonato-mundial",
+  "mundial",
+  "europeo",
+  "nacional",
+  "premio-individual",
+  "maraton-internacional",
+  "world-inline-cup",
+  "otro",
+] as const;
 
 function LegendProfilePage() {
   const { slug } = Route.useParams();
