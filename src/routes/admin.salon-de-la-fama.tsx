@@ -403,10 +403,9 @@ function LegendForm({ initial, onClose, onSaved }: {
                   value={a.category ?? "otro"}
                   onChange={(e) => { const v = [...achievements]; v[i] = { ...a, category: e.target.value as AchievementCategory }; setAchievements(v); }}
                 >
-                  <option value="mundial">Mundial</option>
-                  <option value="europeo">Europeo</option>
-                  <option value="nacional">Nacional</option>
-                  <option value="otro">Otro</option>
+                  {CATEGORY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
                 </select>
                 <input
                   className={inp} placeholder="Título"
