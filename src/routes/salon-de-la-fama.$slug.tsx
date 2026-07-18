@@ -275,6 +275,52 @@ function LegendProfilePage() {
         </div>
 
         <aside className="space-y-6">
+          {(legend.nickname || legend.birth_date || legend.birth_place || legend.national_team || legend.career_years || legend.induction_year) && (
+            <div className="rounded-[8px] border border-[#2a2a2a] bg-[#161616] p-4">
+              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-[#D4A017] mb-3">
+                Ficha personal
+              </h3>
+              <dl className="space-y-2 text-sm">
+                {legend.nickname && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Apodo</dt>
+                    <dd className="text-[#F5F5F5] text-right">{legend.nickname}</dd>
+                  </div>
+                )}
+                {legend.birth_date && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Nacimiento</dt>
+                    <dd className="text-[#F5F5F5] text-right">{new Date(legend.birth_date + "T00:00:00").toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}</dd>
+                  </div>
+                )}
+                {legend.birth_place && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Lugar</dt>
+                    <dd className="text-[#F5F5F5] text-right">{legend.birth_place}</dd>
+                  </div>
+                )}
+                {legend.national_team && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Selección</dt>
+                    <dd className="text-[#F5F5F5] text-right">{legend.national_team}</dd>
+                  </div>
+                )}
+                {legend.career_years && (
+                  <div className="flex justify-between gap-3 border-b border-[#2a2a2a] pb-1.5">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Trayectoria</dt>
+                    <dd className="text-[#F5F5F5] text-right">{legend.career_years}</dd>
+                  </div>
+                )}
+                {legend.induction_year && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-[11px] uppercase tracking-widest text-[#888]">Inducción</dt>
+                    <dd className="text-[#D4A017] font-semibold text-right">{legend.induction_year}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          )}
+
           {legend.highlights?.length > 0 && (
             <div className="rounded-[8px] border border-[#3a2e0d] bg-[#1a1610] p-4">
               <h3 className="font-display text-sm font-bold uppercase tracking-widest text-[#D4A017] mb-3">
