@@ -161,6 +161,11 @@ function LegendProfilePage() {
               <h1 className="mt-2 font-display text-4xl md:text-6xl font-black uppercase text-[#F5F5F5]">
                 {legend.full_name}
               </h1>
+              {legend.nickname && (
+                <div className="mt-1 font-display text-lg md:text-xl italic text-[#D4A017]">
+                  {legend.nickname}
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[#B5B5B5]">
                 {legend.nationality && (
                   <span className="inline-flex items-center gap-1">
@@ -173,7 +178,8 @@ function LegendProfilePage() {
                   </span>
                 )}
                 {legend.club && <span>· {legend.club}</span>}
-                {(legend.birth_year || legend.death_year) && (
+                {legend.career_years && <span className="text-[#888]">· {legend.career_years}</span>}
+                {!legend.career_years && (legend.birth_year || legend.death_year) && (
                   <span className="text-[#888]">
                     {legend.birth_year ?? "?"}
                     {legend.death_year ? ` — ${legend.death_year}` : ""}
