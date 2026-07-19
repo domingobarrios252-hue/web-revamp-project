@@ -298,12 +298,6 @@ function TvPage() {
         </div>
       </section>
 
-      {/* EUROPEO 2026 — WORLD SKATE EUROPE TV */}
-      <section id="europeo-2026" className="scroll-mt-20 border-b border-gold/30 bg-surface/40">
-        <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-          <WorldSkateEuropeLivePlayer isLive={isLive} />
-        </div>
-      </section>
 
       {/* PRÓXIMAS CARRERAS */}
       <section id="emisiones" className="scroll-mt-20 border-b border-border bg-background">
