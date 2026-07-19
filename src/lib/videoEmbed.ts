@@ -97,7 +97,9 @@ export function videoEmbedUrl(
         return `https://player.twitch.tv/?channel=${path[0]}&parent=${parent}${opts?.autoplay ? "&autoplay=true" : "&autoplay=false"}`;
       }
     }
-    if (iframeSrc || u.pathname.includes("/embed")) return source;
+    // Trusted embeddable providers (live streaming CDNs, etc.)
+    const trustedHosts = ["players.cdn.enetres.net", "player.vimeo.com", "iframe.mediadelivery.net"];
+    if (iframeSrc || u.pathname.includes("/embed") || trustedHosts.includes(h)) return source;
   } catch {
     /* ignore */
   }
