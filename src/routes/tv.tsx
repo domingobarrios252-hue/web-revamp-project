@@ -6,7 +6,7 @@ import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvSidebarBanners } from "@/components/tv/TvSidebarBanners";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 import { TvEventLiveCenter } from "@/components/tv/TvEventLiveCenter";
-import { WorldSkateEuropeLivePlayer } from "@/components/tv/WorldSkateEuropeLivePlayer";
+
 
 const TV_OG_IMAGE = "https://rollerzone.es/__l5e/assets-v1/57c70012-bbe9-4642-b766-6b243447cc73/og-rollerzone-tv.jpg";
 const TV_CANONICAL = "https://rollerzone.es/tv";
