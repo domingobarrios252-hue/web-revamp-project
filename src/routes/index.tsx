@@ -18,6 +18,7 @@ import { formatDate } from "@/lib/i18n/format";
 
 import { EditorialCover, type CoverNews } from "@/components/home/EditorialCover";
 import { SpecialCoverageBanner } from "@/components/home/SpecialCoverageBanner";
+import { HomeMedalStandings } from "@/components/home/HomeMedalStandings";
 import { RollerZoneTVHome } from "@/components/home/RollerZoneTVHome";
 import { UniverseGrid } from "@/components/home/UniverseGrid";
 import { JoinContributorsBlock } from "@/components/home/JoinContributorsBlock";
@@ -177,6 +178,7 @@ function HomePage() {
 
       {/* 4. ESPECIAL DEL MOMENTO */}
       <SpecialCoverageBanner />
+      <HomeMedalStandings />
 
       {/* 5. ACTUALIDAD ROLLERZONE */}
       <LatestNewsGrid news={news === null ? null : latestNews} />
