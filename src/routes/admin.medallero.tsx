@@ -49,7 +49,7 @@ function AdminMedallero() {
 
   const load = async () => {
     setLoading(true);
-    const [{ data }, { data: setting }] = await Promise.all([
+    const [{ data }, { data: setting }, { data: urlSetting }] = await Promise.all([
       supabase
         .from("medal_standings")
         .select("*")
@@ -61,13 +61,38 @@ function AdminMedallero() {
         .select("value")
         .eq("key", "home_medals_enabled")
         .maybeSingle(),
+      supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "europeo_external_results_url")
+        .maybeSingle(),
     ]);
     setRows((data as Row[]) ?? []);
     if (setting?.value && typeof (setting.value as { enabled?: boolean }).enabled === "boolean") {
       setShowOnHome((setting.value as { enabled: boolean }).enabled);
     }
+    const u = (urlSetting?.value as { url?: string } | null)?.url;
+    if (typeof u === "string") setExternalUrl(u);
     setLoading(false);
   };
+
+  const saveExternalUrl = async () => {
+    const trimmed = externalUrl.trim();
+    if (trimmed && !/^https?:\/\//i.test(trimmed)) {
+      return toast.error("La URL debe empezar por http:// o https://");
+    }
+    setSavingUrl(true);
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert(
+        [{ key: "europeo_external_results_url", value: { url: trimmed } as unknown as Record<string, unknown> }] as never,
+        { onConflict: "key" },
+      );
+    setSavingUrl(false);
+    if (error) return toast.error(error.message);
+    toast.success("Enlace externo guardado");
+  };
+
 
   const toggleHomeVisibility = async (next: boolean) => {
     setShowOnHome(next);
