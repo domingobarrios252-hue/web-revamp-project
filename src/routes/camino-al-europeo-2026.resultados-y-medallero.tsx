@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Trophy } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Trophy, ExternalLink } from "lucide-react";
 import { SpecialBreadcrumb } from "@/components/specials/europeo-2026/SpecialBreadcrumb";
 import { SpecialHero } from "@/components/specials/europeo-2026/SpecialHero";
 import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav";
 import { BackToSpecial } from "@/components/specials/europeo-2026/BackToSpecial";
 import { getPiece, EVENT } from "@/lib/specials/europeo-2026";
+import { supabase } from "@/integrations/supabase/client";
 
 const PIECE = getPiece("resultados-y-medallero");
 const CANON = "https://rollerzone.lovable.app/camino-al-europeo-2026/resultados-y-medallero";
@@ -25,41 +27,141 @@ export const Route = createFileRoute("/camino-al-europeo-2026/resultados-y-medal
   component: Page,
 });
 
+type Row = {
+  id: string;
+  country_name: string;
+  country_code: string | null;
+  flag_url: string | null;
+  gold: number;
+  silver: number;
+  bronze: number;
+};
+
 function Page() {
+  const [rows, setRows] = useState<Row[]>([]);
+  const [externalUrl, setExternalUrl] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [{ data }, { data: setting }] = await Promise.all([
+        supabase
+          .from("medal_standings")
+          .select("id,country_name,country_code,flag_url,gold,silver,bronze")
+          .eq("published", true)
+          .order("gold", { ascending: false })
+          .order("silver", { ascending: false })
+          .order("bronze", { ascending: false }),
+        supabase
+          .from("site_settings")
+          .select("value")
+          .eq("key", "europeo_external_results_url")
+          .maybeSingle(),
+      ]);
+      if (cancelled) return;
+      setRows((data as Row[]) ?? []);
+      const u = (setting?.value as { url?: string } | null)?.url;
+      if (typeof u === "string") setExternalUrl(u);
+      setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <>
       <SpecialBreadcrumb current="Resultados" />
       <SpecialHero
         compact
         title={PIECE.title}
-        subtitle={`Se activará durante el campeonato (${EVENT.datesLabel}) con resultados diarios, medallero y crónicas.`}
+        subtitle={`Medallero oficial del Europeo (${EVENT.datesLabel}). Se actualiza en tiempo real durante el campeonato.`}
         image={PIECE.image}
       />
       <SpecialSubNav active="resultados-y-medallero" />
 
-      <section className="bg-background py-16 md:py-20">
-        <div className="mx-auto max-w-3xl px-4 text-center md:px-6">
-          <Trophy className="mx-auto h-12 w-12 text-gold" />
-          <h2 className="font-display mt-4 text-2xl uppercase tracking-wider text-foreground md:text-3xl">
-            Resultados y medallero
-          </h2>
-          <div className="mx-auto mt-3 h-[3px] w-24 bg-gold" />
-          <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-            Esta página está preparada para activarse durante el Europeo. Aquí
-            encontrarás:
-          </p>
-          <ul className="mx-auto mt-6 max-w-md space-y-2 text-left text-sm text-foreground">
-            <li className="rounded-md border border-border bg-surface p-3">· Medallero general por países y por categorías.</li>
-            <li className="rounded-md border border-border bg-surface p-3">· Resultados diarios de pista, ruta y maratón.</li>
-            <li className="rounded-md border border-border bg-surface p-3">· Resumen de la actuación de la selección española.</li>
-            <li className="rounded-md border border-border bg-surface p-3">· Enlaces a las crónicas publicadas en RollerZone.</li>
-          </ul>
-          <div className="mt-8">
+      <section className="bg-background py-14 md:py-20">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <div className="font-condensed inline-flex items-center gap-2 bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
+                <Trophy className="h-3 w-3" /> Medallero
+              </div>
+              <h2 className="font-display mt-3 text-3xl uppercase tracking-wider text-foreground md:text-4xl">
+                Medallero completo
+              </h2>
+              <div className="mt-3 h-[3px] w-16 bg-gold" />
+            </div>
+            {externalUrl && (
+              <a
+                href={externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-condensed inline-flex items-center gap-2 rounded-md border border-gold/60 bg-black/30 px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-gold transition-all hover:bg-black/50"
+              >
+                Resultados oficiales <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
+          </div>
+
+          {loading ? (
+            <p className="text-muted-foreground">Cargando medallero…</p>
+          ) : rows.length === 0 ? (
+            <div className="rounded-xl border border-border bg-surface p-10 text-center">
+              <Trophy className="mx-auto h-10 w-10 text-gold/70" />
+              <p className="mt-4 text-muted-foreground">
+                El medallero se activará durante el campeonato. Vuelve pronto para
+                seguir las medallas país a país.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-lg">
+              <table className="w-full text-sm">
+                <thead className="border-b border-border bg-black/30">
+                  <tr className="font-condensed text-left text-[10px] uppercase tracking-[2px] text-muted-foreground">
+                    <th className="w-10 px-3 py-3 text-center">#</th>
+                    <th className="px-3 py-3">País</th>
+                    <th className="px-3 py-3 text-center">🥇</th>
+                    <th className="px-3 py-3 text-center">🥈</th>
+                    <th className="px-3 py-3 text-center">🥉</th>
+                    <th className="px-3 py-3 text-center">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r, i) => (
+                    <tr key={r.id} className="border-b border-border last:border-0 hover:bg-background/40">
+                      <td className="px-3 py-3 text-center font-display text-gold">{i + 1}</td>
+                      <td className="px-3 py-3">
+                        <div className="flex items-center gap-2">
+                          {r.flag_url && (
+                            <img src={r.flag_url} alt="" className="h-4 w-6 object-cover" loading="lazy" />
+                          )}
+                          <span className="font-medium text-foreground">{r.country_name}</span>
+                          {r.country_code && (
+                            <span className="font-mono text-[10px] text-muted-foreground">{r.country_code}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 text-center font-bold text-gold">{r.gold}</td>
+                      <td className="px-3 py-3 text-center">{r.silver}</td>
+                      <td className="px-3 py-3 text-center">{r.bronze}</td>
+                      <td className="px-3 py-3 text-center font-display">
+                        {r.gold + r.silver + r.bronze}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="mt-10 text-center">
             <Link
               to="/resultados"
               className="font-condensed inline-flex items-center gap-2 rounded-md border border-gold/60 bg-black/20 px-6 py-3 text-xs font-bold uppercase tracking-widest text-gold transition-all hover:bg-black/40"
             >
-              Ver resultados publicados
+              Ver todos los resultados publicados
             </Link>
           </div>
         </div>
