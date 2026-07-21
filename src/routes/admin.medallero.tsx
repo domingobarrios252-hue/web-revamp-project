@@ -43,10 +43,13 @@ function AdminMedallero() {
   const [open, setOpen] = useState(false);
   const [showOnHome, setShowOnHome] = useState(true);
   const [savingToggle, setSavingToggle] = useState(false);
+  const [externalUrl, setExternalUrl] = useState("");
+  const [savingUrl, setSavingUrl] = useState(false);
+
 
   const load = async () => {
     setLoading(true);
-    const [{ data }, { data: setting }] = await Promise.all([
+    const [{ data }, { data: setting }, { data: urlSetting }] = await Promise.all([
       supabase
         .from("medal_standings")
         .select("*")
@@ -58,13 +61,38 @@ function AdminMedallero() {
         .select("value")
         .eq("key", "home_medals_enabled")
         .maybeSingle(),
+      supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "europeo_external_results_url")
+        .maybeSingle(),
     ]);
     setRows((data as Row[]) ?? []);
     if (setting?.value && typeof (setting.value as { enabled?: boolean }).enabled === "boolean") {
       setShowOnHome((setting.value as { enabled: boolean }).enabled);
     }
+    const u = (urlSetting?.value as { url?: string } | null)?.url;
+    if (typeof u === "string") setExternalUrl(u);
     setLoading(false);
   };
+
+  const saveExternalUrl = async () => {
+    const trimmed = externalUrl.trim();
+    if (trimmed && !/^https?:\/\//i.test(trimmed)) {
+      return toast.error("La URL debe empezar por http:// o https://");
+    }
+    setSavingUrl(true);
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert(
+        [{ key: "europeo_external_results_url", value: { url: trimmed } as unknown as Record<string, unknown> }] as never,
+        { onConflict: "key" },
+      );
+    setSavingUrl(false);
+    if (error) return toast.error(error.message);
+    toast.success("Enlace externo guardado");
+  };
+
 
   const toggleHomeVisibility = async (next: boolean) => {
     setShowOnHome(next);
@@ -134,6 +162,32 @@ function AdminMedallero() {
           Mostrar el medallero de países en la portada
         </span>
       </label>
+
+      <div className="mb-5 border border-border bg-surface p-3">
+        <label className="font-condensed mb-2 block text-xs uppercase tracking-widest text-muted-foreground">
+          Enlace externo de resultados oficiales (opcional)
+        </label>
+        <div className="flex flex-wrap gap-2">
+          <input
+            type="url"
+            value={externalUrl}
+            onChange={(e) => setExternalUrl(e.target.value)}
+            placeholder="https://www.euroskatingcardano2026.it/results"
+            className="min-w-0 flex-1 border border-border bg-background px-3 py-2 text-sm"
+          />
+          <button
+            onClick={saveExternalUrl}
+            disabled={savingUrl}
+            className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-60"
+          >
+            <Save className="h-4 w-4" /> Guardar enlace
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Se mostrará en la página pública del medallero del Europeo como botón "Resultados oficiales".
+        </p>
+      </div>
+
 
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
