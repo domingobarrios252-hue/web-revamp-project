@@ -163,6 +163,32 @@ function AdminMedallero() {
         </span>
       </label>
 
+      <div className="mb-5 border border-border bg-surface p-3">
+        <label className="font-condensed mb-2 block text-xs uppercase tracking-widest text-muted-foreground">
+          Enlace externo de resultados oficiales (opcional)
+        </label>
+        <div className="flex flex-wrap gap-2">
+          <input
+            type="url"
+            value={externalUrl}
+            onChange={(e) => setExternalUrl(e.target.value)}
+            placeholder="https://www.euroskatingcardano2026.it/results"
+            className="min-w-0 flex-1 border border-border bg-background px-3 py-2 text-sm"
+          />
+          <button
+            onClick={saveExternalUrl}
+            disabled={savingUrl}
+            className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-60"
+          >
+            <Save className="h-4 w-4" /> Guardar enlace
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Se mostrará en la página pública del medallero del Europeo como botón "Resultados oficiales".
+        </p>
+      </div>
+
+
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
       ) : rows.length === 0 ? (
