@@ -43,6 +43,9 @@ function AdminMedallero() {
   const [open, setOpen] = useState(false);
   const [showOnHome, setShowOnHome] = useState(true);
   const [savingToggle, setSavingToggle] = useState(false);
+  const [externalUrl, setExternalUrl] = useState("");
+  const [savingUrl, setSavingUrl] = useState(false);
+
 
   const load = async () => {
     setLoading(true);
