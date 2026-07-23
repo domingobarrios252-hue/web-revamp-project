@@ -65,12 +65,12 @@
   /* Neutrals — nueva identidad */
   --background: #1A1A1A;      /* bg-primary */
   --foreground: #F5F5F5;      /* text-primary */
-  --surface: #242424;         /* bg-secondary */
-  --surface-2: #2E2E2E;       /* bg-tertiary */
+  --surface: #202020;         /* bg-secondary (card) */
+  --surface-2: #262626;       /* bg-tertiary */
 
-  --card: #242424;
+  --card: #202020;
   --card-foreground: #F5F5F5;
-  --popover: #242424;
+  --popover: #202020;
   --popover-foreground: #F5F5F5;
 
   --primary: #D4A017;
