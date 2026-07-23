@@ -48,6 +48,7 @@ function NoticiasIndexPage() {
   const [news, setNews] = useState<News[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [scope, setScope] = useState<"all" | "Nacional" | "Internacional">("all");
+  const [showAllCats, setShowAllCats] = useState(false);
 
   useEffect(() => {
     supabase
@@ -104,11 +105,11 @@ function NoticiasIndexPage() {
         <div className="mt-4 h-[2px] w-24 bg-gold" aria-hidden="true" />
       </header>
 
-      {/* Filtros tabs */}
+      {/* Filtros de ámbito — fila horizontal desplazable en móvil */}
       <div
         role="tablist"
         aria-label="Filtrar noticias por ámbito"
-        className="mb-6 flex flex-wrap gap-2"
+        className="filters-scroll mb-4 -mx-6 flex gap-2 overflow-x-auto px-6 pb-2 sm:mx-0 sm:flex-wrap sm:px-0 sm:pb-0"
       >
         {tabs.map((tab) => {
           const active = scope === tab.key;
@@ -119,9 +120,9 @@ function NoticiasIndexPage() {
               aria-selected={active}
               onClick={() => setScope(tab.key)}
               className={
-                "font-condensed px-4 py-2 text-xs uppercase tracking-widest transition-colors " +
+                "font-condensed shrink-0 snap-start whitespace-nowrap px-4 py-2 text-xs uppercase tracking-widest transition-colors " +
                 (active
-                  ? "border border-gold bg-gold text-background"
+                  ? "border-b-2 border-gold bg-gold text-background shadow-[0_2px_0_0_var(--color-gold)]"
                   : "border border-border bg-transparent text-muted-foreground hover:border-gold hover:text-gold")
               }
             >
@@ -131,23 +132,44 @@ function NoticiasIndexPage() {
         })}
       </div>
 
-      {/* Subcategorías rápidas */}
-      {categories.length > 0 && (
-        <div className="mb-8 flex flex-wrap gap-2">
-          {categories
-            .filter((c) => scope === "all" || c.scope === scope)
-            .map((c) => (
-              <Link
-                key={c.id}
-                to="/noticias/$slug"
-                params={{ slug: c.slug }}
-                className="font-condensed border border-border bg-surface px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground hover:border-gold hover:text-gold"
+      {/* Subcategorías — scroll horizontal + "Ver todas" */}
+      {categories.length > 0 && (() => {
+        const list = categories.filter((c) => scope === "all" || c.scope === scope);
+        if (list.length === 0) return null;
+        return (
+          <div className="mb-8">
+            <div
+              className={
+                showAllCats
+                  ? "flex flex-wrap gap-2"
+                  : "filters-scroll -mx-6 flex gap-2 overflow-x-auto px-6 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+              }
+              aria-label="Subcategorías"
+            >
+              {list.map((c) => (
+                <Link
+                  key={c.id}
+                  to="/noticias/$slug"
+                  params={{ slug: c.slug }}
+                  className="font-condensed shrink-0 snap-start whitespace-nowrap border border-border bg-surface px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground hover:border-gold hover:text-gold"
+                >
+                  {c.name}
+                </Link>
+              ))}
+            </div>
+            {list.length > 4 && (
+              <button
+                type="button"
+                onClick={() => setShowAllCats((v) => !v)}
+                className="font-condensed mt-2 inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-gold hover:underline"
+                aria-expanded={showAllCats}
               >
-                {c.name}
-              </Link>
-            ))}
-        </div>
-      )}
+                {showAllCats ? "Ver menos" : "Ver todas"}
+              </button>
+            )}
+          </div>
+        );
+      })()}
 
       <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
         <div className="min-w-0">

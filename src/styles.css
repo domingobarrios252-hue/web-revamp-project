@@ -260,6 +260,10 @@
 .hide-scrollbar { scrollbar-width: none; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 
+/* Horizontal scrollable filter row with snap + hidden scrollbar */
+.filters-scroll { scrollbar-width: none; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+.filters-scroll::-webkit-scrollbar { display: none; }
+
 /* ===== PREMIUM SPORTS MEDIA UTILITIES ===== */
 
 /* Subtle premium noise/grain texture overlay for body */
