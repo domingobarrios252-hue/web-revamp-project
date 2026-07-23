@@ -48,6 +48,7 @@ function NoticiasIndexPage() {
   const [news, setNews] = useState<News[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [scope, setScope] = useState<"all" | "Nacional" | "Internacional">("all");
+  const [showAllCats, setShowAllCats] = useState(false);
 
   useEffect(() => {
     supabase
