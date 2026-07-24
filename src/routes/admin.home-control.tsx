@@ -34,6 +34,9 @@ const OPTIONS: Array<{
   { value: "none", label: "Ninguno", description: "Oculta toda la zona dinámica de la home.", Icon: EyeOff },
 ];
 
+type SpecialLite = { slug: string; title: string; subtitle: string | null; featured_home: boolean; sort_order: number };
+const SPECIALS_KEY = "home_specials_selected";
+
 function HomeControlPage() {
   const [mode, setMode] = useState<Mode>("liga");
   const [saving, setSaving] = useState<string | null>(null);
@@ -41,6 +44,8 @@ function HomeControlPage() {
   const [featuredEvent, setFeaturedEvent] = useState<{ id: string; name: string } | null>(null);
   const [previewKey, setPreviewKey] = useState(0);
   const { visibility } = useHomeSectionVisibility();
+  const [specials, setSpecials] = useState<SpecialLite[]>([]);
+  const [selectedSlugs, setSelectedSlugs] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -55,9 +60,28 @@ function HomeControlPage() {
         .limit(1)
         .maybeSingle();
       setFeaturedEvent(ev ?? null);
+
+      const { data: sel } = await sb.from("home_modules").select("value").eq("key", SPECIALS_KEY).maybeSingle();
+      const slugs: string[] = (sel?.value ?? "").split(",").map((s: string) => s.trim()).filter(Boolean);
+      setSelectedSlugs(slugs);
+
+      const { data: sp } = await sb
+        .from("special_editorials")
+        .select("slug,title,subtitle,featured_home,sort_order")
+        .eq("status", "active")
+        .order("sort_order", { ascending: true });
+      setSpecials((sp ?? []) as SpecialLite[]);
+
       setLoading(false);
     })();
   }, []);
+
+  const orderedSpecials = useMemo(() => {
+    return [...specials].sort((a, b) => {
+      if (a.featured_home !== b.featured_home) return a.featured_home ? -1 : 1;
+      return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+    });
+  }, [specials]);
 
   const refreshPreview = () => setPreviewKey((k) => k + 1);
 
@@ -83,7 +107,24 @@ function HomeControlPage() {
     setTimeout(refreshPreview, 300);
   };
 
+  const toggleSpecial = async (slug: string) => {
+    const next = selectedSlugs.includes(slug)
+      ? selectedSlugs.filter((s) => s !== slug)
+      : [...selectedSlugs, slug];
+    setSelectedSlugs(next);
+    setSaving("sp:" + slug);
+    const sb = supabase as any;
+    const { error } = await sb
+      .from("home_modules")
+      .upsert({ key: SPECIALS_KEY, value: next.join(",") }, { onConflict: "key" });
+    setSaving(null);
+    if (error) return toast.error("No se pudo guardar: " + error.message);
+    toast.success("Especiales actualizados");
+    setTimeout(refreshPreview, 300);
+  };
+
   if (loading) return <div className="text-muted-foreground">Cargando…</div>;
+
 
   return (
     <div className="space-y-8">
