@@ -71,7 +71,38 @@ export function HomeMedalStandings() {
           </Link>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-lg">
+        {/* Mobile: cards */}
+        <ul className="grid grid-cols-1 gap-3 md:hidden">
+          {rows.map((r, i) => (
+            <li
+              key={r.id}
+              className="rounded-xl border border-border bg-surface p-3 shadow-md"
+              style={{ boxSizing: "border-box", minWidth: 0 }}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="font-display text-lg text-gold shrink-0 w-6 text-center">{i + 1}</span>
+                {r.flag_url && (
+                  <img src={r.flag_url} alt="" className="h-4 w-6 shrink-0 object-cover" loading="lazy" />
+                )}
+                <span className="truncate text-[15px] font-medium text-foreground min-w-0 flex-1">
+                  {r.country_name}
+                </span>
+                {r.country_code && (
+                  <span className="shrink-0 font-mono text-[11px] text-muted-foreground">{r.country_code}</span>
+                )}
+              </div>
+              <dl className="mt-3 grid grid-cols-4 gap-2 text-center text-[13px]">
+                <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥇</dt><dd className="font-bold text-gold">{r.gold}</dd></div>
+                <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥈</dt><dd className="font-semibold text-foreground">{r.silver}</dd></div>
+                <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥉</dt><dd className="font-semibold text-foreground">{r.bronze}</dd></div>
+                <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">Total</dt><dd className="font-display text-foreground">{r.gold + r.silver + r.bronze}</dd></div>
+              </dl>
+            </li>
+          ))}
+        </ul>
+
+        {/* Desktop: table */}
+        <div className="hidden rounded-xl border border-border bg-surface shadow-lg md:block">
           <table className="w-full text-sm">
             <thead className="border-b border-border bg-black/30">
               <tr className="font-condensed text-left text-[10px] uppercase tracking-[2px] text-muted-foreground">
@@ -88,9 +119,9 @@ export function HomeMedalStandings() {
                 <tr key={r.id} className="border-b border-border last:border-0 hover:bg-background/40">
                   <td className="px-3 py-2 text-center font-display text-gold">{i + 1}</td>
                   <td className="px-3 py-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
                       {r.flag_url && (
-                        <img src={r.flag_url} alt="" className="h-4 w-6 object-cover" loading="lazy" />
+                        <img src={r.flag_url} alt="" className="h-4 w-6 shrink-0 object-cover" loading="lazy" />
                       )}
                       <span className="font-medium text-foreground">{r.country_name}</span>
                       {r.country_code && (
