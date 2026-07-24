@@ -168,10 +168,10 @@ function TvPage() {
     null;
 
   return (
-    <div className="bg-background">
+    <div className="w-full max-w-full min-w-0 overflow-x-hidden bg-background">
       {/* HEADER */}
       <section id="directo" className="scroll-mt-20 border-b border-gold/30 bg-background">
-        <div className="mx-auto max-w-7xl px-4 pt-8 lg:px-8 lg:pt-12">
+        <div className="mx-auto w-full max-w-7xl min-w-0 px-4 pt-8 lg:px-8 lg:pt-12">
           <p className="font-condensed text-xs uppercase tracking-[3px] text-gold">RollerZone TV</p>
           <div className="mt-2 flex flex-wrap items-center gap-4">
             <h1 className="font-display text-3xl tracking-widest text-foreground md:text-5xl">
@@ -187,16 +187,16 @@ function TvPage() {
         </div>
 
         {/* MAIN GRID: player + sidebar */}
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 pb-8 pt-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 lg:pb-12">
-          <div className="relative min-w-0">
-            <div className="relative aspect-video w-full overflow-hidden border border-gold/30 bg-black shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
+        <div className="mx-auto grid w-full max-w-7xl min-w-0 grid-cols-[minmax(0,1fr)] gap-6 overflow-hidden px-4 pb-8 pt-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 lg:pb-12">
+          <div className="relative w-full max-w-full min-w-0 overflow-hidden">
+            <div className="relative aspect-video w-full max-w-full min-w-0 overflow-hidden border border-gold/30 bg-black shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
               {playerActive && embedUrl ? (
                 <iframe
                   src={embedUrl}
                   title={settings?.live_title ?? "RollerZone TV"}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  className="h-full w-full"
+                  className="absolute inset-0 block h-full w-full max-w-full border-0"
                 />
               ) : embedUrl ? (
                 <button
