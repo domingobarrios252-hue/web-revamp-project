@@ -211,14 +211,11 @@ function MagazineCard({
 
   const handleBuy = async () => {
     if (!user) { onRequireAuth(); return; }
-    setBuying(true);
-    const { error } = await supabase.from("magazine_purchases").insert({
-      user_id: user.id,
-      magazine_id: m.id,
-      amount_paid: Number(m.price ?? 0),
-    });
+    // Purchases must be created server-side after a verified payment.
+    // Direct client inserts have been disabled to prevent free unlocks.
+    const { toast } = await import("sonner");
+    toast.info("La compra online estará disponible próximamente. Contacta con el equipo para adquirir esta edición.");
     setBuying(false);
-    if (!error) setLocalPurchased(true);
   };
 
   const readHref = m.read_url || m.pdf_url || "#";
