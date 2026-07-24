@@ -5,6 +5,7 @@ import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav"
 import { EventKeyFacts } from "@/components/specials/europeo-2026/EventKeyFacts";
 import { EventCalendarTimeline } from "@/components/specials/europeo-2026/EventCalendarTimeline";
 import { BackToSpecial } from "@/components/specials/europeo-2026/BackToSpecial";
+import { PieceEditorialContent } from "@/components/specials/europeo-2026/PieceEditorialContent";
 import { getPiece } from "@/lib/specials/europeo-2026";
 
 const PIECE = getPiece("presentacion-europeo-2026");
@@ -121,6 +122,7 @@ function Page() {
       <EventKeyFacts />
       <EventCalendarTimeline />
 
+      <PieceEditorialContent slug="presentacion-europeo-2026" />
       <BackToSpecial />
     </>
   );

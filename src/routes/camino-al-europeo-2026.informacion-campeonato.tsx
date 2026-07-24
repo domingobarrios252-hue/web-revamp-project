@@ -5,6 +5,7 @@ import { SpecialHero } from "@/components/specials/europeo-2026/SpecialHero";
 import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav";
 import { EventKeyFacts } from "@/components/specials/europeo-2026/EventKeyFacts";
 import { BackToSpecial } from "@/components/specials/europeo-2026/BackToSpecial";
+import { PieceEditorialContent } from "@/components/specials/europeo-2026/PieceEditorialContent";
 import { EVENT, getPiece } from "@/lib/specials/europeo-2026";
 
 const PIECE = getPiece("informacion-campeonato");
@@ -230,6 +231,7 @@ function Page() {
         </div>
       </section>
 
+      <PieceEditorialContent slug="informacion-campeonato" />
       <BackToSpecial />
     </>
   );

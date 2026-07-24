@@ -4,6 +4,7 @@ import { SpecialBreadcrumb } from "@/components/specials/europeo-2026/SpecialBre
 import { SpecialHero } from "@/components/specials/europeo-2026/SpecialHero";
 import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav";
 import { BackToSpecial } from "@/components/specials/europeo-2026/BackToSpecial";
+import { PieceEditorialContent } from "@/components/specials/europeo-2026/PieceEditorialContent";
 import { getPiece } from "@/lib/specials/europeo-2026";
 
 const PIECE = getPiece("galeria-rollerzone-tv");
@@ -60,6 +61,7 @@ function Page() {
         </div>
       </section>
 
+      <PieceEditorialContent slug="galeria-rollerzone-tv" />
       <BackToSpecial />
     </>
   );

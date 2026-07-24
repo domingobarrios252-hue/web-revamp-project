@@ -4,6 +4,7 @@ import { SpecialHero } from "@/components/specials/europeo-2026/SpecialHero";
 import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav";
 import { RelatedSelectionNews } from "@/components/specials/europeo-2026/RelatedSelectionNews";
 import { BackToSpecial } from "@/components/specials/europeo-2026/BackToSpecial";
+import { PieceEditorialContent } from "@/components/specials/europeo-2026/PieceEditorialContent";
 import { getPiece, SPAIN_CALLUP } from "@/lib/specials/europeo-2026";
 
 const PIECE = getPiece("entrevista-seleccionador");
@@ -65,6 +66,7 @@ function Page() {
 
       <RelatedSelectionNews limit={4} />
 
+      <PieceEditorialContent slug="entrevista-seleccionador" />
       <BackToSpecial />
     </>
   );
