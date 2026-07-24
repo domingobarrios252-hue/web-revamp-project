@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Radio, Trophy, Layers, EyeOff, CheckCircle2, RefreshCw, Eye, ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Radio, Trophy, Layers, EyeOff, CheckCircle2, RefreshCw, Eye, ExternalLink, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
