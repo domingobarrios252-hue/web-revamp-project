@@ -5,6 +5,7 @@ import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav"
 import { CallupRoster } from "@/components/specials/europeo-2026/CallupRoster";
 import { RelatedSelectionNews } from "@/components/specials/europeo-2026/RelatedSelectionNews";
 import { BackToSpecial } from "@/components/specials/europeo-2026/BackToSpecial";
+import { PieceEditorialContent } from "@/components/specials/europeo-2026/PieceEditorialContent";
 import { getPiece, SPAIN_CALLUP } from "@/lib/specials/europeo-2026";
 
 const PIECE = getPiece("convocatoria-seleccion-espanola");
@@ -86,6 +87,7 @@ function Page() {
 
       <RelatedSelectionNews limit={4} />
 
+      <PieceEditorialContent slug="convocatoria-seleccion-espanola" />
       <BackToSpecial />
     </>
   );

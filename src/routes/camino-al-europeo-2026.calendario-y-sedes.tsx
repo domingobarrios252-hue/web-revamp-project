@@ -5,6 +5,7 @@ import { SpecialHero } from "@/components/specials/europeo-2026/SpecialHero";
 import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav";
 import { EventCalendarTimeline } from "@/components/specials/europeo-2026/EventCalendarTimeline";
 import { BackToSpecial } from "@/components/specials/europeo-2026/BackToSpecial";
+import { PieceEditorialContent } from "@/components/specials/europeo-2026/PieceEditorialContent";
 import { EVENT, getPiece } from "@/lib/specials/europeo-2026";
 
 const PIECE = getPiece("calendario-y-sedes");
@@ -182,6 +183,7 @@ function Page() {
         </div>
       </section>
 
+      <PieceEditorialContent slug="calendario-y-sedes" />
       <BackToSpecial />
     </>
   );
