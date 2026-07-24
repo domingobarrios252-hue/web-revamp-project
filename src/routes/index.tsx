@@ -177,6 +177,9 @@ function HomePage() {
       {/* 3. PORTADA EDITORIAL */}
       {coverNews.length > 0 && <EditorialCover news={coverNews} />}
 
+      {/* 3.5 ESPECIALES EDITORIALES */}
+      <HomeSpecialsBlock />
+
       {/* 4. ESPECIAL DEL MOMENTO */}
       <SpecialCoverageBanner />
       <HomeMedalStandings />
