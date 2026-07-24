@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Radio, Trophy, Layers, EyeOff, CheckCircle2, RefreshCw, Eye, ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Radio, Trophy, Layers, EyeOff, CheckCircle2, RefreshCw, Eye, ExternalLink, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -34,6 +34,9 @@ const OPTIONS: Array<{
   { value: "none", label: "Ninguno", description: "Oculta toda la zona dinámica de la home.", Icon: EyeOff },
 ];
 
+type SpecialLite = { slug: string; title: string; subtitle: string | null; featured_home: boolean; sort_order: number };
+const SPECIALS_KEY = "home_specials_selected";
+
 function HomeControlPage() {
   const [mode, setMode] = useState<Mode>("liga");
   const [saving, setSaving] = useState<string | null>(null);
@@ -41,6 +44,8 @@ function HomeControlPage() {
   const [featuredEvent, setFeaturedEvent] = useState<{ id: string; name: string } | null>(null);
   const [previewKey, setPreviewKey] = useState(0);
   const { visibility } = useHomeSectionVisibility();
+  const [specials, setSpecials] = useState<SpecialLite[]>([]);
+  const [selectedSlugs, setSelectedSlugs] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -55,9 +60,28 @@ function HomeControlPage() {
         .limit(1)
         .maybeSingle();
       setFeaturedEvent(ev ?? null);
+
+      const { data: sel } = await sb.from("home_modules").select("value").eq("key", SPECIALS_KEY).maybeSingle();
+      const slugs: string[] = (sel?.value ?? "").split(",").map((s: string) => s.trim()).filter(Boolean);
+      setSelectedSlugs(slugs);
+
+      const { data: sp } = await sb
+        .from("special_editorials")
+        .select("slug,title,subtitle,featured_home,sort_order")
+        .eq("status", "active")
+        .order("sort_order", { ascending: true });
+      setSpecials((sp ?? []) as SpecialLite[]);
+
       setLoading(false);
     })();
   }, []);
+
+  const orderedSpecials = useMemo(() => {
+    return [...specials].sort((a, b) => {
+      if (a.featured_home !== b.featured_home) return a.featured_home ? -1 : 1;
+      return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+    });
+  }, [specials]);
 
   const refreshPreview = () => setPreviewKey((k) => k + 1);
 
@@ -83,7 +107,24 @@ function HomeControlPage() {
     setTimeout(refreshPreview, 300);
   };
 
+  const toggleSpecial = async (slug: string) => {
+    const next = selectedSlugs.includes(slug)
+      ? selectedSlugs.filter((s) => s !== slug)
+      : [...selectedSlugs, slug];
+    setSelectedSlugs(next);
+    setSaving("sp:" + slug);
+    const sb = supabase as any;
+    const { error } = await sb
+      .from("home_modules")
+      .upsert({ key: SPECIALS_KEY, value: next.join(",") }, { onConflict: "key" });
+    setSaving(null);
+    if (error) return toast.error("No se pudo guardar: " + error.message);
+    toast.success("Especiales actualizados");
+    setTimeout(refreshPreview, 300);
+  };
+
   if (loading) return <div className="text-muted-foreground">Cargando…</div>;
+
 
   return (
     <div className="space-y-8">
@@ -191,6 +232,63 @@ function HomeControlPage() {
                 );
               })}
             </ul>
+          </section>
+
+          {/* Especiales editoriales */}
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-display text-sm uppercase tracking-widest text-gold inline-flex items-center gap-2">
+                <Sparkles className="h-4 w-4" /> Especiales editoriales
+              </h2>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                {selectedSlugs.length > 0 ? `${selectedSlugs.length} seleccionados` : "Todos activos"}
+              </span>
+            </div>
+            <p className="mb-3 text-xs text-muted-foreground">
+              Selecciona uno o varios especiales para mostrarlos en la home. Si no seleccionas ninguno, se mostrarán todos los activos. Los destacados aparecen primero.
+            </p>
+            {orderedSpecials.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border bg-surface px-4 py-6 text-center text-xs text-muted-foreground">
+                No hay especiales activos. Créalos en{" "}
+                <a href="/admin/especiales" className="text-gold hover:underline">Especiales</a>.
+              </div>
+            ) : (
+              <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
+                {orderedSpecials.map((sp) => {
+                  const on = selectedSlugs.includes(sp.slug);
+                  const busy = saving === "sp:" + sp.slug;
+                  return (
+                    <li key={sp.slug} className="flex items-center justify-between gap-4 px-4 py-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <div className="font-display truncate text-sm uppercase tracking-wide text-foreground">{sp.title}</div>
+                          {sp.featured_home && (
+                            <span className="font-condensed inline-flex shrink-0 items-center gap-1 rounded-full border border-gold/60 bg-gold/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold">
+                              <Star className="h-2.5 w-2.5" /> Destacado
+                            </span>
+                          )}
+                        </div>
+                        {sp.subtitle && <div className="truncate text-xs text-muted-foreground">{sp.subtitle}</div>}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleSpecial(sp.slug)}
+                        disabled={busy}
+                        aria-pressed={on}
+                        className={
+                          "font-condensed inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-all " +
+                          (on
+                            ? "border-gold bg-gold/10 text-gold"
+                            : "border-border bg-black/30 text-muted-foreground hover:border-gold/50")
+                        }
+                      >
+                        {busy ? "…" : on ? <><CheckCircle2 className="h-3 w-3" /> Elegido</> : "Añadir"}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </section>
         </div>
 

@@ -18,6 +18,7 @@ import { formatDate } from "@/lib/i18n/format";
 
 import { EditorialCover, type CoverNews } from "@/components/home/EditorialCover";
 import { SpecialCoverageBanner } from "@/components/home/SpecialCoverageBanner";
+import { HomeSpecialsBlock } from "@/components/home/HomeSpecialsBlock";
 import { HomeMedalStandings } from "@/components/home/HomeMedalStandings";
 import { RollerZoneTVHome } from "@/components/home/RollerZoneTVHome";
 import { UniverseGrid } from "@/components/home/UniverseGrid";
@@ -175,6 +176,9 @@ function HomePage() {
 
       {/* 3. PORTADA EDITORIAL */}
       {coverNews.length > 0 && <EditorialCover news={coverNews} />}
+
+      {/* 3.5 ESPECIALES EDITORIALES */}
+      <HomeSpecialsBlock />
 
       {/* 4. ESPECIAL DEL MOMENTO */}
       <SpecialCoverageBanner />
