@@ -233,6 +233,63 @@ function HomeControlPage() {
               })}
             </ul>
           </section>
+
+          {/* Especiales editoriales */}
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-display text-sm uppercase tracking-widest text-gold inline-flex items-center gap-2">
+                <Sparkles className="h-4 w-4" /> Especiales editoriales
+              </h2>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                {selectedSlugs.length > 0 ? `${selectedSlugs.length} seleccionados` : "Todos activos"}
+              </span>
+            </div>
+            <p className="mb-3 text-xs text-muted-foreground">
+              Selecciona uno o varios especiales para mostrarlos en la home. Si no seleccionas ninguno, se mostrarán todos los activos. Los destacados aparecen primero.
+            </p>
+            {orderedSpecials.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border bg-surface px-4 py-6 text-center text-xs text-muted-foreground">
+                No hay especiales activos. Créalos en{" "}
+                <a href="/admin/especiales" className="text-gold hover:underline">Especiales</a>.
+              </div>
+            ) : (
+              <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
+                {orderedSpecials.map((sp) => {
+                  const on = selectedSlugs.includes(sp.slug);
+                  const busy = saving === "sp:" + sp.slug;
+                  return (
+                    <li key={sp.slug} className="flex items-center justify-between gap-4 px-4 py-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <div className="font-display truncate text-sm uppercase tracking-wide text-foreground">{sp.title}</div>
+                          {sp.featured_home && (
+                            <span className="font-condensed inline-flex shrink-0 items-center gap-1 rounded-full border border-gold/60 bg-gold/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold">
+                              <Star className="h-2.5 w-2.5" /> Destacado
+                            </span>
+                          )}
+                        </div>
+                        {sp.subtitle && <div className="truncate text-xs text-muted-foreground">{sp.subtitle}</div>}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleSpecial(sp.slug)}
+                        disabled={busy}
+                        aria-pressed={on}
+                        className={
+                          "font-condensed inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-all " +
+                          (on
+                            ? "border-gold bg-gold/10 text-gold"
+                            : "border-border bg-black/30 text-muted-foreground hover:border-gold/50")
+                        }
+                      >
+                        {busy ? "…" : on ? <><CheckCircle2 className="h-3 w-3" /> Elegido</> : "Añadir"}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
         </div>
 
         {/* Vista previa en vivo */}
