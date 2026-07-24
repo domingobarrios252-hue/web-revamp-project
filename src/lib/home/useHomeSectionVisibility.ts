@@ -57,7 +57,7 @@ export function useHomeSectionVisibility() {
     };
     load();
     const ch = supabase
-      .channel("home-section-visibility")
+      .channel(`home-section-visibility-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "home_modules" }, load)
       .subscribe();
     return () => {
