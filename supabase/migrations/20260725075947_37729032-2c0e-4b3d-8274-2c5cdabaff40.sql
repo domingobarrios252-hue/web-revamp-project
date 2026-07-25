@@ -1,0 +1,2 @@
+ALTER TABLE public.medal_standings ADD COLUMN IF NOT EXISTS discipline TEXT NOT NULL DEFAULT 'pista' CHECK (discipline IN ('pista','circuito'));
+CREATE INDEX IF NOT EXISTS medal_standings_discipline_idx ON public.medal_standings(discipline);

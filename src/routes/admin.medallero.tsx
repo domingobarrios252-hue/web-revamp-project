@@ -22,7 +22,10 @@ const schema = z.object({
   bronze: z.number().int().min(0),
   published: z.boolean(),
   sort_order: z.number().int().min(0),
+  discipline: z.enum(["pista", "circuito"]),
 });
+
+type Discipline = "pista" | "circuito";
 
 type Row = {
   id: string;
@@ -34,6 +37,7 @@ type Row = {
   bronze: number;
   published: boolean;
   sort_order: number;
+  discipline: Discipline;
 };
 
 function AdminMedallero() {
@@ -45,6 +49,7 @@ function AdminMedallero() {
   const [savingToggle, setSavingToggle] = useState(false);
   const [externalUrl, setExternalUrl] = useState("");
   const [savingUrl, setSavingUrl] = useState(false);
+  const [discipline, setDiscipline] = useState<Discipline>("pista");
 
 
   const load = async () => {
@@ -127,6 +132,7 @@ function AdminMedallero() {
       bronze: 0,
       published: true,
       sort_order: 0,
+      discipline,
     });
     setOpen(true);
   };
@@ -189,10 +195,38 @@ function AdminMedallero() {
       </div>
 
 
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <span className="font-condensed mr-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+          Modalidad:
+        </span>
+        {(["pista", "circuito"] as const).map((d) => {
+          const active = discipline === d;
+          return (
+            <button
+              key={d}
+              onClick={() => setDiscipline(d)}
+              className={[
+                "font-condensed rounded-md border px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-all",
+                active
+                  ? "border-gold bg-gold text-background"
+                  : "border-gold/50 bg-black/30 text-gold hover:bg-black/50",
+              ].join(" ")}
+            >
+              {d === "pista" ? "Medallero de Pista" : "Medallero de Circuito"}
+            </button>
+          );
+        })}
+        <span className="font-condensed ml-auto text-[11px] uppercase tracking-widest text-muted-foreground">
+          El medallero total se calcula automáticamente sumando ambas modalidades.
+        </span>
+      </div>
+
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
-      ) : rows.length === 0 ? (
-        <p className="text-muted-foreground">Sin entradas. Añade países al medallero.</p>
+      ) : rows.filter((r) => r.discipline === discipline).length === 0 ? (
+        <p className="text-muted-foreground">
+          Sin entradas en {discipline === "pista" ? "pista" : "circuito"}. Añade países al medallero.
+        </p>
       ) : (
         <div className="overflow-x-auto border border-border bg-surface">
           <table className="w-full text-sm">
@@ -209,7 +243,7 @@ function AdminMedallero() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {rows.filter((r) => r.discipline === discipline).map((r) => (
                 <tr key={r.id} className="border-b border-border last:border-0 hover:bg-background/50">
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
@@ -261,6 +295,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
   const [bronze, setBronze] = useState(row.bronze);
   const [published, setPublished] = useState(row.published);
   const [sortOrder, setSortOrder] = useState(row.sort_order);
+  const [discipline, setDiscipline] = useState<Discipline>(row.discipline);
   const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
@@ -273,6 +308,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
       bronze,
       published,
       sort_order: sortOrder,
+      discipline,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
 
@@ -286,6 +322,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
       bronze: parsed.data.bronze,
       published: parsed.data.published,
       sort_order: parsed.data.sort_order,
+      discipline: parsed.data.discipline,
     };
     const { error } = row.id
       ? await supabase.from("medal_standings").update(payload).eq("id", row.id)
@@ -331,6 +368,16 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
               onChange={setFlagUrl}
               accept="image/*"
             />
+          </Field>
+          <Field label="Modalidad *">
+            <select
+              value={discipline}
+              onChange={(e) => setDiscipline(e.target.value as Discipline)}
+              className="input"
+            >
+              <option value="pista">Pista</option>
+              <option value="circuito">Circuito</option>
+            </select>
           </Field>
           <div className="grid grid-cols-3 gap-3">
             <Field label="🥇 Oro">
