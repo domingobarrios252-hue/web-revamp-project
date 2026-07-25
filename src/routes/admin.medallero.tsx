@@ -369,6 +369,16 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
               accept="image/*"
             />
           </Field>
+          <Field label="Modalidad *">
+            <select
+              value={discipline}
+              onChange={(e) => setDiscipline(e.target.value as Discipline)}
+              className="input"
+            >
+              <option value="pista">Pista</option>
+              <option value="circuito">Circuito</option>
+            </select>
+          </Field>
           <div className="grid grid-cols-3 gap-3">
             <Field label="🥇 Oro">
               <input
