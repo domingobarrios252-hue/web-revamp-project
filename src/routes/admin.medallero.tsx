@@ -195,10 +195,38 @@ function AdminMedallero() {
       </div>
 
 
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <span className="font-condensed mr-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+          Modalidad:
+        </span>
+        {(["pista", "circuito"] as const).map((d) => {
+          const active = discipline === d;
+          return (
+            <button
+              key={d}
+              onClick={() => setDiscipline(d)}
+              className={[
+                "font-condensed rounded-md border px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-all",
+                active
+                  ? "border-gold bg-gold text-background"
+                  : "border-gold/50 bg-black/30 text-gold hover:bg-black/50",
+              ].join(" ")}
+            >
+              {d === "pista" ? "Medallero de Pista" : "Medallero de Circuito"}
+            </button>
+          );
+        })}
+        <span className="font-condensed ml-auto text-[11px] uppercase tracking-widest text-muted-foreground">
+          El medallero total se calcula automáticamente sumando ambas modalidades.
+        </span>
+      </div>
+
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
-      ) : rows.length === 0 ? (
-        <p className="text-muted-foreground">Sin entradas. Añade países al medallero.</p>
+      ) : rows.filter((r) => r.discipline === discipline).length === 0 ? (
+        <p className="text-muted-foreground">
+          Sin entradas en {discipline === "pista" ? "pista" : "circuito"}. Añade países al medallero.
+        </p>
       ) : (
         <div className="overflow-x-auto border border-border bg-surface">
           <table className="w-full text-sm">
@@ -215,7 +243,7 @@ function AdminMedallero() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {rows.filter((r) => r.discipline === discipline).map((r) => (
                 <tr key={r.id} className="border-b border-border last:border-0 hover:bg-background/50">
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
