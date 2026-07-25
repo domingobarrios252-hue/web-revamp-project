@@ -132,6 +132,7 @@ function AdminMedallero() {
       bronze: 0,
       published: true,
       sort_order: 0,
+      discipline,
     });
     setOpen(true);
   };
