@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Trophy, ExternalLink } from "lucide-react";
 import { SpecialBreadcrumb } from "@/components/specials/europeo-2026/SpecialBreadcrumb";
 import { SpecialHero } from "@/components/specials/europeo-2026/SpecialHero";
@@ -7,6 +7,12 @@ import { SpecialSubNav } from "@/components/specials/europeo-2026/SpecialSubNav"
 import { BackToSpecial } from "@/components/specials/europeo-2026/BackToSpecial";
 import { getPiece, EVENT } from "@/lib/specials/europeo-2026";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  aggregateByDiscipline,
+  useMedalStandings,
+  type Discipline,
+} from "@/lib/medals/useMedalStandings";
+import { MedalDisciplineTabs } from "@/components/medals/MedalDisciplineTabs";
 
 const PIECE = getPiece("resultados-y-medallero");
 const CANON = "https://rollerzone.lovable.app/camino-al-europeo-2026/resultados-y-medallero";
@@ -27,48 +33,45 @@ export const Route = createFileRoute("/camino-al-europeo-2026/resultados-y-medal
   component: Page,
 });
 
-type Row = {
-  id: string;
-  country_name: string;
-  country_code: string | null;
-  flag_url: string | null;
-  gold: number;
-  silver: number;
-  bronze: number;
+const HEADINGS: Record<Discipline, { title: string; description: string }> = {
+  pista: {
+    title: "Medallero de Pista",
+    description: "Resultados obtenidos exclusivamente en las pruebas disputadas en pista.",
+  },
+  circuito: {
+    title: "Medallero de Circuito",
+    description: "Resultados obtenidos exclusivamente en las pruebas disputadas en circuito.",
+  },
+  total: {
+    title: "Medallero Total",
+    description: "Suma de las medallas conseguidas en pista y circuito.",
+  },
 };
 
 function Page() {
-  const [rows, setRows] = useState<Row[]>([]);
+  const { rows, loading } = useMedalStandings(true);
   const [externalUrl, setExternalUrl] = useState<string>("");
-  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<Discipline>("total");
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data }, { data: setting }] = await Promise.all([
-        supabase
-          .from("medal_standings")
-          .select("id,country_name,country_code,flag_url,gold,silver,bronze")
-          .eq("published", true)
-          .order("gold", { ascending: false })
-          .order("silver", { ascending: false })
-          .order("bronze", { ascending: false }),
-        supabase
-          .from("site_settings")
-          .select("value")
-          .eq("key", "europeo_external_results_url")
-          .maybeSingle(),
-      ]);
+      const { data: setting } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "europeo_external_results_url")
+        .maybeSingle();
       if (cancelled) return;
-      setRows((data as Row[]) ?? []);
       const u = (setting?.value as { url?: string } | null)?.url;
       if (typeof u === "string") setExternalUrl(u);
-      setLoading(false);
     })();
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const visible = useMemo(() => aggregateByDiscipline(rows, tab), [rows, tab]);
+  const heading = HEADINGS[tab];
 
   return (
     <>
@@ -83,15 +86,18 @@ function Page() {
 
       <section className="bg-background py-14 md:py-20">
         <div className="mx-auto max-w-5xl px-4 md:px-6">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="font-condensed inline-flex items-center gap-2 bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
                 <Trophy className="h-3 w-3" /> Medallero
               </div>
               <h2 className="font-display mt-3 text-3xl uppercase tracking-wider text-foreground md:text-4xl">
-                Medallero completo
+                {heading.title}
               </h2>
               <div className="mt-3 h-[3px] w-16 bg-gold" />
+              <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
+                {heading.description}
+              </p>
             </div>
             {externalUrl && (
               <a
@@ -105,21 +111,25 @@ function Page() {
             )}
           </div>
 
+          <div className="mb-6">
+            <MedalDisciplineTabs value={tab} onChange={setTab} />
+          </div>
+
           {loading ? (
             <p className="text-muted-foreground">Cargando medallero…</p>
-          ) : rows.length === 0 ? (
+          ) : visible.length === 0 ? (
             <div className="rounded-xl border border-border bg-surface p-10 text-center">
               <Trophy className="mx-auto h-10 w-10 text-gold/70" />
               <p className="mt-4 text-muted-foreground">
-                El medallero se activará durante el campeonato. Vuelve pronto para
-                seguir las medallas país a país.
+                Aún no hay medallas registradas en esta modalidad. Vuelve pronto
+                para seguir el medallero país a país.
               </p>
             </div>
           ) : (
             <>
               {/* Mobile: cards */}
               <ul className="grid grid-cols-1 gap-3 md:hidden">
-                {rows.map((r, i) => (
+                {visible.map((r, i) => (
                   <li
                     key={r.id}
                     className="rounded-xl border border-border bg-surface p-3 shadow-md"
@@ -161,7 +171,7 @@ function Page() {
                     </tr>
                   </thead>
                   <tbody>
-                    {rows.map((r, i) => (
+                    {visible.map((r, i) => (
                       <tr key={r.id} className="border-b border-border last:border-0 hover:bg-background/40">
                         <td className="px-3 py-3 text-center font-display text-gold">{i + 1}</td>
                         <td className="px-3 py-3">

@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Trophy, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  aggregateByDiscipline,
+  useMedalStandings,
+  type Discipline,
+} from "@/lib/medals/useMedalStandings";
+import { MedalDisciplineTabs } from "@/components/medals/MedalDisciplineTabs";
 
-type Row = {
-  id: string;
-  country_name: string;
-  country_code: string | null;
-  flag_url: string | null;
-  gold: number;
-  silver: number;
-  bronze: number;
-  sort_order: number;
+const TITLES: Record<Discipline, string> = {
+  pista: "Medallero de Pista",
+  circuito: "Medallero de Circuito",
+  total: "Medallero Total del Europeo 2026",
 };
 
 /**
@@ -19,36 +20,35 @@ type Row = {
  * Se controla desde /admin/medallero (toggle "Mostrar en portada" + filas).
  */
 export function HomeMedalStandings() {
-  const [rows, setRows] = useState<Row[]>([]);
   const [enabled, setEnabled] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [checkedFlag, setCheckedFlag] = useState(false);
+  const { rows, loading } = useMedalStandings(true);
+  const [tab, setTab] = useState<Discipline>("total");
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [{ data: setting }, { data }] = await Promise.all([
-        supabase.from("site_settings").select("value").eq("key", "home_medals_enabled").maybeSingle(),
-        supabase
-          .from("medal_standings")
-          .select("id,country_name,country_code,flag_url,gold,silver,bronze,sort_order")
-          .eq("published", true)
-          .order("gold", { ascending: false })
-          .order("silver", { ascending: false })
-          .order("bronze", { ascending: false })
-          .limit(10),
-      ]);
+      const { data: setting } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "home_medals_enabled")
+        .maybeSingle();
       if (cancelled) return;
       const isOn = Boolean((setting?.value as { enabled?: boolean } | null)?.enabled);
       setEnabled(isOn);
-      setRows((data as Row[]) ?? []);
-      setLoading(false);
+      setCheckedFlag(true);
     })();
     return () => {
       cancelled = true;
     };
   }, []);
 
-  if (loading || !enabled || rows.length === 0) return null;
+  const visible = useMemo(
+    () => aggregateByDiscipline(rows, tab).slice(0, 10),
+    [rows, tab],
+  );
+
+  if (loading || !checkedFlag || !enabled || rows.length === 0) return null;
 
   return (
     <section className="relative border-b border-gold/25 bg-background py-12 md:py-16">
@@ -59,7 +59,7 @@ export function HomeMedalStandings() {
               <Trophy className="h-3 w-3" /> Medallero
             </div>
             <h3 className="font-display mt-3 text-2xl uppercase tracking-wider text-foreground md:text-3xl">
-              Medallero del Europeo 2026
+              {TITLES[tab]}
             </h3>
             <div className="mt-2 h-[3px] w-16 bg-gold" aria-hidden="true" />
           </div>
@@ -71,75 +71,87 @@ export function HomeMedalStandings() {
           </Link>
         </div>
 
-        {/* Mobile: cards */}
-        <ul className="grid grid-cols-1 gap-3 md:hidden">
-          {rows.map((r, i) => (
-            <li
-              key={r.id}
-              className="rounded-xl border border-border bg-surface p-3 shadow-md"
-              style={{ boxSizing: "border-box", minWidth: 0 }}
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <span className="font-display text-lg text-gold shrink-0 w-6 text-center">{i + 1}</span>
-                {r.flag_url && (
-                  <img src={r.flag_url} alt="" className="h-4 w-6 shrink-0 object-cover" loading="lazy" />
-                )}
-                <span className="truncate text-[15px] font-medium text-foreground min-w-0 flex-1">
-                  {r.country_name}
-                </span>
-                {r.country_code && (
-                  <span className="shrink-0 font-mono text-[11px] text-muted-foreground">{r.country_code}</span>
-                )}
-              </div>
-              <dl className="mt-3 grid grid-cols-4 gap-2 text-center text-[13px]">
-                <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥇</dt><dd className="font-bold text-gold">{r.gold}</dd></div>
-                <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥈</dt><dd className="font-semibold text-foreground">{r.silver}</dd></div>
-                <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥉</dt><dd className="font-semibold text-foreground">{r.bronze}</dd></div>
-                <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">Total</dt><dd className="font-display text-foreground">{r.gold + r.silver + r.bronze}</dd></div>
-              </dl>
-            </li>
-          ))}
-        </ul>
-
-        {/* Desktop: table */}
-        <div className="hidden rounded-xl border border-border bg-surface shadow-lg md:block">
-          <table className="w-full text-sm">
-            <thead className="border-b border-border bg-black/30">
-              <tr className="font-condensed text-left text-[10px] uppercase tracking-[2px] text-muted-foreground">
-                <th className="px-3 py-2 w-10 text-center">#</th>
-                <th className="px-3 py-2">País</th>
-                <th className="px-3 py-2 text-center">🥇</th>
-                <th className="px-3 py-2 text-center">🥈</th>
-                <th className="px-3 py-2 text-center">🥉</th>
-                <th className="px-3 py-2 text-center">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) => (
-                <tr key={r.id} className="border-b border-border last:border-0 hover:bg-background/40">
-                  <td className="px-3 py-2 text-center font-display text-gold">{i + 1}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      {r.flag_url && (
-                        <img src={r.flag_url} alt="" className="h-4 w-6 shrink-0 object-cover" loading="lazy" />
-                      )}
-                      <span className="font-medium text-foreground">{r.country_name}</span>
-                      {r.country_code && (
-                        <span className="font-mono text-[10px] text-muted-foreground">{r.country_code}</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-3 py-2 text-center font-bold text-gold">{r.gold}</td>
-                  <td className="px-3 py-2 text-center">{r.silver}</td>
-                  <td className="px-3 py-2 text-center">{r.bronze}</td>
-                  <td className="px-3 py-2 text-center font-display">
-                    {r.gold + r.silver + r.bronze}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mb-5">
+          <MedalDisciplineTabs value={tab} onChange={setTab} size="sm" />
         </div>
+
+        {visible.length === 0 ? (
+          <div className="rounded-xl border border-border bg-surface p-6 text-center text-muted-foreground">
+            Aún no hay medallas registradas en esta modalidad.
+          </div>
+        ) : (
+          <>
+            {/* Mobile: cards */}
+            <ul className="grid grid-cols-1 gap-3 md:hidden">
+              {visible.map((r, i) => (
+                <li
+                  key={r.id}
+                  className="rounded-xl border border-border bg-surface p-3 shadow-md"
+                  style={{ boxSizing: "border-box", minWidth: 0 }}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="font-display text-lg text-gold shrink-0 w-6 text-center">{i + 1}</span>
+                    {r.flag_url && (
+                      <img src={r.flag_url} alt="" className="h-4 w-6 shrink-0 object-cover" loading="lazy" />
+                    )}
+                    <span className="truncate text-[15px] font-medium text-foreground min-w-0 flex-1">
+                      {r.country_name}
+                    </span>
+                    {r.country_code && (
+                      <span className="shrink-0 font-mono text-[11px] text-muted-foreground">{r.country_code}</span>
+                    )}
+                  </div>
+                  <dl className="mt-3 grid grid-cols-4 gap-2 text-center text-[13px]">
+                    <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥇</dt><dd className="font-bold text-gold">{r.gold}</dd></div>
+                    <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥈</dt><dd className="font-semibold text-foreground">{r.silver}</dd></div>
+                    <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">🥉</dt><dd className="font-semibold text-foreground">{r.bronze}</dd></div>
+                    <div><dt className="text-[11px] uppercase tracking-widest text-muted-foreground">Total</dt><dd className="font-display text-foreground">{r.gold + r.silver + r.bronze}</dd></div>
+                  </dl>
+                </li>
+              ))}
+            </ul>
+
+            {/* Desktop: table */}
+            <div className="hidden rounded-xl border border-border bg-surface shadow-lg md:block">
+              <table className="w-full text-sm">
+                <thead className="border-b border-border bg-black/30">
+                  <tr className="font-condensed text-left text-[10px] uppercase tracking-[2px] text-muted-foreground">
+                    <th className="px-3 py-2 w-10 text-center">#</th>
+                    <th className="px-3 py-2">País</th>
+                    <th className="px-3 py-2 text-center">🥇</th>
+                    <th className="px-3 py-2 text-center">🥈</th>
+                    <th className="px-3 py-2 text-center">🥉</th>
+                    <th className="px-3 py-2 text-center">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.map((r, i) => (
+                    <tr key={r.id} className="border-b border-border last:border-0 hover:bg-background/40">
+                      <td className="px-3 py-2 text-center font-display text-gold">{i + 1}</td>
+                      <td className="px-3 py-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          {r.flag_url && (
+                            <img src={r.flag_url} alt="" className="h-4 w-6 shrink-0 object-cover" loading="lazy" />
+                          )}
+                          <span className="font-medium text-foreground">{r.country_name}</span>
+                          {r.country_code && (
+                            <span className="font-mono text-[10px] text-muted-foreground">{r.country_code}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 text-center font-bold text-gold">{r.gold}</td>
+                      <td className="px-3 py-2 text-center">{r.silver}</td>
+                      <td className="px-3 py-2 text-center">{r.bronze}</td>
+                      <td className="px-3 py-2 text-center font-display">
+                        {r.gold + r.silver + r.bronze}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
