@@ -295,6 +295,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
   const [bronze, setBronze] = useState(row.bronze);
   const [published, setPublished] = useState(row.published);
   const [sortOrder, setSortOrder] = useState(row.sort_order);
+  const [discipline, setDiscipline] = useState<Discipline>(row.discipline);
   const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
@@ -307,6 +308,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
       bronze,
       published,
       sort_order: sortOrder,
+      discipline,
     });
     if (!parsed.success) return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
 
@@ -320,6 +322,7 @@ function EditDialog({ row, onClose, onSaved }: { row: Row; onClose: () => void; 
       bronze: parsed.data.bronze,
       published: parsed.data.published,
       sort_order: parsed.data.sort_order,
+      discipline: parsed.data.discipline,
     };
     const { error } = row.id
       ? await supabase.from("medal_standings").update(payload).eq("id", row.id)
