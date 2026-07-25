@@ -49,6 +49,7 @@ function AdminMedallero() {
   const [savingToggle, setSavingToggle] = useState(false);
   const [externalUrl, setExternalUrl] = useState("");
   const [savingUrl, setSavingUrl] = useState(false);
+  const [discipline, setDiscipline] = useState<Discipline>("pista");
 
 
   const load = async () => {
