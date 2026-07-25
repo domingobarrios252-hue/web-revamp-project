@@ -22,7 +22,10 @@ const schema = z.object({
   bronze: z.number().int().min(0),
   published: z.boolean(),
   sort_order: z.number().int().min(0),
+  discipline: z.enum(["pista", "circuito"]),
 });
+
+type Discipline = "pista" | "circuito";
 
 type Row = {
   id: string;
@@ -34,6 +37,7 @@ type Row = {
   bronze: number;
   published: boolean;
   sort_order: number;
+  discipline: Discipline;
 };
 
 function AdminMedallero() {
