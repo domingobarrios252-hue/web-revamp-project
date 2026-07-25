@@ -1777,6 +1777,7 @@ export type Database = {
           country_code: string | null
           country_name: string
           created_at: string
+          discipline: string
           flag_url: string | null
           gold: number
           id: string
@@ -1790,6 +1791,7 @@ export type Database = {
           country_code?: string | null
           country_name: string
           created_at?: string
+          discipline?: string
           flag_url?: string | null
           gold?: number
           id?: string
@@ -1803,6 +1805,7 @@ export type Database = {
           country_code?: string | null
           country_name?: string
           created_at?: string
+          discipline?: string
           flag_url?: string | null
           gold?: number
           id?: string
