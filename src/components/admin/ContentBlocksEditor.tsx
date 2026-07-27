@@ -101,6 +101,47 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
         </button>
       </div>
 
+      {issues.length > 0 && (
+        <div
+          className={`border p-3 text-xs ${
+            errors.length > 0 ? "border-destructive/60 bg-destructive/5" : "border-gold/50 bg-gold/5"
+          }`}
+        >
+          <p className="font-condensed mb-2 inline-flex items-center gap-2 uppercase tracking-widest">
+            {errors.length > 0 ? (
+              <>
+                <AlertCircle className="h-4 w-4 text-destructive" />
+                <span className="text-destructive">
+                  {errors.length} campo(s) obligatorio(s) sin completar
+                </span>
+              </>
+            ) : (
+              <>
+                <AlertTriangle className="h-4 w-4 text-gold" />
+                <span className="text-gold">{warnings.length} recomendación(es)</span>
+              </>
+            )}
+          </p>
+          <ul className="space-y-1">
+            {issues.map((it, k) => (
+              <li
+                key={k}
+                className={it.level === "error" ? "text-destructive" : "text-muted-foreground"}
+              >
+                Bloque {it.index + 1} · {BLOCK_LABELS[it.type]}: {it.message}
+              </li>
+            ))}
+          </ul>
+          {errors.length > 0 && (
+            <p className="mt-2 text-muted-foreground">
+              Completa estos campos antes de publicar la noticia.
+            </p>
+          )}
+        </div>
+      )}
+
+
+
       {preview ? (
         <div className="border border-border bg-background p-4">
           {value.length === 0 ? (
