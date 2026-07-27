@@ -68,7 +68,8 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
       return FALLBACK_OG;
     };
     const image = toAbsolute(rawImage);
-    const plain = (a.content ?? "").replace(/\s+/g, " ").trim();
+    const blocksText = blocksPlainText(parseBlocks(a.content_blocks));
+    const plain = (blocksText || a.content || "").replace(/\s+/g, " ").trim();
     const wordCount = plain ? plain.split(" ").filter(Boolean).length : undefined;
     const bodySnippet = plain ? plain.slice(0, 500) : undefined;
     const lang = a.country_code === "co" ? "es-CO" : "es-ES";
