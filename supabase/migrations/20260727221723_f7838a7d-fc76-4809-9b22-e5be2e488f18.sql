@@ -1,0 +1,1 @@
+ALTER TABLE public.news ADD COLUMN IF NOT EXISTS content_blocks jsonb NOT NULL DEFAULT '[]'::jsonb;
