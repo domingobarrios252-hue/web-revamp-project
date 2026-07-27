@@ -10,7 +10,7 @@ import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import { NewsVideoUploadField, deleteStoredVideo } from "@/components/admin/NewsVideoUploadField";
 import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
 import { ContentBlocksEditor } from "@/components/admin/ContentBlocksEditor";
-import { cleanBlocks, parseBlocks, type NewsBlock } from "@/lib/newsBlocks";
+import { cleanBlocks, parseBlocks, validateBlocks, type NewsBlock } from "@/lib/newsBlocks";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
@@ -489,6 +489,19 @@ function NewsEditor({
       toast.error("Selecciona al menos un destino (Portada general o un Hub de país).");
       return;
     }
+    // Validación de bloques de contenido: no se publica con campos obligatorios vacíos.
+    const blockIssues = validateBlocks(blocks);
+    const blockErrors = blockIssues.filter((i) => i.level === "error");
+    if (blockErrors.length > 0 && (status === "published" || status === "pending")) {
+      const first = blockErrors[0];
+      toast.error(
+        `Bloque ${first.index + 1}: ${first.message}${
+          blockErrors.length > 1 ? ` (+${blockErrors.length - 1} más)` : ""
+        }`,
+      );
+      return;
+    }
+
     // country_code debe ser non-null en BD. Si no se elige hub de país,
     // conservamos el valor actual (o 'es' por defecto en nuevas noticias).
     const derivedCountry: string =

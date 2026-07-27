@@ -22,9 +22,12 @@ import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
 import {
   BLOCK_LABELS,
   createBlock,
+  validateBlocks,
   type NewsBlock,
   type NewsBlockType,
 } from "@/lib/newsBlocks";
+import { AlertTriangle, AlertCircle } from "lucide-react";
+
 
 const TYPE_ICONS: Record<NewsBlockType, React.ComponentType<{ className?: string }>> = {
   text: Type,
@@ -60,9 +63,14 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
+  const issues = validateBlocks(value);
+  const errors = issues.filter((i) => i.level === "error");
+  const warnings = issues.filter((i) => i.level === "warning");
+
   const update = (index: number, patch: Partial<NewsBlock>) => {
     onChange(value.map((b, i) => (i === index ? ({ ...b, ...patch } as NewsBlock) : b)));
   };
+
   const remove = (index: number) => onChange(value.filter((_, i) => i !== index));
   const move = (from: number, to: number) => {
     if (to < 0 || to >= value.length || from === to) return;
@@ -92,6 +100,47 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
           {preview ? "Volver a editar" : "Previsualizar"}
         </button>
       </div>
+
+      {issues.length > 0 && (
+        <div
+          className={`border p-3 text-xs ${
+            errors.length > 0 ? "border-destructive/60 bg-destructive/5" : "border-gold/50 bg-gold/5"
+          }`}
+        >
+          <p className="font-condensed mb-2 inline-flex items-center gap-2 uppercase tracking-widest">
+            {errors.length > 0 ? (
+              <>
+                <AlertCircle className="h-4 w-4 text-destructive" />
+                <span className="text-destructive">
+                  {errors.length} campo(s) obligatorio(s) sin completar
+                </span>
+              </>
+            ) : (
+              <>
+                <AlertTriangle className="h-4 w-4 text-gold" />
+                <span className="text-gold">{warnings.length} recomendación(es)</span>
+              </>
+            )}
+          </p>
+          <ul className="space-y-1">
+            {issues.map((it, k) => (
+              <li
+                key={k}
+                className={it.level === "error" ? "text-destructive" : "text-muted-foreground"}
+              >
+                Bloque {it.index + 1} · {BLOCK_LABELS[it.type]}: {it.message}
+              </li>
+            ))}
+          </ul>
+          {errors.length > 0 && (
+            <p className="mt-2 text-muted-foreground">
+              Completa estos campos antes de publicar la noticia.
+            </p>
+          )}
+        </div>
+      )}
+
+
 
       {preview ? (
         <div className="border border-border bg-background p-4">

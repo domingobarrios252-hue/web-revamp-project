@@ -100,6 +100,9 @@ export const Route = createRootRoute({
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "RollerZone",
+          alternateName: "RollerZone — La voz del patinaje de velocidad",
+          description:
+            "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone.",
           url: "https://rollerzone.es",
           inLanguage: "es-ES",
           potentialAction: {
