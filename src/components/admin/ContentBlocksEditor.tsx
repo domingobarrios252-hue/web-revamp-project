@@ -22,9 +22,12 @@ import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
 import {
   BLOCK_LABELS,
   createBlock,
+  validateBlocks,
   type NewsBlock,
   type NewsBlockType,
 } from "@/lib/newsBlocks";
+import { AlertTriangle, AlertCircle } from "lucide-react";
+
 
 const TYPE_ICONS: Record<NewsBlockType, React.ComponentType<{ className?: string }>> = {
   text: Type,
@@ -60,9 +63,14 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
+  const issues = validateBlocks(value);
+  const errors = issues.filter((i) => i.level === "error");
+  const warnings = issues.filter((i) => i.level === "warning");
+
   const update = (index: number, patch: Partial<NewsBlock>) => {
     onChange(value.map((b, i) => (i === index ? ({ ...b, ...patch } as NewsBlock) : b)));
   };
+
   const remove = (index: number) => onChange(value.filter((_, i) => i !== index));
   const move = (from: number, to: number) => {
     if (to < 0 || to >= value.length || from === to) return;
