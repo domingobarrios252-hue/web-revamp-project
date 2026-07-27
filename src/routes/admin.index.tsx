@@ -369,6 +369,7 @@ function NewsEditor({
   const [slug, setSlug] = useState(item?.slug ?? "");
   const [excerpt, setExcerpt] = useState(item?.excerpt ?? "");
   const [content, setContent] = useState(item?.content ?? "");
+  const [blocks, setBlocks] = useState<NewsBlock[]>(parseBlocks(item?.content_blocks));
   const [writerId, setWriterId] = useState(item?.writer_id ?? "");
   const [categoryId, setCategoryId] = useState(item?.category_id ?? "");
   const [legacyTag, setLegacyTag] = useState(item?.legacy_tag ?? "");
