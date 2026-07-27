@@ -9,6 +9,8 @@ import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import { NewsVideoUploadField, deleteStoredVideo } from "@/components/admin/NewsVideoUploadField";
 import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
+import { ContentBlocksEditor } from "@/components/admin/ContentBlocksEditor";
+import { cleanBlocks, parseBlocks, type NewsBlock } from "@/lib/newsBlocks";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
