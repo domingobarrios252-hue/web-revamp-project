@@ -506,6 +506,7 @@ function NewsEditor({
         slug: parsed.data.slug,
         excerpt: parsed.data.excerpt ?? null,
         content: parsed.data.content ?? null,
+        content_blocks: cleanBlocks(blocks) as never,
         author: writer.full_name,
         writer_id: writer.id,
         category_id: parsed.data.category_id ?? null,
