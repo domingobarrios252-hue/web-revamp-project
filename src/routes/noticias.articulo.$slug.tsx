@@ -8,6 +8,8 @@ import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { CroppedImage } from "@/components/site/CroppedImage";
 import { Lightbox } from "@/components/site/Lightbox";
 import { NewsVideoPlayer } from "@/components/site/NewsVideoPlayer";
+import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
+import { parseBlocks, blocksPlainText } from "@/lib/newsBlocks";
 
 type Article = {
   id: string;
@@ -15,6 +17,7 @@ type Article = {
   slug: string;
   excerpt: string | null;
   content: string | null;
+  content_blocks: unknown;
   author: string;
   writer_id: string | null;
   writers: { id: string; full_name: string; published: boolean } | null;
@@ -39,7 +42,7 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const { data } = await supabase
       .from("news")
       .select(
-        "id, title, slug, excerpt, content, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)"
+        "id, title, slug, excerpt, content, content_blocks, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)"
       )
       .eq("slug", params.slug)
       .maybeSingle();
@@ -65,7 +68,8 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
       return FALLBACK_OG;
     };
     const image = toAbsolute(rawImage);
-    const plain = (a.content ?? "").replace(/\s+/g, " ").trim();
+    const blocksText = blocksPlainText(parseBlocks(a.content_blocks));
+    const plain = (blocksText || a.content || "").replace(/\s+/g, " ").trim();
     const wordCount = plain ? plain.split(" ").filter(Boolean).length : undefined;
     const bodySnippet = plain ? plain.slice(0, 500) : undefined;
     const lang = a.country_code === "co" ? "es-CO" : "es-ES";
@@ -212,6 +216,8 @@ function ArticlePage() {
     toast.success("Enlace copiado al portapapeles");
   };
 
+  const blocks = parseBlocks(article.content_blocks);
+
   const paragraphs: string[] = (article.content ?? "")
     .split("\n")
     .map((p: string) => p.trim())
@@ -355,15 +361,19 @@ function ArticlePage() {
 
 
 
-      <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
-        {paragraphs.length === 0 ? (
-          <p className="italic text-muted-foreground">
-            (Sin contenido — añade el cuerpo del artículo desde el panel de administración)
-          </p>
-        ) : (
-          paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
-        )}
-      </div>
+      {blocks.length > 0 ? (
+        <NewsContentBlocks blocks={blocks} title={article.title} />
+      ) : (
+        <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
+          {paragraphs.length === 0 ? (
+            <p className="italic text-muted-foreground">
+              (Sin contenido — añade el cuerpo del artículo desde el panel de administración)
+            </p>
+          ) : (
+            paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
+          )}
+        </div>
+      )}
 
       {Array.isArray(article.gallery) && article.gallery.length > 0 && (
         <section className="mt-10">

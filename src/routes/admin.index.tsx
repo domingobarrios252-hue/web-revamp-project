@@ -9,6 +9,8 @@ import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import { NewsVideoUploadField, deleteStoredVideo } from "@/components/admin/NewsVideoUploadField";
 import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
+import { ContentBlocksEditor } from "@/components/admin/ContentBlocksEditor";
+import { cleanBlocks, parseBlocks, type NewsBlock } from "@/lib/newsBlocks";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
@@ -18,6 +20,7 @@ type News = {
   slug: string;
   excerpt: string | null;
   content: string | null;
+  content_blocks: unknown;
   author: string;
   writer_id: string | null;
   category_id: string | null;
@@ -119,7 +122,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, author, writer_id, category_id, legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code, live_active, live_event_id, live_start_at, live_end_at"
+          "id, title, slug, excerpt, content, content_blocks, author, writer_id, category_id, legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code, live_active, live_event_id, live_start_at, live_end_at"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -366,6 +369,7 @@ function NewsEditor({
   const [slug, setSlug] = useState(item?.slug ?? "");
   const [excerpt, setExcerpt] = useState(item?.excerpt ?? "");
   const [content, setContent] = useState(item?.content ?? "");
+  const [blocks, setBlocks] = useState<NewsBlock[]>(parseBlocks(item?.content_blocks));
   const [writerId, setWriterId] = useState(item?.writer_id ?? "");
   const [categoryId, setCategoryId] = useState(item?.category_id ?? "");
   const [legacyTag, setLegacyTag] = useState(item?.legacy_tag ?? "");
@@ -502,6 +506,7 @@ function NewsEditor({
         slug: parsed.data.slug,
         excerpt: parsed.data.excerpt ?? null,
         content: parsed.data.content ?? null,
+        content_blocks: cleanBlocks(blocks) as never,
         author: writer.full_name,
         writer_id: writer.id,
         category_id: parsed.data.category_id ?? null,
@@ -728,6 +733,21 @@ function NewsEditor({
             onChange={setContent}
             rows={10}
           />
+
+          <div className="border-t border-border pt-3">
+            <p className="mb-3 text-xs text-muted-foreground">
+              Reportaje por bloques (opcional). Si añades bloques, se mostrarán en la noticia en
+              este orden en lugar del texto clásico de arriba. La imagen de portada y la galería
+              final se mantienen aparte.
+            </p>
+            <ContentBlocksEditor
+              value={blocks}
+              onChange={setBlocks}
+              nameHint={slug || title}
+              title={title}
+            />
+          </div>
+
           <label className="block">
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
               Fecha de publicación

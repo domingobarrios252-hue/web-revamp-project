@@ -1920,6 +1920,7 @@ export type Database = {
           category_id: string | null
           competition_tag: string | null
           content: string | null
+          content_blocks: Json
           country_code: string
           created_at: string
           created_by: string | null
@@ -1956,6 +1957,7 @@ export type Database = {
           category_id?: string | null
           competition_tag?: string | null
           content?: string | null
+          content_blocks?: Json
           country_code?: string
           created_at?: string
           created_by?: string | null
@@ -1992,6 +1994,7 @@ export type Database = {
           category_id?: string | null
           competition_tag?: string | null
           content?: string | null
+          content_blocks?: Json
           country_code?: string
           created_at?: string
           created_by?: string | null
