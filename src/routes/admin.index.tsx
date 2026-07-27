@@ -20,6 +20,7 @@ type News = {
   slug: string;
   excerpt: string | null;
   content: string | null;
+  content_blocks: unknown;
   author: string;
   writer_id: string | null;
   category_id: string | null;
