@@ -216,6 +216,8 @@ function ArticlePage() {
     toast.success("Enlace copiado al portapapeles");
   };
 
+  const blocks = parseBlocks(article.content_blocks);
+
   const paragraphs: string[] = (article.content ?? "")
     .split("\n")
     .map((p: string) => p.trim())
