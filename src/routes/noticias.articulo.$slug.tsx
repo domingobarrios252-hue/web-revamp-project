@@ -361,15 +361,19 @@ function ArticlePage() {
 
 
 
-      <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
-        {paragraphs.length === 0 ? (
-          <p className="italic text-muted-foreground">
-            (Sin contenido — añade el cuerpo del artículo desde el panel de administración)
-          </p>
-        ) : (
-          paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
-        )}
-      </div>
+      {blocks.length > 0 ? (
+        <NewsContentBlocks blocks={blocks} title={article.title} />
+      ) : (
+        <div className="prose prose-invert max-w-none space-y-4 text-[16px] leading-relaxed text-foreground/90">
+          {paragraphs.length === 0 ? (
+            <p className="italic text-muted-foreground">
+              (Sin contenido — añade el cuerpo del artículo desde el panel de administración)
+            </p>
+          ) : (
+            paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
+          )}
+        </div>
+      )}
 
       {Array.isArray(article.gallery) && article.gallery.length > 0 && (
         <section className="mt-10">
