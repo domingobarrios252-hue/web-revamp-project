@@ -64,17 +64,17 @@ function computeHeroBadge(slide: News, now: number = Date.now()): HeroBadge {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "RollerZone — El medio del patinaje de velocidad" },
+      { title: "RollerZone — La voz del patinaje de velocidad" },
       {
         name: "description",
         content:
-          "RollerZone: noticias, resultados, eventos, entrevistas, selección española, clubes y la revista de referencia del patinaje sobre ruedas.",
+          "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone.",
       },
-      { property: "og:title", content: "RollerZone — El medio del patinaje de velocidad" },
+      { property: "og:title", content: "RollerZone — La voz del patinaje de velocidad" },
       {
         property: "og:description",
         content:
-          "Noticias, resultados, eventos, entrevistas y revista del patinaje de velocidad. La casa del patinaje sobre ruedas.",
+          "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://rollerzone.es/" },
@@ -83,10 +83,11 @@ export const Route = createFileRoute("/")({
       { property: "og:image:height", content: "630" },
       { property: "og:image:alt", content: "RollerZone — Patinaje de velocidad" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "RollerZone — El medio del patinaje de velocidad" },
-      { name: "twitter:description", content: "Noticias, resultados, eventos, entrevistas y revista del patinaje de velocidad." },
+      { name: "twitter:title", content: "RollerZone — La voz del patinaje de velocidad" },
+      { name: "twitter:description", content: "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone." },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
     ],
+
     links: [{ rel: "canonical", href: "https://rollerzone.es/" }],
   }),
   component: HomePage,
@@ -248,7 +249,13 @@ function HeroCarousel({
       <section className="relative w-full overflow-hidden bg-background">
         <div className="relative flex h-[50vh] min-h-[340px] items-center justify-center">
           <div className="diagonal-lines-bg absolute inset-0" aria-hidden="true" />
-          <h1 className="font-display relative text-5xl uppercase tracking-widest text-gold">RollerZone</h1>
+          <div className="relative text-center">
+            <h1 className="font-display text-5xl uppercase tracking-widest text-gold">RollerZone</h1>
+            <p className="font-condensed mt-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+              La voz del patinaje de velocidad
+            </p>
+          </div>
+
         </div>
       </section>
     );
