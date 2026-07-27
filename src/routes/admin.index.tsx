@@ -733,6 +733,21 @@ function NewsEditor({
             onChange={setContent}
             rows={10}
           />
+
+          <div className="border-t border-border pt-3">
+            <p className="mb-3 text-xs text-muted-foreground">
+              Reportaje por bloques (opcional). Si añades bloques, se mostrarán en la noticia en
+              este orden en lugar del texto clásico de arriba. La imagen de portada y la galería
+              final se mantienen aparte.
+            </p>
+            <ContentBlocksEditor
+              value={blocks}
+              onChange={setBlocks}
+              nameHint={slug || title}
+              title={title}
+            />
+          </div>
+
           <label className="block">
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
               Fecha de publicación
