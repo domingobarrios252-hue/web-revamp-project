@@ -8,6 +8,8 @@ import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { CroppedImage } from "@/components/site/CroppedImage";
 import { Lightbox } from "@/components/site/Lightbox";
 import { NewsVideoPlayer } from "@/components/site/NewsVideoPlayer";
+import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
+import { parseBlocks, blocksPlainText } from "@/lib/newsBlocks";
 
 type Article = {
   id: string;
@@ -15,6 +17,7 @@ type Article = {
   slug: string;
   excerpt: string | null;
   content: string | null;
+  content_blocks: unknown;
   author: string;
   writer_id: string | null;
   writers: { id: string; full_name: string; published: boolean } | null;
