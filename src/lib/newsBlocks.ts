@@ -161,3 +161,49 @@ export function blocksPlainText(blocks: NewsBlock[]): string {
     .replace(/\s+/g, " ")
     .trim();
 }
+
+export type BlockIssue = {
+  index: number;
+  type: NewsBlockType;
+  level: "error" | "warning";
+  message: string;
+};
+
+/** Valida los bloques antes de publicar: campos obligatorios y recomendados. */
+export function validateBlocks(blocks: NewsBlock[]): BlockIssue[] {
+  const issues: BlockIssue[] = [];
+  const push = (index: number, type: NewsBlockType, level: BlockIssue["level"], message: string) =>
+    issues.push({ index, type, level, message });
+
+  blocks.forEach((b, i) => {
+    switch (b.type) {
+      case "text":
+        if (!b.text.trim()) push(i, b.type, "error", "El bloque de texto está vacío.");
+        break;
+      case "heading":
+        if (!b.text.trim()) push(i, b.type, "error", "El título está vacío.");
+        break;
+      case "quote":
+        if (!b.text.trim()) push(i, b.type, "error", "La cita está vacía.");
+        break;
+      case "image":
+        if (!b.url.trim()) push(i, b.type, "error", "Falta la imagen (sube un archivo o pega una URL).");
+        if (!b.alt?.trim()) push(i, b.type, "error", "Falta el texto alternativo (obligatorio para SEO y accesibilidad).");
+        if (!b.caption?.trim()) push(i, b.type, "warning", "Sin pie de foto (recomendado).");
+        break;
+      case "gallery":
+        if (b.images.length === 0) push(i, b.type, "error", "La galería no tiene imágenes.");
+        if (!b.caption?.trim()) push(i, b.type, "warning", "Galería sin pie de foto (recomendado).");
+        break;
+      case "video":
+        if (!b.fileUrl?.trim() && !b.embedUrl?.trim())
+          push(i, b.type, "error", "Falta el vídeo: sube un archivo o añade una URL de embed.");
+        if (!b.caption?.trim()) push(i, b.type, "warning", "Vídeo sin pie descriptivo (recomendado).");
+        break;
+      case "divider":
+        break;
+    }
+  });
+
+  return issues;
+}
