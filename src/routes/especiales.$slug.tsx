@@ -34,7 +34,7 @@ type Piece = {
 export const Route = createFileRoute("/especiales/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug} | RollerZone` },
+      { title: `${params.slug} · Especial | RollerZone` },
       { name: "description", content: "Cobertura especial RollerZone." },
     ],
   }),

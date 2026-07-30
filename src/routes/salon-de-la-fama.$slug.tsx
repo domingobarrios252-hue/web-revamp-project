@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/salon-de-la-fama/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug.replace(/-/g, " ")} | RollerZone` },
+      { title: `${params.slug.replace(/-/g, " ")} · Salón de la Fama | RollerZone` },
       {
         name: "description",
         content: `Perfil de leyenda en el Salón de la Fama de RollerZone — ${params.slug.replace(/-/g, " ")}.`,

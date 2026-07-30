@@ -4,7 +4,7 @@ import { VideoFicha } from "@/components/hub/VideoFicha";
 export const Route = createFileRoute("/hub/$country/tv/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug} | RollerZone` },
+      { title: `${params.slug} · RollerZone TV | RollerZone` },
       { name: "description", content: "Vídeo de RollerZone TV." },
     ],
   }),
