@@ -261,7 +261,7 @@ function HeroCarousel({
         <div className="relative flex h-[50vh] min-h-[340px] items-center justify-center">
           <div className="diagonal-lines-bg absolute inset-0" aria-hidden="true" />
           <div className="relative text-center">
-            <h1 className="font-display text-5xl uppercase tracking-widest text-gold">RollerZone</h1>
+            <p className="font-display text-5xl uppercase tracking-widest text-gold">RollerZone</p>
             <p className="font-condensed mt-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
               La voz del patinaje de velocidad
             </p>
