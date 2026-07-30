@@ -27,7 +27,7 @@ type SpecialLite = { slug: string; title: string };
 export const Route = createFileRoute("/especiales/$slug/$piece")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.piece} — ${params.slug} — RollerZone` },
+      { title: `${params.piece} · ${params.slug} | RollerZone` },
       { name: "description", content: "Pieza editorial del especial." },
     ],
   }),

@@ -4,7 +4,7 @@ import { FederationsDirectory } from "@/components/hub/FederationsDirectory";
 export const Route = createFileRoute("/hub/$country/federaciones/")({
   head: () => ({
     meta: [
-      { title: "Federaciones · Hub España · RollerZone" },
+      { title: "Federaciones · Hub España | RollerZone" },
       { name: "description", content: "Real Federación Española de Patinaje y federaciones autonómicas: directorio, contacto y documentos oficiales." },
     ],
   }),

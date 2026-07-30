@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/liga-nacional/clasificaciones")({
   head: () => ({
     meta: [
-      { title: "Liga Nacional Absoluta y Liga Sub 15 — Clasificaciones completas | RollerZone" },
+      { title: "Liga Nacional Absoluta y Liga Sub 15 · Clasificaciones completas | RollerZone" },
       {
         name: "description",
         content:

@@ -16,7 +16,7 @@ type Sponsor = {
 export const Route = createFileRoute("/patrocinadores")({
   head: () => ({
     meta: [
-      { title: "Patrocinadores — RollerZone" },
+      { title: "Patrocinadores | RollerZone" },
       { name: "description", content: "Marcas y patrocinadores que hacen posible RollerZone." },
       { property: "og:title", content: "Patrocinadores — RollerZone" },
       { property: "og:description", content: "Marcas que apoyan al patinaje de velocidad." },

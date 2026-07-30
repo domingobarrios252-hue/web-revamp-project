@@ -13,7 +13,7 @@ const credSchema = z.object({
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Acceso administrador — RollerZone" },
+      { title: "Acceso administrador | RollerZone" },
       { name: "description", content: "Acceso al panel de administración de RollerZone." },
       { name: "robots", content: "noindex" },
     ],

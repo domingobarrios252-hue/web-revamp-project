@@ -40,7 +40,7 @@ export const Route = createFileRoute("/eventos/$slug")({
   },
   head: ({ loaderData, params }) => {
     const e = loaderData?.event;
-    if (!e) return { meta: [{ title: "Evento — RollerZone" }] };
+    if (!e) return { meta: [{ title: "Evento | RollerZone" }] };
     const desc = e.description?.slice(0, 160) ?? `${e.name} — ${e.location ?? ""}`;
     const url = `https://rollerzone.lovable.app/eventos/${params.slug}`;
     const now = new Date();
@@ -78,7 +78,7 @@ export const Route = createFileRoute("/eventos/$slug")({
     };
     return {
       meta: [
-        { title: `${e.name} — Eventos RollerZone` },
+        { title: `${e.name} | RollerZone` },
         { name: "description", content: desc },
         { property: "og:title", content: e.name },
         { property: "og:description", content: desc },

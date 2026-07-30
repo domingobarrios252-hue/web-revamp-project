@@ -31,7 +31,7 @@ type EventItem = {
 export const Route = createFileRoute("/eventos/")({
   head: () => ({
     meta: [
-      { title: "Eventos — RollerZone" },
+      { title: "Eventos | RollerZone" },
       { name: "description", content: "Calendario de eventos y competiciones de patinaje de velocidad: categorías, fechas, ubicación y enlaces oficiales." },
       { property: "og:title", content: "Eventos — RollerZone" },
       { property: "og:description", content: "Calendario de eventos y competiciones de patinaje de velocidad." },

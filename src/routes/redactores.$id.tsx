@@ -33,7 +33,7 @@ export const Route = createFileRoute("/redactores/$id")({
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
-          { title: `${loaderData.writer.full_name} — Redactores RollerZone` },
+          { title: `${loaderData.writer.full_name} | RollerZone` },
           {
             name: "description",
             content:

@@ -17,7 +17,7 @@ const DESCRIPTION =
 export const Route = createFileRoute("/camino-al-europeo-2026/calendario-y-sedes")({
   head: () => ({
     meta: [
-      { title: `${TITLE} — Europeo 2026` },
+      { title: `${TITLE} | RollerZone` },
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },

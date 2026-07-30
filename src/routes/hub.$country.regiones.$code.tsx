@@ -5,7 +5,7 @@ import { useRegion } from "@/lib/hub/useRegion";
 export const Route = createFileRoute("/hub/$country/regiones/$code")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.code} · Comunidad · Hub España · RollerZone` },
+      { title: `${params.code} · Comunidad · Hub España | RollerZone` },
       { name: "description", content: `Federación, clubes y patinadores de la comunidad ${params.code} en RollerZone.` },
     ],
   }),

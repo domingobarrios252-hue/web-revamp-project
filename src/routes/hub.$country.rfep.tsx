@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/hub/$country/rfep")({
   head: () => ({
     meta: [
-      { title: "RFEP · Real Federación Española de Patinaje · RollerZone" },
+      { title: "RFEP · Real Federación Española de Patinaje | RollerZone" },
       { name: "description", content: "Información institucional de la Real Federación Española de Patinaje: normativa, calendario, convocatorias y licencias." },
     ],
   }),

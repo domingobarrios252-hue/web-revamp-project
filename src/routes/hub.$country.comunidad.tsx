@@ -4,7 +4,7 @@ import { CommunityPage } from "@/components/hub/CommunityPage";
 export const Route = createFileRoute("/hub/$country/comunidad")({
   head: ({ params }) => ({
     meta: [
-      { title: `Comunidad — Hub ${params.country.toUpperCase()}` },
+      { title: `Comunidad · Hub ${params.country.toUpperCase()} | RollerZone` },
       {
         name: "description",
         content:

@@ -6,7 +6,7 @@ import { FileText, LogOut } from "lucide-react";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Mi panel — RollerZone" },
+      { title: "Mi panel | RollerZone" },
       { name: "robots", content: "noindex" },
     ],
   }),

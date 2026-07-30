@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/events/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `Resultados — ${params.slug} · RollerZone` },
+      { title: `Resultados · ${params.slug} | RollerZone` },
       {
         name: "description",
         content: `Clasificación final del evento ${params.slug} en RollerZone.`,

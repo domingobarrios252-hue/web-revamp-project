@@ -4,7 +4,7 @@ import { ArchiveBrowser } from "@/components/hub/ArchiveBrowser";
 export const Route = createFileRoute("/hub/$country/archivo")({
   head: ({ params }) => ({
     meta: [
-      { title: `Archivo histórico — Hub ${params.country.toUpperCase()}` },
+      { title: `Archivo histórico · Hub ${params.country.toUpperCase()} | RollerZone` },
       {
         name: "description",
         content:

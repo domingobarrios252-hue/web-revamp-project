@@ -23,7 +23,7 @@ export const Route = createFileRoute("/legal/$slug")({
     const title = loaderData?.page.title ?? "Página legal";
     return {
       meta: [
-        { title: `${title} — RollerZone` },
+        { title: `${title} | RollerZone` },
         { name: "description", content: `${title} de RollerZone.` },
         { name: "robots", content: "index, follow" },
         { property: "og:title", content: `${title} — RollerZone` },

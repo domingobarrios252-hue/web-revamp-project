@@ -29,7 +29,7 @@ export const Route = createFileRoute("/noticias/$slug")({
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
-          { title: `Noticias ${loaderData.category.name} — RollerZone` },
+          { title: `Noticias ${loaderData.category.name} | RollerZone` },
           {
             name: "description",
             content: `Últimas noticias del patinaje de velocidad en ${loaderData.category.name}.`,
