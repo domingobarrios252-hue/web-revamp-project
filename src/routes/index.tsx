@@ -166,8 +166,19 @@ function HomePage() {
 
   return (
     <>
+      {/* 0. IDENTIDAD / H1 */}
+      <section className="border-b border-border bg-background px-5 py-5 text-center md:px-6 md:py-6">
+        <h1 className="font-display text-2xl uppercase tracking-[0.18em] text-gold sm:text-3xl md:text-4xl">
+          RollerZone
+        </h1>
+        <p className="font-condensed mt-2 text-[11px] font-bold uppercase tracking-[0.3em] text-foreground sm:text-sm">
+          La voz del patinaje de velocidad
+        </p>
+      </section>
+
       {/* 1. HERO CARRUSEL */}
       <HeroCarousel slides={heroSlides} liveActive={heroCfg.live_active} t={t} lang={lang} />
+
 
       {/* 2. TICKER */}
       <Ticker />
