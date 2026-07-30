@@ -166,7 +166,7 @@ export const Route = createFileRoute("/resultados/$evento")({
     }
     return {
       meta: [
-        { title: `${title} — Resultados RollerZone` },
+        { title: `${title} | RollerZone` },
         { name: "description", content: desc },
         { property: "og:title", content: `${title} — Resultados RollerZone` },
         { property: "og:description", content: desc },

@@ -13,7 +13,7 @@ type Writer = {
 export const Route = createFileRoute("/redactores")({
   head: () => ({
     meta: [
-      { title: "Redactores — RollerZone" },
+      { title: "Redactores | RollerZone" },
       { name: "description", content: "Conoce al equipo de redactores de RollerZone que cubre el patinaje de velocidad nacional e internacional." },
       { property: "og:title", content: "Redactores — RollerZone" },
       { property: "og:description", content: "El equipo de redactores que cubre el patinaje de velocidad para RollerZone." },

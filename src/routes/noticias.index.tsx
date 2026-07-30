@@ -27,7 +27,7 @@ type Category = { id: string; name: string; slug: string; scope: string };
 export const Route = createFileRoute("/noticias/")({
   head: () => ({
     meta: [
-      { title: "Noticias — RollerZone" },
+      { title: "Noticias | RollerZone" },
       {
         name: "description",
         content:

@@ -4,7 +4,7 @@ import { LiveCenterPage } from "@/components/hub/LiveCenterPage";
 export const Route = createFileRoute("/hub/$country/live")({
   head: ({ params }) => ({
     meta: [
-      { title: `Live Center — ${params.country.toUpperCase()}` },
+      { title: `Live Center · ${params.country.toUpperCase()} | RollerZone` },
       { name: "description", content: "Sigue en directo las competiciones de patinaje: timeline, resultados y streaming." },
     ],
   }),

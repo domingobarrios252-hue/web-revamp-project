@@ -64,17 +64,17 @@ function computeHeroBadge(slide: News, now: number = Date.now()): HeroBadge {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "RollerZone — La voz del patinaje de velocidad" },
+      { title: "RollerZone | La voz del patinaje de velocidad" },
       {
         name: "description",
         content:
-          "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone.",
+          "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista.",
       },
-      { property: "og:title", content: "RollerZone — La voz del patinaje de velocidad" },
+      { property: "og:title", content: "RollerZone | La voz del patinaje de velocidad" },
       {
         property: "og:description",
         content:
-          "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone.",
+          "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://rollerzone.es/" },
@@ -83,8 +83,8 @@ export const Route = createFileRoute("/")({
       { property: "og:image:height", content: "630" },
       { property: "og:image:alt", content: "RollerZone — Patinaje de velocidad" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "RollerZone — La voz del patinaje de velocidad" },
-      { name: "twitter:description", content: "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone." },
+      { name: "twitter:title", content: "RollerZone | La voz del patinaje de velocidad" },
+      { name: "twitter:description", content: "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista." },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
     ],
 
@@ -166,8 +166,19 @@ function HomePage() {
 
   return (
     <>
+      {/* 0. IDENTIDAD / H1 */}
+      <section className="border-b border-border bg-background px-5 py-5 text-center md:px-6 md:py-6">
+        <h1 className="font-display text-2xl uppercase tracking-[0.18em] text-gold sm:text-3xl md:text-4xl">
+          RollerZone
+        </h1>
+        <p className="font-condensed mt-2 text-[11px] font-bold uppercase tracking-[0.3em] text-foreground sm:text-sm">
+          La voz del patinaje de velocidad
+        </p>
+      </section>
+
       {/* 1. HERO CARRUSEL */}
       <HeroCarousel slides={heroSlides} liveActive={heroCfg.live_active} t={t} lang={lang} />
+
 
       {/* 2. TICKER */}
       <Ticker />
@@ -250,7 +261,7 @@ function HeroCarousel({
         <div className="relative flex h-[50vh] min-h-[340px] items-center justify-center">
           <div className="diagonal-lines-bg absolute inset-0" aria-hidden="true" />
           <div className="relative text-center">
-            <h1 className="font-display text-5xl uppercase tracking-widest text-gold">RollerZone</h1>
+            <p className="font-display text-5xl uppercase tracking-widest text-gold">RollerZone</p>
             <p className="font-condensed mt-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
               La voz del patinaje de velocidad
             </p>
@@ -431,9 +442,10 @@ function HeroSlide({
             params={{ slug: slide.slug }}
             className="block group"
           >
-            <h1 className="font-display text-[2rem] uppercase leading-[1.02] tracking-wider text-foreground drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] transition-colors group-hover:text-gold sm:text-4xl md:text-5xl lg:text-6xl">
+            <h2 className="font-display text-[2rem] uppercase leading-[1.02] tracking-wider text-foreground drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] transition-colors group-hover:text-gold sm:text-4xl md:text-5xl lg:text-6xl">
               {slide.title}
-            </h1>
+            </h2>
+
           </Link>
           <div className="mt-3 h-[3px] w-16 bg-gold md:mt-4 md:w-24" aria-hidden="true" />
           {slide.excerpt && (

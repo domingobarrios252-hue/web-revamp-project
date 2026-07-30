@@ -20,7 +20,7 @@ type ResultEvent = {
 export const Route = createFileRoute("/resultados/")({
   head: () => ({
     meta: [
-      { title: "Resultados — RollerZone" },
+      { title: "Resultados | RollerZone" },
       { name: "description", content: "Resultados oficiales de patinaje de velocidad — clasificaciones por evento y categoría." },
       { property: "og:title", content: "Resultados — RollerZone" },
       { property: "og:description", content: "Clasificaciones oficiales de patinaje de velocidad." },

@@ -80,7 +80,7 @@ export const Route = createFileRoute("/sobre/$slug")({
       meta?.description ??
       stripToDescription(loaderData?.page.content) ??
       `${title} — RollerZone, el medio del patinaje de velocidad.`;
-    const fullTitle = `${title} — RollerZone`;
+    const fullTitle = `${title} | RollerZone`;
     const url = `https://rollerzone.lovable.app/sobre/${slug}`;
     const ogImage =
       "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";

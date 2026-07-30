@@ -22,7 +22,7 @@ const CANON = "https://rollerzone.lovable.app/especiales";
 export const Route = createFileRoute("/especiales/")({
   head: () => ({
     meta: [
-      { title: "Especiales editoriales — RollerZone" },
+      { title: "Especiales editoriales | RollerZone" },
       {
         name: "description",
         content:

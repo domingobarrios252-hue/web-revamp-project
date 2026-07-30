@@ -4,7 +4,7 @@ import { VideosDirectory } from "@/components/hub/VideosDirectory";
 export const Route = createFileRoute("/hub/$country/tv/")({
   head: ({ params }) => ({
     meta: [
-      { title: `RollerZone TV — ${params.country.toUpperCase()}` },
+      { title: `RollerZone TV · ${params.country.toUpperCase()} | RollerZone` },
       { name: "description", content: "Vídeos, entrevistas, directos y highlights del patinaje en RollerZone TV." },
     ],
   }),

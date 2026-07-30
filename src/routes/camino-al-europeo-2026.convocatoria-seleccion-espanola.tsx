@@ -20,7 +20,7 @@ export const Route = createFileRoute(
 )({
   head: () => ({
     meta: [
-      { title: `${TITLE} — Europeo 2026` },
+      { title: `${TITLE} | RollerZone` },
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },

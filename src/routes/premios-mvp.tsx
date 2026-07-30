@@ -37,7 +37,7 @@ export const Route = createFileRoute("/premios-mvp")({
     const ogImage = "https://rollerzonenews.lovable.app/api/og/premios-mvp.svg";
     return {
       meta: [
-        { title: "Premios MVP — RollerZone" },
+        { title: "Premios MVP | RollerZone" },
         { name: "description", content: "Premios MVP del patinaje de velocidad: Élite, Estrella y Promesa, masculino y femenino. Un ganador por categoría y temporada." },
         { property: "og:title", content: "Premios MVP — RollerZone" },
         { property: "og:description", content: "Cuadro de honor MVP por temporada: Élite, Estrella y Promesa." },

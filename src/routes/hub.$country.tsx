@@ -7,7 +7,7 @@ export const Route = createFileRoute("/hub/$country")({
   component: HubLayout,
   head: ({ params }) => ({
     meta: [
-      { title: `Hub ${params.country.toUpperCase()} — RollerZone` },
+      { title: `Hub ${params.country.toUpperCase()} | RollerZone` },
       {
         name: "description",
         content: `Portal del patinaje de velocidad en ${params.country.toUpperCase()} — noticias, competiciones, clubes, patinadores y más.`,

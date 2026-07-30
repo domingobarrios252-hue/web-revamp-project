@@ -4,7 +4,7 @@ import { SkatersDirectory } from "@/components/hub/SkatersDirectory";
 export const Route = createFileRoute("/hub/$country/patinadores/")({
   head: () => ({
     meta: [
-      { title: "Patinadores · Hub España · RollerZone" },
+      { title: "Patinadores · Hub España | RollerZone" },
       {
         name: "description",
         content:

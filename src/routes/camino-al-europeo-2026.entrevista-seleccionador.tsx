@@ -13,7 +13,7 @@ const CANON = "https://rollerzone.lovable.app/camino-al-europeo-2026/entrevista-
 export const Route = createFileRoute("/camino-al-europeo-2026/entrevista-seleccionador")({
   head: () => ({
     meta: [
-      { title: `${PIECE.title} — Europeo 2026` },
+      { title: `${PIECE.title} | RollerZone` },
       { name: "description", content: PIECE.description },
       { property: "og:title", content: PIECE.title },
       { property: "og:description", content: PIECE.description },

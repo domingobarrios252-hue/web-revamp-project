@@ -29,7 +29,7 @@ type Magazine = {
 export const Route = createFileRoute("/revista")({
   head: () => ({
     meta: [
-      { title: "Revista — RollerZone" },
+      { title: "Revista | RollerZone" },
       { name: "description", content: "Ediciones digitales de la revista RollerZone: España y Colombia." },
       { property: "og:title", content: "Revista RollerZone" },
       { property: "og:description", content: "Ediciones digitales de la revista RollerZone." },

@@ -16,7 +16,7 @@ type InterviewRow = {
 export const Route = createFileRoute("/hub/$country/entrevistas")({
   head: ({ params }) => ({
     meta: [
-      { title: `Entrevistas — Hub ${params.country.toUpperCase()} · RollerZone` },
+      { title: `Entrevistas · Hub ${params.country.toUpperCase()} | RollerZone` },
       {
         name: "description",
         content: `Entrevistas a patinadores, entrenadores y figuras del patinaje en ${params.country.toUpperCase()}.`,

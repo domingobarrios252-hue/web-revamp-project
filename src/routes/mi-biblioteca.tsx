@@ -31,7 +31,7 @@ type ReadLog = { magazine_id: string; last_read_at: string; read_count: number }
 export const Route = createFileRoute("/mi-biblioteca")({
   head: () => ({
     meta: [
-      { title: "Mi biblioteca — RollerZone" },
+      { title: "Mi biblioteca | RollerZone" },
       { name: "description", content: "Tus revistas RollerZone: portadas, historial y ediciones disponibles." },
       { name: "robots", content: "noindex" },
     ],

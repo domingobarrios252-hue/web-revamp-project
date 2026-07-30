@@ -18,7 +18,7 @@ type Interview = {
 export const Route = createFileRoute("/entrevistas/")({
   head: () => ({
     meta: [
-      { title: "Entrevistas — RollerZone" },
+      { title: "Entrevistas | RollerZone" },
       { name: "description", content: "Entrevistas en profundidad a patinadores, entrenadores y figuras del patinaje de velocidad." },
       { property: "og:title", content: "Entrevistas — RollerZone" },
       { property: "og:description", content: "Entrevistas en profundidad a patinadores, entrenadores y figuras del patinaje de velocidad." },

@@ -4,7 +4,7 @@ import { ClubProfile } from "@/components/hub/ClubProfile";
 export const Route = createFileRoute("/hub/$country/clubes/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug.replace(/-/g, " ")} · Clubes RollerZone` },
+      { title: `${params.slug.replace(/-/g, " ")} · Clubes | RollerZone` },
       { name: "description", content: `Ficha del club ${params.slug.replace(/-/g, " ")} — RollerZone España.` },
     ],
   }),

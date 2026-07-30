@@ -38,7 +38,7 @@ export const Route = createFileRoute("/entrevistas/$slug")({
     if (!s) {
       return {
         meta: [
-          { title: "Entrevista — RollerZone" },
+          { title: "Entrevista | RollerZone" },
           { property: "og:type", content: "article" },
           { property: "og:url", content: canonical },
         ],
@@ -81,7 +81,7 @@ export const Route = createFileRoute("/entrevistas/$slug")({
 
     return {
       meta: [
-        { title: `${title} · RollerZone` },
+        { title: `${title} | RollerZone` },
         { name: "description", content: desc },
         { name: "author", content: "RollerZone Spain" },
         { property: "og:title", content: title },

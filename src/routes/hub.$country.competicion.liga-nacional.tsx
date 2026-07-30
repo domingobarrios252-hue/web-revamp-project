@@ -5,7 +5,7 @@ import { Trophy } from "lucide-react";
 export const Route = createFileRoute("/hub/$country/competicion/liga-nacional")({
   head: ({ params }) => ({
     meta: [
-      { title: `Liga Nacional — Hub ${params.country.toUpperCase()} — RollerZone` },
+      { title: `Liga Nacional · Hub ${params.country.toUpperCase()} | RollerZone` },
       {
         name: "description",
         content: `Toda la Liga Nacional de patinaje de velocidad en ${params.country.toUpperCase()}: clasificaciones, calendario, resultados y noticias.`,

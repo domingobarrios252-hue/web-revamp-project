@@ -14,7 +14,7 @@ const CANON = "https://rollerzone.lovable.app/camino-al-europeo-2026";
 export const Route = createFileRoute("/camino-al-europeo-2026/")({
   head: () => ({
     meta: [
-      { title: "Camino al Europeo 2026 — Cobertura especial RollerZone" },
+      { title: "Camino al Europeo 2026 · Cobertura especial | RollerZone" },
       {
         name: "description",
         content:
