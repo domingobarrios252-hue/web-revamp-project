@@ -64,17 +64,17 @@ function computeHeroBadge(slide: News, now: number = Date.now()): HeroBadge {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "RollerZone — La voz del patinaje de velocidad" },
+      { title: "RollerZone | La voz del patinaje de velocidad" },
       {
         name: "description",
         content:
-          "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone.",
+          "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista.",
       },
-      { property: "og:title", content: "RollerZone — La voz del patinaje de velocidad" },
+      { property: "og:title", content: "RollerZone | La voz del patinaje de velocidad" },
       {
         property: "og:description",
         content:
-          "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone.",
+          "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://rollerzone.es/" },
@@ -83,8 +83,8 @@ export const Route = createFileRoute("/")({
       { property: "og:image:height", content: "630" },
       { property: "og:image:alt", content: "RollerZone — Patinaje de velocidad" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "RollerZone — La voz del patinaje de velocidad" },
-      { name: "twitter:description", content: "Noticias, resultados, eventos, entrevistas y directos del patinaje de velocidad en España y Latinoamérica. Vive la actualidad en RollerZone." },
+      { name: "twitter:title", content: "RollerZone | La voz del patinaje de velocidad" },
+      { name: "twitter:description", content: "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista." },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
     ],
 
