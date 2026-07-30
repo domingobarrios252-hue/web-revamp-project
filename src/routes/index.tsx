@@ -431,9 +431,10 @@ function HeroSlide({
             params={{ slug: slide.slug }}
             className="block group"
           >
-            <h1 className="font-display text-[2rem] uppercase leading-[1.02] tracking-wider text-foreground drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] transition-colors group-hover:text-gold sm:text-4xl md:text-5xl lg:text-6xl">
+            <h2 className="font-display text-[2rem] uppercase leading-[1.02] tracking-wider text-foreground drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] transition-colors group-hover:text-gold sm:text-4xl md:text-5xl lg:text-6xl">
               {slide.title}
-            </h1>
+            </h2>
+
           </Link>
           <div className="mt-3 h-[3px] w-16 bg-gold md:mt-4 md:w-24" aria-hidden="true" />
           {slide.excerpt && (
