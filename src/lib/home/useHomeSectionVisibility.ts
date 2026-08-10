@@ -11,12 +11,10 @@ export type HomeSectionKey =
   | "patrocinadores"
   | "equipo"
   | "redactores"
-  | "especiales"
-  | "europeo";
+  | "especiales";
 
 export const HOME_SECTIONS: { key: HomeSectionKey; label: string; description: string }[] = [
   { key: "especiales", label: "Especiales editoriales", description: "Bloque premium con los especiales seleccionados." },
-  { key: "europeo", label: "Camino al Europeo 2026", description: "Bloque especial del Campeonato de Europa 2026: banner y medallero." },
   { key: "podios", label: "Podios destacados", description: "Carrusel de podios bajo la zona dinámica." },
   { key: "atletas", label: "Atletas destacados", description: "Bloque de patinadores destacados." },
   { key: "ranking", label: "Ranking MVP", description: "Previa del ranking MVP." },
