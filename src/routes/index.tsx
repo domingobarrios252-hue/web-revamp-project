@@ -205,8 +205,7 @@ function HomePage() {
       <HomeSpecialsBlock />
 
       {/* 4. ESPECIAL DEL MOMENTO */}
-      <SpecialCoverageBanner />
-      <HomeMedalStandings />
+      <EuropeoGate />
 
       {/* 5. ACTUALIDAD ROLLERZONE */}
       <LatestNewsGrid news={news === null ? null : latestNews} />
