@@ -34,7 +34,7 @@ const keyFor = (k: HomeSectionKey) => `${PREFIX}${k}`;
 export function useHomeSectionVisibility() {
   const [visibility, setVisibility] = useState<Record<HomeSectionKey, boolean>>(() => {
     const init: Record<string, boolean> = {};
-    HOME_SECTIONS.forEach((s) => (init[s.key] = true));
+    HOME_SECTIONS.forEach((s) => (init[s.key] = s.key === "europeo" ? false : true));
     return init as Record<HomeSectionKey, boolean>;
   });
   const [loading, setLoading] = useState(true);
