@@ -17,9 +17,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
 
 import { EditorialCover, type CoverNews } from "@/components/home/EditorialCover";
-import { SpecialCoverageBanner } from "@/components/home/SpecialCoverageBanner";
 import { HomeSpecialsBlock } from "@/components/home/HomeSpecialsBlock";
-import { HomeMedalStandings } from "@/components/home/HomeMedalStandings";
 import { RollerZoneTVHome } from "@/components/home/RollerZoneTVHome";
 import { UniverseGrid } from "@/components/home/UniverseGrid";
 import { JoinContributorsBlock } from "@/components/home/JoinContributorsBlock";
@@ -30,18 +28,6 @@ function RedactoresGate() {
   if (loading) return null;
   if (!visibility.redactores) return null;
   return <JoinContributorsBlock />;
-}
-
-function EuropeoGate() {
-  const { visibility, loading } = useHomeSectionVisibility();
-  if (loading) return null;
-  if (!visibility.europeo) return null;
-  return (
-    <>
-      <SpecialCoverageBanner />
-      <HomeMedalStandings />
-    </>
-  );
 }
 
 import { NewsletterBand } from "@/components/home/NewsletterBand";
@@ -204,10 +190,7 @@ function HomePage() {
       {/* 3.5 ESPECIALES EDITORIALES */}
       <HomeSpecialsBlock />
 
-      {/* 4. ESPECIAL DEL MOMENTO */}
-      <EuropeoGate />
-
-      {/* 5. ACTUALIDAD ROLLERZONE */}
+      {/* 4. ACTUALIDAD ROLLERZONE */}
       <LatestNewsGrid news={news === null ? null : latestNews} />
 
       {/* 6. RESULTADOS / LIVE CENTER */}
