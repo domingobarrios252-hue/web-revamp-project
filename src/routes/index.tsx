@@ -32,6 +32,18 @@ function RedactoresGate() {
   return <JoinContributorsBlock />;
 }
 
+function EuropeoGate() {
+  const { visibility, loading } = useHomeSectionVisibility();
+  if (loading) return null;
+  if (!visibility.europeo) return null;
+  return (
+    <>
+      <SpecialCoverageBanner />
+      <HomeMedalStandings />
+    </>
+  );
+}
+
 import { NewsletterBand } from "@/components/home/NewsletterBand";
 import { SectionHeading } from "@/components/home/SectionHeading";
 
