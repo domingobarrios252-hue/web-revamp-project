@@ -62,7 +62,7 @@ export function UniverseGrid() {
         accent="noticias"
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {TILES.map((t) => (
           <Link
             key={t.title}

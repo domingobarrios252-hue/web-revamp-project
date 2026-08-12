@@ -5,7 +5,7 @@ import {
   FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen,
   Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Medal,
   Info, Layers, Inbox, MessageSquare, LayoutDashboard, ChevronDown, ChevronRight,
-  Flag, BarChart3, Newspaper, Globe2, Sparkles, Crown,
+  Flag, BarChart3, Newspaper, Globe2, Sparkles, Crown, Handshake,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -31,7 +31,7 @@ type AdminPath =
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
   | "/admin/espana" | "/admin/colombia" | "/admin/resultados"
   | "/admin/resultados-eventos" | "/admin/resultados-pdfs"
-  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/paginas" | "/admin/red-redactores" | "/dashboard";
+  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/colaboraciones" | "/admin/paginas" | "/admin/red-redactores" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
 type AdminGroup = { id: string; label: string; icon: React.ReactNode; links: AdminLinkDef[] };
@@ -145,6 +145,7 @@ const GROUPS: AdminGroup[] = [
     label: "10 · Configuración",
     icon: <Scale className="h-4 w-4" />,
     links: [
+      { to: "/admin/colaboraciones", label: "Colaboraciones y convenios", icon: <Handshake className="h-4 w-4" /> },
       { to: "/admin/paginas", label: "Gestión de páginas", icon: <Layers className="h-4 w-4" /> },
       { to: "/admin/legal", label: "Páginas legales", icon: <Scale className="h-4 w-4" /> },
       { to: "/admin/sobre-nosotros", label: "Sobre nosotros", icon: <Info className="h-4 w-4" /> },
