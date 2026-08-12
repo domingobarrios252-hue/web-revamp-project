@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Trophy, Award, Flag, Globe2 } from "lucide-react";
+import { ArrowRight, Trophy, Award, Flag, Globe2, Handshake } from "lucide-react";
 import type { ReactNode } from "react";
 import { SectionHeading } from "./SectionHeading";
 

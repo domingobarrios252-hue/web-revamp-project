@@ -105,6 +105,7 @@ import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
 import { Route as AdminComunidadRouteImport } from './routes/admin.comunidad'
 import { Route as AdminColombiaRouteImport } from './routes/admin.colombia'
+import { Route as AdminColaboracionesRouteImport } from './routes/admin.colaboraciones'
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminClasificacionesRouteImport } from './routes/admin.clasificaciones'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
@@ -633,6 +634,11 @@ const AdminColombiaRoute = AdminColombiaRouteImport.update({
   path: '/colombia',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminColaboracionesRoute = AdminColaboracionesRouteImport.update({
+  id: '/colaboraciones',
+  path: '/colaboraciones',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminClubesRoute = AdminClubesRouteImport.update({
   id: '/clubes',
   path: '/clubes',
@@ -859,6 +865,7 @@ export interface FileRoutesByFullPath {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colaboraciones': typeof AdminColaboracionesRoute
   '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
@@ -992,6 +999,7 @@ export interface FileRoutesByTo {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colaboraciones': typeof AdminColaboracionesRoute
   '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
@@ -1122,6 +1130,7 @@ export interface FileRoutesById {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colaboraciones': typeof AdminColaboracionesRoute
   '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
@@ -1260,6 +1269,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colaboraciones'
     | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
@@ -1393,6 +1403,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colaboraciones'
     | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
@@ -1522,6 +1533,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colaboraciones'
     | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
@@ -2362,6 +2374,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminColombiaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/colaboraciones': {
+      id: '/admin/colaboraciones'
+      path: '/colaboraciones'
+      fullPath: '/admin/colaboraciones'
+      preLoaderRoute: typeof AdminColaboracionesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/clubes': {
       id: '/admin/clubes'
       path: '/clubes'
@@ -2636,6 +2655,7 @@ interface AdminRouteChildren {
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClasificacionesRoute: typeof AdminClasificacionesRoute
   AdminClubesRoute: typeof AdminClubesRoute
+  AdminColaboracionesRoute: typeof AdminColaboracionesRoute
   AdminColombiaRoute: typeof AdminColombiaRoute
   AdminComunidadRoute: typeof AdminComunidadRoute
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
@@ -2682,6 +2702,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClasificacionesRoute: AdminClasificacionesRoute,
   AdminClubesRoute: AdminClubesRoute,
+  AdminColaboracionesRoute: AdminColaboracionesRoute,
   AdminColombiaRoute: AdminColombiaRoute,
   AdminComunidadRoute: AdminComunidadRoute,
   AdminEntrevistasRoute: AdminEntrevistasRoute,
