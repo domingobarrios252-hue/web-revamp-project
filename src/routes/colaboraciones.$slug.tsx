@@ -12,7 +12,7 @@ import {
   typeLabel,
   type Collaboration,
 } from "@/lib/colaboraciones";
-import { toEmbedUrl } from "@/lib/videoEmbed";
+import { videoEmbedUrl } from "@/lib/videoEmbed";
 
 type RelatedNews = { id: string; slug: string; title: string; cover_url: string | null };
 
@@ -83,7 +83,7 @@ function CollaborationDetail() {
     })();
   }, [item.related_news]);
 
-  const embed = item.video_url?.trim() ? toEmbedUrl(item.video_url) : null;
+  const embed = item.video_url?.trim() ? videoEmbedUrl(item.video_url) : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
