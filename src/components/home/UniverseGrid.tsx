@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Trophy, Award, Flag, Globe2 } from "lucide-react";
+import { ArrowRight, Trophy, Award, Flag, Globe2, Handshake } from "lucide-react";
 import type { ReactNode } from "react";
 import { SectionHeading } from "./SectionHeading";
 
@@ -43,6 +43,14 @@ const TILES: Tile[] = [
     description: "Liga, ligas regionales y la potencia mundial del patinaje.",
     icon: <Globe2 className="h-5 w-5" />,
   },
+  {
+    to: "/colaboraciones",
+    kicker: "Institucional",
+    title: "Colaboraciones y Convenios",
+    description:
+      "Proyectos y entidades que escriben junto a RollerZone la historia del patinaje de velocidad.",
+    icon: <Handshake className="h-5 w-5" />,
+  },
 ];
 
 export function UniverseGrid() {
@@ -54,7 +62,7 @@ export function UniverseGrid() {
         accent="noticias"
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {TILES.map((t) => (
           <Link
             key={t.title}

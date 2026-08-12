@@ -294,6 +294,108 @@ export type Database = {
           },
         ]
       }
+      collaborations: {
+        Row: {
+          category: string
+          collaboration_md: string
+          content_md: string
+          cover_url: string
+          created_at: string
+          end_date: string | null
+          entity: string
+          entity_logo_url: string
+          external_url: string
+          featured_home: boolean
+          flipbook_url: string
+          gallery: Json
+          id: string
+          objective_md: string
+          pdf_url: string
+          project_md: string
+          published_at: string | null
+          related_news: Json
+          result_md: string
+          seo_description: string
+          seo_title: string
+          short_description: string
+          slug: string
+          sort_order: number
+          start_date: string | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          video_url: string
+          year: number
+        }
+        Insert: {
+          category?: string
+          collaboration_md?: string
+          content_md?: string
+          cover_url?: string
+          created_at?: string
+          end_date?: string | null
+          entity?: string
+          entity_logo_url?: string
+          external_url?: string
+          featured_home?: boolean
+          flipbook_url?: string
+          gallery?: Json
+          id?: string
+          objective_md?: string
+          pdf_url?: string
+          project_md?: string
+          published_at?: string | null
+          related_news?: Json
+          result_md?: string
+          seo_description?: string
+          seo_title?: string
+          short_description?: string
+          slug: string
+          sort_order?: number
+          start_date?: string | null
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+          video_url?: string
+          year?: number
+        }
+        Update: {
+          category?: string
+          collaboration_md?: string
+          content_md?: string
+          cover_url?: string
+          created_at?: string
+          end_date?: string | null
+          entity?: string
+          entity_logo_url?: string
+          external_url?: string
+          featured_home?: boolean
+          flipbook_url?: string
+          gallery?: Json
+          id?: string
+          objective_md?: string
+          pdf_url?: string
+          project_md?: string
+          published_at?: string | null
+          related_news?: Json
+          result_md?: string
+          seo_description?: string
+          seo_title?: string
+          short_description?: string
+          slug?: string
+          sort_order?: number
+          start_date?: string | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          video_url?: string
+          year?: number
+        }
+        Relationships: []
+      }
       community_submission_logs: {
         Row: {
           action: string

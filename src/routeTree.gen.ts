@@ -34,6 +34,7 @@ import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EspecialesIndexRouteImport } from './routes/especiales.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as ColaboracionesIndexRouteImport } from './routes/colaboraciones.index'
 import { Route as CaminoAlEuropeo2026IndexRouteImport } from './routes/camino-al-europeo-2026.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CountryIndexRouteImport } from './routes/$country.index'
@@ -58,6 +59,7 @@ import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
+import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
 import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
 import { Route as CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport } from './routes/camino-al-europeo-2026.presentacion-europeo-2026'
 import { Route as CaminoAlEuropeo2026InformacionCampeonatoRouteImport } from './routes/camino-al-europeo-2026.informacion-campeonato'
@@ -103,6 +105,7 @@ import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
 import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
 import { Route as AdminComunidadRouteImport } from './routes/admin.comunidad'
 import { Route as AdminColombiaRouteImport } from './routes/admin.colombia'
+import { Route as AdminColaboracionesRouteImport } from './routes/admin.colaboraciones'
 import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
 import { Route as AdminClasificacionesRouteImport } from './routes/admin.clasificaciones'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
@@ -267,6 +270,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const ColaboracionesIndexRoute = ColaboracionesIndexRouteImport.update({
+  id: '/colaboraciones/',
+  path: '/colaboraciones/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CaminoAlEuropeo2026IndexRoute =
   CaminoAlEuropeo2026IndexRouteImport.update({
     id: '/',
@@ -387,6 +395,11 @@ const EspanaArchivoRoute = EspanaArchivoRouteImport.update({
 const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   id: '/entrevistas/$slug',
   path: '/entrevistas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ColaboracionesSlugRoute = ColaboracionesSlugRouteImport.update({
+  id: '/colaboraciones/$slug',
+  path: '/colaboraciones/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CaminoAlEuropeo2026ResultadosYMedalleroRoute =
@@ -621,6 +634,11 @@ const AdminColombiaRoute = AdminColombiaRouteImport.update({
   path: '/colombia',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminColaboracionesRoute = AdminColaboracionesRouteImport.update({
+  id: '/colaboraciones',
+  path: '/colaboraciones',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminClubesRoute = AdminClubesRouteImport.update({
   id: '/clubes',
   path: '/clubes',
@@ -847,6 +865,7 @@ export interface FileRoutesByFullPath {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colaboraciones': typeof AdminColaboracionesRoute
   '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
@@ -892,6 +911,7 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
+  '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -916,6 +936,7 @@ export interface FileRoutesByFullPath {
   '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
+  '/colaboraciones/': typeof ColaboracionesIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
@@ -978,6 +999,7 @@ export interface FileRoutesByTo {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colaboraciones': typeof AdminColaboracionesRoute
   '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
@@ -1023,6 +1045,7 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
+  '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1046,6 +1069,7 @@ export interface FileRoutesByTo {
   '/$country': typeof CountryIndexRoute
   '/admin': typeof AdminIndexRoute
   '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026IndexRoute
+  '/colaboraciones': typeof ColaboracionesIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
   '/especiales': typeof EspecialesIndexRoute
@@ -1106,6 +1130,7 @@ export interface FileRoutesById {
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/clasificaciones': typeof AdminClasificacionesRoute
   '/admin/clubes': typeof AdminClubesRoute
+  '/admin/colaboraciones': typeof AdminColaboracionesRoute
   '/admin/colombia': typeof AdminColombiaRoute
   '/admin/comunidad': typeof AdminComunidadRoute
   '/admin/entrevistas': typeof AdminEntrevistasRoute
@@ -1151,6 +1176,7 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
+  '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1175,6 +1201,7 @@ export interface FileRoutesById {
   '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
+  '/colaboraciones/': typeof ColaboracionesIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
@@ -1242,6 +1269,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colaboraciones'
     | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
@@ -1287,6 +1315,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/informacion-campeonato'
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
+    | '/colaboraciones/$slug'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1311,6 +1340,7 @@ export interface FileRouteTypes {
     | '/$country/'
     | '/admin/'
     | '/camino-al-europeo-2026/'
+    | '/colaboraciones/'
     | '/dashboard/'
     | '/entrevistas/'
     | '/especiales/'
@@ -1373,6 +1403,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colaboraciones'
     | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
@@ -1418,6 +1449,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/informacion-campeonato'
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
+    | '/colaboraciones/$slug'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1441,6 +1473,7 @@ export interface FileRouteTypes {
     | '/$country'
     | '/admin'
     | '/camino-al-europeo-2026'
+    | '/colaboraciones'
     | '/dashboard'
     | '/entrevistas'
     | '/especiales'
@@ -1500,6 +1533,7 @@ export interface FileRouteTypes {
     | '/admin/categorias'
     | '/admin/clasificaciones'
     | '/admin/clubes'
+    | '/admin/colaboraciones'
     | '/admin/colombia'
     | '/admin/comunidad'
     | '/admin/entrevistas'
@@ -1545,6 +1579,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/informacion-campeonato'
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
+    | '/colaboraciones/$slug'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1569,6 +1604,7 @@ export interface FileRouteTypes {
     | '/$country/'
     | '/admin/'
     | '/camino-al-europeo-2026/'
+    | '/colaboraciones/'
     | '/dashboard/'
     | '/entrevistas/'
     | '/especiales/'
@@ -1631,6 +1667,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TvRoute: typeof TvRoute
   CountrySplatRoute: typeof CountrySplatRoute
+  ColaboracionesSlugRoute: typeof ColaboracionesSlugRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EspanaArchivoRoute: typeof EspanaArchivoRoute
   EspanaClubesRoute: typeof EspanaClubesRoute
@@ -1652,6 +1689,7 @@ export interface RootRouteChildren {
   SalonDeLaFamaSlugRoute: typeof SalonDeLaFamaSlugRoute
   SobreSlugRoute: typeof SobreSlugRoute
   CountryIndexRoute: typeof CountryIndexRoute
+  ColaboracionesIndexRoute: typeof ColaboracionesIndexRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EspecialesIndexRoute: typeof EspecialesIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
@@ -1839,6 +1877,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/colaboraciones/': {
+      id: '/colaboraciones/'
+      path: '/colaboraciones'
+      fullPath: '/colaboraciones/'
+      preLoaderRoute: typeof ColaboracionesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/camino-al-europeo-2026/': {
       id: '/camino-al-europeo-2026/'
       path: '/'
@@ -2005,6 +2050,13 @@ declare module '@tanstack/react-router' {
       path: '/entrevistas/$slug'
       fullPath: '/entrevistas/$slug'
       preLoaderRoute: typeof EntrevistasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/colaboraciones/$slug': {
+      id: '/colaboraciones/$slug'
+      path: '/colaboraciones/$slug'
+      fullPath: '/colaboraciones/$slug'
+      preLoaderRoute: typeof ColaboracionesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/camino-al-europeo-2026/resultados-y-medallero': {
@@ -2322,6 +2374,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminColombiaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/colaboraciones': {
+      id: '/admin/colaboraciones'
+      path: '/colaboraciones'
+      fullPath: '/admin/colaboraciones'
+      preLoaderRoute: typeof AdminColaboracionesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/clubes': {
       id: '/admin/clubes'
       path: '/clubes'
@@ -2596,6 +2655,7 @@ interface AdminRouteChildren {
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminClasificacionesRoute: typeof AdminClasificacionesRoute
   AdminClubesRoute: typeof AdminClubesRoute
+  AdminColaboracionesRoute: typeof AdminColaboracionesRoute
   AdminColombiaRoute: typeof AdminColombiaRoute
   AdminComunidadRoute: typeof AdminComunidadRoute
   AdminEntrevistasRoute: typeof AdminEntrevistasRoute
@@ -2642,6 +2702,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminClasificacionesRoute: AdminClasificacionesRoute,
   AdminClubesRoute: AdminClubesRoute,
+  AdminColaboracionesRoute: AdminColaboracionesRoute,
   AdminColombiaRoute: AdminColombiaRoute,
   AdminComunidadRoute: AdminComunidadRoute,
   AdminEntrevistasRoute: AdminEntrevistasRoute,
@@ -2923,6 +2984,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TvRoute: TvRoute,
   CountrySplatRoute: CountrySplatRoute,
+  ColaboracionesSlugRoute: ColaboracionesSlugRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EspanaArchivoRoute: EspanaArchivoRoute,
   EspanaClubesRoute: EspanaClubesRoute,
@@ -2944,6 +3006,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalonDeLaFamaSlugRoute: SalonDeLaFamaSlugRoute,
   SobreSlugRoute: SobreSlugRoute,
   CountryIndexRoute: CountryIndexRoute,
+  ColaboracionesIndexRoute: ColaboracionesIndexRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EspecialesIndexRoute: EspecialesIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
@@ -2956,3 +3019,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
