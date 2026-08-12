@@ -34,6 +34,7 @@ import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EspecialesIndexRouteImport } from './routes/especiales.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as ColaboracionesIndexRouteImport } from './routes/colaboraciones.index'
 import { Route as CaminoAlEuropeo2026IndexRouteImport } from './routes/camino-al-europeo-2026.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CountryIndexRouteImport } from './routes/$country.index'
@@ -266,6 +267,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRoute,
+} as any)
+const ColaboracionesIndexRoute = ColaboracionesIndexRouteImport.update({
+  id: '/colaboraciones/',
+  path: '/colaboraciones/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CaminoAlEuropeo2026IndexRoute =
   CaminoAlEuropeo2026IndexRouteImport.update({
@@ -916,6 +922,7 @@ export interface FileRoutesByFullPath {
   '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
+  '/colaboraciones/': typeof ColaboracionesIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
@@ -1046,6 +1053,7 @@ export interface FileRoutesByTo {
   '/$country': typeof CountryIndexRoute
   '/admin': typeof AdminIndexRoute
   '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026IndexRoute
+  '/colaboraciones': typeof ColaboracionesIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
   '/especiales': typeof EspecialesIndexRoute
@@ -1175,6 +1183,7 @@ export interface FileRoutesById {
   '/$country/': typeof CountryIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
+  '/colaboraciones/': typeof ColaboracionesIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
@@ -1311,6 +1320,7 @@ export interface FileRouteTypes {
     | '/$country/'
     | '/admin/'
     | '/camino-al-europeo-2026/'
+    | '/colaboraciones/'
     | '/dashboard/'
     | '/entrevistas/'
     | '/especiales/'
@@ -1441,6 +1451,7 @@ export interface FileRouteTypes {
     | '/$country'
     | '/admin'
     | '/camino-al-europeo-2026'
+    | '/colaboraciones'
     | '/dashboard'
     | '/entrevistas'
     | '/especiales'
@@ -1569,6 +1580,7 @@ export interface FileRouteTypes {
     | '/$country/'
     | '/admin/'
     | '/camino-al-europeo-2026/'
+    | '/colaboraciones/'
     | '/dashboard/'
     | '/entrevistas/'
     | '/especiales/'
@@ -1652,6 +1664,7 @@ export interface RootRouteChildren {
   SalonDeLaFamaSlugRoute: typeof SalonDeLaFamaSlugRoute
   SobreSlugRoute: typeof SobreSlugRoute
   CountryIndexRoute: typeof CountryIndexRoute
+  ColaboracionesIndexRoute: typeof ColaboracionesIndexRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EspecialesIndexRoute: typeof EspecialesIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
@@ -1838,6 +1851,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/colaboraciones/': {
+      id: '/colaboraciones/'
+      path: '/colaboraciones'
+      fullPath: '/colaboraciones/'
+      preLoaderRoute: typeof ColaboracionesIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/camino-al-europeo-2026/': {
       id: '/camino-al-europeo-2026/'
@@ -2944,6 +2964,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalonDeLaFamaSlugRoute: SalonDeLaFamaSlugRoute,
   SobreSlugRoute: SobreSlugRoute,
   CountryIndexRoute: CountryIndexRoute,
+  ColaboracionesIndexRoute: ColaboracionesIndexRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EspecialesIndexRoute: EspecialesIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
