@@ -59,6 +59,7 @@ import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
+import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
 import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
 import { Route as CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport } from './routes/camino-al-europeo-2026.presentacion-europeo-2026'
 import { Route as CaminoAlEuropeo2026InformacionCampeonatoRouteImport } from './routes/camino-al-europeo-2026.informacion-campeonato'
@@ -393,6 +394,11 @@ const EspanaArchivoRoute = EspanaArchivoRouteImport.update({
 const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   id: '/entrevistas/$slug',
   path: '/entrevistas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ColaboracionesSlugRoute = ColaboracionesSlugRouteImport.update({
+  id: '/colaboraciones/$slug',
+  path: '/colaboraciones/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CaminoAlEuropeo2026ResultadosYMedalleroRoute =
@@ -898,6 +904,7 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
+  '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1030,6 +1037,7 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
+  '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1159,6 +1167,7 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/informacion-campeonato': typeof CaminoAlEuropeo2026InformacionCampeonatoRoute
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
+  '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1296,6 +1305,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/informacion-campeonato'
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
+    | '/colaboraciones/$slug'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1428,6 +1438,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/informacion-campeonato'
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
+    | '/colaboraciones/$slug'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1556,6 +1567,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/informacion-campeonato'
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
+    | '/colaboraciones/$slug'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1643,6 +1655,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TvRoute: typeof TvRoute
   CountrySplatRoute: typeof CountrySplatRoute
+  ColaboracionesSlugRoute: typeof ColaboracionesSlugRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EspanaArchivoRoute: typeof EspanaArchivoRoute
   EspanaClubesRoute: typeof EspanaClubesRoute
@@ -2025,6 +2038,13 @@ declare module '@tanstack/react-router' {
       path: '/entrevistas/$slug'
       fullPath: '/entrevistas/$slug'
       preLoaderRoute: typeof EntrevistasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/colaboraciones/$slug': {
+      id: '/colaboraciones/$slug'
+      path: '/colaboraciones/$slug'
+      fullPath: '/colaboraciones/$slug'
+      preLoaderRoute: typeof ColaboracionesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/camino-al-europeo-2026/resultados-y-medallero': {
@@ -2943,6 +2963,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TvRoute: TvRoute,
   CountrySplatRoute: CountrySplatRoute,
+  ColaboracionesSlugRoute: ColaboracionesSlugRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EspanaArchivoRoute: EspanaArchivoRoute,
   EspanaClubesRoute: EspanaClubesRoute,
