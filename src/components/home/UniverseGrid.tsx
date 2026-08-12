@@ -43,6 +43,14 @@ const TILES: Tile[] = [
     description: "Liga, ligas regionales y la potencia mundial del patinaje.",
     icon: <Globe2 className="h-5 w-5" />,
   },
+  {
+    to: "/colaboraciones",
+    kicker: "Institucional",
+    title: "Colaboraciones y Convenios",
+    description:
+      "Proyectos y entidades que escriben junto a RollerZone la historia del patinaje de velocidad.",
+    icon: <Handshake className="h-5 w-5" />,
+  },
 ];
 
 export function UniverseGrid() {
