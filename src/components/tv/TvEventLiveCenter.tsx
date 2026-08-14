@@ -101,7 +101,24 @@ export function TvEventLiveCenter({
     );
   }
 
-  if (!ev) return null;
+  if (!ev) {
+    return (
+      <div className="border border-gold/30 bg-surface/60 p-4">
+        <p className="font-condensed text-[10px] uppercase tracking-[3px] text-gold">Live Center</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          El evento asociado a esta emisión no está disponible. Selecciona un evento válido en el
+          panel de TV.
+        </p>
+        <Link
+          to="/resultados"
+          className="font-condensed mt-3 inline-flex min-h-[44px] items-center gap-2 border border-gold px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-primary-foreground"
+        >
+          Ver resultados <ChevronRight className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+    );
+  }
+
 
   // Group results by race
   const races = new Map<string, LiveResultRow[]>();
