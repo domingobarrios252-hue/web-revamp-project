@@ -219,6 +219,24 @@ function TvPage() {
                     <Play className="ml-1 h-9 w-9 fill-current" />
                   </span>
                 </button>
+              ) : settings?.live_stream_url ? (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center text-muted-foreground">
+                  <Radio className="h-10 w-10 text-gold" />
+                  <p className="font-display text-xl tracking-widest text-foreground">
+                    Retransmisión externa
+                  </p>
+                  <p className="font-condensed text-xs uppercase tracking-widest">
+                    Esta señal no permite incrustarse. Ábrela en su web oficial.
+                  </p>
+                  <a
+                    href={settings.live_stream_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-condensed mt-1 inline-flex min-h-[44px] items-center gap-2 border border-gold bg-gold px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-primary-foreground hover:bg-gold-dark"
+                  >
+                    Ver retransmisión
+                  </a>
+                </div>
               ) : (
                 <div className="flex h-full w-full flex-col items-center justify-center text-center text-muted-foreground">
                   <Radio className="mb-3 h-10 w-10 text-gold" />
@@ -228,6 +246,7 @@ function TvPage() {
                   </p>
                 </div>
               )}
+
 
               {isLive && (
                 <div className="pointer-events-none absolute left-4 top-4 z-10">
