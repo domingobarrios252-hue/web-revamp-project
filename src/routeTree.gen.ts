@@ -74,6 +74,7 @@ import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisione
 import { Route as AdminTvRouteImport } from './routes/admin.tv'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nosotros'
+import { Route as AdminSeguridadRouteImport } from './routes/admin.seguridad'
 import { Route as AdminSectionsRouteImport } from './routes/admin.sections'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminSalonDeLaFamaRouteImport } from './routes/admin.salon-de-la-fama'
@@ -478,6 +479,11 @@ const AdminTickerRoute = AdminTickerRouteImport.update({
 const AdminSobreNosotrosRoute = AdminSobreNosotrosRouteImport.update({
   id: '/sobre-nosotros',
   path: '/sobre-nosotros',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSeguridadRoute = AdminSeguridadRouteImport.update({
+  id: '/seguridad',
+  path: '/seguridad',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSectionsRoute = AdminSectionsRouteImport.update({
@@ -903,6 +909,7 @@ export interface FileRoutesByFullPath {
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
+  '/admin/seguridad': typeof AdminSeguridadRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -1038,6 +1045,7 @@ export interface FileRoutesByTo {
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
+  '/admin/seguridad': typeof AdminSeguridadRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -1170,6 +1178,7 @@ export interface FileRoutesById {
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
+  '/admin/seguridad': typeof AdminSeguridadRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -1310,6 +1319,7 @@ export interface FileRouteTypes {
     | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
+    | '/admin/seguridad'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -1445,6 +1455,7 @@ export interface FileRouteTypes {
     | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
+    | '/admin/seguridad'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -1576,6 +1587,7 @@ export interface FileRouteTypes {
     | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
+    | '/admin/seguridad'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -2170,6 +2182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSobreNosotrosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/seguridad': {
+      id: '/admin/seguridad'
+      path: '/seguridad'
+      fullPath: '/admin/seguridad'
+      preLoaderRoute: typeof AdminSeguridadRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/sections': {
       id: '/admin/sections'
       path: '/sections'
@@ -2707,6 +2726,7 @@ interface AdminRouteChildren {
   AdminSalonDeLaFamaRoute: typeof AdminSalonDeLaFamaRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
   AdminSectionsRoute: typeof AdminSectionsRoute
+  AdminSeguridadRoute: typeof AdminSeguridadRoute
   AdminSobreNosotrosRoute: typeof AdminSobreNosotrosRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminTvRoute: typeof AdminTvRoute
@@ -2754,6 +2774,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSalonDeLaFamaRoute: AdminSalonDeLaFamaRoute,
   AdminScheduleRoute: AdminScheduleRoute,
   AdminSectionsRoute: AdminSectionsRoute,
+  AdminSeguridadRoute: AdminSeguridadRoute,
   AdminSobreNosotrosRoute: AdminSobreNosotrosRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminTvRoute: AdminTvRoute,
