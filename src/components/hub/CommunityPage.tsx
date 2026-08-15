@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { submitCommunitySubmission } from "@/lib/security/public-forms.functions";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -176,6 +179,8 @@ function CommunityForm({ country }: { country: string }) {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const sendSubmission = useServerFn(submitCommunitySubmission);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -220,17 +225,27 @@ function CommunityForm({ country }: { country: string }) {
     }
     setSubmitting(true);
     const { type, ...rest } = parsed.data;
-    const { error } = await supabase.from("community_submissions").insert({
-      ...rest,
-      submission_type: type,
-      country_code: country,
-      image_urls: images,
-      links: [],
-      status: "pendiente",
-    } as never);
+    let res: { ok: boolean; error?: string };
+    try {
+      res = await sendSubmission({
+        data: {
+          submission_type: type,
+          name: rest.name,
+          email: rest.email,
+          phone: rest.phone || null,
+          title: rest.title,
+          description: rest.description,
+          country_code: country,
+          image_urls: images,
+          turnstileToken: captchaToken,
+        },
+      });
+    } catch {
+      res = { ok: false, error: "No se pudo enviar. Inténtalo más tarde." };
+    }
     setSubmitting(false);
-    if (error) {
-      toast.error("No se pudo enviar: " + error.message);
+    if (!res.ok) {
+      toast.error(res.error ?? "No se pudo enviar. Inténtalo más tarde.");
       return;
     }
     setSent(true);
@@ -368,7 +383,9 @@ function CommunityForm({ country }: { country: string }) {
       </div>
 
       <div className="md:col-span-2">
+        <TurnstileWidget onToken={setCaptchaToken} />
         <Button
+
           type="submit"
           disabled={submitting || uploading}
           className="bg-gold text-black hover:bg-gold/90"

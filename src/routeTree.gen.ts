@@ -74,6 +74,7 @@ import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisione
 import { Route as AdminTvRouteImport } from './routes/admin.tv'
 import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
 import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nosotros'
+import { Route as AdminSeguridadRouteImport } from './routes/admin.seguridad'
 import { Route as AdminSectionsRouteImport } from './routes/admin.sections'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminSalonDeLaFamaRouteImport } from './routes/admin.salon-de-la-fama'
@@ -127,6 +128,7 @@ import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.club
 import { Route as HubCountryArchivoRouteImport } from './routes/hub.$country.archivo'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
+import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as HubCountryTvIndexRouteImport } from './routes/hub.$country.tv.index'
 import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$country.patinadores.index'
@@ -479,6 +481,11 @@ const AdminSobreNosotrosRoute = AdminSobreNosotrosRouteImport.update({
   path: '/sobre-nosotros',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSeguridadRoute = AdminSeguridadRouteImport.update({
+  id: '/seguridad',
+  path: '/seguridad',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSectionsRoute = AdminSectionsRouteImport.update({
   id: '/sections',
   path: '/sections',
@@ -744,6 +751,11 @@ const EspecialesSlugPieceRoute = EspecialesSlugPieceRouteImport.update({
   path: '/$piece',
   getParentRoute: () => EspecialesSlugRoute,
 } as any)
+const ApiPublicCspReportRoute = ApiPublicCspReportRouteImport.update({
+  id: '/api/public/csp-report',
+  path: '/api/public/csp-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
   id: '/api/og/premios-mvp.svg',
   path: '/api/og/premios-mvp.svg',
@@ -897,6 +909,7 @@ export interface FileRoutesByFullPath {
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
+  '/admin/seguridad': typeof AdminSeguridadRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -945,6 +958,7 @@ export interface FileRoutesByFullPath {
   '/resultados/': typeof ResultadosIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -1031,6 +1045,7 @@ export interface FileRoutesByTo {
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
+  '/admin/seguridad': typeof AdminSeguridadRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -1078,6 +1093,7 @@ export interface FileRoutesByTo {
   '/resultados': typeof ResultadosIndexRoute
   '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -1162,6 +1178,7 @@ export interface FileRoutesById {
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/sections': typeof AdminSectionsRoute
+  '/admin/seguridad': typeof AdminSeguridadRoute
   '/admin/sobre-nosotros': typeof AdminSobreNosotrosRoute
   '/admin/ticker': typeof AdminTickerRoute
   '/admin/tv': typeof AdminTvRoute
@@ -1210,6 +1227,7 @@ export interface FileRoutesById {
   '/resultados/': typeof ResultadosIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -1301,6 +1319,7 @@ export interface FileRouteTypes {
     | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
+    | '/admin/seguridad'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -1349,6 +1368,7 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
+    | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1435,6 +1455,7 @@ export interface FileRouteTypes {
     | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
+    | '/admin/seguridad'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -1482,6 +1503,7 @@ export interface FileRouteTypes {
     | '/resultados'
     | '/salon-de-la-fama'
     | '/api/og/premios-mvp.svg'
+    | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1565,6 +1587,7 @@ export interface FileRouteTypes {
     | '/admin/salon-de-la-fama'
     | '/admin/schedule'
     | '/admin/sections'
+    | '/admin/seguridad'
     | '/admin/sobre-nosotros'
     | '/admin/ticker'
     | '/admin/tv'
@@ -1613,6 +1636,7 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
+    | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1697,6 +1721,7 @@ export interface RootRouteChildren {
   ResultadosIndexRoute: typeof ResultadosIndexRoute
   SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
+  ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
 }
 
@@ -2157,6 +2182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSobreNosotrosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/seguridad': {
+      id: '/admin/seguridad'
+      path: '/seguridad'
+      fullPath: '/admin/seguridad'
+      preLoaderRoute: typeof AdminSeguridadRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/sections': {
       id: '/admin/sections'
       path: '/sections'
@@ -2528,6 +2560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EspecialesSlugPieceRouteImport
       parentRoute: typeof EspecialesSlugRoute
     }
+    '/api/public/csp-report': {
+      id: '/api/public/csp-report'
+      path: '/api/public/csp-report'
+      fullPath: '/api/public/csp-report'
+      preLoaderRoute: typeof ApiPublicCspReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/og/premios-mvp.svg': {
       id: '/api/og/premios-mvp.svg'
       path: '/api/og/premios-mvp.svg'
@@ -2687,6 +2726,7 @@ interface AdminRouteChildren {
   AdminSalonDeLaFamaRoute: typeof AdminSalonDeLaFamaRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
   AdminSectionsRoute: typeof AdminSectionsRoute
+  AdminSeguridadRoute: typeof AdminSeguridadRoute
   AdminSobreNosotrosRoute: typeof AdminSobreNosotrosRoute
   AdminTickerRoute: typeof AdminTickerRoute
   AdminTvRoute: typeof AdminTvRoute
@@ -2734,6 +2774,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSalonDeLaFamaRoute: AdminSalonDeLaFamaRoute,
   AdminScheduleRoute: AdminScheduleRoute,
   AdminSectionsRoute: AdminSectionsRoute,
+  AdminSeguridadRoute: AdminSeguridadRoute,
   AdminSobreNosotrosRoute: AdminSobreNosotrosRoute,
   AdminTickerRoute: AdminTickerRoute,
   AdminTvRoute: AdminTvRoute,
@@ -3014,6 +3055,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResultadosIndexRoute: ResultadosIndexRoute,
   SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
+  ApiPublicCspReportRoute: ApiPublicCspReportRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
 }
 export const routeTree = rootRouteImport
