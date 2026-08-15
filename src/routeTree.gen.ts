@@ -127,6 +127,7 @@ import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.club
 import { Route as HubCountryArchivoRouteImport } from './routes/hub.$country.archivo'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
+import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as HubCountryTvIndexRouteImport } from './routes/hub.$country.tv.index'
 import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$country.patinadores.index'
@@ -744,6 +745,11 @@ const EspecialesSlugPieceRoute = EspecialesSlugPieceRouteImport.update({
   path: '/$piece',
   getParentRoute: () => EspecialesSlugRoute,
 } as any)
+const ApiPublicCspReportRoute = ApiPublicCspReportRouteImport.update({
+  id: '/api/public/csp-report',
+  path: '/api/public/csp-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
   id: '/api/og/premios-mvp.svg',
   path: '/api/og/premios-mvp.svg',
@@ -945,6 +951,7 @@ export interface FileRoutesByFullPath {
   '/resultados/': typeof ResultadosIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -1078,6 +1085,7 @@ export interface FileRoutesByTo {
   '/resultados': typeof ResultadosIndexRoute
   '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -1210,6 +1218,7 @@ export interface FileRoutesById {
   '/resultados/': typeof ResultadosIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
+  '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
@@ -1349,6 +1358,7 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
+    | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1482,6 +1492,7 @@ export interface FileRouteTypes {
     | '/resultados'
     | '/salon-de-la-fama'
     | '/api/og/premios-mvp.svg'
+    | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1613,6 +1624,7 @@ export interface FileRouteTypes {
     | '/resultados/'
     | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
+    | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
@@ -1697,6 +1709,7 @@ export interface RootRouteChildren {
   ResultadosIndexRoute: typeof ResultadosIndexRoute
   SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
+  ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
 }
 
@@ -2528,6 +2541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EspecialesSlugPieceRouteImport
       parentRoute: typeof EspecialesSlugRoute
     }
+    '/api/public/csp-report': {
+      id: '/api/public/csp-report'
+      path: '/api/public/csp-report'
+      fullPath: '/api/public/csp-report'
+      preLoaderRoute: typeof ApiPublicCspReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/og/premios-mvp.svg': {
       id: '/api/og/premios-mvp.svg'
       path: '/api/og/premios-mvp.svg'
@@ -3014,6 +3034,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResultadosIndexRoute: ResultadosIndexRoute,
   SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
+  ApiPublicCspReportRoute: ApiPublicCspReportRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
 }
 export const routeTree = rootRouteImport
