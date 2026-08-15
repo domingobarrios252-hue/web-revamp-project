@@ -22,14 +22,15 @@ type Factor = { id: string; status: string; friendly_name?: string | null };
 type AuditRow = {
   id: string;
   action: string;
-  table_name: string | null;
+  resource: string | null;
   actor_email: string | null;
+  result: string;
   created_at: string;
-  metadata: unknown;
 };
 type CspRow = {
   id: string;
-  directive: string | null;
+  effective_directive: string | null;
+  violated_directive: string | null;
   blocked_uri: string | null;
   document_uri: string | null;
   created_at: string;
@@ -43,7 +44,7 @@ function MfaPanel() {
 
   const load = async () => {
     const { data } = await supabase.auth.mfa.listFactors();
-    setFactors(((data?.totp ?? []) as Factor[]) ?? []);
+    setFactors((data?.totp ?? []) as Factor[]);
   };
 
   useEffect(() => {
@@ -169,7 +170,7 @@ function AuditPanel() {
     void (async () => {
       const { data } = await supabase
         .from("security_audit_log")
-        .select("id, action, table_name, actor_email, created_at, metadata")
+        .select("id, action, resource, actor_email, result, created_at")
         .order("created_at", { ascending: false })
         .limit(200);
       setRows((data as AuditRow[]) ?? []);
@@ -191,8 +192,9 @@ function AuditPanel() {
               <tr className="border-b border-border text-left text-[11px] uppercase tracking-widest text-muted-foreground">
                 <th className="py-2 pr-3">Fecha</th>
                 <th className="py-2 pr-3">Acción</th>
-                <th className="py-2 pr-3">Tabla</th>
-                <th className="py-2">Usuario</th>
+                <th className="py-2 pr-3">Recurso</th>
+                <th className="py-2 pr-3">Usuario</th>
+                <th className="py-2">Resultado</th>
               </tr>
             </thead>
             <tbody>
@@ -202,8 +204,9 @@ function AuditPanel() {
                     {new Date(r.created_at).toLocaleString("es-ES")}
                   </td>
                   <td className="py-2 pr-3 font-medium">{r.action}</td>
-                  <td className="py-2 pr-3 text-muted-foreground">{r.table_name ?? "—"}</td>
-                  <td className="py-2">{r.actor_email ?? "—"}</td>
+                  <td className="py-2 pr-3 text-muted-foreground">{r.resource ?? "—"}</td>
+                  <td className="py-2 pr-3">{r.actor_email ?? "—"}</td>
+                  <td className="py-2 text-muted-foreground">{r.result}</td>
                 </tr>
               ))}
             </tbody>
@@ -220,7 +223,7 @@ function CspPanel() {
     void (async () => {
       const { data } = await supabase
         .from("csp_reports")
-        .select("id, directive, blocked_uri, document_uri, created_at")
+        .select("id, effective_directive, violated_directive, blocked_uri, document_uri, created_at")
         .order("created_at", { ascending: false })
         .limit(200);
       setRows((data as CspRow[]) ?? []);
@@ -257,7 +260,7 @@ function CspPanel() {
                   <td className="py-2 pr-3 whitespace-nowrap text-muted-foreground">
                     {new Date(r.created_at).toLocaleString("es-ES")}
                   </td>
-                  <td className="py-2 pr-3">{r.directive ?? "—"}</td>
+                  <td className="py-2 pr-3">{r.effective_directive ?? r.violated_directive ?? "—"}</td>
                   <td className="py-2 pr-3 break-all">{r.blocked_uri ?? "—"}</td>
                   <td className="py-2 break-all text-muted-foreground">{r.document_uri ?? "—"}</td>
                 </tr>
