@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { subscribeNewsletter } from "@/lib/security/public-forms.functions";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
@@ -18,6 +20,8 @@ export function NewsletterForm({ source = "footer" }: { source?: string }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const subscribe = useServerFn(subscribeNewsletter);
 
   const successMsg = lang === "en" ? "Thanks for subscribing" : "Gracias por suscribirte";
   const invalidMsg = lang === "en" ? "Please enter a valid email" : "Introduce un email válido";
@@ -38,18 +42,20 @@ export function NewsletterForm({ source = "footer" }: { source?: string }) {
     setStatus("loading");
     setMessage("");
 
-    const { error } = await supabase
-      .from("newsletter_subscribers")
-      .insert({ email: parsed.data.toLowerCase(), source });
+    let res: { ok: boolean; error?: string };
+    try {
+      res = await subscribe({
+        data: { email: parsed.data.toLowerCase(), source, turnstileToken: captchaToken },
+      });
+    } catch {
+      res = { ok: false, error: "generic" };
+    }
 
-    if (error) {
-      if (error.code === "23505") {
-        setStatus("error");
-        setMessage(dupMsg);
-      } else {
-        setStatus("error");
-        setMessage(genericErr);
-      }
+    if (!res.ok) {
+      setStatus("error");
+      setMessage(
+        res.error === "duplicate" ? dupMsg : res.error && res.error !== "generic" ? res.error : genericErr,
+      );
       return;
     }
 
@@ -101,6 +107,7 @@ export function NewsletterForm({ source = "footer" }: { source?: string }) {
           {t("footer.newsletterCta")}
         </button>
       </div>
+      <TurnstileWidget onToken={setCaptchaToken} />
       {status === "error" && message && (
         <p role="alert" className="text-xs text-red-400">
           {message}

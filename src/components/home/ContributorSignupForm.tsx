@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { z } from "zod";
 import { Loader2, Check, ArrowRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { submitContributorSignup } from "@/lib/security/public-forms.functions";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { useRedactoresContent, type RedactoresContent } from "@/lib/home/useRedactoresContent";
 
 const schema = z.object({
@@ -22,6 +24,8 @@ export function ContributorSignupForm({ override }: { override?: RedactoresConte
   const c = override ?? live;
   const [state, setState] = useState<State>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const submitSignup = useServerFn(submitContributorSignup);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,21 +38,27 @@ export function ContributorSignupForm({ override }: { override?: RedactoresConte
       return;
     }
     setState("sending");
-    const { error: err } = await supabase.from("contributor_signups").insert({
-      full_name: parsed.data.full_name,
-      email: parsed.data.email,
-      country: parsed.data.country,
-      region: parsed.data.region || null,
-      club_or_federation: parsed.data.club_or_federation || null,
-      topics: parsed.data.topics,
-      role_type: parsed.data.role_type,
-      message: parsed.data.message || null,
-      language: "es",
-      status: "nuevo",
-    });
-    if (err) {
+    let res: { ok: boolean; error?: string };
+    try {
+      res = await submitSignup({
+        data: {
+          full_name: parsed.data.full_name,
+          email: parsed.data.email,
+          country: parsed.data.country,
+          region: parsed.data.region || null,
+          club_or_federation: parsed.data.club_or_federation || null,
+          topics: parsed.data.topics,
+          role_type: parsed.data.role_type,
+          message: parsed.data.message || null,
+          turnstileToken: captchaToken,
+        },
+      });
+    } catch {
+      res = { ok: false, error: "No se ha podido enviar. Inténtalo más tarde." };
+    }
+    if (!res.ok) {
       setState("error");
-      setError("No se ha podido enviar. Inténtalo más tarde.");
+      setError(res.error ?? "No se ha podido enviar. Inténtalo más tarde.");
       return;
     }
     setState("ok");
@@ -120,6 +130,8 @@ export function ContributorSignupForm({ override }: { override?: RedactoresConte
           className="w-full resize-y rounded-md border border-border bg-background/80 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold md:col-span-2"
         />
       </div>
+
+      <TurnstileWidget onToken={setCaptchaToken} />
 
       {error && <p className="mt-3 text-xs font-medium text-destructive">{error}</p>}
 
