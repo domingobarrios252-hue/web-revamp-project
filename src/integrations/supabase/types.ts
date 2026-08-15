@@ -642,6 +642,42 @@ export type Database = {
         }
         Relationships: []
       }
+      csp_reports: {
+        Row: {
+          blocked_uri: string | null
+          created_at: string
+          disposition: string | null
+          document_uri: string | null
+          effective_directive: string | null
+          id: string
+          raw: Json
+          user_agent: string | null
+          violated_directive: string | null
+        }
+        Insert: {
+          blocked_uri?: string | null
+          created_at?: string
+          disposition?: string | null
+          document_uri?: string | null
+          effective_directive?: string | null
+          id?: string
+          raw?: Json
+          user_agent?: string | null
+          violated_directive?: string | null
+        }
+        Update: {
+          blocked_uri?: string | null
+          created_at?: string
+          disposition?: string | null
+          document_uri?: string | null
+          effective_directive?: string | null
+          id?: string
+          raw?: Json
+          user_agent?: string | null
+          violated_directive?: string | null
+        }
+        Relationships: []
+      }
       editor_countries: {
         Row: {
           country_code: string
@@ -2517,6 +2553,27 @@ export type Database = {
           },
         ]
       }
+      rate_limit_hits: {
+        Row: {
+          action: string
+          created_at: string
+          id: number
+          identity: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: number
+          identity: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: number
+          identity?: string
+        }
+        Relationships: []
+      }
       regions: {
         Row: {
           code: string
@@ -2887,6 +2944,48 @@ export type Database = {
           slug?: string
           sort_order?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      security_audit_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          actor_role: string | null
+          created_at: string
+          details: Json
+          id: string
+          ip_hash: string | null
+          resource: string | null
+          resource_id: string | null
+          result: string
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          ip_hash?: string | null
+          resource?: string | null
+          resource_id?: string | null
+          result?: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          ip_hash?: string | null
+          resource?: string | null
+          resource_id?: string | null
+          result?: string
         }
         Relationships: []
       }
@@ -3860,6 +3959,15 @@ export type Database = {
         Args: { _country: string; _user_id: string }
         Returns: boolean
       }
+      check_rate_limit: {
+        Args: {
+          _action: string
+          _identity: string
+          _max_hits: number
+          _window_seconds: number
+        }
+        Returns: boolean
+      }
       convert_live_to_result_event: {
         Args: { _event_id: string }
         Returns: string
@@ -3874,6 +3982,17 @@ export type Database = {
         Returns: boolean
       }
       is_editorial_staff: { Args: { _user_id: string }; Returns: boolean }
+      log_security_event: {
+        Args: {
+          _action: string
+          _details?: Json
+          _resource?: string
+          _resource_id?: string
+          _result?: string
+        }
+        Returns: string
+      }
+      mfa_satisfied: { Args: never; Returns: boolean }
       register_news_view: {
         Args: { _news_id: string; _visitor_hash: string }
         Returns: number
