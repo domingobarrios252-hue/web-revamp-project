@@ -1,0 +1,1 @@
+DELETE FROM public.newsletter_subscribers WHERE email = 'audit47291@rollerzone-test.es';
