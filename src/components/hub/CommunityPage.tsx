@@ -383,7 +383,9 @@ function CommunityForm({ country }: { country: string }) {
       </div>
 
       <div className="md:col-span-2">
+        <TurnstileWidget onToken={setCaptchaToken} />
         <Button
+
           type="submit"
           disabled={submitting || uploading}
           className="bg-gold text-black hover:bg-gold/90"
