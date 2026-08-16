@@ -109,15 +109,16 @@ Deno.serve(async (req) => {
   }
 
   const userId = created.user.id;
+  // El email NO se copia a profiles: queda sólo en auth.users.
   const { error: profileError } = await adminClient.from("profiles").upsert(
     {
       user_id: userId,
       display_name: displayName,
-      email,
       section_id: sectionId,
     },
     { onConflict: "user_id" },
   );
+
   if (profileError) return json({ error: profileError.message }, 400);
 
   await adminClient.from("user_roles").delete().eq("user_id", userId);
