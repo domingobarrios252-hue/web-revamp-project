@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Eye, EyeOff, Star, ArrowUp, ArrowDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  Plus, Pencil, Trash2, Eye, EyeOff, Star, ArrowUp, ArrowDown,
+  Bold, Italic, List, ListOrdered, Quote, Link2, Minus, Heading2, Heading3,
+  Image as ImageIcon, Video as VideoIcon, Images,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -10,7 +14,7 @@ import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import { NewsVideoUploadField, deleteStoredVideo } from "@/components/admin/NewsVideoUploadField";
 import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
 import { ContentBlocksEditor } from "@/components/admin/ContentBlocksEditor";
-import { cleanBlocks, parseBlocks, validateBlocks, type NewsBlock } from "@/lib/newsBlocks";
+import { cleanBlocks, createBlock, parseBlocks, validateBlocks, type NewsBlock } from "@/lib/newsBlocks";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
@@ -365,6 +369,7 @@ function NewsEditor({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { isAdmin } = useAuth();
   const [title, setTitle] = useState(item?.title ?? "");
   const [slug, setSlug] = useState(item?.slug ?? "");
   const [excerpt, setExcerpt] = useState(item?.excerpt ?? "");
@@ -454,8 +459,10 @@ function NewsEditor({
   // Only show published writers in dropdown, but include current one if it's hidden
   const visibleWriters = writers.filter((w) => w.published || w.id === writerId);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (e: React.FormEvent | null, overrideStatus?: News["status"]) => {
+    e?.preventDefault();
+    const effectiveStatus = overrideStatus ?? status;
+
     const parsed = newsSchema.safeParse({
       title,
       slug,
@@ -471,7 +478,7 @@ function NewsEditor({
       video_poster_url: videoPosterUrl || undefined,
       read_minutes: typeof readMinutes === "number" ? readMinutes : undefined,
       featured,
-      status,
+      status: effectiveStatus,
       published_at: publishedAt,
     });
     if (!parsed.success) {
@@ -492,7 +499,7 @@ function NewsEditor({
     // Validación de bloques de contenido: no se publica con campos obligatorios vacíos.
     const blockIssues = validateBlocks(blocks);
     const blockErrors = blockIssues.filter((i) => i.level === "error");
-    if (blockErrors.length > 0 && (status === "published" || status === "pending")) {
+    if (blockErrors.length > 0 && (effectiveStatus === "published" || effectiveStatus === "pending")) {
       const first = blockErrors[0];
       toast.error(
         `Bloque ${first.index + 1}: ${first.message}${
@@ -594,375 +601,719 @@ function NewsEditor({
     }
   };
 
+  const contentRef = useRef<HTMLTextAreaElement | null>(null);
+  const [tab, setTab] = useState<"contenido" | "media" | "opciones" | "publicar">("contenido");
+  const [showSlug, setShowSlug] = useState(false);
+  const [showBlocks, setShowBlocks] = useState(parseBlocks(item?.content_blocks).length > 0);
+  const [showVideoUpload, setShowVideoUpload] = useState(Boolean(item?.video_url));
+  const [showLive, setShowLive] = useState(Boolean(item?.live_active));
+
+  const canPublish = isAdmin;
+
+  const applyMd = (before: string, after = "", placeholder = "") => {
+    const el = contentRef.current;
+    if (!el) return;
+    const start = el.selectionStart ?? 0;
+    const end = el.selectionEnd ?? 0;
+    const sel = content.slice(start, end) || placeholder;
+    const next = content.slice(0, start) + before + sel + after + content.slice(end);
+    setContent(next);
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(start + before.length, start + before.length + sel.length);
+    });
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-background/85 p-4 backdrop-blur">
-      <div className="w-full max-w-3xl border border-border bg-surface p-5 md:p-7">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-2xl tracking-widest">
-            {item ? "Editar noticia" : "Nueva noticia"}
-          </h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-background/90 p-0 backdrop-blur md:p-4">
+      <div className="mx-auto w-full max-w-[1400px] border border-border bg-surface pb-24">
+        {/* Cabecera */}
+        <div className="sticky top-0 z-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-surface/95 px-4 py-3 backdrop-blur md:px-6">
+          <div className="min-w-0">
+            <h2 className="font-display truncate text-xl tracking-widest md:text-2xl">
+              {item ? "Editar noticia" : "Nueva noticia"}
+            </h2>
+            <p className="truncate text-xs text-muted-foreground">
+              {title ? `rollerzone.es/noticias/${slug || slugify(title)}` : "Mesa de redacción RollerZone"}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar editor"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-border text-muted-foreground hover:border-gold hover:text-gold"
+          >
             ✕
           </button>
         </div>
-        <form onSubmit={onSubmit} className="space-y-3">
-          <Field label="Título" value={title} onChange={setTitle} required />
-          <Field label="Slug (URL)" value={slug} onChange={setSlug} required />
-          <div className="grid gap-3 md:grid-cols-2">
-            <SelectField
-              label="Redactor / Autor *"
-              value={writerId}
-              onChange={setWriterId}
-              options={[
-                { value: "", label: visibleWriters.length === 0 ? "— Crea un redactor primero —" : "— Selecciona redactor —" },
-                ...visibleWriters.map((w) => ({
-                  value: w.id,
-                  label: w.published ? w.full_name : `${w.full_name} (oculto)`,
-                })),
-              ]}
-            />
-            <SelectField
-              label="Sección / Categoría"
-              value={categoryId}
-              onChange={setCategoryId}
-              options={[
-                { value: "", label: "— Sin categoría —" },
-                ...categories.map((c) => ({
-                  value: c.id,
-                  label: `${c.scope} · ${c.name}`,
-                })),
-              ]}
-            />
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            <Field label="Etiqueta (opcional)" value={legacyTag} onChange={setLegacyTag} />
-            <NumberField label="Min. lectura" value={readMinutes} onChange={setReadMinutes} />
-          </div>
-          <div>
-            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-              Imagen de portada
-            </span>
-            <ImageUploadField
-              value={imageUrl}
-              onChange={setImageUrl}
-              folder="news"
-              nameHint={slug || title}
-              placeholder="URL o subir archivo"
-              crops={imageCrops}
-              onCropsChange={setImageCrops}
-            />
-            {imageUrl && (
-              <div className="mt-3">
-                <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                  Imagen principal del artículo
-                </span>
-                <div className="flex flex-wrap gap-3 text-sm">
-                  <label className="inline-flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="hero-display-mode"
-                      value="crop"
-                      checked={heroDisplayMode === "crop"}
-                      onChange={() => setHeroDisplayMode("crop")}
-                      className="accent-[var(--gold,#caa15a)]"
-                    />
-                    Recortada (Hero 16:9)
-                  </label>
-                  <label className="inline-flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="hero-display-mode"
-                      value="full"
-                      checked={heroDisplayMode === "full"}
-                      onChange={() => setHeroDisplayMode("full")}
-                      className="accent-[var(--gold,#caa15a)]"
-                    />
-                    Completa (sin recorte)
-                  </label>
+
+        {/* Pestañas */}
+        <div className="filters-scroll flex gap-1 overflow-x-auto border-b border-border px-2 md:px-6">
+          {([
+            { id: "contenido", label: "Contenido" },
+            { id: "media", label: "Imágenes y vídeo" },
+            { id: "opciones", label: "Opciones" },
+            { id: "publicar", label: "Publicar" },
+          ] as const).map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              aria-current={tab === t.id}
+              className={`font-condensed min-h-11 shrink-0 border-b-2 px-4 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+                tab === t.id
+                  ? "border-gold text-gold"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={onSubmit} className="grid gap-5 p-4 md:p-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
+          {/* ================= COLUMNA PRINCIPAL ================= */}
+          <div className="min-w-0 space-y-5">
+            {tab === "contenido" && (
+              <>
+                <div>
+                  <label className="sr-only" htmlFor="news-title">Título</label>
+                  <input
+                    id="news-title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                    maxLength={200}
+                    placeholder="Escribe un título atractivo para tu noticia..."
+                    className="font-display w-full border-0 border-b border-border bg-transparent px-0 py-3 text-2xl tracking-wide text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none md:text-3xl"
+                  />
+                  <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <button
+                      type="button"
+                      onClick={() => setShowSlug((v) => !v)}
+                      className="font-condensed uppercase tracking-widest text-gold hover:underline"
+                    >
+                      {showSlug ? "Ocultar URL" : "Editar URL"}
+                    </button>
+                    <span className={title.length > 100 ? "text-amber-400" : ""}>
+                      {title.length} / 100
+                    </span>
+                  </div>
+                  {showSlug && (
+                    <div className="mt-2">
+                      <Field label="Slug (URL)" value={slug} onChange={setSlug} required />
+                      <p className="mt-1 text-[11px] text-muted-foreground">
+                        rollerzone.es/noticias/{slug || "…"}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-          </div>
-          <div>
-            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-              Galería de imágenes ({gallery.length})
-            </span>
-            <GalleryUploadField
-              value={gallery}
-              onChange={setGallery}
-              folder="news/gallery"
-              nameHint={slug || title}
-            />
-          </div>
 
-          <div className="border-t border-border pt-3">
-            <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-muted-foreground">
-              Vídeo de la noticia (opcional)
-            </span>
-            <p className="mb-2 text-xs text-muted-foreground">
-              Sube un archivo de vídeo (MP4/WebM/MOV, máx. 200 MB) o pega una URL/embed de YouTube, Vimeo, Facebook o Twitch. Si añades ambos, se mostrará el vídeo subido. Se mostrará en la ficha pública entre la imagen principal y el texto.
-            </p>
-            <div className="space-y-4">
-              <div>
-                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                  Archivo de vídeo
-                </span>
-                <NewsVideoUploadField
-                  value={videoUrl}
-                  onChange={setVideoUrl}
-                  nameHint={slug || title}
-                />
-              </div>
-              <div>
-                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                  URL o embed externo (YouTube, Vimeo, Facebook, Twitch…)
-                </span>
-                <input
-                  value={videoEmbedUrl}
-                  onChange={(e) => setVideoEmbedUrl(e.target.value)}
-                  placeholder="https://www.youtube.com/watch?v=…"
-                  className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
-                />
-              </div>
-              <div>
-                <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                  Miniatura / portada del vídeo (opcional)
-                </span>
-                <ImageUploadField
-                  value={videoPosterUrl}
-                  onChange={setVideoPosterUrl}
-                  folder="news/video-posters"
-                  nameHint={slug || title}
-                  placeholder="URL o subir imagen de portada"
-                />
-              </div>
-            </div>
-          </div>
-
-          <TextareaField label="Resumen" value={excerpt} onChange={setExcerpt} rows={3} />
-          <TextareaField
-            label="Contenido (un párrafo por línea)"
-            value={content}
-            onChange={setContent}
-            rows={10}
-          />
-
-          <div className="border-t border-border pt-3">
-            <p className="mb-3 text-xs text-muted-foreground">
-              Reportaje por bloques (opcional). Si añades bloques, se mostrarán en la noticia en
-              este orden en lugar del texto clásico de arriba. La imagen de portada y la galería
-              final se mantienen aparte.
-            </p>
-            <ContentBlocksEditor
-              value={blocks}
-              onChange={setBlocks}
-              nameHint={slug || title}
-              title={title}
-            />
-          </div>
-
-          <label className="block">
-            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-              Fecha de publicación
-            </span>
-            <input
-              type="datetime-local"
-              value={publishedAt}
-              onChange={(e) => setPublishedAt(e.target.value)}
-              required
-              className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold md:w-auto"
-            />
-          </label>
-          <div className="flex flex-wrap gap-4">
-            <SelectField
-              label="Estado editorial"
-              value={status}
-              onChange={(value) => setStatus(value as News["status"])}
-              options={[
-                { value: "draft", label: "Borrador" },
-                { value: "pending", label: "Pendiente de revisión" },
-                { value: "published", label: "Publicado" },
-                { value: "rejected", label: "Rechazado" },
-              ]}
-            />
-            <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
-          </div>
-
-          <div className="border-t border-border pt-3">
-            <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-muted-foreground">
-              Visibilidad — ¿dónde se mostrará esta noticia?
-            </span>
-            <div className="flex flex-wrap gap-4">
-              <Checkbox label="Portada general (home + /noticias)" checked={visHome} onChange={setVisHome} />
-            </div>
-            <div className="mt-3">
-              <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                Hub de país (excluyentes — solo uno)
-              </span>
-              <div className="flex flex-wrap gap-4 text-sm">
-                {([
-                  { value: "none", label: "Ninguno" },
-                  { value: "es", label: "Hub España" },
-                  { value: "co", label: "Hub Colombia" },
-                ] as const).map((opt) => (
-                  <label key={opt.value} className="inline-flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="hubScope"
-                      value={opt.value}
-                      checked={hubScope === opt.value}
-                      onChange={() => setHubScope(opt.value)}
-                      className="accent-gold"
-                    />
-                    <span>{opt.label}</span>
+                <div>
+                  <label
+                    htmlFor="news-excerpt"
+                    className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground"
+                  >
+                    Entradilla / Resumen
                   </label>
-                ))}
-              </div>
-            </div>
-            {!visHome && hubScope === "none" && (
-              <p className="mt-2 text-xs text-amber-400">
-                Sin destino seleccionado: la noticia quedará oculta de todas las portadas y hubs.
-              </p>
+                  <textarea
+                    id="news-excerpt"
+                    value={excerpt}
+                    onChange={(e) => setExcerpt(e.target.value)}
+                    rows={3}
+                    maxLength={500}
+                    placeholder="Una breve descripción que aparecerá bajo el título..."
+                    className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                  />
+                  <p className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <span>Se usa como entradilla, en listados, portada, redes y SEO (mismo campo, sin datos duplicados).</span>
+                    <span className={excerpt.length > 200 ? "text-amber-400" : ""}>{excerpt.length} / 200</span>
+                  </p>
+                </div>
+
+                <div>
+                  <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                    Contenido de la noticia
+                  </span>
+                  <div className="flex flex-wrap gap-1 border border-b-0 border-border bg-background/60 p-1.5">
+                    <MdBtn title="Párrafo" onClick={() => applyMd("\n\n", "", "")}>P</MdBtn>
+                    <MdBtn title="Título H2" onClick={() => applyMd("\n## ", "", "Título de sección")}><Heading2 className="h-4 w-4" /></MdBtn>
+                    <MdBtn title="Subtítulo H3" onClick={() => applyMd("\n### ", "", "Subtítulo")}><Heading3 className="h-4 w-4" /></MdBtn>
+                    <MdBtn title="Negrita" onClick={() => applyMd("**", "**", "texto")}><Bold className="h-4 w-4" /></MdBtn>
+                    <MdBtn title="Cursiva" onClick={() => applyMd("*", "*", "texto")}><Italic className="h-4 w-4" /></MdBtn>
+                    <MdBtn title="Lista" onClick={() => applyMd("\n- ", "", "elemento")}><List className="h-4 w-4" /></MdBtn>
+                    <MdBtn title="Lista numerada" onClick={() => applyMd("\n1. ", "", "elemento")}><ListOrdered className="h-4 w-4" /></MdBtn>
+                    <MdBtn title="Cita" onClick={() => applyMd("\n> ", "", "cita")}><Quote className="h-4 w-4" /></MdBtn>
+                    <MdBtn title="Enlace" onClick={() => applyMd("[", "](https://)", "texto del enlace")}><Link2 className="h-4 w-4" /></MdBtn>
+                    <MdBtn title="Separador" onClick={() => applyMd("\n\n---\n\n")}><Minus className="h-4 w-4" /></MdBtn>
+                    <span className="mx-1 w-px self-stretch bg-border" />
+                    <MdBtn
+                      title="Insertar imagen (bloques)"
+                      onClick={() => { setShowBlocks(true); setBlocks([...blocks, createBlock("image")]); }}
+                    >
+                      <ImageIcon className="h-4 w-4" />
+                    </MdBtn>
+                    <MdBtn
+                      title="Insertar vídeo (bloques)"
+                      onClick={() => { setShowBlocks(true); setBlocks([...blocks, createBlock("video")]); }}
+                    >
+                      <VideoIcon className="h-4 w-4" />
+                    </MdBtn>
+                    <MdBtn
+                      title="Insertar galería (bloques)"
+                      onClick={() => { setShowBlocks(true); setBlocks([...blocks, createBlock("gallery")]); }}
+                    >
+                      <Images className="h-4 w-4" />
+                    </MdBtn>
+                  </div>
+                  <textarea
+                    ref={contentRef}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    rows={16}
+                    placeholder="Escribe aquí la noticia. Un párrafo por línea. Puedes usar la barra superior para dar formato."
+                    className="w-full border border-border bg-background px-3 py-3 text-sm leading-relaxed focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                  />
+                </div>
+
+                {/* Contenido avanzado por bloques */}
+                <div className="border border-border p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+                      Contenido avanzado {blocks.length > 0 ? `(${blocks.length} bloques)` : ""}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowBlocks((v) => !v)}
+                      className="font-condensed inline-flex min-h-11 items-center gap-2 border border-border px-3 text-[11px] uppercase tracking-widest text-gold hover:bg-gold/10"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> {showBlocks ? "Ocultar bloques" : "Añadir bloque"}
+                    </button>
+                  </div>
+                  {showBlocks ? (
+                    <div className="mt-3">
+                      <p className="mb-3 text-xs text-muted-foreground">
+                        Si añades bloques, la noticia se mostrará con ellos en este orden en lugar del texto
+                        clásico. La portada y la galería final se mantienen aparte.
+                      </p>
+                      <ContentBlocksEditor
+                        value={blocks}
+                        onChange={setBlocks}
+                        nameHint={slug || title}
+                        title={title}
+                      />
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Opcional: reportaje editorial por bloques (texto, imagen, galería, vídeo, cita, separador).
+                    </p>
+                  )}
+                </div>
+              </>
             )}
-            {hubScope !== "none" && (
-              <p className="mt-2 text-xs text-muted-foreground">
-                Solo se publicará en el hub <strong>{hubScope === "es" ? "España" : "Colombia"}</strong>
-                {visHome ? " además de la portada general." : "."} El <code>country_code</code> se sincroniza automáticamente.
-              </p>
+
+            {tab === "media" && (
+              <>
+                <SectionCard title="Imagen de portada">
+                  <ImageUploadField
+                    value={imageUrl}
+                    onChange={setImageUrl}
+                    folder="news"
+                    nameHint={slug || title}
+                    placeholder="URL o subir archivo"
+                    crops={imageCrops}
+                    onCropsChange={setImageCrops}
+                    previewClassName="mt-3 h-40 w-full max-w-md object-cover"
+                  />
+                  <p className="mt-2 text-[11px] text-muted-foreground">Recomendado 1200×630 px</p>
+                  {imageUrl && (
+                    <div className="mt-3">
+                      <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                        Imagen principal del artículo
+                      </span>
+                      <div className="flex flex-wrap gap-3 text-sm">
+                        <label className="inline-flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="hero-display-mode"
+                            value="crop"
+                            checked={heroDisplayMode === "crop"}
+                            onChange={() => setHeroDisplayMode("crop")}
+                            className="accent-[var(--gold,#caa15a)]"
+                          />
+                          Recortada (Hero 16:9)
+                        </label>
+                        <label className="inline-flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="hero-display-mode"
+                            value="full"
+                            checked={heroDisplayMode === "full"}
+                            onChange={() => setHeroDisplayMode("full")}
+                            className="accent-[var(--gold,#caa15a)]"
+                          />
+                          Completa (sin recorte)
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setImageUrl("")}
+                        className="font-condensed mt-3 inline-flex min-h-11 items-center border border-border px-3 text-[11px] uppercase tracking-widest text-destructive hover:border-destructive"
+                      >
+                        Eliminar portada
+                      </button>
+                    </div>
+                  )}
+                </SectionCard>
+
+                <SectionCard title={`Galería de imágenes (${gallery.length})`}>
+                  <GalleryUploadField
+                    value={gallery}
+                    onChange={setGallery}
+                    folder="news/gallery"
+                    nameHint={slug || title}
+                  />
+                </SectionCard>
+
+                <SectionCard title="Vídeo (opcional)">
+                  <label className="block">
+                    <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                      URL del vídeo
+                    </span>
+                    <input
+                      value={videoEmbedUrl}
+                      onChange={(e) => setVideoEmbedUrl(e.target.value)}
+                      placeholder="Pega una URL de YouTube, Vimeo, Facebook, Twitch u otro proveedor compatible"
+                      className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                    />
+                  </label>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    El proveedor se detecta automáticamente.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowVideoUpload((v) => !v)}
+                    className="font-condensed mt-3 inline-flex min-h-11 items-center gap-2 border border-border px-3 text-[11px] uppercase tracking-widest text-gold hover:bg-gold/10"
+                  >
+                    {showVideoUpload ? "Ocultar opciones avanzadas" : "Subir vídeo propio / miniatura"}
+                  </button>
+                  {showVideoUpload && (
+                    <div className="mt-3 space-y-4">
+                      <div>
+                        <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                          Archivo de vídeo (MP4/WebM/MOV, máx. 200 MB)
+                        </span>
+                        <NewsVideoUploadField
+                          value={videoUrl}
+                          onChange={setVideoUrl}
+                          nameHint={slug || title}
+                        />
+                      </div>
+                      <div>
+                        <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                          Miniatura / portada del vídeo (opcional)
+                        </span>
+                        <ImageUploadField
+                          value={videoPosterUrl}
+                          onChange={setVideoPosterUrl}
+                          folder="news/video-posters"
+                          nameHint={slug || title}
+                          placeholder="URL o subir imagen de portada"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </SectionCard>
+              </>
+            )}
+
+            {tab === "opciones" && (
+              <>
+                <SectionCard title="¿Dónde se mostrará?">
+                  <Checkbox label="Portada general (home + /noticias)" checked={visHome} onChange={setVisHome} />
+                  <div className="mt-3">
+                    <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                      Hub de país (excluyentes — solo uno)
+                    </span>
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      {([
+                        { value: "none", label: "Ninguno" },
+                        { value: "es", label: "España" },
+                        { value: "co", label: "Colombia" },
+                      ] as const).map((opt) => (
+                        <label key={opt.value} className="inline-flex cursor-pointer items-center gap-2">
+                          <input
+                            type="radio"
+                            name="hubScope"
+                            value={opt.value}
+                            checked={hubScope === opt.value}
+                            onChange={() => setHubScope(opt.value)}
+                            className="accent-gold"
+                          />
+                          <span>{opt.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  {!visHome && hubScope === "none" && (
+                    <p className="mt-2 text-xs text-amber-400">
+                      Sin destino seleccionado: la noticia quedará oculta de todas las portadas y hubs.
+                    </p>
+                  )}
+                  {hubScope !== "none" && (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Solo se publicará en el hub <strong>{hubScope === "es" ? "España" : "Colombia"}</strong>
+                      {visHome ? " además de la portada general." : "."} El <code>country_code</code> se sincroniza automáticamente.
+                    </p>
+                  )}
+                </SectionCard>
+
+                <SectionCard title="Relacionados">
+                  <div className="grid gap-3 md:grid-cols-3">
+                    <div>
+                      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Clubes</span>
+                      <EntityRelationsField kind="clubs" country="es" value={relClubs} onChange={setRelClubs} />
+                    </div>
+                    <div>
+                      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Patinadores</span>
+                      <EntityRelationsField kind="skaters" country="es" value={relSkaters} onChange={setRelSkaters} />
+                    </div>
+                    <div>
+                      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Federaciones</span>
+                      <EntityRelationsField kind="federations" country="es" value={relFeds} onChange={setRelFeds} />
+                    </div>
+                  </div>
+                </SectionCard>
+
+                <SectionCard title="SEO / URL">
+                  <Field label="Slug (URL)" value={slug} onChange={setSlug} required />
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    rollerzone.es/noticias/{slug || "…"}
+                  </p>
+                  <div className="mt-3">
+                    <Field label="Etiqueta (opcional)" value={legacyTag} onChange={setLegacyTag} />
+                  </div>
+                </SectionCard>
+              </>
+            )}
+
+            {tab === "publicar" && (
+              <>
+                <SectionCard title="Publicación">
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <label className="block">
+                      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                        Fecha de publicación
+                      </span>
+                      <input
+                        type="datetime-local"
+                        value={publishedAt}
+                        onChange={(e) => setPublishedAt(e.target.value)}
+                        required
+                        className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                      />
+                    </label>
+                    <SelectField
+                      label="Estado editorial"
+                      value={status}
+                      onChange={(value) => setStatus(value as News["status"])}
+                      options={
+                        canPublish
+                          ? [
+                              { value: "draft", label: "Borrador" },
+                              { value: "pending", label: "Pendiente de revisión" },
+                              { value: "published", label: "Publicado" },
+                              { value: "rejected", label: "Rechazado" },
+                            ]
+                          : [
+                              { value: "draft", label: "Borrador" },
+                              { value: "pending", label: "Pendiente de revisión" },
+                            ]
+                      }
+                    />
+                  </div>
+                  <div className="mt-3">
+                    <Checkbox label="Destacada (hero portada)" checked={featured} onChange={setFeatured} />
+                  </div>
+                  {!canPublish && (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Tu perfil puede crear y editar noticias y enviarlas a revisión. La publicación la realiza un administrador.
+                    </p>
+                  )}
+                </SectionCard>
+
+                <SectionCard title="Directo (avanzado)">
+                  <button
+                    type="button"
+                    onClick={() => setShowLive((v) => !v)}
+                    className="font-condensed inline-flex min-h-11 items-center gap-2 border border-border px-3 text-[11px] uppercase tracking-widest text-gold hover:bg-gold/10"
+                  >
+                    {showLive ? "Ocultar ajustes de directo" : "Configurar directo"}
+                  </button>
+                  {showLive && (
+                    <div className="mt-3">
+                      <Checkbox
+                        label="Esta noticia pertenece a un directo"
+                        checked={liveActive}
+                        onChange={setLiveActive}
+                      />
+                      {liveActive && (
+                        <div className="mt-3 space-y-3">
+                          <SelectField
+                            label="Evento o streaming vinculado (opcional)"
+                            value={liveEventId}
+                            onChange={setLiveEventId}
+                            options={[
+                              { value: "", label: "— Sin evento vinculado —" },
+                              ...eventOptions.map((e) => ({
+                                value: e.id,
+                                label: e.start_date
+                                  ? `${e.name} (${new Date(e.start_date).toLocaleDateString("es-ES")})`
+                                  : e.name,
+                              })),
+                            ]}
+                          />
+                          <div className="grid gap-3 md:grid-cols-2">
+                            <label className="block">
+                              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                                Inicio del directo (opcional)
+                              </span>
+                              <input
+                                type="datetime-local"
+                                value={liveStartAt}
+                                onChange={(e) => setLiveStartAt(e.target.value)}
+                                className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                              />
+                            </label>
+                            <label className="block">
+                              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                                Fin del directo (opcional)
+                              </span>
+                              <input
+                                type="datetime-local"
+                                value={liveEndAt}
+                                onChange={(e) => setLiveEndAt(e.target.value)}
+                                className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                              />
+                            </label>
+                          </div>
+                          <div>
+                            <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                              Vista previa del distintivo
+                            </span>
+                            {(() => {
+                              const state = computeLiveBadgeState(liveActive, liveStartAt, liveEndAt);
+                              if (state === "live") {
+                                return (
+                                  <span className="inline-flex items-center gap-2 rounded-sm bg-[oklch(0.62_0.22_25)] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
+                                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
+                                    EN DIRECTO
+                                  </span>
+                                );
+                              }
+                              if (state === "scheduled") {
+                                return <span className="text-xs text-muted-foreground">Programado — aparecerá al comenzar el directo.</span>;
+                              }
+                              if (state === "ended") {
+                                return <span className="text-xs text-muted-foreground">El directo ya ha finalizado.</span>;
+                              }
+                              return <span className="text-xs text-muted-foreground">Interruptor desactivado.</span>;
+                            })()}
+                          </div>
+                        </div>
+                      )}
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        Si la noticia no pertenece a un directo y fue publicada hace menos de 72 horas, se mostrará
+                        automáticamente el distintivo dorado <strong>NUEVA NOTICIA</strong>.
+                      </p>
+                    </div>
+                  )}
+                </SectionCard>
+              </>
             )}
           </div>
 
-          <div className="border-t border-border pt-3">
-            <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-muted-foreground">
-              Distintivo del hero de portada — Directo
-            </span>
-            <Checkbox
-              label="Esta noticia pertenece a un directo"
-              checked={liveActive}
-              onChange={setLiveActive}
-            />
-            {liveActive && (
-              <div className="mt-3 space-y-3">
+          {/* ================= COLUMNA DERECHA ================= */}
+          <aside className="min-w-0 space-y-4">
+            <SectionCard title="Imagen de portada">
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt=""
+                  loading="lazy"
+                  className="mb-2 aspect-video w-full object-cover"
+                />
+              ) : (
+                <div className="mb-2 grid aspect-video w-full place-items-center border border-dashed border-border text-center text-xs text-muted-foreground">
+                  Arrastra una imagen aquí o usa SUBIR IMAGEN
+                </div>
+              )}
+              <ImageUploadField
+                value={imageUrl}
+                onChange={setImageUrl}
+                folder="news"
+                nameHint={slug || title}
+                placeholder="URL o subir imagen"
+                crops={imageCrops}
+                onCropsChange={setImageCrops}
+                previewClassName="hidden"
+              />
+              <p className="mt-2 text-[11px] text-muted-foreground">Recomendado 1200×630 px</p>
+            </SectionCard>
+
+            <SectionCard title="Información básica">
+              <div className="space-y-3">
                 <SelectField
-                  label="Evento o streaming vinculado (opcional)"
-                  value={liveEventId}
-                  onChange={setLiveEventId}
+                  label="Redactor / Autor *"
+                  value={writerId}
+                  onChange={setWriterId}
                   options={[
-                    { value: "", label: "— Sin evento vinculado —" },
-                    ...eventOptions.map((e) => ({
-                      value: e.id,
-                      label: e.start_date
-                        ? `${e.name} (${new Date(e.start_date).toLocaleDateString("es-ES")})`
-                        : e.name,
+                    { value: "", label: visibleWriters.length === 0 ? "— Crea un redactor primero —" : "— Selecciona redactor —" },
+                    ...visibleWriters.map((w) => ({
+                      value: w.id,
+                      label: w.published ? w.full_name : `${w.full_name} (oculto)`,
                     })),
                   ]}
                 />
-                <div className="grid gap-3 md:grid-cols-2">
-                  <label className="block">
-                    <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                      Inicio del directo (opcional)
-                    </span>
-                    <input
-                      type="datetime-local"
-                      value={liveStartAt}
-                      onChange={(e) => setLiveStartAt(e.target.value)}
-                      className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                      Fin del directo (opcional)
-                    </span>
-                    <input
-                      type="datetime-local"
-                      value={liveEndAt}
-                      onChange={(e) => setLiveEndAt(e.target.value)}
-                      className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
-                    />
-                  </label>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Si dejas las fechas vacías, el distintivo permanecerá activo mientras el interruptor esté encendido. Con fechas, aparecerá solo dentro de ese periodo y desaparecerá automáticamente al terminar.
-                </p>
-                <div>
-                  <span className="font-condensed mb-1.5 block text-[11px] uppercase tracking-widest text-muted-foreground">
-                    Vista previa del distintivo
-                  </span>
-                  {(() => {
-                    const state = computeLiveBadgeState(liveActive, liveStartAt, liveEndAt);
-                    if (state === "live") {
-                      return (
-                        <span className="inline-flex items-center gap-2 rounded-sm bg-[oklch(0.62_0.22_25)] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
-                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                          EN DIRECTO
-                        </span>
-                      );
-                    }
-                    if (state === "scheduled") {
-                      return (
-                        <span className="text-xs text-muted-foreground">
-                          Programado — el distintivo aparecerá cuando comience el directo.
-                        </span>
-                      );
-                    }
-                    if (state === "ended") {
-                      return (
-                        <span className="text-xs text-muted-foreground">
-                          El directo ya ha finalizado — no se mostrará distintivo.
-                        </span>
-                      );
-                    }
-                    return (
-                      <span className="text-xs text-muted-foreground">
-                        Interruptor desactivado.
-                      </span>
-                    );
-                  })()}
-                </div>
+                <SelectField
+                  label="Sección / Categoría"
+                  value={categoryId}
+                  onChange={setCategoryId}
+                  options={[
+                    { value: "", label: "— Sin categoría —" },
+                    ...categories.map((c) => ({ value: c.id, label: `${c.scope} · ${c.name}` })),
+                  ]}
+                />
+                <Field label="Etiqueta (opcional)" value={legacyTag} onChange={setLegacyTag} />
+                <NumberField label="Min. lectura" value={readMinutes} onChange={setReadMinutes} />
               </div>
-            )}
-            <p className="mt-3 text-xs text-muted-foreground">
-              Si la noticia no pertenece a un directo y fue publicada hace menos de 72 horas, se mostrará automáticamente el distintivo dorado <strong>NUEVA NOTICIA</strong>.
-            </p>
-          </div>
+            </SectionCard>
 
+            <SectionCard title="Publicación">
+              <div className="space-y-3">
+                <label className="block">
+                  <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                    Fecha de publicación
+                  </span>
+                  <input
+                    type="datetime-local"
+                    value={publishedAt}
+                    onChange={(e) => setPublishedAt(e.target.value)}
+                    required
+                    className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                  />
+                </label>
+                <SelectField
+                  label="Estado"
+                  value={status}
+                  onChange={(value) => setStatus(value as News["status"])}
+                  options={
+                    canPublish
+                      ? [
+                          { value: "draft", label: "Borrador" },
+                          { value: "pending", label: "Pendiente" },
+                          { value: "published", label: "Publicado" },
+                          { value: "rejected", label: "Rechazado" },
+                        ]
+                      : [
+                          { value: "draft", label: "Borrador" },
+                          { value: "pending", label: "Pendiente" },
+                        ]
+                  }
+                />
+                <Checkbox label="Destacada / Hero" checked={featured} onChange={setFeatured} />
+              </div>
+            </SectionCard>
+          </aside>
 
-          <div className="grid gap-3 border-t border-border pt-3 md:grid-cols-3">
-            <div>
-              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Clubes relacionados</span>
-              <EntityRelationsField kind="clubs" country="es" value={relClubs} onChange={setRelClubs} />
+          {/* ================= BARRA FIJA ================= */}
+          <div className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-t border-border bg-surface/95 px-4 py-3 backdrop-blur md:px-6">
+            <span className="font-condensed min-w-0 truncate text-[11px] uppercase tracking-widest text-muted-foreground">
+              <span className="mr-2 inline-block h-2 w-2 rounded-full bg-gold align-middle" />
+              {saving ? "Guardando…" : item ? "Cambios listos para guardar" : "Borrador sin guardar"}
+            </span>
+            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+              {item && (
+                <a
+                  href={`/noticias/${item.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-condensed inline-flex min-h-11 items-center border border-border px-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
+                >
+                  Vista previa
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="font-condensed inline-flex min-h-11 items-center border border-border px-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={() => onSubmit(null, "draft")}
+                className="font-condensed inline-flex min-h-11 items-center border border-border px-3 text-[11px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold disabled:opacity-50"
+              >
+                Guardar borrador
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={() => onSubmit(null, canPublish ? "published" : "pending")}
+                className="font-condensed inline-flex min-h-11 items-center bg-gold px-4 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"
+              >
+                {canPublish ? "Publicar noticia" : "Enviar a revisión"}
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="font-condensed inline-flex min-h-11 items-center border border-gold px-3 text-[11px] font-bold uppercase tracking-widest text-gold hover:bg-gold/10 disabled:opacity-50"
+              >
+                {item ? "Guardar cambios" : "Crear noticia"}
+              </button>
             </div>
-            <div>
-              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Patinadores relacionados</span>
-              <EntityRelationsField kind="skaters" country="es" value={relSkaters} onChange={setRelSkaters} />
-            </div>
-            <div>
-              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Federaciones relacionadas</span>
-              <EntityRelationsField kind="federations" country="es" value={relFeds} onChange={setRelFeds} />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 border-t border-border pt-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="font-condensed border border-border px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="font-condensed bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"
-            >
-              {saving ? "Guardando…" : item ? "Guardar cambios" : "Crear noticia"}
-            </button>
           </div>
         </form>
       </div>
     </div>
   );
 }
+
+function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="border border-border bg-background/40 p-4">
+      <h3 className="font-condensed mb-3 text-[11px] font-bold uppercase tracking-widest text-gold">
+        {title}
+      </h3>
+      {children}
+    </section>
+  );
+}
+
+function MdBtn({
+  children,
+  title,
+  onClick,
+}: {
+  children: React.ReactNode;
+  title: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      title={title}
+      aria-label={title}
+      onClick={onClick}
+      className="font-condensed inline-flex h-9 min-w-9 items-center justify-center border border-border bg-background px-2 text-xs uppercase text-muted-foreground hover:border-gold hover:text-gold"
+    >
+      {children}
+    </button>
+  );
+}
+
 
 function Field({
   label,
