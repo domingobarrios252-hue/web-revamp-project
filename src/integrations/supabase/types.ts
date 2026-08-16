@@ -443,14 +443,21 @@ export type Database = {
           admin_notes: string | null
           country_code: string
           created_at: string
+          declarations: Json
+          declarations_accepted_at: string | null
+          declarations_version: string | null
           description: string
           email: string
+          has_minors: boolean | null
           id: string
+          image_paths: string[]
           image_urls: string[]
           links: string[]
           name: string
           news_id: string | null
           phone: string | null
+          photo_credit: string | null
+          retention_until: string | null
           status: string
           submission_type: string
           title: string
@@ -460,14 +467,21 @@ export type Database = {
           admin_notes?: string | null
           country_code?: string
           created_at?: string
+          declarations?: Json
+          declarations_accepted_at?: string | null
+          declarations_version?: string | null
           description: string
           email: string
+          has_minors?: boolean | null
           id?: string
+          image_paths?: string[]
           image_urls?: string[]
           links?: string[]
           name: string
           news_id?: string | null
           phone?: string | null
+          photo_credit?: string | null
+          retention_until?: string | null
           status?: string
           submission_type?: string
           title: string
@@ -477,14 +491,21 @@ export type Database = {
           admin_notes?: string | null
           country_code?: string
           created_at?: string
+          declarations?: Json
+          declarations_accepted_at?: string | null
+          declarations_version?: string | null
           description?: string
           email?: string
+          has_minors?: boolean | null
           id?: string
+          image_paths?: string[]
           image_urls?: string[]
           links?: string[]
           name?: string
           news_id?: string | null
           phone?: string | null
+          photo_credit?: string | null
+          retention_until?: string | null
           status?: string
           submission_type?: string
           title?: string
@@ -3977,14 +3998,21 @@ export type Database = {
           admin_notes: string | null
           country_code: string
           created_at: string
+          declarations: Json
+          declarations_accepted_at: string | null
+          declarations_version: string | null
           description: string
           email: string
+          has_minors: boolean | null
           id: string
+          image_paths: string[]
           image_urls: string[]
           links: string[]
           name: string
           news_id: string | null
           phone: string | null
+          photo_credit: string | null
+          retention_until: string | null
           status: string
           submission_type: string
           title: string
@@ -4035,6 +4063,7 @@ export type Database = {
         Returns: string
       }
       mfa_satisfied: { Args: never; Returns: boolean }
+      purge_expired_community_submissions: { Args: never; Returns: number }
       register_news_view: {
         Args: { _news_id: string; _visitor_hash: string }
         Returns: number

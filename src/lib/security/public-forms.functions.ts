@@ -1,4 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
+import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware'
+import { COMMUNITY_RETENTION_DAYS } from '@/lib/community/declarations'
 import {
   newsletterInput,
   newsletterTokenInput,
@@ -201,16 +204,37 @@ export const submitCommunitySubmission = createServerFn({ method: 'POST' })
     })
     if (!guard.ok) return { ok: false as const, error: guard.error }
 
+    const hasImages = (data.image_paths ?? []).length > 0
+    const now = new Date()
+    const retentionUntil = new Date(
+      now.getTime() + COMMUNITY_RETENTION_DAYS * 24 * 3600 * 1000,
+    )
+
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server')
     const { error } = await supabaseAdmin.from('community_submissions').insert({
       submission_type: data.submission_type,
       name: data.name,
       email: data.email,
-      phone: data.phone || null,
+      // Minimización de datos: no se solicita teléfono ni documentación identificativa.
+      phone: null,
       title: data.title,
       description: data.description,
       country_code: data.country_code,
-      image_urls: data.image_urls ?? [],
+      // Las imágenes pendientes viven en almacenamiento privado; no hay URL pública.
+      image_paths: data.image_paths ?? [],
+      image_urls: [],
+      photo_credit: data.photo_credit || null,
+      has_minors: hasImages ? (data.has_minors ?? null) : null,
+      declarations: {
+        age14: data.declaration_age14,
+        rights: data.declaration_rights,
+        editorial_use: data.declaration_editorial_use,
+        people_images: hasImages ? data.declaration_people_images : null,
+        minors_auth: hasImages && data.has_minors === true ? data.declaration_minors_auth : null,
+      },
+      declarations_version: data.declarations_version,
+      declarations_accepted_at: now.toISOString(),
+      retention_until: retentionUntil.toISOString(),
       links: [],
       status: 'pendiente',
     })
@@ -218,3 +242,53 @@ export const submitCommunitySubmission = createServerFn({ method: 'POST' })
     if (error) return { ok: false as const, error: 'No se pudo enviar. Inténtalo más tarde.' }
     return { ok: true as const }
   })
+
+/**
+ * Publica el material aprobado: copia las imágenes del almacén privado al
+ * almacén público de medios y devuelve sus URLs. Solo redacción autorizada.
+ */
+export const publishCommunityImages = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ submissionId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isStaff } = await context.supabase.rpc('is_editorial_staff', {
+      _user_id: context.userId,
+    })
+    if (!isStaff) return { ok: false as const, error: 'insufficient privileges' }
+
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server')
+    const { data: row } = await supabaseAdmin
+      .from('community_submissions')
+      .select('id, image_paths, image_urls')
+      .eq('id', data.submissionId)
+      .maybeSingle()
+
+    if (!row) return { ok: false as const, error: 'not found' }
+
+    const urls: string[] = [...((row.image_urls as string[] | null) ?? [])]
+    for (const path of ((row.image_paths as string[] | null) ?? [])) {
+      const { data: file, error: dlError } = await supabaseAdmin.storage
+        .from('community-pending')
+        .download(path)
+      if (dlError || !file) continue
+      const target = `comunidad/${path.split('/').pop()}`
+      const { error: upError } = await supabaseAdmin.storage
+        .from('media')
+        .upload(target, file, { upsert: true, contentType: file.type })
+      if (upError) continue
+      const { data: pub } = supabaseAdmin.storage.from('media').getPublicUrl(target)
+      urls.push(pub.publicUrl)
+    }
+
+    if (urls.length) {
+      await supabaseAdmin
+        .from('community_submissions')
+        .update({ image_urls: urls })
+        .eq('id', row.id)
+    }
+
+    return { ok: true as const, urls }
+  })
+

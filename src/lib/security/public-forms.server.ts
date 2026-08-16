@@ -30,17 +30,60 @@ export const contributorInput = z.object({
   turnstileToken: z.string().max(4096).optional().nullable(),
 })
 
-export const communityInput = z.object({
-  submission_type: z.enum(['noticia', 'evento', 'otro']),
-  name: z.string().trim().min(2).max(120),
-  email: z.string().trim().email().max(255),
-  phone: z.string().trim().max(40).optional().nullable(),
-  title: z.string().trim().min(3).max(200),
-  description: z.string().trim().min(10).max(5000),
-  country_code: z.string().trim().min(2).max(8),
-  image_urls: z.array(z.string().url().max(500)).max(6).optional().default([]),
-  turnstileToken: z.string().max(4096).optional().nullable(),
-})
+const imagePath = z
+  .string()
+  .trim()
+  .max(300)
+  .regex(/^[a-z0-9-]{2,8}\/[a-z0-9-]+\.(jpg|jpeg|png|webp)$/i, 'ruta de imagen no válida')
+
+export const communityInput = z
+  .object({
+    submission_type: z.enum(['noticia', 'evento', 'otro']),
+    name: z.string().trim().min(2).max(120),
+    email: z.string().trim().email().max(255),
+    title: z.string().trim().min(3).max(200),
+    description: z.string().trim().min(10).max(5000),
+    country_code: z.string().trim().min(2).max(8),
+    // Material fotográfico: rutas en almacenamiento privado (nunca URLs públicas)
+    image_paths: z.array(imagePath).max(6).optional().default([]),
+    photo_credit: z.string().trim().max(160).optional().nullable(),
+    has_minors: z.boolean().optional().nullable(),
+    // Declaraciones obligatorias
+    declaration_age14: z.literal(true),
+    declaration_rights: z.literal(true),
+    declaration_editorial_use: z.literal(true),
+    // Obligatorias solo si se adjuntan imágenes
+    declaration_people_images: z.boolean().optional().default(false),
+    declaration_minors_auth: z.boolean().optional().default(false),
+    declarations_version: z.string().trim().min(1).max(40),
+    turnstileToken: z.string().max(4096).optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    const hasImages = (data.image_paths ?? []).length > 0
+    if (!hasImages) return
+    if (data.has_minors !== true && data.has_minors !== false) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['has_minors'],
+        message: 'Indica si aparecen menores de edad identificables en las imágenes.',
+      })
+    }
+    if (!data.declaration_people_images) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['declaration_people_images'],
+        message: 'Falta la declaración sobre las imágenes de personas.',
+      })
+    }
+    if (data.has_minors === true && !data.declaration_minors_auth) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['declaration_minors_auth'],
+        message: 'Falta la declaración de autorización para imágenes de menores.',
+      })
+    }
+  })
+
 
 export type GuardResult = { ok: true; ipHash: string } | { ok: false; error: string }
 
