@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-rout
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { MfaStatusBanner } from "@/components/admin/MfaStatusBanner";
+import { MfaChallengeGate } from "@/components/admin/MfaChallengeGate";
 
 import {
   FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen,
@@ -217,6 +218,7 @@ function AdminLayout() {
   const toggle = (id: string) => setOpenGroups((p) => ({ ...p, [id]: !p[id] }));
 
   return (
+    <MfaChallengeGate>
     <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 md:grid-cols-[260px_1fr] md:px-6">
       <aside className="h-fit border border-border bg-surface p-3 md:sticky md:top-4">
         <div className="mb-3 flex items-center justify-between px-2">
@@ -273,6 +275,7 @@ function AdminLayout() {
       </section>
 
     </div>
+    </MfaChallengeGate>
   );
 }
 
