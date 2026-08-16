@@ -4065,6 +4065,7 @@ export type Database = {
         Returns: string
       }
       mfa_satisfied: { Args: never; Returns: boolean }
+      mfa_strict: { Args: never; Returns: boolean }
       purge_expired_community_submissions: { Args: never; Returns: number }
       register_news_view: {
         Args: { _news_id: string; _visitor_hash: string }
