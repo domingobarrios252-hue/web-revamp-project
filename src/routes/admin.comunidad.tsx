@@ -174,9 +174,17 @@ function CommunityAdmin() {
     if (!confirm("¿Publicar este envío como noticia en la web?")) return;
     const slugBase = slugify(it.title) || `comunidad-${it.id.slice(0, 8)}`;
     const slug = `${slugBase}-${it.id.slice(0, 6)}`;
-    const image = it.image_urls?.[0] ?? null;
+    // Al publicar, el material aprobado pasa del almacén privado al público.
+    let publicUrls = it.image_urls ?? [];
+    if ((it.image_paths?.length ?? 0) > 0) {
+      const res = await promoteImages({ data: { submissionId: it.id } });
+      if (res.ok) publicUrls = res.urls;
+    }
+    const image = publicUrls[0] ?? null;
+    const credit = it.photo_credit ? `\n\nFoto: ${it.photo_credit}` : "";
     const excerpt = it.description.slice(0, 200);
-    const content = `${it.description}\n\n*Enviado por la comunidad — ${it.name}*`;
+    const content = `${it.description}${credit}\n\n*Enviado por la comunidad — ${it.name}*`;
+
 
     const { data: news, error } = await supabase
       .from("news")
