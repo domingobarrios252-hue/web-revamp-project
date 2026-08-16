@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Play } from "lucide-react";
 import { videoEmbedUrl, detectVideoPlatform } from "@/lib/videoEmbed";
+import { ExternalEmbedGate } from "./ExternalEmbedGate";
 
 type Props = {
   /** Direct file URL (mp4/webm/mov) uploaded to storage. */
@@ -49,14 +50,16 @@ export function NewsVideoPlayer({ fileUrl, embedUrl, posterUrl, title }: Props) 
       <figure className="mb-8 overflow-hidden border border-border bg-black">
         <div className="relative aspect-video w-full">
           {activated ? (
-            <iframe
-              src={embedSrc}
-              title={title ?? "Vídeo"}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              loading="lazy"
-              className="absolute inset-0 h-full w-full"
-            />
+            <ExternalEmbedGate provider="reproductor externo" sourceUrl={embedUrl}>
+              <iframe
+                src={embedSrc}
+                title={title ?? "Vídeo"}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
+                className="absolute inset-0 h-full w-full"
+              />
+            </ExternalEmbedGate>
           ) : (
             <button
               type="button"

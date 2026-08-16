@@ -13,6 +13,7 @@ import {
   type Collaboration,
 } from "@/lib/colaboraciones";
 import { videoEmbedUrl } from "@/lib/videoEmbed";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 type RelatedNews = { id: string; slug: string; title: string; cover_url: string | null };
 
@@ -176,14 +177,16 @@ function CollaborationDetail() {
           <section className="mt-10">
             <SectionTitle>Multimedia</SectionTitle>
             <div className="relative w-full max-w-full overflow-hidden border border-border bg-black aspect-video">
-              <iframe
-                src={embed}
-                title={`Vídeo · ${item.title}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                loading="lazy"
-                className="absolute inset-0 h-full w-full"
-              />
+              <ExternalEmbedGate provider="reproductor externo">
+                <iframe
+                  src={embed}
+                  title={`Vídeo · ${item.title}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full"
+                />
+              </ExternalEmbedGate>
             </div>
           </section>
         ) : null}

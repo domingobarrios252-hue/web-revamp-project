@@ -86,9 +86,27 @@ function persist(record: ConsentRecord) {
   }
 }
 
+/** Borra las cookies de medición de Google si se retira el consentimiento analítico. */
+function clearAnalyticsCookies() {
+  if (typeof document === "undefined") return;
+  const host = window.location.hostname;
+  const domains = ["", host, `.${host}`, `.${host.split(".").slice(-2).join(".")}`];
+  for (const raw of document.cookie.split(";")) {
+    const name = raw.split("=")[0]?.trim();
+    if (!name || !/^_ga/.test(name)) continue;
+    for (const domain of domains) {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${
+        domain ? `; domain=${domain}` : ""
+      }`;
+    }
+  }
+}
+
 /** Aplica el estado al Consent Mode de Google (si el stub existe). */
 function syncGoogleConsent(categories: ConsentCategories) {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
+  if (typeof window === "undefined") return;
+  if (!categories.analytics) clearAnalyticsCookies();
+  if (typeof window.gtag !== "function") return;
   window.gtag("consent", "update", {
     analytics_storage: categories.analytics ? "granted" : "denied",
     ad_storage: "denied",
@@ -96,6 +114,7 @@ function syncGoogleConsent(categories: ConsentCategories) {
     ad_personalization: "denied",
   });
 }
+
 
 type ConsentState = {
   /** true cuando el visitante ya ha tomado una decisión válida para esta versión. */

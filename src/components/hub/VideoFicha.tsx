@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useVideo, useVideos } from "@/lib/hub/useVideos";
 import { videoEmbedUrl } from "@/lib/videoEmbed";
 import { VideoCard } from "./VideoCard";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 type RelatedSkater = { id: string; full_name: string; slug: string };
 type RelatedClub = { id: string; name: string; slug: string };
@@ -98,13 +99,15 @@ export function VideoFicha({ country, slug }: { country: string; slug: string })
 
       <div className="relative aspect-video overflow-hidden rounded-[8px] border border-[#2A2A2A] bg-black">
         {embed ? (
-          <iframe
-            src={embed}
-            className="absolute inset-0 h-full w-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title={video.title}
-          />
+          <ExternalEmbedGate provider="reproductor externo" sourceUrl={video.video_url}>
+            <iframe
+              src={embed}
+              className="absolute inset-0 h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title={video.title}
+            />
+          </ExternalEmbedGate>
         ) : (
           <div className="p-6 text-[#888]">Vídeo no disponible</div>
         )}

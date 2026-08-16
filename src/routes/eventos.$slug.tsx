@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, ArrowLeft, Users, Navigation, X, ZoomIn, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 type EventDetail = {
   id: string;
@@ -332,13 +333,15 @@ function EventLocationMap({ location, name }: { location: string; name: string }
       </h2>
       <p className="mb-3 text-sm text-foreground/80">{location}</p>
       <div className="aspect-video overflow-hidden border border-border bg-background">
-        <iframe
-          title={`Mapa de ${name}`}
-          src={mapSrc}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          className="h-full w-full"
-        />
+        <ExternalEmbedGate provider="Google Maps" sourceUrl={directionsUrl}>
+          <iframe
+            title={`Mapa de ${name}`}
+            src={mapSrc}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="h-full w-full"
+          />
+        </ExternalEmbedGate>
       </div>
       <div className="mt-3 flex flex-wrap gap-3">
         <a
