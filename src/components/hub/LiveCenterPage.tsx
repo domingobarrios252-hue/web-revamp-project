@@ -3,6 +3,7 @@ import { Radio, MapPin, Calendar, ExternalLink, Clock } from "lucide-react";
 import { useActiveLiveEvent, useLiveTimeline, useLiveResults } from "@/lib/hub/useLive";
 import { videoEmbedUrl } from "@/lib/videoEmbed";
 import { LiveResultsTable } from "@/components/site/LiveResultsTable";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 export function LiveCenterPage({ country }: { country: string }) {
   const { event, loading } = useActiveLiveEvent(country);
@@ -78,13 +79,15 @@ export function LiveCenterPage({ country }: { country: string }) {
           </h2>
           <div className="relative aspect-video overflow-hidden rounded-[8px] border border-[#2A2A2A] bg-black">
             {embed ? (
-              <iframe
-                src={embed}
-                className="absolute inset-0 h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title={event.name}
-              />
+              <ExternalEmbedGate provider="reproductor externo">
+                <iframe
+                  src={embed}
+                  className="absolute inset-0 h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={event.name}
+                />
+              </ExternalEmbedGate>
             ) : (
               <div className="absolute inset-0 grid place-items-center text-sm text-[#888]">
                 Sin retransmisión activa

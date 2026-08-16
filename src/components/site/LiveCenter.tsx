@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatTime as fmtTime, formatShortDate } from "@/lib/i18n/format";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 type StreamRow = {
   id: string;
@@ -776,13 +777,15 @@ function MainTvPlayer({
       )}
       <div className="relative aspect-video">
         {embed?.type === "iframe" ? (
-          <iframe
-            src={embed.src}
-            title="RollerZone TV"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-            className="h-full w-full"
-          />
+          <ExternalEmbedGate provider="reproductor externo">
+            <iframe
+              src={embed.src}
+              title="RollerZone TV"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              className="h-full w-full"
+            />
+          </ExternalEmbedGate>
         ) : embed?.type === "link" ? (
           <a
             href={embed.href}

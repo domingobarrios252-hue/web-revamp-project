@@ -4,6 +4,7 @@ import { VideoCard } from "./VideoCard";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { Link } from "@tanstack/react-router";
 import { Play } from "lucide-react";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 export function VideosDirectory({ country }: { country: string }) {
   const { videos, loading } = useVideos(country);
@@ -89,13 +90,15 @@ function FeaturedHero({ country, video }: { country: string; video: VideoRow }) 
     <section className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 items-stretch">
       <div className="relative aspect-video overflow-hidden rounded-[8px] border border-[#2A2A2A] bg-black">
         {embed ? (
-          <iframe
-            src={embed}
-            className="absolute inset-0 h-full w-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title={video.title}
-          />
+          <ExternalEmbedGate provider="reproductor externo" sourceUrl={video.video_url}>
+            <iframe
+              src={embed}
+              className="absolute inset-0 h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title={video.title}
+            />
+          </ExternalEmbedGate>
         ) : thumb ? (
           <img loading="lazy" decoding="async" src={thumb} alt={video.title} className="h-full w-full object-cover" />
         ) : null}

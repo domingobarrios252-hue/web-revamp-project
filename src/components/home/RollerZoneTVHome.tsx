@@ -4,6 +4,7 @@ import { Play, Tv, X, Radio } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { canEmbedVideo, videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { SectionHeading } from "./SectionHeading";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 type Highlight = {
   id: string;
@@ -229,13 +230,15 @@ export function RollerZoneTVHome() {
           </button>
           <div className="w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
             <div className="aspect-video overflow-hidden rounded-lg bg-black">
-              <iframe
-                src={videoEmbedUrl(openUrl, { autoplay: true }) ?? undefined}
-                title="Vídeo"
-                className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              <ExternalEmbedGate provider="reproductor externo" sourceUrl={openUrl}>
+                <iframe
+                  src={videoEmbedUrl(openUrl, { autoplay: true }) ?? undefined}
+                  title="Vídeo"
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </ExternalEmbedGate>
             </div>
           </div>
         </div>
