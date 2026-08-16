@@ -55,6 +55,9 @@ export async function sendNewsletterConfirmation(
   try {
     const res = await fetch(endpoint, {
       method: "POST",
+      // Sin seguir redirecciones: si la ruta de correo no existe, el servidor
+      // redirige a HTML y no queremos interpretarlo como "enviado".
+      redirect: "manual",
       headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
         templateName: "newsletter-confirmation",
@@ -63,8 +66,8 @@ export async function sendNewsletterConfirmation(
         templateData: { confirmUrl: confirmUrl(token) },
       }),
     });
-    if (!res.ok) {
-      console.error(`Newsletter confirmation email failed [${res.status}]: ${await res.text()}`);
+    const isJson = (res.headers.get("content-type") ?? "").includes("application/json");
+    if (!res.ok || !isJson) {
       return { sent: false, reason: "email_not_configured" };
     }
     return { sent: true };
@@ -73,3 +76,4 @@ export async function sendNewsletterConfirmation(
     return { sent: false, reason: "email_not_configured" };
   }
 }
+
