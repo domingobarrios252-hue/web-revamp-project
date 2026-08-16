@@ -2404,22 +2404,55 @@ export type Database = {
       }
       newsletter_subscribers: {
         Row: {
+          confirm_sent_at: string | null
+          confirm_token_expires_at: string | null
+          confirm_token_hash: string | null
+          confirmed_at: string | null
+          consent_at: string | null
+          consent_text: string | null
+          consent_version: string | null
           created_at: string
           email: string
           id: string
           source: string | null
+          status: string
+          unsubscribe_token_hash: string | null
+          unsubscribed_at: string | null
+          updated_at: string
         }
         Insert: {
+          confirm_sent_at?: string | null
+          confirm_token_expires_at?: string | null
+          confirm_token_hash?: string | null
+          confirmed_at?: string | null
+          consent_at?: string | null
+          consent_text?: string | null
+          consent_version?: string | null
           created_at?: string
           email: string
           id?: string
           source?: string | null
+          status?: string
+          unsubscribe_token_hash?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string
         }
         Update: {
+          confirm_sent_at?: string | null
+          confirm_token_expires_at?: string | null
+          confirm_token_hash?: string | null
+          confirmed_at?: string | null
+          consent_at?: string | null
+          consent_text?: string | null
+          consent_version?: string | null
           created_at?: string
           email?: string
           id?: string
           source?: string | null
+          status?: string
+          unsubscribe_token_hash?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

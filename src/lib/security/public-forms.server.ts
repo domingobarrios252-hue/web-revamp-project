@@ -5,8 +5,18 @@ import { verifyTurnstile, identityHash, clientIp } from './turnstile.server'
 export const newsletterInput = z.object({
   email: z.string().trim().email().max(255),
   source: z.string().trim().max(60).optional(),
+  // El consentimiento es obligatorio: sin casilla marcada no hay suscripción.
+  consent: z.literal(true),
   turnstileToken: z.string().max(4096).optional().nullable(),
 })
+
+export const newsletterTokenInput = z.object({
+  token: z
+    .string()
+    .trim()
+    .regex(/^[a-f0-9]{64}$/, 'token inválido'),
+})
+
 
 export const contributorInput = z.object({
   full_name: z.string().trim().min(2).max(120),
