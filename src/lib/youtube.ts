@@ -36,8 +36,10 @@ export function youTubeEmbedUrl(input: string | null | undefined, opts?: { autop
   if (opts?.autoplay) params.set("autoplay", "1");
   params.set("rel", "0");
   const qs = params.toString();
-  return `https://www.youtube.com/embed/${id}${qs ? `?${qs}` : ""}`;
+  // Dominio con privacidad mejorada (no sustituye al consentimiento).
+  return `https://www.youtube-nocookie.com/embed/${id}${qs ? `?${qs}` : ""}`;
 }
+
 
 export function youTubeThumbnail(input: string | null | undefined): string | null {
   const id = extractYouTubeId(input);

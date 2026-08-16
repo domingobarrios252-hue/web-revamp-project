@@ -11,6 +11,8 @@ import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { AutoCanonical } from "@/components/site/AutoCanonical";
 import { Toaster } from "@/components/ui/sonner";
 import { PageSettingsProvider } from "@/lib/pageSettings";
+import { ConsentProvider } from "@/lib/consent";
+
 
 import appCss from "../styles.css?url";
 
@@ -72,13 +74,13 @@ export const Route = createRootRoute({
     ],
     scripts: [
       {
-        src: "https://www.googletagmanager.com/gtag/js?id=G-2ZLN80RMTW",
-        async: true,
-      },
-      {
+        // Stub de Consent Mode: se ejecuta antes de cualquier etiqueta y deja
+        // el almacenamiento analítico DENEGADO por defecto. La librería de GA4
+        // solo se carga si el visitante acepta las cookies analíticas.
         children:
-          "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','G-2ZLN80RMTW',{send_page_view:false});",
+          "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});gtag('js',new Date());",
       },
+
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -136,24 +138,27 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <LanguageProvider>
-      <AuthProvider>
-        <AuthDialogProvider>
-          <PageSettingsProvider>
-            <a href="#main-content" className="skip-link">Saltar al contenido</a>
-            <AutoCanonical />
-            <LiveBar />
-            <SiteHeader />
-            <Breadcrumbs />
-            <main id="main-content" tabIndex={-1} className="min-h-[60vh]">
-              <Outlet />
-            </main>
-            <SiteFooter />
-            <CookieBanner />
-            <GoogleAnalytics />
-            <Toaster />
-          </PageSettingsProvider>
-        </AuthDialogProvider>
-      </AuthProvider>
+      <ConsentProvider>
+        <AuthProvider>
+          <AuthDialogProvider>
+            <PageSettingsProvider>
+              <a href="#main-content" className="skip-link">Saltar al contenido</a>
+              <AutoCanonical />
+              <LiveBar />
+              <SiteHeader />
+              <Breadcrumbs />
+              <main id="main-content" tabIndex={-1} className="min-h-[60vh]">
+                <Outlet />
+              </main>
+              <SiteFooter />
+              <CookieBanner />
+              <GoogleAnalytics />
+              <Toaster />
+            </PageSettingsProvider>
+          </AuthDialogProvider>
+        </AuthProvider>
+      </ConsentProvider>
     </LanguageProvider>
   );
 }
+
