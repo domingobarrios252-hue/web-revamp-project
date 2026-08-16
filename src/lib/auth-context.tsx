@@ -12,10 +12,17 @@ type AuthState = {
   sectionId: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, displayName?: string) => Promise<{ error: string | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    displayName?: string,
+    consent?: { ageConfirmed: boolean; termsAccepted: boolean },
+  ) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshRoles: () => Promise<void>;
 };
+
+export const TERMS_VERSION = "2026-08-v1";
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
@@ -73,14 +80,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null };
   };
 
-  const signUp: AuthState["signUp"] = async (email, password, displayName) => {
+  const signUp: AuthState["signUp"] = async (email, password, displayName, consent) => {
+    if (consent && (!consent.ageConfirmed || !consent.termsAccepted)) {
+      return {
+        error:
+          "Debes confirmar que tienes 14 años o más y aceptar las Condiciones de Uso y la Política de Privacidad.",
+      };
+    }
     const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        data: displayName ? { display_name: displayName } : undefined,
+        data: {
+          ...(displayName ? { display_name: displayName } : {}),
+          ...(consent
+            ? {
+                age_14_confirmed: true,
+                terms_accepted: true,
+                terms_version: TERMS_VERSION,
+              }
+            : {}),
+        },
       },
     });
     return { error: error?.message ?? null };

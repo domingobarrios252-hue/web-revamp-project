@@ -20,6 +20,7 @@ import {
   Eye,
   PenSquare,
   SlidersHorizontal,
+  ScrollText,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { NewsletterForm } from "./NewsletterForm";
@@ -54,6 +55,7 @@ export function SiteFooter() {
 
   const legalLinks = [
     { slug: "aviso-legal", label: t("footer.legalNotice"), Icon: FileText },
+    { slug: "condiciones-uso", label: "Condiciones de uso y registro", Icon: ScrollText },
     { slug: "privacidad", label: t("footer.privacy"), Icon: Shield },
     { slug: "cookies", label: t("footer.cookies"), Icon: Cookie },
   ] as const;

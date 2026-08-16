@@ -11,6 +11,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
+import { LegalConsentChecks } from "@/components/auth/LegalConsentChecks";
 
 type Ctx = { openAuthDialog: () => void; closeAuthDialog: () => void };
 const AuthDialogContext = createContext<Ctx | undefined>(undefined);
@@ -46,10 +47,13 @@ function AuthModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [ageOk, setAgeOk] = useState(false);
+  const [termsOk, setTermsOk] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const reset = () => {
     setEmail(""); setPassword(""); setDisplayName(""); setSubmitting(false);
+    setAgeOk(false); setTermsOk(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,11 +66,20 @@ function AuthModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
       toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos");
       return;
     }
+    if (mode === "signup" && (!ageOk || !termsOk)) {
+      toast.error(
+        "Debes confirmar que tienes 14 años o más y aceptar las Condiciones de Uso y la Política de Privacidad.",
+      );
+      return;
+    }
     setSubmitting(true);
     const { error } =
       mode === "login"
         ? await signIn(parsed.data.email, parsed.data.password)
-        : await signUp(parsed.data.email, parsed.data.password, parsed.data.displayName);
+        : await signUp(parsed.data.email, parsed.data.password, parsed.data.displayName, {
+            ageConfirmed: ageOk,
+            termsAccepted: termsOk,
+          });
     setSubmitting(false);
     if (error) {
       toast.error(
@@ -112,7 +125,14 @@ function AuthModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
               <Field label="Nombre" type="text" value={displayName} onChange={setDisplayName} autoComplete="name" />
               <Field label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" required />
               <Field label="Contraseña" type="password" value={password} onChange={setPassword} autoComplete="new-password" required />
-              <Button type="submit" disabled={submitting} className="w-full">
+              <LegalConsentChecks
+                idPrefix="dialog"
+                ageOk={ageOk}
+                termsOk={termsOk}
+                onAgeChange={setAgeOk}
+                onTermsChange={setTermsOk}
+              />
+              <Button type="submit" disabled={submitting || !ageOk || !termsOk} className="w-full">
                 {submitting ? "Procesando..." : "Crear cuenta"}
               </Button>
             </form>

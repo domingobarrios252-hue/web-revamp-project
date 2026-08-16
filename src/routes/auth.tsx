@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { LegalConsentChecks } from "@/components/auth/LegalConsentChecks";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -28,6 +29,8 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [ageOk, setAgeOk] = useState(false);
+  const [termsOk, setTermsOk] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -47,12 +50,21 @@ function AuthPage() {
       toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos");
       return;
     }
+    if (mode === "signup" && (!ageOk || !termsOk)) {
+      toast.error(
+        "Debes confirmar que tienes 14 años o más y aceptar las Condiciones de Uso y la Política de Privacidad.",
+      );
+      return;
+    }
     setSubmitting(true);
     try {
       const { error } =
         mode === "login"
           ? await signIn(parsed.data.email, parsed.data.password)
-          : await signUp(parsed.data.email, parsed.data.password, parsed.data.displayName);
+          : await signUp(parsed.data.email, parsed.data.password, parsed.data.displayName, {
+              ageConfirmed: ageOk,
+              termsAccepted: termsOk,
+            });
       if (error) {
         toast.error(
           error.includes("Invalid login credentials")
@@ -99,9 +111,18 @@ function AuthPage() {
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             required
           />
+          {mode === "signup" && (
+            <LegalConsentChecks
+              idPrefix="auth"
+              ageOk={ageOk}
+              termsOk={termsOk}
+              onAgeChange={setAgeOk}
+              onTermsChange={setTermsOk}
+            />
+          )}
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || (mode === "signup" && (!ageOk || !termsOk))}
             className="font-condensed mt-2 w-full bg-gold py-3 text-sm font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-dark disabled:opacity-50"
           >
             {submitting
