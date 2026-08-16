@@ -4025,6 +4025,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      admin_mfa_ok: { Args: never; Returns: boolean }
       can_edit_country: {
         Args: { _country: string; _user_id: string }
         Returns: boolean
