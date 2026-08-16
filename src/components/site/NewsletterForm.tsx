@@ -168,11 +168,8 @@ export function NewsletterForm({ source = "footer" }: { source?: string }) {
           {message}
         </p>
       )}
-      {status === "idle" && consent && (
-        <span className="sr-only">
-          <CheckCircle2 aria-hidden="true" />
-        </span>
-      )}
+    </form>
+
     </form>
   );
 }
