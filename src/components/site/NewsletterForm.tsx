@@ -170,6 +170,5 @@ export function NewsletterForm({ source = "footer" }: { source?: string }) {
       )}
     </form>
 
-    </form>
   );
 }
