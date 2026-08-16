@@ -1,6 +1,8 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { MfaStatusBanner } from "@/components/admin/MfaStatusBanner";
+
 import {
   FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen,
   Heart, Mic, UsersRound, Radio, Megaphone, PenLine, Tv, Film, Scale, Medal,
@@ -266,8 +268,10 @@ function AdminLayout() {
         </div>
       </aside>
       <section>
+        <MfaStatusBanner />
         <Outlet />
       </section>
+
     </div>
   );
 }

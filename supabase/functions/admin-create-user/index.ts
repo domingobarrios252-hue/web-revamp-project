@@ -45,6 +45,27 @@ Deno.serve(async (req) => {
   });
   if (roleError || !isAdmin) return json({ error: "Solo administradores" }, 403);
 
+  // Segundo factor obligatorio para operaciones críticas (crear/eliminar usuarios y roles).
+  // Se evalúa con el token del propio administrador: mfa_satisfied() exige AAL2 cuando
+  // la cuenta ya tiene un factor TOTP verificado.
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+  if (!anonKey) return json({ error: "Configuración de backend incompleta" }, 500);
+  const userClient = createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+    auth: { persistSession: false },
+  });
+  const { data: mfaOk, error: mfaError } = await userClient.rpc("admin_mfa_ok");
+  if (mfaError || mfaOk !== true) {
+    return json(
+      {
+        error:
+          "Se requiere verificación en dos pasos (AAL2) para gestionar usuarios y roles. Verifica tu doble factor en Panel → Seguridad y accesos.",
+      },
+      403,
+    );
+  }
+
+
   let payload: Payload;
   try {
     payload = await req.json();
