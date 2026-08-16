@@ -473,7 +473,7 @@ function NewsEditor({
       video_poster_url: videoPosterUrl || undefined,
       read_minutes: typeof readMinutes === "number" ? readMinutes : undefined,
       featured,
-      status,
+      status: effectiveStatus,
       published_at: publishedAt,
     });
     if (!parsed.success) {
@@ -494,7 +494,7 @@ function NewsEditor({
     // Validación de bloques de contenido: no se publica con campos obligatorios vacíos.
     const blockIssues = validateBlocks(blocks);
     const blockErrors = blockIssues.filter((i) => i.level === "error");
-    if (blockErrors.length > 0 && (status === "published" || status === "pending")) {
+    if (blockErrors.length > 0 && (effectiveStatus === "published" || effectiveStatus === "pending")) {
       const first = blockErrors[0];
       toast.error(
         `Bloque ${first.index + 1}: ${first.message}${
