@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-rout
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { MfaStatusBanner } from "@/components/admin/MfaStatusBanner";
+import { MfaChallengeGate } from "@/components/admin/MfaChallengeGate";
 
 import {
   FileText, Tag, ShieldCheck, Users, Trophy, Building2, Calendar, BookOpen,
