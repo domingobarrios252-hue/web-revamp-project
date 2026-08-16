@@ -305,6 +305,9 @@ function CommunityAdmin() {
                         ))}
                       </div>
                     ) : null}
+                    <PendingImages paths={it.image_paths ?? []} />
+                    <SubmissionEvidence item={it} />
+
                     {it.news_id && (
                       <a
                         href={`/noticias/${it.id}`}
