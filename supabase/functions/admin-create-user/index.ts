@@ -25,9 +25,8 @@ Deno.serve(async (req) => {
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const anonKey = Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!supabaseUrl || !anonKey || !serviceKey) {
+  if (!supabaseUrl || !serviceKey) {
     return json({ error: "Configuración de backend incompleta" }, 500);
   }
 
@@ -35,12 +34,9 @@ Deno.serve(async (req) => {
   const token = authHeader.replace(/^Bearer\s+/i, "");
   if (!token) return json({ error: "Sesión requerida" }, 401);
 
-  const userClient = createClient(supabaseUrl, anonKey, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-  });
   const adminClient = createClient(supabaseUrl, serviceKey);
 
-  const { data: authData, error: authError } = await userClient.auth.getUser(token);
+  const { data: authData, error: authError } = await adminClient.auth.getUser(token);
   if (authError || !authData.user) return json({ error: "Sesión no válida" }, 401);
 
   const { data: isAdmin, error: roleError } = await adminClient.rpc("has_role", {
