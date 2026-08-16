@@ -110,9 +110,41 @@ function AuthPage() {
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             required
           />
+          {mode === "signup" && (
+            <div className="space-y-3 border-t border-border pt-3">
+              <Check checked={ageOk} onChange={setAgeOk} id="age14">
+                Confirmo que tengo <strong className="text-foreground">14 años o más</strong>.
+              </Check>
+              <Check checked={termsOk} onChange={setTermsOk} id="terms">
+                He leído y acepto las{" "}
+                <Link
+                  to="/legal/$slug"
+                  params={{ slug: "condiciones-uso" }}
+                  target="_blank"
+                  className="text-gold underline"
+                >
+                  Condiciones de Uso y Registro
+                </Link>{" "}
+                y la{" "}
+                <Link
+                  to="/legal/$slug"
+                  params={{ slug: "privacidad" }}
+                  target="_blank"
+                  className="text-gold underline"
+                >
+                  Política de Privacidad
+                </Link>
+                .
+              </Check>
+              <p className="text-xs text-muted-foreground">
+                No pedimos DNI ni fecha de nacimiento. Solo guardamos la constancia de estas
+                confirmaciones y su fecha.
+              </p>
+            </div>
+          )}
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || (mode === "signup" && (!ageOk || !termsOk))}
             className="font-condensed mt-2 w-full bg-gold py-3 text-sm font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-dark disabled:opacity-50"
           >
             {submitting
