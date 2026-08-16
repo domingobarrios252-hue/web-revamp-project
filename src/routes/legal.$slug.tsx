@@ -1,10 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ShieldCheck, FileText, Cookie, ArrowUp, Mail, Clock } from "lucide-react";
+import { ShieldCheck, FileText, Cookie, ArrowUp, Mail, Clock, ScrollText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { renderMarkdown } from "@/lib/markdown";
 
-const SLUGS = ["privacidad", "aviso-legal", "cookies"] as const;
+const SLUGS = ["privacidad", "aviso-legal", "cookies", "condiciones-uso"] as const;
 type LegalSlug = (typeof SLUGS)[number];
 
 export const Route = createFileRoute("/legal/$slug")({
