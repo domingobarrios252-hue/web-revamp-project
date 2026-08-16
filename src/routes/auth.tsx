@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { LegalConsentChecks } from "@/components/auth/LegalConsentChecks";
 import { toast } from "sonner";
 import { z } from "zod";
 
