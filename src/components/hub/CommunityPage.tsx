@@ -12,17 +12,28 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Send, Megaphone, Upload, MapPin, X, Newspaper, CheckCircle2 } from "lucide-react";
+import { Calendar, Send, Megaphone, Upload, MapPin, X, Newspaper, CheckCircle2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import {
+  COMMUNITY_ALLOWED_EXTENSIONS,
+  COMMUNITY_ALLOWED_IMAGE_TYPES,
+  COMMUNITY_CONTACT_EMAIL,
+  COMMUNITY_DECLARATIONS,
+  COMMUNITY_DECLARATIONS_VERSION,
+  COMMUNITY_MAX_IMAGES,
+  COMMUNITY_MAX_IMAGE_MB,
+  COMMUNITY_RETENTION_DAYS,
+} from "@/lib/community/declarations";
 
 const submissionSchema = z.object({
   type: z.enum(["noticia", "evento", "otro"]),
   name: z.string().min(2).max(120),
   email: z.string().email().max(200),
-  phone: z.string().max(40).optional(),
   title: z.string().min(3).max(200),
   description: z.string().min(10).max(5000),
+  photoCredit: z.string().max(160).optional(),
 });
+
 
 type EventRow = {
   id: string;
