@@ -45,6 +45,7 @@ import { Route as RedactoresIdRouteImport } from './routes/redactores.$id'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
 import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
 import { Route as NewsletterConfirmarRouteImport } from './routes/newsletter.confirmar'
+import { Route as NewsletterBajaRouteImport } from './routes/newsletter.baja'
 import { Route as LigaNacionalClasificacionesRouteImport } from './routes/liga-nacional.clasificaciones'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as HubCountryRouteImport } from './routes/hub.$country'
@@ -327,6 +328,11 @@ const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
 const NewsletterConfirmarRoute = NewsletterConfirmarRouteImport.update({
   id: '/newsletter/confirmar',
   path: '/newsletter/confirmar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsletterBajaRoute = NewsletterBajaRouteImport.update({
+  id: '/newsletter/baja',
+  path: '/newsletter/baja',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LigaNacionalClasificacionesRoute =
@@ -946,6 +952,7 @@ export interface FileRoutesByFullPath {
   '/hub/$country': typeof HubCountryRouteWithChildren
   '/legal/$slug': typeof LegalSlugRoute
   '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
+  '/newsletter/baja': typeof NewsletterBajaRoute
   '/newsletter/confirmar': typeof NewsletterConfirmarRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
@@ -1082,6 +1089,7 @@ export interface FileRoutesByTo {
   '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
+  '/newsletter/baja': typeof NewsletterBajaRoute
   '/newsletter/confirmar': typeof NewsletterConfirmarRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
@@ -1217,6 +1225,7 @@ export interface FileRoutesById {
   '/hub/$country': typeof HubCountryRouteWithChildren
   '/legal/$slug': typeof LegalSlugRoute
   '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
+  '/newsletter/baja': typeof NewsletterBajaRoute
   '/newsletter/confirmar': typeof NewsletterConfirmarRoute
   '/noticias/$slug': typeof NoticiasSlugRoute
   '/patinadores/$slug': typeof PatinadoresSlugRoute
@@ -1359,6 +1368,7 @@ export interface FileRouteTypes {
     | '/hub/$country'
     | '/legal/$slug'
     | '/liga-nacional/clasificaciones'
+    | '/newsletter/baja'
     | '/newsletter/confirmar'
     | '/noticias/$slug'
     | '/patinadores/$slug'
@@ -1495,6 +1505,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/legal/$slug'
     | '/liga-nacional/clasificaciones'
+    | '/newsletter/baja'
     | '/newsletter/confirmar'
     | '/noticias/$slug'
     | '/patinadores/$slug'
@@ -1629,6 +1640,7 @@ export interface FileRouteTypes {
     | '/hub/$country'
     | '/legal/$slug'
     | '/liga-nacional/clasificaciones'
+    | '/newsletter/baja'
     | '/newsletter/confirmar'
     | '/noticias/$slug'
     | '/patinadores/$slug'
@@ -1719,6 +1731,7 @@ export interface RootRouteChildren {
   HubCountryRoute: typeof HubCountryRouteWithChildren
   LegalSlugRoute: typeof LegalSlugRoute
   LigaNacionalClasificacionesRoute: typeof LigaNacionalClasificacionesRoute
+  NewsletterBajaRoute: typeof NewsletterBajaRoute
   NewsletterConfirmarRoute: typeof NewsletterConfirmarRoute
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
@@ -1990,6 +2003,13 @@ declare module '@tanstack/react-router' {
       path: '/newsletter/confirmar'
       fullPath: '/newsletter/confirmar'
       preLoaderRoute: typeof NewsletterConfirmarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletter/baja': {
+      id: '/newsletter/baja'
+      path: '/newsletter/baja'
+      fullPath: '/newsletter/baja'
+      preLoaderRoute: typeof NewsletterBajaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/liga-nacional/clasificaciones': {
@@ -3061,6 +3081,7 @@ const rootRouteChildren: RootRouteChildren = {
   HubCountryRoute: HubCountryRouteWithChildren,
   LegalSlugRoute: LegalSlugRoute,
   LigaNacionalClasificacionesRoute: LigaNacionalClasificacionesRoute,
+  NewsletterBajaRoute: NewsletterBajaRoute,
   NewsletterConfirmarRoute: NewsletterConfirmarRoute,
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
