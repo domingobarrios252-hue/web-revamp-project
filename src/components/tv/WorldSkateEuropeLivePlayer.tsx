@@ -44,16 +44,18 @@ export function WorldSkateEuropeLivePlayer({ isLive = false, className = "" }: P
 
       <div className="relative w-full overflow-hidden rounded-xl border border-gold/40 bg-black shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
         <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
-          <iframe
-            ref={iframeRef}
-            id={PLAYER_ID}
-            title="World Skate Europe TV — Europeo 2026 en directo"
-            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-            allowFullScreen
-            frameBorder={0}
-            className="absolute inset-0 h-full w-full"
-          />
-          {isLive ? (
+          <ExternalEmbedGate provider="World Skate Europe TV">
+            <iframe
+              ref={iframeRef}
+              id={PLAYER_ID}
+              title="World Skate Europe TV — Europeo 2026 en directo"
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              allowFullScreen
+              frameBorder={0}
+              className="absolute inset-0 h-full w-full"
+            />
+          </ExternalEmbedGate>
+          {allowExternal && isLive ? (
             <div className="pointer-events-none absolute left-4 top-4 z-10">
               <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
                 <span className="relative flex h-2 w-2">
@@ -63,7 +65,7 @@ export function WorldSkateEuropeLivePlayer({ isLive = false, className = "" }: P
                 EN DIRECTO
               </span>
             </div>
-          ) : (
+          ) : allowExternal ? (
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center bg-black/75 p-6 text-center">
               <Radio className="mb-3 h-10 w-10 text-gold" />
               <p className="font-display text-lg uppercase tracking-widest text-white md:text-xl">
@@ -73,8 +75,9 @@ export function WorldSkateEuropeLivePlayer({ isLive = false, className = "" }: P
                 Vuelve al inicio del evento para verlo en directo
               </p>
             </div>
-          )}
+          ) : null}
         </div>
+
       </div>
 
       <p className="mt-3 text-center text-sm text-muted-foreground">
