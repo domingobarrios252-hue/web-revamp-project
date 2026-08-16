@@ -125,7 +125,14 @@ function AuthModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
               <Field label="Nombre" type="text" value={displayName} onChange={setDisplayName} autoComplete="name" />
               <Field label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" required />
               <Field label="Contraseña" type="password" value={password} onChange={setPassword} autoComplete="new-password" required />
-              <Button type="submit" disabled={submitting} className="w-full">
+              <LegalConsentChecks
+                idPrefix="dialog"
+                ageOk={ageOk}
+                termsOk={termsOk}
+                onAgeChange={setAgeOk}
+                onTermsChange={setTermsOk}
+              />
+              <Button type="submit" disabled={submitting || !ageOk || !termsOk} className="w-full">
                 {submitting ? "Procesando..." : "Crear cuenta"}
               </Button>
             </form>
