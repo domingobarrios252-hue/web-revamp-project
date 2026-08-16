@@ -99,8 +99,86 @@ function slugify(s: string) {
     .slice(0, 80);
 }
 
+/** Imágenes pendientes: viven en almacén privado y se abren con URL firmada temporal. */
+function PendingImages({ paths }: { paths: string[] }) {
+  const [urls, setUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!paths.length) {
+      setUrls([]);
+      return;
+    }
+    let cancelled = false;
+    supabase.storage
+      .from("community-pending")
+      .createSignedUrls(paths, 600)
+      .then(({ data }) => {
+        if (cancelled) return;
+        setUrls((data ?? []).map((d) => d.signedUrl).filter(Boolean) as string[]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [paths.join(",")]);
+
+  if (!paths.length) return null;
+
+  return (
+    <div className="mt-3">
+      <p className="text-[11px] uppercase tracking-widest text-muted-foreground">
+        Material pendiente (privado · enlace temporal)
+      </p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {urls.map((u, i) => (
+          <a key={i} href={u} target="_blank" rel="noopener noreferrer">
+            <img src={u} alt="" className="h-20 w-20 border border-border object-cover" />
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Evidencia proporcionada del consentimiento del envío. */
+function SubmissionEvidence({ item }: { item: Submission }) {
+  const d = (item.declarations ?? {}) as Record<string, unknown>;
+  if (!item.declarations_accepted_at && !item.photo_credit) return null;
+  return (
+    <div className="mt-3 rounded border border-border/60 bg-muted/30 p-3 text-[11px] text-muted-foreground">
+      <p className="font-semibold uppercase tracking-widest">Declaraciones aceptadas</p>
+      <ul className="mt-1 space-y-0.5">
+        {item.declarations_accepted_at ? (
+          <li>
+            Fecha: {new Date(item.declarations_accepted_at).toLocaleString("es-ES")} · versión{" "}
+            {item.declarations_version ?? "—"}
+          </li>
+        ) : null}
+        {d.age14 ? <li>+14 años: sí</li> : null}
+        {d.rights ? <li>Autorizado/a para enviar el contenido: sí</li> : null}
+        {d.editorial_use ? <li>Autoriza uso editorial: sí</li> : null}
+        {d.people_images ? <li>Imágenes de personas: legitimación declarada</li> : null}
+        {item.has_minors === true ? (
+          <li className="text-amber-500">
+            Menores identificables: SÍ{d.minors_auth ? " · autorización declarada" : ""}
+          </li>
+        ) : item.has_minors === false ? (
+          <li>Menores identificables: no</li>
+        ) : null}
+        {item.photo_credit ? <li>Crédito: {item.photo_credit}</li> : null}
+        {item.retention_until ? (
+          <li>
+            Conservación del material no publicado hasta{" "}
+            {new Date(item.retention_until).toLocaleDateString("es-ES")}
+          </li>
+        ) : null}
+      </ul>
+    </div>
+  );
+}
+
 function CommunityAdmin() {
   const { user } = useAuth();
+  const promoteImages = useServerFn(publishCommunityImages);
   const [items, setItems] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<string>("pendiente");
