@@ -6,6 +6,7 @@ import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvSidebarBanners } from "@/components/tv/TvSidebarBanners";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 import { TvEventLiveCenter } from "@/components/tv/TvEventLiveCenter";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 
 const TV_OG_IMAGE = "https://rollerzone.es/__l5e/assets-v1/57c70012-bbe9-4642-b766-6b243447cc73/og-rollerzone-tv.jpg";
@@ -191,13 +192,15 @@ function TvPage() {
           <div className="relative w-full max-w-full min-w-0 overflow-hidden">
             <div className="relative aspect-video w-full max-w-full min-w-0 overflow-hidden border border-gold/30 bg-black shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
               {playerActive && embedUrl ? (
-                <iframe
-                  src={embedUrl}
-                  title={settings?.live_title ?? "RollerZone TV"}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute inset-0 block h-full w-full max-w-full border-0"
-                />
+                <ExternalEmbedGate provider="reproductor externo">
+                  <iframe
+                    src={embedUrl}
+                    title={settings?.live_title ?? "RollerZone TV"}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 block h-full w-full max-w-full border-0"
+                  />
+                </ExternalEmbedGate>
               ) : embedUrl ? (
                 <button
                   type="button"
@@ -657,13 +660,15 @@ function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => voi
         </button>
         <div className="aspect-video w-full border border-gold bg-black shadow-[0_0_60px_oklch(0.78_0.16_70/0.3)]">
           {embed ? (
-            <iframe
-              src={embed}
-              title={item.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="h-full w-full"
-            />
+            <ExternalEmbedGate provider="reproductor externo" sourceUrl={item.video_url}>
+              <iframe
+                src={embed}
+                title={item.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="h-full w-full"
+              />
+            </ExternalEmbedGate>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-muted-foreground">
               No se puede reproducir este vídeo. Ábrelo en{" "}
