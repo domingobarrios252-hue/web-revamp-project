@@ -166,48 +166,94 @@ function CommunityCalendar({ country }: { country: string }) {
   );
 }
 
+function DeclarationCheck({
+  checked,
+  onChange,
+  children,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="flex cursor-pointer items-start gap-3 border border-[#2a2a2a] bg-[#121212] p-3 text-xs leading-relaxed text-[#bbb] hover:border-gold/40">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 h-4 w-4 shrink-0 accent-[color:var(--gold,#c9a227)]"
+      />
+      <span>{children}</span>
+    </label>
+  );
+}
+
 function CommunityForm({ country }: { country: string }) {
   const [form, setForm] = useState({
     type: "noticia" as "noticia" | "evento" | "otro",
     name: "",
     email: "",
-    phone: "",
     title: "",
     description: "",
+    photoCredit: "",
   });
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<{ path: string; preview: string }[]>([]);
+  const [hasMinors, setHasMinors] = useState<"" | "no" | "si">("");
+  const [decl, setDecl] = useState({
+    age14: false,
+    rights: false,
+    editorialUse: false,
+    peopleImages: false,
+    minorsAuth: false,
+  });
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const sendSubmission = useServerFn(submitCommunitySubmission);
 
+  const hasImages = images.length > 0;
+
+  const canSubmit =
+    decl.age14 &&
+    decl.rights &&
+    decl.editorialUse &&
+    (!hasImages || (hasMinors !== "" && decl.peopleImages)) &&
+    (!hasImages || hasMinors !== "si" || decl.minorsAuth);
+
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
-    if (images.length + files.length > 6) {
-      toast.error("Máximo 6 imágenes");
+    if (images.length + files.length > COMMUNITY_MAX_IMAGES) {
+      toast.error(`Máximo ${COMMUNITY_MAX_IMAGES} imágenes`);
       return;
     }
     setUploading(true);
     try {
-      const uploaded: string[] = [];
+      const uploaded: { path: string; preview: string }[] = [];
       for (const file of files) {
-        if (file.size > 8 * 1024 * 1024) {
-          toast.error(`${file.name} supera 8MB`);
+        if (!(COMMUNITY_ALLOWED_IMAGE_TYPES as readonly string[]).includes(file.type)) {
+          toast.error(`${file.name}: formato no permitido (JPG, PNG o WEBP)`);
           continue;
         }
-        const ext = file.name.split(".").pop() ?? "jpg";
-        const path = `${country}/${crypto.randomUUID()}.${ext}`;
+        if (file.size > COMMUNITY_MAX_IMAGE_MB * 1024 * 1024) {
+          toast.error(`${file.name} supera ${COMMUNITY_MAX_IMAGE_MB}MB`);
+          continue;
+        }
+        const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+        const safeExt = (COMMUNITY_ALLOWED_EXTENSIONS as readonly string[]).includes(ext)
+          ? ext
+          : "jpg";
+        const path = `${country}/${crypto.randomUUID()}.${safeExt}`;
+        // Almacén privado: el material pendiente de revisión nunca es público.
         const { error } = await supabase.storage
-          .from("community")
+          .from("community-pending")
           .upload(path, file, { cacheControl: "3600", upsert: false });
         if (error) {
           toast.error(error.message);
           continue;
         }
-        const { data } = supabase.storage.from("community").getPublicUrl(path);
-        uploaded.push(data.publicUrl);
+        uploaded.push({ path, preview: URL.createObjectURL(file) });
       }
       setImages((prev) => [...prev, ...uploaded]);
     } finally {
@@ -223,6 +269,10 @@ function CommunityForm({ country }: { country: string }) {
       toast.error(parsed.error.issues[0]?.message ?? "Revisa los campos");
       return;
     }
+    if (!canSubmit) {
+      toast.error("Debes aceptar las declaraciones obligatorias para enviar el material.");
+      return;
+    }
     setSubmitting(true);
     const { type, ...rest } = parsed.data;
     let res: { ok: boolean; error?: string };
@@ -232,11 +282,18 @@ function CommunityForm({ country }: { country: string }) {
           submission_type: type,
           name: rest.name,
           email: rest.email,
-          phone: rest.phone || null,
           title: rest.title,
           description: rest.description,
           country_code: country,
-          image_urls: images,
+          image_paths: images.map((i) => i.path),
+          photo_credit: form.photoCredit || null,
+          has_minors: hasImages ? hasMinors === "si" : null,
+          declaration_age14: true as const,
+          declaration_rights: true as const,
+          declaration_editorial_use: true as const,
+          declaration_people_images: hasImages ? decl.peopleImages : false,
+          declaration_minors_auth: hasImages && hasMinors === "si" ? decl.minorsAuth : false,
+          declarations_version: COMMUNITY_DECLARATIONS_VERSION,
           turnstileToken: captchaToken,
         },
       });
@@ -249,8 +306,10 @@ function CommunityForm({ country }: { country: string }) {
       return;
     }
     setSent(true);
-    setForm({ type: "noticia", name: "", email: "", phone: "", title: "", description: "" });
+    setForm({ type: "noticia", name: "", email: "", title: "", description: "", photoCredit: "" });
     setImages([]);
+    setHasMinors("");
+    setDecl({ age14: false, rights: false, editorialUse: false, peopleImages: false, minorsAuth: false });
     toast.success("Envío recibido. Te avisaremos al revisarlo.");
   }
 
@@ -259,13 +318,10 @@ function CommunityForm({ country }: { country: string }) {
       <Card className="border-gold/40 bg-[#161616] p-8 text-center">
         <h3 className="font-display text-2xl tracking-widest text-gold">¡Gracias!</h3>
         <p className="mt-2 text-sm text-[#aaa]">
-          Hemos recibido tu envío. El equipo editorial lo revisará en breve.
+          Hemos recibido tu envío. El equipo editorial lo revisará en breve. El envío de
+          material no implica su publicación.
         </p>
-        <Button
-          variant="outline"
-          className="mt-4"
-          onClick={() => setSent(false)}
-        >
+        <Button variant="outline" className="mt-4" onClick={() => setSent(false)}>
           Enviar otro
         </Button>
       </Card>
@@ -277,6 +333,45 @@ function CommunityForm({ country }: { country: string }) {
       onSubmit={handleSubmit}
       className="grid gap-5 border border-[#222] bg-[#161616] p-6 md:grid-cols-2"
     >
+      {/* Primera capa informativa de protección de datos */}
+      <div className="md:col-span-2 border border-[#2a2a2a] bg-[#121212] p-4">
+        <p className="font-condensed flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-gold">
+          <ShieldCheck className="h-3.5 w-3.5" /> Información básica de privacidad
+        </p>
+        <ul className="mt-2 space-y-1 text-xs leading-relaxed text-[#aaa]">
+          <li>
+            <strong className="text-[#ddd]">Responsable:</strong> RollerZone Spain.
+          </li>
+          <li>
+            <strong className="text-[#ddd]">Finalidad:</strong> recibir, revisar y gestionar
+            la información, noticias, eventos, fotografías y demás material remitido
+            voluntariamente a RollerZone para valorar su posible utilización editorial.
+          </li>
+          <li>
+            <strong className="text-[#ddd]">Derechos:</strong> acceso, rectificación,
+            supresión y demás derechos aplicables, escribiendo a{" "}
+            <a href={`mailto:${COMMUNITY_CONTACT_EMAIL}`} className="text-gold hover:underline">
+              {COMMUNITY_CONTACT_EMAIL}
+            </a>
+            .
+          </li>
+          <li>
+            <strong className="text-[#ddd]">Conservación:</strong> el material no publicado
+            se conserva únicamente el tiempo necesario para revisar y gestionar el envío
+            (orientativamente {COMMUNITY_RETENTION_DAYS} días) y después se elimina, salvo
+            obligación o justificación legítima. El material publicado puede conservarse
+            como parte del archivo periodístico de RollerZone cuando exista base jurídica.
+          </li>
+        </ul>
+        <Link
+          to="/legal/$slug"
+          params={{ slug: "privacidad" }}
+          className="mt-3 inline-block text-xs font-semibold text-gold hover:underline"
+        >
+          Política de Privacidad y Protección de Datos
+        </Link>
+      </div>
+
       <div className="md:col-span-2">
         <Label className="text-xs uppercase tracking-widest text-[#888]">Tipo</Label>
         <div className="mt-2 flex flex-wrap gap-2">
@@ -317,14 +412,6 @@ function CommunityForm({ country }: { country: string }) {
         />
       </div>
       <div className="md:col-span-2">
-        <Label>Teléfono (opcional)</Label>
-        <Input
-          value={form.phone}
-          onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-          className="mt-1 border-[#333] bg-[#0e0e0e]"
-        />
-      </div>
-      <div className="md:col-span-2">
         <Label>Título</Label>
         <Input
           value={form.title}
@@ -348,14 +435,20 @@ function CommunityForm({ country }: { country: string }) {
 
       <div className="md:col-span-2">
         <Label className="text-xs uppercase tracking-widest text-[#888]">
-          Imágenes (máx. 6)
+          Imágenes (máx. {COMMUNITY_MAX_IMAGES} · JPG, PNG o WEBP · {COMMUNITY_MAX_IMAGE_MB}MB)
         </Label>
-        <div className="mt-2 flex flex-wrap gap-3">
-          {images.map((url, i) => (
-            <div key={i} className="relative h-24 w-24 overflow-hidden border border-[#333]">
-              <img loading="lazy" decoding="async" src={url} alt="" className="h-full w-full object-cover" />
+        <p className="mt-1 text-[11px] leading-relaxed text-[#777]">
+          Si la fotografía ha sido realizada por otra persona, debes disponer de autorización
+          suficiente para enviarla y permitir su utilización por RollerZone. Las imágenes
+          enviadas quedan en un almacenamiento privado hasta que la redacción las revisa.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-3">
+          {images.map((img, i) => (
+            <div key={img.path} className="relative h-24 w-24 overflow-hidden border border-[#333]">
+              <img loading="lazy" decoding="async" src={img.preview} alt="" className="h-full w-full object-cover" />
               <button
                 type="button"
+                aria-label="Quitar imagen"
                 onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
                 className="absolute right-1 top-1 rounded-full bg-black/70 p-1 text-white hover:bg-red-600"
               >
@@ -363,7 +456,7 @@ function CommunityForm({ country }: { country: string }) {
               </button>
             </div>
           ))}
-          {images.length < 6 ? (
+          {images.length < COMMUNITY_MAX_IMAGES ? (
             <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center border border-dashed border-[#444] text-[#888] hover:border-gold hover:text-gold">
               <Upload className="h-5 w-5" />
               <span className="mt-1 text-[10px] uppercase tracking-widest">
@@ -371,7 +464,7 @@ function CommunityForm({ country }: { country: string }) {
               </span>
               <input
                 type="file"
-                accept="image/*"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                 multiple
                 className="hidden"
                 onChange={handleUpload}
@@ -382,24 +475,112 @@ function CommunityForm({ country }: { country: string }) {
         </div>
       </div>
 
+      {hasImages ? (
+        <>
+          <div className="md:col-span-2">
+            <Label>Autor/a de la fotografía o crédito (opcional)</Label>
+            <Input
+              value={form.photoCredit}
+              onChange={(e) => setForm((f) => ({ ...f, photoCredit: e.target.value }))}
+              maxLength={160}
+              placeholder="Foto: Nombre del fotógrafo / Club"
+              className="mt-1 border-[#333] bg-[#0e0e0e]"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <Label className="text-xs uppercase tracking-widest text-[#888]">
+              ¿Aparecen menores de edad identificables en las imágenes?
+            </Label>
+            <div className="mt-2 flex gap-2">
+              {(["no", "si"] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => {
+                    setHasMinors(v);
+                    if (v === "no") setDecl((d) => ({ ...d, minorsAuth: false }));
+                  }}
+                  className={`font-condensed min-h-[44px] px-5 text-xs uppercase tracking-widest transition-colors ${
+                    hasMinors === v
+                      ? "border border-gold bg-gold/10 text-gold"
+                      : "border border-[#333] text-[#aaa] hover:border-gold/50"
+                  }`}
+                >
+                  {v === "no" ? "No" : "Sí"}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      ) : null}
+
+      <div className="md:col-span-2 space-y-2">
+        <DeclarationCheck checked={decl.age14} onChange={(v) => setDecl((d) => ({ ...d, age14: v }))}>
+          {COMMUNITY_DECLARATIONS.age14}
+        </DeclarationCheck>
+        {!decl.age14 ? (
+          <p className="text-[11px] leading-relaxed text-[#777]">
+            Si eres menor de 14 años y quieres enviarnos información o fotografías, pide a tu
+            padre, madre o tutor legal que realice el envío.
+          </p>
+        ) : null}
+        <DeclarationCheck checked={decl.rights} onChange={(v) => setDecl((d) => ({ ...d, rights: v }))}>
+          {COMMUNITY_DECLARATIONS.rights}
+        </DeclarationCheck>
+        <DeclarationCheck
+          checked={decl.editorialUse}
+          onChange={(v) => setDecl((d) => ({ ...d, editorialUse: v }))}
+        >
+          {COMMUNITY_DECLARATIONS.editorialUse}
+        </DeclarationCheck>
+        {hasImages ? (
+          <DeclarationCheck
+            checked={decl.peopleImages}
+            onChange={(v) => setDecl((d) => ({ ...d, peopleImages: v }))}
+          >
+            {COMMUNITY_DECLARATIONS.peopleImages}
+          </DeclarationCheck>
+        ) : null}
+        {hasImages && hasMinors === "si" ? (
+          <DeclarationCheck
+            checked={decl.minorsAuth}
+            onChange={(v) => setDecl((d) => ({ ...d, minorsAuth: v }))}
+          >
+            {COMMUNITY_DECLARATIONS.minorsAuth}
+          </DeclarationCheck>
+        ) : null}
+        <p className="text-[11px] leading-relaxed text-[#777]">
+          Conservas tus derechos de autor y de imagen: esta autorización se limita a la
+          utilización del material por RollerZone en su actividad editorial e informativa y no
+          supone una cesión total, exclusiva, perpetua ni irrevocable.
+        </p>
+      </div>
+
       <div className="md:col-span-2">
         <TurnstileWidget onToken={setCaptchaToken} />
         <Button
-
           type="submit"
-          disabled={submitting || uploading}
-          className="bg-gold text-black hover:bg-gold/90"
+          disabled={submitting || uploading || !canSubmit}
+          className="min-h-[44px] bg-gold text-black hover:bg-gold/90"
         >
           {submitting ? "Enviando…" : "Enviar a redacción"}
         </Button>
-        <p className="mt-2 text-[11px] text-[#666]">
-          Al enviar aceptas que RollerZone revise y publique tu contenido si cumple con
-          la línea editorial.
+        <p className="mt-3 text-[11px] leading-relaxed text-[#666]">
+          El envío de material no implica su publicación. RollerZone podrá valorar su interés
+          editorial, verificar la información y decidir si procede su publicación. Para
+          consultas, problemas con una fotografía, correcciones, cuestiones de derechos de
+          imagen o ejercicio de derechos de protección de datos, escribe a{" "}
+          <a href={`mailto:${COMMUNITY_CONTACT_EMAIL}`} className="text-gold hover:underline">
+            {COMMUNITY_CONTACT_EMAIL}
+          </a>
+          .
         </p>
       </div>
     </form>
   );
 }
+
 
 type Publication = {
   id: string;
