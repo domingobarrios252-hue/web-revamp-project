@@ -47,6 +47,13 @@ type Submission = {
   title: string;
   description: string;
   image_urls: string[] | null;
+  image_paths: string[] | null;
+  photo_credit: string | null;
+  has_minors: boolean | null;
+  declarations: Record<string, unknown> | null;
+  declarations_version: string | null;
+  declarations_accepted_at: string | null;
+  retention_until: string | null;
   links: string[] | null;
   status: string;
   country_code: string;
