@@ -170,10 +170,11 @@ function AuditPanel() {
     void (async () => {
       const { data } = await supabase
         .from("security_audit_log")
-        .select("id, action, resource, actor_email, result, created_at")
+        .select("id, action, resource, actor_id, result, created_at")
         .order("created_at", { ascending: false })
         .limit(200);
       setRows((data as AuditRow[]) ?? []);
+
     })();
   }, []);
 
@@ -205,7 +206,10 @@ function AuditPanel() {
                   </td>
                   <td className="py-2 pr-3 font-medium">{r.action}</td>
                   <td className="py-2 pr-3 text-muted-foreground">{r.resource ?? "—"}</td>
-                  <td className="py-2 pr-3">{r.actor_email ?? "—"}</td>
+                  <td className="py-2 pr-3 font-mono text-xs text-muted-foreground">
+                    {r.actor_id ? `${r.actor_id.slice(0, 8)}…` : "—"}
+                  </td>
+
                   <td className="py-2 text-muted-foreground">{r.result}</td>
                 </tr>
               ))}
