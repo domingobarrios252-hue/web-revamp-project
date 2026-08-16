@@ -12,7 +12,12 @@ type AuthState = {
   sectionId: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, displayName?: string) => Promise<{ error: string | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    displayName?: string,
+    consent?: { ageConfirmed: boolean; termsAccepted: boolean },
+  ) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshRoles: () => Promise<void>;
 };
