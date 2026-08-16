@@ -23,7 +23,7 @@ type AuditRow = {
   id: string;
   action: string;
   resource: string | null;
-  actor_email: string | null;
+  actor_id: string | null;
   result: string;
   created_at: string;
 };
