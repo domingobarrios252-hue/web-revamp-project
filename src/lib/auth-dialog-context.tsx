@@ -66,11 +66,20 @@ function AuthModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
       toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos");
       return;
     }
+    if (mode === "signup" && (!ageOk || !termsOk)) {
+      toast.error(
+        "Debes confirmar que tienes 14 años o más y aceptar las Condiciones de Uso y la Política de Privacidad.",
+      );
+      return;
+    }
     setSubmitting(true);
     const { error } =
       mode === "login"
         ? await signIn(parsed.data.email, parsed.data.password)
-        : await signUp(parsed.data.email, parsed.data.password, parsed.data.displayName);
+        : await signUp(parsed.data.email, parsed.data.password, parsed.data.displayName, {
+            ageConfirmed: ageOk,
+            termsAccepted: termsOk,
+          });
     setSubmitting(false);
     if (error) {
       toast.error(
