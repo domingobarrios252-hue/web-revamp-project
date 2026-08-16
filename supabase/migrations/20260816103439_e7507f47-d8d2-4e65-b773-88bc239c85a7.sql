@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.admin_mfa_ok() FROM anon;
