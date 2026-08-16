@@ -274,6 +274,7 @@ function AdminLayout() {
       </section>
 
     </div>
+    </MfaChallengeGate>
   );
 }
 
