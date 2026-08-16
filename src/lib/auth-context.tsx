@@ -22,6 +22,8 @@ type AuthState = {
   refreshRoles: () => Promise<void>;
 };
 
+export const TERMS_VERSION = "2026-08-v1";
+
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
