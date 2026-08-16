@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Radio } from "lucide-react";
+import { useConsent } from "@/lib/consent";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 
 const PLAYER_ID = "A217BCEBB2594BDF8FE2E65131DBF663";
 const PLAYER_SRC = `https://players.cdn.enetres.net/live/${PLAYER_ID}022829`;
@@ -14,16 +16,20 @@ type Props = {
 /**
  * Reproductor oficial de World Skate Europe TV para el Europeo 2026.
  * Responsive 16:9, no provoca scroll horizontal en móviles.
+ * El iframe solo recibe src cuando el visitante permite el contenido externo.
  */
 export function WorldSkateEuropeLivePlayer({ isLive = false, className = "" }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { categories, ready } = useConsent();
+  const allowExternal = ready && categories.external;
 
   useEffect(() => {
     // El proveedor requiere asignar el src vía JS tras montar el iframe.
-    if (iframeRef.current && !iframeRef.current.src) {
+    if (allowExternal && iframeRef.current && !iframeRef.current.src) {
       iframeRef.current.src = PLAYER_SRC;
     }
-  }, []);
+  }, [allowExternal]);
+
 
   return (
     <section className={`mx-auto w-full max-w-5xl ${className}`}>
