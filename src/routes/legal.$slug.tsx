@@ -70,6 +70,13 @@ const SLUG_META: Record<
     icon: Cookie,
     label: "Cookies",
   },
+  "condiciones-uso": {
+    eyebrow: "Condiciones de uso y registro",
+    intro:
+      "Qué implica usar RollerZone y crear una cuenta: edad mínima de 14 años, uso permitido, contenidos y responsabilidades.",
+    icon: ScrollText,
+    label: "Condiciones de uso",
+  },
 };
 
 function slugify(s: string): string {
