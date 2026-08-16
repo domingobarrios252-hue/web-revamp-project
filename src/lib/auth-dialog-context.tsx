@@ -47,10 +47,13 @@ function AuthModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [ageOk, setAgeOk] = useState(false);
+  const [termsOk, setTermsOk] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const reset = () => {
     setEmail(""); setPassword(""); setDisplayName(""); setSubmitting(false);
+    setAgeOk(false); setTermsOk(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
