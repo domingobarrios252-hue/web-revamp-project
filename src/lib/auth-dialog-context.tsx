@@ -11,6 +11,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
+import { LegalConsentChecks } from "@/components/auth/LegalConsentChecks";
 
 type Ctx = { openAuthDialog: () => void; closeAuthDialog: () => void };
 const AuthDialogContext = createContext<Ctx | undefined>(undefined);
