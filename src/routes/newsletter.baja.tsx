@@ -23,7 +23,7 @@ export const Route = createFileRoute("/newsletter/baja")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: UnsubscribePage;
+  component: UnsubscribePage,
 });
 
 type State = "ready" | "loading" | "done" | "already" | "invalid" | "error";
