@@ -2519,7 +2519,6 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string | null
-          email: string | null
           id: string
           section_id: string | null
           suspended_at: string | null
@@ -2533,7 +2532,6 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
-          email?: string | null
           id?: string
           section_id?: string | null
           suspended_at?: string | null
@@ -2547,7 +2545,6 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
-          email?: string | null
           id?: string
           section_id?: string | null
           suspended_at?: string | null
@@ -3013,7 +3010,6 @@ export type Database = {
       security_audit_log: {
         Row: {
           action: string
-          actor_email: string | null
           actor_id: string | null
           actor_role: string | null
           created_at: string
@@ -3026,7 +3022,6 @@ export type Database = {
         }
         Insert: {
           action: string
-          actor_email?: string | null
           actor_id?: string | null
           actor_role?: string | null
           created_at?: string
@@ -3039,7 +3034,6 @@ export type Database = {
         }
         Update: {
           action?: string
-          actor_email?: string | null
           actor_id?: string | null
           actor_role?: string | null
           created_at?: string
@@ -3992,6 +3986,13 @@ export type Database = {
       }
     }
     Functions: {
+      admin_list_account_emails: {
+        Args: never
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
       admin_list_community_submissions: {
         Args: never
         Returns: {

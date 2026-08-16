@@ -27,16 +27,28 @@ function AdminUsersPage() {
 
   const reload = async () => {
     setLoading(true);
-    const [{ data: p }, { data: r }, { data: s }] = await Promise.all([
-      supabase.from("profiles").select("user_id, display_name, email, section_id, suspended_at"),
+    // El email vive únicamente en el sistema de autenticación: se pide aparte,
+    // sólo para esta pantalla y sólo si el administrador tiene MFA satisfecho.
+    const [{ data: p }, { data: r }, { data: s }, emails] = await Promise.all([
+      supabase.from("profiles").select("user_id, display_name, section_id, suspended_at"),
       supabase.from("user_roles").select("user_id, role"),
       supabase.from("sections").select("id, name").order("sort_order"),
+      supabase.rpc("admin_list_account_emails"),
     ]);
-    setProfiles((p as Profile[]) ?? []);
+    const emailMap = new Map<string, string | null>(
+      ((emails.data as { user_id: string; email: string | null }[] | null) ?? []).map((e) => [e.user_id, e.email]),
+    );
+    setProfiles(
+      (((p as Omit<Profile, "email">[]) ?? []).map((row) => ({
+        ...row,
+        email: emailMap.get(row.user_id) ?? null,
+      })) as Profile[]),
+    );
     setRoles((r as RoleRow[]) ?? []);
     setSections((s as Section[]) ?? []);
     setLoading(false);
   };
+
 
   useEffect(() => {
     if (isAdmin) reload();
