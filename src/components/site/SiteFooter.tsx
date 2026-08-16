@@ -19,10 +19,13 @@ import {
   BookOpenCheck,
   Eye,
   PenSquare,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { NewsletterForm } from "./NewsletterForm";
 import { usePageSettings } from "@/lib/pageSettings";
+import { openCookiePreferences } from "@/lib/consent";
+
 
 const CONTACT_EMAIL = "rollerzonespain@gmail.com";
 
@@ -183,8 +186,19 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <button
+                  type="button"
+                  onClick={openCookiePreferences}
+                  className={`${linkClass} min-h-[44px] text-left uppercase`}
+                >
+                  <SlidersHorizontal className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                  <span>Gestionar cookies</span>
+                </button>
+              </li>
             </ul>
           </div>
+
         </div>
 
         {/* Bottom bar */}
