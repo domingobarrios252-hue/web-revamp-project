@@ -2494,6 +2494,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_confirmed_14_at: string | null
           avatar_url: string | null
           created_at: string
           display_name: string | null
@@ -2501,10 +2502,13 @@ export type Database = {
           id: string
           section_id: string | null
           suspended_at: string | null
+          terms_accepted_at: string | null
+          terms_version: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          age_confirmed_14_at?: string | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
@@ -2512,10 +2516,13 @@ export type Database = {
           id?: string
           section_id?: string | null
           suspended_at?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          age_confirmed_14_at?: string | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
@@ -2523,6 +2530,8 @@ export type Database = {
           id?: string
           section_id?: string | null
           suspended_at?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           updated_at?: string
           user_id?: string
         }
