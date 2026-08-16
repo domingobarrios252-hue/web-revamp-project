@@ -111,36 +111,13 @@ function AuthPage() {
             required
           />
           {mode === "signup" && (
-            <div className="space-y-3 border-t border-border pt-3">
-              <Check checked={ageOk} onChange={setAgeOk} id="age14">
-                Confirmo que tengo <strong className="text-foreground">14 años o más</strong>.
-              </Check>
-              <Check checked={termsOk} onChange={setTermsOk} id="terms">
-                He leído y acepto las{" "}
-                <Link
-                  to="/legal/$slug"
-                  params={{ slug: "condiciones-uso" }}
-                  target="_blank"
-                  className="text-gold underline"
-                >
-                  Condiciones de Uso y Registro
-                </Link>{" "}
-                y la{" "}
-                <Link
-                  to="/legal/$slug"
-                  params={{ slug: "privacidad" }}
-                  target="_blank"
-                  className="text-gold underline"
-                >
-                  Política de Privacidad
-                </Link>
-                .
-              </Check>
-              <p className="text-xs text-muted-foreground">
-                No pedimos DNI ni fecha de nacimiento. Solo guardamos la constancia de estas
-                confirmaciones y su fecha.
-              </p>
-            </div>
+            <LegalConsentChecks
+              idPrefix="auth"
+              ageOk={ageOk}
+              termsOk={termsOk}
+              onAgeChange={setAgeOk}
+              onTermsChange={setTermsOk}
+            />
           )}
           <button
             type="submit"
