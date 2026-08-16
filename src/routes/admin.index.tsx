@@ -454,8 +454,10 @@ function NewsEditor({
   // Only show published writers in dropdown, but include current one if it's hidden
   const visibleWriters = writers.filter((w) => w.published || w.id === writerId);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (e: React.FormEvent | null, overrideStatus?: News["status"]) => {
+    e?.preventDefault();
+    const effectiveStatus = overrideStatus ?? status;
+
     const parsed = newsSchema.safeParse({
       title,
       slug,
