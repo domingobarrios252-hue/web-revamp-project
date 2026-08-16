@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Eye, EyeOff, Star, ArrowUp, ArrowDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  Plus, Pencil, Trash2, Eye, EyeOff, Star, ArrowUp, ArrowDown,
+  Bold, Italic, List, ListOrdered, Quote, Link2, Minus, Heading2, Heading3,
+  Image as ImageIcon, Video as VideoIcon, Images,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -10,7 +14,7 @@ import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import { NewsVideoUploadField, deleteStoredVideo } from "@/components/admin/NewsVideoUploadField";
 import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
 import { ContentBlocksEditor } from "@/components/admin/ContentBlocksEditor";
-import { cleanBlocks, parseBlocks, validateBlocks, type NewsBlock } from "@/lib/newsBlocks";
+import { cleanBlocks, createBlock, parseBlocks, validateBlocks, type NewsBlock } from "@/lib/newsBlocks";
 
 type Category = { id: string; name: string; slug: string; scope: string };
 type Writer = { id: string; full_name: string; published: boolean };
@@ -365,6 +369,7 @@ function NewsEditor({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { isAdmin } = useAuth();
   const [title, setTitle] = useState(item?.title ?? "");
   const [slug, setSlug] = useState(item?.slug ?? "");
   const [excerpt, setExcerpt] = useState(item?.excerpt ?? "");
