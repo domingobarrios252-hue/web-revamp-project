@@ -90,6 +90,7 @@ import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminRedRedactoresRouteImport } from './routes/admin.red-redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
+import { Route as AdminPermisosRouteImport } from './routes/admin.permisos'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
@@ -564,6 +565,11 @@ const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
   path: '/premios-mvp',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPermisosRoute = AdminPermisosRouteImport.update({
+  id: '/permisos',
+  path: '/permisos',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPendientesRoute = AdminPendientesRouteImport.update({
   id: '/pendientes',
   path: '/pendientes',
@@ -916,6 +922,7 @@ export interface FileRoutesByFullPath {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
+  '/admin/permisos': typeof AdminPermisosRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1055,6 +1062,7 @@ export interface FileRoutesByTo {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
+  '/admin/permisos': typeof AdminPermisosRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1191,6 +1199,7 @@ export interface FileRoutesById {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
+  '/admin/permisos': typeof AdminPermisosRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1335,6 +1344,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
+    | '/admin/permisos'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1474,6 +1484,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
+    | '/admin/permisos'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1609,6 +1620,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
+    | '/admin/permisos'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -2333,6 +2345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPremiosMvpRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/permisos': {
+      id: '/admin/permisos'
+      path: '/permisos'
+      fullPath: '/admin/permisos'
+      preLoaderRoute: typeof AdminPermisosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/pendientes': {
       id: '/admin/pendientes'
       path: '/pendientes'
@@ -2774,6 +2793,7 @@ interface AdminRouteChildren {
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPendientesRoute: typeof AdminPendientesRoute
+  AdminPermisosRoute: typeof AdminPermisosRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedRedactoresRoute: typeof AdminRedRedactoresRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
@@ -2822,6 +2842,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPendientesRoute: AdminPendientesRoute,
+  AdminPermisosRoute: AdminPermisosRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedRedactoresRoute: AdminRedRedactoresRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
