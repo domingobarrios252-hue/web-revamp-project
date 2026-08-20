@@ -26,6 +26,7 @@ import { Route as CaminoAlEuropeo2026RouteImport } from './routes/camino-al-euro
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AccesoInternoRouteImport } from './routes/acceso-interno'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
@@ -89,6 +90,7 @@ import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminRedRedactoresRouteImport } from './routes/admin.red-redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
+import { Route as AdminPermisosRouteImport } from './routes/admin.permisos'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
@@ -232,6 +234,11 @@ const AuthRoute = AuthRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccesoInternoRoute = AccesoInternoRouteImport.update({
+  id: '/acceso-interno',
+  path: '/acceso-interno',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -558,6 +565,11 @@ const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
   path: '/premios-mvp',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPermisosRoute = AdminPermisosRouteImport.update({
+  id: '/permisos',
+  path: '/permisos',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPendientesRoute = AdminPendientesRouteImport.update({
   id: '/pendientes',
   path: '/pendientes',
@@ -867,6 +879,7 @@ const HubCountryCompeticionLigaNacionalCalendarioRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acceso-interno': typeof AccesoInternoRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -909,6 +922,7 @@ export interface FileRoutesByFullPath {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
+  '/admin/permisos': typeof AdminPermisosRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1008,6 +1022,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acceso-interno': typeof AccesoInternoRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
@@ -1047,6 +1062,7 @@ export interface FileRoutesByTo {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
+  '/admin/permisos': typeof AdminPermisosRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1140,6 +1156,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/acceso-interno': typeof AccesoInternoRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -1182,6 +1199,7 @@ export interface FileRoutesById {
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
+  '/admin/permisos': typeof AdminPermisosRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1283,6 +1301,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/acceso-interno'
     | '/admin'
     | '/auth'
     | '/aviso-legal'
@@ -1325,6 +1344,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
+    | '/admin/permisos'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1424,6 +1444,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/acceso-interno'
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
@@ -1463,6 +1484,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
+    | '/admin/permisos'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1555,6 +1577,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/acceso-interno'
     | '/admin'
     | '/auth'
     | '/aviso-legal'
@@ -1597,6 +1620,7 @@ export interface FileRouteTypes {
     | '/admin/patinadores'
     | '/admin/patrocinadores'
     | '/admin/pendientes'
+    | '/admin/permisos'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1697,6 +1721,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccesoInternoRoute: typeof AccesoInternoRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
@@ -1870,6 +1895,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acceso-interno': {
+      id: '/acceso-interno'
+      path: '/acceso-interno'
+      fullPath: '/acceso-interno'
+      preLoaderRoute: typeof AccesoInternoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -2313,6 +2345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPremiosMvpRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/permisos': {
+      id: '/admin/permisos'
+      path: '/permisos'
+      fullPath: '/admin/permisos'
+      preLoaderRoute: typeof AdminPermisosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/pendientes': {
       id: '/admin/pendientes'
       path: '/pendientes'
@@ -2754,6 +2793,7 @@ interface AdminRouteChildren {
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPendientesRoute: typeof AdminPendientesRoute
+  AdminPermisosRoute: typeof AdminPermisosRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedRedactoresRoute: typeof AdminRedRedactoresRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
@@ -2802,6 +2842,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPendientesRoute: AdminPendientesRoute,
+  AdminPermisosRoute: AdminPermisosRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedRedactoresRoute: AdminRedRedactoresRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
@@ -3047,6 +3088,7 @@ const HubCountryRouteWithChildren = HubCountryRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccesoInternoRoute: AccesoInternoRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,

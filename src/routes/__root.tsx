@@ -1,6 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth-context";
-import { AuthDialogProvider } from "@/lib/auth-dialog-context";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -140,7 +139,6 @@ function RootComponent() {
     <LanguageProvider>
       <ConsentProvider>
         <AuthProvider>
-          <AuthDialogProvider>
             <PageSettingsProvider>
               <a href="#main-content" className="skip-link">Saltar al contenido</a>
               <AutoCanonical />
@@ -155,7 +153,6 @@ function RootComponent() {
               <GoogleAnalytics />
               <Toaster />
             </PageSettingsProvider>
-          </AuthDialogProvider>
         </AuthProvider>
       </ConsentProvider>
     </LanguageProvider>

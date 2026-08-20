@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.has_section_permission(uuid, text, text) FROM anon;
