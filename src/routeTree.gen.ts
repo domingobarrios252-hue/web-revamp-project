@@ -26,6 +26,7 @@ import { Route as CaminoAlEuropeo2026RouteImport } from './routes/camino-al-euro
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AccesoInternoRouteImport } from './routes/acceso-interno'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
@@ -232,6 +233,11 @@ const AuthRoute = AuthRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccesoInternoRoute = AccesoInternoRouteImport.update({
+  id: '/acceso-interno',
+  path: '/acceso-interno',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -867,6 +873,7 @@ const HubCountryCompeticionLigaNacionalCalendarioRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acceso-interno': typeof AccesoInternoRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -1008,6 +1015,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acceso-interno': typeof AccesoInternoRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
@@ -1140,6 +1148,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/acceso-interno': typeof AccesoInternoRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -1283,6 +1292,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/acceso-interno'
     | '/admin'
     | '/auth'
     | '/aviso-legal'
@@ -1424,6 +1434,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/acceso-interno'
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
@@ -1555,6 +1566,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/acceso-interno'
     | '/admin'
     | '/auth'
     | '/aviso-legal'
@@ -1697,6 +1709,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccesoInternoRoute: typeof AccesoInternoRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
@@ -1870,6 +1883,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acceso-interno': {
+      id: '/acceso-interno'
+      path: '/acceso-interno'
+      fullPath: '/acceso-interno'
+      preLoaderRoute: typeof AccesoInternoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -3047,6 +3067,7 @@ const HubCountryRouteWithChildren = HubCountryRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccesoInternoRoute: AccesoInternoRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
