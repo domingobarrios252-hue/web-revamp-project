@@ -1,24 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth-context";
-import { useAuthDialog } from "@/lib/auth-dialog-context";
+import { getMagazinePages } from "@/lib/magazines.functions";
 
 export const Route = createFileRoute("/revista/leer/$id")({
   component: MagazineReader,
 });
 
-const SIGNED_URL_TTL = 300; // 5 minutes
 const REFRESH_INTERVAL = 4 * 60 * 1000; // 4 minutes
-const BUCKET = "magazine-pages";
 
 function MagazineReader() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
-  const { openAuthDialog } = useAuthDialog();
+  const fetchPages = useServerFn(getMagazinePages);
 
   const [pages, setPages] = useState<string[]>([]);
   const [magTitle, setMagTitle] = useState("");
@@ -29,84 +25,34 @@ function MagazineReader() {
   const touchStartX = useRef<number | null>(null);
 
   const goHome = useCallback(
-    (msg: string, variant: "error" | "info" = "error") => {
-      if (variant === "info") toast.info(msg);
-      else toast.error(msg);
+    (msg: string) => {
+      toast.error(msg);
       navigate({ to: "/revista" });
     },
     [navigate],
   );
 
   const loadPages = useCallback(async () => {
-    // 1) Auth check
-    if (!user) {
-      openAuthDialog();
-      goHome("Inicia sesión para leer esta revista.", "info");
-      return;
-    }
-
-    // 2) Magazine exists + purchase or free
-    const { data: mag, error: magErr } = await supabase
-      .from("magazines")
-      .select("id, title, is_free, published")
-      .eq("id", id)
-      .maybeSingle();
-
-    if (magErr || !mag || !mag.published) {
-      goHome("Revista no disponible.");
-      return;
-    }
-    setMagTitle(mag.title);
-
-    if (!mag.is_free) {
-      const { data: purchase } = await supabase
-        .from("magazine_purchases")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("magazine_id", id)
-        .maybeSingle();
-      if (!purchase) {
-        goHome("Debes comprar esta revista para leerla.");
+    try {
+      const res = await fetchPages({ data: { id } });
+      if (!res.ok) {
+        goHome(res.error);
         return;
       }
-    }
-
-    // 3) List files
-    const { data: files, error: listErr } = await supabase.storage
-      .from(BUCKET)
-      .list(id, { limit: 500, sortBy: { column: "name", order: "asc" } });
-
-    if (listErr || !files || files.length === 0) {
-      goHome("Esta revista aún no tiene páginas publicadas.");
-      return;
-    }
-
-    const imageFiles = files
-      .filter((f) => /\.(jpe?g|png|webp)$/i.test(f.name))
-      .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-
-    // 4) Signed URLs (5 min)
-    const paths = imageFiles.map((f) => `${id}/${f.name}`);
-    const { data: signed, error: signErr } = await supabase.storage
-      .from(BUCKET)
-      .createSignedUrls(paths, SIGNED_URL_TTL);
-
-    if (signErr || !signed) {
+      setMagTitle(res.title);
+      setPages(res.pages);
+      setLoading(false);
+    } catch {
       goHome("No se pudieron cargar las páginas.");
-      return;
     }
-
-    setPages(signed.map((s) => s.signedUrl).filter(Boolean) as string[]);
-    setLoading(false);
-  }, [id, user, openAuthDialog, goHome]);
+  }, [fetchPages, id, goHome]);
 
   useEffect(() => {
-    if (authLoading) return;
     void loadPages();
     const interval = setInterval(() => void loadPages(), REFRESH_INTERVAL);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, id, user]);
+  }, [id]);
 
   const total = pages.length;
   const goPrev = useCallback(() => setCurrent((p) => Math.max(0, p - 1)), []);
