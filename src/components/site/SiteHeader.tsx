@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, X, Search, LayoutDashboard, LogOut, User as UserIcon, BookOpen } from "lucide-react";
+import { Menu, X, Search, LayoutDashboard, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
-import { useAuthDialog } from "@/lib/auth-dialog-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -45,7 +44,6 @@ export function SiteHeader() {
   const [searchValue, setSearchValue] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const { user, isEditor, signOut } = useAuth();
-  const { openAuthDialog } = useAuthDialog();
   const navigate = useNavigate();
   const { settings } = usePageSettings();
 
@@ -175,13 +173,8 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem asChild>
-                  <Link to="/mi-biblioteca" className="cursor-pointer">
-                    <BookOpen className="mr-2 h-4 w-4" /> Mi biblioteca
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
                   <Link to="/dashboard" className="cursor-pointer">
-                    <UserIcon className="mr-2 h-4 w-4" /> Mi panel
+                    <LayoutDashboard className="mr-2 h-4 w-4" /> Mi panel editorial
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -196,15 +189,7 @@ export function SiteHeader() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
-            <button
-              type="button"
-              onClick={openAuthDialog}
-              className={`${ACTION_BTN} hidden xl:inline-flex`}
-            >
-              Acceder / Mi cuenta
-            </button>
-          )}
+          ) : null}
 
           <button
             className="xl:hidden inline-flex h-11 w-11 items-center justify-center text-[#F5F5F5]"
@@ -271,13 +256,6 @@ export function SiteHeader() {
                       </Avatar>
                       <span className="truncate text-sm text-[#F5F5F5]">{displayName}</span>
                     </div>
-                    <Link
-                      to="/mi-biblioteca"
-                      onClick={() => setMobileOpen(false)}
-                      className="font-ui rounded-[6px] border border-[#333] px-3 py-2 text-center text-xs font-semibold tracking-wide text-[#F5F5F5]"
-                    >
-                      Mi biblioteca
-                    </Link>
                     {isEditor && (
                       <Link
                         to="/admin"
@@ -298,15 +276,7 @@ export function SiteHeader() {
                       Cerrar sesión
                     </button>
                   </>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => { setMobileOpen(false); openAuthDialog(); }}
-                    className="font-ui rounded-[6px] border border-[#D4A017] px-3 py-2 text-center text-xs font-semibold tracking-wide text-[#D4A017] hover:bg-[#D4A017] hover:text-[#1A1A1A]"
-                  >
-                    Acceder / Mi cuenta
-                  </button>
-                )}
+                ) : null}
               </div>
             </div>
           </aside>

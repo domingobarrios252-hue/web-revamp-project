@@ -19,7 +19,7 @@ function DashboardLayout() {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate({ to: "/auth" });
+      navigate({ to: "/acceso-interno" });
       return;
     }
     // El Admin trabaja desde /admin; los editores desde /dashboard
@@ -61,7 +61,7 @@ function DashboardLayout() {
           <button
             onClick={async () => {
               await signOut();
-              navigate({ to: "/auth" });
+              navigate({ to: "/acceso-interno" });
             }}
             className="font-condensed mt-2 flex items-center gap-2 px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-background hover:text-destructive"
           >

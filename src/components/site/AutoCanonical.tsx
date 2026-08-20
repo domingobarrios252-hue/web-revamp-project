@@ -72,7 +72,7 @@ export function AutoCanonical() {
     }
 
     // robots noindex on private/admin surfaces --------------------------
-    const PRIVATE_PREFIXES = ["/admin", "/dashboard", "/auth", "/mi-biblioteca"];
+    const PRIVATE_PREFIXES = ["/admin", "/dashboard", "/auth", "/acceso-interno", "/mi-biblioteca"];
     const shouldNoindex = PRIVATE_PREFIXES.some(
       (p) => pathname === p || pathname.startsWith(p + "/"),
     );

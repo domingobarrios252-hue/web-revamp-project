@@ -180,7 +180,7 @@ function AdminLayout() {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate({ to: "/auth" });
+      navigate({ to: "/acceso-interno" });
       return;
     }
     if (!loading && user && !isAdmin && (isEditor || isColaborador)) {
@@ -189,7 +189,7 @@ function AdminLayout() {
     }
     // Lectores (o cualquier usuario sin permisos editoriales) fuera de /admin.
     if (!loading && user && !isAdmin && !isEditor && !isColaborador) {
-      navigate({ to: "/mi-biblioteca" });
+      navigate({ to: "/" });
     }
   }, [user, loading, isAdmin, isEditor, isColaborador, navigate]);
 
@@ -208,8 +208,6 @@ function AdminLayout() {
         <p className="mt-2 text-sm text-muted-foreground">
           Si eres editor, accede a tu panel desde{" "}
           <Link to="/dashboard" className="text-gold hover:underline">/dashboard</Link>.
-          Si solo eres lector, puedes ver tus revistas en{" "}
-          <Link to="/mi-biblioteca" className="text-gold hover:underline">Mi biblioteca</Link>.
         </p>
       </div>
     );
