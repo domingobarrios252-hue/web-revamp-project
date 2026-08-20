@@ -725,6 +725,42 @@ export type Database = {
           },
         ]
       }
+      editor_permissions: {
+        Row: {
+          can_create: boolean
+          can_delete: boolean
+          can_edit: boolean
+          can_publish: boolean
+          created_at: string
+          id: string
+          section: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_publish?: boolean
+          created_at?: string
+          id?: string
+          section: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_publish?: boolean
+          created_at?: string
+          id?: string
+          section?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       event_clubs: {
         Row: {
           club_id: string
@@ -1879,6 +1915,7 @@ export type Database = {
           issue_number: string | null
           pdf_url: string | null
           price: number
+          public_access: boolean
           published: boolean
           read_url: string | null
           slug: string
@@ -1900,6 +1937,7 @@ export type Database = {
           issue_number?: string | null
           pdf_url?: string | null
           price?: number
+          public_access?: boolean
           published?: boolean
           read_url?: string | null
           slug: string
@@ -1921,6 +1959,7 @@ export type Database = {
           issue_number?: string | null
           pdf_url?: string | null
           price?: number
+          public_access?: boolean
           published?: boolean
           read_url?: string | null
           slug?: string
@@ -4051,6 +4090,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      has_section_permission: {
+        Args: { _action: string; _section: string; _user_id: string }
         Returns: boolean
       }
       is_editorial_staff: { Args: { _user_id: string }; Returns: boolean }
