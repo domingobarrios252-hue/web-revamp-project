@@ -25,6 +25,7 @@ type Magazine = {
   price: number | null;
   is_active: boolean | null;
   is_free: boolean | null;
+  public_access: boolean | null;
 };
 
 const schema = z.object({
@@ -211,6 +212,7 @@ function CountryPanel({
                 <th className="px-3 py-2 text-left">Precio (€)</th>
                 <th className="px-3 py-2 text-center">En venta</th>
                 <th className="px-3 py-2 text-center">Gratis</th>
+                <th className="px-3 py-2 text-center">Acceso público</th>
                 <th className="px-3 py-2 text-center">Publicada</th>
                 <th className="px-3 py-2"></th>
               </tr>
@@ -281,6 +283,9 @@ function MagazineRow({
       </td>
       <td className="px-3 py-2 text-center">
         <Toggle checked={!!m.is_free} onChange={(v) => onPatch({ is_free: v })} />
+      </td>
+      <td className="px-3 py-2 text-center">
+        <Toggle checked={!!m.public_access} onChange={(v) => onPatch({ public_access: v })} />
       </td>
       <td className="px-3 py-2 text-center">
         <Toggle checked={!!m.published} onChange={(v) => onPatch({ published: v })} />
