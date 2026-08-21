@@ -166,12 +166,6 @@ export function SiteFooter() {
                 </a>
               </li>
             </ul>
-            <div className="mt-5">
-              <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-[#D4A017]">
-                Newsletter
-              </span>
-              <NewsletterForm source="footer" />
-            </div>
           </div>
 
           {/* 5. Legal */}
