@@ -30,7 +30,6 @@ function RedactoresGate() {
   return <JoinContributorsBlock />;
 }
 
-import { NewsletterBand } from "@/components/home/NewsletterBand";
 import { SectionHeading } from "@/components/home/SectionHeading";
 
 type News = CoverNews & {
@@ -214,7 +213,6 @@ function HomePage() {
 
 
       {/* 12. NEWSLETTER */}
-      <NewsletterBand />
     </>
   );
 }

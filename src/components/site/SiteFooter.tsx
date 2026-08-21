@@ -23,7 +23,6 @@ import {
   ScrollText,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
-import { NewsletterForm } from "./NewsletterForm";
 import { usePageSettings } from "@/lib/pageSettings";
 import { openCookiePreferences } from "@/lib/consent";
 
