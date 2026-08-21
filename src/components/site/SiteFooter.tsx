@@ -23,7 +23,6 @@ import {
   ScrollText,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
-import { NewsletterForm } from "./NewsletterForm";
 import { usePageSettings } from "@/lib/pageSettings";
 import { openCookiePreferences } from "@/lib/consent";
 
@@ -166,12 +165,6 @@ export function SiteFooter() {
                 </a>
               </li>
             </ul>
-            <div className="mt-5">
-              <span className="font-condensed mb-2 block text-[11px] uppercase tracking-widest text-[#D4A017]">
-                Newsletter
-              </span>
-              <NewsletterForm source="footer" />
-            </div>
           </div>
 
           {/* 5. Legal */}
