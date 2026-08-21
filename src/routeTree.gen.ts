@@ -29,6 +29,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccesoInternoRouteImport } from './routes/acceso-interno'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
+import { Route as RevistaIndexRouteImport } from './routes/revista.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
@@ -250,6 +251,11 @@ const SalonDeLaFamaIndexRoute = SalonDeLaFamaIndexRouteImport.update({
   id: '/salon-de-la-fama/',
   path: '/salon-de-la-fama/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const RevistaIndexRoute = RevistaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RevistaRoute,
 } as any)
 const ResultadosIndexRoute = ResultadosIndexRouteImport.update({
   id: '/resultados/',
@@ -984,6 +990,7 @@ export interface FileRoutesByFullPath {
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
+  '/revista/': typeof RevistaIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
@@ -1032,7 +1039,6 @@ export interface FileRoutesByTo {
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
-  '/revista': typeof RevistaRouteWithChildren
   '/rollerzone-tv': typeof RollerzoneTvRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -1123,6 +1129,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/resultados': typeof ResultadosIndexRoute
+  '/revista': typeof RevistaIndexRoute
   '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
@@ -1261,6 +1268,7 @@ export interface FileRoutesById {
   '/eventos/': typeof EventosIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
+  '/revista/': typeof RevistaIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
@@ -1406,6 +1414,7 @@ export interface FileRouteTypes {
     | '/eventos/'
     | '/noticias/'
     | '/resultados/'
+    | '/revista/'
     | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
@@ -1454,7 +1463,6 @@ export interface FileRouteTypes {
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
-    | '/revista'
     | '/rollerzone-tv'
     | '/sitemap-news.xml'
     | '/sitemap.xml'
@@ -1545,6 +1553,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/noticias'
     | '/resultados'
+    | '/revista'
     | '/salon-de-la-fama'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
@@ -1682,6 +1691,7 @@ export interface FileRouteTypes {
     | '/eventos/'
     | '/noticias/'
     | '/resultados/'
+    | '/revista/'
     | '/salon-de-la-fama/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
@@ -1917,6 +1927,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/salon-de-la-fama/'
       preLoaderRoute: typeof SalonDeLaFamaIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/revista/': {
+      id: '/revista/'
+      path: '/'
+      fullPath: '/revista/'
+      preLoaderRoute: typeof RevistaIndexRouteImport
+      parentRoute: typeof RevistaRoute
     }
     '/resultados/': {
       id: '/resultados/'
@@ -2925,10 +2942,12 @@ const RedactoresRouteWithChildren = RedactoresRoute._addFileChildren(
 )
 
 interface RevistaRouteChildren {
+  RevistaIndexRoute: typeof RevistaIndexRoute
   RevistaLeerIdRoute: typeof RevistaLeerIdRoute
 }
 
 const RevistaRouteChildren: RevistaRouteChildren = {
+  RevistaIndexRoute: RevistaIndexRoute,
   RevistaLeerIdRoute: RevistaLeerIdRoute,
 }
 

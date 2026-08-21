@@ -34,7 +34,7 @@ type AdminPath =
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
   | "/admin/espana" | "/admin/colombia" | "/admin/resultados"
   | "/admin/resultados-eventos" | "/admin/resultados-pdfs"
-  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/colaboraciones" | "/admin/paginas" | "/admin/red-redactores" | "/admin/seguridad" | "/dashboard";
+  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/colaboraciones" | "/admin/paginas" | "/admin/red-redactores" | "/admin/seguridad" | "/admin/permisos" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
 type AdminGroup = { id: string; label: string; icon: React.ReactNode; links: AdminLinkDef[] };
@@ -154,6 +154,7 @@ const GROUPS: AdminGroup[] = [
       { to: "/admin/sobre-nosotros", label: "Sobre nosotros", icon: <Info className="h-4 w-4" /> },
       { to: "/admin/equipo", label: "Equipo", icon: <UsersRound className="h-4 w-4" /> },
       { to: "/admin/usuarios", label: "Usuarios y roles", icon: <ShieldCheck className="h-4 w-4" />, adminOnly: true },
+      { to: "/admin/permisos", label: "Permisos por sección", icon: <ShieldCheck className="h-4 w-4" />, adminOnly: true },
       { to: "/admin/seguridad", label: "Seguridad y accesos", icon: <ShieldCheck className="h-4 w-4" />, adminOnly: true },
 
     ],
