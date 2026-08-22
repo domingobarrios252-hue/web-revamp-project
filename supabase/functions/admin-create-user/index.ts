@@ -110,6 +110,23 @@ Deno.serve(async (req) => {
     return json({ ok: true });
   }
 
+  // --- Acción: reenviar enlace para establecer contraseña ---
+  if (payload.action === "invite-link") {
+    const targetEmail = payload.email?.trim().toLowerCase();
+    if (!targetEmail) return json({ error: "Email requerido" }, 400);
+    const { error: linkError } = await adminClient.auth.resetPasswordForEmail(targetEmail);
+    if (linkError) return json({ error: linkError.message }, 400);
+    await adminClient.from("security_audit_log").insert({
+      actor_id: authData.user.id,
+      action: "admin_send_password_link",
+      resource: "auth.users",
+      resource_id: payload.userId ?? null,
+      result: "success",
+      details: {},
+    });
+    return json({ ok: true });
+  }
+
   // --- Acción por defecto: crear ---
   const email = payload.email?.trim().toLowerCase();
   const password = payload.password ?? "";
