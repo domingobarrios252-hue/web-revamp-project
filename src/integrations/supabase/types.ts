@@ -4123,7 +4123,7 @@ export type Database = {
       mvp_tier: "elite" | "estrella" | "promesa"
       news_scope: "General" | "Nacional" | "Internacional"
       page_status: "active" | "hidden" | "coming_soon"
-      post_status: "draft" | "pending" | "published" | "rejected"
+      post_status: "draft" | "pending" | "published" | "rejected" | "archived"
       result_doc_status: "borrador" | "provisional" | "oficial" | "oculto"
       result_doc_type:
         | "clasificacion"
@@ -4268,7 +4268,7 @@ export const Constants = {
       mvp_tier: ["elite", "estrella", "promesa"],
       news_scope: ["General", "Nacional", "Internacional"],
       page_status: ["active", "hidden", "coming_soon"],
-      post_status: ["draft", "pending", "published", "rejected"],
+      post_status: ["draft", "pending", "published", "rejected", "archived"],
       result_doc_status: ["borrador", "provisional", "oficial", "oculto"],
       result_doc_type: [
         "clasificacion",
