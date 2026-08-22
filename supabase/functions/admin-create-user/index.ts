@@ -210,7 +210,7 @@ Deno.serve(async (req) => {
     resource: "auth.users",
     resource_id: userId,
     result: "success",
-    details: { role, country_code: countryCode, section_id: sectionId },
+    details: { role, country_code: countryCode, section_id: sectionId, invited: useInvite },
   });
 
   return json({ userId });
