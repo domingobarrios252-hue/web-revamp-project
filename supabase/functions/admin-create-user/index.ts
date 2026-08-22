@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 type Payload = {
-  action?: "create" | "delete" | "reset-password";
+  action?: "create" | "delete" | "reset-password" | "invite-link";
   email?: string;
   password?: string;
   displayName?: string;
@@ -110,6 +110,23 @@ Deno.serve(async (req) => {
     return json({ ok: true });
   }
 
+  // --- Acción: reenviar enlace para establecer contraseña ---
+  if (payload.action === "invite-link") {
+    const targetEmail = payload.email?.trim().toLowerCase();
+    if (!targetEmail) return json({ error: "Email requerido" }, 400);
+    const { error: linkError } = await adminClient.auth.resetPasswordForEmail(targetEmail);
+    if (linkError) return json({ error: linkError.message }, 400);
+    await adminClient.from("security_audit_log").insert({
+      actor_id: authData.user.id,
+      action: "admin_send_password_link",
+      resource: "auth.users",
+      resource_id: payload.userId ?? null,
+      result: "success",
+      details: {},
+    });
+    return json({ ok: true });
+  }
+
   // --- Acción por defecto: crear ---
   const email = payload.email?.trim().toLowerCase();
   const password = payload.password ?? "";
@@ -120,17 +137,25 @@ Deno.serve(async (req) => {
   const sectionId = role === "editor" && !countryCode ? payload.sectionId : null;
 
   if (!email || !/^\S+@\S+\.\S+$/.test(email)) return json({ error: "Email no válido" }, 400);
-  if (password.length < 8) return json({ error: "La contraseña debe tener al menos 8 caracteres" }, 400);
+  const useInvite = password.length === 0;
+  if (!useInvite && password.length < 8) {
+    return json({ error: "La contraseña debe tener al menos 8 caracteres" }, 400);
+  }
   if (role === "editor" && !sectionId && !countryCode) {
     return json({ error: "El editor necesita una sección o un territorio" }, 400);
   }
 
-  const { data: created, error: createError } = await adminClient.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: false,
-    user_metadata: { display_name: displayName },
-  });
+  // Sin contraseña => invitación por email: el editor establece su propia clave.
+  const { data: created, error: createError } = useInvite
+    ? await adminClient.auth.admin.inviteUserByEmail(email, {
+        data: { display_name: displayName },
+      })
+    : await adminClient.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: false,
+        user_metadata: { display_name: displayName },
+      });
   if (createError || !created.user) {
     return json({ error: createError?.message ?? "No se pudo crear el usuario" }, 400);
   }
@@ -185,10 +210,10 @@ Deno.serve(async (req) => {
     resource: "auth.users",
     resource_id: userId,
     result: "success",
-    details: { role, country_code: countryCode, section_id: sectionId },
+    details: { role, country_code: countryCode, section_id: sectionId, invited: useInvite },
   });
 
-  return json({ userId });
+  return json({ userId, invited: useInvite });
 });
 
 function json(body: unknown, status = 200) {
