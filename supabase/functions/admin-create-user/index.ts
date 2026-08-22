@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 type Payload = {
-  action?: "create" | "delete" | "reset-password";
+  action?: "create" | "delete" | "reset-password" | "invite-link";
   email?: string;
   password?: string;
   displayName?: string;
