@@ -21,6 +21,7 @@ import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MiamiRouteImport } from './routes/miami'
 import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
+import { Route as EquipoRouteImport } from './routes/equipo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as CaminoAlEuropeo2026RouteImport } from './routes/camino-al-europeo-2026'
@@ -218,6 +219,11 @@ const MiamiRoute = MiamiRouteImport.update({
 const MiBibliotecaRoute = MiBibliotecaRouteImport.update({
   id: '/mi-biblioteca',
   path: '/mi-biblioteca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipoRoute = EquipoRouteImport.update({
+  id: '/equipo',
+  path: '/equipo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -940,6 +946,7 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026RouteWithChildren
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/equipo': typeof EquipoRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
@@ -1089,6 +1096,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
+  '/equipo': typeof EquipoRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
@@ -1233,6 +1241,7 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026RouteWithChildren
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/equipo': typeof EquipoRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
@@ -1387,6 +1396,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026'
     | '/cookies'
     | '/dashboard'
+    | '/equipo'
     | '/mi-biblioteca'
     | '/miami'
     | '/paises'
@@ -1536,6 +1546,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/aviso-legal'
     | '/cookies'
+    | '/equipo'
     | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
@@ -1679,6 +1690,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026'
     | '/cookies'
     | '/dashboard'
+    | '/equipo'
     | '/mi-biblioteca'
     | '/miami'
     | '/paises'
@@ -1832,6 +1844,7 @@ export interface RootRouteChildren {
   CaminoAlEuropeo2026Route: typeof CaminoAlEuropeo2026RouteWithChildren
   CookiesRoute: typeof CookiesRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  EquipoRoute: typeof EquipoRoute
   MiBibliotecaRoute: typeof MiBibliotecaRoute
   MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
@@ -1965,6 +1978,13 @@ declare module '@tanstack/react-router' {
       path: '/mi-biblioteca'
       fullPath: '/mi-biblioteca'
       preLoaderRoute: typeof MiBibliotecaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipo': {
+      id: '/equipo'
+      path: '/equipo'
+      fullPath: '/equipo'
+      preLoaderRoute: typeof EquipoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -3287,6 +3307,7 @@ const rootRouteChildren: RootRouteChildren = {
   CaminoAlEuropeo2026Route: CaminoAlEuropeo2026RouteWithChildren,
   CookiesRoute: CookiesRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  EquipoRoute: EquipoRoute,
   MiBibliotecaRoute: MiBibliotecaRoute,
   MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,

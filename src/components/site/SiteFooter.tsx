@@ -115,6 +115,12 @@ export function SiteFooter() {
                 </li>
               ))}
               <li>
+                <Link to="/equipo" className={linkClass}>
+                  <Users className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
+                  <span>Equipo</span>
+                </Link>
+              </li>
+              <li>
                 <Link to="/redactores" className={linkClass}>
                   <PenSquare className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
                   <span>Red de redactores</span>
