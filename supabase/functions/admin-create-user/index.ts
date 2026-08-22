@@ -213,7 +213,7 @@ Deno.serve(async (req) => {
     details: { role, country_code: countryCode, section_id: sectionId, invited: useInvite },
   });
 
-  return json({ userId });
+  return json({ userId, invited: useInvite });
 });
 
 function json(body: unknown, status = 200) {
