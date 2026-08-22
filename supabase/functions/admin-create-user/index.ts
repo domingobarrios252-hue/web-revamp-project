@@ -1,5 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.103.3";
 
+/** Página pública donde el editor fija su contraseña tras abrir el correo. */
+const PASSWORD_REDIRECT = "https://rollerzone.es/establecer-clave";
+
+
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
