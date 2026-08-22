@@ -1,5 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.103.3";
 
+/** Página pública donde el editor fija su contraseña tras abrir el correo. */
+const PASSWORD_REDIRECT = "https://rollerzone.es/establecer-clave";
+
+
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -114,8 +119,11 @@ Deno.serve(async (req) => {
   if (payload.action === "invite-link") {
     const targetEmail = payload.email?.trim().toLowerCase();
     if (!targetEmail) return json({ error: "Email requerido" }, 400);
-    const { error: linkError } = await adminClient.auth.resetPasswordForEmail(targetEmail);
+    const { error: linkError } = await adminClient.auth.resetPasswordForEmail(targetEmail, {
+      redirectTo: PASSWORD_REDIRECT,
+    });
     if (linkError) return json({ error: linkError.message }, 400);
+
     await adminClient.from("security_audit_log").insert({
       actor_id: authData.user.id,
       action: "admin_send_password_link",
@@ -149,9 +157,11 @@ Deno.serve(async (req) => {
   const { data: created, error: createError } = useInvite
     ? await adminClient.auth.admin.inviteUserByEmail(email, {
         data: { display_name: displayName },
+        redirectTo: PASSWORD_REDIRECT,
       })
     : await adminClient.auth.admin.createUser({
         email,
+
         password,
         email_confirm: false,
         user_metadata: { display_name: displayName },
