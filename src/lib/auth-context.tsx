@@ -11,6 +11,7 @@ type AuthState = {
   isLector: boolean;
   sectionId: string | null;
   territory: string | null;
+  suspended: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (
