@@ -14,7 +14,7 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function DashboardLayout() {
-  const { user, isAdmin, isColaborador, isEditor, loading, signOut } = useAuth();
+  const { user, isAdmin, isColaborador, isEditor, suspended, loading, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +32,27 @@ function DashboardLayout() {
     return <div className="px-6 py-10 text-muted-foreground">Cargando…</div>;
   }
   if (!user) return null;
+
+  if (suspended) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-16 text-center">
+        <h1 className="font-display text-3xl tracking-widest">Acceso desactivado</h1>
+        <p className="mt-3 text-muted-foreground">
+          Tu acceso editorial está desactivado. Contacta con RollerZone.
+        </p>
+        <button
+          onClick={async () => {
+            await signOut();
+            navigate({ to: "/acceso-interno" });
+          }}
+          className="font-condensed mt-6 border border-border px-4 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    );
+  }
+
 
   if (!isEditor && !isColaborador) {
     return (
