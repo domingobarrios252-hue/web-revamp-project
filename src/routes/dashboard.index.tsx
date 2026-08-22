@@ -53,6 +53,7 @@ export const Route = createFileRoute("/dashboard/")({
 
 function MyPostsPage() {
   const { user, sectionId } = useAuth();
+  const [territory, setTerritory] = useState<string | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
   const [writers, setWriters] = useState<Writer[]>([]);
@@ -63,6 +64,30 @@ function MyPostsPage() {
 
   const reload = async () => {
     if (!user) return;
+    const { data: terr } = await supabase
+      .from("editor_countries")
+      .select("country_code")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    const myTerritory = ((terr as { country_code: string } | null)?.country_code) ?? null;
+    setTerritory(myTerritory);
+    if (myTerritory) {
+      setLoading(true);
+      const [{ data: tn }, { data: ts }, { data: tw }] = await Promise.all([
+        supabase
+          .from("news")
+          .select("id, title, slug, excerpt, content, image_url, status, section_id, review_feedback, updated_at")
+          .eq("created_by", user.id)
+          .order("updated_at", { ascending: false }),
+        supabase.from("sections").select("id, name").order("sort_order"),
+        supabase.from("writers").select("id, full_name").eq("published", true).order("sort_order"),
+      ]);
+      setPosts((tn as Post[]) ?? []);
+      setSections((ts as Section[]) ?? []);
+      setWriters((tw as Writer[]) ?? []);
+      setLoading(false);
+      return;
+    }
     if (!sectionId) {
       setPosts([]);
       setLoading(false);
@@ -114,7 +139,7 @@ function MyPostsPage() {
         <h1 className="font-display text-2xl tracking-widest md:text-3xl">Mis noticias</h1>
         <button
           onClick={() => setEditing("new")}
-          disabled={!sectionId}
+          disabled={!sectionId && !territory}
           className="font-condensed inline-flex items-center gap-1.5 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-40"
         >
           <Plus className="h-3.5 w-3.5" /> Nueva noticia
@@ -122,7 +147,12 @@ function MyPostsPage() {
       </div>
 
       <div className="mb-5 border border-border bg-surface px-3 py-2 text-xs text-muted-foreground">
-        {sectionId ? (
+        {territory ? (
+          <>
+            Territorio asignado: <strong className="text-gold">{territory.toUpperCase()}</strong>. El territorio se
+            asigna automáticamente en el servidor y todo el contenido pasa por revisión del administrador.
+          </>
+        ) : sectionId ? (
           <>
             Tu sección asignada: <strong className="text-gold">{mySection?.name ?? "…"}</strong>.
             Todas las noticias creadas o editadas quedarán pendientes de revisión.

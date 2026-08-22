@@ -19,6 +19,7 @@ import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as PaisesRouteImport } from './routes/paises'
+import { Route as MiamiRouteImport } from './routes/miami'
 import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiesRouteImport } from './routes/cookies'
@@ -32,6 +33,7 @@ import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fam
 import { Route as RevistaIndexRouteImport } from './routes/revista.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
+import { Route as MiamiIndexRouteImport } from './routes/miami.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EspecialesIndexRouteImport } from './routes/especiales.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
@@ -63,6 +65,7 @@ import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
+import { Route as DashboardMiamiRouteImport } from './routes/dashboard.miami'
 import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
 import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
 import { Route as CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport } from './routes/camino-al-europeo-2026.presentacion-europeo-2026'
@@ -96,6 +99,7 @@ import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
 import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
 import { Route as AdminPaginasRouteImport } from './routes/admin.paginas'
+import { Route as AdminMiamiRouteImport } from './routes/admin.miami'
 import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
 import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-results'
 import { Route as AdminLiveCenterRouteImport } from './routes/admin.live-center'
@@ -117,9 +121,13 @@ import { Route as AdminClasificacionesRouteImport } from './routes/admin.clasifi
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
+import { Route as MiamiNoticiasIndexRouteImport } from './routes/miami.noticias.index'
+import { Route as MiamiEntrevistasIndexRouteImport } from './routes/miami.entrevistas.index'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
+import { Route as MiamiNoticiasSlugRouteImport } from './routes/miami.noticias.$slug'
+import { Route as MiamiEntrevistasSlugRouteImport } from './routes/miami.entrevistas.$slug'
 import { Route as HubCountryTvRouteImport } from './routes/hub.$country.tv'
 import { Route as HubCountryRfepRouteImport } from './routes/hub.$country.rfep'
 import { Route as HubCountryPatinadoresRouteImport } from './routes/hub.$country.patinadores'
@@ -202,6 +210,11 @@ const PaisesRoute = PaisesRouteImport.update({
   path: '/paises',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MiamiRoute = MiamiRouteImport.update({
+  id: '/miami',
+  path: '/miami',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MiBibliotecaRoute = MiBibliotecaRouteImport.update({
   id: '/mi-biblioteca',
   path: '/mi-biblioteca',
@@ -266,6 +279,11 @@ const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MiamiIndexRoute = MiamiIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MiamiRoute,
 } as any)
 const EventosIndexRoute = EventosIndexRouteImport.update({
   id: '/eventos/',
@@ -423,6 +441,11 @@ const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   id: '/entrevistas/$slug',
   path: '/entrevistas/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardMiamiRoute = DashboardMiamiRouteImport.update({
+  id: '/miami',
+  path: '/miami',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const ColaboracionesSlugRoute = ColaboracionesSlugRouteImport.update({
   id: '/colaboraciones/$slug',
@@ -596,6 +619,11 @@ const AdminPaginasRoute = AdminPaginasRouteImport.update({
   path: '/paginas',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMiamiRoute = AdminMiamiRouteImport.update({
+  id: '/miami',
+  path: '/miami',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMedalleroRoute = AdminMedalleroRouteImport.update({
   id: '/medallero',
   path: '/medallero',
@@ -701,6 +729,16 @@ const CountrySplatRoute = CountrySplatRouteImport.update({
   path: '/$country/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MiamiNoticiasIndexRoute = MiamiNoticiasIndexRouteImport.update({
+  id: '/noticias/',
+  path: '/noticias/',
+  getParentRoute: () => MiamiRoute,
+} as any)
+const MiamiEntrevistasIndexRoute = MiamiEntrevistasIndexRouteImport.update({
+  id: '/entrevistas/',
+  path: '/entrevistas/',
+  getParentRoute: () => MiamiRoute,
+} as any)
 const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -715,6 +753,16 @@ const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MiamiNoticiasSlugRoute = MiamiNoticiasSlugRouteImport.update({
+  id: '/noticias/$slug',
+  path: '/noticias/$slug',
+  getParentRoute: () => MiamiRoute,
+} as any)
+const MiamiEntrevistasSlugRoute = MiamiEntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
+  getParentRoute: () => MiamiRoute,
 } as any)
 const HubCountryTvRoute = HubCountryTvRouteImport.update({
   id: '/tv',
@@ -893,6 +941,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/mi-biblioteca': typeof MiBibliotecaRoute
+  '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
@@ -924,6 +973,7 @@ export interface FileRoutesByFullPath {
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
+  '/admin/miami': typeof AdminMiamiRoute
   '/admin/paginas': typeof AdminPaginasRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -957,6 +1007,7 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
+  '/dashboard/miami': typeof DashboardMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -988,6 +1039,7 @@ export interface FileRoutesByFullPath {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
+  '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
@@ -1007,9 +1059,13 @@ export interface FileRoutesByFullPath {
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/hub/$country/rfep': typeof HubCountryRfepRoute
   '/hub/$country/tv': typeof HubCountryTvRouteWithChildren
+  '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
+  '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country/': typeof HubCountryIndexRoute
+  '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
+  '/miami/noticias/': typeof MiamiNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1064,6 +1120,7 @@ export interface FileRoutesByTo {
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
+  '/admin/miami': typeof AdminMiamiRoute
   '/admin/paginas': typeof AdminPaginasRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -1097,6 +1154,7 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
+  '/dashboard/miami': typeof DashboardMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1127,6 +1185,7 @@ export interface FileRoutesByTo {
   '/entrevistas': typeof EntrevistasIndexRoute
   '/especiales': typeof EspecialesIndexRoute
   '/eventos': typeof EventosIndexRoute
+  '/miami': typeof MiamiIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/resultados': typeof ResultadosIndexRoute
   '/revista': typeof RevistaIndexRoute
@@ -1141,9 +1200,13 @@ export interface FileRoutesByTo {
   '/hub/$country/live': typeof HubCountryLiveRoute
   '/hub/$country/mvp': typeof HubCountryMvpRoute
   '/hub/$country/rfep': typeof HubCountryRfepRoute
+  '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
+  '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country': typeof HubCountryIndexRoute
+  '/miami/entrevistas': typeof MiamiEntrevistasIndexRoute
+  '/miami/noticias': typeof MiamiNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
@@ -1171,6 +1234,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/mi-biblioteca': typeof MiBibliotecaRoute
+  '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/premios-mvp': typeof PremiosMvpRoute
@@ -1202,6 +1266,7 @@ export interface FileRoutesById {
   '/admin/live-center': typeof AdminLiveCenterRoute
   '/admin/live-results': typeof AdminLiveResultsRoute
   '/admin/medallero': typeof AdminMedalleroRoute
+  '/admin/miami': typeof AdminMiamiRoute
   '/admin/paginas': typeof AdminPaginasRoute
   '/admin/patinadores': typeof AdminPatinadoresRoute
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
@@ -1235,6 +1300,7 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
+  '/dashboard/miami': typeof DashboardMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1266,6 +1332,7 @@ export interface FileRoutesById {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
+  '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
@@ -1285,9 +1352,13 @@ export interface FileRoutesById {
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/hub/$country/rfep': typeof HubCountryRfepRoute
   '/hub/$country/tv': typeof HubCountryTvRouteWithChildren
+  '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
+  '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country/': typeof HubCountryIndexRoute
+  '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
+  '/miami/noticias/': typeof MiamiNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1317,6 +1388,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/dashboard'
     | '/mi-biblioteca'
+    | '/miami'
     | '/paises'
     | '/patrocinadores'
     | '/premios-mvp'
@@ -1348,6 +1420,7 @@ export interface FileRouteTypes {
     | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
+    | '/admin/miami'
     | '/admin/paginas'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -1381,6 +1454,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
+    | '/dashboard/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1412,6 +1486,7 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/especiales/'
     | '/eventos/'
+    | '/miami/'
     | '/noticias/'
     | '/resultados/'
     | '/revista/'
@@ -1431,9 +1506,13 @@ export interface FileRouteTypes {
     | '/hub/$country/patinadores'
     | '/hub/$country/rfep'
     | '/hub/$country/tv'
+    | '/miami/entrevistas/$slug'
+    | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
     | '/revista/leer/$id'
     | '/hub/$country/'
+    | '/miami/entrevistas/'
+    | '/miami/noticias/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -1488,6 +1567,7 @@ export interface FileRouteTypes {
     | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
+    | '/admin/miami'
     | '/admin/paginas'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -1521,6 +1601,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
+    | '/dashboard/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1551,6 +1632,7 @@ export interface FileRouteTypes {
     | '/entrevistas'
     | '/especiales'
     | '/eventos'
+    | '/miami'
     | '/noticias'
     | '/resultados'
     | '/revista'
@@ -1565,9 +1647,13 @@ export interface FileRouteTypes {
     | '/hub/$country/live'
     | '/hub/$country/mvp'
     | '/hub/$country/rfep'
+    | '/miami/entrevistas/$slug'
+    | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
     | '/revista/leer/$id'
     | '/hub/$country'
+    | '/miami/entrevistas'
+    | '/miami/noticias'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
@@ -1594,6 +1680,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/dashboard'
     | '/mi-biblioteca'
+    | '/miami'
     | '/paises'
     | '/patrocinadores'
     | '/premios-mvp'
@@ -1625,6 +1712,7 @@ export interface FileRouteTypes {
     | '/admin/live-center'
     | '/admin/live-results'
     | '/admin/medallero'
+    | '/admin/miami'
     | '/admin/paginas'
     | '/admin/patinadores'
     | '/admin/patrocinadores'
@@ -1658,6 +1746,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
+    | '/dashboard/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1689,6 +1778,7 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/especiales/'
     | '/eventos/'
+    | '/miami/'
     | '/noticias/'
     | '/resultados/'
     | '/revista/'
@@ -1708,9 +1798,13 @@ export interface FileRouteTypes {
     | '/hub/$country/patinadores'
     | '/hub/$country/rfep'
     | '/hub/$country/tv'
+    | '/miami/entrevistas/$slug'
+    | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
     | '/revista/leer/$id'
     | '/hub/$country/'
+    | '/miami/entrevistas/'
+    | '/miami/noticias/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -1739,6 +1833,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   MiBibliotecaRoute: typeof MiBibliotecaRoute
+  MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
@@ -1858,6 +1953,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaisesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/miami': {
+      id: '/miami'
+      path: '/miami'
+      fullPath: '/miami'
+      preLoaderRoute: typeof MiamiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mi-biblioteca': {
       id: '/mi-biblioteca'
       path: '/mi-biblioteca'
@@ -1948,6 +2050,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/noticias/'
       preLoaderRoute: typeof NoticiasIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/miami/': {
+      id: '/miami/'
+      path: '/'
+      fullPath: '/miami/'
+      preLoaderRoute: typeof MiamiIndexRouteImport
+      parentRoute: typeof MiamiRoute
     }
     '/eventos/': {
       id: '/eventos/'
@@ -2165,6 +2274,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/entrevistas/$slug'
       preLoaderRoute: typeof EntrevistasSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/miami': {
+      id: '/dashboard/miami'
+      path: '/miami'
+      fullPath: '/dashboard/miami'
+      preLoaderRoute: typeof DashboardMiamiRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/colaboraciones/$slug': {
       id: '/colaboraciones/$slug'
@@ -2397,6 +2513,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPaginasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/miami': {
+      id: '/admin/miami'
+      path: '/miami'
+      fullPath: '/admin/miami'
+      preLoaderRoute: typeof AdminMiamiRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/medallero': {
       id: '/admin/medallero'
       path: '/medallero'
@@ -2544,6 +2667,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountrySplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/miami/noticias/': {
+      id: '/miami/noticias/'
+      path: '/noticias'
+      fullPath: '/miami/noticias/'
+      preLoaderRoute: typeof MiamiNoticiasIndexRouteImport
+      parentRoute: typeof MiamiRoute
+    }
+    '/miami/entrevistas/': {
+      id: '/miami/entrevistas/'
+      path: '/entrevistas'
+      fullPath: '/miami/entrevistas/'
+      preLoaderRoute: typeof MiamiEntrevistasIndexRouteImport
+      parentRoute: typeof MiamiRoute
+    }
     '/hub/$country/': {
       id: '/hub/$country/'
       path: '/'
@@ -2564,6 +2701,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/noticias/articulo/$slug'
       preLoaderRoute: typeof NoticiasArticuloSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/miami/noticias/$slug': {
+      id: '/miami/noticias/$slug'
+      path: '/noticias/$slug'
+      fullPath: '/miami/noticias/$slug'
+      preLoaderRoute: typeof MiamiNoticiasSlugRouteImport
+      parentRoute: typeof MiamiRoute
+    }
+    '/miami/entrevistas/$slug': {
+      id: '/miami/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/miami/entrevistas/$slug'
+      preLoaderRoute: typeof MiamiEntrevistasSlugRouteImport
+      parentRoute: typeof MiamiRoute
     }
     '/hub/$country/tv': {
       id: '/hub/$country/tv'
@@ -2806,6 +2957,7 @@ interface AdminRouteChildren {
   AdminLiveCenterRoute: typeof AdminLiveCenterRoute
   AdminLiveResultsRoute: typeof AdminLiveResultsRoute
   AdminMedalleroRoute: typeof AdminMedalleroRoute
+  AdminMiamiRoute: typeof AdminMiamiRoute
   AdminPaginasRoute: typeof AdminPaginasRoute
   AdminPatinadoresRoute: typeof AdminPatinadoresRoute
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
@@ -2855,6 +3007,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLiveCenterRoute: AdminLiveCenterRoute,
   AdminLiveResultsRoute: AdminLiveResultsRoute,
   AdminMedalleroRoute: AdminMedalleroRoute,
+  AdminMiamiRoute: AdminMiamiRoute,
   AdminPaginasRoute: AdminPaginasRoute,
   AdminPatinadoresRoute: AdminPatinadoresRoute,
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
@@ -2918,16 +3071,36 @@ const CaminoAlEuropeo2026RouteWithChildren =
   CaminoAlEuropeo2026Route._addFileChildren(CaminoAlEuropeo2026RouteChildren)
 
 interface DashboardRouteChildren {
+  DashboardMiamiRoute: typeof DashboardMiamiRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardMiamiRoute: DashboardMiamiRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
+
+interface MiamiRouteChildren {
+  MiamiIndexRoute: typeof MiamiIndexRoute
+  MiamiEntrevistasSlugRoute: typeof MiamiEntrevistasSlugRoute
+  MiamiNoticiasSlugRoute: typeof MiamiNoticiasSlugRoute
+  MiamiEntrevistasIndexRoute: typeof MiamiEntrevistasIndexRoute
+  MiamiNoticiasIndexRoute: typeof MiamiNoticiasIndexRoute
+}
+
+const MiamiRouteChildren: MiamiRouteChildren = {
+  MiamiIndexRoute: MiamiIndexRoute,
+  MiamiEntrevistasSlugRoute: MiamiEntrevistasSlugRoute,
+  MiamiNoticiasSlugRoute: MiamiNoticiasSlugRoute,
+  MiamiEntrevistasIndexRoute: MiamiEntrevistasIndexRoute,
+  MiamiNoticiasIndexRoute: MiamiNoticiasIndexRoute,
+}
+
+const MiamiRouteWithChildren = MiamiRoute._addFileChildren(MiamiRouteChildren)
 
 interface RedactoresRouteChildren {
   RedactoresIdRoute: typeof RedactoresIdRoute
@@ -3115,6 +3288,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   DashboardRoute: DashboardRouteWithChildren,
   MiBibliotecaRoute: MiBibliotecaRoute,
+  MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PremiosMvpRoute: PremiosMvpRoute,

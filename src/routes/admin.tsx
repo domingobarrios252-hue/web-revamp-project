@@ -32,7 +32,7 @@ type AdminPath =
   | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule"
   | "/admin/medallero" | "/admin/live-results" | "/admin/sections"
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
-  | "/admin/espana" | "/admin/colombia" | "/admin/resultados"
+  | "/admin/espana" | "/admin/colombia" | "/admin/miami" | "/admin/resultados"
   | "/admin/resultados-eventos" | "/admin/resultados-pdfs"
   | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/colaboraciones" | "/admin/paginas" | "/admin/red-redactores" | "/admin/seguridad" | "/admin/permisos" | "/dashboard";
 
@@ -91,6 +91,7 @@ const GROUPS: AdminGroup[] = [
     links: [
       { to: "/admin/espana", label: "España", icon: <Flag className="h-4 w-4" /> },
       { to: "/admin/colombia", label: "Colombia", icon: <Globe2 className="h-4 w-4" /> },
+      { to: "/admin/miami", label: "Miami", icon: <Globe2 className="h-4 w-4" /> },
     ],
   },
   {

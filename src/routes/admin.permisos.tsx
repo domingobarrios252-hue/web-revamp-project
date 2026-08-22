@@ -56,6 +56,8 @@ function AdminPermissionsPage() {
   const [perms, setPerms] = useState<Record<string, PermRow>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [territory, setTerritory] = useState<string>("");
+  const [savingTerritory, setSavingTerritory] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -123,6 +125,42 @@ function AdminPermissionsPage() {
       })),
     [perms, selected],
   );
+
+  useEffect(() => {
+    if (!selected) {
+      setTerritory("");
+      return;
+    }
+    (async () => {
+      const { data } = await supabase
+        .from("editor_countries")
+        .select("country_code")
+        .eq("user_id", selected)
+        .maybeSingle();
+      setTerritory(((data as { country_code: string } | null)?.country_code) ?? "");
+    })();
+  }, [selected]);
+
+  const saveTerritory = async () => {
+    if (!selected) return;
+    setSavingTerritory(true);
+    await supabase.from("editor_countries").delete().eq("user_id", selected);
+    if (territory) {
+      const { error } = await supabase
+        .from("editor_countries")
+        .insert({ user_id: selected, country_code: territory });
+      if (error) {
+        setSavingTerritory(false);
+        return toast.error(error.message);
+      }
+    }
+    setSavingTerritory(false);
+    toast.success(
+      territory
+        ? "Territorio asignado. El editor solo podrá trabajar en ese territorio."
+        : "Territorio retirado.",
+    );
+  };
 
   if (!isAdmin) return <p className="text-muted-foreground">Solo administradores.</p>;
 
@@ -216,6 +254,36 @@ function AdminPermissionsPage() {
 
           {selected && (
             <>
+              <div className="mb-5 border border-border bg-surface p-4">
+                <h2 className="font-condensed mb-2 text-xs font-bold uppercase tracking-widest text-gold">
+                  Territorio editorial asignado
+                </h2>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Un editor con territorio asignado solo puede crear y editar contenido de ese territorio; el
+                  valor se aplica en el servidor y nunca puede publicar sin aprobación del administrador.
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <select
+                    value={territory}
+                    onChange={(e) => setTerritory(e.target.value)}
+                    className="min-h-11 border border-border bg-background px-3 text-sm"
+                  >
+                    <option value="">Sin territorio (editor general)</option>
+                    <option value="mia">Miami</option>
+                    <option value="es">España</option>
+                    <option value="co">Colombia</option>
+                    <option value="ve">Venezuela</option>
+                  </select>
+                  <button
+                    onClick={saveTerritory}
+                    disabled={savingTerritory}
+                    className="font-condensed inline-flex min-h-11 items-center gap-2 border border-gold px-4 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background disabled:opacity-50"
+                  >
+                    <Save className="h-4 w-4" /> {savingTerritory ? "Guardando…" : "Guardar territorio"}
+                  </button>
+                </div>
+              </div>
+
               <div className="overflow-x-auto border border-border bg-surface">
                 <table className="w-full min-w-[560px] text-sm">
                   <thead className="border-b border-border bg-background">
