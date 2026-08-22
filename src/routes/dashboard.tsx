@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { FileText, LogOut } from "lucide-react";
+import { FileText, LogOut, Globe2 } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -57,6 +57,13 @@ function DashboardLayout() {
             activeOptions={{ exact: true }}
           >
             <FileText className="h-4 w-4" /> Mis noticias
+          </Link>
+          <Link
+            to="/dashboard/miami"
+            className="font-condensed flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-background hover:text-gold"
+            activeProps={{ className: "bg-background text-gold" }}
+          >
+            <Globe2 className="h-4 w-4" /> Miami
           </Link>
           <button
             onClick={async () => {

@@ -4,6 +4,7 @@ import { Calendar, Eye, User as UserIcon, Instagram, Facebook, MessageCircle, Li
 import { supabase } from "@/integrations/supabase/client";
 import { getVisitorHash } from "@/lib/visitor";
 import { toast } from "sonner";
+import { RelatedContent } from "@/components/site/RelatedContent";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { CroppedImage } from "@/components/site/CroppedImage";
 import { Lightbox } from "@/components/site/Lightbox";
@@ -415,6 +416,8 @@ function ArticlePage() {
         />
       )}
 
+
+      <RelatedContent countryCode={article.country_code} excludeId={article.id} />
 
       {/* Banner publicidad in-article */}
       <div className="mt-10">
