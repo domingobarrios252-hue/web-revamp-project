@@ -21,6 +21,7 @@ import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MiamiRouteImport } from './routes/miami'
 import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
+import { Route as EstablecerClaveRouteImport } from './routes/establecer-clave'
 import { Route as EquipoRouteImport } from './routes/equipo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CookiesRouteImport } from './routes/cookies'
@@ -220,6 +221,11 @@ const MiamiRoute = MiamiRouteImport.update({
 const MiBibliotecaRoute = MiBibliotecaRouteImport.update({
   id: '/mi-biblioteca',
   path: '/mi-biblioteca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstablecerClaveRoute = EstablecerClaveRouteImport.update({
+  id: '/establecer-clave',
+  path: '/establecer-clave',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EquipoRoute = EquipoRouteImport.update({
@@ -953,6 +959,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/equipo': typeof EquipoRoute
+  '/establecer-clave': typeof EstablecerClaveRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
@@ -1104,6 +1111,7 @@ export interface FileRoutesByTo {
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/equipo': typeof EquipoRoute
+  '/establecer-clave': typeof EstablecerClaveRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
@@ -1250,6 +1258,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/equipo': typeof EquipoRoute
+  '/establecer-clave': typeof EstablecerClaveRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
@@ -1406,6 +1415,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/dashboard'
     | '/equipo'
+    | '/establecer-clave'
     | '/mi-biblioteca'
     | '/miami'
     | '/paises'
@@ -1557,6 +1567,7 @@ export interface FileRouteTypes {
     | '/aviso-legal'
     | '/cookies'
     | '/equipo'
+    | '/establecer-clave'
     | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
@@ -1702,6 +1713,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/dashboard'
     | '/equipo'
+    | '/establecer-clave'
     | '/mi-biblioteca'
     | '/miami'
     | '/paises'
@@ -1857,6 +1869,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   EquipoRoute: typeof EquipoRoute
+  EstablecerClaveRoute: typeof EstablecerClaveRoute
   MiBibliotecaRoute: typeof MiBibliotecaRoute
   MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
@@ -1991,6 +2004,13 @@ declare module '@tanstack/react-router' {
       path: '/mi-biblioteca'
       fullPath: '/mi-biblioteca'
       preLoaderRoute: typeof MiBibliotecaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/establecer-clave': {
+      id: '/establecer-clave'
+      path: '/establecer-clave'
+      fullPath: '/establecer-clave'
+      preLoaderRoute: typeof EstablecerClaveRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/equipo': {
@@ -3328,6 +3348,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   DashboardRoute: DashboardRouteWithChildren,
   EquipoRoute: EquipoRoute,
+  EstablecerClaveRoute: EstablecerClaveRoute,
   MiBibliotecaRoute: MiBibliotecaRoute,
   MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,
