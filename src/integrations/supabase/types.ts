@@ -1403,62 +1403,101 @@ export type Database = {
       }
       interviews: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           content: string | null
           country_code: string
           cover_crops: Json
           cover_display_mode: string
           cover_url: string | null
           created_at: string
+          created_by: string | null
           excerpt: string | null
+          gallery: Json
           hub_countries: string[]
           id: string
           interview_date: string
           interviewee_bio: string | null
           interviewee_name: string
+          meta_description: string | null
+          og_image_url: string | null
           photos: Json
           published: boolean
+          published_at: string | null
+          published_by: string | null
+          review_feedback: string | null
+          seo_title: string | null
           slug: string
           sort_order: number
+          status: Database["public"]["Enums"]["post_status"]
+          submitted_at: string | null
+          subtitle: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           content?: string | null
           country_code?: string
           cover_crops?: Json
           cover_display_mode?: string
           cover_url?: string | null
           created_at?: string
+          created_by?: string | null
           excerpt?: string | null
+          gallery?: Json
           hub_countries?: string[]
           id?: string
           interview_date: string
           interviewee_bio?: string | null
           interviewee_name: string
+          meta_description?: string | null
+          og_image_url?: string | null
           photos?: Json
           published?: boolean
+          published_at?: string | null
+          published_by?: string | null
+          review_feedback?: string | null
+          seo_title?: string | null
           slug: string
           sort_order?: number
+          status?: Database["public"]["Enums"]["post_status"]
+          submitted_at?: string | null
+          subtitle?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           content?: string | null
           country_code?: string
           cover_crops?: Json
           cover_display_mode?: string
           cover_url?: string | null
           created_at?: string
+          created_by?: string | null
           excerpt?: string | null
+          gallery?: Json
           hub_countries?: string[]
           id?: string
           interview_date?: string
           interviewee_bio?: string | null
           interviewee_name?: string
+          meta_description?: string | null
+          og_image_url?: string | null
           photos?: Json
           published?: boolean
+          published_at?: string | null
+          published_by?: string | null
+          review_feedback?: string | null
+          seo_title?: string | null
           slug?: string
           sort_order?: number
+          status?: Database["public"]["Enums"]["post_status"]
+          submitted_at?: string | null
+          subtitle?: string | null
           title?: string
           updated_at?: string
         }
@@ -2114,6 +2153,8 @@ export type Database = {
       }
       news: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           author: string
           category_id: string | null
           competition_tag: string | null
@@ -2137,11 +2178,13 @@ export type Database = {
           live_start_at: string | null
           published: boolean
           published_at: string
+          published_by: string | null
           read_minutes: number | null
           review_feedback: string | null
           section_id: string | null
           slug: string
           status: Database["public"]["Enums"]["post_status"]
+          submitted_at: string | null
           title: string
           updated_at: string
           video_embed_url: string | null
@@ -2151,6 +2194,8 @@ export type Database = {
           writer_id: string | null
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           author?: string
           category_id?: string | null
           competition_tag?: string | null
@@ -2174,11 +2219,13 @@ export type Database = {
           live_start_at?: string | null
           published?: boolean
           published_at?: string
+          published_by?: string | null
           read_minutes?: number | null
           review_feedback?: string | null
           section_id?: string | null
           slug: string
           status?: Database["public"]["Enums"]["post_status"]
+          submitted_at?: string | null
           title: string
           updated_at?: string
           video_embed_url?: string | null
@@ -2188,6 +2235,8 @@ export type Database = {
           writer_id?: string | null
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           author?: string
           category_id?: string | null
           competition_tag?: string | null
@@ -2211,11 +2260,13 @@ export type Database = {
           live_start_at?: string | null
           published?: boolean
           published_at?: string
+          published_by?: string | null
           read_minutes?: number | null
           review_feedback?: string | null
           section_id?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["post_status"]
+          submitted_at?: string | null
           title?: string
           updated_at?: string
           video_embed_url?: string | null
@@ -4084,6 +4135,7 @@ export type Database = {
         Returns: string
       }
       current_user_section_id: { Args: never; Returns: string }
+      editor_country_code: { Args: { _user_id: string }; Returns: string }
       has_assigned_section: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -4096,6 +4148,7 @@ export type Database = {
         Args: { _action: string; _section: string; _user_id: string }
         Returns: boolean
       }
+      is_country_editor: { Args: { _user_id: string }; Returns: boolean }
       is_editorial_staff: { Args: { _user_id: string }; Returns: boolean }
       log_security_event: {
         Args: {
