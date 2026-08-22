@@ -4076,6 +4076,16 @@ export type Database = {
       }
     }
     Functions: {
+      admin_list_account_details: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          email_confirmed: boolean
+          last_sign_in_at: string
+          user_id: string
+        }[]
+      }
       admin_list_account_emails: {
         Args: never
         Returns: {

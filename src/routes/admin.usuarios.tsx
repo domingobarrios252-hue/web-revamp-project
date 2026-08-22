@@ -1,14 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Shield, ShieldCheck, ShieldOff, UserPlus, Ban, Trash2, RotateCcw, BookOpen } from "lucide-react";
+import { Shield, ShieldCheck, ShieldOff, UserPlus, Ban, Trash2, RotateCcw, BookOpen, KeyRound, Globe2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
 type AppRole = "admin" | "editor" | "user" | "colaborador" | "lector";
-type Profile = { user_id: string; display_name: string | null; email: string | null; section_id: string | null; suspended_at: string | null };
+type Profile = {
+  user_id: string;
+  display_name: string | null;
+  email: string | null;
+  section_id: string | null;
+  suspended_at: string | null;
+  created_at?: string | null;
+  last_sign_in_at?: string | null;
+};
 type RoleRow = { user_id: string; role: AppRole };
 type Section = { id: string; name: string };
+type Country = { code: string; name: string };
+type AccountDetail = { user_id: string; email: string | null; created_at: string | null; last_sign_in_at: string | null };
 type Filter = "all" | "admin" | "editor" | "lector" | "suspended";
 
 export const Route = createFileRoute("/admin/usuarios")({
@@ -20,6 +30,8 @@ function AdminUsersPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [roles, setRoles] = useState<RoleRow[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [territories, setTerritories] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
@@ -29,20 +41,30 @@ function AdminUsersPage() {
     setLoading(true);
     // El email vive únicamente en el sistema de autenticación: se pide aparte,
     // sólo para esta pantalla y sólo si el administrador tiene MFA satisfecho.
-    const [{ data: p }, { data: r }, { data: s }, emails] = await Promise.all([
+    const [{ data: p }, { data: r }, { data: s }, { data: c }, { data: terr }, details] = await Promise.all([
       supabase.from("profiles").select("user_id, display_name, section_id, suspended_at"),
       supabase.from("user_roles").select("user_id, role"),
       supabase.from("sections").select("id, name").order("sort_order"),
-      supabase.rpc("admin_list_account_emails"),
+      supabase.from("countries").select("code, name").order("name"),
+      supabase.from("editor_countries").select("user_id, country_code"),
+      supabase.rpc("admin_list_account_details"),
     ]);
-    const emailMap = new Map<string, string | null>(
-      ((emails.data as { user_id: string; email: string | null }[] | null) ?? []).map((e) => [e.user_id, e.email]),
+    const detailMap = new Map<string, AccountDetail>(
+      ((details.data as AccountDetail[] | null) ?? []).map((d) => [d.user_id, d]),
     );
     setProfiles(
       (((p as Omit<Profile, "email">[]) ?? []).map((row) => ({
         ...row,
-        email: emailMap.get(row.user_id) ?? null,
+        email: detailMap.get(row.user_id)?.email ?? null,
+        created_at: detailMap.get(row.user_id)?.created_at ?? null,
+        last_sign_in_at: detailMap.get(row.user_id)?.last_sign_in_at ?? null,
       })) as Profile[]),
+    );
+    setCountries((c as Country[]) ?? []);
+    setTerritories(
+      Object.fromEntries(
+        ((terr as { user_id: string; country_code: string }[] | null) ?? []).map((t) => [t.user_id, t.country_code]),
+      ),
     );
     setRoles((r as RoleRow[]) ?? []);
     setSections((s as Section[]) ?? []);
@@ -103,6 +125,42 @@ function AdminUsersPage() {
     }
   };
 
+  const setTerritory = async (userId: string, code: string | null) => {
+    const { error: delErr } = await supabase.from("editor_countries").delete().eq("user_id", userId);
+    if (delErr) return toast.error(delErr.message);
+    if (code) {
+      const { error } = await supabase.from("editor_countries").insert({ user_id: userId, country_code: code });
+      if (error) return toast.error(error.message);
+      // Permisos editoriales mínimos del territorio: crear/editar noticias y entrevistas.
+      await supabase.from("editor_permissions").delete().eq("user_id", userId);
+      await supabase.from("editor_permissions").insert(
+        ["noticias", "entrevistas"].map((section) => ({
+          user_id: userId,
+          section,
+          can_create: true,
+          can_edit: true,
+          can_delete: false,
+          can_publish: false,
+        })),
+      );
+    }
+    toast.success(code ? "Territorio asignado" : "Territorio retirado");
+    reload();
+  };
+
+  const resetPassword = async (p: Profile) => {
+    const pwd = prompt(
+      `Nueva contraseña temporal para ${p.display_name ?? p.email ?? "el usuario"} (mínimo 10 caracteres).\nEl usuario podrá cambiarla después.`,
+    );
+    if (!pwd) return;
+    const { data, error } = await supabase.functions.invoke("admin-create-user", {
+      body: { action: "reset-password", userId: p.user_id, newPassword: pwd },
+    });
+    if (error) return toast.error(error.message);
+    if ((data as { error?: string } | null)?.error) return toast.error((data as { error: string }).error);
+    toast.success("Contraseña restablecida");
+  };
+
   const toggleSuspend = async (p: Profile) => {
     if (p.user_id === me?.id) return toast.error("No puedes suspenderte a ti mismo.");
     const next = p.suspended_at ? null : new Date().toISOString();
@@ -128,23 +186,24 @@ function AdminUsersPage() {
   return (
     <div>
       <div className="mb-5 flex items-center justify-between">
-        <h1 className="font-display text-2xl tracking-widest md:text-3xl">Usuarios</h1>
+        <h1 className="font-display text-2xl tracking-widest md:text-3xl">
+          Equipo interno <Globe2 className="inline h-4 w-4 text-gold" />
+        </h1>
         <button
           onClick={() => setShowCreate(true)}
           className="font-condensed inline-flex items-center gap-1.5 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
         >
-          <UserPlus className="h-3.5 w-3.5" /> Crear usuario
+          <UserPlus className="h-3.5 w-3.5" /> Crear miembro del equipo
         </button>
       </div>
 
       <div className="mb-4 flex items-start gap-2 border border-border bg-surface p-3 text-xs text-muted-foreground">
         <UserPlus className="mt-0.5 h-4 w-4 text-gold" />
         <p>
-          Los usuarios se registran desde <code className="text-gold">/auth</code> y reciben por defecto el rol{" "}
-          <strong className="text-foreground">LECTOR</strong>. Aquí puedes ascender a{" "}
-          <strong>editor</strong> (contenido limitado a una sección, sujeto a aprobación) o{" "}
-          <strong>admin</strong> (control total), y también <strong>suspender</strong> o{" "}
-          <strong>eliminar</strong> cuentas.
+          El registro público está desactivado: <strong className="text-foreground">solo un ADMIN crea cuentas</strong>.
+          Los miembros del equipo entran por <code className="text-gold">/acceso-interno</code> con correo y contraseña.
+          Un editor con <strong>territorio</strong> (por ejemplo Miami) solo puede crear y editar noticias y entrevistas
+          de esa región y enviarlas a revisión; publicar es exclusivo del ADMIN.
         </p>
       </div>
 
@@ -180,6 +239,8 @@ function AdminUsersPage() {
                 <th className="px-3 py-2">Usuario</th>
                 <th className="px-3 py-2">Roles</th>
                 <th className="px-3 py-2">Sección</th>
+                <th className="px-3 py-2">Territorio</th>
+                <th className="px-3 py-2">Alta / último acceso</th>
                 <th className="px-3 py-2 text-right">Acciones</th>
               </tr>
             </thead>
@@ -244,6 +305,30 @@ function AdminUsersPage() {
                       </select>
                     </td>
                     <td className="px-3 py-2">
+                      <select
+                        value={territories[p.user_id] ?? ""}
+                        onChange={(e) => setTerritory(p.user_id, e.target.value || null)}
+                        disabled={!isEditor}
+                        title={isEditor ? "Territorio autorizado" : "Solo aplica a editores no administradores"}
+                        className="border border-border bg-background px-2 py-1 text-xs focus:border-gold focus:outline-none disabled:opacity-50"
+                      >
+                        <option value="">—</option>
+                        {countries.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground">
+                      <div>{p.created_at ? new Date(p.created_at).toLocaleDateString("es-ES") : "—"}</div>
+                      <div>
+                        {p.last_sign_in_at
+                          ? new Date(p.last_sign_in_at).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })
+                          : "Sin accesos"}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2">
                       <div className="flex flex-wrap justify-end gap-1.5">
                         <RoleToggle
                           enabled={userRoles.includes("lector") || userRoles.length === 0}
@@ -263,6 +348,13 @@ function AdminUsersPage() {
                           icon={<ShieldCheck className="h-3.5 w-3.5" />}
                           label="Admin"
                         />
+                        <button
+                          onClick={() => resetPassword(p)}
+                          className="font-condensed inline-flex items-center gap-1 border border-border bg-background px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-gold"
+                          title="Restablecer contraseña"
+                        >
+                          <KeyRound className="h-3.5 w-3.5" /> Contraseña
+                        </button>
                         {!isMe && (
                           <>
                             <button
@@ -298,6 +390,7 @@ function AdminUsersPage() {
       {showCreate && (
         <CreateUserModal
           sections={sections}
+          countries={countries}
           onClose={() => setShowCreate(false)}
           onCreated={() => {
             setShowCreate(false);
@@ -337,10 +430,12 @@ function RoleToggle({
 
 function CreateUserModal({
   sections,
+  countries,
   onClose,
   onCreated,
 }: {
   sections: Section[];
+  countries: Country[];
   onClose: () => void;
   onCreated: () => void;
 }) {
@@ -349,11 +444,15 @@ function CreateUserModal({
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"admin" | "editor" | "lector">("lector");
   const [sectionId, setSectionId] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const [saving, setSaving] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (role === "editor" && !sectionId) return toast.error("Asigna una sección al editor");
+    if (role === "editor" && !sectionId && !countryCode) {
+      return toast.error("Asigna una sección o un territorio al editor");
+    }
+    if (password.length < 10) return toast.error("La contraseña inicial debe tener al menos 10 caracteres");
     setSaving(true);
     const { data, error } = await supabase.functions.invoke("admin-create-user", {
       body: {
@@ -362,7 +461,8 @@ function CreateUserModal({
         password,
         displayName,
         role,
-        sectionId: role === "editor" ? sectionId : null,
+        sectionId: role === "editor" && !countryCode ? sectionId : null,
+        countryCode: role === "editor" ? countryCode || null : null,
       },
     });
     setSaving(false);
@@ -378,13 +478,13 @@ function CreateUserModal({
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-background/85 p-4 backdrop-blur">
       <div className="w-full max-w-lg border border-border bg-surface p-5 md:p-7">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-2xl tracking-widest">Crear usuario</h2>
+          <h2 className="font-display text-2xl tracking-widest">Crear miembro del equipo</h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">✕</button>
         </div>
         <form onSubmit={onSubmit} className="space-y-3">
           <UserField label="Nombre" value={displayName} onChange={setDisplayName} required />
           <UserField label="Email" type="email" value={email} onChange={setEmail} required />
-          <UserField label="Contraseña temporal" type="password" value={password} onChange={setPassword} required />
+          <UserField label="Contraseña inicial (mín. 10 caracteres)" type="password" value={password} onChange={setPassword} required />
           <label className="block">
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Rol</span>
             <select value={role} onChange={(e) => setRole(e.target.value as "admin" | "editor" | "lector")} className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none">
@@ -394,6 +494,29 @@ function CreateUserModal({
             </select>
           </label>
           {role === "editor" && (
+            <label className="block">
+              <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+                Territorio autorizado (Miami, España…)
+              </span>
+              <select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none"
+              >
+                <option value="">— Sin territorio (editor por sección) —</option>
+                {countries.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <span className="mt-1 block text-[11px] text-muted-foreground">
+                Con territorio, el editor solo podrá crear noticias y entrevistas de esa región y nunca publicar
+                directamente.
+              </span>
+            </label>
+          )}
+          {role === "editor" && !countryCode && (
             <label className="block">
               <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Sección única</span>
               <select value={sectionId} onChange={(e) => setSectionId(e.target.value)} required className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none">

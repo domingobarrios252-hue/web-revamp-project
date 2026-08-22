@@ -10,6 +10,7 @@ type AuthState = {
   isColaborador: boolean;
   isLector: boolean;
   sectionId: string | null;
+  territory: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (
@@ -31,20 +32,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
   const [sectionId, setSectionId] = useState<string | null>(null);
+  const [territory, setTerritory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadRoles = async (uid: string | null) => {
     if (!uid) {
       setRoles([]);
       setSectionId(null);
+      setTerritory(null);
       return;
     }
-    const [{ data: r }, { data: p }] = await Promise.all([
+    const [{ data: r }, { data: p }, { data: t }] = await Promise.all([
       supabase.from("user_roles").select("role").eq("user_id", uid),
       supabase.from("profiles").select("section_id").eq("user_id", uid).maybeSingle(),
+      supabase.from("editor_countries").select("country_code").eq("user_id", uid).limit(1).maybeSingle(),
     ]);
     setRoles((r ?? []).map((x) => x.role as string));
     setSectionId(((p as { section_id: string | null } | null)?.section_id) ?? null);
+    setTerritory(((t as { country_code: string } | null)?.country_code) ?? null);
   };
 
   useEffect(() => {
@@ -58,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setRoles([]);
         setSectionId(null);
+        setTerritory(null);
       }
     });
 
@@ -126,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isColaborador: roles.includes("colaborador"),
         isLector: roles.includes("lector"),
         sectionId,
+        territory,
         loading,
         signIn,
         signUp,

@@ -21,7 +21,7 @@ export const Route = createFileRoute("/acceso-interno")({
 });
 
 function InternalAccessPage() {
-  const { user, isAdmin, isEditor, isColaborador, signIn, loading } = useAuth();
+  const { user, isAdmin, isEditor, isColaborador, territory, signIn, loading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,8 +30,10 @@ function InternalAccessPage() {
   useEffect(() => {
     if (loading || !user) return;
     if (isAdmin) navigate({ to: "/admin", replace: true });
+    else if ((isEditor || isColaborador) && territory === "mia")
+      navigate({ to: "/dashboard/miami", replace: true });
     else if (isEditor || isColaborador) navigate({ to: "/dashboard", replace: true });
-  }, [user, isAdmin, isEditor, isColaborador, loading, navigate]);
+  }, [user, isAdmin, isEditor, isColaborador, territory, loading, navigate]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
