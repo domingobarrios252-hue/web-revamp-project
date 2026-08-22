@@ -66,6 +66,7 @@ import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
+import { Route as EditorMiamiRouteImport } from './routes/editor.miami'
 import { Route as DashboardMiamiRouteImport } from './routes/dashboard.miami'
 import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
 import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
@@ -446,6 +447,11 @@ const EspanaArchivoRoute = EspanaArchivoRouteImport.update({
 const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   id: '/entrevistas/$slug',
   path: '/entrevistas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EditorMiamiRoute = EditorMiamiRouteImport.update({
+  id: '/editor/miami',
+  path: '/editor/miami',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardMiamiRoute = DashboardMiamiRouteImport.update({
@@ -1015,6 +1021,7 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/editor/miami': typeof EditorMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1163,6 +1170,7 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/editor/miami': typeof EditorMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1310,6 +1318,7 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/editor/miami': typeof EditorMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1465,6 +1474,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/editor/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1613,6 +1623,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/editor/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1759,6 +1770,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/editor/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1859,6 +1871,7 @@ export interface RootRouteChildren {
   TvRoute: typeof TvRoute
   CountrySplatRoute: typeof CountrySplatRoute
   ColaboracionesSlugRoute: typeof ColaboracionesSlugRoute
+  EditorMiamiRoute: typeof EditorMiamiRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EspanaArchivoRoute: typeof EspanaArchivoRoute
   EspanaClubesRoute: typeof EspanaClubesRoute
@@ -2293,6 +2306,13 @@ declare module '@tanstack/react-router' {
       path: '/entrevistas/$slug'
       fullPath: '/entrevistas/$slug'
       preLoaderRoute: typeof EntrevistasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/editor/miami': {
+      id: '/editor/miami'
+      path: '/editor/miami'
+      fullPath: '/editor/miami'
+      preLoaderRoute: typeof EditorMiamiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/miami': {
@@ -3322,6 +3342,7 @@ const rootRouteChildren: RootRouteChildren = {
   TvRoute: TvRoute,
   CountrySplatRoute: CountrySplatRoute,
   ColaboracionesSlugRoute: ColaboracionesSlugRoute,
+  EditorMiamiRoute: EditorMiamiRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EspanaArchivoRoute: EspanaArchivoRoute,
   EspanaClubesRoute: EspanaClubesRoute,
