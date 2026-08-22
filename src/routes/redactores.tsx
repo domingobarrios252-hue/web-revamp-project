@@ -81,23 +81,9 @@ function WriterCard({ writer }: { writer: Writer }) {
     <Link
       to="/redactores/$id"
       params={{ id: writer.id }}
-      className="group flex flex-col border border-border bg-surface p-3 transition-colors hover:border-gold"
+      className="group flex flex-col border border-border bg-surface p-4 transition-colors hover:border-gold"
     >
-      <div className="relative aspect-square overflow-hidden border border-border bg-background">
-        {writer.photo_url ? (
-          <img
-            src={writer.photo_url}
-            alt={writer.full_name}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-gold/30">
-            <PenLine className="h-10 w-10" />
-          </div>
-        )}
-      </div>
-      <h2 className="font-display mt-2.5 text-center text-sm tracking-wider group-hover:text-gold md:text-base">
+      <h2 className="font-display text-center text-sm tracking-wider group-hover:text-gold md:text-base">
         {writer.full_name}
       </h2>
       {writer.bio && (
