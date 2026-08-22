@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Shield, ShieldCheck, ShieldOff, UserPlus, Ban, Trash2, RotateCcw, BookOpen, KeyRound, Globe2 } from "lucide-react";
+import { Shield, ShieldCheck, ShieldOff, UserPlus, Ban, Trash2, RotateCcw, BookOpen, KeyRound, Globe2, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -144,6 +144,13 @@ function AdminUsersPage() {
         })),
       );
     }
+    await supabase.rpc("log_security_event", {
+      _action: "admin_set_territory",
+      _resource: "editor_countries",
+      _resource_id: userId,
+      _result: "success",
+      _details: { country_code: code },
+    });
     toast.success(code ? "Territorio asignado" : "Territorio retirado");
     reload();
   };
@@ -161,11 +168,28 @@ function AdminUsersPage() {
     toast.success("Contraseña restablecida");
   };
 
+  const sendAccessLink = async (p: Profile) => {
+    if (!p.email) return toast.error("Sin email disponible para esta cuenta");
+    const { data, error } = await supabase.functions.invoke("admin-create-user", {
+      body: { action: "invite-link", email: p.email, userId: p.user_id },
+    });
+    if (error) return toast.error(error.message);
+    if ((data as { error?: string } | null)?.error) return toast.error((data as { error: string }).error);
+    toast.success("Enlace para establecer contraseña enviado por email");
+  };
+
   const toggleSuspend = async (p: Profile) => {
     if (p.user_id === me?.id) return toast.error("No puedes suspenderte a ti mismo.");
     const next = p.suspended_at ? null : new Date().toISOString();
     const { error } = await supabase.from("profiles").update({ suspended_at: next }).eq("user_id", p.user_id);
     if (error) return toast.error(error.message);
+    await supabase.rpc("log_security_event", {
+      _action: next ? "admin_suspend_user" : "admin_reactivate_user",
+      _resource: "profiles",
+      _resource_id: p.user_id,
+      _result: "success",
+      _details: {},
+    });
     toast.success(next ? "Usuario suspendido" : "Suspensión retirada");
     reload();
   };
@@ -355,6 +379,13 @@ function AdminUsersPage() {
                         >
                           <KeyRound className="h-3.5 w-3.5" /> Contraseña
                         </button>
+                        <button
+                          onClick={() => sendAccessLink(p)}
+                          className="font-condensed inline-flex items-center gap-1 border border-border bg-background px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-gold"
+                          title="Enviar enlace por email para que establezca su contraseña"
+                        >
+                          <Mail className="h-3.5 w-3.5" /> Enviar acceso
+                        </button>
                         {!isMe && (
                           <>
                             <button
@@ -452,7 +483,9 @@ function CreateUserModal({
     if (role === "editor" && !sectionId && !countryCode) {
       return toast.error("Asigna una sección o un territorio al editor");
     }
-    if (password.length < 10) return toast.error("La contraseña inicial debe tener al menos 10 caracteres");
+    if (password.length > 0 && password.length < 10) {
+      return toast.error("La contraseña inicial debe tener al menos 10 caracteres");
+    }
     setSaving(true);
     const { data, error } = await supabase.functions.invoke("admin-create-user", {
       body: {
@@ -469,7 +502,11 @@ function CreateUserModal({
     if (error) toast.error(error.message);
     else if ((data as { error?: string } | null)?.error) toast.error((data as { error: string }).error);
     else {
-      toast.success("Usuario creado");
+      toast.success(
+        (data as { invited?: boolean } | null)?.invited
+          ? "Usuario creado. Se ha enviado un email para que establezca su contraseña."
+          : "Usuario creado con contraseña provisional",
+      );
       onCreated();
     }
   };
@@ -484,7 +521,15 @@ function CreateUserModal({
         <form onSubmit={onSubmit} className="space-y-3">
           <UserField label="Nombre" value={displayName} onChange={setDisplayName} required />
           <UserField label="Email" type="email" value={email} onChange={setEmail} required />
-          <UserField label="Contraseña inicial (mín. 10 caracteres)" type="password" value={password} onChange={setPassword} required />
+          <UserField
+            label="Contraseña provisional (opcional, mín. 10 caracteres)"
+            type="password"
+            value={password}
+            onChange={setPassword}
+          />
+          <p className="-mt-2 text-[11px] text-muted-foreground">
+            Déjala en blanco para enviar un email de invitación y que la persona cree su propia contraseña.
+          </p>
           <label className="block">
             <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Rol</span>
             <select value={role} onChange={(e) => setRole(e.target.value as "admin" | "editor" | "lector")} className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none">
