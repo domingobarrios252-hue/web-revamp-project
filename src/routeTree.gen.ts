@@ -151,6 +151,8 @@ import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$co
 import { Route as HubCountryFederacionesIndexRouteImport } from './routes/hub.$country.federaciones.index'
 import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
 import { Route as HubCountryClubesIndexRouteImport } from './routes/hub.$country.clubes.index'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as HubCountryTvSlugRouteImport } from './routes/hub.$country.tv.$slug'
 import { Route as HubCountryRegionesCodeRouteImport } from './routes/hub.$country.regiones.$code'
 import { Route as HubCountryPatinadoresSlugRouteImport } from './routes/hub.$country.patinadores.$slug'
@@ -885,6 +887,16 @@ const HubCountryClubesIndexRoute = HubCountryClubesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HubCountryClubesRoute,
 } as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HubCountryTvSlugRoute = HubCountryTvSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -1093,6 +1105,8 @@ export interface FileRoutesByFullPath {
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/regiones/$code': typeof HubCountryRegionesCodeRoute
   '/hub/$country/tv/$slug': typeof HubCountryTvSlugRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/hub/$country/clubes/': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones/': typeof HubCountryFederacionesIndexRoute
@@ -1236,6 +1250,8 @@ export interface FileRoutesByTo {
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/regiones/$code': typeof HubCountryRegionesCodeRoute
   '/hub/$country/tv/$slug': typeof HubCountryTvSlugRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/hub/$country/clubes': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones': typeof HubCountryFederacionesIndexRoute
@@ -1392,6 +1408,8 @@ export interface FileRoutesById {
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
   '/hub/$country/regiones/$code': typeof HubCountryRegionesCodeRoute
   '/hub/$country/tv/$slug': typeof HubCountryTvSlugRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/hub/$country/clubes/': typeof HubCountryClubesIndexRoute
   '/hub/$country/competicion/': typeof HubCountryCompeticionIndexRoute
   '/hub/$country/federaciones/': typeof HubCountryFederacionesIndexRoute
@@ -1549,6 +1567,8 @@ export interface FileRouteTypes {
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/regiones/$code'
     | '/hub/$country/tv/$slug'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/hub/$country/clubes/'
     | '/hub/$country/competicion/'
     | '/hub/$country/federaciones/'
@@ -1692,6 +1712,8 @@ export interface FileRouteTypes {
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/regiones/$code'
     | '/hub/$country/tv/$slug'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/hub/$country/clubes'
     | '/hub/$country/competicion'
     | '/hub/$country/federaciones'
@@ -1847,6 +1869,8 @@ export interface FileRouteTypes {
     | '/hub/$country/patinadores/$slug'
     | '/hub/$country/regiones/$code'
     | '/hub/$country/tv/$slug'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/hub/$country/clubes/'
     | '/hub/$country/competicion/'
     | '/hub/$country/federaciones/'
@@ -1918,6 +1942,8 @@ export interface RootRouteChildren {
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2916,6 +2942,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryClubesIndexRouteImport
       parentRoute: typeof HubCountryClubesRoute
     }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hub/$country/tv/$slug': {
       id: '/hub/$country/tv/$slug'
       path: '/$slug'
@@ -3397,6 +3437,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -41,7 +41,13 @@ const cspReportOnly = [
 ].join('; ')
 
 const securityHeaders = createMiddleware({ type: 'request' }).server(
-  async ({ next }) => {
+  async ({ next, request }) => {
+    // Las rutas /lovable/* (webhooks de correo, previews) se autentican solas.
+    const url = new URL(request.url)
+    if (url.pathname.startsWith('/lovable/')) {
+      return next()
+    }
+
     const result = await next()
     const headers = result.response.headers
     const contentType = headers.get('content-type') ?? ''
