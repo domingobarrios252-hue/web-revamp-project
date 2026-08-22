@@ -7,13 +7,15 @@ const corsHeaders = {
 };
 
 type Payload = {
-  action?: "create" | "delete";
+  action?: "create" | "delete" | "reset-password";
   email?: string;
   password?: string;
   displayName?: string;
   role?: "admin" | "editor" | "lector";
   sectionId?: string | null;
+  countryCode?: string | null;
   userId?: string;
+  newPassword?: string;
 };
 
 Deno.serve(async (req) => {
@@ -65,7 +67,6 @@ Deno.serve(async (req) => {
     );
   }
 
-
   let payload: Payload;
   try {
     payload = await req.json();
@@ -86,17 +87,43 @@ Deno.serve(async (req) => {
     return json({ ok: true });
   }
 
+  // --- Acción: restablecer contraseña (nunca se muestra la anterior) ---
+  if (payload.action === "reset-password") {
+    const uid = payload.userId;
+    const newPassword = payload.newPassword ?? "";
+    if (!uid) return json({ error: "userId requerido" }, 400);
+    if (newPassword.length < 10) {
+      return json({ error: "La nueva contraseña debe tener al menos 10 caracteres" }, 400);
+    }
+    const { error: pwError } = await adminClient.auth.admin.updateUserById(uid, {
+      password: newPassword,
+    });
+    if (pwError) return json({ error: pwError.message }, 400);
+    await adminClient.from("security_audit_log").insert({
+      actor_id: authData.user.id,
+      action: "admin_reset_password",
+      resource: "auth.users",
+      resource_id: uid,
+      result: "success",
+      details: {},
+    });
+    return json({ ok: true });
+  }
+
   // --- Acción por defecto: crear ---
   const email = payload.email?.trim().toLowerCase();
   const password = payload.password ?? "";
   const displayName = payload.displayName?.trim() || email?.split("@")[0] || "Usuario";
   const role: "admin" | "editor" | "lector" =
     payload.role === "admin" ? "admin" : payload.role === "lector" ? "lector" : "editor";
-  const sectionId = role === "editor" ? payload.sectionId : null;
+  const countryCode = role === "editor" ? (payload.countryCode || null) : null;
+  const sectionId = role === "editor" && !countryCode ? payload.sectionId : null;
 
   if (!email || !/^\S+@\S+\.\S+$/.test(email)) return json({ error: "Email no válido" }, 400);
   if (password.length < 8) return json({ error: "La contraseña debe tener al menos 8 caracteres" }, 400);
-  if (role === "editor" && !sectionId) return json({ error: "El editor necesita una sección" }, 400);
+  if (role === "editor" && !sectionId && !countryCode) {
+    return json({ error: "El editor necesita una sección o un territorio" }, 400);
+  }
 
   const { data: created, error: createError } = await adminClient.auth.admin.createUser({
     email,
@@ -127,6 +154,39 @@ Deno.serve(async (req) => {
     role,
   });
   if (roleInsertError) return json({ error: roleInsertError.message }, 400);
+
+  // Territorio del editor (Miami, España, Colombia…): se fija SIEMPRE en servidor.
+  if (countryCode) {
+    await adminClient.from("editor_countries").delete().eq("user_id", userId);
+    const { error: terrError } = await adminClient
+      .from("editor_countries")
+      .insert({ user_id: userId, country_code: countryCode });
+    if (terrError) return json({ error: terrError.message }, 400);
+
+    // Permisos mínimos del editor territorial: crear y editar noticias y entrevistas.
+    // Nunca publicar ni eliminar: eso queda reservado al ADMIN.
+    await adminClient.from("editor_permissions").delete().eq("user_id", userId);
+    const { error: permError } = await adminClient.from("editor_permissions").insert(
+      ["noticias", "entrevistas"].map((section) => ({
+        user_id: userId,
+        section,
+        can_create: true,
+        can_edit: true,
+        can_delete: false,
+        can_publish: false,
+      })),
+    );
+    if (permError) return json({ error: permError.message }, 400);
+  }
+
+  await adminClient.from("security_audit_log").insert({
+    actor_id: authData.user.id,
+    action: "admin_create_account",
+    resource: "auth.users",
+    resource_id: userId,
+    result: "success",
+    details: { role, country_code: countryCode, section_id: sectionId },
+  });
 
   return json({ userId });
 });
