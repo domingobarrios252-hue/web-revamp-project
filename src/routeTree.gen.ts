@@ -70,6 +70,7 @@ import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as EditorMiamiRouteImport } from './routes/editor.miami'
+import { Route as DashboardPortugalRouteImport } from './routes/dashboard.portugal'
 import { Route as DashboardMiamiRouteImport } from './routes/dashboard.miami'
 import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
 import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
@@ -478,6 +479,11 @@ const EditorMiamiRoute = EditorMiamiRouteImport.update({
   id: '/editor/miami',
   path: '/editor/miami',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardPortugalRoute = DashboardPortugalRouteImport.update({
+  id: '/portugal',
+  path: '/portugal',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardMiamiRoute = DashboardMiamiRouteImport.update({
   id: '/miami',
@@ -1085,6 +1091,7 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
@@ -1243,6 +1250,7 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
@@ -1401,6 +1409,7 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
@@ -1567,6 +1576,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/dashboard/portugal'
     | '/editor/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
@@ -1725,6 +1735,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/dashboard/portugal'
     | '/editor/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
@@ -1882,6 +1893,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/dashboard/portugal'
     | '/editor/miami'
     | '/entrevistas/$slug'
     | '/espana/archivo'
@@ -2458,6 +2470,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/editor/miami'
       preLoaderRoute: typeof EditorMiamiRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/portugal': {
+      id: '/dashboard/portugal'
+      path: '/portugal'
+      fullPath: '/dashboard/portugal'
+      preLoaderRoute: typeof DashboardPortugalRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/miami': {
       id: '/dashboard/miami'
@@ -3307,11 +3326,13 @@ const CaminoAlEuropeo2026RouteWithChildren =
 
 interface DashboardRouteChildren {
   DashboardMiamiRoute: typeof DashboardMiamiRoute
+  DashboardPortugalRoute: typeof DashboardPortugalRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardMiamiRoute: DashboardMiamiRoute,
+  DashboardPortugalRoute: DashboardPortugalRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
