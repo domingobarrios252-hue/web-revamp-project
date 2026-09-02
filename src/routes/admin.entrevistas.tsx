@@ -496,7 +496,10 @@ function InterviewForm({
             {[
               { code: "es", label: "🇪🇸 España" },
               { code: "co", label: "🇨🇴 Colombia" },
+              { code: "mia", label: "🇺🇸 Miami" },
+              { code: "pt", label: "🇵🇹 Portugal" },
             ].map((h) => (
+
               <label key={h.code} className="flex items-center gap-2">
                 <input
                   type="checkbox"
