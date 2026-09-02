@@ -1,8 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Newspaper, Mic } from "lucide-react";
 import { SectionHeading } from "@/components/home/SectionHeading";
-import { MiamiInterviewCard, MiamiLead, MiamiMasthead, MiamiNewsCard } from "@/components/miami/MiamiCards";
-import { useMiamiInterviews, useMiamiNews } from "@/lib/miami/useMiami";
+import {
+  TerritoryInterviewCard,
+  TerritoryLead,
+  TerritoryMasthead,
+  TerritoryNewsCard,
+} from "@/components/territory/TerritoryCards";
+import { MIAMI } from "@/lib/territory/territories";
+import { useTerritoryInterviews, useTerritoryNews } from "@/lib/territory/useTerritory";
 
 const TITLE = "RollerZone Miami | Noticias y entrevistas del patinaje en Miami";
 const DESC =
@@ -24,13 +30,13 @@ export const Route = createFileRoute("/miami/")({
 });
 
 function MiamiHome() {
-  const { items: news, loading } = useMiamiNews(13);
-  const { items: interviews } = useMiamiInterviews(6);
+  const { items: news, loading } = useTerritoryNews(MIAMI.code, 13);
+  const { items: interviews } = useTerritoryInterviews(MIAMI.code, 6);
   const [lead, ...rest] = news;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <MiamiMasthead />
+      <TerritoryMasthead territory={MIAMI} />
 
       {loading ? (
         <p className="mt-10 text-muted-foreground">Cargando…</p>
@@ -38,7 +44,7 @@ function MiamiHome() {
         <>
           {lead ? (
             <section className="mt-8">
-              <MiamiLead item={lead} />
+              <TerritoryLead item={lead} territory={MIAMI} />
             </section>
           ) : (
             <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
@@ -57,7 +63,7 @@ function MiamiHome() {
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {rest.map((n) => (
-                  <MiamiNewsCard key={n.id} item={n} />
+                  <TerritoryNewsCard key={n.id} item={n} territory={MIAMI} />
                 ))}
               </div>
             </section>
@@ -74,7 +80,7 @@ function MiamiHome() {
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {interviews.map((it) => (
-                  <MiamiInterviewCard key={it.id} item={it} />
+                  <TerritoryInterviewCard key={it.id} item={it} />
                 ))}
               </div>
             </section>

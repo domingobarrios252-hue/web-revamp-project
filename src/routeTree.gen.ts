@@ -69,6 +69,7 @@ import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
+import { Route as EditorPortugalRouteImport } from './routes/editor.portugal'
 import { Route as EditorMiamiRouteImport } from './routes/editor.miami'
 import { Route as DashboardPortugalRouteImport } from './routes/dashboard.portugal'
 import { Route as DashboardMiamiRouteImport } from './routes/dashboard.miami'
@@ -473,6 +474,11 @@ const EspanaArchivoRoute = EspanaArchivoRouteImport.update({
 const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   id: '/entrevistas/$slug',
   path: '/entrevistas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EditorPortugalRoute = EditorPortugalRouteImport.update({
+  id: '/editor/portugal',
+  path: '/editor/portugal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EditorMiamiRoute = EditorMiamiRouteImport.update({
@@ -1093,6 +1099,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/miami': typeof DashboardMiamiRoute
   '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
+  '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1252,6 +1259,7 @@ export interface FileRoutesByTo {
   '/dashboard/miami': typeof DashboardMiamiRoute
   '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
+  '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1411,6 +1419,7 @@ export interface FileRoutesById {
   '/dashboard/miami': typeof DashboardMiamiRoute
   '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
+  '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1578,6 +1587,7 @@ export interface FileRouteTypes {
     | '/dashboard/miami'
     | '/dashboard/portugal'
     | '/editor/miami'
+    | '/editor/portugal'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1737,6 +1747,7 @@ export interface FileRouteTypes {
     | '/dashboard/miami'
     | '/dashboard/portugal'
     | '/editor/miami'
+    | '/editor/portugal'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1895,6 +1906,7 @@ export interface FileRouteTypes {
     | '/dashboard/miami'
     | '/dashboard/portugal'
     | '/editor/miami'
+    | '/editor/portugal'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -2005,6 +2017,7 @@ export interface RootRouteChildren {
   CountrySplatRoute: typeof CountrySplatRoute
   ColaboracionesSlugRoute: typeof ColaboracionesSlugRoute
   EditorMiamiRoute: typeof EditorMiamiRoute
+  EditorPortugalRoute: typeof EditorPortugalRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EspanaArchivoRoute: typeof EspanaArchivoRoute
   EspanaClubesRoute: typeof EspanaClubesRoute
@@ -2462,6 +2475,13 @@ declare module '@tanstack/react-router' {
       path: '/entrevistas/$slug'
       fullPath: '/entrevistas/$slug'
       preLoaderRoute: typeof EntrevistasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/editor/portugal': {
+      id: '/editor/portugal'
+      path: '/editor/portugal'
+      fullPath: '/editor/portugal'
+      preLoaderRoute: typeof EditorPortugalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/editor/miami': {
@@ -3581,6 +3601,7 @@ const rootRouteChildren: RootRouteChildren = {
   CountrySplatRoute: CountrySplatRoute,
   ColaboracionesSlugRoute: ColaboracionesSlugRoute,
   EditorMiamiRoute: EditorMiamiRoute,
+  EditorPortugalRoute: EditorPortugalRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EspanaArchivoRoute: EspanaArchivoRoute,
   EspanaClubesRoute: EspanaClubesRoute,
