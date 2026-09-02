@@ -352,8 +352,6 @@ function TerritoryEditor({
         content: content || null,
         image_url: image || null,
         ...media,
-        seo_title: seoTitle || null,
-        meta_description: metaDesc || null,
         status,
         country_code: territory.code,
         author: user?.email ?? `RollerZone ${territory.name}`,
@@ -456,8 +454,12 @@ function TerritoryEditor({
             </div>
           </div>
 
-          <Field label="SEO title" value={seoTitle} onChange={setSeoTitle} />
-          <Textarea label="Meta description" value={metaDesc} onChange={setMetaDesc} rows={2} />
+          {kind === "interviews" && (
+            <>
+              <Field label="SEO title" value={seoTitle} onChange={setSeoTitle} />
+              <Textarea label="Meta description" value={metaDesc} onChange={setMetaDesc} rows={2} />
+            </>
+          )}
         </div>
 
         <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-border pt-3">
