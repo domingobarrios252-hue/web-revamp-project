@@ -127,6 +127,7 @@ import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
 import { Route as PortugalNoticiasIndexRouteImport } from './routes/portugal.noticias.index'
+import { Route as PortugalEntrevistasIndexRouteImport } from './routes/portugal.entrevistas.index'
 import { Route as MiamiNoticiasIndexRouteImport } from './routes/miami.noticias.index'
 import { Route as MiamiEntrevistasIndexRouteImport } from './routes/miami.entrevistas.index'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
@@ -767,6 +768,12 @@ const PortugalNoticiasIndexRoute = PortugalNoticiasIndexRouteImport.update({
   path: '/noticias/',
   getParentRoute: () => PortugalRoute,
 } as any)
+const PortugalEntrevistasIndexRoute =
+  PortugalEntrevistasIndexRouteImport.update({
+    id: '/entrevistas/',
+    path: '/entrevistas/',
+    getParentRoute: () => PortugalRoute,
+  } as any)
 const MiamiNoticiasIndexRoute = MiamiNoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
@@ -1119,6 +1126,7 @@ export interface FileRoutesByFullPath {
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias/': typeof MiamiNoticiasIndexRoute
+  '/portugal/entrevistas/': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias/': typeof PortugalNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
@@ -1267,6 +1275,7 @@ export interface FileRoutesByTo {
   '/hub/$country': typeof HubCountryIndexRoute
   '/miami/entrevistas': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias': typeof MiamiNoticiasIndexRoute
+  '/portugal/entrevistas': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias': typeof PortugalNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1427,6 +1436,7 @@ export interface FileRoutesById {
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias/': typeof MiamiNoticiasIndexRoute
+  '/portugal/entrevistas/': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias/': typeof PortugalNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
@@ -1589,6 +1599,7 @@ export interface FileRouteTypes {
     | '/hub/$country/'
     | '/miami/entrevistas/'
     | '/miami/noticias/'
+    | '/portugal/entrevistas/'
     | '/portugal/noticias/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
@@ -1737,6 +1748,7 @@ export interface FileRouteTypes {
     | '/hub/$country'
     | '/miami/entrevistas'
     | '/miami/noticias'
+    | '/portugal/entrevistas'
     | '/portugal/noticias'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/federaciones/$slug'
@@ -1896,6 +1908,7 @@ export interface FileRouteTypes {
     | '/hub/$country/'
     | '/miami/entrevistas/'
     | '/miami/noticias/'
+    | '/portugal/entrevistas/'
     | '/portugal/noticias/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
@@ -2809,6 +2822,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortugalNoticiasIndexRouteImport
       parentRoute: typeof PortugalRoute
     }
+    '/portugal/entrevistas/': {
+      id: '/portugal/entrevistas/'
+      path: '/entrevistas'
+      fullPath: '/portugal/entrevistas/'
+      preLoaderRoute: typeof PortugalEntrevistasIndexRouteImport
+      parentRoute: typeof PortugalRoute
+    }
     '/miami/noticias/': {
       id: '/miami/noticias/'
       path: '/noticias'
@@ -3260,11 +3280,13 @@ const MiamiRouteWithChildren = MiamiRoute._addFileChildren(MiamiRouteChildren)
 
 interface PortugalRouteChildren {
   PortugalIndexRoute: typeof PortugalIndexRoute
+  PortugalEntrevistasIndexRoute: typeof PortugalEntrevistasIndexRoute
   PortugalNoticiasIndexRoute: typeof PortugalNoticiasIndexRoute
 }
 
 const PortugalRouteChildren: PortugalRouteChildren = {
   PortugalIndexRoute: PortugalIndexRoute,
+  PortugalEntrevistasIndexRoute: PortugalEntrevistasIndexRoute,
   PortugalNoticiasIndexRoute: PortugalNoticiasIndexRoute,
 }
 
