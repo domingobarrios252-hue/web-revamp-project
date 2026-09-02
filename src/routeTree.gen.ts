@@ -99,6 +99,7 @@ import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminRedRedactoresRouteImport } from './routes/admin.red-redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
+import { Route as AdminPortugalRouteImport } from './routes/admin.portugal'
 import { Route as AdminPermisosRouteImport } from './routes/admin.permisos'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
@@ -630,6 +631,11 @@ const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
   path: '/premios-mvp',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPortugalRoute = AdminPortugalRouteImport.update({
+  id: '/portugal',
+  path: '/portugal',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPermisosRoute = AdminPermisosRouteImport.update({
   id: '/permisos',
   path: '/permisos',
@@ -1049,6 +1055,7 @@ export interface FileRoutesByFullPath {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/permisos': typeof AdminPermisosRoute
+  '/admin/portugal': typeof AdminPortugalRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1206,6 +1213,7 @@ export interface FileRoutesByTo {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/permisos': typeof AdminPermisosRoute
+  '/admin/portugal': typeof AdminPortugalRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1363,6 +1371,7 @@ export interface FileRoutesById {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/permisos': typeof AdminPermisosRoute
+  '/admin/portugal': typeof AdminPortugalRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1528,6 +1537,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/permisos'
+    | '/admin/portugal'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1685,6 +1695,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/permisos'
+    | '/admin/portugal'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1841,6 +1852,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/permisos'
+    | '/admin/portugal'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -2650,6 +2662,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPremiosMvpRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/portugal': {
+      id: '/admin/portugal'
+      path: '/portugal'
+      fullPath: '/admin/portugal'
+      preLoaderRoute: typeof AdminPortugalRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/permisos': {
       id: '/admin/permisos'
       path: '/permisos'
@@ -3177,6 +3196,7 @@ interface AdminRouteChildren {
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPendientesRoute: typeof AdminPendientesRoute
   AdminPermisosRoute: typeof AdminPermisosRoute
+  AdminPortugalRoute: typeof AdminPortugalRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedRedactoresRoute: typeof AdminRedRedactoresRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
@@ -3227,6 +3247,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPendientesRoute: AdminPendientesRoute,
   AdminPermisosRoute: AdminPermisosRoute,
+  AdminPortugalRoute: AdminPortugalRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedRedactoresRoute: AdminRedRedactoresRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
