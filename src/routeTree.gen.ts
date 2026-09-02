@@ -17,6 +17,7 @@ import { Route as RevistaRouteImport } from './routes/revista'
 import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
+import { Route as PortugalRouteImport } from './routes/portugal'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MiamiRouteImport } from './routes/miami'
@@ -34,6 +35,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
 import { Route as RevistaIndexRouteImport } from './routes/revista.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
+import { Route as PortugalIndexRouteImport } from './routes/portugal.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as MiamiIndexRouteImport } from './routes/miami.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
@@ -67,7 +69,9 @@ import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
 import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
+import { Route as EditorPortugalRouteImport } from './routes/editor.portugal'
 import { Route as EditorMiamiRouteImport } from './routes/editor.miami'
+import { Route as DashboardPortugalRouteImport } from './routes/dashboard.portugal'
 import { Route as DashboardMiamiRouteImport } from './routes/dashboard.miami'
 import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
 import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
@@ -97,6 +101,7 @@ import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
 import { Route as AdminRedRedactoresRouteImport } from './routes/admin.red-redactores'
 import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
+import { Route as AdminPortugalRouteImport } from './routes/admin.portugal'
 import { Route as AdminPermisosRouteImport } from './routes/admin.permisos'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
@@ -124,10 +129,14 @@ import { Route as AdminClasificacionesRouteImport } from './routes/admin.clasifi
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
+import { Route as PortugalNoticiasIndexRouteImport } from './routes/portugal.noticias.index'
+import { Route as PortugalEntrevistasIndexRouteImport } from './routes/portugal.entrevistas.index'
 import { Route as MiamiNoticiasIndexRouteImport } from './routes/miami.noticias.index'
 import { Route as MiamiEntrevistasIndexRouteImport } from './routes/miami.entrevistas.index'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
+import { Route as PortugalNoticiasSlugRouteImport } from './routes/portugal.noticias.$slug'
+import { Route as PortugalEntrevistasSlugRouteImport } from './routes/portugal.entrevistas.$slug'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
 import { Route as MiamiNoticiasSlugRouteImport } from './routes/miami.noticias.$slug'
 import { Route as MiamiEntrevistasSlugRouteImport } from './routes/miami.entrevistas.$slug'
@@ -203,6 +212,11 @@ const PrivacidadRoute = PrivacidadRouteImport.update({
 const PremiosMvpRoute = PremiosMvpRouteImport.update({
   id: '/premios-mvp',
   path: '/premios-mvp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortugalRoute = PortugalRouteImport.update({
+  id: '/portugal',
+  path: '/portugal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
@@ -289,6 +303,11 @@ const ResultadosIndexRoute = ResultadosIndexRouteImport.update({
   id: '/resultados/',
   path: '/resultados/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PortugalIndexRoute = PortugalIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PortugalRoute,
 } as any)
 const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
   id: '/noticias/',
@@ -457,10 +476,20 @@ const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
   path: '/entrevistas/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditorPortugalRoute = EditorPortugalRouteImport.update({
+  id: '/editor/portugal',
+  path: '/editor/portugal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EditorMiamiRoute = EditorMiamiRouteImport.update({
   id: '/editor/miami',
   path: '/editor/miami',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardPortugalRoute = DashboardPortugalRouteImport.update({
+  id: '/portugal',
+  path: '/portugal',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardMiamiRoute = DashboardMiamiRouteImport.update({
   id: '/miami',
@@ -614,6 +643,11 @@ const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
   path: '/premios-mvp',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPortugalRoute = AdminPortugalRouteImport.update({
+  id: '/portugal',
+  path: '/portugal',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPermisosRoute = AdminPermisosRouteImport.update({
   id: '/permisos',
   path: '/permisos',
@@ -749,6 +783,17 @@ const CountrySplatRoute = CountrySplatRouteImport.update({
   path: '/$country/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortugalNoticiasIndexRoute = PortugalNoticiasIndexRouteImport.update({
+  id: '/noticias/',
+  path: '/noticias/',
+  getParentRoute: () => PortugalRoute,
+} as any)
+const PortugalEntrevistasIndexRoute =
+  PortugalEntrevistasIndexRouteImport.update({
+    id: '/entrevistas/',
+    path: '/entrevistas/',
+    getParentRoute: () => PortugalRoute,
+  } as any)
 const MiamiNoticiasIndexRoute = MiamiNoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
@@ -768,6 +813,16 @@ const RevistaLeerIdRoute = RevistaLeerIdRouteImport.update({
   id: '/leer/$id',
   path: '/leer/$id',
   getParentRoute: () => RevistaRoute,
+} as any)
+const PortugalNoticiasSlugRoute = PortugalNoticiasSlugRouteImport.update({
+  id: '/noticias/$slug',
+  path: '/noticias/$slug',
+  getParentRoute: () => PortugalRoute,
+} as any)
+const PortugalEntrevistasSlugRoute = PortugalEntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
+  getParentRoute: () => PortugalRoute,
 } as any)
 const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
@@ -976,6 +1031,7 @@ export interface FileRoutesByFullPath {
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/portugal': typeof PortugalRouteWithChildren
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
@@ -1011,6 +1067,7 @@ export interface FileRoutesByFullPath {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/permisos': typeof AdminPermisosRoute
+  '/admin/portugal': typeof AdminPortugalRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1040,7 +1097,9 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
+  '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1074,6 +1133,7 @@ export interface FileRoutesByFullPath {
   '/eventos/': typeof EventosIndexRoute
   '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
+  '/portugal/': typeof PortugalIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
@@ -1095,10 +1155,14 @@ export interface FileRoutesByFullPath {
   '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
   '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
+  '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias/': typeof MiamiNoticiasIndexRoute
+  '/portugal/entrevistas/': typeof PortugalEntrevistasIndexRoute
+  '/portugal/noticias/': typeof PortugalNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1163,6 +1227,7 @@ export interface FileRoutesByTo {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/permisos': typeof AdminPermisosRoute
+  '/admin/portugal': typeof AdminPortugalRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1192,7 +1257,9 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
+  '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1225,6 +1292,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosIndexRoute
   '/miami': typeof MiamiIndexRoute
   '/noticias': typeof NoticiasIndexRoute
+  '/portugal': typeof PortugalIndexRoute
   '/resultados': typeof ResultadosIndexRoute
   '/revista': typeof RevistaIndexRoute
   '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
@@ -1241,10 +1309,14 @@ export interface FileRoutesByTo {
   '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
   '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
+  '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/miami/entrevistas': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias': typeof MiamiNoticiasIndexRoute
+  '/portugal/entrevistas': typeof PortugalEntrevistasIndexRoute
+  '/portugal/noticias': typeof PortugalNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
@@ -1279,6 +1351,7 @@ export interface FileRoutesById {
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/portugal': typeof PortugalRouteWithChildren
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
@@ -1314,6 +1387,7 @@ export interface FileRoutesById {
   '/admin/patrocinadores': typeof AdminPatrocinadoresRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/permisos': typeof AdminPermisosRoute
+  '/admin/portugal': typeof AdminPortugalRoute
   '/admin/premios-mvp': typeof AdminPremiosMvpRoute
   '/admin/red-redactores': typeof AdminRedRedactoresRoute
   '/admin/redactores': typeof AdminRedactoresRoute
@@ -1343,7 +1417,9 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
+  '/dashboard/portugal': typeof DashboardPortugalRoute
   '/editor/miami': typeof EditorMiamiRoute
+  '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1377,6 +1453,7 @@ export interface FileRoutesById {
   '/eventos/': typeof EventosIndexRoute
   '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
+  '/portugal/': typeof PortugalIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
@@ -1398,10 +1475,14 @@ export interface FileRoutesById {
   '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
   '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
+  '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
+  '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias/': typeof MiamiNoticiasIndexRoute
+  '/portugal/entrevistas/': typeof PortugalEntrevistasIndexRoute
+  '/portugal/noticias/': typeof PortugalNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1438,6 +1519,7 @@ export interface FileRouteTypes {
     | '/miami'
     | '/paises'
     | '/patrocinadores'
+    | '/portugal'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
@@ -1473,6 +1555,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/permisos'
+    | '/admin/portugal'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1502,7 +1585,9 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/dashboard/portugal'
     | '/editor/miami'
+    | '/editor/portugal'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1536,6 +1621,7 @@ export interface FileRouteTypes {
     | '/eventos/'
     | '/miami/'
     | '/noticias/'
+    | '/portugal/'
     | '/resultados/'
     | '/revista/'
     | '/salon-de-la-fama/'
@@ -1557,10 +1643,14 @@ export interface FileRouteTypes {
     | '/miami/entrevistas/$slug'
     | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
+    | '/portugal/entrevistas/$slug'
+    | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
     | '/hub/$country/'
     | '/miami/entrevistas/'
     | '/miami/noticias/'
+    | '/portugal/entrevistas/'
+    | '/portugal/noticias/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -1625,6 +1715,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/permisos'
+    | '/admin/portugal'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1654,7 +1745,9 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/dashboard/portugal'
     | '/editor/miami'
+    | '/editor/portugal'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1687,6 +1780,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/miami'
     | '/noticias'
+    | '/portugal'
     | '/resultados'
     | '/revista'
     | '/salon-de-la-fama'
@@ -1703,10 +1797,14 @@ export interface FileRouteTypes {
     | '/miami/entrevistas/$slug'
     | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
+    | '/portugal/entrevistas/$slug'
+    | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
     | '/hub/$country'
     | '/miami/entrevistas'
     | '/miami/noticias'
+    | '/portugal/entrevistas'
+    | '/portugal/noticias'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
@@ -1740,6 +1838,7 @@ export interface FileRouteTypes {
     | '/miami'
     | '/paises'
     | '/patrocinadores'
+    | '/portugal'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
@@ -1775,6 +1874,7 @@ export interface FileRouteTypes {
     | '/admin/patrocinadores'
     | '/admin/pendientes'
     | '/admin/permisos'
+    | '/admin/portugal'
     | '/admin/premios-mvp'
     | '/admin/red-redactores'
     | '/admin/redactores'
@@ -1804,7 +1904,9 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
     | '/dashboard/miami'
+    | '/dashboard/portugal'
     | '/editor/miami'
+    | '/editor/portugal'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1838,6 +1940,7 @@ export interface FileRouteTypes {
     | '/eventos/'
     | '/miami/'
     | '/noticias/'
+    | '/portugal/'
     | '/resultados/'
     | '/revista/'
     | '/salon-de-la-fama/'
@@ -1859,10 +1962,14 @@ export interface FileRouteTypes {
     | '/miami/entrevistas/$slug'
     | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
+    | '/portugal/entrevistas/$slug'
+    | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
     | '/hub/$country/'
     | '/miami/entrevistas/'
     | '/miami/noticias/'
+    | '/portugal/entrevistas/'
+    | '/portugal/noticias/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -1898,6 +2005,7 @@ export interface RootRouteChildren {
   MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
+  PortugalRoute: typeof PortugalRouteWithChildren
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
   RedactoresRoute: typeof RedactoresRouteWithChildren
@@ -1909,6 +2017,7 @@ export interface RootRouteChildren {
   CountrySplatRoute: typeof CountrySplatRoute
   ColaboracionesSlugRoute: typeof ColaboracionesSlugRoute
   EditorMiamiRoute: typeof EditorMiamiRoute
+  EditorPortugalRoute: typeof EditorPortugalRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EspanaArchivoRoute: typeof EspanaArchivoRoute
   EspanaClubesRoute: typeof EspanaClubesRoute
@@ -2002,6 +2111,13 @@ declare module '@tanstack/react-router' {
       path: '/premios-mvp'
       fullPath: '/premios-mvp'
       preLoaderRoute: typeof PremiosMvpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portugal': {
+      id: '/portugal'
+      path: '/portugal'
+      fullPath: '/portugal'
+      preLoaderRoute: typeof PortugalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patrocinadores': {
@@ -2122,6 +2238,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/resultados/'
       preLoaderRoute: typeof ResultadosIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/portugal/': {
+      id: '/portugal/'
+      path: '/'
+      fullPath: '/portugal/'
+      preLoaderRoute: typeof PortugalIndexRouteImport
+      parentRoute: typeof PortugalRoute
     }
     '/noticias/': {
       id: '/noticias/'
@@ -2354,12 +2477,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrevistasSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/editor/portugal': {
+      id: '/editor/portugal'
+      path: '/editor/portugal'
+      fullPath: '/editor/portugal'
+      preLoaderRoute: typeof EditorPortugalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/editor/miami': {
       id: '/editor/miami'
       path: '/editor/miami'
       fullPath: '/editor/miami'
       preLoaderRoute: typeof EditorMiamiRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/portugal': {
+      id: '/dashboard/portugal'
+      path: '/portugal'
+      fullPath: '/dashboard/portugal'
+      preLoaderRoute: typeof DashboardPortugalRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/miami': {
       id: '/dashboard/miami'
@@ -2564,6 +2701,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPremiosMvpRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/portugal': {
+      id: '/admin/portugal'
+      path: '/portugal'
+      fullPath: '/admin/portugal'
+      preLoaderRoute: typeof AdminPortugalRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/permisos': {
       id: '/admin/permisos'
       path: '/permisos'
@@ -2753,6 +2897,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountrySplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portugal/noticias/': {
+      id: '/portugal/noticias/'
+      path: '/noticias'
+      fullPath: '/portugal/noticias/'
+      preLoaderRoute: typeof PortugalNoticiasIndexRouteImport
+      parentRoute: typeof PortugalRoute
+    }
+    '/portugal/entrevistas/': {
+      id: '/portugal/entrevistas/'
+      path: '/entrevistas'
+      fullPath: '/portugal/entrevistas/'
+      preLoaderRoute: typeof PortugalEntrevistasIndexRouteImport
+      parentRoute: typeof PortugalRoute
+    }
     '/miami/noticias/': {
       id: '/miami/noticias/'
       path: '/noticias'
@@ -2780,6 +2938,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/revista/leer/$id'
       preLoaderRoute: typeof RevistaLeerIdRouteImport
       parentRoute: typeof RevistaRoute
+    }
+    '/portugal/noticias/$slug': {
+      id: '/portugal/noticias/$slug'
+      path: '/noticias/$slug'
+      fullPath: '/portugal/noticias/$slug'
+      preLoaderRoute: typeof PortugalNoticiasSlugRouteImport
+      parentRoute: typeof PortugalRoute
+    }
+    '/portugal/entrevistas/$slug': {
+      id: '/portugal/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/portugal/entrevistas/$slug'
+      preLoaderRoute: typeof PortugalEntrevistasSlugRouteImport
+      parentRoute: typeof PortugalRoute
     }
     '/noticias/articulo/$slug': {
       id: '/noticias/articulo/$slug'
@@ -3063,6 +3235,7 @@ interface AdminRouteChildren {
   AdminPatrocinadoresRoute: typeof AdminPatrocinadoresRoute
   AdminPendientesRoute: typeof AdminPendientesRoute
   AdminPermisosRoute: typeof AdminPermisosRoute
+  AdminPortugalRoute: typeof AdminPortugalRoute
   AdminPremiosMvpRoute: typeof AdminPremiosMvpRoute
   AdminRedRedactoresRoute: typeof AdminRedRedactoresRoute
   AdminRedactoresRoute: typeof AdminRedactoresRoute
@@ -3113,6 +3286,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPatrocinadoresRoute: AdminPatrocinadoresRoute,
   AdminPendientesRoute: AdminPendientesRoute,
   AdminPermisosRoute: AdminPermisosRoute,
+  AdminPortugalRoute: AdminPortugalRoute,
   AdminPremiosMvpRoute: AdminPremiosMvpRoute,
   AdminRedRedactoresRoute: AdminRedRedactoresRoute,
   AdminRedactoresRoute: AdminRedactoresRoute,
@@ -3172,11 +3346,13 @@ const CaminoAlEuropeo2026RouteWithChildren =
 
 interface DashboardRouteChildren {
   DashboardMiamiRoute: typeof DashboardMiamiRoute
+  DashboardPortugalRoute: typeof DashboardPortugalRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardMiamiRoute: DashboardMiamiRoute,
+  DashboardPortugalRoute: DashboardPortugalRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
@@ -3201,6 +3377,26 @@ const MiamiRouteChildren: MiamiRouteChildren = {
 }
 
 const MiamiRouteWithChildren = MiamiRoute._addFileChildren(MiamiRouteChildren)
+
+interface PortugalRouteChildren {
+  PortugalIndexRoute: typeof PortugalIndexRoute
+  PortugalEntrevistasSlugRoute: typeof PortugalEntrevistasSlugRoute
+  PortugalNoticiasSlugRoute: typeof PortugalNoticiasSlugRoute
+  PortugalEntrevistasIndexRoute: typeof PortugalEntrevistasIndexRoute
+  PortugalNoticiasIndexRoute: typeof PortugalNoticiasIndexRoute
+}
+
+const PortugalRouteChildren: PortugalRouteChildren = {
+  PortugalIndexRoute: PortugalIndexRoute,
+  PortugalEntrevistasSlugRoute: PortugalEntrevistasSlugRoute,
+  PortugalNoticiasSlugRoute: PortugalNoticiasSlugRoute,
+  PortugalEntrevistasIndexRoute: PortugalEntrevistasIndexRoute,
+  PortugalNoticiasIndexRoute: PortugalNoticiasIndexRoute,
+}
+
+const PortugalRouteWithChildren = PortugalRoute._addFileChildren(
+  PortugalRouteChildren,
+)
 
 interface RedactoresRouteChildren {
   RedactoresIdRoute: typeof RedactoresIdRoute
@@ -3393,6 +3589,7 @@ const rootRouteChildren: RootRouteChildren = {
   MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
+  PortugalRoute: PortugalRouteWithChildren,
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
   RedactoresRoute: RedactoresRouteWithChildren,
@@ -3404,6 +3601,7 @@ const rootRouteChildren: RootRouteChildren = {
   CountrySplatRoute: CountrySplatRoute,
   ColaboracionesSlugRoute: ColaboracionesSlugRoute,
   EditorMiamiRoute: EditorMiamiRoute,
+  EditorPortugalRoute: EditorPortugalRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EspanaArchivoRoute: EspanaArchivoRoute,
   EspanaClubesRoute: EspanaClubesRoute,

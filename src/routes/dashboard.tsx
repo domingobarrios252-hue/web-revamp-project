@@ -86,6 +86,13 @@ function DashboardLayout() {
           >
             <Globe2 className="h-4 w-4" /> Miami
           </Link>
+          <Link
+            to="/dashboard/portugal"
+            className="font-condensed flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-background hover:text-gold"
+            activeProps={{ className: "bg-background text-gold" }}
+          >
+            <Globe2 className="h-4 w-4" /> Portugal
+          </Link>
           <button
             onClick={async () => {
               await signOut();

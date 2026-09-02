@@ -32,6 +32,8 @@ function InternalAccessPage() {
     if (isAdmin) navigate({ to: "/admin", replace: true });
     else if ((isEditor || isColaborador) && territory === "mia")
       navigate({ to: "/dashboard/miami", replace: true });
+    else if ((isEditor || isColaborador) && territory === "pt")
+      navigate({ to: "/dashboard/portugal", replace: true });
     else if (isEditor || isColaborador) navigate({ to: "/dashboard", replace: true });
   }, [user, isAdmin, isEditor, isColaborador, territory, loading, navigate]);
 

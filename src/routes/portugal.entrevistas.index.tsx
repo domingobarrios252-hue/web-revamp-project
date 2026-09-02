@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { TerritoryInterviewCard, TerritoryMasthead } from "@/components/territory/TerritoryCards";
-import { MIAMI } from "@/lib/territory/territories";
+import { PORTUGAL } from "@/lib/territory/territories";
 import { useTerritoryInterviews } from "@/lib/territory/useTerritory";
 
-const TITLE = "Entrevistas Miami | RollerZone";
-const DESC = "Entrevistas a patinadores, entrenadores y protagonistas del patinaje en Miami.";
+const TITLE = "Entrevistas Portugal | RollerZone";
+const DESC = "Entrevistas a patinadores, entrenadores y protagonistas del patinaje en Portugal.";
 
-export const Route = createFileRoute("/miami/entrevistas/")({
+export const Route = createFileRoute("/portugal/entrevistas/")({
   head: () => ({
     meta: [
       { title: TITLE },
@@ -16,21 +16,21 @@ export const Route = createFileRoute("/miami/entrevistas/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/miami/entrevistas" }],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/portugal/entrevistas" }],
   }),
-  component: MiamiInterviewsIndex,
+  component: PortugalInterviewsIndex,
 });
 
-function MiamiInterviewsIndex() {
-  const { items, loading } = useTerritoryInterviews(MIAMI.code, 60);
+function PortugalInterviewsIndex() {
+  const { items, loading } = useTerritoryInterviews(PORTUGAL.code, 60);
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <TerritoryMasthead territory={MIAMI} subtitle="Entrevistas · Edición Miami" />
+      <TerritoryMasthead territory={PORTUGAL} subtitle="Entrevistas · Edición Portugal" />
       {loading ? (
         <p className="mt-8 text-muted-foreground">Cargando…</p>
       ) : items.length === 0 ? (
         <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
-          Aún no hay entrevistas publicadas en Miami.
+          Aún no hay entrevistas publicadas en Portugal.
         </div>
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

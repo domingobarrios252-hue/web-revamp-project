@@ -1,30 +1,37 @@
 import { Link } from "@tanstack/react-router";
-import { Calendar, Mic } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { cropObjectPosition } from "@/lib/imageCrops";
-import type { MiamiInterview, MiamiNews } from "@/lib/miami/useMiami";
+import type { Territory } from "@/lib/territory/territories";
+import type { TerritoryInterview, TerritoryNews } from "@/lib/territory/useTerritory";
 
 const dateFmt = (iso: string) =>
   new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" });
 
-/** Cabecera editorial de la edición territorial de Miami. */
-export function MiamiMasthead({ subtitle }: { subtitle?: string }) {
+/** Cabecera editorial de una delegación territorial. */
+export function TerritoryMasthead({
+  territory,
+  subtitle,
+}: {
+  territory: Territory;
+  subtitle?: string;
+}) {
   return (
     <header className="border-b border-border pb-6">
       <div className="font-condensed mb-2 inline-flex items-center gap-2 bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
-        Edición territorial
+        <span aria-hidden>{territory.flag}</span> Edición territorial
       </div>
       <h1 className="font-display text-4xl uppercase tracking-widest md:text-5xl">
-        ROLLER<span className="text-gold">ZONE</span> MIAMI
+        ROLLER<span className="text-gold">ZONE</span> {territory.name.toUpperCase()}
       </h1>
       <p className="font-condensed mt-2 text-sm uppercase tracking-widest text-muted-foreground">
-        {subtitle ?? "Noticias y entrevistas del patinaje de velocidad en Miami"}
+        {subtitle ?? territory.subtitle}
       </p>
     </header>
   );
 }
 
-/** Noticia destacada de Miami (portada del territorio). */
-export function MiamiLead({ item }: { item: MiamiNews }) {
+/** Noticia destacada del territorio (portada). */
+export function TerritoryLead({ item, territory }: { item: TerritoryNews; territory: Territory }) {
   return (
     <Link
       to="/noticias/articulo/$slug"
@@ -41,13 +48,13 @@ export function MiamiLead({ item }: { item: MiamiNews }) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-            RollerZone Miami
+            RollerZone {territory.name}
           </div>
         )}
       </div>
       <div className="flex flex-col justify-center gap-3 p-5 md:p-7">
         <span className="font-condensed inline-flex w-fit items-center gap-2 bg-gold px-2 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
-          Portada Miami
+          Portada {territory.name}
         </span>
         <h2 className="font-display text-2xl uppercase leading-tight tracking-wide text-foreground md:text-4xl">
           {item.title}
@@ -64,7 +71,7 @@ export function MiamiLead({ item }: { item: MiamiNews }) {
   );
 }
 
-export function MiamiNewsCard({ item }: { item: MiamiNews }) {
+export function TerritoryNewsCard({ item, territory }: { item: TerritoryNews; territory: Territory }) {
   return (
     <Link
       to="/noticias/articulo/$slug"
@@ -82,7 +89,7 @@ export function MiamiNewsCard({ item }: { item: MiamiNews }) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-            Miami
+            {territory.name}
           </div>
         )}
       </div>
@@ -99,7 +106,7 @@ export function MiamiNewsCard({ item }: { item: MiamiNews }) {
   );
 }
 
-export function MiamiInterviewCard({ item }: { item: MiamiInterview }) {
+export function TerritoryInterviewCard({ item }: { item: TerritoryInterview }) {
   return (
     <Link
       to="/entrevistas/$slug"
@@ -120,14 +127,11 @@ export function MiamiInterviewCard({ item }: { item: MiamiInterview }) {
             Entrevista
           </div>
         )}
-        <span className="font-condensed absolute left-0 top-0 inline-flex items-center gap-1.5 bg-gold px-2 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
-          <Mic className="h-3 w-3" /> Entrevista
-        </span>
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="font-condensed text-[11px] uppercase tracking-widest text-gold">
+        <span className="font-condensed text-[10px] font-bold uppercase tracking-[3px] text-gold">
           {item.interviewee_name}
-        </div>
+        </span>
         <h3 className="font-display text-lg uppercase leading-tight tracking-wide text-foreground group-hover:text-gold">
           {item.title}
         </h3>

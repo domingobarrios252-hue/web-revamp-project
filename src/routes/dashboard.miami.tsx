@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MiamiWorkspace } from "@/components/miami/MiamiWorkspace";
+import { TerritoryWorkspace } from "@/components/territory/TerritoryWorkspace";
+import { MIAMI } from "@/lib/territory/territories";
 
 export const Route = createFileRoute("/dashboard/miami")({
   head: () => ({
@@ -8,5 +9,5 @@ export const Route = createFileRoute("/dashboard/miami")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: MiamiWorkspace,
+  component: () => <TerritoryWorkspace territory={MIAMI} />,
 });

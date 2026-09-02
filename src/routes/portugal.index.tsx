@@ -7,14 +7,14 @@ import {
   TerritoryMasthead,
   TerritoryNewsCard,
 } from "@/components/territory/TerritoryCards";
-import { MIAMI } from "@/lib/territory/territories";
+import { PORTUGAL } from "@/lib/territory/territories";
 import { useTerritoryInterviews, useTerritoryNews } from "@/lib/territory/useTerritory";
 
-const TITLE = "RollerZone Miami | Noticias y entrevistas del patinaje en Miami";
+const TITLE = "RollerZone Portugal | Notícias e entrevistas da patinagem de velocidade";
 const DESC =
-  "Edición territorial de RollerZone en Miami: noticias y entrevistas del patinaje de velocidad en el sur de Florida.";
+  "Edición territorial de RollerZone en Portugal: noticias, entrevistas, vídeos y competiciones del patinaje de velocidad portugués.";
 
-export const Route = createFileRoute("/miami/")({
+export const Route = createFileRoute("/portugal/")({
   head: () => ({
     meta: [
       { title: TITLE },
@@ -24,19 +24,19 @@ export const Route = createFileRoute("/miami/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/miami" }],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/portugal" }],
   }),
-  component: MiamiHome,
+  component: PortugalHome,
 });
 
-function MiamiHome() {
-  const { items: news, loading } = useTerritoryNews(MIAMI.code, 13);
-  const { items: interviews } = useTerritoryInterviews(MIAMI.code, 6);
+function PortugalHome() {
+  const { items: news, loading } = useTerritoryNews(PORTUGAL.code, 13);
+  const { items: interviews } = useTerritoryInterviews(PORTUGAL.code, 6);
   const [lead, ...rest] = news;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <TerritoryMasthead territory={MIAMI} />
+      <TerritoryMasthead territory={PORTUGAL} />
 
       {loading ? (
         <p className="mt-10 text-muted-foreground">Cargando…</p>
@@ -44,26 +44,26 @@ function MiamiHome() {
         <>
           {lead ? (
             <section className="mt-8">
-              <TerritoryLead item={lead} territory={MIAMI} />
+              <TerritoryLead item={lead} territory={PORTUGAL} />
             </section>
           ) : (
             <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
-              Aún no hay contenido publicado en RollerZone Miami. Muy pronto.
+              Aún no hay contenido publicado en RollerZone Portugal. Muy pronto.
             </div>
           )}
 
           {rest.length > 0 && (
             <section className="mt-14">
               <SectionHeading
-                kicker="Miami"
+                kicker="Portugal"
                 icon={<Newspaper className="h-3.5 w-3.5" />}
                 title="ÚLTIMAS"
                 accent="NOTICIAS"
-                action={{ to: "/miami/noticias", label: "Ver todas las noticias" }}
+                action={{ to: "/portugal/noticias", label: "Ver todas las noticias" }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {rest.map((n) => (
-                  <TerritoryNewsCard key={n.id} item={n} territory={MIAMI} />
+                  <TerritoryNewsCard key={n.id} item={n} territory={PORTUGAL} />
                 ))}
               </div>
             </section>
@@ -72,11 +72,11 @@ function MiamiHome() {
           {interviews.length > 0 && (
             <section className="mt-14">
               <SectionHeading
-                kicker="Miami"
+                kicker="Portugal"
                 icon={<Mic className="h-3.5 w-3.5" />}
                 title="ENTRE"
                 accent="VISTAS"
-                action={{ to: "/miami/entrevistas", label: "Ver todas las entrevistas" }}
+                action={{ to: "/portugal/entrevistas", label: "Ver todas las entrevistas" }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {interviews.map((it) => (
@@ -88,16 +88,22 @@ function MiamiHome() {
 
           <div className="mt-12 flex flex-wrap gap-3">
             <Link
-              to="/miami/noticias"
+              to="/portugal/noticias"
               className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
-              Noticias Miami
+              Noticias Portugal
             </Link>
             <Link
-              to="/miami/entrevistas"
+              to="/portugal/entrevistas"
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
-              Entrevistas Miami
+              Entrevistas Portugal
+            </Link>
+            <Link
+              to="/eventos"
+              className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
+            >
+              Eventos y competiciones
             </Link>
           </div>
         </>

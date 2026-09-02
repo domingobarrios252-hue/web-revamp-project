@@ -30,6 +30,7 @@ type Profile = { user_id: string; display_name: string | null };
 const TERRITORIES: { code: string; label: string }[] = [
   { code: "all", label: "Todos los territorios" },
   { code: "mia", label: "Miami" },
+  { code: "pt", label: "Portugal" },
   { code: "es", label: "España" },
   { code: "co", label: "Colombia" },
   { code: "ve", label: "Venezuela" },

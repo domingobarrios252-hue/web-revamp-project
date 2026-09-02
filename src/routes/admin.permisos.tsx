@@ -270,6 +270,7 @@ function AdminPermissionsPage() {
                   >
                     <option value="">Sin territorio (editor general)</option>
                     <option value="mia">Miami</option>
+                    <option value="pt">Portugal</option>
                     <option value="es">España</option>
                     <option value="co">Colombia</option>
                     <option value="ve">Venezuela</option>
