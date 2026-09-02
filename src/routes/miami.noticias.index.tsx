@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MiamiMasthead, MiamiNewsCard } from "@/components/miami/MiamiCards";
-import { useMiamiNews } from "@/lib/miami/useMiami";
+import { TerritoryMasthead, TerritoryNewsCard } from "@/components/territory/TerritoryCards";
+import { MIAMI } from "@/lib/territory/territories";
+import { useTerritoryNews } from "@/lib/territory/useTerritory";
 
 const TITLE = "Noticias Miami | RollerZone";
 const DESC = "Todas las noticias del patinaje de velocidad en Miami publicadas por RollerZone.";
@@ -21,10 +22,10 @@ export const Route = createFileRoute("/miami/noticias/")({
 });
 
 function MiamiNewsIndex() {
-  const { items, loading } = useMiamiNews(60);
+  const { items, loading } = useTerritoryNews(MIAMI.code, 60);
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <MiamiMasthead subtitle="Noticias · Edición Miami" />
+      <TerritoryMasthead territory={MIAMI} subtitle="Noticias · Edición Miami" />
       {loading ? (
         <p className="mt-8 text-muted-foreground">Cargando…</p>
       ) : items.length === 0 ? (
@@ -34,7 +35,7 @@ function MiamiNewsIndex() {
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((n) => (
-            <MiamiNewsCard key={n.id} item={n} />
+            <TerritoryNewsCard key={n.id} item={n} territory={MIAMI} />
           ))}
         </div>
       )}
