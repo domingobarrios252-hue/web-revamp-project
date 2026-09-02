@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MiamiInterviewCard, MiamiMasthead } from "@/components/miami/MiamiCards";
-import { useMiamiInterviews } from "@/lib/miami/useMiami";
+import { TerritoryInterviewCard, TerritoryMasthead } from "@/components/territory/TerritoryCards";
+import { MIAMI } from "@/lib/territory/territories";
+import { useTerritoryInterviews } from "@/lib/territory/useTerritory";
 
 const TITLE = "Entrevistas Miami | RollerZone";
 const DESC = "Entrevistas a patinadores, entrenadores y protagonistas del patinaje en Miami.";
@@ -21,10 +22,10 @@ export const Route = createFileRoute("/miami/entrevistas/")({
 });
 
 function MiamiInterviewsIndex() {
-  const { items, loading } = useMiamiInterviews(60);
+  const { items, loading } = useTerritoryInterviews(MIAMI.code, 60);
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <MiamiMasthead subtitle="Entrevistas · Edición Miami" />
+      <TerritoryMasthead territory={MIAMI} subtitle="Entrevistas · Edición Miami" />
       {loading ? (
         <p className="mt-8 text-muted-foreground">Cargando…</p>
       ) : items.length === 0 ? (
@@ -34,7 +35,7 @@ function MiamiInterviewsIndex() {
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((it) => (
-            <MiamiInterviewCard key={it.id} item={it} />
+            <TerritoryInterviewCard key={it.id} item={it} />
           ))}
         </div>
       )}
