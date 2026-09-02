@@ -17,6 +17,7 @@ import { Route as RevistaRouteImport } from './routes/revista'
 import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
+import { Route as PortugalRouteImport } from './routes/portugal'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as PaisesRouteImport } from './routes/paises'
 import { Route as MiamiRouteImport } from './routes/miami'
@@ -203,6 +204,11 @@ const PrivacidadRoute = PrivacidadRouteImport.update({
 const PremiosMvpRoute = PremiosMvpRouteImport.update({
   id: '/premios-mvp',
   path: '/premios-mvp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortugalRoute = PortugalRouteImport.update({
+  id: '/portugal',
+  path: '/portugal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
@@ -976,6 +982,7 @@ export interface FileRoutesByFullPath {
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/portugal': typeof PortugalRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
@@ -1129,6 +1136,7 @@ export interface FileRoutesByTo {
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/portugal': typeof PortugalRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
@@ -1279,6 +1287,7 @@ export interface FileRoutesById {
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
+  '/portugal': typeof PortugalRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
@@ -1438,6 +1447,7 @@ export interface FileRouteTypes {
     | '/miami'
     | '/paises'
     | '/patrocinadores'
+    | '/portugal'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
@@ -1591,6 +1601,7 @@ export interface FileRouteTypes {
     | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
+    | '/portugal'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
@@ -1740,6 +1751,7 @@ export interface FileRouteTypes {
     | '/miami'
     | '/paises'
     | '/patrocinadores'
+    | '/portugal'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
@@ -1898,6 +1910,7 @@ export interface RootRouteChildren {
   MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
+  PortugalRoute: typeof PortugalRoute
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
   RedactoresRoute: typeof RedactoresRouteWithChildren
@@ -2002,6 +2015,13 @@ declare module '@tanstack/react-router' {
       path: '/premios-mvp'
       fullPath: '/premios-mvp'
       preLoaderRoute: typeof PremiosMvpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portugal': {
+      id: '/portugal'
+      path: '/portugal'
+      fullPath: '/portugal'
+      preLoaderRoute: typeof PortugalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patrocinadores': {
@@ -3393,6 +3413,7 @@ const rootRouteChildren: RootRouteChildren = {
   MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
+  PortugalRoute: PortugalRoute,
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
   RedactoresRoute: RedactoresRouteWithChildren,
