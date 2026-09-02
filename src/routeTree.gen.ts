@@ -35,6 +35,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
 import { Route as RevistaIndexRouteImport } from './routes/revista.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
+import { Route as PortugalIndexRouteImport } from './routes/portugal.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as MiamiIndexRouteImport } from './routes/miami.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
@@ -295,6 +296,11 @@ const ResultadosIndexRoute = ResultadosIndexRouteImport.update({
   id: '/resultados/',
   path: '/resultados/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PortugalIndexRoute = PortugalIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PortugalRoute,
 } as any)
 const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
   id: '/noticias/',
@@ -982,7 +988,7 @@ export interface FileRoutesByFullPath {
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
-  '/portugal': typeof PortugalRoute
+  '/portugal': typeof PortugalRouteWithChildren
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
@@ -1081,6 +1087,7 @@ export interface FileRoutesByFullPath {
   '/eventos/': typeof EventosIndexRoute
   '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
+  '/portugal/': typeof PortugalIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
@@ -1136,7 +1143,6 @@ export interface FileRoutesByTo {
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
-  '/portugal': typeof PortugalRoute
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
@@ -1233,6 +1239,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosIndexRoute
   '/miami': typeof MiamiIndexRoute
   '/noticias': typeof NoticiasIndexRoute
+  '/portugal': typeof PortugalIndexRoute
   '/resultados': typeof ResultadosIndexRoute
   '/revista': typeof RevistaIndexRoute
   '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
@@ -1287,7 +1294,7 @@ export interface FileRoutesById {
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
-  '/portugal': typeof PortugalRoute
+  '/portugal': typeof PortugalRouteWithChildren
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
@@ -1386,6 +1393,7 @@ export interface FileRoutesById {
   '/eventos/': typeof EventosIndexRoute
   '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
+  '/portugal/': typeof PortugalIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
@@ -1546,6 +1554,7 @@ export interface FileRouteTypes {
     | '/eventos/'
     | '/miami/'
     | '/noticias/'
+    | '/portugal/'
     | '/resultados/'
     | '/revista/'
     | '/salon-de-la-fama/'
@@ -1601,7 +1610,6 @@ export interface FileRouteTypes {
     | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
-    | '/portugal'
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
@@ -1698,6 +1706,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/miami'
     | '/noticias'
+    | '/portugal'
     | '/resultados'
     | '/revista'
     | '/salon-de-la-fama'
@@ -1850,6 +1859,7 @@ export interface FileRouteTypes {
     | '/eventos/'
     | '/miami/'
     | '/noticias/'
+    | '/portugal/'
     | '/resultados/'
     | '/revista/'
     | '/salon-de-la-fama/'
@@ -1910,7 +1920,7 @@ export interface RootRouteChildren {
   MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
-  PortugalRoute: typeof PortugalRoute
+  PortugalRoute: typeof PortugalRouteWithChildren
   PremiosMvpRoute: typeof PremiosMvpRoute
   PrivacidadRoute: typeof PrivacidadRoute
   RedactoresRoute: typeof RedactoresRouteWithChildren
@@ -2142,6 +2152,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/resultados/'
       preLoaderRoute: typeof ResultadosIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/portugal/': {
+      id: '/portugal/'
+      path: '/'
+      fullPath: '/portugal/'
+      preLoaderRoute: typeof PortugalIndexRouteImport
+      parentRoute: typeof PortugalRoute
     }
     '/noticias/': {
       id: '/noticias/'
@@ -3222,6 +3239,18 @@ const MiamiRouteChildren: MiamiRouteChildren = {
 
 const MiamiRouteWithChildren = MiamiRoute._addFileChildren(MiamiRouteChildren)
 
+interface PortugalRouteChildren {
+  PortugalIndexRoute: typeof PortugalIndexRoute
+}
+
+const PortugalRouteChildren: PortugalRouteChildren = {
+  PortugalIndexRoute: PortugalIndexRoute,
+}
+
+const PortugalRouteWithChildren = PortugalRoute._addFileChildren(
+  PortugalRouteChildren,
+)
+
 interface RedactoresRouteChildren {
   RedactoresIdRoute: typeof RedactoresIdRoute
 }
@@ -3413,7 +3442,7 @@ const rootRouteChildren: RootRouteChildren = {
   MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
-  PortugalRoute: PortugalRoute,
+  PortugalRoute: PortugalRouteWithChildren,
   PremiosMvpRoute: PremiosMvpRoute,
   PrivacidadRoute: PrivacidadRoute,
   RedactoresRoute: RedactoresRouteWithChildren,
