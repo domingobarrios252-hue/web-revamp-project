@@ -395,7 +395,7 @@ function NewsEditor({
   const [visHome, setVisHome] = useState(true);
   // Hub scope is mutually exclusive — a noticia pertenece como máximo a UN hub
   // de país. Esto evita que se mezcle el contenido entre /hub/es y /hub/co.
-  const [hubScope, setHubScope] = useState<HubScope>("none");
+  const [hubScope, setHubScope] = useState<"none" | "es" | "co">("none");
   // Directo: distintivo EN DIRECTO en el hero de portada
   const [liveActive, setLiveActive] = useState<boolean>(item?.live_active ?? false);
   const [liveEventId, setLiveEventId] = useState<string>(item?.live_event_id ?? "");
