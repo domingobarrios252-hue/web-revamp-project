@@ -134,6 +134,7 @@ import { Route as PortugalEntrevistasIndexRouteImport } from './routes/portugal.
 import { Route as MiamiNoticiasIndexRouteImport } from './routes/miami.noticias.index'
 import { Route as MiamiEntrevistasIndexRouteImport } from './routes/miami.entrevistas.index'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
+import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
 import { Route as PortugalNoticiasSlugRouteImport } from './routes/portugal.noticias.$slug'
 import { Route as PortugalEntrevistasSlugRouteImport } from './routes/portugal.entrevistas.$slug'
@@ -809,6 +810,11 @@ const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HubCountryRoute,
 } as any)
+const EspecialesSlugIndexRoute = EspecialesSlugIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EspecialesSlugRoute,
+} as any)
 const RevistaLeerIdRoute = RevistaLeerIdRouteImport.update({
   id: '/leer/$id',
   path: '/leer/$id',
@@ -1158,6 +1164,7 @@ export interface FileRoutesByFullPath {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/especiales/$slug/': typeof EspecialesSlugIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias/': typeof MiamiNoticiasIndexRoute
@@ -1269,7 +1276,6 @@ export interface FileRoutesByTo {
   '/espana/mvp': typeof EspanaMvpRoute
   '/espana/patinadores': typeof EspanaPatinadoresRoute
   '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
-  '/especiales/$slug': typeof EspecialesSlugRouteWithChildren
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
@@ -1312,6 +1318,7 @@ export interface FileRoutesByTo {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/especiales/$slug': typeof EspecialesSlugIndexRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/miami/entrevistas': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias': typeof MiamiNoticiasIndexRoute
@@ -1478,6 +1485,7 @@ export interface FileRoutesById {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/especiales/$slug/': typeof EspecialesSlugIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias/': typeof MiamiNoticiasIndexRoute
@@ -1646,6 +1654,7 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/especiales/$slug/'
     | '/hub/$country/'
     | '/miami/entrevistas/'
     | '/miami/noticias/'
@@ -1757,7 +1766,6 @@ export interface FileRouteTypes {
     | '/espana/mvp'
     | '/espana/patinadores'
     | '/espana/rollerzone-tv'
-    | '/especiales/$slug'
     | '/eventos/$slug'
     | '/events/$slug'
     | '/legal/$slug'
@@ -1800,6 +1808,7 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/especiales/$slug'
     | '/hub/$country'
     | '/miami/entrevistas'
     | '/miami/noticias'
@@ -1965,6 +1974,7 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/especiales/$slug/'
     | '/hub/$country/'
     | '/miami/entrevistas/'
     | '/miami/noticias/'
@@ -2932,6 +2942,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryIndexRouteImport
       parentRoute: typeof HubCountryRoute
     }
+    '/especiales/$slug/': {
+      id: '/especiales/$slug/'
+      path: '/'
+      fullPath: '/especiales/$slug/'
+      preLoaderRoute: typeof EspecialesSlugIndexRouteImport
+      parentRoute: typeof EspecialesSlugRoute
+    }
     '/revista/leer/$id': {
       id: '/revista/leer/$id'
       path: '/leer/$id'
@@ -3425,10 +3442,12 @@ const RevistaRouteWithChildren =
 
 interface EspecialesSlugRouteChildren {
   EspecialesSlugPieceRoute: typeof EspecialesSlugPieceRoute
+  EspecialesSlugIndexRoute: typeof EspecialesSlugIndexRoute
 }
 
 const EspecialesSlugRouteChildren: EspecialesSlugRouteChildren = {
   EspecialesSlugPieceRoute: EspecialesSlugPieceRoute,
+  EspecialesSlugIndexRoute: EspecialesSlugIndexRoute,
 }
 
 const EspecialesSlugRouteWithChildren = EspecialesSlugRoute._addFileChildren(

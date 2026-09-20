@@ -1,22 +1,26 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { renderMarkdown } from "@/lib/markdown";
+import { Lightbox } from "@/components/site/Lightbox";
+import { PieceShareBar } from "@/components/specials/PieceShareBar";
 import specialFallback from "@/assets/special-fallback.svg";
+
+const SITE = "https://rollerzone.es";
 
 type Piece = {
   slug: string;
-  number: string;
-  kicker: string;
-  category: string;
+  number: string | null;
+  kicker: string | null;
+  category: string | null;
   title: string;
-  description: string;
-  excerpt: string;
-  content_md: string;
-  image_url: string;
-  thumbnail_url: string;
-  external_url: string;
+  description: string | null;
+  excerpt: string | null;
+  content_md: string | null;
+  image_url: string | null;
+  thumbnail_url: string | null;
+  external_url: string | null;
   status: string;
   visible: boolean;
   gallery?: string[] | null;
@@ -24,130 +28,165 @@ type Piece = {
 
 type SpecialLite = { slug: string; title: string };
 
+const PUBLIC_STATUSES = ["published", "live"];
+
 export const Route = createFileRoute("/especiales/$slug/$piece")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.piece} · ${params.slug} | RollerZone` },
-      { name: "description", content: "Pieza editorial del especial." },
-    ],
-  }),
+  loader: async ({ params }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sb = supabase as any;
+    const { data: special } = await sb
+      .from("special_editorials")
+      .select("slug,title")
+      .eq("slug", params.slug)
+      .eq("status", "active")
+      .maybeSingle();
+    if (!special) throw notFound();
+
+    const { data: piece } = await sb
+      .from("special_pieces")
+      .select("*")
+      .eq("special_slug", params.slug)
+      .eq("slug", params.piece)
+      .in("status", PUBLIC_STATUSES)
+      .eq("visible", true)
+      .maybeSingle();
+    if (!piece) throw notFound();
+
+    const { data: siblings } = await sb
+      .from("special_pieces")
+      .select("slug,number,kicker,category,title,description,excerpt,image_url,thumbnail_url")
+      .eq("special_slug", params.slug)
+      .in("status", PUBLIC_STATUSES)
+      .eq("visible", true)
+      .neq("slug", params.piece)
+      .order("sort_order", { ascending: true })
+      .limit(3);
+
+    return {
+      special: special as SpecialLite,
+      piece: piece as Piece,
+      siblings: (siblings ?? []) as Piece[],
+      url: `${SITE}/especiales/${params.slug}/${params.piece}`,
+    };
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {
+        meta: [
+          { title: "Pieza no disponible | Rollerzone" },
+          { name: "robots", content: "noindex, follow" },
+        ],
+      };
+    }
+    const { piece, special, url } = loaderData;
+    const title = `${piece.title} | Rollerzone`;
+    const description =
+      (piece.excerpt || piece.description || `${piece.title} · ${special.title}`).slice(0, 300);
+    const image = piece.image_url?.trim() || piece.thumbnail_url?.trim() || "";
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: url },
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
+    ];
+    if (image.startsWith("http")) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+    }
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: piece.title,
+            description,
+            image: image || undefined,
+            isPartOf: { "@type": "CreativeWork", name: special.title },
+            url,
+            publisher: {
+              "@type": "Organization",
+              name: "Rollerzone",
+              url: SITE,
+            },
+          }),
+        },
+      ],
+    };
+  },
   component: PiecePage,
   notFoundComponent: PieceNotFound,
 });
 
 function PiecePage() {
-  const { slug, piece: pieceSlug } = Route.useParams();
-  const [special, setSpecial] = useState<SpecialLite | null>(null);
-  const [piece, setPiece] = useState<Piece | null>(null);
-  const [siblings, setSiblings] = useState<Piece[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [missing, setMissing] = useState(false);
+  const { slug } = Route.useParams();
+  const { special, piece, siblings, url } = Route.useLoaderData();
+  const [lightbox, setLightbox] = useState<number | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sb = supabase as any;
-      const { data: sp } = await sb
-        .from("special_editorials")
-        .select("slug,title,status")
-        .eq("slug", slug)
-        .eq("status", "active")
-        .maybeSingle();
-      if (cancelled) return;
-      if (!sp) {
-        setMissing(true);
-        setLoading(false);
-        return;
-      }
-      const { data: pc } = await sb
-        .from("special_pieces")
-        .select("*")
-        .eq("special_slug", slug)
-        .eq("slug", pieceSlug)
-        .in("status", ["published", "live"])
-        .eq("visible", true)
-        .maybeSingle();
-      if (cancelled) return;
-      if (!pc) {
-        setMissing(true);
-        setLoading(false);
-        return;
-      }
-      const { data: sibs } = await sb
-        .from("special_pieces")
-        .select("*")
-        .eq("special_slug", slug)
-        .in("status", ["published", "live"])
-        .eq("visible", true)
-        .neq("slug", pieceSlug)
-        .order("sort_order", { ascending: true })
-        .limit(4);
-      setSpecial(sp as SpecialLite);
-      setPiece(pc as Piece);
-      setSiblings((sibs ?? []) as Piece[]);
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [slug, pieceSlug]);
-
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 py-24 text-muted-foreground">Cargando pieza…</div>
-    );
-  }
-  if (missing || !piece || !special) {
-    throw notFound();
-  }
-
-  const hero = piece.image_url || piece.thumbnail_url || (specialFallback as string);
-  const html = renderMarkdown(piece.content_md ?? "");
+  const hero = piece.image_url?.trim() || piece.thumbnail_url?.trim() || (specialFallback as string);
+  // El H1 de la página es el título de la pieza: los H1 del contenido bajan a H2.
+  const html = renderMarkdown(piece.content_md ?? "")
+    .replace(/<h1(\s|>)/g, "<h2$1")
+    .replace(/<\/h1>/g, "</h2>");
+  const gallery = Array.isArray(piece.gallery) ? piece.gallery.filter(Boolean) : [];
+  const kicker = piece.kicker || piece.category || "";
 
   return (
     <>
-      <section className="relative overflow-hidden bg-surface">
-        <div className="absolute inset-0">
-          <img loading="lazy" decoding="async" src={hero} alt="" className="h-full w-full object-cover opacity-30" aria-hidden="true" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
-        </div>
-        <div className="relative mx-auto max-w-4xl px-4 py-16 md:px-6 md:py-24">
-          <Link
-            to="/especiales/$slug"
-            params={{ slug }}
-            className="font-condensed inline-block text-[10px] font-bold uppercase tracking-[3px] text-gold hover:text-gold-light"
-          >
-            ← {special.title}
-          </Link>
-          <div className="mt-4 flex items-center gap-3">
-            {(piece.kicker || piece.category) && (
+      {/* Cabecera editorial (las migas de pan globales ya las pinta el layout) */}
+      <header className="bg-background">
+        <div className="mx-auto max-w-4xl px-4 pb-8 pt-6 md:px-6">
+          <div className="flex flex-wrap items-center gap-3">
+            {kicker && (
               <span className="font-condensed inline-block bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
-                {piece.kicker || piece.category}
+                {kicker}
               </span>
             )}
-            {piece.number && (
-              <span className="font-display text-2xl text-gold">{piece.number}</span>
-            )}
+            {piece.number && <span className="font-display text-2xl text-gold">{piece.number}</span>}
           </div>
-          <h1 className="font-display mt-4 text-3xl uppercase tracking-wider text-foreground md:text-5xl">
+          <h1 className="font-display mt-4 break-words text-[1.75rem] uppercase leading-tight tracking-wider text-foreground sm:text-4xl md:text-5xl">
             {piece.title}
           </h1>
           <div className="mt-4 h-[3px] w-24 bg-gold" />
-          {piece.excerpt && (
-            <p className="mt-6 max-w-3xl text-lg text-muted-foreground md:text-xl">
-              {piece.excerpt}
+          {(piece.excerpt || piece.description) && (
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-xl">
+              {piece.excerpt || piece.description}
             </p>
           )}
+          <div className="mt-6">
+            <PieceShareBar url={url} title={piece.title} />
+          </div>
         </div>
-      </section>
+      </header>
 
-      <article className="bg-background py-12 md:py-16">
+      {/* Imagen destacada a ancho completo */}
+      <figure className="bg-background">
+        <div className="mx-auto max-w-5xl px-0 md:px-6">
+          <div className="aspect-[16/9] w-full overflow-hidden bg-surface-2 md:rounded-2xl md:border md:border-border">
+            <img
+              src={hero}
+              alt={`${kicker ? kicker + " — " : ""}${piece.title} · ${special.title}`}
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      </figure>
+
+      {/* Contenido */}
+      <article className="bg-background py-10 md:py-16">
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           {html ? (
             <div
-              className="prose prose-invert max-w-none text-base leading-relaxed text-muted-foreground [&_a]:text-gold [&_h1]:font-display [&_h1]:uppercase [&_h1]:tracking-wider [&_h1]:text-foreground [&_h2]:font-display [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-foreground [&_h3]:font-display [&_h3]:uppercase [&_h3]:tracking-wider [&_h3]:text-foreground [&_strong]:text-foreground"
+              className="prose prose-invert max-w-none break-words text-base leading-relaxed text-muted-foreground [&_a]:text-gold [&_h1]:font-display [&_h1]:uppercase [&_h1]:tracking-wider [&_h1]:text-foreground [&_h2]:font-display [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-foreground [&_h3]:font-display [&_h3]:uppercase [&_h3]:tracking-wider [&_h3]:text-foreground [&_img]:h-auto [&_img]:max-w-full [&_pre]:overflow-x-auto [&_strong]:text-foreground [&_table]:block [&_table]:overflow-x-auto"
               dangerouslySetInnerHTML={{ __html: html }}
             />
           ) : (
@@ -160,74 +199,101 @@ function PiecePage() {
               href={piece.external_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-condensed mt-8 inline-flex items-center gap-2 border border-gold px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+              className="font-condensed mt-8 inline-flex items-center gap-2 border border-gold px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
               Enlace externo <ExternalLink className="h-3.5 w-3.5" />
             </a>
           )}
         </div>
 
-        {Array.isArray(piece.gallery) && piece.gallery.length > 0 && (
-          <div className="mx-auto mt-14 max-w-5xl px-4 md:px-6">
+        {/* Galería */}
+        {gallery.length > 0 && (
+          <div className="mx-auto mt-12 max-w-5xl px-4 md:px-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="h-[2px] w-10 bg-gold" />
               <h2 className="font-condensed text-[11px] font-bold uppercase tracking-[3px] text-gold">
                 Galería del reportaje
               </h2>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {piece.gallery.map((url, i) => (
-                <figure
-                  key={`${url}-${i}`}
+            {/* Móvil: carrusel táctil · Escritorio: mosaico */}
+            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0">
+              {gallery.map((src, i) => (
+                <button
+                  key={`${src}-${i}`}
+                  type="button"
+                  onClick={() => setLightbox(i)}
                   className={
-                    "overflow-hidden rounded-lg border border-border bg-surface " +
+                    "w-[85%] shrink-0 snap-center overflow-hidden rounded-lg border border-border bg-surface sm:w-full " +
                     (i % 3 === 0 ? "sm:col-span-2" : "")
                   }
                 >
                   <img
-                    src={url}
-                    alt=""
+                    src={src}
+                    alt={`${piece.title} — foto ${i + 1}`}
                     loading="lazy"
-                    className="h-full w-full object-cover"
+                    decoding="async"
+                    className="aspect-[16/10] h-full w-full object-cover"
                   />
-                </figure>
+                </button>
               ))}
             </div>
           </div>
         )}
       </article>
 
+      {/* Volver al especial */}
+      <div className="bg-background pb-10">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <Link
+            to="/especiales/$slug"
+            params={{ slug }}
+            className="font-condensed inline-flex items-center gap-2 rounded-md border border-gold/60 bg-black/20 px-5 py-3 text-xs font-bold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-background"
+          >
+            <ArrowLeft className="h-4 w-4" /> Volver al especial · {special.title}
+          </Link>
+        </div>
+      </div>
 
+      {/* Otras piezas */}
       {siblings.length > 0 && (
         <section className="bg-surface py-12">
           <div className="mx-auto max-w-7xl px-4 md:px-6">
             <h2 className="font-display mb-6 text-xl uppercase tracking-wider text-foreground">
-              Más piezas del especial
+              Otras piezas del especial
             </h2>
-            <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ol className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {siblings.map((s) => (
                 <li key={s.slug}>
                   <Link
                     to="/especiales/$slug/$piece"
                     params={{ slug, piece: s.slug }}
-                    className="group block overflow-hidden rounded-xl border border-border bg-background transition-colors hover:border-gold"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background transition-all hover:-translate-y-1 hover:border-gold"
                   >
-                    <div className="aspect-[16/9] overflow-hidden bg-surface-2">
+                    <div className="relative aspect-[16/9] overflow-hidden bg-surface-2">
                       <img
-                        src={s.thumbnail_url || s.image_url || (specialFallback as string)}
+                        src={s.image_url?.trim() || s.thumbnail_url?.trim() || (specialFallback as string)}
                         alt={s.title}
                         loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                    </div>
-                    <div className="p-3">
                       {(s.kicker || s.category) && (
-                        <div className="font-condensed text-[9px] font-bold uppercase tracking-[2px] text-gold">
+                        <span className="font-condensed absolute left-3 top-3 inline-block bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
                           {s.kicker || s.category}
-                        </div>
+                        </span>
                       )}
-                      <div className="font-display mt-1 text-sm uppercase leading-tight tracking-wider text-foreground group-hover:text-gold">
+                    </div>
+                    <div className="flex flex-1 flex-col p-4">
+                      <h3 className="font-display text-base uppercase leading-snug tracking-wider text-foreground group-hover:text-gold md:text-lg">
                         {s.title}
+                      </h3>
+                      {(s.excerpt || s.description) && (
+                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                          {s.excerpt || s.description}
+                        </p>
+                      )}
+                      <div className="font-condensed mt-auto pt-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
+                        Leer pieza <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                       </div>
                     </div>
                   </Link>
@@ -236,6 +302,15 @@ function PiecePage() {
             </ol>
           </div>
         </section>
+      )}
+
+      {lightbox !== null && gallery.length > 0 && (
+        <Lightbox
+          images={gallery}
+          startIndex={lightbox}
+          alt={piece.title}
+          onClose={() => setLightbox(null)}
+        />
       )}
     </>
   );
@@ -254,7 +329,7 @@ function PieceNotFound() {
       <Link
         to="/especiales/$slug"
         params={{ slug }}
-        className="font-condensed mt-6 inline-block bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background"
+        className="font-condensed mt-6 inline-block bg-gold px-5 py-3 text-xs font-bold uppercase tracking-widest text-background"
       >
         Volver al especial
       </Link>

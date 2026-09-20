@@ -505,6 +505,16 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
    PANEL B · Piezas de un especial
 ============================================================ */
 
+function slugify(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
 const emptyPiece = (): Omit<Piece, "id" | "special_slug"> => ({
   slug: "",
   number: "",
@@ -623,6 +633,44 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
     load();
   };
 
+  const duplicate = async (p: Piece) => {
+    const { id: _id, ...rest } = p;
+    void _id;
+    let base = `${p.slug}-copia`;
+    let candidate = base;
+    let n = 2;
+    const taken = new Set(items.map((i) => i.slug));
+    while (taken.has(candidate)) {
+      candidate = `${base}-${n}`;
+      n += 1;
+    }
+    base = candidate;
+    const { error } = await db.from("special_pieces").insert({
+      ...rest,
+      special_slug: special.slug,
+      slug: base,
+      title: `${p.title} (copia)`,
+      status: "draft",
+      visible: false,
+      featured: false,
+      sort_order: (items[items.length - 1]?.sort_order ?? 0) + 10,
+    });
+    if (error) return toast.error(error.message);
+    toast.success("Pieza duplicada como borrador");
+    load();
+  };
+
+  const toggleStatus = async (p: Piece) => {
+    const next = p.status === "published" || p.status === "live" ? "draft" : "published";
+    const { error } = await db
+      .from("special_pieces")
+      .update({ status: next, visible: next === "published" ? true : p.visible })
+      .eq("id", p.id);
+    if (error) return toast.error(error.message);
+    toast.success(next === "published" ? "Pieza publicada" : "Pieza en borrador");
+    load();
+  };
+
   const onDragEnd = async (e: DragEndEvent) => {
     const { active, over } = e;
     if (!over || active.id === over.id) return;
@@ -716,6 +764,8 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
                   onEdit={() => openEdit(p)}
                   onRemove={() => remove(p)}
                   onToggle={(f) => toggleField(p, f)}
+                  onDuplicate={() => duplicate(p)}
+                  onToggleStatus={() => toggleStatus(p)}
                 />
               ))}
             </ul>
@@ -759,7 +809,13 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
             <Field label="Título">
               <input
                 value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    title: e.target.value,
+                    slug: !editing && f.slug === slugify(f.title) ? slugify(e.target.value) : f.slug,
+                  }))
+                }
                 className="w-full border border-border bg-surface px-3 py-2 text-sm"
               />
             </Field>
@@ -768,10 +824,13 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
               <input
                 value={form.slug}
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                disabled={!!editing}
-                className="w-full border border-border bg-surface px-3 py-2 text-sm disabled:opacity-60"
+                className="w-full border border-border bg-surface px-3 py-2 text-sm"
                 placeholder="titulo-de-la-pieza"
               />
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                URL pública: /especiales/{special.slug}/{form.slug || "…"}
+                {editing && " · Cambiarlo rompe los enlaces antiguos a esta pieza."}
+              </p>
             </Field>
 
             <Field label="Entradilla / descripción corta">
@@ -910,12 +969,16 @@ function SortableRow({
   onEdit,
   onRemove,
   onToggle,
+  onDuplicate,
+  onToggleStatus,
 }: {
   piece: Piece;
   specialSlug: string;
   onEdit: () => void;
   onRemove: () => void;
   onToggle: (field: "featured" | "visible") => void;
+  onDuplicate: () => void;
+  onToggleStatus: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: piece.id,
@@ -961,8 +1024,30 @@ function SortableRow({
           <span className={statusBadgeClass(piece.status)}>{statusLabel(piece.status)}</span>
         </div>
         <div className="truncate text-sm text-foreground">{piece.title}</div>
-        <div className="truncate text-[11px] text-muted-foreground">/{piece.slug}</div>
+        <div className="flex flex-wrap items-center gap-x-3 text-[11px] text-muted-foreground">
+          <span className="truncate">/{piece.slug}</span>
+          {piece.category && <span>Categoría: {piece.category}</span>}
+          <span>Orden: {piece.sort_order}</span>
+        </div>
       </div>
+
+      <button
+        onClick={onToggleStatus}
+        className="font-condensed shrink-0 border border-border px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
+        type="button"
+      >
+        {piece.status === "published" || piece.status === "live" ? "Ocultar" : "Publicar"}
+      </button>
+      <button
+        onClick={onDuplicate}
+        className="text-muted-foreground hover:text-gold"
+        aria-label="Duplicar"
+        title="Duplicar"
+        type="button"
+      >
+        <Copy className="h-4 w-4" />
+      </button>
+
 
       <Link
         to="/especiales/$slug/$piece"
