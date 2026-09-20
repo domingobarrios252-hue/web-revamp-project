@@ -61,28 +61,22 @@ function computeHeroBadge(slide: News, now: number = Date.now()): HeroBadge {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "RollerZone | La voz del patinaje de velocidad" },
-      {
-        name: "description",
-        content:
-          "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista.",
-      },
-      { property: "og:title", content: "RollerZone | La voz del patinaje de velocidad" },
-      {
-        property: "og:description",
-        content:
-          "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista.",
-      },
+      { title: HOME_TITLE },
+      { name: "description", content: HOME_DESCRIPTION },
+      { property: "og:title", content: HOME_TITLE },
+      { property: "og:description", content: HOME_DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Rollerzone" },
+      { property: "og:locale", content: "es_ES" },
       { property: "og:url", content: "https://rollerzone.es/" },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
+      { property: "og:image", content: HOME_OG_IMAGE },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "RollerZone — Patinaje de velocidad" },
+      { property: "og:image:alt", content: "Rollerzone — Patinaje de velocidad" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "RollerZone | La voz del patinaje de velocidad" },
-      { name: "twitter:description", content: "RollerZone, la voz del patinaje de velocidad: noticias, resultados, eventos, directos, entrevistas, selección española, clubes y revista." },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5" },
+      { name: "twitter:title", content: HOME_TITLE },
+      { name: "twitter:description", content: HOME_DESCRIPTION },
+      { name: "twitter:image", content: HOME_OG_IMAGE },
     ],
 
     links: [{ rel: "canonical", href: "https://rollerzone.es/" }],
