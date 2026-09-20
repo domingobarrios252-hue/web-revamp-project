@@ -141,25 +141,9 @@ function PiecePage() {
 
   return (
     <>
-      {/* Breadcrumb */}
-      <nav
-        aria-label="Migas de pan"
-        className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-2 gap-y-1 px-4 py-4 text-[10px] uppercase tracking-[2px] text-muted-foreground md:px-6 md:text-[11px]"
-      >
-        <Link to="/" className="hover:text-gold">Inicio</Link>
-        <ChevronRight className="h-3 w-3 shrink-0" />
-        <Link to="/especiales" className="hover:text-gold">Especiales</Link>
-        <ChevronRight className="h-3 w-3 shrink-0" />
-        <Link to="/especiales/$slug" params={{ slug }} className="hover:text-gold">
-          {special.title}
-        </Link>
-        <ChevronRight className="h-3 w-3 shrink-0" />
-        <span className="text-foreground/80">{piece.title}</span>
-      </nav>
-
-      {/* Cabecera editorial */}
+      {/* Cabecera editorial (las migas de pan globales ya las pinta el layout) */}
       <header className="bg-background">
-        <div className="mx-auto max-w-4xl px-4 pb-8 md:px-6">
+        <div className="mx-auto max-w-4xl px-4 pb-8 pt-6 md:px-6">
           <div className="flex flex-wrap items-center gap-3">
             {kicker && (
               <span className="font-condensed inline-block bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background">
