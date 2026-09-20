@@ -799,7 +799,13 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
             <Field label="Título">
               <input
                 value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    title: e.target.value,
+                    slug: !editing && f.slug === slugify(f.title) ? slugify(e.target.value) : f.slug,
+                  }))
+                }
                 className="w-full border border-border bg-surface px-3 py-2 text-sm"
               />
             </Field>
@@ -808,10 +814,13 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
               <input
                 value={form.slug}
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                disabled={!!editing}
-                className="w-full border border-border bg-surface px-3 py-2 text-sm disabled:opacity-60"
+                className="w-full border border-border bg-surface px-3 py-2 text-sm"
                 placeholder="titulo-de-la-pieza"
               />
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                URL pública: /especiales/{special.slug}/{form.slug || "…"}
+                {editing && " · Cambiarlo rompe los enlaces antiguos a esta pieza."}
+              </p>
             </Field>
 
             <Field label="Entradilla / descripción corta">
