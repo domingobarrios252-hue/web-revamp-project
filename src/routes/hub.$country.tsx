@@ -21,7 +21,6 @@ export const Route = createFileRoute("/hub/$country")({
         { property: "og:url", content: url },
         { name: "twitter:card", content: "summary_large_image" },
       ],
-      links: [{ rel: "canonical", href: url }],
     };
   },
 });
