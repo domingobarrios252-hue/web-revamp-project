@@ -5,15 +5,24 @@ import { HubHero } from "@/components/hub/HubHero";
 
 export const Route = createFileRoute("/hub/$country")({
   component: HubLayout,
-  head: ({ params }) => ({
-    meta: [
-      { title: `Hub ${params.country.toUpperCase()} | RollerZone` },
-      {
-        name: "description",
-        content: `Portal del patinaje de velocidad en ${params.country.toUpperCase()} — noticias, competiciones, clubes, patinadores y más.`,
-      },
-    ],
-  }),
+  head: ({ params }) => {
+    const NAMES: Record<string, string> = { es: "España", co: "Colombia", pt: "Portugal" };
+    const name = NAMES[params.country] ?? params.country.toUpperCase();
+    const title = `Patinaje de velocidad en ${name}: noticias, competiciones y clubes | Rollerzone`;
+    const desc = `Portal Rollerzone del patinaje de velocidad en ${name}: noticias, resultados, competiciones, clubes, federaciones y patinadores.`;
+    const url = `https://rollerzone.es/hub/${params.country}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+    };
+  },
 });
 
 function HubLayout() {

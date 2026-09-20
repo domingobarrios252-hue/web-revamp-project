@@ -37,6 +37,36 @@ export const Route = createFileRoute("/tv")({
       { name: "twitter:image:alt", content: "RollerZone TV — El canal del patinaje de velocidad" },
     ],
     links: [{ rel: "canonical", href: TV_CANONICAL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "BroadcastService",
+              name: "Rollerzone TV",
+              url: TV_CANONICAL,
+              inLanguage: "es-ES",
+              broadcastDisplayName: "Rollerzone TV",
+              description: TV_DESCRIPTION,
+              publisher: { "@type": "Organization", name: "Rollerzone", url: "https://rollerzone.es" },
+              areaServed: ["ES", "CO", "PT"],
+            },
+            {
+              "@type": "VideoObject",
+              name: TV_TITLE,
+              description: TV_DESCRIPTION,
+              thumbnailUrl: [TV_OG_IMAGE],
+              uploadDate: "2025-01-01T00:00:00.000Z",
+              contentUrl: TV_CANONICAL,
+              embedUrl: TV_CANONICAL,
+              publisher: { "@type": "Organization", name: "Rollerzone", url: "https://rollerzone.es" },
+            },
+          ],
+        }).replace(/</g, "\\u003c"),
+      },
+    ],
   }),
   component: TvPage,
 });

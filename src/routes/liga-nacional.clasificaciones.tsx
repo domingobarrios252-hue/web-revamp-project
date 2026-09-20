@@ -18,7 +18,11 @@ export const Route = createFileRoute("/liga-nacional/clasificaciones")({
         content:
           "Consulta todas las clasificaciones de la Liga Nacional Absoluta y la Liga Sub 15 por grupo y división en RollerZone.es.",
       },
+      { property: "og:url", content: "https://rollerzone.es/liga-nacional/clasificaciones" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/liga-nacional/clasificaciones" }],
   }),
   component: LigaNacionalClasificaciones,
 });

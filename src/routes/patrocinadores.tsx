@@ -20,7 +20,11 @@ export const Route = createFileRoute("/patrocinadores")({
       { name: "description", content: "Marcas y patrocinadores que hacen posible RollerZone." },
       { property: "og:title", content: "Patrocinadores — RollerZone" },
       { property: "og:description", content: "Marcas que apoyan al patinaje de velocidad." },
+      { property: "og:url", content: "https://rollerzone.es/patrocinadores" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/patrocinadores" }],
   }),
   component: SponsorsPage,
 });

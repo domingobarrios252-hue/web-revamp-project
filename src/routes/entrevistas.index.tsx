@@ -18,11 +18,15 @@ type Interview = {
 export const Route = createFileRoute("/entrevistas/")({
   head: () => ({
     meta: [
-      { title: "Entrevistas | RollerZone" },
+      { title: "Entrevistas de patinaje de velocidad | Rollerzone" },
       { name: "description", content: "Entrevistas en profundidad a patinadores, entrenadores y figuras del patinaje de velocidad." },
       { property: "og:title", content: "Entrevistas — RollerZone" },
       { property: "og:description", content: "Entrevistas en profundidad a patinadores, entrenadores y figuras del patinaje de velocidad." },
+      { property: "og:url", content: "https://rollerzone.es/entrevistas" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/entrevistas" }],
   }),
   component: EntrevistasIndex,
 });

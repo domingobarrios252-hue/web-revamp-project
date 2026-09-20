@@ -27,7 +27,7 @@ type Magazine = {
 export const Route = createFileRoute("/revista/")({
   head: () => ({
     meta: [
-      { title: "Revista | RollerZone" },
+      { title: "Revista de patinaje de velocidad | Rollerzone Magazine" },
       {
         name: "description",
         content:
@@ -37,7 +37,9 @@ export const Route = createFileRoute("/revista/")({
       { property: "og:description", content: "Biblioteca digital abierta: todas las ediciones de la revista RollerZone." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "https://rollerzone.es/revista" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/revista" }],
   }),
   component: RevistaPage,
 });

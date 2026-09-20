@@ -18,7 +18,11 @@ export const Route = createFileRoute("/espana/federaciones")({
         content:
           "Consulta los datos oficiales de las federaciones autonómicas vinculadas al patinaje nacional.",
       },
+      { property: "og:url", content: "https://rollerzone.es/espana/federaciones" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/espana/federaciones" }],
   }),
   component: EspanaFederacionesPage,
 });

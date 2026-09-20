@@ -27,18 +27,22 @@ type Category = { id: string; name: string; slug: string; scope: string };
 export const Route = createFileRoute("/noticias/")({
   head: () => ({
     meta: [
-      { title: "Noticias | RollerZone" },
+      { title: "Noticias de patinaje de velocidad | Rollerzone" },
       {
         name: "description",
         content:
-          "Todas las noticias del patinaje de velocidad: nacionales, internacionales y reportajes.",
+          "Noticias de patinaje de velocidad en España e internacional: Liga Nacional, Campeonato de España, World Skate Games, clubes, patinadores y reportajes.",
       },
-      { property: "og:title", content: "Noticias — RollerZone" },
+      { property: "og:title", content: "Noticias de patinaje de velocidad | Rollerzone" },
       {
         property: "og:description",
         content: "Todas las noticias del patinaje de velocidad.",
       },
+      { property: "og:url", content: "https://rollerzone.es/noticias" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/noticias" }],
   }),
   component: NoticiasIndexPage,
 });

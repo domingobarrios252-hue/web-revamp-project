@@ -49,7 +49,9 @@ export const Route = createFileRoute("/premios-mvp")({
         { name: "twitter:title", content: "Premios MVP — RollerZone" },
         { name: "twitter:description", content: "Cuadro de honor MVP por temporada." },
         { name: "twitter:image", content: ogImage },
+        { property: "og:url", content: "https://rollerzone.es/premios-mvp" },
       ],
+        links: [{ rel: "canonical", href: "https://rollerzone.es/premios-mvp" }],
     };
   },
   component: PremiosMvpPage,

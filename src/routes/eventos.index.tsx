@@ -31,10 +31,30 @@ type EventItem = {
 export const Route = createFileRoute("/eventos/")({
   head: () => ({
     meta: [
-      { title: "Eventos | RollerZone" },
-      { name: "description", content: "Calendario de eventos y competiciones de patinaje de velocidad: categorías, fechas, ubicación y enlaces oficiales." },
-      { property: "og:title", content: "Eventos — RollerZone" },
+      { title: "Competiciones y eventos de patinaje de velocidad | Rollerzone" },
+      { name: "description", content: "Calendario de competiciones de patinaje de velocidad: Liga Nacional, Campeonato de España, World Skate Games y campeonatos internacionales con fechas y sedes." },
+      { property: "og:title", content: "Competiciones y eventos de patinaje de velocidad | Rollerzone" },
       { property: "og:description", content: "Calendario de eventos y competiciones de patinaje de velocidad." },
+      { property: "og:url", content: "https://rollerzone.es/eventos" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/eventos" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Calendario de competiciones de patinaje de velocidad",
+          description:
+            "Competiciones de patinaje de velocidad: Liga Nacional, Campeonato de España, World Skate Games y campeonatos internacionales con fechas y sedes.",
+          url: "https://rollerzone.es/eventos",
+          inLanguage: "es-ES",
+          isPartOf: { "@type": "WebSite", name: "Rollerzone", url: "https://rollerzone.es" },
+          about: { "@type": "Thing", name: "Patinaje de velocidad" },
+        }).replace(/</g, "\\u003c"),
+      },
     ],
   }),
   component: EventosPage,
