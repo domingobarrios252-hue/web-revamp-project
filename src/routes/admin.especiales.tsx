@@ -754,6 +754,8 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
                   onEdit={() => openEdit(p)}
                   onRemove={() => remove(p)}
                   onToggle={(f) => toggleField(p, f)}
+                  onDuplicate={() => duplicate(p)}
+                  onToggleStatus={() => toggleStatus(p)}
                 />
               ))}
             </ul>
@@ -948,12 +950,16 @@ function SortableRow({
   onEdit,
   onRemove,
   onToggle,
+  onDuplicate,
+  onToggleStatus,
 }: {
   piece: Piece;
   specialSlug: string;
   onEdit: () => void;
   onRemove: () => void;
   onToggle: (field: "featured" | "visible") => void;
+  onDuplicate: () => void;
+  onToggleStatus: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: piece.id,
