@@ -33,65 +33,70 @@ type Piece = {
 };
 
 export const Route = createFileRoute("/especiales/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.slug} · Especial | RollerZone` },
-      { name: "description", content: "Cobertura especial RollerZone." },
-    ],
-  }),
+  loader: async ({ params }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sb = supabase as any;
+    const { data: sp } = await sb
+      .from("special_editorials")
+      .select("*")
+      .eq("slug", params.slug)
+      .eq("status", "active")
+      .maybeSingle();
+    if (!sp) throw notFound();
+    const { data: pcs } = await sb
+      .from("special_pieces")
+      .select("*")
+      .eq("special_slug", params.slug)
+      .in("status", ["published", "live"])
+      .eq("visible", true)
+      .order("sort_order", { ascending: true });
+    return {
+      special: sp as Special,
+      pieces: (pcs ?? []) as Piece[],
+      url: `${SITE}/especiales/${params.slug}`,
+    };
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {
+        meta: [
+          { title: "Especial no disponible | Rollerzone" },
+          { name: "robots", content: "noindex, follow" },
+        ],
+      };
+    }
+    const { special, url } = loaderData;
+    const title = `${special.title} | Rollerzone`;
+    const description = (
+      special.description ||
+      special.subtitle ||
+      `Cobertura especial de Rollerzone: ${special.title}.`
+    ).slice(0, 300);
+    const image = (special.hero_image_url || special.cover_url || "").trim();
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: url },
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
+    ];
+    if (image.startsWith("http")) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }] };
+  },
   component: SpecialLanding,
   notFoundComponent: SpecialNotFound,
 });
 
 function SpecialLanding() {
   const { slug } = Route.useParams();
-  const [special, setSpecial] = useState<Special | null>(null);
-  const [pieces, setPieces] = useState<Piece[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [missing, setMissing] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sb = supabase as any;
-      const { data: sp } = await sb
-        .from("special_editorials")
-        .select("*")
-        .eq("slug", slug)
-        .eq("status", "active")
-        .maybeSingle();
-      if (cancelled) return;
-      if (!sp) {
-        setMissing(true);
-        setLoading(false);
-        return;
-      }
-      const { data: pcs } = await sb
-        .from("special_pieces")
-        .select("*")
-        .eq("special_slug", slug)
-        .in("status", ["published", "live"])
-        .eq("visible", true)
-        .order("sort_order", { ascending: true });
-      setSpecial(sp as Special);
-      setPieces((pcs ?? []) as Piece[]);
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 py-24 text-muted-foreground">Cargando especial…</div>
-    );
-  }
-  if (missing || !special) {
-    throw notFound();
-  }
+  const { special, pieces } = Route.useLoaderData();
 
   const heroImage = special.hero_image_url?.trim() || special.cover_url?.trim() || (specialFallback as string);
   const featured = pieces.filter((p) => p.featured);
