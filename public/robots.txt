@@ -4,6 +4,10 @@ Disallow: /admin
 Disallow: /admin/
 Disallow: /auth
 Disallow: /dashboard
+Disallow: /editor
+Disallow: /acceso-interno
+Disallow: /establecer-clave
+Disallow: /newsletter
 Disallow: /mi-biblioteca
 
 User-agent: Googlebot-News
