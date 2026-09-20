@@ -20,9 +20,9 @@ type ResultEvent = {
 export const Route = createFileRoute("/resultados/")({
   head: () => ({
     meta: [
-      { title: "Resultados | RollerZone" },
-      { name: "description", content: "Resultados oficiales de patinaje de velocidad — clasificaciones por evento y categoría." },
-      { property: "og:title", content: "Resultados — RollerZone" },
+      { title: "Resultados de patinaje de velocidad | Rollerzone" },
+      { name: "description", content: "Resultados de patinaje de velocidad: clasificaciones oficiales por evento y categoría de la Liga Nacional, Campeonato de España y competiciones internacionales." },
+      { property: "og:title", content: "Resultados de patinaje de velocidad | Rollerzone" },
       { property: "og:description", content: "Clasificaciones oficiales de patinaje de velocidad." },
       { property: "og:url", content: "https://rollerzone.es/resultados" },
       { property: "og:type", content: "website" },

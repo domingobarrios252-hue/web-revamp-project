@@ -31,9 +31,9 @@ type EventItem = {
 export const Route = createFileRoute("/eventos/")({
   head: () => ({
     meta: [
-      { title: "Eventos | RollerZone" },
-      { name: "description", content: "Calendario de eventos y competiciones de patinaje de velocidad: categorías, fechas, ubicación y enlaces oficiales." },
-      { property: "og:title", content: "Eventos — RollerZone" },
+      { title: "Competiciones y eventos de patinaje de velocidad | Rollerzone" },
+      { name: "description", content: "Calendario de competiciones de patinaje de velocidad: Liga Nacional, Campeonato de España, World Skate Games y campeonatos internacionales con fechas y sedes." },
+      { property: "og:title", content: "Competiciones y eventos de patinaje de velocidad | Rollerzone" },
       { property: "og:description", content: "Calendario de eventos y competiciones de patinaje de velocidad." },
       { property: "og:url", content: "https://rollerzone.es/eventos" },
       { property: "og:type", content: "website" },

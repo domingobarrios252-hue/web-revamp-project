@@ -27,7 +27,7 @@ type Magazine = {
 export const Route = createFileRoute("/revista/")({
   head: () => ({
     meta: [
-      { title: "Revista | RollerZone" },
+      { title: "Revista de patinaje de velocidad | Rollerzone Magazine" },
       {
         name: "description",
         content:
