@@ -1,8 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import specialFallback from "@/assets/special-fallback.svg";
+
+const SITE = "https://rollerzone.es";
 
 type Special = {
   slug: string;
