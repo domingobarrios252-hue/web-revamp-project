@@ -505,6 +505,16 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
    PANEL B · Piezas de un especial
 ============================================================ */
 
+function slugify(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
 const emptyPiece = (): Omit<Piece, "id" | "special_slug"> => ({
   slug: "",
   number: "",
