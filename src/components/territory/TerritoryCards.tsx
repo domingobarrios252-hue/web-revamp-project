@@ -42,7 +42,9 @@ export function TerritoryLead({ item, territory }: { item: TerritoryNews; territ
         {item.image_url ? (
           <img
             src={item.image_url}
-            alt={item.title}
+            alt={`${item.title} — Rollerzone ${territory.name}`}
+            loading="lazy"
+            decoding="async"
             style={{ objectPosition: cropObjectPosition(item.image_crops, "hero") }}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />

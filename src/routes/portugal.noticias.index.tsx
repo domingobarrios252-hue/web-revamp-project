@@ -3,7 +3,7 @@ import { TerritoryMasthead, TerritoryNewsCard } from "@/components/territory/Ter
 import { PORTUGAL } from "@/lib/territory/territories";
 import { useTerritoryNews } from "@/lib/territory/useTerritory";
 
-const TITLE = "Noticias Portugal | RollerZone";
+const TITLE = "Notícias de patinagem de velocidade em Portugal | Rollerzone";
 const DESC = "Todas las noticias del patinaje de velocidad en Portugal publicadas por RollerZone.";
 
 export const Route = createFileRoute("/portugal/noticias/")({
@@ -14,7 +14,10 @@ export const Route = createFileRoute("/portugal/noticias/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://rollerzone.es/portugal/noticias" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
     ],
     links: [{ rel: "canonical", href: "https://rollerzone.es/portugal/noticias" }],
   }),
