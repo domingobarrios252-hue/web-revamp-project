@@ -10,7 +10,7 @@ import {
 import { PORTUGAL } from "@/lib/territory/territories";
 import { useTerritoryInterviews, useTerritoryNews } from "@/lib/territory/useTerritory";
 
-const TITLE = "RollerZone Portugal | Notícias e entrevistas da patinagem de velocidade";
+const TITLE = "Patinagem de velocidade em Portugal: notícias e competições | Rollerzone";
 const DESC =
   "Edición territorial de RollerZone en Portugal: noticias, entrevistas, vídeos y competiciones del patinaje de velocidad portugués.";
 
@@ -22,7 +22,10 @@ export const Route = createFileRoute("/portugal/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://rollerzone.es/portugal" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
     ],
     links: [{ rel: "canonical", href: "https://rollerzone.es/portugal" }],
   }),

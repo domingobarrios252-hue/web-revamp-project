@@ -132,7 +132,9 @@ function CollaborationDetail() {
             {item.entity_logo_url?.trim() ? (
               <img
                 src={item.entity_logo_url}
-                alt={item.entity}
+                alt={`Logotipo de ${item.entity}`}
+                loading="eager"
+                decoding="async"
                 className="h-10 w-auto max-w-[140px] object-contain"
               />
             ) : null}
@@ -142,7 +144,10 @@ function CollaborationDetail() {
         <div className="mt-6 aspect-[16/9] w-full max-w-full overflow-hidden border border-border bg-surface-2">
           <img
             src={item.cover_url?.trim() ? item.cover_url : (specialFallback as string)}
-            alt={item.title}
+            alt={`${item.title} — Rollerzone`}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="h-full w-full object-cover"
           />
         </div>
