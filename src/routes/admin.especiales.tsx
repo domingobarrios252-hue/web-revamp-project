@@ -1005,8 +1005,30 @@ function SortableRow({
           <span className={statusBadgeClass(piece.status)}>{statusLabel(piece.status)}</span>
         </div>
         <div className="truncate text-sm text-foreground">{piece.title}</div>
-        <div className="truncate text-[11px] text-muted-foreground">/{piece.slug}</div>
+        <div className="flex flex-wrap items-center gap-x-3 text-[11px] text-muted-foreground">
+          <span className="truncate">/{piece.slug}</span>
+          {piece.category && <span>Categoría: {piece.category}</span>}
+          <span>Orden: {piece.sort_order}</span>
+        </div>
       </div>
+
+      <button
+        onClick={onToggleStatus}
+        className="font-condensed shrink-0 border border-border px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
+        type="button"
+      >
+        {piece.status === "published" || piece.status === "live" ? "Ocultar" : "Publicar"}
+      </button>
+      <button
+        onClick={onDuplicate}
+        className="text-muted-foreground hover:text-gold"
+        aria-label="Duplicar"
+        title="Duplicar"
+        type="button"
+      >
+        <Copy className="h-4 w-4" />
+      </button>
+
 
       <Link
         to="/especiales/$slug/$piece"
