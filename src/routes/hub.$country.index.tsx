@@ -8,20 +8,8 @@ export const Route = createFileRoute("/hub/$country/")({
   }),
 });
 
-const HUB_H1: Record<string, string> = {
-  es: "Patinaje de velocidad en España: noticias, competiciones y resultados",
-  co: "Patinaje de velocidad en Colombia: noticias, competiciones y resultados",
-};
-
 function HubIndex() {
   const { country } = Route.useParams();
-  return (
-    <>
-      {/* Titular principal para buscadores y lectores de pantalla; no altera el diseño. */}
-      <h1 className="sr-only">
-        {HUB_H1[country] ?? `Patinaje de velocidad · Hub ${country.toUpperCase()} | Rollerzone`}
-      </h1>
-      <HubDashboard country={country} />
-    </>
-  );
+  // El H1 del hub lo aporta la cabecera (HubHero) del layout padre.
+  return <HubDashboard country={country} />;
 }
