@@ -623,6 +623,44 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
     load();
   };
 
+  const duplicate = async (p: Piece) => {
+    const { id: _id, ...rest } = p;
+    void _id;
+    let base = `${p.slug}-copia`;
+    let candidate = base;
+    let n = 2;
+    const taken = new Set(items.map((i) => i.slug));
+    while (taken.has(candidate)) {
+      candidate = `${base}-${n}`;
+      n += 1;
+    }
+    base = candidate;
+    const { error } = await db.from("special_pieces").insert({
+      ...rest,
+      special_slug: special.slug,
+      slug: base,
+      title: `${p.title} (copia)`,
+      status: "draft",
+      visible: false,
+      featured: false,
+      sort_order: (items[items.length - 1]?.sort_order ?? 0) + 10,
+    });
+    if (error) return toast.error(error.message);
+    toast.success("Pieza duplicada como borrador");
+    load();
+  };
+
+  const toggleStatus = async (p: Piece) => {
+    const next = p.status === "published" || p.status === "live" ? "draft" : "published";
+    const { error } = await db
+      .from("special_pieces")
+      .update({ status: next, visible: next === "published" ? true : p.visible })
+      .eq("id", p.id);
+    if (error) return toast.error(error.message);
+    toast.success(next === "published" ? "Pieza publicada" : "Pieza en borrador");
+    load();
+  };
+
   const onDragEnd = async (e: DragEndEvent) => {
     const { active, over } = e;
     if (!over || active.id === over.id) return;
