@@ -40,6 +40,22 @@ export const Route = createFileRoute("/eventos/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://rollerzone.es/eventos" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Calendario de competiciones de patinaje de velocidad",
+          description:
+            "Competiciones de patinaje de velocidad: Liga Nacional, Campeonato de España, World Skate Games y campeonatos internacionales con fechas y sedes.",
+          url: "https://rollerzone.es/eventos",
+          inLanguage: "es-ES",
+          isPartOf: { "@type": "WebSite", name: "Rollerzone", url: "https://rollerzone.es" },
+          about: { "@type": "Thing", name: "Patinaje de velocidad" },
+        }).replace(/</g, "\\u003c"),
+      },
+    ],
   }),
   component: EventosPage,
 });
