@@ -132,7 +132,10 @@ function PiecePage() {
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   const hero = piece.image_url?.trim() || piece.thumbnail_url?.trim() || (specialFallback as string);
-  const html = renderMarkdown(piece.content_md ?? "");
+  // El H1 de la página es el título de la pieza: los H1 del contenido bajan a H2.
+  const html = renderMarkdown(piece.content_md ?? "")
+    .replace(/<h1(\s|>)/g, "<h2$1")
+    .replace(/<\/h1>/g, "</h2>");
   const gallery = Array.isArray(piece.gallery) ? piece.gallery.filter(Boolean) : [];
   const kicker = piece.kicker || piece.category || "";
 
