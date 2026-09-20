@@ -10,5 +10,6 @@ export const Route = createFileRoute("/hub/$country/")({
 
 function HubIndex() {
   const { country } = Route.useParams();
+  // El H1 del hub lo aporta la cabecera (HubHero) del layout padre.
   return <HubDashboard country={country} />;
 }
