@@ -22,7 +22,11 @@ export const Route = createFileRoute("/entrevistas/")({
       { name: "description", content: "Entrevistas en profundidad a patinadores, entrenadores y figuras del patinaje de velocidad." },
       { property: "og:title", content: "Entrevistas — RollerZone" },
       { property: "og:description", content: "Entrevistas en profundidad a patinadores, entrenadores y figuras del patinaje de velocidad." },
+      { property: "og:url", content: "https://rollerzone.es/entrevistas" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/entrevistas" }],
   }),
   component: EntrevistasIndex,
 });

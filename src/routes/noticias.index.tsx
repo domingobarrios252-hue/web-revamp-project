@@ -38,7 +38,11 @@ export const Route = createFileRoute("/noticias/")({
         property: "og:description",
         content: "Todas las noticias del patinaje de velocidad.",
       },
+      { property: "og:url", content: "https://rollerzone.es/noticias" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/noticias" }],
   }),
   component: NoticiasIndexPage,
 });

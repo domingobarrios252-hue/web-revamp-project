@@ -24,7 +24,11 @@ export const Route = createFileRoute("/resultados/")({
       { name: "description", content: "Resultados oficiales de patinaje de velocidad — clasificaciones por evento y categoría." },
       { property: "og:title", content: "Resultados — RollerZone" },
       { property: "og:description", content: "Clasificaciones oficiales de patinaje de velocidad." },
+      { property: "og:url", content: "https://rollerzone.es/resultados" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/resultados" }],
   }),
   component: ResultadosIndex,
 });

@@ -32,7 +32,9 @@ export const Route = createFileRoute("/equipo")({
         name: "twitter:description",
         content: "Las personas detrás de RollerZone, el medio del patinaje de velocidad.",
       },
+      { property: "og:url", content: "https://rollerzone.es/equipo" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/equipo" }],
   }),
   component: EquipoPage,
 });

@@ -35,7 +35,11 @@ export const Route = createFileRoute("/eventos/")({
       { name: "description", content: "Calendario de eventos y competiciones de patinaje de velocidad: categorías, fechas, ubicación y enlaces oficiales." },
       { property: "og:title", content: "Eventos — RollerZone" },
       { property: "og:description", content: "Calendario de eventos y competiciones de patinaje de velocidad." },
+      { property: "og:url", content: "https://rollerzone.es/eventos" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/eventos" }],
   }),
   component: EventosPage,
 });

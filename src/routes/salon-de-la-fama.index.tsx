@@ -21,7 +21,11 @@ export const Route = createFileRoute("/salon-de-la-fama/")({
         content:
           "Homenaje a las leyendas del patinaje de velocidad. Conoce sus logros y su huella en el deporte.",
       },
+      { property: "og:url", content: "https://rollerzone.es/salon-de-la-fama" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/salon-de-la-fama" }],
   }),
   component: HallOfFamePage,
 });

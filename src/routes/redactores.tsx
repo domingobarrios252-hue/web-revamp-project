@@ -17,7 +17,11 @@ export const Route = createFileRoute("/redactores")({
       { name: "description", content: "Conoce al equipo de redactores de RollerZone que cubre el patinaje de velocidad nacional e internacional." },
       { property: "og:title", content: "Redactores — RollerZone" },
       { property: "og:description", content: "El equipo de redactores que cubre el patinaje de velocidad para RollerZone." },
+      { property: "og:url", content: "https://rollerzone.es/redactores" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/redactores" }],
   }),
   component: RedactoresPage,
 });
