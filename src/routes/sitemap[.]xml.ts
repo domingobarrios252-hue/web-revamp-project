@@ -58,7 +58,6 @@ const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/especiales", changefreq: "weekly", priority: "0.6" },
   { path: "/colaboraciones", changefreq: "monthly", priority: "0.5" },
   { path: "/equipo", changefreq: "monthly", priority: "0.4" },
-  { path: "/hub/pt", changefreq: "daily", priority: "0.7" },
   { path: "/sobre/quienes-somos", changefreq: "monthly", priority: "0.4" },
   { path: "/sobre/publicidad", changefreq: "monthly", priority: "0.4" },
   { path: "/sobre/contacto", changefreq: "monthly", priority: "0.4" },
