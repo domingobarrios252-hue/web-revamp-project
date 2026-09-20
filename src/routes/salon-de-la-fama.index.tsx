@@ -26,6 +26,22 @@ export const Route = createFileRoute("/salon-de-la-fama/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://rollerzone.es/salon-de-la-fama" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Salón de la Fama del patinaje de velocidad",
+          description:
+            "Leyendas del patinaje de velocidad: trayectorias, palmarés y biografías de los grandes nombres del deporte.",
+          url: "https://rollerzone.es/salon-de-la-fama",
+          inLanguage: "es-ES",
+          isPartOf: { "@type": "WebSite", name: "Rollerzone", url: "https://rollerzone.es" },
+          about: { "@type": "Thing", name: "Patinaje de velocidad" },
+        }).replace(/</g, "\\u003c"),
+      },
+    ],
   }),
   component: HallOfFamePage,
 });

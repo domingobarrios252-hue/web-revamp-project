@@ -104,7 +104,7 @@ export const translations = {
         "Utilizamos cookies propias y de terceros para mejorar tu experiencia y analizar el tráfico. Puedes aceptar o rechazar las cookies no esenciales.",
       accept: "Aceptar",
       reject: "Rechazar",
-      learnMore: "Más información",
+      learnMore: "Leer la política de cookies",
     },
     home: {
       latestNews: "Últimas",
@@ -373,7 +373,7 @@ export const translations = {
         "We use our own and third-party cookies to improve your experience and analyze traffic. You can accept or reject non-essential cookies.",
       accept: "Accept",
       reject: "Reject",
-      learnMore: "Learn more",
+      learnMore: "Read the cookie policy",
     },
     home: {
       latestNews: "Latest",
