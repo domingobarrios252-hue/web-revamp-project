@@ -58,6 +58,12 @@ function computeHeroBadge(slide: News, now: number = Date.now()): HeroBadge {
   return null;
 }
 
+const HOME_TITLE = "Rollerzone | Patinaje de velocidad: noticias, resultados y competiciones";
+const HOME_DESCRIPTION =
+  "Rollerzone, el medio del patinaje de velocidad: noticias, resultados, competiciones, Liga Nacional, Campeonato de España, World Skate Games, entrevistas, directos y revista.";
+const HOME_OG_IMAGE =
+  "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
