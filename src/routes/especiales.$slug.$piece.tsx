@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { renderMarkdown } from "@/lib/markdown";
 import { Lightbox } from "@/components/site/Lightbox";
