@@ -7,6 +7,8 @@ import { LiveEventNav } from "@/components/specials/live/LiveEventNav";
 import { LiveSchedule } from "@/components/specials/live/LiveSchedule";
 import { LiveStream, streamMode } from "@/components/specials/live/LiveStream";
 import { LiveUpdates, type TimelineRow } from "@/components/specials/live/LiveUpdates";
+import { LiveResults } from "@/components/specials/live/LiveResults";
+import { loadEventResults, type NormalizedResult, type ResultsProviderKey } from "@/lib/results/provider";
 import {
   buildLiveNav,
   isEventLive,
@@ -64,6 +66,8 @@ export const Route = createFileRoute("/especiales/$slug/")({
     let schedule: ScheduleItem[] = [];
     let stream: EventStream | null = null;
     let timeline: TimelineRow[] = [];
+    let results: NormalizedResult[] = [];
+    let resultsEmpty: string | null = null;
     if (sp.result_event_id) {
       const { data: st } = await sb.from("result_events").select(STREAM_COLUMNS).eq("id", sp.result_event_id).maybeSingle();
       stream = (st as unknown as EventStream) ?? null;
@@ -82,6 +86,19 @@ export const Route = createFileRoute("/especiales/$slug/")({
         .eq("published", true)
         .order("scheduled_at", { ascending: true });
       schedule = (si ?? []) as ScheduleItem[];
+      const times = new Map(schedule.map((x) => [x.id, x.scheduled_at] as [string, string]));
+      const [{ data: pv }, { data: et }] = await Promise.all([
+        sb.from("result_events").select("results_provider").eq("id", sp.result_event_id).maybeSingle(),
+        sb.from("site_settings").select("value").eq("key", `special_results_empty:${sp.slug}`).maybeSingle(),
+      ]);
+      results = await loadEventResults(
+        sb,
+        sp.result_event_id,
+        (pv as { results_provider?: ResultsProviderKey } | null)?.results_provider,
+        times,
+      );
+      const ev = (et as { value?: unknown } | null)?.value;
+      resultsEmpty = typeof ev === "string" ? ev : null;
     }
     return {
       special: sp as Special,
@@ -90,6 +107,8 @@ export const Route = createFileRoute("/especiales/$slug/")({
       schedule,
       stream,
       timeline,
+      results,
+      resultsEmpty,
       url: `${SITE}/especiales/${params.slug}`,
     };
   },
@@ -133,7 +152,7 @@ export const Route = createFileRoute("/especiales/$slug/")({
 
 function SpecialLanding() {
   const { slug } = Route.useParams();
-  const { special, pieces, event, schedule, stream, timeline } = Route.useLoaderData();
+  const { special, pieces, event, schedule, stream, timeline, results, resultsEmpty } = Route.useLoaderData();
   const hasStream = streamMode(stream) !== null;
   const streamLive = streamMode(stream) === "player";
   const sp = special as Special & { schedule_notice?: string | null; schedule_notice_visible?: boolean; today_override?: string | null };
@@ -158,7 +177,7 @@ function SpecialLanding() {
             live={live}
             location={special.location?.trim() || event?.city || event?.location || ""}
           />
-          <LiveEventNav slug={slug} items={buildLiveNav(pieces, { hasSchedule: schedule.length > 0, hasStream })} live={live} />
+          <LiveEventNav slug={slug} items={buildLiveNav(pieces, { hasSchedule: schedule.length > 0, hasStream, hasResults: Boolean(special.result_event_id) })} live={live} />
         </>
       ) : (
       <section className="relative overflow-hidden bg-surface">
@@ -209,6 +228,7 @@ function SpecialLanding() {
         <LiveUpdates items={timeline} tz={venueTimeZone(event?.country)} />
         <LiveSchedule
           streamAnchor={streamLive ? "#directo" : undefined}
+          withResults={new Set(results.map((r) => r.scheduleItemId).filter(Boolean) as string[])}
           items={schedule}
           days={dayRange(event?.start_date ?? special.start_date, event?.end_date ?? special.end_date)}
           tz={venueTimeZone(event?.country)}
@@ -217,6 +237,9 @@ function SpecialLanding() {
           notice={sp.schedule_notice}
           noticeVisible={sp.schedule_notice_visible}
         />
+        {special.result_event_id && (
+          <LiveResults results={results} tz={venueTimeZone(event?.country)} emptyText={resultsEmpty} />
+        )}
         </>
       )}
 

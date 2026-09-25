@@ -1,3 +1,4 @@
+import { RESULTS_FOCUS_EVENT } from "@/components/specials/live/LiveResults";
 import { useMemo, useState } from "react";
 import {
   SCHEDULE_STATUS_LABEL,
@@ -16,10 +17,11 @@ type Props = {
   notice?: string | null;
   noticeVisible?: boolean;
   streamAnchor?: string;
+  withResults?: Set<string>;
 };
 
 /** Hoy en [sede] + Calendario por jornadas. Se oculta si no hay pruebas. */
-export function LiveSchedule({ items, days, tz, city, todayOverride, notice, noticeVisible, streamAnchor }: Props) {
+export function LiveSchedule({ items, days, tz, city, todayOverride, notice, noticeVisible, streamAnchor, withResults }: Props) {
   const byDay = useMemo(() => {
     const m = new Map<string, ScheduleItem[]>();
     for (const it of items) {
@@ -59,7 +61,7 @@ export function LiveSchedule({ items, days, tz, city, todayOverride, notice, not
             </p>
             <ul className="mt-4 grid gap-2 md:grid-cols-2">
               {todayItems.map((it) => (
-                <ScheduleRow streamAnchor={streamAnchor} key={it.id} item={it} tz={tz} />
+                <ScheduleRow streamAnchor={streamAnchor} hasResults={withResults?.has(it.id) ?? false} key={it.id} item={it} tz={tz} />
               ))}
             </ul>
           </div>
@@ -116,7 +118,7 @@ export function LiveSchedule({ items, days, tz, city, todayOverride, notice, not
                   )}
                   <ul className="grid gap-2 md:grid-cols-2">
                     {list.map((it) => (
-                      <ScheduleRow streamAnchor={streamAnchor} key={it.id} item={it} tz={tz} />
+                      <ScheduleRow streamAnchor={streamAnchor} hasResults={withResults?.has(it.id) ?? false} key={it.id} item={it} tz={tz} />
                     ))}
                   </ul>
                 </div>
@@ -139,7 +141,7 @@ function groupByVenue(list: ScheduleItem[]): [string, ScheduleItem[]][] {
   return [...m.entries()];
 }
 
-function ScheduleRow({ item, tz, streamAnchor }: { item: ScheduleItem; tz: string; streamAnchor?: string }) {
+function ScheduleRow({ item, tz, streamAnchor, hasResults }: { item: ScheduleItem; tz: string; streamAnchor?: string; hasResults?: boolean }) {
   const meta = [item.category, item.gender].filter(Boolean).join(" · ");
   const live = item.status === "en_curso";
   const off = item.status === "cancelada" || item.status === "aplazada";
@@ -163,6 +165,15 @@ function ScheduleRow({ item, tz, streamAnchor }: { item: ScheduleItem; tz: strin
         {live && streamAnchor && (
           <a href={streamAnchor} className="font-condensed mt-1 inline-flex min-h-8 items-center text-[11px] font-bold uppercase tracking-[1.5px] text-gold underline-offset-4 hover:underline">
             ▶ Ver directo
+          </a>
+        )}
+        {hasResults && (
+          <a
+            href="#resultados"
+            onClick={() => window.dispatchEvent(new CustomEvent(RESULTS_FOCUS_EVENT, { detail: item.id }))}
+            className="font-condensed mt-1 inline-flex min-h-11 items-center text-[11px] font-bold uppercase tracking-[1.5px] text-gold underline-offset-4 hover:underline"
+          >
+            Ver resultados →
           </a>
         )}
       </div>
