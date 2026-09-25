@@ -48,6 +48,11 @@ type Special = {
   description: string;
   cover_url: string;
   hero_image_url: string;
+  hero_image_mobile_url: string;
+  hero_image_alt: string;
+  hero_image_mobile_alt: string;
+  location: string;
+  ctas: { label: string; url: string; visible: boolean }[];
   status: "active" | "hidden" | "archived" | "draft";
   featured_home: boolean;
   event_id: string | null;
@@ -142,6 +147,11 @@ const emptySpecial = (): Omit<Special, "id"> => ({
   description: "",
   cover_url: "",
   hero_image_url: "",
+  hero_image_mobile_url: "",
+  hero_image_alt: "",
+  hero_image_mobile_alt: "",
+  location: "",
+  ctas: [],
   status: "draft",
   featured_home: false,
   event_id: null,
@@ -444,7 +454,7 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
                 previewClassName="mt-2 h-32 w-56 object-cover rounded"
               />
             </Field>
-            <Field label="Imagen hero (opcional)">
+            <Field label="Imagen hero escritorio (opcional)">
               <ImageUploadField
                 value={form.hero_image_url}
                 onChange={(url) => setForm((f) => ({ ...f, hero_image_url: url }))}
@@ -452,6 +462,86 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
                 nameHint={(form.slug || form.title) + "-hero"}
                 previewClassName="mt-2 h-32 w-56 object-cover rounded"
               />
+            </Field>
+            <Field label="Texto alternativo (ALT) imagen escritorio">
+              <input
+                value={form.hero_image_alt ?? ""}
+                onChange={(e) => setForm({ ...form, hero_image_alt: e.target.value })}
+                className="w-full border border-border bg-surface px-3 py-2 text-sm"
+              />
+            </Field>
+            <Field label="Imagen hero móvil (opcional, vertical)">
+              <ImageUploadField
+                value={form.hero_image_mobile_url ?? ""}
+                onChange={(url) => setForm((f) => ({ ...f, hero_image_mobile_url: url }))}
+                folder="specials"
+                nameHint={(form.slug || form.title) + "-hero-mobile"}
+                previewClassName="mt-2 h-40 w-24 object-cover rounded"
+              />
+            </Field>
+            <Field label="Texto alternativo (ALT) imagen móvil">
+              <input
+                value={form.hero_image_mobile_alt ?? ""}
+                onChange={(e) => setForm({ ...form, hero_image_mobile_alt: e.target.value })}
+                className="w-full border border-border bg-surface px-3 py-2 text-sm"
+              />
+            </Field>
+            <Field label="Ubicación (ej. Asunción, Paraguay)">
+              <input
+                value={form.location ?? ""}
+                onChange={(e) => setForm({ ...form, location: e.target.value })}
+                className="w-full border border-border bg-surface px-3 py-2 text-sm"
+              />
+            </Field>
+            <Field label="Botones del hero (vacío = Entrar al especial · Resultados · Directo automáticos)">
+              <div className="space-y-2">
+                {(form.ctas ?? []).map((c, i) => (
+                  <div key={i} className="grid grid-cols-[1fr_1.4fr_auto_auto] items-center gap-2">
+                    <input
+                      placeholder="Texto"
+                      value={c.label}
+                      onChange={(e) => {
+                        const ctas = [...(form.ctas ?? [])];
+                        ctas[i] = { ...c, label: e.target.value };
+                        setForm({ ...form, ctas });
+                      }}
+                      className="w-full border border-border bg-surface px-2 py-1.5 text-sm"
+                    />
+                    <input
+                      placeholder="/especiales/... o https://..."
+                      value={c.url}
+                      onChange={(e) => {
+                        const ctas = [...(form.ctas ?? [])];
+                        ctas[i] = { ...c, url: e.target.value };
+                        setForm({ ...form, ctas });
+                      }}
+                      className="w-full border border-border bg-surface px-2 py-1.5 text-sm"
+                    />
+                    <Switch
+                      checked={c.visible !== false}
+                      onCheckedChange={(v) => {
+                        const ctas = [...(form.ctas ?? [])];
+                        ctas[i] = { ...c, visible: v };
+                        setForm({ ...form, ctas });
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, ctas: (form.ctas ?? []).filter((_, j) => j !== i) })}
+                      className="px-2 text-xs text-muted-foreground hover:text-destructive"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, ctas: [...(form.ctas ?? []), { label: "", url: "", visible: true }] })}
+                  className="font-condensed border border-border px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gold hover:border-gold"
+                >
+                  + Añadir botón
+                </button>
+              </div>
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Fecha inicio">
