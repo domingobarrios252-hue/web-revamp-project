@@ -84,12 +84,16 @@ export type NavItem = { key: NavKey; label: string; pieceSlug: string | null; an
  * Los accesos sin destino se ocultan (nunca mostramos módulos vacíos).
  * "Hoy" siempre apunta al bloque de piezas de la portada del especial.
  */
-export function buildLiveNav(pieces: LivePiece[], opts: { hasSchedule?: boolean; hasStream?: boolean } = {}): NavItem[] {
+export function buildLiveNav(pieces: LivePiece[], opts: { hasSchedule?: boolean; hasStream?: boolean; hasResults?: boolean } = {}): NavItem[] {
   const used = new Set<string>();
   const out: NavItem[] = [];
   for (const n of NAV) {
     if (n.key === "directo" && opts.hasStream) {
       out.push({ key: n.key, label: n.label, pieceSlug: null, anchor: "#directo" });
+      continue;
+    }
+    if (n.key === "resultados" && opts.hasResults) {
+      out.push({ key: n.key, label: n.label, pieceSlug: null, anchor: "#resultados" });
       continue;
     }
     if (n.key === "calendario" && opts.hasSchedule) {
