@@ -8,6 +8,7 @@ import { TvMobileNav } from "@/components/tv/TvMobileNav";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 import { TvAdSlot, useVisibleBanners } from "@/components/tv/TvAdSlot";
+import { TvPartners, useTvPartners } from "@/components/tv/TvPartners";
 
 
 const TV_OG_IMAGE = "https://rollerzone.es/__l5e/assets-v1/57c70012-bbe9-4642-b766-6b243447cc73/og-rollerzone-tv.jpg";
@@ -204,6 +205,7 @@ function TvPage() {
   const tvPremium = useVisibleBanners("tv_premium");
   const tv05 = useVisibleBanners("tv_05");
   const tv06 = useVisibleBanners("tv_06");
+  const partners = useTvPartners();
 
   // ¿La zona superior termina en publicidad? (TV-03 sin próxima emisión ni Live Center debajo)
   const nextShown =
@@ -303,6 +305,9 @@ function TvPage() {
       </section>
     ),
   });
+  if (partners.length) {
+    blocks.push({ key: "partners", ad: false, node: <TvPartners items={partners} /> });
+  }
   if (tv06.length) {
     blocks.push({
       key: "tv06",
