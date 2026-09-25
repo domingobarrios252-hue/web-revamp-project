@@ -18,6 +18,7 @@ import { formatDate } from "@/lib/i18n/format";
 
 import { EditorialCover, type CoverNews } from "@/components/home/EditorialCover";
 import { HomeSpecialsBlock } from "@/components/home/HomeSpecialsBlock";
+import { EventModeHomeBlock } from "@/components/home/EventModeHomeBlock";
 import { RollerZoneTVHome } from "@/components/home/RollerZoneTVHome";
 import { UniverseGrid } from "@/components/home/UniverseGrid";
 import { JoinContributorsBlock } from "@/components/home/JoinContributorsBlock";
@@ -172,6 +173,9 @@ function HomePage() {
           La voz del patinaje de velocidad
         </p>
       </section>
+
+      {/* 0. MODO EVENTO (solo si hay un especial con Modo evento ON) */}
+      <EventModeHomeBlock />
 
       {/* 1. HERO CARRUSEL */}
       <HeroCarousel slides={heroSlides} liveActive={heroCfg.live_active} t={t} lang={lang} />
