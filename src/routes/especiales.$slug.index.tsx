@@ -4,11 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import specialFallback from "@/assets/special-fallback.svg";
 import { LiveEventHero } from "@/components/specials/live/LiveEventHero";
 import { LiveEventNav } from "@/components/specials/live/LiveEventNav";
+import { LiveSchedule } from "@/components/specials/live/LiveSchedule";
 import {
   buildLiveNav,
   isEventLive,
   resolveCtas,
   loadLinkedEvent,
+  dayRange,
+  venueTimeZone,
+  type ScheduleItem,
   type LinkedEvent,
   type LiveSpecial,
 } from "@/lib/specials/liveEvent";
@@ -53,10 +57,21 @@ export const Route = createFileRoute("/especiales/$slug/")({
       .eq("visible", true)
       .order("sort_order", { ascending: true });
     const event: LinkedEvent | null = await loadLinkedEvent(sb, sp);
+    let schedule: ScheduleItem[] = [];
+    if (sp.result_event_id) {
+      const { data: si } = await sb
+        .from("schedule_items")
+        .select("id,event_name,event_name_en,category,gender,phase,discipline,venue_type,location,scheduled_at,status,featured,sort_order")
+        .eq("result_event_id", sp.result_event_id)
+        .eq("published", true)
+        .order("scheduled_at", { ascending: true });
+      schedule = (si ?? []) as ScheduleItem[];
+    }
     return {
       special: sp as Special,
       pieces: (pcs ?? []) as Piece[],
       event,
+      schedule,
       url: `${SITE}/especiales/${params.slug}`,
     };
   },
@@ -100,7 +115,8 @@ export const Route = createFileRoute("/especiales/$slug/")({
 
 function SpecialLanding() {
   const { slug } = Route.useParams();
-  const { special, pieces, event } = Route.useLoaderData();
+  const { special, pieces, event, schedule } = Route.useLoaderData();
+  const sp = special as Special & { schedule_notice?: string | null; schedule_notice_visible?: boolean; today_override?: string | null };
 
   const heroImage = special.hero_image_url?.trim() || special.cover_url?.trim() || (specialFallback as string);
   const featured = pieces.filter((p) => p.featured);
@@ -122,7 +138,7 @@ function SpecialLanding() {
             live={live}
             location={special.location?.trim() || event?.city || event?.location || ""}
           />
-          <LiveEventNav slug={slug} items={buildLiveNav(pieces)} live={live} />
+          <LiveEventNav slug={slug} items={buildLiveNav(pieces, { hasSchedule: schedule.length > 0 })} live={live} />
         </>
       ) : (
       <section className="relative overflow-hidden bg-surface">
@@ -166,8 +182,20 @@ function SpecialLanding() {
         </section>
       )}
 
-      {/* Featured */}
       <div id="hoy" className="scroll-mt-14" />
+      {isLiveHub && (
+        <LiveSchedule
+          items={schedule}
+          days={dayRange(special.start_date ?? event?.start_date, special.end_date ?? event?.end_date)}
+          tz={venueTimeZone(event?.country)}
+          city={event?.city ? event.city.charAt(0) + event.city.slice(1).toLowerCase() : ""}
+          todayOverride={sp.today_override}
+          notice={sp.schedule_notice}
+          noticeVisible={sp.schedule_notice_visible}
+        />
+      )}
+
+      {/* Featured */}
       {featured.length > 0 && (
         <section className="bg-background py-8 md:py-12">
           <div className="mx-auto max-w-7xl px-4 md:px-6">

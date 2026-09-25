@@ -34,6 +34,7 @@ export type LinkedEvent = {
   city: string | null;
   start_date: string | null;
   end_date: string | null;
+  country?: string | null;
 };
 
 export type LivePiece = { slug: string; kicker?: string | null; category?: string | null; title?: string };
@@ -136,7 +137,7 @@ export async function loadLinkedEvent(sb: any, sp: { result_event_id?: string | 
   if (sp.result_event_id) {
     const { data } = await sb
       .from("result_events")
-      .select("id,name,status,venue,city,event_date,end_date")
+      .select("id,name,status,venue,city,country,event_date,end_date")
       .eq("id", sp.result_event_id)
       .maybeSingle();
     if (data)
@@ -148,6 +149,7 @@ export async function loadLinkedEvent(sb: any, sp: { result_event_id?: string | 
         city: data.city ?? null,
         start_date: data.event_date ?? null,
         end_date: data.end_date ?? null,
+        country: data.country ?? null,
       };
   }
   if (sp.event_id) {
