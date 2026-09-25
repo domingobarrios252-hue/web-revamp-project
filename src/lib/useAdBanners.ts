@@ -11,6 +11,10 @@ export type AdBanner = {
   active: boolean;
   starts_at?: string | null;
   ends_at?: string | null;
+  image_mobile_url?: string | null;
+  mobile_fallback?: "use_desktop" | "hide" | null;
+  device_target?: "all" | "desktop" | "mobile" | null;
+  sponsor_id?: string | null;
 };
 
 type PlacementJoinRow = {
@@ -36,7 +40,7 @@ export function useAdBanners(placement: string) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .from("ad_banner_placements" as any)
         .select(
-          "sort_order, ad_banners!inner(id,name,image_url,link_url,alt_text,active,sponsor,starts_at,ends_at)",
+          "sort_order, ad_banners!inner(id,name,image_url,link_url,alt_text,active,sponsor,starts_at,ends_at,image_mobile_url,mobile_fallback,device_target,sponsor_id)",
         )
         .eq("placement", placement)
         .eq("ad_banners.active", true)
@@ -80,19 +84,29 @@ export function useAdBanners(placement: string) {
   return banners;
 }
 
+export type CreativeSize = { w: number; h: number };
 export type PlacementDef = {
   value: string;
   label: string;
   group: string;
+  /** Recommended (not mandatory) creative sizes. mobile=null → not shown on mobile. */
+  desktop?: CreativeSize;
+  mobile?: CreativeSize | null;
 };
 
 export const AD_PLACEMENTS: PlacementDef[] = [
   { group: "Home", value: "home_top", label: "Home — banner superior (entre ticker y noticias)" },
   { group: "Home", value: "home_middle", label: "Home — entre secciones" },
   { group: "Home", value: "home_bottom", label: "Home — pie antes del footer" },
-  { group: "RollerZone TV", value: "tv_sidebar", label: "TV — banners laterales (300×200)" },
-  { group: "RollerZone TV", value: "tv_premium", label: "TV — banner premium horizontal (1200×200)" },
-  { group: "RollerZone TV", value: "tv_side", label: "TV — lateral (300×100)" },
+  { group: "RollerZone TV · nuevas", value: "tv_01", label: "TV-01 · Presenting Partner", desktop: { w: 970, h: 90 }, mobile: { w: 320, h: 100 } },
+  { group: "RollerZone TV · nuevas", value: "tv_02", label: "TV-02 · Lateral reproductor (solo escritorio)", desktop: { w: 300, h: 250 }, mobile: null },
+  { group: "RollerZone TV · nuevas", value: "tv_03", label: "TV-03 · Bajo reproductor", desktop: { w: 970, h: 250 }, mobile: { w: 320, h: 100 } },
+  { group: "RollerZone TV · nuevas", value: "tv_04", label: "TV-04 · Bajo Live Center", desktop: { w: 1200, h: 200 }, mobile: { w: 640, h: 320 } },
+  { group: "RollerZone TV · nuevas", value: "tv_05", label: "TV-05 · Entre programación y Highlights", desktop: { w: 970, h: 250 }, mobile: { w: 300, h: 250 } },
+  { group: "RollerZone TV · nuevas", value: "tv_06", label: "TV-06 · Final Rollerzone TV", desktop: { w: 1200, h: 200 }, mobile: { w: 640, h: 320 } },
+  { group: "RollerZone TV", value: "tv_sidebar", label: "TV — banners laterales (300×200)", desktop: { w: 300, h: 200 } },
+  { group: "RollerZone TV", value: "tv_premium", label: "TV — banner premium horizontal (1200×200)", desktop: { w: 1200, h: 200 } },
+  { group: "RollerZone TV", value: "tv_side", label: "TV — lateral (300×100)", desktop: { w: 300, h: 100 } },
   { group: "Noticias", value: "noticias_side", label: "Noticias (listado) — lateral (300×100)" },
   { group: "Noticias", value: "noticias_article", label: "Noticias (dentro del artículo) (300×100)" },
   { group: "Eventos", value: "eventos_side", label: "Eventos (listado) — lateral (300×100)" },

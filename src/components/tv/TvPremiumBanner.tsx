@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useAdBanners, type AdBanner } from "@/lib/useAdBanners";
-
-type Banner = AdBanner;
+import { useAdBanners } from "@/lib/useAdBanners";
+import { AdCreative, bannerVisibleOn } from "@/components/site/AdCreative";
 
 type Props = {
   autoplay: boolean;
@@ -12,7 +11,16 @@ type Props = {
 };
 
 export function TvPremiumBanner({ autoplay, intervalMs, showArrows, showDots }: Props) {
-  const items = useAdBanners("tv_premium");
+  const all = useAdBanners("tv_premium");
+  const [device, setDevice] = useState<"desktop" | "mobile" | null>(null);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const on = () => setDevice(mq.matches ? "desktop" : "mobile");
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  const items = device ? all.filter((b) => bannerVisibleOn(b, device)) : all;
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -28,26 +36,6 @@ export function TvPremiumBanner({ autoplay, intervalMs, showArrows, showDots }: 
   if (items.length === 0) return null;
   const current = items[idx % items.length];
   const multi = items.length > 1;
-
-  const wrap = (child: React.ReactNode, b: Banner) =>
-    b.link_url ? (
-      b.link_url.startsWith("/") ? (
-        <a href={b.link_url} className="block h-full w-full">
-          {child}
-        </a>
-      ) : (
-        <a
-          href={b.link_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block h-full w-full"
-        >
-          {child}
-        </a>
-      )
-    ) : (
-      <div className="block h-full w-full">{child}</div>
-    );
 
   return (
     <section aria-label="Publicidad premium" className="w-full">
@@ -69,15 +57,12 @@ export function TvPremiumBanner({ autoplay, intervalMs, showArrows, showDots }: 
               }`}
               aria-hidden={i !== idx}
             >
-              {wrap(
-                <img
-                  src={b.image_url}
-                  alt={b.alt_text ?? b.name}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />,
-                b,
-              )}
+              <AdCreative
+                banner={b}
+                placement={i === idx ? "tv_premium" : undefined}
+                className="block h-full w-full"
+                imgClassName="h-full w-full object-cover"
+              />
             </div>
           ))}
 

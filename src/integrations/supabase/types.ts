@@ -109,19 +109,76 @@ export type Database = {
           },
         ]
       }
+      ad_banner_stats_daily: {
+        Row: {
+          advertiser_name: string | null
+          banner_id: string | null
+          banner_name: string
+          banner_ref: string
+          clicks: number
+          created_at: string
+          day: string
+          device: string
+          id: string
+          impressions: number
+          placement: string
+          updated_at: string
+        }
+        Insert: {
+          advertiser_name?: string | null
+          banner_id?: string | null
+          banner_name: string
+          banner_ref: string
+          clicks?: number
+          created_at?: string
+          day?: string
+          device: string
+          id?: string
+          impressions?: number
+          placement: string
+          updated_at?: string
+        }
+        Update: {
+          advertiser_name?: string | null
+          banner_id?: string | null
+          banner_name?: string
+          banner_ref?: string
+          clicks?: number
+          created_at?: string
+          day?: string
+          device?: string
+          id?: string
+          impressions?: number
+          placement?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_banner_stats_daily_banner_id_fkey"
+            columns: ["banner_id"]
+            isOneToOne: false
+            referencedRelation: "ad_banners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ad_banners: {
         Row: {
           active: boolean
           alt_text: string | null
           created_at: string
+          device_target: string
           ends_at: string | null
           id: string
+          image_mobile_url: string | null
           image_url: string
           link_url: string | null
+          mobile_fallback: string
           name: string
           placement: string | null
           sort_order: number
           sponsor: string | null
+          sponsor_id: string | null
           starts_at: string | null
           updated_at: string
         }
@@ -129,14 +186,18 @@ export type Database = {
           active?: boolean
           alt_text?: string | null
           created_at?: string
+          device_target?: string
           ends_at?: string | null
           id?: string
+          image_mobile_url?: string | null
           image_url: string
           link_url?: string | null
+          mobile_fallback?: string
           name: string
           placement?: string | null
           sort_order?: number
           sponsor?: string | null
+          sponsor_id?: string | null
           starts_at?: string | null
           updated_at?: string
         }
@@ -144,18 +205,30 @@ export type Database = {
           active?: boolean
           alt_text?: string | null
           created_at?: string
+          device_target?: string
           ends_at?: string | null
           id?: string
+          image_mobile_url?: string | null
           image_url?: string
           link_url?: string | null
+          mobile_fallback?: string
           name?: string
           placement?: string | null
           sort_order?: number
           sponsor?: string | null
+          sponsor_id?: string | null
           starts_at?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ad_banners_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       club_hubs: {
         Row: {
@@ -4350,6 +4423,15 @@ export type Database = {
       mfa_satisfied: { Args: never; Returns: boolean }
       mfa_strict: { Args: never; Returns: boolean }
       purge_expired_community_submissions: { Args: never; Returns: number }
+      record_ad_event: {
+        Args: {
+          _banner_id: string
+          _device: string
+          _kind: string
+          _placement: string
+        }
+        Returns: boolean
+      }
       register_news_view: {
         Args: { _news_id: string; _visitor_hash: string }
         Returns: number
