@@ -720,8 +720,11 @@ function ImageUploadField({
       {value && (
         <div className="mt-2 border border-border bg-background p-2">
           <img src={value} alt="preview" className="max-h-48 w-full object-contain" />
-          <div className="font-condensed mt-1 truncate text-[10px] uppercase tracking-wider text-muted-foreground">
-            {value}
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <span className="font-condensed truncate text-[10px] uppercase tracking-wider text-muted-foreground">{value}</span>
+            <button type="button" onClick={() => onChange("")} className="font-condensed shrink-0 text-[10px] uppercase tracking-widest text-destructive hover:underline">
+              Quitar
+            </button>
           </div>
         </div>
       )}
