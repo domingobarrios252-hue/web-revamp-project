@@ -1,0 +1,2 @@
+ALTER TABLE public.special_editorials ADD COLUMN IF NOT EXISTS result_event_id uuid REFERENCES public.result_events(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS idx_special_editorials_result_event ON public.special_editorials(result_event_id);

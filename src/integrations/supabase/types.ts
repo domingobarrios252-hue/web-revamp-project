@@ -3303,6 +3303,7 @@ export type Database = {
           hero_image_url: string
           id: string
           location: string
+          result_event_id: string | null
           slug: string
           sort_order: number
           start_date: string | null
@@ -3326,6 +3327,7 @@ export type Database = {
           hero_image_url?: string
           id?: string
           location?: string
+          result_event_id?: string | null
           slug: string
           sort_order?: number
           start_date?: string | null
@@ -3349,6 +3351,7 @@ export type Database = {
           hero_image_url?: string
           id?: string
           location?: string
+          result_event_id?: string | null
           slug?: string
           sort_order?: number
           start_date?: string | null
@@ -3363,6 +3366,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "special_editorials_result_event_id_fkey"
+            columns: ["result_event_id"]
+            isOneToOne: false
+            referencedRelation: "result_events"
             referencedColumns: ["id"]
           },
         ]
