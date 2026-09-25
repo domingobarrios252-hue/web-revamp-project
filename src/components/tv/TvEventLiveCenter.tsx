@@ -46,6 +46,7 @@ export function TvEventLiveCenter({
   const [results, setResults] = useState<LiveResultRow[]>([]);
   const [schedule, setSchedule] = useState<ScheduleRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -143,16 +144,17 @@ export function TvEventLiveCenter({
   const nowMs = Date.now();
   const upcoming = schedule
     .filter((s) => s.status === "programada" && new Date(s.scheduled_at).getTime() >= nowMs - 30 * 60_000)
-    .slice(0, 5);
+    ;
   const latestFinished = raceEntries
     .filter(([, rows]) => rows.some((r) => r.status === "finalizado"))
     .slice(0, 3);
 
+  // Sin badge "Próximamente" en la cabecera: ya lo indica el estado general de la página.
   const statusBadge = (() => {
     const s = ev.status || "";
-    if (s === "en_vivo") return { label: "EN DIRECTO", cls: "bg-tv-red text-white" };
+    if (s === "en_vivo" || hasNow) return { label: "EN DIRECTO", cls: "bg-tv-red text-white" };
     if (s === "finalizado") return { label: "FINALIZADO", cls: "bg-surface text-muted-foreground border border-border" };
-    return { label: "PRÓXIMAMENTE", cls: "border border-gold/60 bg-gold/10 text-gold" };
+    return null;
   })();
 
   const blocks = [hasNow, upcoming.length > 0, latestFinished.length > 0].filter(Boolean).length;
@@ -169,14 +171,16 @@ export function TvEventLiveCenter({
             <span className={`h-2 w-2 rounded-full ${hasNow ? "live-dot bg-destructive" : "bg-gold/50"}`} aria-hidden="true" />
             LIVE CENTER
           </p>
-          <p className="font-condensed mt-0.5 truncate text-[11px] uppercase tracking-widest text-muted-foreground">
+          <p className="font-condensed mt-0.5 line-clamp-2 text-[11px] uppercase tracking-widest text-muted-foreground">
             {ev.name}
             {ev.city ? ` · ${ev.city}` : ""}
           </p>
         </div>
-        <span className={`font-condensed shrink-0 px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${statusBadge.cls}`}>
-          {statusBadge.label}
-        </span>
+        {statusBadge && (
+          <span className={`font-condensed shrink-0 px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${statusBadge.cls}`}>
+            {statusBadge.label}
+          </span>
+        )}
       </div>
 
       {blocks === 0 ? (
@@ -209,12 +213,28 @@ export function TvEventLiveCenter({
           {upcoming.length > 0 && (
             <Section title="A continuación" icon={<Clock className="h-3 w-3" />}>
               <ul className="divide-y divide-border">
-                {upcoming.map((s) => (
-                  <li key={s.id} className="py-2 first:pt-0 last:pb-0">
+                {upcoming.map((s, i) => (
+                  <li
+                    key={s.id}
+                    className={`py-2 first:pt-0 last:pb-0 ${
+                      showAll ? "" : i >= 5 ? "hidden" : i >= 3 ? "hidden md:block" : ""
+                    }`}
+                  >
                     <ScheduleCard s={s} />
                   </li>
                 ))}
               </ul>
+              {!showAll && upcoming.length > 3 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAll(true)}
+                  className={`font-condensed mt-2 inline-flex min-h-11 w-full items-center justify-center gap-1 border border-border px-3 text-[11px] font-bold uppercase tracking-widest text-gold hover:border-gold ${
+                    upcoming.length > 5 ? "" : "md:hidden"
+                  }`}
+                >
+                  Ver toda la programación <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              )}
             </Section>
           )}
 
@@ -271,16 +291,16 @@ function ScheduleCard({ s, live }: { s: ScheduleRow; live?: boolean }) {
         <p className="font-condensed text-[9px] uppercase tracking-widest text-muted-foreground">{day}</p>
       </div>
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-foreground">{s.event_name}</p>
+        <p className="line-clamp-2 text-sm font-semibold leading-snug text-foreground">{s.event_name}</p>
         {sub && <p className="font-condensed truncate text-[10px] uppercase tracking-widest text-muted-foreground">{sub}</p>}
       </div>
-      <span
-        className={`font-condensed shrink-0 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest ${
-          live ? "bg-tv-red text-white" : "border border-border text-muted-foreground"
-        }`}
-      >
-        {live ? "En directo" : "Próximamente"}
-      </span>
+      {live ? (
+        <span className="font-condensed shrink-0 bg-tv-red px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">
+          En directo
+        </span>
+      ) : (
+        <span aria-hidden="true" />
+      )}
     </div>
   );
 }

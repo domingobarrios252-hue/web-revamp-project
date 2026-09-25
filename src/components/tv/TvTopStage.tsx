@@ -265,7 +265,7 @@ export function TvTopStage({
                 <CalendarClock className="h-5 w-5 shrink-0 text-gold" aria-hidden="true" />
                 <div className="min-w-0">
                   <p className="font-condensed text-[10px] uppercase tracking-[2px] text-gold">Próxima emisión</p>
-                  <p className="truncate text-sm font-semibold uppercase text-foreground">{next.title}</p>
+                  <p className="line-clamp-2 text-sm font-semibold uppercase leading-snug text-foreground">{next.title}</p>
                   <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
                     {fmtDate(next.at)} · {fmtTime(next.at)} h <span className="normal-case">(tu hora)</span>
                   </p>

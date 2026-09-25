@@ -27,16 +27,19 @@ export function useTvPartners() {
 }
 
 function Logo({ p, size }: { p: Partner; size: "lg" | "sm" }) {
-  const box =
-    size === "lg"
-      ? "h-24 w-full max-w-[320px] px-6 md:h-28"
-      : "h-16 w-full max-w-[200px] px-4 md:h-20";
+  const box = size === "lg" ? "h-20 md:h-24" : "h-12 md:h-14";
   const inner = p.logo_url ? (
-    <img src={p.logo_url} alt={p.name} loading="lazy" decoding="async" className="max-h-full max-w-full object-contain" />
+    <img
+      src={p.logo_url}
+      alt={p.name}
+      loading="lazy"
+      decoding="async"
+      className="h-full w-full object-contain"
+    />
   ) : (
     <span className="font-display text-center text-sm tracking-widest text-foreground">{p.name}</span>
   );
-  const cls = `flex ${box} items-center justify-center border border-border bg-surface/60 py-3 transition-colors hover:border-gold/60`;
+  const cls = `flex ${box} min-h-11 w-full items-center justify-center rounded-sm bg-white/[0.03] px-3 py-2 transition-opacity hover:opacity-80`;
   return p.website_url ? (
     <a href={p.website_url} target="_blank" rel="noopener noreferrer sponsored" aria-label={p.name} className={cls}>
       {inner}
@@ -46,40 +49,46 @@ function Logo({ p, size }: { p: Partner; size: "lg" | "sm" }) {
   );
 }
 
+/** Columnas equilibradas según número de logos (sin scroll horizontal). */
+function cols(n: number, tier: "lg" | "sm") {
+  if (tier === "lg") {
+    if (n === 1) return "grid-cols-1 max-w-xs";
+    if (n === 2 || n === 4) return "grid-cols-2 max-w-2xl";
+    return "grid-cols-2 sm:grid-cols-3 max-w-4xl";
+  }
+  if (n <= 2) return "grid-cols-2 max-w-md";
+  if (n === 4) return "grid-cols-2 sm:grid-cols-4 max-w-3xl";
+  return "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 max-w-5xl";
+}
+
+/** Un único bloque premium construido con los logos existentes (Admin → Patrocinadores). */
 export function TvPartners({ items }: { items: Partner[] }) {
   if (!items.length) return null;
   const main = items.filter((p) => p.tv_tier === "principal");
   const collab = items.filter((p) => p.tv_tier !== "principal");
   return (
-    <section id="partners" aria-label="Partners de Rollerzone TV" className="border-t border-gold/30 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <p className="font-display text-center text-lg tracking-[4px] text-foreground md:text-xl">
-          PARTNERS DE <span className="text-gold">ROLLERZONE TV</span>
-        </p>
-        {main.length > 0 && (
-          <div className="mt-6">
-            <p className="font-condensed text-center text-[10px] uppercase tracking-[3px] text-gold">
-              {main.length > 1 ? "Partners principales" : "Partner principal"}
-            </p>
-            <div className="mt-3 grid grid-cols-1 justify-items-center gap-3 sm:flex sm:flex-wrap sm:justify-center">
+    <section id="partners" aria-label="Partners de Rollerzone TV" className="bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        <div className="border border-gold/30 bg-gradient-to-b from-surface/80 to-background px-4 py-6 md:px-8 md:py-8">
+          <p className="font-display text-center text-base tracking-[4px] text-foreground md:text-xl">
+            PARTNERS DE <span className="text-gold">ROLLERZONE TV</span>
+          </p>
+          <div className="mx-auto mt-2 h-px w-12 bg-gold/60" aria-hidden="true" />
+          {main.length > 0 && (
+            <div className={`mx-auto mt-6 grid gap-4 ${cols(main.length, "lg")}`}>
               {main.map((p) => (
                 <Logo key={p.id} p={p} size="lg" />
               ))}
             </div>
-          </div>
-        )}
-        {collab.length > 0 && (
-          <div className="mt-8">
-            <p className="font-condensed text-center text-[10px] uppercase tracking-[3px] text-muted-foreground">
-              Colaboradores
-            </p>
-            <div className="mt-3 grid grid-cols-2 justify-items-center gap-3 sm:flex sm:flex-wrap sm:justify-center">
+          )}
+          {collab.length > 0 && (
+            <div className={`mx-auto grid gap-3 ${main.length ? "mt-6 border-t border-border pt-6" : "mt-6"} ${cols(collab.length, "sm")}`}>
               {collab.map((p) => (
                 <Logo key={p.id} p={p} size="sm" />
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );

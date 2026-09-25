@@ -306,7 +306,8 @@ function TvPage() {
     ),
   });
   if (partners.length) {
-    blocks.push({ key: "partners", ad: false, node: <TvPartners items={partners} /> });
+    // Partners = bloque comercial a efectos de separación (nunca pegado a un banner).
+    blocks.push({ key: "partners", ad: true, node: <TvPartners items={partners} /> });
   }
   if (tv06.length) {
     blocks.push({
