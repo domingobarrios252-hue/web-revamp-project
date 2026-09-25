@@ -55,6 +55,11 @@ type Row = {
   schedule_item_id?: string | null;
   record_mark?: string | null;
   result_status?: string | null;
+  country?: string | null;
+  bib?: string | null;
+  gender?: string | null;
+  round?: string | null;
+  gap?: string | null;
 };
 
 const slugify = (s: string) =>
@@ -597,6 +602,11 @@ function EditDialog({
   const [published, setPublished] = useState(row.published);
   const [sortOrder, setSortOrder] = useState(row.sort_order);
   const [scheduleItemId, setScheduleItemId] = useState(row.schedule_item_id ?? "");
+  const [country, setCountry] = useState(row.country ?? "");
+  const [bib, setBib] = useState(row.bib ?? "");
+  const [gender, setGender] = useState(row.gender ?? "");
+  const [round, setRound] = useState(row.round ?? "");
+  const [gap, setGap] = useState(row.gap ?? "");
   const [recordMark, setRecordMark] = useState(row.record_mark ?? "");
   const [resultStatus, setResultStatus] = useState(row.result_status || "official");
   const [linkedEventId, setLinkedEventId] = useState<string | null>(row.result_event_id ?? null);
@@ -669,6 +679,11 @@ function EditDialog({
       result_event_id: resultEventId,
       schedule_item_id: scheduleItemId || null,
       record_mark: recordMark.trim() || null,
+      country: country.trim().slice(0, 80) || null,
+      bib: bib.trim().slice(0, 20) || null,
+      gender: gender.trim().slice(0, 40) || null,
+      round: round.trim().slice(0, 80) || null,
+      gap: gap.trim().slice(0, 40) || null,
       result_status: resultStatus || "official",
       event_name: parsed.data.event_name,
       event_slug: parsed.data.event_slug || slugify(parsed.data.event_name),
@@ -793,6 +808,24 @@ function EditDialog({
                 className="input"
                 placeholder="Ej: 100"
               />
+            </Field>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Field label="País">
+              <input value={country} onChange={(e) => setCountry(e.target.value)} className="input" placeholder="Ej: ESP" />
+            </Field>
+            <Field label="Dorsal">
+              <input value={bib} onChange={(e) => setBib(e.target.value)} className="input" />
+            </Field>
+            <Field label="Género">
+              <input value={gender} onChange={(e) => setGender(e.target.value)} className="input" placeholder="Ej: Masculino" />
+            </Field>
+            <Field label="Fase / ronda">
+              <input value={round} onChange={(e) => setRound(e.target.value)} className="input" placeholder="Ej: Final" />
+            </Field>
+            <Field label="Diferencia">
+              <input value={gap} onChange={(e) => setGap(e.target.value)} className="input" placeholder="Ej: +0.123" />
             </Field>
           </div>
 
