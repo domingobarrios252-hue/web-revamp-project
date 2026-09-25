@@ -18,7 +18,6 @@ export async function checkScheduleLink(scheduleItemId: string | null, resultEve
 }
 
 export const RESULT_STATUS_OPTIONS = [
-  { value: "", label: "— Sin definir —" },
   { value: "upcoming", label: "Próximamente" },
   { value: "in_progress", label: "En curso" },
   { value: "provisional", label: "Provisional" },

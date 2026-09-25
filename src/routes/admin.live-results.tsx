@@ -598,7 +598,7 @@ function EditDialog({
   const [sortOrder, setSortOrder] = useState(row.sort_order);
   const [scheduleItemId, setScheduleItemId] = useState(row.schedule_item_id ?? "");
   const [recordMark, setRecordMark] = useState(row.record_mark ?? "");
-  const [resultStatus, setResultStatus] = useState(row.result_status ?? "");
+  const [resultStatus, setResultStatus] = useState(row.result_status || "official");
   const [linkedEventId, setLinkedEventId] = useState<string | null>(row.result_event_id ?? null);
   const [scheduleOpts, setScheduleOpts] = useState<{ id: string; label: string }[]>([]);
   const [saving, setSaving] = useState(false);
@@ -669,7 +669,7 @@ function EditDialog({
       result_event_id: resultEventId,
       schedule_item_id: scheduleItemId || null,
       record_mark: recordMark.trim() || null,
-      result_status: resultStatus || null,
+      result_status: resultStatus || "official",
       event_name: parsed.data.event_name,
       event_slug: parsed.data.event_slug || slugify(parsed.data.event_name),
       race: parsed.data.race || null,
