@@ -125,7 +125,7 @@ function SpecialLanding() {
               start_date: special.start_date ?? event?.start_date ?? null,
               end_date: special.end_date ?? event?.end_date ?? null,
             }}
-            ctas={resolveCtas(special, pieces)}
+            ctas={resolveCtas(special, pieces).map((c) => (c.url === `/especiales/${slug}` ? { ...c, url: "#hoy" } : c))}
             live={live}
             location={special.location?.trim() || event?.city || event?.location || ""}
           />
