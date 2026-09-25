@@ -174,6 +174,7 @@ function SpecialLanding() {
       )}
 
       {/* Featured */}
+      <div id="hoy" className="scroll-mt-14" />
       {featured.length > 0 && (
         <section className="bg-background py-8 md:py-12">
           <div className="mx-auto max-w-7xl px-4 md:px-6">
