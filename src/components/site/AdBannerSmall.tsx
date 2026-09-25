@@ -35,7 +35,7 @@ export function AdBannerSmall({
       </div>
       <div className="flex w-full flex-col items-center gap-3">
         {banners.map((banner) => (
-          <div key={banner.id} className={`w-full justify-center ${bannerVisibilityClass(banner) || "flex"} ${bannerVisibilityClass(banner) === "hidden md:block" ? "md:flex" : bannerVisibilityClass(banner) === "md:hidden" ? "flex" : ""}`}>
+          <div key={banner.id} className={`w-full justify-center ${bannerVisibilityClass(banner).replace("block", "flex") || "flex"} ${bannerVisibilityClass(banner) === "md:hidden" ? "flex" : ""}`}>
             {renderBanner(banner)}
           </div>
         ))}
