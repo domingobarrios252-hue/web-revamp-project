@@ -26,7 +26,7 @@ export function LiveEventNav({ slug, items, live }: { slug: string; items: NavIt
               {it.label}
             </Link>
           ) : (
-            <a key={it.key} href="#hoy" className={cls + " border-gold text-gold"}>
+            <a key={it.key} href={it.anchor ?? "#hoy"} className={it.anchor ? cls : cls + " border-gold text-gold"}>
               {it.label}
             </a>
           ),
