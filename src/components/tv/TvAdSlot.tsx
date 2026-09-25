@@ -51,7 +51,8 @@ export function TvAdSlot({
             {
               "--ar-m": `${mobile.w} / ${mobile.h}`,
               "--ar-d": `${desktop.w} / ${desktop.h}`,
-              maxWidth: `max(${mobile.w}px, min(100%, ${desktop.w}px))`,
+              "--mw-m": mobile.w < 400 ? "400px" : "100%",
+              "--mw-d": `${desktop.w}px`,
             } as React.CSSProperties
           }
         >
