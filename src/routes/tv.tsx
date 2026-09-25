@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { MapPin, Play, Radio } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvTopStage, type TvStageStatus } from "@/components/tv/TvTopStage";
 import { TvMobileNav } from "@/components/tv/TvMobileNav";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
+import { TvAdSlot, useVisibleBanners } from "@/components/tv/TvAdSlot";
 
 
 const TV_OG_IMAGE = "https://rollerzone.es/__l5e/assets-v1/57c70012-bbe9-4642-b766-6b243447cc73/og-rollerzone-tv.jpg";
@@ -117,6 +118,7 @@ type Highlight = {
   category: string | null;
   duration: string | null;
   featured: boolean;
+  created_at: string | null;
 };
 
 function TvPage() {
@@ -124,7 +126,6 @@ function TvPage() {
   const [broadcasts, setBroadcasts] = useState<Broadcast[] | null>(null);
   const [highlights, setHighlights] = useState<Highlight[] | null>(null);
   const [now, setNow] = useState(() => new Date());
-  const [carouselIdx, setCarouselIdx] = useState(0);
   const [activeHighlight, setActiveHighlight] = useState<Highlight | null>(null);
   const [playerActive, setPlayerActive] = useState(false);
   const location = useLocation();
@@ -163,7 +164,7 @@ function TvPage() {
 
     supabase
       .from("tv_highlights")
-      .select("id, title, description, video_url, thumbnail_url, category, duration, featured")
+      .select("id, title, description, video_url, thumbnail_url, category, duration, featured, created_at")
       .eq("published", true)
       .order("featured", { ascending: false })
       .order("sort_order", { ascending: true })
@@ -177,28 +178,56 @@ function TvPage() {
     : settings?.status_label === "finished"
       ? "finished"
       : "upcoming";
-  void now;
 
-  const nextBroadcast = useMemo(() => {
-    const b = (broadcasts ?? []).find((x) => new Date(x.scheduled_at).getTime() > Date.now());
-    return b ? { title: b.title, at: b.scheduled_at } : null;
-  }, [broadcasts]);
+  // Programación: SOLO emisiones futuras publicadas.
+  const upcomingBroadcasts = useMemo(
+    () => (broadcasts ?? []).filter((x) => new Date(x.scheduled_at).getTime() > now.getTime()),
+    [broadcasts, now],
+  );
+  const nextBroadcast = upcomingBroadcasts[0]
+    ? { title: upcomingBroadcasts[0].title, at: upcomingBroadcasts[0].scheduled_at }
+    : null;
 
   const hasLiveCenter = !!(settings?.show_live_center && settings?.live_center_event_slug);
+  const hasProgram = upcomingBroadcasts.length > 0;
+  const hasHighlights = !!highlights && highlights.length > 0;
   const navItems = [
     { id: "directo", label: "Directo" },
     ...(hasLiveCenter ? [{ id: "live-center", label: "Live Center" }] : []),
-    ...(broadcasts && broadcasts.length ? [{ id: "emisiones", label: "Programación" }] : []),
-    ...(highlights && highlights.length ? [{ id: "highlights", label: "Highlights" }] : []),
+    ...(hasProgram ? [{ id: "emisiones", label: "Programación" }] : []),
+    ...(hasHighlights ? [{ id: "highlights", label: "Highlights" }] : []),
   ];
 
-  return (
-    <div className="w-full max-w-full min-w-0 overflow-x-clip bg-background">
-      <TvMobileNav items={navItems} live={status === "live"} />
-      <TvTopStage settings={settings} status={status} nextBroadcast={nextBroadcast} />
-      <section aria-label="Publicidad" className="border-b border-gold/30 bg-background">
-        {/* PREMIUM BANNER — ancho completo */}
-        <div className="border-t border-border bg-background">
+  // Publicidad (solo banners visibles en este dispositivo).
+  const tv03 = useVisibleBanners("tv_03");
+  const tv04 = useVisibleBanners("tv_04");
+  const tvPremium = useVisibleBanners("tv_premium");
+  const tv05 = useVisibleBanners("tv_05");
+  const tv06 = useVisibleBanners("tv_06");
+
+  // ¿La zona superior termina en publicidad? (TV-03 sin próxima emisión ni Live Center debajo)
+  const nextShown =
+    status !== "live" &&
+    ((settings?.next_event_title && settings.next_event_at && new Date(settings.next_event_at).getTime() > now.getTime()) ||
+      !!nextBroadcast);
+  const liveCenterBelow = hasLiveCenter && settings?.live_center_position === "bottom";
+  const topEndsWithAd = tv03.length > 0 && !nextShown && !liveCenterBelow;
+
+  type Block = { key: string; ad: boolean; node: React.ReactNode };
+  const blocks: Block[] = [];
+  // Bajo Live Center: TV-04 tiene prioridad; si no hay campaña TV-04, se muestra el carrusel tv_premium.
+  if (tv04.length > 0) {
+    blocks.push({
+      key: "tv04",
+      ad: true,
+      node: <TvAdSlot banner={tv04[0]} placement="tv_04" desktop={{ w: 1200, h: 200 }} mobile={{ w: 640, h: 320 }} />,
+    });
+  } else if (tvPremium.length > 0) {
+    blocks.push({
+      key: "tv_premium",
+      ad: true,
+      node: (
+        <section aria-label="Publicidad" className="bg-background">
           <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
             <TvPremiumBanner
               autoplay={settings?.premium_autoplay ?? true}
@@ -207,55 +236,52 @@ function TvPage() {
               showDots={settings?.premium_show_dots ?? true}
             />
           </div>
-        </div>
-      </section>
-
-
-      {/* PRÓXIMAS CARRERAS */}
-      <section id="emisiones" className="scroll-mt-28 border-b border-border bg-background">
-        <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-          <SectionHeader kicker="Programación" title="Próximas" highlight="carreras" />
-          {broadcasts === null ? (
-            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="aspect-video animate-pulse bg-surface" />
-              ))}
-            </div>
-          ) : broadcasts.length === 0 ? (
-            <p className="mt-6 text-muted-foreground">Aún no hay próximas emisiones programadas.</p>
-          ) : (
-            <BroadcastsCarousel items={broadcasts} index={carouselIdx} setIndex={setCarouselIdx} />
-          )}
-          <div className="mt-6">
-            <Link
-              to="/eventos"
-              className="font-condensed inline-flex items-center gap-1 text-xs uppercase tracking-widest text-gold hover:underline"
-            >
-              Ver todos los eventos <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+        </section>
+      ),
+    });
+  }
+  const tv05Block: Block | null = tv05.length
+    ? {
+        key: "tv05",
+        ad: true,
+        node: <TvAdSlot banner={tv05[0]} placement="tv_05" desktop={{ w: 970, h: 250 }} mobile={{ w: 300, h: 250 }} />,
+      }
+    : null;
+  if (hasProgram) {
+    blocks.push({
+      key: "prog",
+      ad: false,
+      node: (
+        <section id="emisiones" className="scroll-mt-28 border-y border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
+            <SectionHeader kicker="Programación" title="Próximas" highlight="emisiones" />
+            <BroadcastsRail items={upcomingBroadcasts} />
           </div>
-        </div>
-      </section>
-
-      {/* HIGHLIGHTS */}
-      <section id="highlights" className="scroll-mt-28 bg-surface/40">
-        <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-          <SectionHeader kicker="Lo mejor" title="Highlights" highlight="& momentos" />
-          {highlights === null ? (
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[0, 1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="aspect-video animate-pulse bg-surface-2" />
-              ))}
-            </div>
-          ) : highlights.length === 0 ? (
-            <p className="mt-6 text-muted-foreground">Aún no hay highlights publicados.</p>
-          ) : (
-            <HighlightsGrid items={highlights} onPlay={setActiveHighlight} />
-          )}
-        </div>
-      </section>
-
-      {/* CTA SUSCRIPCIÓN */}
+        </section>
+      ),
+    });
+    if (tv05Block) blocks.push(tv05Block);
+  }
+  if (hasHighlights) {
+    blocks.push({
+      key: "hl",
+      ad: false,
+      node: (
+        <section id="highlights" className="scroll-mt-28 border-y border-border bg-surface/40">
+          <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
+            <SectionHeader kicker="Lo mejor" title="Highlights" highlight="& vídeos" />
+            <HighlightsRail items={highlights!} onPlay={setActiveHighlight} />
+          </div>
+        </section>
+      ),
+    });
+  }
+  // Sin Programación: TV-05 se coloca después de Highlights (nunca pegado a TV-04).
+  if (!hasProgram && tv05Block) blocks.push(tv05Block);
+  blocks.push({
+    key: "cta",
+    ad: false,
+    node: (
       <section className="border-t border-gold/30 bg-background">
         <div className="mx-auto max-w-3xl px-4 py-12 text-center lg:px-8">
           <h2 className="font-display text-2xl tracking-widest text-foreground md:text-3xl">
@@ -269,13 +295,37 @@ function TvPage() {
             href={settings?.subscribe_button_url ?? "https://www.youtube.com/@rollerzonespain?sub_confirmation=1"}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-condensed mt-5 inline-flex items-center gap-2 bg-gold px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground transition-colors hover:bg-gold-dark"
+            className="font-condensed mt-5 inline-flex min-h-11 items-center gap-2 bg-gold px-6 text-xs font-bold uppercase tracking-widest text-primary-foreground transition-colors hover:bg-gold-dark"
           >
             {settings?.subscribe_button_text ?? "Suscribirse al canal"}
           </a>
         </div>
       </section>
+    ),
+  });
+  if (tv06.length) {
+    blocks.push({
+      key: "tv06",
+      ad: true,
+      node: <TvAdSlot banner={tv06[0]} placement="tv_06" desktop={{ w: 1200, h: 200 }} mobile={{ w: 640, h: 320 }} />,
+    });
+  }
+  // Regla anti-saturación: nunca dos espacios publicitarios seguidos.
+  const rendered: Block[] = [];
+  let prevAd = topEndsWithAd;
+  for (const b of blocks) {
+    if (b.ad && prevAd) continue;
+    rendered.push(b);
+    prevAd = b.ad;
+  }
 
+  return (
+    <div className="w-full max-w-full min-w-0 overflow-x-clip bg-background">
+      <TvMobileNav items={navItems} live={status === "live"} />
+      <TvTopStage settings={settings} status={status} nextBroadcast={nextBroadcast} />
+      {rendered.map((b) => (
+        <Fragment key={b.key}>{b.node}</Fragment>
+      ))}
       {activeHighlight && (
         <HighlightModal item={activeHighlight} onClose={() => setActiveHighlight(null)} />
       )}
@@ -328,195 +378,127 @@ function SectionHeader({
   );
 }
 
-function BroadcastsCarousel({
-  items,
-  index,
-  setIndex,
-}: {
-  items: Broadcast[];
-  index: number;
-  setIndex: (i: number) => void;
-}) {
-  const perView = 3;
-  const maxIndex = Math.max(0, items.length - perView);
-  const safeIndex = Math.min(index, maxIndex);
+/** Carril táctil en móvil (tarjetas ~82 % del ancho) y rejilla en tablet/desktop. */
+const RAIL = "mt-6 -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-3";
+const RAIL_ITEM = "w-[82%] shrink-0 snap-start sm:w-auto";
 
+function BroadcastsRail({ items }: { items: Broadcast[] }) {
   return (
-    <div className="relative mt-6">
-      <div className="overflow-hidden">
-        <div
-          className="flex transition-transform duration-500 ease-out"
-          style={{ transform: `translateX(-${(safeIndex * 100) / perView}%)` }}
-        >
-          {items.map((b) => (
-            <div key={b.id} className="w-full shrink-0 px-2 sm:w-1/2 lg:w-1/3">
-              <BroadcastCard b={b} />
-            </div>
-          ))}
+    <div className={RAIL}>
+      {items.map((b) => (
+        <div key={b.id} className={RAIL_ITEM}>
+          <BroadcastCard b={b} />
         </div>
-      </div>
-
-      {items.length > perView && (
-        <>
-          <button
-            onClick={() => setIndex(Math.max(0, safeIndex - 1))}
-            disabled={safeIndex === 0}
-            aria-label="Anterior"
-            className="absolute -left-3 top-1/2 z-10 hidden -translate-y-1/2 border border-gold/60 bg-background/90 p-2 text-gold backdrop-blur transition-opacity hover:bg-gold hover:text-primary-foreground disabled:opacity-30 sm:block"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            onClick={() => setIndex(Math.min(maxIndex, safeIndex + 1))}
-            disabled={safeIndex === maxIndex}
-            aria-label="Siguiente"
-            className="absolute -right-3 top-1/2 z-10 hidden -translate-y-1/2 border border-gold/60 bg-background/90 p-2 text-gold backdrop-blur transition-opacity hover:bg-gold hover:text-primary-foreground disabled:opacity-30 sm:block"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-          <div className="mt-4 flex items-center justify-center gap-1.5">
-            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setIndex(i)}
-                aria-label={`Ir a ${i + 1}`}
-                className={`h-1 w-6 transition-colors ${i === safeIndex ? "bg-gold" : "bg-border"}`}
-              />
-            ))}
-          </div>
-        </>
-      )}
+      ))}
     </div>
   );
 }
 
 function BroadcastCard({ b }: { b: Broadcast }) {
   const cover = b.cover_url || videoThumbnail(b.stream_url);
-  const Wrapper = ({ children }: { children: React.ReactNode }) =>
-    b.stream_url ? (
-      <a
-        href={b.stream_url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group block overflow-hidden border border-border bg-surface transition-all hover:border-gold hover:shadow-[0_0_30px_oklch(0.78_0.16_70/0.18)]"
-      >
-        {children}
-      </a>
-    ) : (
-      <div className="block overflow-hidden border border-border bg-surface">{children}</div>
-    );
-
-  return (
-    <Wrapper>
+  const d = new Date(b.scheduled_at);
+  const day = d.toLocaleDateString("es-ES", { weekday: "short", day: "2-digit", month: "short" });
+  const time = d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+  const body = (
+    <>
       <div className="relative aspect-video overflow-hidden bg-black">
         {cover ? (
-          <img
-            src={cover}
-            alt={b.title}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          <img src={cover} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover opacity-80" />
         ) : (
           <div className="hero-grid-bg flex h-full w-full items-center justify-center">
             <Radio className="h-10 w-10 text-gold/40" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        <div className="absolute left-3 top-3">
-          <span className="font-condensed inline-flex items-center gap-1 bg-gold px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
-            <Radio className="h-3 w-3" /> {b.platform}
-          </span>
-        </div>
-        <div className="absolute bottom-3 left-3 right-3">
-          <p className="font-condensed flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-white">
-            <Calendar className="h-3 w-3" /> {formatDateTime(b.scheduled_at)}
-          </p>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+        <span className="font-condensed absolute left-2 top-2 border border-gold/60 bg-background/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gold">
+          Próximamente
+        </span>
+        <div className="absolute bottom-2 left-3 right-3 flex items-end justify-between gap-2">
+          <p className="font-condensed text-[11px] uppercase tracking-widest text-white/85">{day}</p>
+          <p className="font-display text-xl leading-none text-gold">{time}</p>
         </div>
       </div>
-      <div className="p-4">
+      <div className="p-3">
         <h3 className="font-display clamp-2 text-base leading-tight tracking-wide text-foreground group-hover:text-gold">
           {b.title}
         </h3>
         {b.location && (
-          <p className="font-condensed mt-2 flex items-center gap-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-            <MapPin className="h-3 w-3" /> {b.location}
+          <p className="font-condensed mt-1.5 flex items-center gap-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+            <MapPin className="h-3 w-3 shrink-0" /> <span className="truncate">{b.location}</span>
           </p>
         )}
-        {b.description && <p className="clamp-2 mt-2 text-sm text-muted-foreground">{b.description}</p>}
       </div>
-    </Wrapper>
+    </>
+  );
+  return b.stream_url ? (
+    <a
+      href={b.stream_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block h-full overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
+    >
+      {body}
+    </a>
+  ) : (
+    <div className="block h-full overflow-hidden border border-border bg-surface">{body}</div>
   );
 }
 
-function HighlightsGrid({
-  items,
-  onPlay,
-}: {
-  items: Highlight[];
-  onPlay: (h: Highlight) => void;
-}) {
+function HighlightsRail({ items, onPlay }: { items: Highlight[]; onPlay: (h: Highlight) => void }) {
   return (
-    <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((h, i) => {
-        const isFeatured = h.featured && i === 0;
+    <div className={RAIL}>
+      {items.map((h) => {
+        const thumb = h.thumbnail_url || videoThumbnail(h.video_url);
+        const date = h.created_at
+          ? new Date(h.created_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })
+          : null;
         return (
-          <button
-            key={h.id}
-            onClick={() => onPlay(h)}
-            className={`group relative overflow-hidden border border-border bg-surface text-left transition-all hover:border-gold hover:shadow-[0_0_30px_oklch(0.78_0.16_70/0.2)] ${
-              isFeatured ? "sm:col-span-2 lg:row-span-2" : ""
-            }`}
-          >
-            <div
-              className={`relative overflow-hidden bg-black ${isFeatured ? "aspect-[16/10]" : "aspect-video"}`}
+          <div key={h.id} className={RAIL_ITEM}>
+            <button
+              type="button"
+              onClick={() => onPlay(h)}
+              aria-label={`Reproducir: ${h.title}`}
+              className="group block h-full w-full overflow-hidden border border-border bg-surface text-left transition-colors hover:border-gold"
             >
-              {(() => {
-                const thumb = h.thumbnail_url || videoThumbnail(h.video_url);
-                return thumb ? (
+              <div className="relative aspect-video overflow-hidden bg-black">
+                {thumb ? (
                   <img
                     src={thumb}
-                    alt={h.title}
+                    alt=""
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="hero-grid-bg flex h-full w-full items-center justify-center">
-                    <Play className="h-12 w-12 text-gold/50" />
-                  </div>
-                );
-              })()}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90" />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gold text-primary-foreground shadow-2xl">
-                  <Play className="ml-1 h-7 w-7 fill-current" />
+                  <div className="hero-grid-bg h-full w-full" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/95 text-primary-foreground shadow-xl transition-transform group-hover:scale-110">
+                    <Play className="ml-0.5 h-5 w-5 fill-current" />
+                  </span>
                 </span>
-              </div>
-              {h.duration && (
-                <div className="absolute right-2 top-2 bg-black/80 px-2 py-0.5 text-[11px] font-bold tracking-wider text-white">
-                  {h.duration}
-                </div>
-              )}
-              {h.category && (
-                <div className="absolute left-2 top-2">
-                  <span className="font-condensed bg-gold/95 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
+                {h.duration && (
+                  <span className="absolute bottom-2 right-2 bg-black/80 px-1.5 py-0.5 font-mono text-[11px] text-white">
+                    {h.duration}
+                  </span>
+                )}
+                {h.category && (
+                  <span className="font-condensed absolute left-2 top-2 bg-gold/95 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
                     {h.category}
                   </span>
-                </div>
-              )}
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <h3
-                  className={`font-display tracking-wide text-white group-hover:text-gold ${
-                    isFeatured ? "clamp-2 text-2xl md:text-3xl" : "clamp-2 text-base"
-                  }`}
-                >
-                  {h.title}
-                </h3>
-                {isFeatured && h.description && (
-                  <p className="clamp-2 mt-2 text-sm text-white/80">{h.description}</p>
                 )}
               </div>
-            </div>
-          </button>
+              <div className="p-3">
+                <h3 className="font-display clamp-2 text-base leading-tight tracking-wide text-foreground group-hover:text-gold">
+                  {h.title}
+                </h3>
+                {date && (
+                  <p className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">{date}</p>
+                )}
+              </div>
+            </button>
+          </div>
         );
       })}
     </div>
