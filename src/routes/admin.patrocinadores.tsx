@@ -91,8 +91,8 @@ function AdminSponsors() {
                 <th className="px-3 py-2 text-left">Nombre</th>
                 <th className="px-3 py-2 text-left">Tier</th>
                 <th className="px-3 py-2 text-left">Web</th>
-                <th className="px-3 py-2 text-left">TV</th>
                 <th className="px-3 py-2 text-left">Orden</th>
+                <th className="px-3 py-2 text-left">TV</th>
                 <th className="px-3 py-2 text-left">Estado</th>
                 <th className="px-3 py-2"></th>
               </tr>
