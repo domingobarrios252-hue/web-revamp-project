@@ -15,10 +15,11 @@ type Props = {
   todayOverride?: string | null;
   notice?: string | null;
   noticeVisible?: boolean;
+  streamAnchor?: string;
 };
 
 /** Hoy en [sede] + Calendario por jornadas. Se oculta si no hay pruebas. */
-export function LiveSchedule({ items, days, tz, city, todayOverride, notice, noticeVisible }: Props) {
+export function LiveSchedule({ items, days, tz, city, todayOverride, notice, noticeVisible, streamAnchor }: Props) {
   const byDay = useMemo(() => {
     const m = new Map<string, ScheduleItem[]>();
     for (const it of items) {
@@ -58,7 +59,7 @@ export function LiveSchedule({ items, days, tz, city, todayOverride, notice, not
             </p>
             <ul className="mt-4 grid gap-2 md:grid-cols-2">
               {todayItems.map((it) => (
-                <ScheduleRow key={it.id} item={it} tz={tz} />
+                <ScheduleRow streamAnchor={streamAnchor} key={it.id} item={it} tz={tz} />
               ))}
             </ul>
           </div>
@@ -115,7 +116,7 @@ export function LiveSchedule({ items, days, tz, city, todayOverride, notice, not
                   )}
                   <ul className="grid gap-2 md:grid-cols-2">
                     {list.map((it) => (
-                      <ScheduleRow key={it.id} item={it} tz={tz} />
+                      <ScheduleRow streamAnchor={streamAnchor} key={it.id} item={it} tz={tz} />
                     ))}
                   </ul>
                 </div>
@@ -138,7 +139,7 @@ function groupByVenue(list: ScheduleItem[]): [string, ScheduleItem[]][] {
   return [...m.entries()];
 }
 
-function ScheduleRow({ item, tz }: { item: ScheduleItem; tz: string }) {
+function ScheduleRow({ item, tz, streamAnchor }: { item: ScheduleItem; tz: string; streamAnchor?: string }) {
   const meta = [item.category, item.gender].filter(Boolean).join(" · ");
   const live = item.status === "en_curso";
   const off = item.status === "cancelada" || item.status === "aplazada";
@@ -158,6 +159,11 @@ function ScheduleRow({ item, tz }: { item: ScheduleItem; tz: string }) {
           <div className="font-condensed mt-0.5 text-[11px] uppercase tracking-[1.5px] text-muted-foreground">
             {[item.phase, meta].filter(Boolean).join(" · ")}
           </div>
+        )}
+        {live && streamAnchor && (
+          <a href={streamAnchor} className="font-condensed mt-1 inline-flex min-h-8 items-center text-[11px] font-bold uppercase tracking-[1.5px] text-gold underline-offset-4 hover:underline">
+            ▶ Ver directo
+          </a>
         )}
       </div>
       <span

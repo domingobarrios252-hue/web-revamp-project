@@ -1858,31 +1858,42 @@ export type Database = {
         Row: {
           created_at: string
           entry_type: string
-          event_id: string
+          event_id: string | null
           id: string
           message: string
           occurred_at: string
           published: boolean
+          result_event_id: string | null
         }
         Insert: {
           created_at?: string
           entry_type?: string
-          event_id: string
+          event_id?: string | null
           id?: string
           message: string
           occurred_at?: string
           published?: boolean
+          result_event_id?: string | null
         }
         Update: {
           created_at?: string
           entry_type?: string
-          event_id?: string
+          event_id?: string | null
           id?: string
           message?: string
           occurred_at?: string
           published?: boolean
+          result_event_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "live_timeline_result_event_id_fkey"
+            columns: ["result_event_id"]
+            isOneToOne: false
+            referencedRelation: "result_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       magazine_purchases: {
         Row: {
@@ -2888,6 +2899,19 @@ export type Database = {
           sort_order: number
           source_url: string | null
           status: Database["public"]["Enums"]["live_result_status"]
+          stream_active: boolean
+          stream_attribution: string | null
+          stream_cta_label: string | null
+          stream_cta_url: string | null
+          stream_description: string | null
+          stream_embed_url: string | null
+          stream_poster_alt: string | null
+          stream_poster_mobile_url: string | null
+          stream_poster_url: string | null
+          stream_provider: string | null
+          stream_scheduled_at: string | null
+          stream_status: string
+          stream_title: string | null
           stream_url: string | null
           updated_at: string
           venue: string | null
@@ -2918,6 +2942,19 @@ export type Database = {
           sort_order?: number
           source_url?: string | null
           status?: Database["public"]["Enums"]["live_result_status"]
+          stream_active?: boolean
+          stream_attribution?: string | null
+          stream_cta_label?: string | null
+          stream_cta_url?: string | null
+          stream_description?: string | null
+          stream_embed_url?: string | null
+          stream_poster_alt?: string | null
+          stream_poster_mobile_url?: string | null
+          stream_poster_url?: string | null
+          stream_provider?: string | null
+          stream_scheduled_at?: string | null
+          stream_status?: string
+          stream_title?: string | null
           stream_url?: string | null
           updated_at?: string
           venue?: string | null
@@ -2948,6 +2985,19 @@ export type Database = {
           sort_order?: number
           source_url?: string | null
           status?: Database["public"]["Enums"]["live_result_status"]
+          stream_active?: boolean
+          stream_attribution?: string | null
+          stream_cta_label?: string | null
+          stream_cta_url?: string | null
+          stream_description?: string | null
+          stream_embed_url?: string | null
+          stream_poster_alt?: string | null
+          stream_poster_mobile_url?: string | null
+          stream_poster_url?: string | null
+          stream_provider?: string | null
+          stream_scheduled_at?: string | null
+          stream_status?: string
+          stream_title?: string | null
           stream_url?: string | null
           updated_at?: string
           venue?: string | null

@@ -84,10 +84,14 @@ export type NavItem = { key: NavKey; label: string; pieceSlug: string | null; an
  * Los accesos sin destino se ocultan (nunca mostramos módulos vacíos).
  * "Hoy" siempre apunta al bloque de piezas de la portada del especial.
  */
-export function buildLiveNav(pieces: LivePiece[], opts: { hasSchedule?: boolean } = {}): NavItem[] {
+export function buildLiveNav(pieces: LivePiece[], opts: { hasSchedule?: boolean; hasStream?: boolean } = {}): NavItem[] {
   const used = new Set<string>();
   const out: NavItem[] = [];
   for (const n of NAV) {
+    if (n.key === "directo" && opts.hasStream) {
+      out.push({ key: n.key, label: n.label, pieceSlug: null, anchor: "#directo" });
+      continue;
+    }
     if (n.key === "calendario" && opts.hasSchedule) {
       out.push({ key: n.key, label: n.label, pieceSlug: null, anchor: "#calendario" });
       continue;
@@ -249,4 +253,58 @@ export function dayRange(start?: string | null, end?: string | null): string[] {
 export function dayChipLabel(day: string) {
   const [, m, d] = day.split("-");
   return `${+d} ${MONTHS[+m - 1]}`;
+}
+
+// ---- Streaming del evento (result_events.stream_*) ---------------------------
+
+export type EventStream = {
+  stream_active: boolean;
+  stream_status: "upcoming" | "live" | "finished";
+  stream_title: string | null;
+  stream_description: string | null;
+  stream_url: string | null;
+  stream_embed_url: string | null;
+  stream_poster_url: string | null;
+  stream_poster_mobile_url: string | null;
+  stream_poster_alt: string | null;
+  stream_scheduled_at: string | null;
+  stream_cta_label: string | null;
+  stream_cta_url: string | null;
+  stream_provider: string | null;
+  stream_attribution: string | null;
+};
+
+export const STREAM_COLUMNS =
+  "stream_active,stream_status,stream_title,stream_description,stream_url,stream_embed_url,stream_poster_url,stream_poster_mobile_url,stream_poster_alt,stream_scheduled_at,stream_cta_label,stream_cta_url,stream_provider,stream_attribution";
+
+/**
+ * Acepta un enlace https o un código <iframe src="https://...">; devuelve solo
+ * el src https (nunca HTML). null si está vacío; undefined si no es válido.
+ */
+export function extractEmbedSrc(input: string | null | undefined): string | null | undefined {
+  const v = (input ?? "").trim();
+  if (!v) return null;
+  const m = /src\s*=\s*["']([^"']+)["']/i.exec(v);
+  const url = (m ? m[1] : v).trim().replace(/&amp;/g, "&");
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" ? u.toString() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Quita autoplay con sonido: fuerza autoplay=0 / mute=1 si el proveedor lo admite. */
+export function safeEmbedUrl(src: string, autoplay: boolean) {
+  try {
+    const u = new URL(src);
+    u.searchParams.set("autoplay", autoplay ? "1" : "0");
+    if (autoplay) {
+      u.searchParams.set("mute", "1");
+      u.searchParams.set("muted", "1");
+    }
+    return u.toString();
+  } catch {
+    return src;
+  }
 }
