@@ -379,7 +379,7 @@ function SectionHeader({
 }
 
 /** Carril táctil en móvil (tarjetas ~82 % del ancho) y rejilla en tablet/desktop. */
-const RAIL = "mt-6 -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-3";
+const RAIL = "mt-6 -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:scroll-px-0 lg:grid-cols-3";
 const RAIL_ITEM = "w-[82%] shrink-0 snap-start sm:w-auto";
 
 function BroadcastsRail({ items }: { items: Broadcast[] }) {
