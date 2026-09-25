@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAdBanners } from "@/lib/useAdBanners";
-import { AdCreative } from "@/components/site/AdCreative";
+import { AdCreative, bannerVisibleOn } from "@/components/site/AdCreative";
 
 type Props = {
   autoplay: boolean;
@@ -11,7 +11,16 @@ type Props = {
 };
 
 export function TvPremiumBanner({ autoplay, intervalMs, showArrows, showDots }: Props) {
-  const items = useAdBanners("tv_premium");
+  const all = useAdBanners("tv_premium");
+  const [device, setDevice] = useState<"desktop" | "mobile" | null>(null);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const on = () => setDevice(mq.matches ? "desktop" : "mobile");
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  const items = device ? all.filter((b) => bannerVisibleOn(b, device)) : all;
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
 
