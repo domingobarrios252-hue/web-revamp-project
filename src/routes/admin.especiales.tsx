@@ -56,6 +56,7 @@ type Special = {
   status: "active" | "hidden" | "archived" | "draft";
   featured_home: boolean;
   event_id: string | null;
+  result_event_id: string | null;
   event_mode_active: boolean;
   sort_order: number;
   start_date: string | null;
@@ -155,6 +156,7 @@ const emptySpecial = (): Omit<Special, "id"> => ({
   status: "draft",
   featured_home: false,
   event_id: null,
+  result_event_id: null,
   event_mode_active: false,
   sort_order: 10,
   start_date: null,
@@ -187,11 +189,12 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
 
   useEffect(() => {
     load();
-    db.from("events")
-      .select("id,name,start_date")
-      .order("start_date", { ascending: false })
-      .then(({ data }: { data: { id: string; name: string; start_date: string | null }[] | null }) =>
-        setEvents(data ?? []),
+    // Fuente real: Gestor de Resultados → Eventos (tabla result_events), sin filtros.
+    db.from("result_events")
+      .select("id,name,event_date")
+      .order("event_date", { ascending: false, nullsFirst: false })
+      .then(({ data }: { data: { id: string; name: string; event_date: string | null }[] | null }) =>
+        setEvents((data ?? []).map((e) => ({ id: e.id, name: e.name, start_date: e.event_date }))),
       );
   }, []);
 
@@ -599,8 +602,8 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
             <div className="grid grid-cols-1 gap-4 border-t border-border pt-4 md:grid-cols-2">
               <Field label="Evento vinculado (calendario, directo, resultados, medallero)">
                 <select
-                  value={form.event_id ?? ""}
-                  onChange={(e) => setForm({ ...form, event_id: e.target.value || null })}
+                  value={form.result_event_id ?? ""}
+                  onChange={(e) => setForm({ ...form, result_event_id: e.target.value || null })}
                   className="w-full border border-border bg-surface px-3 py-2 text-sm"
                 >
                   <option value="">— Sin evento —</option>

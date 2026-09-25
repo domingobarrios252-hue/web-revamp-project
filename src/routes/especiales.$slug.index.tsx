@@ -8,6 +8,7 @@ import {
   buildLiveNav,
   isEventLive,
   resolveCtas,
+  loadLinkedEvent,
   type LinkedEvent,
   type LiveSpecial,
 } from "@/lib/specials/liveEvent";
@@ -51,15 +52,7 @@ export const Route = createFileRoute("/especiales/$slug/")({
       .in("status", ["published", "live"])
       .eq("visible", true)
       .order("sort_order", { ascending: true });
-    let event: LinkedEvent | null = null;
-    if (sp.event_id) {
-      const { data: ev } = await sb
-        .from("events")
-        .select("id,name,status,location,city,start_date,end_date")
-        .eq("id", sp.event_id)
-        .maybeSingle();
-      event = (ev ?? null) as LinkedEvent | null;
-    }
+    const event: LinkedEvent | null = await loadLinkedEvent(sb, sp);
     return {
       special: sp as Special,
       pieces: (pcs ?? []) as Piece[],
@@ -112,7 +105,7 @@ function SpecialLanding() {
   const heroImage = special.hero_image_url?.trim() || special.cover_url?.trim() || (specialFallback as string);
   const featured = pieces.filter((p) => p.featured);
   const rest = pieces.filter((p) => !p.featured);
-  const isLiveHub = Boolean(special.event_id);
+  const isLiveHub = Boolean(special.result_event_id || special.event_id);
   const live = isEventLive(event);
 
   return (
