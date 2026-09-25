@@ -62,7 +62,7 @@ export function useAdBanners(placement: string) {
     load();
 
     const ch = supabase
-      .channel(`ad-banners-placement-${placement}`)
+      .channel(`ad-banners-placement-${placement}-${Math.random().toString(36).slice(2, 8)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "ad_banners" },
