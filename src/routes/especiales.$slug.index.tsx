@@ -2,18 +2,19 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import specialFallback from "@/assets/special-fallback.svg";
+import { LiveEventHero } from "@/components/specials/live/LiveEventHero";
+import { LiveEventNav } from "@/components/specials/live/LiveEventNav";
+import {
+  buildLiveNav,
+  isEventLive,
+  resolveCtas,
+  type LinkedEvent,
+  type LiveSpecial,
+} from "@/lib/specials/liveEvent";
 
 const SITE = "https://rollerzone.es";
 
-type Special = {
-  slug: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  cover_url: string;
-  hero_image_url: string;
-  status: string;
-};
+type Special = LiveSpecial & { status: string };
 
 type Piece = {
   slug: string;
@@ -50,9 +51,19 @@ export const Route = createFileRoute("/especiales/$slug/")({
       .in("status", ["published", "live"])
       .eq("visible", true)
       .order("sort_order", { ascending: true });
+    let event: LinkedEvent | null = null;
+    if (sp.event_id) {
+      const { data: ev } = await sb
+        .from("events")
+        .select("id,name,status,location,city,start_date,end_date")
+        .eq("id", sp.event_id)
+        .maybeSingle();
+      event = (ev ?? null) as LinkedEvent | null;
+    }
     return {
       special: sp as Special,
       pieces: (pcs ?? []) as Piece[],
+      event,
       url: `${SITE}/especiales/${params.slug}`,
     };
   },
@@ -96,15 +107,31 @@ export const Route = createFileRoute("/especiales/$slug/")({
 
 function SpecialLanding() {
   const { slug } = Route.useParams();
-  const { special, pieces } = Route.useLoaderData();
+  const { special, pieces, event } = Route.useLoaderData();
 
   const heroImage = special.hero_image_url?.trim() || special.cover_url?.trim() || (specialFallback as string);
   const featured = pieces.filter((p) => p.featured);
   const rest = pieces.filter((p) => !p.featured);
+  const isLiveHub = Boolean(special.event_id);
+  const live = isEventLive(event);
 
   return (
     <>
-      {/* Hero */}
+      {isLiveHub ? (
+        <>
+          <LiveEventHero
+            special={{
+              ...special,
+              start_date: special.start_date ?? event?.start_date ?? null,
+              end_date: special.end_date ?? event?.end_date ?? null,
+            }}
+            ctas={resolveCtas(special, pieces).map((c) => (c.url === `/especiales/${slug}` ? { ...c, url: "#hoy" } : c))}
+            live={live}
+            location={special.location?.trim() || event?.city || event?.location || ""}
+          />
+          <LiveEventNav slug={slug} items={buildLiveNav(pieces)} live={live} />
+        </>
+      ) : (
       <section className="relative overflow-hidden bg-surface">
         <div className="absolute inset-0">
           <img loading="lazy" decoding="async"
@@ -133,6 +160,7 @@ function SpecialLanding() {
           )}
         </div>
       </section>
+      )}
 
       {/* Description */}
       {special.description && (
@@ -146,6 +174,7 @@ function SpecialLanding() {
       )}
 
       {/* Featured */}
+      <div id="hoy" className="scroll-mt-14" />
       {featured.length > 0 && (
         <section className="bg-background py-8 md:py-12">
           <div className="mx-auto max-w-7xl px-4 md:px-6">

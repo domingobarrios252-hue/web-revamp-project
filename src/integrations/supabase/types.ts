@@ -3291,13 +3291,18 @@ export type Database = {
         Row: {
           cover_url: string
           created_at: string
+          ctas: Json
           description: string
           end_date: string | null
           event_id: string | null
           event_mode_active: boolean
           featured_home: boolean
+          hero_image_alt: string
+          hero_image_mobile_alt: string
+          hero_image_mobile_url: string
           hero_image_url: string
           id: string
+          location: string
           slug: string
           sort_order: number
           start_date: string | null
@@ -3309,13 +3314,18 @@ export type Database = {
         Insert: {
           cover_url?: string
           created_at?: string
+          ctas?: Json
           description?: string
           end_date?: string | null
           event_id?: string | null
           event_mode_active?: boolean
           featured_home?: boolean
+          hero_image_alt?: string
+          hero_image_mobile_alt?: string
+          hero_image_mobile_url?: string
           hero_image_url?: string
           id?: string
+          location?: string
           slug: string
           sort_order?: number
           start_date?: string | null
@@ -3327,13 +3337,18 @@ export type Database = {
         Update: {
           cover_url?: string
           created_at?: string
+          ctas?: Json
           description?: string
           end_date?: string | null
           event_id?: string | null
           event_mode_active?: boolean
           featured_home?: boolean
+          hero_image_alt?: string
+          hero_image_mobile_alt?: string
+          hero_image_mobile_url?: string
           hero_image_url?: string
           id?: string
+          location?: string
           slug?: string
           sort_order?: number
           start_date?: string | null
