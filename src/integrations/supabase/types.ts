@@ -901,9 +901,11 @@ export type Database = {
           logo_url: string | null
           name: string
           organizer: string | null
+          provider_event_ref: string | null
           published: boolean
           region_id: string | null
           registration_url: string | null
+          results_provider: string
           scope: string
           season: string | null
           show_in_calendar: boolean
@@ -941,9 +943,11 @@ export type Database = {
           logo_url?: string | null
           name: string
           organizer?: string | null
+          provider_event_ref?: string | null
           published?: boolean
           region_id?: string | null
           registration_url?: string | null
+          results_provider?: string
           scope?: string
           season?: string | null
           show_in_calendar?: boolean
@@ -981,9 +985,11 @@ export type Database = {
           logo_url?: string | null
           name?: string
           organizer?: string | null
+          provider_event_ref?: string | null
           published?: boolean
           region_id?: string | null
           registration_url?: string | null
+          results_provider?: string
           scope?: string
           season?: string | null
           show_in_calendar?: boolean
@@ -3287,6 +3293,8 @@ export type Database = {
           created_at: string
           description: string
           end_date: string | null
+          event_id: string | null
+          event_mode_active: boolean
           featured_home: boolean
           hero_image_url: string
           id: string
@@ -3303,6 +3311,8 @@ export type Database = {
           created_at?: string
           description?: string
           end_date?: string | null
+          event_id?: string | null
+          event_mode_active?: boolean
           featured_home?: boolean
           hero_image_url?: string
           id?: string
@@ -3319,6 +3329,8 @@ export type Database = {
           created_at?: string
           description?: string
           end_date?: string | null
+          event_id?: string | null
+          event_mode_active?: boolean
           featured_home?: boolean
           hero_image_url?: string
           id?: string
@@ -3330,7 +3342,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "special_editorials_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       special_pieces: {
         Row: {
