@@ -49,7 +49,7 @@ export function TvEventLiveCenter({
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      const [evRes, resRes, schRes] = await Promise.all([
+      const [evRes, resRes, _unused] = await Promise.all([
         supabase
           .from("result_events")
           .select("id, slug, name, city, venue, status, event_date")
@@ -63,13 +63,20 @@ export function TvEventLiveCenter({
           .order("sort_order", { ascending: true })
           .order("position", { ascending: true })
           .limit(60),
-        supabase
-          .from("schedule_items")
-          .select("id, event_name, category, scheduled_at, status")
-          .eq("published", true)
-          .order("scheduled_at", { ascending: true })
-          .limit(20),
+        Promise.resolve(null),
       ]);
+      // Programación SOLO del evento vinculado (antes mezclaba pruebas de cualquier evento).
+      const evId = (evRes.data as { id?: string } | null)?.id;
+      const schRes = evId
+        ? await supabase
+            .from("schedule_items")
+            .select("id, event_name, category, scheduled_at, status")
+            .eq("published", true)
+            .eq("result_event_id", evId)
+            .order("scheduled_at", { ascending: true })
+            .limit(20)
+        : { data: [] };
+      void _unused;
       if (cancelled) return;
       setEv((evRes.data as ResultEvent | null) ?? null);
       setResults((resRes.data as LiveResultRow[]) ?? []);
