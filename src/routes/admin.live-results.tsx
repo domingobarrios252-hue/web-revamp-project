@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, X, ArrowUp, ArrowDown, Sparkles, Eraser, Save, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveResultEventId, checkScheduleLink, RESULT_STATUS_OPTIONS } from "@/lib/results/linking";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ResultadosHubTabs } from "@/components/admin/ResultadosHubTabs";
@@ -50,6 +51,10 @@ type Row = {
   status: Status;
   published: boolean;
   sort_order: number;
+  result_event_id?: string | null;
+  schedule_item_id?: string | null;
+  record_mark?: string | null;
+  result_status?: string | null;
 };
 
 const slugify = (s: string) =>
@@ -591,7 +596,38 @@ function EditDialog({
   const [status, setStatus] = useState<Status>(row.status);
   const [published, setPublished] = useState(row.published);
   const [sortOrder, setSortOrder] = useState(row.sort_order);
+  const [scheduleItemId, setScheduleItemId] = useState(row.schedule_item_id ?? "");
+  const [recordMark, setRecordMark] = useState(row.record_mark ?? "");
+  const [resultStatus, setResultStatus] = useState(row.result_status ?? "");
+  const [linkedEventId, setLinkedEventId] = useState<string | null>(row.result_event_id ?? null);
+  const [scheduleOpts, setScheduleOpts] = useState<{ id: string; label: string }[]>([]);
   const [saving, setSaving] = useState(false);
+
+  // Evento real (por ID) a partir de la dirección; y sus pruebas del calendario.
+  useEffect(() => {
+    let off = false;
+    (async () => {
+      const id = (await resolveResultEventId(eventSlug)) ?? null;
+      if (off) return;
+      setLinkedEventId(id);
+      if (!id) return setScheduleOpts([]);
+      const { data } = await supabase
+        .from("schedule_items")
+        .select("id,event_name,phase,category,scheduled_at")
+        .eq("result_event_id", id)
+        .order("scheduled_at", { ascending: true });
+      if (off) return;
+      setScheduleOpts(
+        ((data ?? []) as { id: string; event_name: string; phase: string | null; category: string | null; scheduled_at: string }[]).map((x) => ({
+          id: x.id,
+          label: `${new Date(x.scheduled_at).toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })} · ${[x.event_name, x.phase, x.category].filter(Boolean).join(" · ")}`,
+        })),
+      );
+    })();
+    return () => {
+      off = true;
+    };
+  }, [eventSlug]);
 
   // Auto-generar slug desde el nombre del evento si está vacío
   useEffect(() => {
@@ -622,7 +658,18 @@ function EditDialog({
       return toast.error(parsed.error.errors[0]?.message ?? "Datos inválidos");
 
     setSaving(true);
+    const slugFinal = parsed.data.event_slug || slugify(parsed.data.event_name);
+    const resultEventId = await resolveResultEventId(slugFinal);
+    const linkErr = await checkScheduleLink(scheduleItemId || null, resultEventId);
+    if (linkErr) {
+      setSaving(false);
+      return toast.error(linkErr);
+    }
     const payload = {
+      result_event_id: resultEventId,
+      schedule_item_id: scheduleItemId || null,
+      record_mark: recordMark.trim() || null,
+      result_status: resultStatus || null,
       event_name: parsed.data.event_name,
       event_slug: parsed.data.event_slug || slugify(parsed.data.event_name),
       race: parsed.data.race || null,
@@ -746,6 +793,27 @@ function EditDialog({
                 className="input"
                 placeholder="Ej: 100"
               />
+            </Field>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Field label="Estado del resultado">
+              <select value={resultStatus} onChange={(e) => setResultStatus(e.target.value)} className="input">
+                {RESULT_STATUS_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Récord / marca (opcional)">
+              <input value={recordMark} onChange={(e) => setRecordMark(e.target.value)} className="input" placeholder="Ej: RN, RM…" />
+            </Field>
+            <Field label="Prueba del calendario">
+              <select value={scheduleItemId} onChange={(e) => setScheduleItemId(e.target.value)} className="input" disabled={!linkedEventId}>
+                <option value="">{linkedEventId ? "— Sin vincular —" : "Evento sin ID en el Gestor"}</option>
+                {scheduleOpts.map((o) => (
+                  <option key={o.id} value={o.id}>{o.label}</option>
+                ))}
+              </select>
             </Field>
           </div>
 
@@ -1083,7 +1151,9 @@ function BulkUploadByEvent({ onSaved }: { onSaved: () => void }) {
     const valid = rowsDraft.filter((r) => r.athlete_name.trim());
     if (valid.length === 0) return toast.error("Añade al menos un patinador");
     setSaving(true);
+    const resultEventId = await resolveResultEventId(eventSlug);
     const payload = valid.map((r, i) => ({
+      result_event_id: resultEventId,
       event_name: eventName,
       event_slug: eventSlug,
       race: race.trim() || null,
