@@ -1,3 +1,4 @@
+import { AdCreative, bannerVisibilityClass } from "@/components/site/AdCreative";
 import { useAdBanners, type AdBanner as AdBannerType } from "@/lib/useAdBanners";
 
 export function AdBanner({ placement = "home_top" }: { placement?: string }) {
@@ -5,40 +6,15 @@ export function AdBanner({ placement = "home_top" }: { placement?: string }) {
 
   if (banners.length === 0) return null;
 
-  const renderBanner = (banner: AdBannerType) => {
-    const img = (
-      <img
-        src={banner.image_url}
-        alt={banner.alt_text ?? banner.name}
-        className="mx-auto h-auto max-h-[80px] w-full object-contain sm:max-h-[120px] md:max-h-none md:object-cover"
-        loading="lazy"
+  const renderBanner = (banner: AdBannerType) => (
+    <div className="overflow-hidden border border-border bg-surface transition-opacity hover:opacity-90">
+      <AdCreative
+        banner={banner}
+        placement={placement}
+        imgClassName="mx-auto h-auto max-h-[80px] w-full object-contain sm:max-h-[120px] md:max-h-none md:object-cover"
       />
-    );
-    const card = (
-      <div className="overflow-hidden border border-border bg-surface transition-opacity hover:opacity-90">
-        {img}
-      </div>
-    );
-    if (!banner.link_url) return card;
-    if (isExternal(banner.link_url)) {
-      return (
-        <a
-          href={banner.link_url}
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-          aria-label={banner.alt_text ?? banner.name}
-          className="block"
-        >
-          {card}
-        </a>
-      );
-    }
-    return (
-      <a href={banner.link_url} aria-label={banner.alt_text ?? banner.name} className="block">
-        {card}
-      </a>
-    );
-  };
+    </div>
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 sm:pt-4 md:pt-6">
@@ -47,13 +23,10 @@ export function AdBanner({ placement = "home_top" }: { placement?: string }) {
       </div>
       <div className="space-y-3">
         {banners.map((b) => (
-          <div key={b.id}>{renderBanner(b)}</div>
+          <div key={b.id} className={bannerVisibilityClass(b)}>{renderBanner(b)}</div>
         ))}
       </div>
     </div>
   );
 }
 
-function isExternal(url: string) {
-  return /^https?:\/\//i.test(url);
-}
