@@ -212,7 +212,7 @@ function TvPage() {
 
 
       {/* PRÓXIMAS CARRERAS */}
-      <section id="emisiones" className="scroll-mt-20 border-b border-border bg-background">
+      <section id="emisiones" className="scroll-mt-28 border-b border-border bg-background">
         <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
           <SectionHeader kicker="Programación" title="Próximas" highlight="carreras" />
           {broadcasts === null ? (
@@ -238,7 +238,7 @@ function TvPage() {
       </section>
 
       {/* HIGHLIGHTS */}
-      <section id="highlights" className="scroll-mt-20 bg-surface/40">
+      <section id="highlights" className="scroll-mt-28 bg-surface/40">
         <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
           <SectionHeader kicker="Lo mejor" title="Highlights" highlight="& momentos" />
           {highlights === null ? (
