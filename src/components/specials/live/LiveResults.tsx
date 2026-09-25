@@ -99,33 +99,10 @@ export function LiveResults({ results, tz, emptyText }: Props) {
                 Prueba seleccionada · Ver todos ✕
               </button>
             )}
-            {!focus &&
-              options.map((o) => (
-                <div key={o.key} className="mt-3">
-                  <div className="font-condensed mb-1 text-[10px] uppercase tracking-[2px] text-muted-foreground">
-                    {FILTER_LABEL[o.key]}
-                  </div>
-                  <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:px-0">
-                    {["", ...o.values].map((v) => {
-                      const active = (filters[o.key] ?? "") === v;
-                      return (
-                        <button
-                          key={v || "all"}
-                          type="button"
-                          aria-pressed={active}
-                          onClick={() => setFilters((f) => ({ ...f, [o.key]: v }))}
-                          className={
-                            "font-condensed min-h-11 shrink-0 whitespace-nowrap border px-3 text-[11px] font-bold uppercase tracking-widest " +
-                            (active ? "border-gold bg-gold text-background" : "border-border text-foreground")
-                          }
-                        >
-                          {v ? (o.key === "day" ? dayChipLabel(v) : v) : "Todos"}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+            {!focus && (
+              <ResultFilters options={options} filters={filters} setFilters={setFilters} />
+            )}
+
 
             <div className="mt-5 space-y-6">
               {groups.length === 0 && <p className="text-sm text-muted-foreground">No hay resultados con estos filtros.</p>}
@@ -137,6 +114,110 @@ export function LiveResults({ results, tz, emptyText }: Props) {
         )}
       </div>
     </section>
+  );
+}
+
+type Filters = Partial<Record<FilterKey, string>>;
+
+function ChipRow({ o, filters, setFilters }: { o: { key: FilterKey; values: string[] }; filters: Filters; setFilters: (fn: (f: Filters) => Filters) => void }) {
+  return (
+    <div className="mt-3 min-w-0">
+      <div className="font-condensed mb-1 text-[10px] uppercase tracking-[2px] text-muted-foreground">{FILTER_LABEL[o.key]}</div>
+      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap">
+        {["", ...o.values].map((v) => {
+          const active = (filters[o.key] ?? "") === v;
+          return (
+            <button
+              key={v || "all"}
+              type="button"
+              aria-pressed={active}
+              onClick={() => setFilters((f) => ({ ...f, [o.key]: v }))}
+              className={
+                "font-condensed min-h-11 shrink-0 whitespace-nowrap border px-3 text-[11px] font-bold uppercase tracking-widest " +
+                (active ? "border-gold bg-gold text-background" : "border-border text-foreground")
+              }
+            >
+              {v ? (o.key === "day" ? dayChipLabel(v) : v) : "Todos"}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ResultFilters({
+  options,
+  filters,
+  setFilters,
+}: {
+  options: { key: FilterKey; values: string[] }[];
+  filters: Filters;
+  setFilters: (fn: (f: Filters) => Filters) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const day = options.find((o) => o.key === "day");
+  const rest = options.filter((o) => o.key !== "day");
+  const active = (Object.entries(filters) as [FilterKey, string][]).filter(([k, v]) => v && k !== "day");
+  const anyActive = active.length > 0 || !!filters.day;
+  if (options.length === 0) return null;
+  return (
+    <div className="min-w-0">
+      {day && <ChipRow o={day} filters={filters} setFilters={setFilters} />}
+      {(rest.length > 0 || anyActive) && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 md:hidden">
+          {rest.length > 0 && (
+            <button
+              type="button"
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+              className="font-condensed inline-flex min-h-11 items-center gap-1 border border-border px-3 text-[11px] font-bold uppercase tracking-widest text-foreground"
+            >
+              Filtros{active.length ? ` (${active.length})` : ""}
+              <ChevronDown className={"h-4 w-4 transition-transform " + (open ? "rotate-180" : "")} />
+            </button>
+          )}
+          {anyActive && (
+            <button
+              type="button"
+              onClick={() => setFilters(() => ({}))}
+              className="font-condensed inline-flex min-h-11 items-center px-2 text-[11px] font-bold uppercase tracking-widest text-gold underline"
+            >
+              Limpiar filtros
+            </button>
+          )}
+        </div>
+      )}
+      {active.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2 md:hidden">
+          {active.map(([k, v]) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setFilters((f) => ({ ...f, [k]: "" }))}
+              aria-label={`Quitar filtro ${FILTER_LABEL[k]}: ${v}`}
+              className="font-condensed inline-flex min-h-11 max-w-full items-center gap-1 border border-gold bg-gold/15 px-3 text-[11px] font-bold uppercase tracking-widest text-gold"
+            >
+              <span className="truncate">{v}</span> ✕
+            </button>
+          ))}
+        </div>
+      )}
+      <div className={(open ? "block" : "hidden") + " md:block"}>
+        {rest.map((o) => (
+          <ChipRow key={o.key} o={o} filters={filters} setFilters={setFilters} />
+        ))}
+        {anyActive && (
+          <button
+            type="button"
+            onClick={() => setFilters(() => ({}))}
+            className="font-condensed mt-3 hidden min-h-11 items-center px-2 text-[11px] font-bold uppercase tracking-widest text-gold underline md:inline-flex"
+          >
+            Limpiar filtros
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 
