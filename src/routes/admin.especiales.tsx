@@ -50,6 +50,8 @@ type Special = {
   hero_image_url: string;
   status: "active" | "hidden" | "archived" | "draft";
   featured_home: boolean;
+  event_id: string | null;
+  event_mode_active: boolean;
   sort_order: number;
   start_date: string | null;
   end_date: string | null;
@@ -142,6 +144,8 @@ const emptySpecial = (): Omit<Special, "id"> => ({
   hero_image_url: "",
   status: "draft",
   featured_home: false,
+  event_id: null,
+  event_mode_active: false,
   sort_order: 10,
   start_date: null,
   end_date: null,
@@ -169,8 +173,16 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
     setLoading(false);
   };
 
+  const [events, setEvents] = useState<{ id: string; name: string; start_date: string | null }[]>([]);
+
   useEffect(() => {
     load();
+    db.from("events")
+      .select("id,name,start_date")
+      .order("start_date", { ascending: false })
+      .then(({ data }: { data: { id: string; name: string; start_date: string | null }[] | null }) =>
+        setEvents(data ?? []),
+      );
   }, []);
 
   const filtered = useMemo(() => {
@@ -242,6 +254,7 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
       title: `${s.title} (copia)`,
       status: "draft",
       featured_home: false,
+      event_mode_active: false,
     });
     if (error) return toast.error(error.message);
     // copy pieces as draft
@@ -488,6 +501,34 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
                   />
                   <span className="font-condensed uppercase tracking-widest text-muted-foreground">
                     Destacado en portada
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 border-t border-border pt-4 md:grid-cols-2">
+              <Field label="Evento vinculado (calendario, directo, resultados, medallero)">
+                <select
+                  value={form.event_id ?? ""}
+                  onChange={(e) => setForm({ ...form, event_id: e.target.value || null })}
+                  className="w-full border border-border bg-surface px-3 py-2 text-sm"
+                >
+                  <option value="">— Sin evento —</option>
+                  {events.map((ev) => (
+                    <option key={ev.id} value={ev.id}>
+                      {ev.name} {ev.start_date ? `· ${ev.start_date.slice(0, 10)}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <div className="flex items-end">
+                <label className="flex items-center gap-2 text-xs">
+                  <Switch
+                    checked={form.event_mode_active}
+                    onCheckedChange={(v) => setForm({ ...form, event_mode_active: v })}
+                  />
+                  <span className="font-condensed uppercase tracking-widest text-muted-foreground">
+                    Modo evento ON (solo un especial a la vez)
                   </span>
                 </label>
               </div>
