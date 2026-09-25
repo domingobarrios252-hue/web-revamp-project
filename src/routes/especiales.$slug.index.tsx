@@ -186,7 +186,7 @@ function SpecialLanding() {
       {isLiveHub && (
         <LiveSchedule
           items={schedule}
-          days={dayRange(special.start_date ?? event?.start_date, special.end_date ?? event?.end_date)}
+          days={dayRange(event?.start_date ?? special.start_date, event?.end_date ?? special.end_date)}
           tz={venueTimeZone(event?.country)}
           city={event?.city ? event.city.charAt(0) + event.city.slice(1).toLowerCase() : ""}
           todayOverride={sp.today_override}
