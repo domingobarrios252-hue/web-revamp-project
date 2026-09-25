@@ -430,3 +430,15 @@ select.input {
   left: 1rem;
   top: 1rem;
 }
+
+/* Rollerzone TV · posiciones publicitarias TV-04/05/06 (proporción por dispositivo) */
+.tv-ad-slot {
+  aspect-ratio: var(--ar-m);
+  max-width: var(--mw-m);
+}
+@media (min-width: 768px) {
+  .tv-ad-slot {
+    aspect-ratio: var(--ar-d);
+    max-width: var(--mw-d);
+  }
+}
