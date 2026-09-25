@@ -57,6 +57,9 @@ type Special = {
   featured_home: boolean;
   event_id: string | null;
   result_event_id: string | null;
+  schedule_notice: string | null;
+  schedule_notice_visible: boolean;
+  today_override: string | null;
   event_mode_active: boolean;
   sort_order: number;
   start_date: string | null;
@@ -157,6 +160,9 @@ const emptySpecial = (): Omit<Special, "id"> => ({
   featured_home: false,
   event_id: null,
   result_event_id: null,
+  schedule_notice: "CALENDARIO PROVISIONAL · SUJETO A MODIFICACIONES DE LA ORGANIZACIÓN",
+  schedule_notice_visible: true,
+  today_override: null,
   event_mode_active: false,
   sort_order: 10,
   start_date: null,
@@ -625,6 +631,36 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
                   </span>
                 </label>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 border-t border-border pt-4 md:grid-cols-2">
+              <Field label="Aviso del calendario">
+                <input
+                  value={form.schedule_notice ?? ""}
+                  onChange={(e) => setForm({ ...form, schedule_notice: e.target.value })}
+                  className="w-full border border-border bg-surface px-3 py-2 text-sm"
+                />
+              </Field>
+              <div className="flex items-end">
+                <label className="flex items-center gap-2 text-xs">
+                  <Switch
+                    checked={form.schedule_notice_visible}
+                    onCheckedChange={(v) => setForm({ ...form, schedule_notice_visible: v })}
+                  />
+                  <span className="font-condensed uppercase tracking-widest text-muted-foreground">Mostrar aviso</span>
+                </label>
+              </div>
+              <Field label="Jornada de «Hoy» (vacío = automática según la fecha de la sede)">
+                <input
+                  type="date"
+                  value={form.today_override ?? ""}
+                  onChange={(e) => setForm({ ...form, today_override: e.target.value || null })}
+                  className="w-full border border-border bg-surface px-3 py-2 text-sm"
+                />
+              </Field>
+              <p className="self-end text-xs text-muted-foreground">
+                Las pruebas se gestionan en Pruebas programadas, eligiendo este mismo evento.
+              </p>
             </div>
 
             <FormActions onCancel={() => setShowForm(false)} onSave={save} />

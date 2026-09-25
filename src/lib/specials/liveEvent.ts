@@ -34,6 +34,7 @@ export type LinkedEvent = {
   city: string | null;
   start_date: string | null;
   end_date: string | null;
+  country?: string | null;
 };
 
 export type LivePiece = { slug: string; kicker?: string | null; category?: string | null; title?: string };
@@ -76,17 +77,21 @@ const NAV: { key: NavKey; label: string; match: RegExp | null }[] = [
   { key: "galeria", label: "Galería", match: /galer|foto/i },
 ];
 
-export type NavItem = { key: NavKey; label: string; pieceSlug: string | null };
+export type NavItem = { key: NavKey; label: string; pieceSlug: string | null; anchor?: string };
 
 /**
  * Navegación LIVE: cada acceso apunta a la pieza existente que corresponde.
  * Los accesos sin destino se ocultan (nunca mostramos módulos vacíos).
  * "Hoy" siempre apunta al bloque de piezas de la portada del especial.
  */
-export function buildLiveNav(pieces: LivePiece[]): NavItem[] {
+export function buildLiveNav(pieces: LivePiece[], opts: { hasSchedule?: boolean } = {}): NavItem[] {
   const used = new Set<string>();
   const out: NavItem[] = [];
   for (const n of NAV) {
+    if (n.key === "calendario" && opts.hasSchedule) {
+      out.push({ key: n.key, label: n.label, pieceSlug: null, anchor: "#calendario" });
+      continue;
+    }
     if (!n.match) {
       out.push({ key: n.key, label: n.label, pieceSlug: null });
       continue;
@@ -132,7 +137,7 @@ export async function loadLinkedEvent(sb: any, sp: { result_event_id?: string | 
   if (sp.result_event_id) {
     const { data } = await sb
       .from("result_events")
-      .select("id,name,status,venue,city,event_date,end_date")
+      .select("id,name,status,venue,city,country,event_date,end_date")
       .eq("id", sp.result_event_id)
       .maybeSingle();
     if (data)
@@ -144,6 +149,7 @@ export async function loadLinkedEvent(sb: any, sp: { result_event_id?: string | 
         city: data.city ?? null,
         start_date: data.event_date ?? null,
         end_date: data.end_date ?? null,
+        country: data.country ?? null,
       };
   }
   if (sp.event_id) {
@@ -155,4 +161,92 @@ export async function loadLinkedEvent(sb: any, sp: { result_event_id?: string | 
     return (data ?? null) as LinkedEvent | null;
   }
   return null;
+}
+
+// ---- Calendario de pruebas (schedule_items) ----------------------------------
+
+export type ScheduleStatus = "programada" | "en_curso" | "finalizada" | "aplazada" | "cancelada";
+
+export type ScheduleItem = {
+  id: string;
+  event_name: string;
+  event_name_en: string | null;
+  category: string | null;
+  gender: string | null;
+  phase: string | null;
+  discipline: string | null;
+  venue_type: string | null;
+  location: string | null;
+  scheduled_at: string;
+  status: ScheduleStatus;
+  featured: boolean;
+  sort_order: number;
+};
+
+export const SCHEDULE_STATUS_LABEL: Record<ScheduleStatus, string> = {
+  programada: "Próximamente",
+  en_curso: "En directo",
+  finalizada: "Finalizada",
+  aplazada: "Aplazada",
+  cancelada: "Cancelada",
+};
+
+/** Zona horaria de la sede según el país del evento (hora local mostrada). */
+export function venueTimeZone(country?: string | null): string {
+  const c = (country ?? "").toLowerCase();
+  if (c.includes("paraguay")) return "America/Asuncion";
+  if (c.includes("colombia")) return "America/Bogota";
+  if (c.includes("portugal")) return "Europe/Lisbon";
+  if (c.includes("miami") || c.includes("estados unidos") || c.includes("usa")) return "America/New_York";
+  return "Europe/Madrid";
+}
+
+function parts(d: Date, tz: string) {
+  const f = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  });
+  const o: Record<string, string> = {};
+  for (const p of f.formatToParts(d)) o[p.type] = p.value;
+  return o;
+}
+
+/** "YYYY-MM-DD" en la hora local de la sede. */
+export function dayInTz(iso: string | Date, tz: string) {
+  const o = parts(new Date(iso), tz);
+  return `${o.year}-${o.month}-${o.day}`;
+}
+
+/** "HH:MM" en la hora local de la sede. */
+export function timeInTz(iso: string, tz: string) {
+  const o = parts(new Date(iso), tz);
+  return `${o.hour}:${o.minute}`;
+}
+
+/** Convierte "YYYY-MM-DDTHH:MM" (hora local de la sede) a ISO UTC. */
+export function localToUtcIso(local: string, tz: string) {
+  const guess = new Date(`${local}:00Z`);
+  const o = parts(guess, tz);
+  const asUtc = Date.UTC(+o.year, +o.month - 1, +o.day, +o.hour, +o.minute);
+  return new Date(guess.getTime() - (asUtc - guess.getTime())).toISOString();
+}
+
+/** ISO UTC → "YYYY-MM-DDTHH:MM" en la hora local de la sede (para inputs). */
+export function utcToLocalInput(iso: string, tz: string) {
+  const o = parts(new Date(iso), tz);
+  return `${o.year}-${o.month}-${o.day}T${o.hour}:${o.minute}`;
+}
+
+/** Lista de días "YYYY-MM-DD" entre dos fechas (incluidas). */
+export function dayRange(start?: string | null, end?: string | null): string[] {
+  if (!start) return [];
+  const out: string[] = [];
+  const a = new Date(`${start.slice(0, 10)}T12:00:00Z`);
+  const b = new Date(`${(end || start).slice(0, 10)}T12:00:00Z`);
+  for (let d = a; d <= b && out.length < 60; d = new Date(d.getTime() + 86400000)) out.push(d.toISOString().slice(0, 10));
+  return out;
+}
+
+export function dayChipLabel(day: string) {
+  const [, m, d] = day.split("-");
+  return `${+d} ${MONTHS[+m - 1]}`;
 }

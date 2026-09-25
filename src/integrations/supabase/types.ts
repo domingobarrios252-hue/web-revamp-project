@@ -3042,42 +3042,71 @@ export type Database = {
           category: string | null
           country_code: string
           created_at: string
+          discipline: string | null
           event_name: string
+          event_name_en: string | null
+          featured: boolean
+          gender: string | null
           id: string
           location: string | null
+          phase: string | null
           published: boolean
+          result_event_id: string | null
           scheduled_at: string
           sort_order: number
           status: Database["public"]["Enums"]["schedule_status"]
           updated_at: string
+          venue_type: string | null
         }
         Insert: {
           category?: string | null
           country_code?: string
           created_at?: string
+          discipline?: string | null
           event_name: string
+          event_name_en?: string | null
+          featured?: boolean
+          gender?: string | null
           id?: string
           location?: string | null
+          phase?: string | null
           published?: boolean
+          result_event_id?: string | null
           scheduled_at: string
           sort_order?: number
           status?: Database["public"]["Enums"]["schedule_status"]
           updated_at?: string
+          venue_type?: string | null
         }
         Update: {
           category?: string | null
           country_code?: string
           created_at?: string
+          discipline?: string | null
           event_name?: string
+          event_name_en?: string | null
+          featured?: boolean
+          gender?: string | null
           id?: string
           location?: string | null
+          phase?: string | null
           published?: boolean
+          result_event_id?: string | null
           scheduled_at?: string
           sort_order?: number
           status?: Database["public"]["Enums"]["schedule_status"]
           updated_at?: string
+          venue_type?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "schedule_items_result_event_id_fkey"
+            columns: ["result_event_id"]
+            isOneToOne: false
+            referencedRelation: "result_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sections: {
         Row: {
@@ -3304,12 +3333,15 @@ export type Database = {
           id: string
           location: string
           result_event_id: string | null
+          schedule_notice: string | null
+          schedule_notice_visible: boolean
           slug: string
           sort_order: number
           start_date: string | null
           status: string
           subtitle: string
           title: string
+          today_override: string | null
           updated_at: string
         }
         Insert: {
@@ -3328,12 +3360,15 @@ export type Database = {
           id?: string
           location?: string
           result_event_id?: string | null
+          schedule_notice?: string | null
+          schedule_notice_visible?: boolean
           slug: string
           sort_order?: number
           start_date?: string | null
           status?: string
           subtitle?: string
           title: string
+          today_override?: string | null
           updated_at?: string
         }
         Update: {
@@ -3352,12 +3387,15 @@ export type Database = {
           id?: string
           location?: string
           result_event_id?: string | null
+          schedule_notice?: string | null
+          schedule_notice_visible?: boolean
           slug?: string
           sort_order?: number
           start_date?: string | null
           status?: string
           subtitle?: string
           title?: string
+          today_override?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -4249,7 +4287,12 @@ export type Database = {
         | "medallero"
         | "ranking"
         | "otro"
-      schedule_status: "programada" | "en_curso" | "finalizada"
+      schedule_status:
+        | "programada"
+        | "en_curso"
+        | "finalizada"
+        | "aplazada"
+        | "cancelada"
       visibility_channel: "global_home" | "featured" | "breaking" | "country"
     }
     CompositeTypes: {
@@ -4395,7 +4438,13 @@ export const Constants = {
         "ranking",
         "otro",
       ],
-      schedule_status: ["programada", "en_curso", "finalizada"],
+      schedule_status: [
+        "programada",
+        "en_curso",
+        "finalizada",
+        "aplazada",
+        "cancelada",
+      ],
       visibility_channel: ["global_home", "featured", "breaking", "country"],
     },
   },
