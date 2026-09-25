@@ -4,7 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 
-type EventRow = { id: string; name: string; start_date: string; status: string };
+type EventRow = { id: string; name: string; start_date: string; status: string; source: "ev" | "re" };
+
+/** Clave compuesta: "ev:<id>" (Eventos) o "re:<id>" (Gestor de Resultados). */
+function splitKey(k: string) {
+  const [src, id] = k.split(":");
+  return { col: src === "re" ? "result_event_id" : "event_id", id } as const;
+}
 type TimelineEntry = {
   id: string;
   event_id: string;
@@ -24,7 +30,7 @@ const ENTRY_TYPES = [
 ] as const;
 
 const entrySchema = z.object({
-  event_id: z.string().uuid(),
+  event_key: z.string().regex(/^(ev|re):[0-9a-f-]{36}$/),
   entry_type: z.string().min(1).max(40),
   message: z.string().trim().min(2).max(1000),
   occurred_at: z.string().min(1),
@@ -45,12 +51,16 @@ export function LiveTimelineEditor() {
   const [editing, setEditing] = useState<TimelineEntry | "new" | null>(null);
 
   const loadEvents = async () => {
-    const { data } = await supabase
-      .from("events")
-      .select("id,name,start_date,status")
-      .order("start_date", { ascending: false })
-      .limit(80);
-    const list = (data as EventRow[]) ?? [];
+    const [{ data }, { data: re }] = await Promise.all([
+      supabase.from("events").select("id,name,start_date,status").order("start_date", { ascending: false }).limit(80),
+      supabase.from("result_events").select("id,name,event_date,status").order("event_date", { ascending: false }).limit(80),
+    ]);
+    const list: EventRow[] = [
+      ...((re ?? []) as { id: string; name: string; event_date: string | null; status: string }[]).map((r) => ({
+        id: `re:${r.id}`, name: r.name, start_date: r.event_date ?? "", status: r.status === "en_vivo" ? "en_curso" : r.status, source: "re" as const,
+      })),
+      ...((data ?? []) as Omit<EventRow, "source">[]).map((e) => ({ ...e, id: `ev:${e.id}`, source: "ev" as const })),
+    ];
     setEvents(list);
     if (!activeEventId && list.length > 0) {
       const live = list.find((e) => e.status === "en_curso") ?? list[0];
@@ -63,7 +73,7 @@ export function LiveTimelineEditor() {
     const { data } = await supabase
       .from("live_timeline")
       .select("*")
-      .eq("event_id", eventId)
+      .eq(splitKey(eventId).col, splitKey(eventId).id)
       .order("occurred_at", { ascending: false });
     setEntries((data as TimelineEntry[]) ?? []);
     setLoading(false);
@@ -114,11 +124,15 @@ export function LiveTimelineEditor() {
             className="input min-w-[260px]"
           >
             <option value="">— Selecciona un evento —</option>
-            {events.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.status === "en_curso" ? "● " : ""}
-                {e.name} · {e.start_date}
-              </option>
+            {(["re", "ev"] as const).map((src) => (
+              <optgroup key={src} label={src === "re" ? "Gestor de Resultados" : "Eventos (calendario)"}>
+                {events.filter((e) => e.source === src).map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.status === "en_curso" ? "● " : ""}
+                    {e.name} · {e.start_date}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
           <button
@@ -237,7 +251,7 @@ function EntryForm({
   const save = async () => {
     const iso = new Date(occurredAt).toISOString();
     const parsed = entrySchema.safeParse({
-      event_id: eventId,
+      event_key: eventId,
       entry_type: entryType,
       message,
       occurred_at: iso,
@@ -248,8 +262,10 @@ function EntryForm({
       return;
     }
     setSaving(true);
+    const { col, id } = splitKey(eventId);
     const payload = {
-      event_id: eventId,
+      event_id: col === "event_id" ? id : null,
+      result_event_id: col === "result_event_id" ? id : null,
       entry_type: entryType,
       message: message.trim(),
       occurred_at: iso,

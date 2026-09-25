@@ -5,11 +5,15 @@ import specialFallback from "@/assets/special-fallback.svg";
 import { LiveEventHero } from "@/components/specials/live/LiveEventHero";
 import { LiveEventNav } from "@/components/specials/live/LiveEventNav";
 import { LiveSchedule } from "@/components/specials/live/LiveSchedule";
+import { LiveStream, streamMode } from "@/components/specials/live/LiveStream";
+import { LiveUpdates, type TimelineRow } from "@/components/specials/live/LiveUpdates";
 import {
   buildLiveNav,
   isEventLive,
   resolveCtas,
   loadLinkedEvent,
+  STREAM_COLUMNS,
+  type EventStream,
   dayRange,
   venueTimeZone,
   type ScheduleItem,
@@ -58,7 +62,19 @@ export const Route = createFileRoute("/especiales/$slug/")({
       .order("sort_order", { ascending: true });
     const event: LinkedEvent | null = await loadLinkedEvent(sb, sp);
     let schedule: ScheduleItem[] = [];
+    let stream: EventStream | null = null;
+    let timeline: TimelineRow[] = [];
     if (sp.result_event_id) {
+      const { data: st } = await sb.from("result_events").select(STREAM_COLUMNS).eq("id", sp.result_event_id).maybeSingle();
+      stream = (st as unknown as EventStream) ?? null;
+      const { data: tl } = await sb
+        .from("live_timeline")
+        .select("id,entry_type,message,occurred_at")
+        .eq("result_event_id", sp.result_event_id)
+        .eq("published", true)
+        .order("occurred_at", { ascending: false })
+        .limit(30);
+      timeline = (tl ?? []) as TimelineRow[];
       const { data: si } = await sb
         .from("schedule_items")
         .select("id,event_name,event_name_en,category,gender,phase,discipline,venue_type,location,scheduled_at,status,featured,sort_order")
@@ -72,6 +88,8 @@ export const Route = createFileRoute("/especiales/$slug/")({
       pieces: (pcs ?? []) as Piece[],
       event,
       schedule,
+      stream,
+      timeline,
       url: `${SITE}/especiales/${params.slug}`,
     };
   },
@@ -115,7 +133,9 @@ export const Route = createFileRoute("/especiales/$slug/")({
 
 function SpecialLanding() {
   const { slug } = Route.useParams();
-  const { special, pieces, event, schedule } = Route.useLoaderData();
+  const { special, pieces, event, schedule, stream, timeline } = Route.useLoaderData();
+  const hasStream = streamMode(stream) !== null;
+  const streamLive = streamMode(stream) === "player";
   const sp = special as Special & { schedule_notice?: string | null; schedule_notice_visible?: boolean; today_override?: string | null };
 
   const heroImage = special.hero_image_url?.trim() || special.cover_url?.trim() || (specialFallback as string);
@@ -138,7 +158,7 @@ function SpecialLanding() {
             live={live}
             location={special.location?.trim() || event?.city || event?.location || ""}
           />
-          <LiveEventNav slug={slug} items={buildLiveNav(pieces, { hasSchedule: schedule.length > 0 })} live={live} />
+          <LiveEventNav slug={slug} items={buildLiveNav(pieces, { hasSchedule: schedule.length > 0, hasStream })} live={live} />
         </>
       ) : (
       <section className="relative overflow-hidden bg-surface">
@@ -184,7 +204,11 @@ function SpecialLanding() {
 
       <div id="hoy" className="scroll-mt-14" />
       {isLiveHub && (
+        <>
+        <LiveStream stream={stream} city={event?.city ? event.city.charAt(0) + event.city.slice(1).toLowerCase() : ""} tz={venueTimeZone(event?.country)} />
+        <LiveUpdates items={timeline} tz={venueTimeZone(event?.country)} />
         <LiveSchedule
+          streamAnchor={streamLive ? "#directo" : undefined}
           items={schedule}
           days={dayRange(event?.start_date ?? special.start_date, event?.end_date ?? special.end_date)}
           tz={venueTimeZone(event?.country)}
@@ -193,6 +217,7 @@ function SpecialLanding() {
           notice={sp.schedule_notice}
           noticeVisible={sp.schedule_notice_visible}
         />
+        </>
       )}
 
       {/* Featured */}
