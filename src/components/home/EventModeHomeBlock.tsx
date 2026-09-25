@@ -5,6 +5,7 @@ import {
   formatEventRange,
   isEventLive,
   resolveCtas,
+  loadLinkedEvent,
   type LinkedEvent,
   type LivePiece,
   type LiveSpecial,
@@ -33,9 +34,7 @@ export function EventModeHomeBlock() {
         .maybeSingle();
       if (!sp || cancelled) return;
       const [{ data: ev }, { data: pcs }] = await Promise.all([
-        sp.event_id
-          ? sb.from("events").select("id,name,status,location,city,start_date,end_date").eq("id", sp.event_id).maybeSingle()
-          : Promise.resolve({ data: null }),
+        loadLinkedEvent(sb, sp).then((ev) => ({ data: ev })),
         sb
           .from("special_pieces")
           .select("slug,kicker,category")

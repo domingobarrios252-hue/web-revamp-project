@@ -22,6 +22,7 @@ export type LiveSpecial = {
   end_date: string | null;
   ctas?: SpecialCta[] | null;
   event_id?: string | null;
+  result_event_id?: string | null;
   event_mode_active?: boolean;
 };
 
@@ -120,4 +121,38 @@ export function resolveCtas(special: LiveSpecial, pieces: LivePiece[]): SpecialC
   if (res?.pieceSlug) out.push({ label: "Resultados", url: `${base}/${res.pieceSlug}`, visible: true });
   if (dir?.pieceSlug) out.push({ label: "Directo", url: `${base}/${dir.pieceSlug}`, visible: true });
   return out;
+}
+
+/**
+ * Carga el evento vinculado a un especial. Prioriza el evento real del
+ * Gestor de Resultados (result_events); si no, usa el evento de calendario.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function loadLinkedEvent(sb: any, sp: { result_event_id?: string | null; event_id?: string | null }): Promise<LinkedEvent | null> {
+  if (sp.result_event_id) {
+    const { data } = await sb
+      .from("result_events")
+      .select("id,name,status,venue,city,event_date,end_date")
+      .eq("id", sp.result_event_id)
+      .maybeSingle();
+    if (data)
+      return {
+        id: data.id,
+        name: data.name,
+        status: data.status === "en_vivo" ? "live" : data.status === "finalizado" ? "finished" : "upcoming",
+        location: data.venue ?? null,
+        city: data.city ?? null,
+        start_date: data.event_date ?? null,
+        end_date: data.end_date ?? null,
+      };
+  }
+  if (sp.event_id) {
+    const { data } = await sb
+      .from("events")
+      .select("id,name,status,location,city,start_date,end_date")
+      .eq("id", sp.event_id)
+      .maybeSingle();
+    return (data ?? null) as LinkedEvent | null;
+  }
+  return null;
 }
