@@ -1748,8 +1748,11 @@ export type Database = {
           published: boolean
           race: string | null
           race_time: string | null
+          record_mark: string | null
+          result_event_id: string | null
           result_status: string
           round: string | null
+          schedule_item_id: string | null
           sort_order: number
           status: Database["public"]["Enums"]["live_result_status"]
           updated_at: string
@@ -1778,8 +1781,11 @@ export type Database = {
           published?: boolean
           race?: string | null
           race_time?: string | null
+          record_mark?: string | null
+          result_event_id?: string | null
           result_status?: string
           round?: string | null
+          schedule_item_id?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["live_result_status"]
           updated_at?: string
@@ -1808,8 +1814,11 @@ export type Database = {
           published?: boolean
           race?: string | null
           race_time?: string | null
+          record_mark?: string | null
+          result_event_id?: string | null
           result_status?: string
           round?: string | null
+          schedule_item_id?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["live_result_status"]
           updated_at?: string
@@ -1820,6 +1829,20 @@ export type Database = {
             columns: ["news_id"]
             isOneToOne: false
             referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "live_results_result_event_id_fkey"
+            columns: ["result_event_id"]
+            isOneToOne: false
+            referencedRelation: "result_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "live_results_schedule_item_id_fkey"
+            columns: ["schedule_item_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_items"
             referencedColumns: ["id"]
           },
         ]
@@ -2891,8 +2914,12 @@ export type Database = {
           pdf_url: string | null
           placements: string[]
           poster_url: string | null
+          provider_attribution: string | null
+          provider_attribution_visible: boolean
+          provider_event_ref: string | null
           published: boolean
           region: string | null
+          results_provider: string
           season: string | null
           show_in_home: boolean
           slug: string
@@ -2934,8 +2961,12 @@ export type Database = {
           pdf_url?: string | null
           placements?: string[]
           poster_url?: string | null
+          provider_attribution?: string | null
+          provider_attribution_visible?: boolean
+          provider_event_ref?: string | null
           published?: boolean
           region?: string | null
+          results_provider?: string
           season?: string | null
           show_in_home?: boolean
           slug: string
@@ -2977,8 +3008,12 @@ export type Database = {
           pdf_url?: string | null
           placements?: string[]
           poster_url?: string | null
+          provider_attribution?: string | null
+          provider_attribution_visible?: boolean
+          provider_event_ref?: string | null
           published?: boolean
           region?: string | null
+          results_provider?: string
           season?: string | null
           show_in_home?: boolean
           slug?: string

@@ -1,0 +1,1 @@
+ALTER TABLE public.live_results ALTER COLUMN result_status SET DEFAULT 'official';

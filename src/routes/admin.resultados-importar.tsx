@@ -196,8 +196,10 @@ function AdminResultsImport() {
     if (missingRequired.length > 0) return toast.error("Mapea los campos obligatorios");
     if (!eventReady) return toast.error("Selecciona el evento destino");
     setImporting(true);
+    const resultEventId = events.find((e) => e.slug === defaults.event_slug)?.id ?? null;
     const payload = rows.map((r, idx) => ({
       ...projectRow(r, mapping, defaults),
+      result_event_id: resultEventId,
       sort_order: idx,
     }));
     const CHUNK = 500;
