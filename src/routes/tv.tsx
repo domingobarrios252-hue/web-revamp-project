@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvTopStage, type TvStageStatus } from "@/components/tv/TvTopStage";
 import { TvMobileNav } from "@/components/tv/TvMobileNav";
+import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 
 
