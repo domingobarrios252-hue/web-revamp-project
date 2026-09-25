@@ -47,6 +47,8 @@ export function TvEventLiveCenter({
   const [schedule, setSchedule] = useState<ScheduleRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
+  const [totalSchedule, setTotalSchedule] = useState(0);
+  const [calendarSlug, setCalendarSlug] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,17 +74,29 @@ export function TvEventLiveCenter({
       const schRes = evId
         ? await supabase
             .from("schedule_items")
-            .select("id, event_name, category, phase, scheduled_at, status")
+            .select("id, event_name, category, phase, scheduled_at, status", { count: "exact" })
             .eq("published", true)
             .eq("result_event_id", evId)
             .order("scheduled_at", { ascending: true })
             .limit(20)
-        : { data: [] };
+        : { data: [], count: 0 };
+      // Calendario completo: especial activo vinculado al mismo evento (sistema existente).
+      const spRes = evId
+        ? await supabase
+            .from("special_editorials")
+            .select("slug")
+            .eq("result_event_id", evId)
+            .eq("status", "active")
+            .limit(1)
+            .maybeSingle()
+        : { data: null };
       void _unused;
       if (cancelled) return;
       setEv((evRes.data as ResultEvent | null) ?? null);
       setResults((resRes.data as LiveResultRow[]) ?? []);
       setSchedule((schRes.data as ScheduleRow[]) ?? []);
+      setTotalSchedule((schRes as { count?: number | null }).count ?? 0);
+      setCalendarSlug((spRes.data as { slug?: string } | null)?.slug ?? null);
       setLoading(false);
     };
     load();
@@ -234,6 +248,16 @@ export function TvEventLiveCenter({
                 >
                   Ver toda la programación <ChevronRight className="h-3.5 w-3.5" />
                 </button>
+              )}
+              {showAll && calendarSlug && totalSchedule > schedule.length && (
+                <Link
+                  to="/especiales/$slug"
+                  params={{ slug: calendarSlug }}
+                  hash="calendario"
+                  className="font-condensed mt-2 inline-flex min-h-11 w-full items-center justify-center gap-1 border border-gold px-3 text-[11px] font-bold uppercase tracking-widest text-gold hover:bg-gold/10"
+                >
+                  Ver calendario completo <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
               )}
             </Section>
           )}
