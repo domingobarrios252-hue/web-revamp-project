@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Radio, Trophy, Clock, ChevronRight, MapPin, Calendar } from "lucide-react";
+import { Radio, Trophy, Clock, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type ResultEvent = {
@@ -28,6 +28,7 @@ type ScheduleRow = {
   id: string;
   event_name: string;
   category: string | null;
+  phase: string | null;
   scheduled_at: string;
   status: string;
 };
@@ -70,7 +71,7 @@ export function TvEventLiveCenter({
       const schRes = evId
         ? await supabase
             .from("schedule_items")
-            .select("id, event_name, category, scheduled_at, status")
+            .select("id, event_name, category, phase, scheduled_at, status")
             .eq("published", true)
             .eq("result_event_id", evId)
             .order("scheduled_at", { ascending: true })
@@ -127,7 +128,7 @@ export function TvEventLiveCenter({
   }
 
 
-  // Group results by race
+  // AHORA: solo si realmente hay una prueba en directo (resultado o prueba marcada en curso en Admin).
   const races = new Map<string, LiveResultRow[]>();
   for (const r of results) {
     const key = [r.race, r.category].filter(Boolean).join(" · ") || "General";
@@ -136,9 +137,13 @@ export function TvEventLiveCenter({
   }
   const raceEntries = Array.from(races.entries());
   const liveRace = raceEntries.find(([, rows]) => rows.some((r) => r.status === "en_vivo"));
-  const currentRace = liveRace ?? raceEntries[0];
+  const liveSchedule = schedule.find((s) => LIVE_STATUSES.includes(s.status));
+  const hasNow = !!(liveRace || liveSchedule);
 
-  const upcoming = schedule.filter((s) => s.status === "programada").slice(0, 5);
+  const nowMs = Date.now();
+  const upcoming = schedule
+    .filter((s) => s.status === "programada" && new Date(s.scheduled_at).getTime() >= nowMs - 30 * 60_000)
+    .slice(0, 5);
   const latestFinished = raceEntries
     .filter(([, rows]) => rows.some((r) => r.status === "finalizado"))
     .slice(0, 3);
@@ -150,129 +155,100 @@ export function TvEventLiveCenter({
     return { label: "PRÓXIMAMENTE", cls: "border border-gold/60 bg-gold/10 text-gold" };
   })();
 
-  const containerCls = layout === "bottom" ? "mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col gap-4";
+  const blocks = [hasNow, upcoming.length > 0, latestFinished.length > 0].filter(Boolean).length;
+  const gridCls =
+    layout === "bottom" && blocks > 1
+      ? `grid gap-3 md:gap-4 ${blocks === 3 ? "lg:grid-cols-3" : "md:grid-cols-2"}`
+      : "flex flex-col gap-3";
 
   return (
-    <div className="border border-gold/30 bg-surface/60 p-4 backdrop-blur">
-      {/* Header */}
-      <div className="mb-4 flex items-start justify-between gap-3 border-b border-border pb-3">
+    <div className="border border-gold/30 bg-surface/60 p-3 md:p-4">
+      <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-border pb-3">
         <div className="min-w-0">
-          <p className="font-condensed text-[10px] uppercase tracking-[3px] text-gold">Live Center</p>
-          <p className="font-display truncate text-sm uppercase tracking-widest text-foreground">
-            {ev.name}
+          <p className="font-display flex items-center gap-2 text-base tracking-[3px] text-gold">
+            <span className={`h-2 w-2 rounded-full ${hasNow ? "live-dot bg-destructive" : "bg-gold/50"}`} aria-hidden="true" />
+            LIVE CENTER
           </p>
-          <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
-            {(ev.city || ev.venue) && (
-              <span className="inline-flex items-center gap-1">
-                <MapPin className="h-3 w-3 text-gold" /> {[ev.venue, ev.city].filter(Boolean).join(" · ")}
-              </span>
-            )}
-            {ev.event_date && (
-              <span className="inline-flex items-center gap-1">
-                <Calendar className="h-3 w-3 text-gold" />
-                {new Date(ev.event_date).toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
-              </span>
-            )}
-          </div>
+          <p className="font-condensed mt-0.5 truncate text-[11px] uppercase tracking-widest text-muted-foreground">
+            {ev.name}
+            {ev.city ? ` · ${ev.city}` : ""}
+          </p>
         </div>
-        <span className={`font-condensed px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${statusBadge.cls}`}>
+        <span className={`font-condensed shrink-0 px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${statusBadge.cls}`}>
           {statusBadge.label}
         </span>
       </div>
 
-      <div className={containerCls}>
-        {/* Prueba en curso */}
-        <Section title="Prueba en directo" icon={<Radio className="h-3 w-3" />}>
-          {currentRace ? (
-            <div>
-              <p className="font-condensed mb-2 text-[11px] uppercase tracking-widest text-foreground">
-                {currentRace[0]}
-              </p>
-              <ul className="space-y-1">
-                {currentRace[1].slice(0, 5).map((r) => (
-                  <li key={r.id} className="flex items-center justify-between gap-2 text-xs">
-                    <span className="flex items-center gap-2 truncate">
-                      <span
-                        className={`inline-flex h-5 w-5 shrink-0 items-center justify-center text-[10px] font-bold ${
-                          r.position === 1
-                            ? "bg-gold text-primary-foreground"
-                            : r.position <= 3
-                            ? "border border-gold/60 text-gold"
-                            : "border border-border text-muted-foreground"
-                        }`}
-                      >
-                        {r.position}
-                      </span>
-                      <span className="truncate text-foreground">{r.athlete_name}</span>
-                      {r.club && <span className="truncate text-muted-foreground">· {r.club}</span>}
-                    </span>
-                    {r.race_time && (
-                      <span className="font-mono text-[11px] text-gold">{r.race_time}</span>
-                    )}
+      {blocks === 0 ? (
+        <p className="text-xs text-muted-foreground">Sin pruebas programadas por ahora.</p>
+      ) : (
+        <div className={gridCls}>
+          {hasNow && (
+            <Section title="Ahora" icon={<Radio className="h-3 w-3" />} tone="live">
+              {liveRace ? (
+                <div>
+                  <p className="font-condensed mb-2 text-xs font-bold uppercase tracking-widest text-foreground">
+                    {liveRace[0]}
+                  </p>
+                  <ul className="space-y-1">
+                    {liveRace[1].slice(0, 5).map((r) => (
+                      <li key={r.id} className="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] items-center gap-2 text-xs">
+                        <span className="font-mono text-gold">{r.position}</span>
+                        <span className="truncate text-foreground">{r.athlete_name}</span>
+                        {r.race_time && <span className="font-mono text-[11px] text-gold">{r.race_time}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : liveSchedule ? (
+                <ScheduleCard s={liveSchedule} live />
+              ) : null}
+            </Section>
+          )}
+
+          {upcoming.length > 0 && (
+            <Section title="A continuación" icon={<Clock className="h-3 w-3" />}>
+              <ul className="divide-y divide-border">
+                {upcoming.map((s) => (
+                  <li key={s.id} className="py-2 first:pt-0 last:pb-0">
+                    <ScheduleCard s={s} />
                   </li>
                 ))}
               </ul>
-            </div>
-          ) : (
-            <p className="text-xs text-muted-foreground">Sin pruebas activas.</p>
+            </Section>
           )}
-        </Section>
 
-        {/* Próximas pruebas */}
-        <Section title="Próximas pruebas" icon={<Clock className="h-3 w-3" />}>
-          {upcoming.length === 0 ? (
-            <p className="text-xs text-muted-foreground">Sin próximas pruebas.</p>
-          ) : (
-            <ul className="space-y-1.5">
-              {upcoming.map((s) => (
-                <li key={s.id} className="flex items-center justify-between gap-2 text-xs">
-                  <span className="truncate text-foreground">
-                    {s.event_name}
-                    {s.category && <span className="text-muted-foreground"> · {s.category}</span>}
-                  </span>
-                  <span className="font-condensed shrink-0 text-[10px] uppercase text-gold">
-                    {new Date(s.scheduled_at).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
-                  </span>
-                </li>
-              ))}
-            </ul>
+          {latestFinished.length > 0 && (
+            <Section title="Últimos resultados" icon={<Trophy className="h-3 w-3" />}>
+              <ul className="space-y-3">
+                {latestFinished.map(([race, rows]) => {
+                  const top = rows.slice().sort((a, b) => a.position - b.position).slice(0, 3);
+                  return (
+                    <li key={race}>
+                      <p className="font-condensed mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">{race}</p>
+                      <ul className="space-y-0.5">
+                        {top.map((r) => (
+                          <li key={r.id} className="grid grid-cols-[1.25rem_minmax(0,1fr)_auto] items-center gap-2 text-xs">
+                            <span className="font-mono text-gold">{r.position}</span>
+                            <span className="truncate text-foreground">{r.athlete_name}</span>
+                            {r.race_time && <span className="font-mono text-[11px] text-muted-foreground">{r.race_time}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Section>
           )}
-        </Section>
+        </div>
+      )}
 
-        {/* Últimos resultados */}
-        <Section title="Últimos resultados" icon={<Trophy className="h-3 w-3" />}>
-          {latestFinished.length === 0 ? (
-            <p className="text-xs text-muted-foreground">Aún sin resultados finalizados.</p>
-          ) : (
-            <ul className="space-y-2">
-              {latestFinished.map(([race, rows]) => {
-                const top = rows.slice().sort((a, b) => a.position - b.position).slice(0, 3);
-                return (
-                  <li key={race}>
-                    <p className="font-condensed mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-                      {race}
-                    </p>
-                    <ul className="space-y-0.5">
-                      {top.map((r) => (
-                        <li key={r.id} className="flex items-center gap-2 text-xs">
-                          <span className="font-mono w-4 text-gold">{r.position}</span>
-                          <span className="truncate text-foreground">{r.athlete_name}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </Section>
-      </div>
-
-      {showFullResultsButton && (
+      {showFullResultsButton && latestFinished.length > 0 && (
         <Link
           to="/resultados/$evento"
           params={{ evento: ev.slug }}
-          className="font-condensed mt-4 inline-flex w-full items-center justify-center gap-2 border border-gold bg-gold px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-primary-foreground hover:bg-gold-dark"
+          className="font-condensed mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 border border-gold bg-gold px-4 text-[11px] font-bold uppercase tracking-widest text-primary-foreground hover:bg-gold-dark"
         >
           Ver resultados completos <ChevronRight className="h-3.5 w-3.5" />
         </Link>
@@ -281,10 +257,52 @@ export function TvEventLiveCenter({
   );
 }
 
-function Section({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
+const LIVE_STATUSES = ["en_curso", "en_vivo", "live"];
+
+function ScheduleCard({ s, live }: { s: ScheduleRow; live?: boolean }) {
+  const d = new Date(s.scheduled_at);
+  const day = d.toLocaleDateString("es-ES", { day: "2-digit", month: "short" }).replace(".", "");
+  const time = d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+  const sub = [s.category, s.phase].filter(Boolean).join(" · ");
   return (
-    <div className="border border-border bg-background/60 p-3">
-      <p className="font-condensed mb-2 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-gold">
+    <div className="grid grid-cols-[3.25rem_minmax(0,1fr)_auto] items-center gap-3">
+      <div className="text-center leading-tight">
+        <p className="font-display text-sm text-gold">{time}</p>
+        <p className="font-condensed text-[9px] uppercase tracking-widest text-muted-foreground">{day}</p>
+      </div>
+      <div className="min-w-0">
+        <p className="truncate text-sm font-semibold text-foreground">{s.event_name}</p>
+        {sub && <p className="font-condensed truncate text-[10px] uppercase tracking-widest text-muted-foreground">{sub}</p>}
+      </div>
+      <span
+        className={`font-condensed shrink-0 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest ${
+          live ? "bg-tv-red text-white" : "border border-border text-muted-foreground"
+        }`}
+      >
+        {live ? "En directo" : "Próximamente"}
+      </span>
+    </div>
+  );
+}
+
+function Section({
+  title,
+  icon,
+  children,
+  tone,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  tone?: "live";
+}) {
+  return (
+    <div className={`border bg-background/60 p-3 ${tone === "live" ? "border-destructive/60" : "border-border"}`}>
+      <p
+        className={`font-condensed mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[2px] ${
+          tone === "live" ? "text-destructive" : "text-gold"
+        }`}
+      >
         {icon} {title}
       </p>
       {children}
