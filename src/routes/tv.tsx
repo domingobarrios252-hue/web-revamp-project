@@ -3,10 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Play, Radio, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
-import { TvSidebarBanners } from "@/components/tv/TvSidebarBanners";
-import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
-import { TvEventLiveCenter } from "@/components/tv/TvEventLiveCenter";
+import { TvTopStage, type TvStageStatus } from "@/components/tv/TvTopStage";
+import { TvMobileNav } from "@/components/tv/TvMobileNav";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
+import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 
 
 const TV_OG_IMAGE = "https://rollerzone.es/__l5e/assets-v1/57c70012-bbe9-4642-b766-6b243447cc73/og-rollerzone-tv.jpg";
@@ -171,172 +171,32 @@ function TvPage() {
       .then(({ data }) => setHighlights((data as Highlight[]) ?? []));
   }, []);
 
-  const isLive = useMemo(() => {
-    if (!settings) return false;
-    if (settings.live_is_active) return true;
-    if (settings.status_label === "live") return true;
-    if (settings.live_starts_at) {
-      const start = new Date(settings.live_starts_at).getTime();
-      const end = settings.live_ends_at
-        ? new Date(settings.live_ends_at).getTime()
-        : start + 1000 * 60 * 60 * 4;
-      const t = now.getTime();
-      if (t >= start && t <= end) return true;
-    }
-    return false;
-  }, [settings, now]);
+  // Estado: solo manual (activación en Admin TV). Nunca se autoactiva por horario.
+  const status: TvStageStatus = settings?.live_is_active || settings?.status_label === "live"
+    ? "live"
+    : settings?.status_label === "finished"
+      ? "finished"
+      : "upcoming";
+  void now;
 
-  const statusInfo = useMemo(() => {
-    if (isLive) return { label: "EN DIRECTO AHORA", tone: "live" as const };
-    if (settings?.status_label === "finished") return { label: "FINALIZADO", tone: "muted" as const };
-    return { label: "PRÓXIMAMENTE", tone: "gold" as const };
-  }, [isLive, settings]);
+  const nextBroadcast = useMemo(() => {
+    const b = (broadcasts ?? []).find((x) => new Date(x.scheduled_at).getTime() > Date.now());
+    return b ? { title: b.title, at: b.scheduled_at } : null;
+  }, [broadcasts]);
 
-  const embedUrl = videoEmbedUrl(settings?.live_stream_url, { autoplay: true });
-  const thumbnail =
-    settings?.live_thumbnail_url ||
-    videoThumbnail(settings?.live_stream_url) ||
-    null;
+  const hasLiveCenter = !!(settings?.show_live_center && settings?.live_center_event_slug);
+  const navItems = [
+    { id: "directo", label: "Directo" },
+    ...(hasLiveCenter ? [{ id: "live-center", label: "Live Center" }] : []),
+    ...(broadcasts && broadcasts.length ? [{ id: "emisiones", label: "Programación" }] : []),
+    ...(highlights && highlights.length ? [{ id: "highlights", label: "Highlights" }] : []),
+  ];
 
   return (
-    <div className="w-full max-w-full min-w-0 overflow-x-hidden bg-background">
-      {/* HEADER */}
-      <section id="directo" className="scroll-mt-20 border-b border-gold/30 bg-background">
-        <div className="mx-auto w-full max-w-7xl min-w-0 px-4 pt-8 lg:px-8 lg:pt-12">
-          <p className="font-condensed text-xs uppercase tracking-[3px] text-gold">RollerZone TV</p>
-          <div className="mt-2 flex flex-wrap items-center gap-4">
-            <h1 className="font-display text-3xl tracking-widest text-foreground md:text-5xl">
-              {settings?.live_title ?? "RollerZone TV"}
-            </h1>
-            <StatusBadge tone={statusInfo.tone} label={statusInfo.label} />
-          </div>
-          {settings?.live_subtitle && (
-            <p className="mt-3 max-w-3xl text-base text-muted-foreground md:text-lg">
-              {settings.live_subtitle}
-            </p>
-          )}
-        </div>
-
-        {/* MAIN GRID: player + sidebar */}
-        <div className="mx-auto grid w-full max-w-7xl min-w-0 grid-cols-[minmax(0,1fr)] gap-6 overflow-hidden px-4 pb-8 pt-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 lg:pb-12">
-          <div className="relative w-full max-w-full min-w-0 overflow-hidden">
-            <div className="relative aspect-video w-full max-w-full min-w-0 overflow-hidden border border-gold/30 bg-black shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
-              {playerActive && embedUrl ? (
-                <ExternalEmbedGate provider="reproductor externo">
-                  <iframe
-                    src={embedUrl}
-                    title={settings?.live_title ?? "RollerZone TV"}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute inset-0 block h-full w-full max-w-full border-0"
-                  />
-                </ExternalEmbedGate>
-              ) : embedUrl ? (
-                <button
-                  type="button"
-                  onClick={() => setPlayerActive(true)}
-                  className="group relative flex h-full w-full items-center justify-center bg-black"
-                  aria-label="Reproducir"
-                >
-                  {thumbnail ? (
-                    <img loading="lazy" decoding="async"
-                      src={thumbnail}
-                      alt={settings?.live_title ?? "Preview"}
-                      className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
-                    />
-                  ) : (
-                    <div className="hero-grid-bg h-full w-full" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <span className="absolute flex h-20 w-20 items-center justify-center rounded-full bg-gold text-primary-foreground shadow-2xl transition-transform group-hover:scale-110">
-                    <Play className="ml-1 h-9 w-9 fill-current" />
-                  </span>
-                </button>
-              ) : settings?.live_stream_url ? (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center text-muted-foreground">
-                  <Radio className="h-10 w-10 text-gold" />
-                  <p className="font-display text-xl tracking-widest text-foreground">
-                    Retransmisión externa
-                  </p>
-                  <p className="font-condensed text-xs uppercase tracking-widest">
-                    Esta señal no permite incrustarse. Ábrela en su web oficial.
-                  </p>
-                  <a
-                    href={settings.live_stream_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-condensed mt-1 inline-flex min-h-[44px] items-center gap-2 border border-gold bg-gold px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-primary-foreground hover:bg-gold-dark"
-                  >
-                    Ver retransmisión
-                  </a>
-                </div>
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center text-center text-muted-foreground">
-                  <Radio className="mb-3 h-10 w-10 text-gold" />
-                  <p className="font-display text-xl tracking-widest">Sin emisión disponible</p>
-                  <p className="font-condensed mt-1 text-xs uppercase tracking-widest">
-                    El equipo configurará pronto la próxima emisión
-                  </p>
-                </div>
-              )}
-
-
-              {isLive && (
-                <div className="pointer-events-none absolute left-4 top-4 z-10">
-                  <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg">
-                    <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-                    </span>
-                    EN DIRECTO
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {settings?.next_event_title && !isLive && (
-              <div className="mt-4 border border-gold/30 bg-surface p-4">
-                <p className="font-condensed text-[11px] uppercase tracking-widest text-gold">
-                  Siguiente emisión
-                </p>
-                <p className="font-display mt-1 text-lg uppercase tracking-wider text-foreground">
-                  {settings.next_event_title}
-                </p>
-                {settings.next_event_at && (
-                  <p className="font-condensed mt-0.5 text-[11px] uppercase tracking-widest text-muted-foreground">
-                    {formatDateTime(settings.next_event_at)}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {settings?.show_live_center &&
-              settings?.live_center_event_slug &&
-              settings?.live_center_position === "bottom" && (
-                <div className="mt-6">
-                  <TvEventLiveCenter
-                    eventSlug={settings.live_center_event_slug}
-                    layout="bottom"
-                    showFullResultsButton={settings.show_full_results_button}
-                  />
-                </div>
-              )}
-          </div>
-
-          <div className="flex flex-col gap-4">
-            {settings?.show_live_center &&
-              settings?.live_center_event_slug &&
-              settings?.live_center_position === "right" && (
-                <TvEventLiveCenter
-                  eventSlug={settings.live_center_event_slug}
-                  layout="right"
-                  showFullResultsButton={settings.show_full_results_button}
-                />
-              )}
-            <TvSidebarBanners />
-          </div>
-        </div>
-
+    <div className="w-full max-w-full min-w-0 overflow-x-clip bg-background">
+      <TvMobileNav items={navItems} live={status === "live"} />
+      <TvTopStage settings={settings} status={status} nextBroadcast={nextBroadcast} />
+      <section aria-label="Publicidad" className="border-b border-gold/30 bg-background">
         {/* PREMIUM BANNER — ancho completo */}
         <div className="border-t border-border bg-background">
           <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
