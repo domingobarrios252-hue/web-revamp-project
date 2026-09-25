@@ -16,6 +16,9 @@ type Sponsor = {
   tier: string;
   published: boolean;
   sort_order: number;
+  show_on_tv?: boolean;
+  tv_tier?: string;
+  tv_sort_order?: number;
 };
 
 const schema = z.object({
@@ -88,6 +91,7 @@ function AdminSponsors() {
                 <th className="px-3 py-2 text-left">Nombre</th>
                 <th className="px-3 py-2 text-left">Tier</th>
                 <th className="px-3 py-2 text-left">Web</th>
+                <th className="px-3 py-2 text-left">TV</th>
                 <th className="px-3 py-2 text-left">Orden</th>
                 <th className="px-3 py-2 text-left">Estado</th>
                 <th className="px-3 py-2"></th>
@@ -101,6 +105,7 @@ function AdminSponsors() {
                   <td className="px-3 py-2 text-xs uppercase">{s.tier}</td>
                   <td className="px-3 py-2 text-xs text-muted-foreground">{s.website_url ? s.website_url.replace(/^https?:\/\//, "").slice(0, 30) : "—"}</td>
                   <td className="px-3 py-2 text-xs">{s.sort_order}</td>
+                  <td className="px-3 py-2 text-xs">{s.show_on_tv ? `Sí · ${s.tv_tier === "principal" ? "Principal" : "Colab."} · ${s.tv_sort_order ?? 0}` : "—"}</td>
                   <td className="px-3 py-2 text-xs">{s.published ? <span className="text-gold">Visible</span> : <span className="text-muted-foreground">Oculto</span>}</td>
                   <td className="px-3 py-2 text-right">
                     <button onClick={() => { setEditing(s); setShowForm(true); }} className="mr-2 text-muted-foreground hover:text-gold"><Pencil className="h-3.5 w-3.5" /></button>
@@ -125,6 +130,9 @@ function SponsorForm({ initial, onClose, onSaved }: { initial: Sponsor | null; o
   const [tier, setTier] = useState<Sponsor["tier"]>(initial?.tier ?? "standard");
   const [sort_order, setSortOrder] = useState<number>(initial?.sort_order ?? 0);
   const [published, setPublished] = useState(initial?.published ?? true);
+  const [showOnTv, setShowOnTv] = useState<boolean>(initial?.show_on_tv ?? false);
+  const [tvTier, setTvTier] = useState<string>(initial?.tv_tier ?? "colaborador");
+  const [tvSort, setTvSort] = useState<number>(initial?.tv_sort_order ?? 0);
   const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
@@ -142,6 +150,9 @@ function SponsorForm({ initial, onClose, onSaved }: { initial: Sponsor | null; o
       tier: parsed.data.tier,
       sort_order: parsed.data.sort_order,
       published: parsed.data.published,
+      show_on_tv: showOnTv,
+      tv_tier: tvTier === "principal" ? "principal" : "colaborador",
+      tv_sort_order: Math.max(0, Math.min(9999, Math.round(Number(tvSort) || 0))),
     };
     const { error } = initial
       ? await supabase.from("sponsors").update(payload).eq("id", initial.id)
@@ -189,6 +200,22 @@ function SponsorForm({ initial, onClose, onSaved }: { initial: Sponsor | null; o
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
           <span className="font-condensed text-xs uppercase tracking-widest">Visible en la web</span>
         </label>
+        <div className="md:col-span-2 border-t border-border pt-3">
+          <p className="font-condensed mb-2 text-[11px] uppercase tracking-widest text-gold">Rollerzone TV · Partners (solo afecta a /tv)</p>
+          <div className="grid gap-3 md:grid-cols-3">
+            <label className="flex min-h-11 items-center gap-2">
+              <input type="checkbox" checked={showOnTv} onChange={(e) => setShowOnTv(e.target.checked)} />
+              <span className="font-condensed text-xs uppercase tracking-widest">Mostrar en Rollerzone TV</span>
+            </label>
+            <label className="block"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Nivel en TV</span>
+              <select value={tvTier} onChange={(e) => setTvTier(e.target.value)} className="input">
+                <option value="principal">Principal</option>
+                <option value="colaborador">Colaborador</option>
+              </select></label>
+            <label className="block"><span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Orden en Rollerzone TV</span>
+              <input type="number" min={0} value={tvSort} onChange={(e) => setTvSort(Number(e.target.value))} className="input" /></label>
+          </div>
+        </div>
       </div>
       <div className="mt-5 flex gap-2">
         <button onClick={onSave} disabled={saving} className="font-condensed bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50">{saving ? "Guardando…" : initial ? "Guardar" : "Crear"}</button>
