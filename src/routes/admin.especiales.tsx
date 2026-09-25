@@ -178,6 +178,8 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
   const [editing, setEditing] = useState<Special | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Omit<Special, "id">>(emptySpecial());
+  // Texto de "sin resultados" del hub (site_settings, clave por especial)
+  const [resultsEmpty, setResultsEmpty] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -224,6 +226,16 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
     const { id: _id, ...rest } = s;
     void _id;
     setForm(rest);
+    setResultsEmpty("");
+    void db
+      .from("site_settings")
+      .select("value")
+      .eq("key", `special_results_empty:${s.slug}`)
+      .maybeSingle()
+      .then(({ data }: { data: { value: unknown } | null }) => {
+        const v = data?.value;
+        setResultsEmpty(typeof v === "string" ? v : "");
+      });
     setShowForm(true);
   };
 
@@ -241,6 +253,12 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
       if (error) return toast.error(error.message);
       toast.success("Especial creado");
     }
+    const key = `special_results_empty:${slug}`;
+    const txt = resultsEmpty.trim().slice(0, 300);
+    const { error: e2 } = txt
+      ? await db.from("site_settings").upsert({ key, value: txt }, { onConflict: "key" })
+      : await db.from("site_settings").delete().eq("key", key);
+    if (e2) toast.error(`Texto de resultados: ${e2.message}`);
     setShowForm(false);
     load();
   };
@@ -650,6 +668,14 @@ function SpecialsPanel({ onOpenPieces }: { onOpenPieces: (s: Special) => void })
                   <span className="font-condensed uppercase tracking-widest text-muted-foreground">Mostrar aviso</span>
                 </label>
               </div>
+              <Field label="Texto de «Resultados» sin datos (vacío = texto por defecto)">
+                <input
+                  value={resultsEmpty}
+                  onChange={(e) => setResultsEmpty(e.target.value)}
+                  placeholder="Los resultados estarán disponibles durante la competición."
+                  className="w-full border border-border bg-surface px-3 py-2 text-sm"
+                />
+              </Field>
               <Field label="Jornada de «Hoy» (vacío = automática según la fecha de la sede)">
                 <input
                   type="date"
