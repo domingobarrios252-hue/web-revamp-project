@@ -3663,9 +3663,12 @@ export type Database = {
           logo_url: string | null
           name: string
           published: boolean
+          show_on_tv: boolean
           slug: string
           sort_order: number
           tier: string
+          tv_sort_order: number
+          tv_tier: string
           updated_at: string
           website_url: string | null
         }
@@ -3677,9 +3680,12 @@ export type Database = {
           logo_url?: string | null
           name: string
           published?: boolean
+          show_on_tv?: boolean
           slug: string
           sort_order?: number
           tier?: string
+          tv_sort_order?: number
+          tv_tier?: string
           updated_at?: string
           website_url?: string | null
         }
@@ -3691,9 +3697,12 @@ export type Database = {
           logo_url?: string | null
           name?: string
           published?: boolean
+          show_on_tv?: boolean
           slug?: string
           sort_order?: number
           tier?: string
+          tv_sort_order?: number
+          tv_tier?: string
           updated_at?: string
           website_url?: string | null
         }
