@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { z } from "zod";
-import { AD_PLACEMENTS } from "@/lib/useAdBanners";
+import { AD_PLACEMENTS, type PlacementDef, type CreativeSize } from "@/lib/useAdBanners";
+import { AdCreative } from "@/components/site/AdCreative";
+import { BannerStats } from "@/components/admin/BannerStats";
 
 type Banner = {
   id: string;
@@ -19,7 +21,13 @@ type Banner = {
   sort_order: number;
   starts_at: string | null;
   ends_at: string | null;
+  image_mobile_url: string | null;
+  mobile_fallback: "use_desktop" | "hide";
+  device_target: "all" | "desktop" | "mobile";
+  sponsor_id: string | null;
 };
+
+type SponsorOpt = { id: string; name: string };
 
 type PlacementRow = { banner_id: string; placement: string; sort_order: number };
 
@@ -40,6 +48,10 @@ const bannerSchema = z.object({
   starts_at: z.string().trim().optional(),
   ends_at: z.string().trim().optional(),
   placements: z.array(z.string().min(1)).min(1, "Selecciona al menos una ubicación"),
+  image_mobile_url: z.string().trim().url("La imagen Mobile debe ser una URL válida").optional(),
+  mobile_fallback: z.enum(["use_desktop", "hide"]),
+  device_target: z.enum(["all", "desktop", "mobile"]),
+  sponsor_id: z.string().uuid().optional(),
 });
 
 export const Route = createFileRoute("/admin/banners")({
@@ -202,6 +214,8 @@ function AdminBannersList() {
         </div>
       )}
 
+      {isAdmin && <BannerStats />}
+
       {editing && (
         <BannerEditor
           item={editing === "new" ? null : editing}
@@ -268,7 +282,20 @@ function BannerEditor({
   const [sortOrder, setSortOrder] = useState<number>(item?.sort_order ?? 0);
   const [startsAt, setStartsAt] = useState<string>(toLocalInput(item?.starts_at ?? null));
   const [endsAt, setEndsAt] = useState<string>(toLocalInput(item?.ends_at ?? null));
+  const [imageMobileUrl, setImageMobileUrl] = useState(item?.image_mobile_url ?? "");
+  const [mobileFallback, setMobileFallback] = useState<"use_desktop" | "hide">(item?.mobile_fallback ?? "use_desktop");
+  const [deviceTarget, setDeviceTarget] = useState<"all" | "desktop" | "mobile">(item?.device_target ?? "all");
+  const [sponsorId, setSponsorId] = useState<string>(item?.sponsor_id ?? "");
+  const [sponsors, setSponsors] = useState<SponsorOpt[]>([]);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("sponsors")
+      .select("id, name")
+      .order("name")
+      .then(({ data }) => setSponsors((data as SponsorOpt[]) ?? []));
+  }, []);
 
   const togglePlacement = (p: string) => {
     setSelectedPlacements((cur) =>
@@ -289,6 +316,10 @@ function BannerEditor({
       starts_at: startsAt || undefined,
       ends_at: endsAt || undefined,
       placements: selectedPlacements,
+      image_mobile_url: imageMobileUrl || undefined,
+      mobile_fallback: mobileFallback,
+      device_target: deviceTarget,
+      sponsor_id: sponsorId || undefined,
     });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Datos no válidos");
@@ -307,6 +338,10 @@ function BannerEditor({
         sort_order: parsed.data.sort_order,
         starts_at: parsed.data.starts_at ? new Date(parsed.data.starts_at).toISOString() : null,
         ends_at: parsed.data.ends_at ? new Date(parsed.data.ends_at).toISOString() : null,
+        image_mobile_url: parsed.data.image_mobile_url ?? null,
+        mobile_fallback: parsed.data.mobile_fallback,
+        device_target: parsed.data.device_target,
+        sponsor_id: parsed.data.sponsor_id ?? null,
       };
       let bannerId = item?.id;
       if (item) {
@@ -369,13 +404,52 @@ function BannerEditor({
         <form onSubmit={onSubmit} className="space-y-3">
           <div className="grid gap-3 md:grid-cols-2">
             <Field label="Nombre interno" value={name} onChange={setName} required />
-            <Field label="Patrocinador (opcional)" value={sponsor} onChange={setSponsor} placeholder="Marca / cliente" />
+            <Field label="Anunciante — texto libre (opcional)" value={sponsor} onChange={setSponsor} placeholder="Marca / cliente" />
           </div>
-          <ImageUploadField
-            label="Imagen del banner"
-            value={imageUrl}
-            onChange={setImageUrl}
-          />
+          <label className="block">
+            <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">
+              Patrocinador vinculado (opcional)
+            </span>
+            <select
+              value={sponsorId}
+              onChange={(e) => setSponsorId(e.target.value)}
+              className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none"
+            >
+              <option value="">— Ninguno (usar solo texto libre) —</option>
+              {sponsors.map((sp) => (
+                <option key={sp.id} value={sp.id}>
+                  {sp.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <PlacementSpecs placements={selectedPlacements} desktopUrl={imageUrl} mobileUrl={imageMobileUrl} />
+          <div className="grid gap-3 md:grid-cols-2">
+            <ImageUploadField label="Imagen Desktop" value={imageUrl} onChange={setImageUrl} />
+            <ImageUploadField label="Imagen Mobile (opcional)" value={imageMobileUrl} onChange={setImageMobileUrl} />
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <SelectField
+              label="Dispositivos"
+              value={deviceTarget}
+              onChange={(v) => setDeviceTarget(v as typeof deviceTarget)}
+              options={[
+                ["all", "Todos"],
+                ["desktop", "Solo Desktop"],
+                ["mobile", "Solo Mobile"],
+              ]}
+            />
+            <SelectField
+              label="Si no hay imagen Mobile"
+              value={mobileFallback}
+              onChange={(v) => setMobileFallback(v as typeof mobileFallback)}
+              disabled={!!imageMobileUrl}
+              options={[
+                ["use_desktop", "Usar imagen Desktop en móvil"],
+                ["hide", "Ocultar en móvil"],
+              ]}
+            />
+          </div>
           <Field
             label="Enlace (opcional) — / interno o https://externo"
             value={linkUrl}
@@ -425,6 +499,22 @@ function BannerEditor({
           <div className="flex flex-wrap gap-4">
             <Checkbox label="Activo (visible en la web)" checked={active} onChange={setActive} />
           </div>
+          {imageUrl && (
+            <BannerPreview
+              placement={selectedPlacements[0]}
+              banner={{
+                id: item?.id ?? "preview",
+                name: name || "Vista previa",
+                image_url: imageUrl,
+                image_mobile_url: imageMobileUrl || null,
+                mobile_fallback: mobileFallback,
+                device_target: deviceTarget,
+                link_url: null,
+                alt_text: altText || null,
+                active: true,
+              }}
+            />
+          )}
           <div className="flex justify-end gap-2 border-t border-border pt-3">
             <button
               type="button"
@@ -635,6 +725,153 @@ function ImageUploadField({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+  disabled,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: [string, string][];
+  disabled?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">{label}</span>
+      <select
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none disabled:opacity-50"
+      >
+        {options.map(([v, l]) => (
+          <option key={v} value={v}>
+            {l}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function gcd(a: number, b: number): number {
+  return b ? gcd(b, a % b) : a;
+}
+function ratioLabel(s: CreativeSize) {
+  const g = gcd(s.w, s.h);
+  return `${s.w / g}:${s.h / g}`;
+}
+
+function useImageSize(url: string) {
+  const [size, setSize] = useState<CreativeSize | null>(null);
+  useEffect(() => {
+    setSize(null);
+    if (!url) return;
+    const img = new Image();
+    img.onload = () => setSize({ w: img.naturalWidth, h: img.naturalHeight });
+    img.src = url;
+  }, [url]);
+  return size;
+}
+
+/** Aviso (no bloqueo): proporción ±5 % y resolución mínima = tamaño recomendado. */
+export function checkCreative(actual: CreativeSize | null, rec: CreativeSize | undefined | null) {
+  if (!actual || !rec) return null;
+  const diff = Math.abs(actual.w / actual.h - rec.w / rec.h) / (rec.w / rec.h);
+  const msgs: string[] = [];
+  if (diff > 0.05) msgs.push(`Proporción ${actual.w}×${actual.h} no coincide con ${ratioLabel(rec)}; puede recortarse o verse con bandas.`);
+  if (actual.w < rec.w || actual.h < rec.h) msgs.push(`Por debajo de la resolución mínima (${rec.w}×${rec.h}); puede verse borrosa.`);
+  return msgs;
+}
+
+function PlacementSpecs({ placements, desktopUrl, mobileUrl }: { placements: string[]; desktopUrl: string; mobileUrl: string }) {
+  const dSize = useImageSize(desktopUrl);
+  const mSize = useImageSize(mobileUrl);
+  const defs = placements
+    .map((v) => AD_PLACEMENTS.find((p) => p.value === v))
+    .filter((p): p is PlacementDef => !!p && !!p.desktop);
+  if (!defs.length) return null;
+  return (
+    <div className="border border-gold/40 bg-background p-3 text-xs">
+      <div className="font-condensed mb-2 text-[10px] font-bold uppercase tracking-widest text-gold">Medidas recomendadas</div>
+      <div className="space-y-2">
+        {defs.map((p) => {
+          const dw = checkCreative(dSize, p.desktop);
+          const mw = p.mobile ? checkCreative(mSize, p.mobile) : null;
+          return (
+            <div key={p.value}>
+              <div className="font-semibold text-foreground">{p.label}</div>
+              <div className="text-muted-foreground">
+                Desktop {p.desktop!.w}×{p.desktop!.h} ({ratioLabel(p.desktop!)}, mínimo {p.desktop!.w}×{p.desktop!.h})
+                {" · "}
+                {p.mobile === null
+                  ? "No se muestra en móvil"
+                  : p.mobile
+                    ? `Mobile ${p.mobile.w}×${p.mobile.h} (${ratioLabel(p.mobile)}, mínimo ${p.mobile.w}×${p.mobile.h})`
+                    : "Mobile: usa la Desktop"}
+              </div>
+              {dw?.map((m) => (
+                <div key={m} className="text-gold">⚠ Desktop: {m}</div>
+              ))}
+              {mw?.map((m) => (
+                <div key={m} className="text-gold">⚠ Mobile: {m}</div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+      <p className="mt-2 text-[10px] text-muted-foreground">
+        Medidas recomendadas, no obligatorias: se acepta cualquier resolución mayor con la misma proporción.
+      </p>
+    </div>
+  );
+}
+
+function BannerPreview({ banner, placement }: { banner: import("@/lib/useAdBanners").AdBanner; placement?: string }) {
+  const def = AD_PLACEMENTS.find((p) => p.value === placement);
+  const showMobile =
+    def?.mobile !== null &&
+    banner.device_target !== "desktop" &&
+    !(!banner.image_mobile_url && banner.mobile_fallback === "hide");
+  const showDesktop = banner.device_target !== "mobile";
+  const ar = (s?: CreativeSize | null) => (s ? `${s.w} / ${s.h}` : undefined);
+  const mobileAr = def?.mobile ?? (def?.desktop ? def.desktop : undefined);
+  return (
+    <div className="border border-border bg-background p-3">
+      <div className="font-condensed mb-2 text-[10px] font-bold uppercase tracking-widest text-gold">
+        Vista previa {def ? `· ${def.label}` : ""}
+      </div>
+      <div className="flex flex-wrap items-start gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="font-condensed mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">Desktop (1200 px)</div>
+          {showDesktop ? (
+            <div className="overflow-hidden border border-border bg-surface" style={{ aspectRatio: ar(def?.desktop) }}>
+              <AdCreative banner={banner} forceDevice="desktop" className="block h-full w-full" imgClassName="h-full w-full object-cover" />
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">No se muestra en escritorio.</p>
+          )}
+        </div>
+        <div className="w-[195px] shrink-0">
+          <div className="font-condensed mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">Mobile (390 px)</div>
+          <div className="border-4 border-border bg-surface p-1">
+            {showMobile ? (
+              <div className="overflow-hidden" style={{ aspectRatio: ar(mobileAr) }}>
+                <AdCreative banner={banner} forceDevice="mobile" className="block h-full w-full" imgClassName="h-full w-full object-cover" />
+              </div>
+            ) : (
+              <p className="p-2 text-xs text-muted-foreground">Oculto en móvil.</p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
