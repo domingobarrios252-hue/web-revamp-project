@@ -145,6 +145,7 @@ export function NewsEditor({
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const loaded = useRef(!item);
+  const hadCountryRow = useRef(false);
   const savingRef = useRef(false);
 
   const autoMinutes = useMemo(() => estimateReadMinutes(blocks), [blocks]);
@@ -173,18 +174,10 @@ export function NewsEditor({
       setRelFeds(f);
       const rows = (v.data ?? []) as { channel: string; country_code: string | null }[];
       const valid = HUBS.map((h) => h.value) as string[];
-      if (rows.length === 0) {
-        setVisHome(true);
-        // Compatibilidad: Portugal/Miami siempre se han identificado por country_code;
-        // España/Colombia sin filas de visibilidad derivan también de él.
-        setHub(item.country_code && valid.includes(item.country_code) ? (item.country_code as Hub) : "general");
-      } else {
-        setVisHome(rows.some((r) => r.channel === "global_home"));
-        const country = rows.find((r) => r.channel === "country" && r.country_code && valid.includes(r.country_code));
-        if (country) setHub(country.country_code as Hub);
-        else if (item.country_code === "pt" || item.country_code === "mia") setHub(item.country_code);
-        else setHub("general");
-      }
+      // El hub es siempre el valor real guardado en news.country_code.
+      setHub(item.country_code && valid.includes(item.country_code) ? (item.country_code as Hub) : "general");
+      hadCountryRow.current = rows.some((r) => r.channel === "country");
+      setVisHome(rows.length === 0 ? true : rows.some((r) => r.channel === "global_home"));
       // Evita que la carga inicial dispare el autoguardado.
       setTimeout(() => {
         loaded.current = true;
@@ -225,9 +218,11 @@ export function NewsEditor({
         return false;
       }
       const clean = cleanBlocks(blocks);
-      // country_code es obligatorio en BD; "General" conserva el valor existente
-      // (o 'es' en noticias nuevas). La visibilidad por hub la decide news_visibility.
-      const countryCode = hub === "general" ? (item?.country_code ?? "es") : hub;
+      // "general" se guarda como edición real e independiente.
+      const countryCode = hub;
+      // Noticias antiguas que nunca tuvieron fila de hub la conservan así si el hub no cambia,
+      // para no alterar dónde aparecen en las páginas públicas.
+      const keepNoCountryRow = !!item && !hadCountryRow.current && item.country_code === hub;
       const plain = clean
         .filter((b) => b.type === "text" || b.type === "heading")
         .map((b) => (b as { text: string }).text)
@@ -282,7 +277,8 @@ export function NewsEditor({
         await supabase.from("news_visibility").delete().eq("news_id", id).in("channel", ["global_home", "country"]);
         const rows: { news_id: string; channel: "global_home" | "country"; country_code?: string }[] = [];
         if (visHome) rows.push({ news_id: id, channel: "global_home" });
-        if (hub !== "general") rows.push({ news_id: id, channel: "country", country_code: hub });
+        if (hub !== "general" && !keepNoCountryRow) rows.push({ news_id: id, channel: "country", country_code: hub });
+        hadCountryRow.current = rows.some((r) => r.channel === "country");
         for (const row of rows) {
           const { error } = await supabase.from("news_visibility").insert(row);
           if (error && !opts.silent) toast.error(`Visibilidad no guardada: ${error.message}`);
