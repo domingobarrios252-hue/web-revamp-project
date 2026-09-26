@@ -145,6 +145,7 @@ export function NewsEditor({
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const loaded = useRef(!item);
+  const hadCountryRow = useRef(false);
   const savingRef = useRef(false);
 
   const autoMinutes = useMemo(() => estimateReadMinutes(blocks), [blocks]);
@@ -277,7 +278,7 @@ export function NewsEditor({
         const rows: { news_id: string; channel: "global_home" | "country"; country_code?: string }[] = [];
         if (visHome) rows.push({ news_id: id, channel: "global_home" });
         if (hub !== "general" && !keepNoCountryRow) rows.push({ news_id: id, channel: "country", country_code: hub });
-        hadCountryRow.current = hub !== "general" && !keepNoCountryRow ? true : hadCountryRow.current && hub !== "general";
+        hadCountryRow.current = rows.some((r) => r.channel === "country");
         for (const row of rows) {
           const { error } = await supabase.from("news_visibility").insert(row);
           if (error && !opts.silent) toast.error(`Visibilidad no guardada: ${error.message}`);
