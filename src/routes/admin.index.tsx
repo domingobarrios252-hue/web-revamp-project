@@ -289,7 +289,7 @@ function AdminNewsList() {
               </tr>
             </thead>
             <tbody>
-              {news.map((n) => {
+              {news.filter((n) => hubFilter === "all" || n.country_code === hubFilter).map((n) => {
                 const cat = categories.find((c) => c.id === n.category_id);
                 return (
                   <tr key={n.id} className="border-b border-border/50 last:border-0">
