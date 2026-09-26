@@ -221,6 +221,7 @@ function AdminNewsList() {
           className="ml-auto mr-2 min-h-11 border border-border bg-background px-3 text-xs uppercase tracking-widest"
         >
           <option value="all">Todos los hubs</option>
+          <option value="general">General</option>
           <option value="es">España</option>
           <option value="co">Colombia</option>
           <option value="pt">Portugal</option>
