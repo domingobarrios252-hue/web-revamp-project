@@ -14,7 +14,12 @@ import {
   Film,
   Quote,
   Minus,
+  List as ListIcon,
+  Copy,
+  Upload,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import { NewsVideoUploadField } from "@/components/admin/NewsVideoUploadField";
@@ -22,6 +27,8 @@ import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
 import {
   BLOCK_LABELS,
   createBlock,
+  duplicateBlock,
+  newBlockId,
   validateBlocks,
   type NewsBlock,
   type NewsBlockType,
@@ -36,6 +43,7 @@ const TYPE_ICONS: Record<NewsBlockType, React.ComponentType<{ className?: string
   gallery: Images,
   video: Film,
   quote: Quote,
+  list: ListIcon,
   divider: Minus,
 };
 
@@ -46,8 +54,23 @@ const TYPE_ORDER: NewsBlockType[] = [
   "gallery",
   "video",
   "quote",
+  "list",
   "divider",
 ];
+
+async function uploadImage(file: File, nameHint?: string): Promise<string | null> {
+  const ext = file.name.split(".").pop() ?? "jpg";
+  const prefix =
+    (nameHint ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) ||
+    crypto.randomUUID();
+  const path = `news/blocks/${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}.${ext}`;
+  const { error } = await supabase.storage.from("media").upload(path, file, { cacheControl: "3600", upsert: false });
+  if (error) {
+    toast.error(error.message);
+    return null;
+  }
+  return supabase.storage.from("media").getPublicUrl(path).data.publicUrl;
+}
 
 type Props = {
   value: NewsBlock[];
@@ -62,6 +85,30 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
   const [preview, setPreview] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
+  const [fileOver, setFileOver] = useState(false);
+  const [uploading, setUploading] = useState(0);
+
+  /** Sube imágenes soltadas/seleccionadas y las inserta como bloques en `index`. */
+  const insertFiles = async (files: File[], index: number) => {
+    const imgs = files.filter((f) => f.type.startsWith("image/"));
+    if (imgs.length === 0) return;
+    setUploading((n) => n + imgs.length);
+    const urls: string[] = [];
+    for (const f of imgs) {
+      const u = await uploadImage(f, nameHint);
+      if (u) urls.push(u);
+      setUploading((n) => n - 1);
+    }
+    if (urls.length === 0) return;
+    const created: NewsBlock[] =
+      urls.length === 1
+        ? [{ id: newBlockId(), type: "image", url: urls[0], caption: "", alt: "", width: "normal" }]
+        : [{ id: newBlockId(), type: "gallery", images: urls, caption: "" }];
+    const next = [...value];
+    next.splice(Math.min(index, next.length), 0, ...created);
+    onChange(next);
+    toast.success(urls.length === 1 ? "Imagen añadida al artículo" : `Galería de ${urls.length} imágenes añadida`);
+  };
 
   const issues = validateBlocks(value);
   const errors = issues.filter((i) => i.level === "error");
@@ -151,7 +198,24 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
           )}
         </div>
       ) : (
-        <>
+        <div
+          onDragOver={(e) => {
+            if (dragIndex === null && e.dataTransfer.types.includes("Files")) {
+              e.preventDefault();
+              setFileOver(true);
+            }
+          }}
+          onDragLeave={(e) => {
+            if (e.currentTarget === e.target) setFileOver(false);
+          }}
+          onDrop={(e) => {
+            if (dragIndex !== null || e.dataTransfer.files.length === 0) return;
+            e.preventDefault();
+            setFileOver(false);
+            void insertFiles(Array.from(e.dataTransfer.files), value.length);
+          }}
+          className={fileOver ? "outline outline-2 outline-dashed outline-gold/70" : ""}
+        >
           <AddBar onAdd={(t) => insertAt(0, t)} label="Insertar al principio" />
 
           {value.map((block, index) => {
@@ -163,7 +227,7 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
                   onDragStart={() => setDragIndex(index)}
                   onDragOver={(e) => {
                     e.preventDefault();
-                    setOverIndex(index);
+                    if (dragIndex !== null) setOverIndex(index);
                   }}
                   onDragEnd={() => {
                     setDragIndex(null);
@@ -171,6 +235,12 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
                   }}
                   onDrop={(e) => {
                     e.preventDefault();
+                    if (dragIndex === null && e.dataTransfer.files.length > 0) {
+                      e.stopPropagation();
+                      setFileOver(false);
+                      void insertFiles(Array.from(e.dataTransfer.files), index + 1);
+                      return;
+                    }
                     if (dragIndex !== null) move(dragIndex, index);
                     setDragIndex(null);
                     setOverIndex(null);
@@ -194,6 +264,16 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
                       <SmallBtn title="Bajar" onClick={() => move(index, index + 1)}>
                         <ArrowDown className="h-4 w-4" />
                       </SmallBtn>
+                      <SmallBtn
+                        title="Duplicar"
+                        onClick={() => {
+                          const next = [...value];
+                          next.splice(index + 1, 0, duplicateBlock(block));
+                          onChange(next);
+                        }}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </SmallBtn>
                       <SmallBtn title="Eliminar" danger onClick={() => remove(index)}>
                         <Trash2 className="h-4 w-4" />
                       </SmallBtn>
@@ -214,11 +294,28 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
           {value.length === 0 && (
             <p className="text-xs text-muted-foreground">
               Añade bloques para construir el reportaje: texto → imagen → texto → vídeo… Se
-              publicarán en este mismo orden. Si no añades ninguno, la noticia usará el contenido
-              clásico.
+              publicarán en este mismo orden. 
             </p>
           )}
-        </>
+
+          <label className="font-condensed mt-2 flex min-h-16 cursor-pointer flex-col items-center justify-center gap-1 border border-dashed border-gold/40 bg-gold/5 p-3 text-center text-[11px] uppercase tracking-widest text-gold hover:bg-gold/10">
+            <Upload className="h-4 w-4" />
+            {uploading > 0
+              ? `Subiendo ${uploading} imagen(es)…`
+              : "Arrastra imágenes aquí o pulsa para subirlas al final del artículo"}
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                const files = Array.from(e.target.files ?? []);
+                e.target.value = "";
+                void insertFiles(files, value.length);
+              }}
+            />
+          </label>
+        </div>
       )}
     </div>
   );
@@ -446,6 +543,28 @@ function BlockFields({
             placeholder="Autor de la cita (opcional)"
             className={inputCls}
           />
+        </div>
+      );
+
+    case "list":
+      return (
+        <div className="space-y-2">
+          <textarea
+            value={block.items.join("\n")}
+            onChange={(e) => onPatch({ items: e.target.value.split("\n") })}
+            rows={4}
+            placeholder={"Un elemento por línea\nSegundo elemento\nTercer elemento"}
+            className={inputCls}
+          />
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={block.ordered === true}
+              onChange={(e) => onPatch({ ordered: e.target.checked })}
+              className="accent-[var(--gold,#caa15a)]"
+            />
+            Lista numerada
+          </label>
         </div>
       );
 
