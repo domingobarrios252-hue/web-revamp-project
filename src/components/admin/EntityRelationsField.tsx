@@ -18,7 +18,9 @@ export function EntityRelationsField({
   value,
   onChange,
   label,
+  compact,
 }: {
+  compact?: boolean;
   kind: EntityKind;
   country?: string;
   value: string[];
@@ -99,11 +101,12 @@ export function EntityRelationsField({
           className="w-full border border-border bg-surface py-1.5 pl-7 pr-2 text-xs"
         />
       </div>
+      {compact && !search.trim() ? null : (
       <div className="max-h-48 overflow-y-auto border border-border/50">
         {filtered.length === 0 ? (
           <div className="p-2 text-[11px] text-muted-foreground">Sin resultados</div>
         ) : (
-          filtered.slice(0, 200).map((o) => (
+          filtered.slice(0, compact ? 30 : 200).map((o) => (
             <label
               key={o.id}
               className="flex cursor-pointer items-center gap-2 border-b border-border/30 px-2 py-1.5 text-xs last:border-0 hover:bg-surface"
@@ -120,6 +123,7 @@ export function EntityRelationsField({
           ))
         )}
       </div>
+      )}
     </div>
   );
 }
