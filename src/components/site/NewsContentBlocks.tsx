@@ -142,6 +142,20 @@ export function NewsContentBlocks({ blocks, title }: Props) {
               </blockquote>
             );
 
+          case "list": {
+            const items = block.items.filter((x) => x.trim());
+            const cls = "space-y-2 pl-6 text-[16px] leading-relaxed text-foreground/90 marker:text-gold";
+            return block.ordered ? (
+              <ol key={block.id} className={`list-decimal ${cls}`}>
+                {items.map((it, k) => <li key={k}>{it}</li>)}
+              </ol>
+            ) : (
+              <ul key={block.id} className={`list-disc ${cls}`}>
+                {items.map((it, k) => <li key={k}>{it}</li>)}
+              </ul>
+            );
+          }
+
           case "divider":
             return <hr key={block.id} className="my-8 border-border" />;
         }
