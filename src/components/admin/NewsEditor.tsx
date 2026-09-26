@@ -236,9 +236,6 @@ export function NewsEditor({
       savingRef.current = true;
       setSaveState("saving");
       try {
-        if (featured && targetStatus === "published") {
-          await supabase.from("news").update({ featured: false }).eq("featured", true).neq("id", newsId ?? "");
-        }
         const payload = {
           title: parsed.data.title,
           slug: parsed.data.slug,

@@ -115,6 +115,7 @@ function AdminNewsList() {
   const [writers, setWriters] = useState<Writer[]>([]);
   const [editing, setEditing] = useState<News | "new" | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hubFilter, setHubFilter] = useState<string>("all");
 
   const reload = async () => {
     setLoading(true);
@@ -213,6 +214,18 @@ function AdminNewsList() {
         <h1 className="font-display text-2xl tracking-widest md:text-3xl">
           Noticias
         </h1>
+        <select
+          value={hubFilter}
+          onChange={(e) => setHubFilter(e.target.value)}
+          aria-label="Filtrar por hub"
+          className="ml-auto mr-2 min-h-11 border border-border bg-background px-3 text-xs uppercase tracking-widest"
+        >
+          <option value="all">Todos los hubs</option>
+          <option value="es">España</option>
+          <option value="co">Colombia</option>
+          <option value="pt">Portugal</option>
+          <option value="mia">Miami</option>
+        </select>
         <button
           onClick={() => setEditing("new")}
           className="font-condensed inline-flex items-center gap-1.5 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
