@@ -95,7 +95,9 @@ export function SelectionMembers({ members }: { members: PieceMember[] }) {
 
 
 function MemberCard({ m }: { m: PieceMember }) {
-  const name = `${m.first_name} ${m.last_name}`.trim();
+  const fullName = `${m.first_name} ${m.last_name}`.trim();
+  const visible = m.display_name?.trim();
+  const name = visible || fullName;
   const flag = flagEmoji(m.country_code);
   const results = m.results ?? [];
   const external = m.link_url?.startsWith("http");
@@ -122,6 +124,7 @@ function MemberCard({ m }: { m: PieceMember }) {
         <div className="absolute inset-x-0 bottom-0 p-5">
           <SpainStripe />
           <h3 className="font-display mt-3 break-words text-3xl uppercase leading-[0.95] tracking-wide text-foreground md:text-[2.1rem]">{name}</h3>
+          {visible && fullName && <p className="mt-1.5 text-sm text-foreground/75">{fullName}</p>}
           {m.club && <p className="font-condensed mt-2 text-sm uppercase tracking-[2px] text-gold">{m.club}</p>}
         </div>
       </div>

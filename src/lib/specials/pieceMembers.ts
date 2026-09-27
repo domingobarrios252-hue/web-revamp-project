@@ -16,6 +16,7 @@ export type PieceMember = {
   piece_id: string;
   first_name: string;
   last_name: string;
+  display_name?: string | null;
   category: string | null;
   club: string | null;
   specialty: string | null;

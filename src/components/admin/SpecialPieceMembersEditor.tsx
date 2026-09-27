@@ -436,6 +436,7 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
         <button type="button" onClick={onClose} aria-label="Volver"><X className="h-5 w-5" /></button>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="sm:col-span-2"><label className={label}>Nombre visible (opcional)</label><input {...txt("display_name")} placeholder="Ej.: CHEVI GUZMÁN — si está vacío se usa el nombre completo" /></div>
         <div><label className={label}>Nombre</label><input {...txt("first_name")} /></div>
         <div><label className={label}>Apellidos</label><input {...txt("last_name")} /></div>
         <div><label className={label}>Categoría</label><input {...txt("category")} placeholder="Júnior / Sénior" /></div>
