@@ -1,13 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Component, useMemo, useState, type ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import { ArrowDownRight, ArrowUpRight, Info, Play, Eye, Radio, AlertTriangle } from "lucide-react";
 import { getStats, getRealtime, type StatsResult, type RealtimeResult, type StatsModule } from "@/lib/stats/stats.functions";
 
 export const Route = createFileRoute("/admin/estadisticas")({
-  head: () => ({ meta: [{ title: "Estadísticas — Panel RollerZone" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({
+    meta: [
+      { title: "Estadísticas — Panel RollerZone" },
+      { name: "description", content: "Panel privado de estadísticas reales de RollerZone." },
+      { property: "og:title", content: "Estadísticas — Panel RollerZone" },
+      { property: "og:description", content: "Panel privado de estadísticas reales de RollerZone." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: StatsPage,
 });
 
@@ -106,6 +116,16 @@ function Bars({ rows, total, unit }: { rows: { name: string; value: number }[]; 
 }
 
 function StatsPage() {
+  const [queryClient] = useState(() => new QueryClient());
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <StatsContent />
+    </QueryClientProvider>
+  );
+}
+
+function StatsContent() {
   const [preset, setPreset] = useState<Preset>("30d");
   const [cs, setCs] = useState(iso(addDays(new Date(), -29)));
   const [ce, setCe] = useState(iso(new Date()));

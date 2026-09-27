@@ -5,3 +5,4 @@
 - Public results read only via src/lib/results/provider.ts (loadEventResults → normalized rows); VeloPro providers fall back to manual. Why: page never depends on an external service.
 - Per-special "no results" text stored in site_settings key special_results_empty:<slug>. Why: editable without a schema change.
 - Banner analytics are aggregated daily in ad_banner_stats_daily via record_ad_event() (banner_id ON DELETE SET NULL + banner_ref/name snapshots); render creatives with AdCreative. Why: keep history after deletion, no personal data, one ad manager.
+- The statistics route owns its QueryClientProvider and a stable per-mount QueryClient. Why: the app has no global React Query provider, and stats queries must not crash route mounting.
