@@ -17,6 +17,8 @@ import {
   List as ListIcon,
   Copy,
   Upload,
+  Columns2,
+  Link2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -45,6 +47,8 @@ const TYPE_ICONS: Record<NewsBlockType, React.ComponentType<{ className?: string
   quote: Quote,
   list: ListIcon,
   divider: Minus,
+  imageText: Columns2,
+  button: Link2,
 };
 
 const TYPE_ORDER: NewsBlockType[] = [
@@ -79,9 +83,11 @@ type Props = {
   nameHint?: string;
   /** Título de la noticia para la previsualización. */
   title?: string;
+  /** Tipos de bloque disponibles (por defecto, los de noticias). */
+  allowedTypes?: NewsBlockType[];
 };
 
-export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props) {
+export function ContentBlocksEditor({ value, onChange, nameHint, title, allowedTypes = TYPE_ORDER }: Props) {
   const [preview, setPreview] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
@@ -216,7 +222,7 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
           }}
           className={fileOver ? "outline outline-2 outline-dashed outline-gold/70" : ""}
         >
-          <AddBar onAdd={(t) => insertAt(0, t)} label="Insertar al principio" />
+          <AddBar types={allowedTypes} onAdd={(t) => insertAt(0, t)} label="Insertar al principio" />
 
           {value.map((block, index) => {
             const Icon = TYPE_ICONS[block.type];
@@ -286,7 +292,7 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
                     onPatch={(patch) => update(index, patch)}
                   />
                 </div>
-                <AddBar onAdd={(t) => insertAt(index + 1, t)} label="Insertar aquí" />
+                <AddBar types={allowedTypes} onAdd={(t) => insertAt(index + 1, t)} label="Insertar aquí" />
               </div>
             );
           })}
@@ -321,13 +327,13 @@ export function ContentBlocksEditor({ value, onChange, nameHint, title }: Props)
   );
 }
 
-function AddBar({ onAdd, label }: { onAdd: (t: NewsBlockType) => void; label: string }) {
+function AddBar({ onAdd, label, types }: { onAdd: (t: NewsBlockType) => void; label: string; types: NewsBlockType[] }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="py-1">
       {open ? (
         <div className="flex flex-wrap items-center gap-2 border border-dashed border-gold/50 p-2">
-          {TYPE_ORDER.map((t) => {
+          {types.map((t) => {
             const Icon = TYPE_ICONS[t];
             return (
               <button
@@ -570,5 +576,57 @@ function BlockFields({
 
     case "divider":
       return <hr className="border-border" />;
+
+    case "imageText":
+      return (
+        <div className="space-y-2">
+          <ImageUploadField
+            value={block.url}
+            onChange={(url) => onPatch({ url })}
+            folder="specials/blocks"
+            nameHint={nameHint}
+            placeholder="URL o subir imagen"
+          />
+          <input
+            value={block.alt ?? ""}
+            onChange={(e) => onPatch({ alt: e.target.value })}
+            placeholder="Texto alternativo de la imagen"
+            className={inputCls}
+          />
+          <textarea
+            value={block.text}
+            onChange={(e) => onPatch({ text: e.target.value })}
+            rows={5}
+            placeholder="Texto junto a la imagen. Admite **negrita** y [enlaces](https://…)."
+            className={inputCls}
+          />
+          <select
+            value={block.position ?? "left"}
+            onChange={(e) => onPatch({ position: e.target.value === "right" ? "right" : "left" })}
+            className="border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none"
+          >
+            <option value="left">Imagen a la izquierda</option>
+            <option value="right">Imagen a la derecha</option>
+          </select>
+        </div>
+      );
+
+    case "button":
+      return (
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <input
+            value={block.label}
+            onChange={(e) => onPatch({ label: e.target.value })}
+            placeholder="Texto del botón"
+            className={inputCls}
+          />
+          <input
+            value={block.url}
+            onChange={(e) => onPatch({ url: e.target.value })}
+            placeholder="https://… o /ruta-interna"
+            className={inputCls}
+          />
+        </div>
+      );
   }
 }
