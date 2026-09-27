@@ -3629,6 +3629,7 @@ export type Database = {
           club: string | null
           country_code: string | null
           created_at: string
+          display_name: string | null
           first_name: string
           id: string
           image_url: string | null
@@ -3649,6 +3650,7 @@ export type Database = {
           club?: string | null
           country_code?: string | null
           created_at?: string
+          display_name?: string | null
           first_name?: string
           id?: string
           image_url?: string | null
@@ -3669,6 +3671,7 @@ export type Database = {
           club?: string | null
           country_code?: string | null
           created_at?: string
+          display_name?: string | null
           first_name?: string
           id?: string
           image_url?: string | null

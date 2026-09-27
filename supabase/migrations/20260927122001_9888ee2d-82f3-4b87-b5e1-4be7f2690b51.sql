@@ -1,0 +1,1 @@
+ALTER TABLE public.special_piece_members ADD COLUMN IF NOT EXISTS display_name text;
