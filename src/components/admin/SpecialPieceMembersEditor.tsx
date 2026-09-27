@@ -26,11 +26,19 @@ import {
   arrayMove,
   sortableKeyboardCoordinates,
   useSortable,
-  verticalListSortingStrategy,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import {
   parseFeatureData,
   type FeatureData,
@@ -280,24 +288,17 @@ function MembersTab({ pieceId, nameHint }: { pieceId: string; nameHint: string }
     if (results.some((r: { error: unknown }) => r.error)) toast.error("No se pudo guardar el orden");
   };
 
-  if (editing) {
-    return (
-      <MemberForm
-        member={editing}
-        nameHint={nameHint}
-        onClose={() => {
-          setEditing(null);
-          load();
-        }}
-      />
-    );
-  }
-
   return (
-    <div className="space-y-3">
-      <button type="button" onClick={create} className="font-condensed inline-flex items-center gap-1 bg-gold px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-background">
-        <Plus className="h-3.5 w-3.5" /> Crear patinador
-      </button>
+    <div className="space-y-4">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <div className="min-w-0">
+          <h3 className="font-display truncate text-base uppercase tracking-widest">Patinadores</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Arrastra las fichas para cambiar su orden.</p>
+        </div>
+        <Button type="button" onClick={create} className="min-h-11 bg-gold font-condensed text-xs font-bold uppercase tracking-widest text-background hover:bg-gold/90">
+          <Plus /> Añadir patinador
+        </Button>
+      </div>
       {loading ? (
         <p className="text-xs text-muted-foreground">Cargando…</p>
       ) : items.length === 0 ? (
@@ -306,8 +307,8 @@ function MembersTab({ pieceId, nameHint }: { pieceId: string; nameHint: string }
         </p>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-          <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-            <ul className="space-y-2">
+          <SortableContext items={items.map((i) => i.id)} strategy={rectSortingStrategy}>
+            <ul className="grid grid-cols-1 gap-3 xl:grid-cols-2">
               {items.map((m) => (
                 <MemberRow
                   key={m.id}
@@ -322,6 +323,28 @@ function MembersTab({ pieceId, nameHint }: { pieceId: string; nameHint: string }
           </SortableContext>
         </DndContext>
       )}
+      <Sheet
+        open={Boolean(editing)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditing(null);
+            load();
+          }
+        }}
+      >
+        <SheetContent side="right" className="flex h-dvh w-[96vw] max-w-none flex-col gap-0 overflow-hidden border-gold/30 p-0 sm:w-[min(92vw,980px)] sm:max-w-none">
+          {editing && (
+            <MemberForm
+              member={editing}
+              nameHint={nameHint}
+              onClose={() => {
+                setEditing(null);
+                load();
+              }}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
@@ -340,33 +363,39 @@ function MemberRow({
   onDelete: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: m.id });
-  const iconBtn = "flex h-9 w-9 items-center justify-center border border-border text-muted-foreground hover:text-gold";
+  const actionClass = "min-h-11 justify-start px-3 font-condensed text-[11px] uppercase tracking-wider";
+  const fullName = `${m.first_name} ${m.last_name}`.trim();
+  const mainName = m.display_name?.trim() || fullName || "Sin nombre";
   return (
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className="flex items-center gap-2 border border-border bg-background p-2"
+      className="grid min-w-0 grid-cols-[auto_4.5rem_minmax(0,1fr)] gap-3 border border-border bg-background p-3"
     >
-      <button type="button" {...attributes} {...listeners} className="cursor-grab text-muted-foreground" aria-label="Arrastrar">
+      <Button type="button" variant="ghost" size="icon" {...attributes} {...listeners} className="h-11 w-8 cursor-grab self-center text-muted-foreground" aria-label="Arrastrar patinador">
         <GripVertical className="h-4 w-4" />
-      </button>
-      <div className="h-12 w-10 shrink-0 overflow-hidden bg-surface">
-        {m.image_url && <img src={m.image_url} alt="" className="h-full w-full object-cover" />}
+      </Button>
+      <div className="aspect-[4/5] w-[4.5rem] shrink-0 overflow-hidden bg-surface">
+        {m.image_url ? <img src={m.image_url} alt="" className="h-full w-full object-cover object-top" /> : <div className="grid h-full place-items-center font-display text-xl text-gold/40">{mainName.charAt(0)}</div>}
       </div>
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold">
-          {m.first_name} {m.last_name}
+      <div className="min-w-0 self-center">
+        <div className="truncate text-sm font-semibold">{mainName}</div>
+        {m.display_name?.trim() && <div className="truncate text-[11px] text-muted-foreground">{fullName}</div>}
+        <div className="mt-1 truncate text-[11px] text-muted-foreground">
+          {[m.category, m.club].filter(Boolean).join(" · ") || "Sin categoría ni club"}
         </div>
-        <div className="truncate text-[11px] text-muted-foreground">
-          {[m.category, m.club].filter(Boolean).join(" · ")} {m.published ? "" : "· Oculto"}
-        </div>
+        <span className={"mt-2 inline-flex border px-2 py-0.5 font-condensed text-[10px] uppercase tracking-widest " + (m.published ? "border-gold/50 text-gold" : "border-border text-muted-foreground")}>
+          {m.published ? "Publicado" : "Oculto"}
+        </span>
       </div>
-      <button type="button" className={iconBtn} onClick={onEdit} aria-label="Editar"><Pencil className="h-4 w-4" /></button>
-      <button type="button" className={iconBtn} onClick={onDuplicate} aria-label="Duplicar"><Copy className="h-4 w-4" /></button>
-      <button type="button" className={iconBtn} onClick={onToggle} aria-label={m.published ? "Ocultar" : "Publicar"}>
-        {m.published ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-      </button>
-      <button type="button" className={iconBtn} onClick={onDelete} aria-label="Eliminar"><Trash2 className="h-4 w-4" /></button>
+      <div className="col-span-3 grid grid-cols-2 gap-2 border-t border-border pt-3 sm:grid-cols-4">
+        <Button type="button" variant="outline" className={actionClass} onClick={onEdit}><Pencil /> Editar</Button>
+        <Button type="button" variant="outline" className={actionClass} onClick={onDuplicate}><Copy /> Duplicar</Button>
+        <Button type="button" variant="outline" className={actionClass} onClick={onToggle}>
+          {m.published ? <EyeOff /> : <Eye />} {m.published ? "Ocultar" : "Publicar"}
+        </Button>
+        <Button type="button" variant="outline" className={actionClass + " hover:text-destructive"} onClick={onDelete}><Trash2 /> Eliminar</Button>
+      </div>
     </li>
   );
 }
@@ -374,6 +403,8 @@ function MemberRow({
 function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHint: string; onClose: () => void }) {
   const [f, setF] = useState<PieceMember>({ ...member });
   const [results, setResults] = useState<MemberResult[]>([]);
+  const [preview, setPreview] = useState(false);
+  const [saving, setSaving] = useState(false);
   const hint = `${nameHint}-${f.first_name}-${f.last_name}`;
 
   useEffect(() => {
@@ -391,10 +422,14 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
   });
 
   const save = async () => {
+    setSaving(true);
     const { id, results: _r, ...rest } = f;
     void _r;
     const { error } = await db.from("special_piece_members").update(rest).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      setSaving(false);
+      return toast.error(error.message);
+    }
     // Resultados: borrar eliminados, upsert el resto con su orden
     const { data: existing } = await db.from("special_piece_member_results").select("id").eq("member_id", id);
     const keep = new Set(results.filter((r) => !r.id.startsWith("new-")).map((r) => r.id));
@@ -414,7 +449,10 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
         ? db.from("special_piece_member_results").insert(row)
         : db.from("special_piece_member_results").update(row).eq("id", r.id);
       const { error: e2 } = await q;
-      if (e2) return toast.error(e2.message);
+      if (e2) {
+        setSaving(false);
+        return toast.error(e2.message);
+      }
     }
     toast.success("Ficha guardada");
     onClose();
@@ -430,11 +468,14 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
     });
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="font-display text-base uppercase tracking-widest">Editar ficha</h3>
-        <button type="button" onClick={onClose} aria-label="Volver"><X className="h-5 w-5" /></button>
-      </div>
+    <>
+      <SheetHeader className="shrink-0 border-b border-border px-4 py-4 pr-14 text-left sm:px-6">
+        <SheetTitle className="font-display text-lg uppercase tracking-widest">Editar patinador</SheetTitle>
+        <SheetDescription className="truncate">{f.display_name?.trim() || `${f.first_name} ${f.last_name}`.trim()}</SheetDescription>
+      </SheetHeader>
+      <div className="flex-1 space-y-5 overflow-y-auto px-4 py-5 sm:px-6">
+      {preview && <MemberPreview member={f} results={results} />}
+      <FormSection title="Datos básicos">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="sm:col-span-2"><label className={label}>Nombre visible (opcional)</label><input {...txt("display_name")} placeholder="Ej.: CHEVI GUZMÁN — si está vacío se usa el nombre completo" /></div>
         <div><label className={label}>Nombre</label><input {...txt("first_name")} /></div>
@@ -444,6 +485,12 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
         <div><label className={label}>Especialidad</label><input {...txt("specialty")} /></div>
         <div><label className={label}>País (código de 2 letras)</label><input {...txt("country_code")} placeholder="es" maxLength={2} /></div>
       </div>
+      <label className="flex min-h-11 items-center gap-2 text-xs">
+        <input type="checkbox" checked={f.published} onChange={(e) => setF({ ...f, published: e.target.checked })} />
+        <span className="font-condensed uppercase tracking-widest text-muted-foreground">Publicado</span>
+      </label>
+      </FormSection>
+      <FormSection title="Imágenes">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label className={label}>Imagen / cromo principal</label>
@@ -454,22 +501,24 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
           <ImageUploadField value={f.alt_image_url ?? ""} onChange={(url) => setF((x) => ({ ...x, alt_image_url: url }))} folder="specials" nameHint={hint + "-alt"} previewClassName="mt-2 h-32 w-24 object-cover rounded" />
         </div>
       </div>
-      <div><label className={label}>Texto editorial breve</label><textarea rows={3} {...txt("bio")} /></div>
+      </FormSection>
+      <FormSection title="Texto editorial">
+        <div><label className={label}>Texto editorial breve</label><textarea rows={5} {...txt("bio")} /></div>
+      </FormSection>
+      <FormSection title="Botón y enlace">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div><label className={label}>Texto del botón (opcional)</label><input {...txt("button_label")} /></div>
         <div><label className={label}>Enlace (opcional)</label><input {...txt("link_url")} placeholder="https://… o /hub/es/patinadores/…" /></div>
       </div>
-      <label className="flex items-center gap-2 text-xs">
-        <input type="checkbox" checked={f.published} onChange={(e) => setF({ ...f, published: e.target.checked })} />
-        <span className="font-condensed uppercase tracking-widest text-muted-foreground">Publicado</span>
-      </label>
+      </FormSection>
 
-      <div className="border-t border-border pt-3">
+      <FormSection title="Resultados 2026">
         <div className="mb-2 flex items-center justify-between">
-          <span className={label}>Resultados 2026</span>
-          <button
+          <span className="text-xs text-muted-foreground">{results.length} resultados</span>
+          <Button
             type="button"
-            className={btn}
+            variant="outline"
+            className="min-h-11 font-condensed text-[11px] uppercase tracking-widest"
             onClick={() =>
               setResults((rs) => [
                 ...rs,
@@ -478,36 +527,68 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
             }
           >
             <Plus className="h-3.5 w-3.5" /> Añadir resultado
-          </button>
+          </Button>
         </div>
         {results.length === 0 && <p className="text-[11px] text-muted-foreground">Sin resultados.</p>}
+        {results.length > 0 && <div className="mb-1 hidden grid-cols-[2fr_1.35fr_1fr_1fr_1.15fr_auto] gap-2 px-2 sm:grid">
+          {['Competición', 'Prueba', 'Resultado', 'Medalla', 'Fecha', 'Orden'].map((heading) => <span key={heading} className={label}>{heading}</span>)}
+        </div>}
         <ul className="space-y-2">
           {results.map((r, i) => (
-            <li key={r.id} className="grid grid-cols-2 gap-2 border border-border bg-background p-2 sm:grid-cols-6">
-              <input className={input + " col-span-2"} placeholder="Competición" value={r.competition} onChange={(e) => setR(i, { competition: e.target.value })} />
-              <input className={input} placeholder="Prueba" value={r.event_name ?? ""} onChange={(e) => setR(i, { event_name: e.target.value })} />
-              <input className={input} placeholder="Resultado" value={r.result ?? ""} onChange={(e) => setR(i, { result: e.target.value })} />
-              <select className={input} value={r.medal ?? ""} onChange={(e) => setR(i, { medal: (e.target.value || null) as MemberResult["medal"] })}>
+            <li key={r.id} className="grid grid-cols-1 gap-2 border border-border bg-background p-3 sm:grid-cols-[2fr_1.35fr_1fr_1fr_1.15fr_auto] sm:items-end sm:p-2">
+              <ResultField labelText="Competición"><input className={input} placeholder="Competición" value={r.competition} onChange={(e) => setR(i, { competition: e.target.value })} /></ResultField>
+              <ResultField labelText="Prueba"><input className={input} placeholder="Prueba" value={r.event_name ?? ""} onChange={(e) => setR(i, { event_name: e.target.value })} /></ResultField>
+              <ResultField labelText="Resultado"><input className={input} placeholder="Resultado" value={r.result ?? ""} onChange={(e) => setR(i, { result: e.target.value })} /></ResultField>
+              <ResultField labelText="Medalla"><select className={input} value={r.medal ?? ""} onChange={(e) => setR(i, { medal: (e.target.value || null) as MemberResult["medal"] })}>
                 <option value="">Sin medalla</option>
                 <option value="oro">Oro</option>
                 <option value="plata">Plata</option>
                 <option value="bronce">Bronce</option>
-              </select>
-              <input type="date" className={input} value={r.result_date ?? ""} onChange={(e) => setR(i, { result_date: e.target.value || null })} />
-              <div className="col-span-2 flex justify-end gap-1 sm:col-span-6">
-                <button type="button" className={btn} onClick={() => move(i, -1)} aria-label="Subir"><ArrowUp className="h-3.5 w-3.5" /></button>
-                <button type="button" className={btn} onClick={() => move(i, 1)} aria-label="Bajar"><ArrowDown className="h-3.5 w-3.5" /></button>
-                <button type="button" className={btn} onClick={() => setResults((rs) => rs.filter((_, j) => j !== i))} aria-label="Eliminar resultado"><Trash2 className="h-3.5 w-3.5" /></button>
+              </select></ResultField>
+              <ResultField labelText="Fecha"><input type="date" className={input} value={r.result_date ?? ""} onChange={(e) => setR(i, { result_date: e.target.value || null })} /></ResultField>
+              <div className="flex justify-end gap-1">
+                <Button type="button" variant="outline" size="icon" className="h-11 w-11" onClick={() => move(i, -1)} aria-label="Subir"><ArrowUp /></Button>
+                <Button type="button" variant="outline" size="icon" className="h-11 w-11" onClick={() => move(i, 1)} aria-label="Bajar"><ArrowDown /></Button>
+                <Button type="button" variant="outline" size="icon" className="h-11 w-11 hover:text-destructive" onClick={() => setResults((rs) => rs.filter((_, j) => j !== i))} aria-label="Eliminar resultado"><Trash2 /></Button>
               </div>
             </li>
           ))}
         </ul>
+      </FormSection>
       </div>
+      <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-border bg-background px-4 py-3 sm:flex sm:justify-end sm:px-6">
+        <Button type="button" variant="outline" className="min-h-11 font-condensed text-xs uppercase tracking-widest" onClick={() => setPreview((value) => !value)}><Eye />{preview ? "Ocultar vista" : "Previsualizar ficha"}</Button>
+        <Button type="button" variant="outline" className="min-h-11 font-condensed text-xs uppercase tracking-widest" onClick={onClose}>Cancelar</Button>
+        <Button type="button" disabled={saving} onClick={save} className="col-span-2 min-h-11 bg-gold font-condensed text-xs font-bold uppercase tracking-widest text-background hover:bg-gold/90 sm:col-span-1">{saving ? "Guardando…" : "Guardar ficha"}</Button>
+      </div>
+    </>
+  );
+}
 
-      <div className="flex justify-end gap-2">
-        <button type="button" onClick={onClose} className={btn}>Cancelar</button>
-        <button type="button" onClick={save} className="font-condensed bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background">Guardar ficha</button>
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return <section className="border border-border bg-surface/30 p-4"><h4 className="font-display mb-4 text-sm uppercase tracking-widest text-gold">{title}</h4>{children}</section>;
+}
+
+function ResultField({ labelText, children }: { labelText: string; children: React.ReactNode }) {
+  return <label className="block"><span className={label + " sm:hidden"}>{labelText}</span>{children}</label>;
+}
+
+function MemberPreview({ member, results }: { member: PieceMember; results: MemberResult[] }) {
+  const fullName = `${member.first_name} ${member.last_name}`.trim();
+  const title = member.display_name?.trim() || fullName || "Sin nombre";
+  return (
+    <section className="grid gap-4 border border-gold/40 bg-background p-4 sm:grid-cols-[9rem_minmax(0,1fr)]" aria-label="Previsualización de la ficha">
+      <div className="aspect-[4/5] overflow-hidden bg-surface">
+        {member.image_url ? <img src={member.image_url} alt="" className="h-full w-full object-cover object-top" /> : <div className="grid h-full place-items-center font-display text-4xl text-gold/40">{title.charAt(0)}</div>}
       </div>
-    </div>
+      <div className="min-w-0">
+        <span className="font-condensed text-[10px] uppercase tracking-widest text-gold">Vista previa</span>
+        <h4 className="font-display mt-2 break-words text-2xl uppercase text-foreground">{title}</h4>
+        {member.display_name?.trim() && <p className="mt-1 text-xs text-muted-foreground">{fullName}</p>}
+        <p className="mt-2 text-xs uppercase text-muted-foreground">{[member.category, member.club].filter(Boolean).join(" · ")}</p>
+        {results.length > 0 && <p className="mt-3 text-xs text-gold">{results.length} resultado{results.length === 1 ? "" : "s"} en 2026</p>}
+        {member.bio && <p className="mt-3 line-clamp-3 text-sm text-foreground/80">{member.bio}</p>}
+      </div>
+    </section>
   );
 }
