@@ -10,7 +10,6 @@ import {
   Plus,
   ArrowUp,
   ArrowDown,
-  X,
 } from "lucide-react";
 import {
   DndContext,
@@ -51,9 +50,6 @@ const db = supabase as any;
 
 const input = "w-full border border-border bg-surface px-3 py-2 text-sm";
 const label = "font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground";
-const btn =
-  "font-condensed inline-flex items-center gap-1 border border-border px-3 py-2 text-[11px] uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold";
-
 type Tab = "resumen" | "patinadores" | "cierre";
 
 export function SpecialPieceMembersEditor({ pieceId, nameHint }: { pieceId: string; nameHint: string }) {
