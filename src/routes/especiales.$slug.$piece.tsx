@@ -14,6 +14,8 @@ import { SelectionSummary, SelectionMembers, SelectionClosing } from "@/componen
 const SITE = "https://rollerzone.es";
 
 type Piece = {
+  id?: string;
+  feature_data?: unknown;
   slug: string;
   number: string | null;
   kicker: string | null;
@@ -161,7 +163,7 @@ export const Route = createFileRoute("/especiales/$slug/$piece")({
 
 function PiecePage() {
   const { slug } = Route.useParams();
-  const { special, piece, siblings, url } = Route.useLoaderData();
+  const { special, piece, siblings, url, members, feature } = Route.useLoaderData();
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   const hero = piece.image_url?.trim() || piece.thumbnail_url?.trim() || (specialFallback as string);
@@ -220,6 +222,8 @@ function PiecePage() {
           </div>
         </div>
       </figure>
+
+      <SelectionSummary data={feature} />
 
       {/* Contenido */}
       <article className="bg-background py-10 md:py-16">
@@ -293,6 +297,9 @@ function PiecePage() {
           </div>
         )}
       </article>
+
+      <SelectionMembers members={members} />
+      <SelectionClosing data={feature} />
 
       {/* Volver al especial */}
       <div className="bg-background pb-10">
