@@ -7,3 +7,4 @@
 - Banner analytics are aggregated daily in ad_banner_stats_daily via record_ad_event() (banner_id ON DELETE SET NULL + banner_ref/name snapshots); render creatives with AdCreative. Why: keep history after deletion, no personal data, one ad manager.
 - The statistics route owns its QueryClientProvider and a stable per-mount QueryClient. Why: the app has no global React Query provider, and stats queries must not crash route mounting.
 - Special pieces reuse the news block editor (content_blocks jsonb); when empty the public page falls back to content_md. Why: one block system, full backward compatibility.
+- Selection pieces use special_piece_members + special_piece_member_results (per piece, CASCADE) and special_pieces.feature_data (summary/closing), independent from skaters (optional skater_id). Why: special cards/images must not alter public skater profiles.
