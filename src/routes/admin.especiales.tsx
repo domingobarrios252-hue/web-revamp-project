@@ -18,6 +18,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
+import { ContentBlocksEditor } from "@/components/admin/ContentBlocksEditor";
+import { parseBlocks, cleanBlocks, type NewsBlock } from "@/lib/newsBlocks";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import type { ImageCrops } from "@/lib/imageCrops";
@@ -86,6 +88,10 @@ type Piece = {
   status: string;
   crops: ImageCrops | null;
   gallery: string[];
+  subtitle: string;
+  secondary_image_url: string;
+  button_label: string;
+  content_blocks: NewsBlock[];
 };
 
 const PIECE_STATUS = [
@@ -729,6 +735,10 @@ const emptyPiece = (): Omit<Piece, "id" | "special_slug"> => ({
   status: "published",
   crops: {},
   gallery: [],
+  subtitle: "",
+  secondary_image_url: "",
+  button_label: "",
+  content_blocks: [],
 });
 
 function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void }) {
@@ -783,7 +793,15 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
     const { id: _id, special_slug: _s, ...rest } = p;
     void _id;
     void _s;
-    setForm({ ...emptyPiece(), ...rest, crops: (p.crops ?? {}) as ImageCrops });
+    setForm({
+      ...emptyPiece(),
+      ...rest,
+      subtitle: p.subtitle ?? "",
+      secondary_image_url: p.secondary_image_url ?? "",
+      button_label: p.button_label ?? "",
+      content_blocks: parseBlocks(p.content_blocks),
+      crops: (p.crops ?? {}) as ImageCrops,
+    });
     setShowForm(true);
   };
 
@@ -797,6 +815,7 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
       slug,
       title,
       crops: form.crops as unknown as never,
+      content_blocks: cleanBlocks(form.content_blocks) as unknown as never,
     };
     if (editing) {
       const { error } = await db.from("special_pieces").update(payload).eq("id", editing.id);
@@ -1029,6 +1048,14 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
               </p>
             </Field>
 
+            <Field label="Subtítulo (opcional)">
+              <input
+                value={form.subtitle}
+                onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
+                className="w-full border border-border bg-surface px-3 py-2 text-sm"
+              />
+            </Field>
+
             <Field label="Entradilla / descripción corta">
               <textarea
                 rows={2}
@@ -1047,7 +1074,21 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
               />
             </Field>
 
-            <Field label="Contenido (Markdown)">
+            <Field label="Contenido por bloques">
+              <p className="mb-2 text-[11px] text-muted-foreground">
+                Si añades bloques, sustituyen al texto completo de abajo en la página pública. Sin
+                bloques, se sigue mostrando el texto completo.
+              </p>
+              <ContentBlocksEditor
+                value={form.content_blocks}
+                onChange={(blocks) => setForm((f) => ({ ...f, content_blocks: blocks }))}
+                nameHint={form.slug || form.title}
+                title={form.title}
+                allowedTypes={["text", "heading", "image", "imageText", "gallery", "quote", "video", "button", "list", "divider"]}
+              />
+            </Field>
+
+            <Field label="Texto completo (Markdown)">
               <textarea
                 rows={10}
                 value={form.content_md}
@@ -1080,6 +1121,16 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
               </Field>
             </div>
 
+            <Field label="Imagen secundaria (opcional)">
+              <ImageUploadField
+                value={form.secondary_image_url}
+                onChange={(url) => setForm((f) => ({ ...f, secondary_image_url: url }))}
+                folder="specials"
+                nameHint={(form.slug || form.title) + "-secundaria"}
+                previewClassName="mt-2 h-24 w-40 object-cover rounded"
+              />
+            </Field>
+
             <Field label="Galería de fotos (reportaje editorial)">
               <p className="mb-2 text-[11px] text-muted-foreground">
                 Sube fotos desde tu ordenador para incluir en el cuerpo del reportaje. Se muestran a
@@ -1094,14 +1145,24 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
             </Field>
 
 
-            <Field label="Enlace externo (opcional)">
-              <input
-                value={form.external_url}
-                onChange={(e) => setForm({ ...form, external_url: e.target.value })}
-                placeholder="https://…"
-                className="w-full border border-border bg-surface px-3 py-2 text-sm"
-              />
-            </Field>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Texto del botón (opcional)">
+                <input
+                  value={form.button_label}
+                  onChange={(e) => setForm({ ...form, button_label: e.target.value })}
+                  placeholder="Enlace externo"
+                  className="w-full border border-border bg-surface px-3 py-2 text-sm"
+                />
+              </Field>
+              <Field label="Enlace del botón (opcional)">
+                <input
+                  value={form.external_url}
+                  onChange={(e) => setForm({ ...form, external_url: e.target.value })}
+                  placeholder="https://…"
+                  className="w-full border border-border bg-surface px-3 py-2 text-sm"
+                />
+              </Field>
+            </div>
 
             <div className="grid grid-cols-3 gap-3">
               <Field label="Orden">
