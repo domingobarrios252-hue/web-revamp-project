@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { renderMarkdown } from "@/lib/markdown";
 import { Lightbox } from "@/components/site/Lightbox";
 import { PieceShareBar } from "@/components/specials/PieceShareBar";
+import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
+import { parseBlocks } from "@/lib/newsBlocks";
 import specialFallback from "@/assets/special-fallback.svg";
 
 const SITE = "https://rollerzone.es";
@@ -24,6 +26,10 @@ type Piece = {
   status: string;
   visible: boolean;
   gallery?: string[] | null;
+  subtitle?: string | null;
+  secondary_image_url?: string | null;
+  button_label?: string | null;
+  content_blocks?: unknown;
 };
 
 type SpecialLite = { slug: string; title: string };
@@ -138,6 +144,8 @@ function PiecePage() {
     .replace(/<\/h1>/g, "</h2>");
   const gallery = Array.isArray(piece.gallery) ? piece.gallery.filter(Boolean) : [];
   const kicker = piece.kicker || piece.category || "";
+  const blocks = parseBlocks(piece.content_blocks);
+  const secondary = piece.secondary_image_url?.trim() || "";
 
   return (
     <>
@@ -155,6 +163,11 @@ function PiecePage() {
           <h1 className="font-display mt-4 break-words text-[1.75rem] uppercase leading-tight tracking-wider text-foreground sm:text-4xl md:text-5xl">
             {piece.title}
           </h1>
+          {piece.subtitle?.trim() && (
+            <p className="font-condensed mt-3 text-sm uppercase tracking-[2px] text-gold md:text-base">
+              {piece.subtitle}
+            </p>
+          )}
           <div className="mt-4 h-[3px] w-24 bg-gold" />
           {(piece.excerpt || piece.description) && (
             <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-xl">
@@ -184,7 +197,9 @@ function PiecePage() {
       {/* Contenido */}
       <article className="bg-background py-10 md:py-16">
         <div className="mx-auto max-w-3xl px-4 md:px-6">
-          {html ? (
+          {blocks.length > 0 ? (
+            <NewsContentBlocks blocks={blocks} title={piece.title} />
+          ) : html ? (
             <div
               className="prose prose-invert max-w-none break-words text-base leading-relaxed text-muted-foreground [&_a]:text-gold [&_h1]:font-display [&_h1]:uppercase [&_h1]:tracking-wider [&_h1]:text-foreground [&_h2]:font-display [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-foreground [&_h3]:font-display [&_h3]:uppercase [&_h3]:tracking-wider [&_h3]:text-foreground [&_img]:h-auto [&_img]:max-w-full [&_pre]:overflow-x-auto [&_strong]:text-foreground [&_table]:block [&_table]:overflow-x-auto"
               dangerouslySetInnerHTML={{ __html: html }}
@@ -194,6 +209,17 @@ function PiecePage() {
               {piece.description || "Contenido en preparación."}
             </p>
           )}
+          {secondary && (
+            <figure className="mt-10 overflow-hidden rounded-lg border border-border bg-surface">
+              <img
+                src={secondary}
+                alt={`${piece.title} · ${special.title}`}
+                loading="lazy"
+                decoding="async"
+                className="h-auto w-full object-cover"
+              />
+            </figure>
+          )}
           {piece.external_url && (
             <a
               href={piece.external_url}
@@ -201,7 +227,7 @@ function PiecePage() {
               rel="noopener noreferrer"
               className="font-condensed mt-8 inline-flex items-center gap-2 border border-gold px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
-              Enlace externo <ExternalLink className="h-3.5 w-3.5" />
+              {piece.button_label?.trim() || "Enlace externo"} <ExternalLink className="h-3.5 w-3.5" />
             </a>
           )}
         </div>

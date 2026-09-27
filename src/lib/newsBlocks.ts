@@ -25,7 +25,16 @@ export type NewsBlock =
     }
   | { id: string; type: "quote"; text: string; author?: string }
   | { id: string; type: "list"; items: string[]; ordered?: boolean }
-  | { id: string; type: "divider" };
+  | { id: string; type: "divider" }
+  | {
+      id: string;
+      type: "imageText";
+      url: string;
+      alt?: string;
+      text: string;
+      position?: "left" | "right";
+    }
+  | { id: string; type: "button"; label: string; url: string };
 
 export type NewsBlockType = NewsBlock["type"];
 
@@ -38,6 +47,8 @@ export const BLOCK_LABELS: Record<NewsBlockType, string> = {
   quote: "Cita destacada",
   list: "Lista",
   divider: "Separador",
+  imageText: "Imagen + texto",
+  button: "Botón / enlace",
 };
 
 export function newBlockId(): string {
@@ -65,6 +76,10 @@ export function createBlock(type: NewsBlockType): NewsBlock {
       return { id, type: "list", items: [""], ordered: false };
     case "divider":
       return { id, type: "divider" };
+    case "imageText":
+      return { id, type: "imageText", url: "", alt: "", text: "", position: "left" };
+    case "button":
+      return { id, type: "button", label: "", url: "" };
   }
 }
 
@@ -175,6 +190,12 @@ export function parseBlocks(raw: unknown): NewsBlock[] {
       case "divider":
         out.push({ id, type });
         break;
+      case "imageText":
+        out.push({ id, type, url: str(b.url), alt: str(b.alt), text: str(b.text), position: b.position === "right" ? "right" : "left" });
+        break;
+      case "button":
+        out.push({ id, type, label: str(b.label), url: str(b.url) });
+        break;
     }
   }
   return out;
@@ -198,6 +219,10 @@ export function cleanBlocks(blocks: NewsBlock[]): NewsBlock[] {
         return b.items.some((x) => x.trim().length > 0);
       case "divider":
         return true;
+      case "imageText":
+        return b.url.trim().length > 0 || b.text.trim().length > 0;
+      case "button":
+        return b.url.trim().length > 0 && b.label.trim().length > 0;
     }
   }).map((b) => (b.type === "list" ? { ...b, items: b.items.filter((x) => x.trim()) } : b));
 }
@@ -215,6 +240,8 @@ export function blocksPlainText(blocks: NewsBlock[]): string {
           return b.caption ?? "";
         case "list":
           return b.items.join(" ");
+        case "imageText":
+          return b.text;
         default:
           return "";
       }
@@ -267,6 +294,14 @@ export function validateBlocks(blocks: NewsBlock[]): BlockIssue[] {
         if (!b.items.some((x) => x.trim())) push(i, b.type, "error", "La lista está vacía.");
         break;
       case "divider":
+        break;
+      case "imageText":
+        if (!b.url.trim()) push(i, b.type, "error", "Falta la imagen.");
+        if (!b.text.trim()) push(i, b.type, "warning", "Sin texto junto a la imagen.");
+        break;
+      case "button":
+        if (!b.label.trim()) push(i, b.type, "error", "Falta el texto del botón.");
+        if (!/^(https?:\/\/|\/)/.test(b.url.trim())) push(i, b.type, "error", "El enlace debe empezar por https:// o /.");
         break;
     }
   });

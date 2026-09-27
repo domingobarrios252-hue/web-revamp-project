@@ -158,6 +158,48 @@ export function NewsContentBlocks({ blocks, title }: Props) {
 
           case "divider":
             return <hr key={block.id} className="my-8 border-border" />;
+
+          case "imageText": {
+            const alt = block.alt?.trim() || title;
+            return (
+              <div
+                key={block.id}
+                className={`flex flex-col gap-5 md:items-start ${block.position === "right" ? "md:flex-row-reverse" : "md:flex-row"}`}
+              >
+                {block.url && (
+                  <button
+                    type="button"
+                    onClick={() => setLightbox({ images: [block.url], index: 0 })}
+                    className="block w-full shrink-0 cursor-zoom-in overflow-hidden border border-border bg-black md:w-1/2"
+                    aria-label={`Ampliar imagen: ${alt}`}
+                  >
+                    <img src={block.url} alt={alt} loading="lazy" decoding="async" className="h-auto w-full object-cover" />
+                  </button>
+                )}
+                {block.text.trim() && (
+                  <div
+                    className="prose prose-invert min-w-0 max-w-none flex-1 text-[16px] leading-relaxed text-foreground/90"
+                    dangerouslySetInnerHTML={{ __html: renderMarkdown(block.text) }}
+                  />
+                )}
+              </div>
+            );
+          }
+
+          case "button": {
+            const external = /^https?:\/\//.test(block.url);
+            return (
+              <div key={block.id}>
+                <a
+                  href={block.url}
+                  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  className="font-condensed inline-flex min-h-11 items-center gap-2 border border-gold px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+                >
+                  {block.label}
+                </a>
+              </div>
+            );
+          }
         }
       })}
 

@@ -3575,7 +3575,9 @@ export type Database = {
       }
       special_pieces: {
         Row: {
+          button_label: string | null
           category: string
+          content_blocks: Json
           content_md: string
           created_at: string
           crops: Json
@@ -3591,17 +3593,21 @@ export type Database = {
           related_news_ids: string[]
           related_result_event_ids: string[]
           related_video_ids: string[]
+          secondary_image_url: string | null
           slug: string
           sort_order: number
           special_slug: string
           status: string
+          subtitle: string | null
           thumbnail_url: string
           title: string
           updated_at: string
           visible: boolean
         }
         Insert: {
+          button_label?: string | null
           category?: string
+          content_blocks?: Json
           content_md?: string
           created_at?: string
           crops?: Json
@@ -3617,17 +3623,21 @@ export type Database = {
           related_news_ids?: string[]
           related_result_event_ids?: string[]
           related_video_ids?: string[]
+          secondary_image_url?: string | null
           slug: string
           sort_order?: number
           special_slug: string
           status?: string
+          subtitle?: string | null
           thumbnail_url?: string
           title: string
           updated_at?: string
           visible?: boolean
         }
         Update: {
+          button_label?: string | null
           category?: string
+          content_blocks?: Json
           content_md?: string
           created_at?: string
           crops?: Json
@@ -3643,10 +3653,12 @@ export type Database = {
           related_news_ids?: string[]
           related_result_event_ids?: string[]
           related_video_ids?: string[]
+          secondary_image_url?: string | null
           slug?: string
           sort_order?: number
           special_slug?: string
           status?: string
+          subtitle?: string | null
           thumbnail_url?: string
           title?: string
           updated_at?: string
