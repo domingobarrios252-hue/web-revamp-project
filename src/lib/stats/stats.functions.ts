@@ -171,6 +171,7 @@ export const getStats = createServerFn({ method: "POST" })
         const [views, users, eng] = r.m;
         const seg = path.split("/").filter(Boolean);
         const a = seg[0] ?? "";
+        if (a === "admin" || a === "dashboard" || a === "acceso-interno" || a === "editor") continue;
         const isTv = a === "tv" || a === "rollerzone-tv" || seg.includes("tv") || a.endsWith("rollerzone-tv") || seg[1] === "rollerzone-tv";
         if (isTv) { tv.views += views; tv.users += users; tv.eng += eng; add("Rollerzone TV", views); }
         else if (a === "noticias" && seg.length >= 2) {
