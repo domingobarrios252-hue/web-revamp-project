@@ -7,6 +7,7 @@ import { AdCreative } from "@/components/site/AdCreative";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 import { TvEventLiveCenter } from "@/components/tv/TvEventLiveCenter";
 import { TvSidebarBanners } from "@/components/tv/TvSidebarBanners";
+import { TvPlayBeacon } from "@/components/tv/TvPlayBeacon";
 
 export type TvStageSettings = {
   live_stream_url: string | null;
@@ -179,6 +180,7 @@ export function TvTopStage({
           <div className="relative aspect-video w-full overflow-hidden border-y border-gold/30 bg-black md:border md:shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
             {playerActive && embedUrl ? (
               <ExternalEmbedGate provider="reproductor externo">
+                <TvPlayBeacon title={title} eventRef={slug ?? null} status={status} />
                 <iframe
                   src={embedUrl}
                   title={title}
