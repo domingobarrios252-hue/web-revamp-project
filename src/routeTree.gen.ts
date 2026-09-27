@@ -117,6 +117,7 @@ import { Route as AdminHomeControlRouteImport } from './routes/admin.home-contro
 import { Route as AdminFormulariosRouteImport } from './routes/admin.formularios'
 import { Route as AdminFederacionesRouteImport } from './routes/admin.federaciones'
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
+import { Route as AdminEstadisticasRouteImport } from './routes/admin.estadisticas'
 import { Route as AdminEspecialesRouteImport } from './routes/admin.especiales'
 import { Route as AdminEspanaRouteImport } from './routes/admin.espana'
 import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
@@ -724,6 +725,11 @@ const AdminEventosRoute = AdminEventosRouteImport.update({
   path: '/eventos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEstadisticasRoute = AdminEstadisticasRouteImport.update({
+  id: '/estadisticas',
+  path: '/estadisticas',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEspecialesRoute = AdminEspecialesRouteImport.update({
   id: '/especiales',
   path: '/especiales',
@@ -1058,6 +1064,7 @@ export interface FileRoutesByFullPath {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/espana': typeof AdminEspanaRoute
   '/admin/especiales': typeof AdminEspecialesRoute
+  '/admin/estadisticas': typeof AdminEstadisticasRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/formularios': typeof AdminFormulariosRoute
@@ -1219,6 +1226,7 @@ export interface FileRoutesByTo {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/espana': typeof AdminEspanaRoute
   '/admin/especiales': typeof AdminEspecialesRoute
+  '/admin/estadisticas': typeof AdminEstadisticasRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/formularios': typeof AdminFormulariosRoute
@@ -1379,6 +1387,7 @@ export interface FileRoutesById {
   '/admin/equipo': typeof AdminEquipoRoute
   '/admin/espana': typeof AdminEspanaRoute
   '/admin/especiales': typeof AdminEspecialesRoute
+  '/admin/estadisticas': typeof AdminEstadisticasRoute
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/formularios': typeof AdminFormulariosRoute
@@ -1548,6 +1557,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/espana'
     | '/admin/especiales'
+    | '/admin/estadisticas'
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/formularios'
@@ -1709,6 +1719,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/espana'
     | '/admin/especiales'
+    | '/admin/estadisticas'
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/formularios'
@@ -1868,6 +1879,7 @@ export interface FileRouteTypes {
     | '/admin/equipo'
     | '/admin/espana'
     | '/admin/especiales'
+    | '/admin/estadisticas'
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/formularios'
@@ -2823,6 +2835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEventosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/estadisticas': {
+      id: '/admin/estadisticas'
+      path: '/estadisticas'
+      fullPath: '/admin/estadisticas'
+      preLoaderRoute: typeof AdminEstadisticasRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/especiales': {
       id: '/admin/especiales'
       path: '/especiales'
@@ -3237,6 +3256,7 @@ interface AdminRouteChildren {
   AdminEquipoRoute: typeof AdminEquipoRoute
   AdminEspanaRoute: typeof AdminEspanaRoute
   AdminEspecialesRoute: typeof AdminEspecialesRoute
+  AdminEstadisticasRoute: typeof AdminEstadisticasRoute
   AdminEventosRoute: typeof AdminEventosRoute
   AdminFederacionesRoute: typeof AdminFederacionesRoute
   AdminFormulariosRoute: typeof AdminFormulariosRoute
@@ -3288,6 +3308,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEquipoRoute: AdminEquipoRoute,
   AdminEspanaRoute: AdminEspanaRoute,
   AdminEspecialesRoute: AdminEspecialesRoute,
+  AdminEstadisticasRoute: AdminEstadisticasRoute,
   AdminEventosRoute: AdminEventosRoute,
   AdminFederacionesRoute: AdminFederacionesRoute,
   AdminFormulariosRoute: AdminFormulariosRoute,

@@ -34,7 +34,7 @@ type AdminPath =
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
   | "/admin/espana" | "/admin/colombia" | "/admin/miami" | "/admin/portugal" | "/admin/resultados"
   | "/admin/resultados-eventos" | "/admin/resultados-pdfs"
-  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/colaboraciones" | "/admin/paginas" | "/admin/red-redactores" | "/admin/seguridad" | "/admin/permisos" | "/dashboard";
+  | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/colaboraciones" | "/admin/paginas" | "/admin/red-redactores" | "/admin/seguridad" | "/admin/permisos" | "/admin/estadisticas" | "/dashboard";
 
 type AdminLinkDef = { to: AdminPath; label: string; icon: React.ReactNode; exact?: boolean; adminOnly?: boolean };
 type AdminGroup = { id: string; label: string; icon: React.ReactNode; links: AdminLinkDef[] };
@@ -49,6 +49,7 @@ const GROUPS: AdminGroup[] = [
       { to: "/admin/ticker", label: "Ticker en directo", icon: <Radio className="h-4 w-4" /> },
       { to: "/admin/clasificaciones", label: "Portada · Clasificaciones", icon: <Trophy className="h-4 w-4" /> },
       { to: "/admin/pendientes", label: "Pendientes (cola)", icon: <Inbox className="h-4 w-4" /> },
+      { to: "/admin/estadisticas", label: "Estadísticas", icon: <BarChart3 className="h-4 w-4" />, adminOnly: true },
     ],
   },
   {
