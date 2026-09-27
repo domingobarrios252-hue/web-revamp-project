@@ -1,8 +1,9 @@
 # Roadmap
 - [x] Evento tv_play en Rollerzone TV (solo con consentimiento Analíticas)
 - [x] Secretos GA4 guardados; clave válida
-- [ ] Activar Google Analytics Data API en el proyecto de Google Cloud (bloqueado: usuario)
-- [ ] Verificar lectura de datos reales + llegada de tv_play a GA4
-- [ ] Panel Admin → Estadísticas (tras tener credenciales)
+- [x] GA4 conectado y leyendo datos reales; tv_play llega a GA4
+- [x] Panel Admin → Estadísticas
+- [ ] Revisión en pantalla del panel de Estadísticas (bloqueado: MFA)
+- [ ] Registrar dimensión personalizada stream_title en GA4 (usuario)
 - [ ] Revisión visual del editor de noticias (bloqueado: MFA)
 - [ ] Lista de noticias antiguas candidatas a General (tras revisión visual)

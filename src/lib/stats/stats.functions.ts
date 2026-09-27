@@ -41,6 +41,12 @@ const HUB_BY_SEG: Record<string, string> = {
 };
 const HUB_BY_CODE: Record<string, string> = { general: "General", es: "España", co: "Colombia", pt: "Portugal", mia: "Miami" };
 
+const regionNames = new Intl.DisplayNames(["es"], { type: "region" });
+function countryName(code: string) {
+  if (!code || code === "(not set)") return "Desconocido";
+  try { return regionNames.of(code) ?? code; } catch { return code; }
+}
+
 function fmt(d: Date) {
   return d.toISOString().slice(0, 10);
 }
@@ -130,7 +136,7 @@ export const getStats = createServerFn({ method: "POST" })
         totals(data.prevStart, data.prevEnd),
         runReport({ dateRanges: range, dimensions: [{ name: dimTime }], metrics: TOT.slice(0, 3), orderBys: [{ dimension: { dimensionName: dimTime } }] }),
         runReport({ dateRanges: range, dimensions: [{ name: "pagePath" }], metrics: [{ name: "screenPageViews" }, { name: "totalUsers" }, { name: "userEngagementDuration" }], limit: 10000 }),
-        runReport({ dateRanges: range, dimensions: [{ name: "country" }], metrics: [{ name: "totalUsers" }, { name: "sessions" }], limit: 30, orderBys: [{ metric: { metricName: "totalUsers" }, desc: true }] }),
+        runReport({ dateRanges: range, dimensions: [{ name: "countryId" }], metrics: [{ name: "totalUsers" }, { name: "sessions" }], limit: 30, orderBys: [{ metric: { metricName: "totalUsers" }, desc: true }] }),
         runReport({ dateRanges: range, dimensions: [{ name: "sessionSource" }, { name: "sessionMedium" }], metrics: [{ name: "sessions" }], limit: 500 }),
         runReport({ dateRanges: range, dimensions: [{ name: "deviceCategory" }], metrics: [{ name: "totalUsers" }] }),
         runReport({ dateRanges: range, dimensions: [{ name: "browser" }], metrics: [{ name: "totalUsers" }], limit: 6, orderBys: [{ metric: { metricName: "totalUsers" }, desc: true }] }),
@@ -213,7 +219,7 @@ export const getStats = createServerFn({ method: "POST" })
         totals: cur, prevTotals: prev,
         series: series.map((r) => ({ key: r.d[0], users: r.m[0], sessions: r.m[1], views: r.m[2] })),
         sections: [...sec.entries()].map(([name, views]) => ({ name, views })).sort((a, b) => b.views - a.views),
-        countries: countries.map((r) => ({ name: r.d[0], users: r.m[0], sessions: r.m[1] })),
+        countries: countries.map((r) => ({ name: countryName(r.d[0]), users: r.m[0], sessions: r.m[1] })),
         sources: [...bucket.entries()].map(([name, sessions]) => ({ name, sessions })).sort((a, b) => b.sessions - a.sessions),
         devices: devices.map((r) => ({ name: DEV[r.d[0]] ?? r.d[0], users: r.m[0] })),
         browsers: browsers.map((r) => ({ name: r.d[0], users: r.m[0] })),
