@@ -93,11 +93,6 @@ export function SelectionMembers({ members }: { members: PieceMember[] }) {
   );
 }
 
-const MEDAL_DOT: Record<string, string> = {
-  oro: "bg-gold",
-  plata: "bg-foreground/70",
-  bronce: "bg-[hsl(28_60%_45%)]",
-};
 
 function MemberCard({ m }: { m: PieceMember }) {
   const name = `${m.first_name} ${m.last_name}`.trim();
