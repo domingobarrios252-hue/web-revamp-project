@@ -22,6 +22,7 @@ import { ContentBlocksEditor } from "@/components/admin/ContentBlocksEditor";
 import { parseBlocks, cleanBlocks, type NewsBlock } from "@/lib/newsBlocks";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
+import { SpecialPieceMembersEditor } from "@/components/admin/SpecialPieceMembersEditor";
 import type { ImageCrops } from "@/lib/imageCrops";
 import {
   DndContext,
@@ -809,8 +810,11 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
     const slug = form.slug.trim();
     const title = form.title.trim();
     if (!slug || !title) return toast.error("Slug y título son obligatorios");
+    // feature_data se guarda desde su propio editor: no sobrescribirlo aquí.
+    const { feature_data: _fd, ...formRest } = form as typeof form & { feature_data?: unknown };
+    void _fd;
     const payload = {
-      ...form,
+      ...formRest,
       special_slug: special.slug,
       slug,
       title,
@@ -1087,6 +1091,16 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
                 allowedTypes={["text", "heading", "image", "imageText", "gallery", "quote", "video", "button", "list", "divider"]}
               />
             </Field>
+
+            {editing ? (
+              <Field label="Selección · Resumen, patinadores y cierre (opcional)">
+                <SpecialPieceMembersEditor pieceId={editing.id} nameHint={form.slug || form.title} />
+              </Field>
+            ) : (
+              <p className="text-[11px] text-muted-foreground">
+                Guarda la pieza para poder añadir patinadores, resumen y cierre.
+              </p>
+            )}
 
             <Field label="Texto completo (Markdown)">
               <textarea

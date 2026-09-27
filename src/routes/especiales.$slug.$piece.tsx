@@ -8,10 +8,14 @@ import { PieceShareBar } from "@/components/specials/PieceShareBar";
 import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
 import { parseBlocks } from "@/lib/newsBlocks";
 import specialFallback from "@/assets/special-fallback.svg";
+import { parseFeatureData, type MemberResult, type PieceMember } from "@/lib/specials/pieceMembers";
+import { SelectionSummary, SelectionMembers, SelectionClosing } from "@/components/specials/SelectionFeature";
 
 const SITE = "https://rollerzone.es";
 
 type Piece = {
+  id?: string;
+  feature_data?: unknown;
   slug: string;
   number: string | null;
   kicker: string | null;
@@ -68,10 +72,35 @@ export const Route = createFileRoute("/especiales/$slug/$piece")({
       .order("sort_order", { ascending: true })
       .limit(3);
 
+    // Módulo opcional de selección: si falla o está vacío, la página sigue igual.
+    let members: PieceMember[] = [];
+    try {
+      const { data: m } = await sb
+        .from("special_piece_members")
+        .select("*")
+        .eq("piece_id", piece.id)
+        .eq("published", true)
+        .order("sort_order", { ascending: true });
+      members = (m ?? []) as PieceMember[];
+      if (members.length) {
+        const { data: r } = await sb
+          .from("special_piece_member_results")
+          .select("*")
+          .in("member_id", members.map((x) => x.id))
+          .order("sort_order", { ascending: true });
+        const rs = (r ?? []) as MemberResult[];
+        members = members.map((x) => ({ ...x, results: rs.filter((y) => y.member_id === x.id) }));
+      }
+    } catch {
+      members = [];
+    }
+
     return {
       special: special as SpecialLite,
       piece: piece as Piece,
       siblings: (siblings ?? []) as Piece[],
+      members,
+      feature: parseFeatureData(piece.feature_data),
       url: `${SITE}/especiales/${params.slug}/${params.piece}`,
     };
   },
@@ -134,7 +163,7 @@ export const Route = createFileRoute("/especiales/$slug/$piece")({
 
 function PiecePage() {
   const { slug } = Route.useParams();
-  const { special, piece, siblings, url } = Route.useLoaderData();
+  const { special, piece, siblings, url, members, feature } = Route.useLoaderData();
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   const hero = piece.image_url?.trim() || piece.thumbnail_url?.trim() || (specialFallback as string);
@@ -193,6 +222,8 @@ function PiecePage() {
           </div>
         </div>
       </figure>
+
+      <SelectionSummary data={feature} />
 
       {/* Contenido */}
       <article className="bg-background py-10 md:py-16">
@@ -266,6 +297,9 @@ function PiecePage() {
           </div>
         )}
       </article>
+
+      <SelectionMembers members={members} />
+      <SelectionClosing data={feature} />
 
       {/* Volver al especial */}
       <div className="bg-background pb-10">

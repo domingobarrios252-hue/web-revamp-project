@@ -3573,6 +3573,131 @@ export type Database = {
           },
         ]
       }
+      special_piece_member_results: {
+        Row: {
+          competition: string
+          created_at: string
+          event_name: string | null
+          id: string
+          medal: string | null
+          member_id: string
+          result: string | null
+          result_date: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          competition?: string
+          created_at?: string
+          event_name?: string | null
+          id?: string
+          medal?: string | null
+          member_id: string
+          result?: string | null
+          result_date?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          competition?: string
+          created_at?: string
+          event_name?: string | null
+          id?: string
+          medal?: string | null
+          member_id?: string
+          result?: string | null
+          result_date?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "special_piece_member_results_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "special_piece_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      special_piece_members: {
+        Row: {
+          alt_image_url: string | null
+          bio: string | null
+          button_label: string | null
+          category: string | null
+          club: string | null
+          country_code: string | null
+          created_at: string
+          first_name: string
+          id: string
+          image_url: string | null
+          last_name: string
+          link_url: string | null
+          piece_id: string
+          published: boolean
+          skater_id: string | null
+          sort_order: number
+          specialty: string | null
+          updated_at: string
+        }
+        Insert: {
+          alt_image_url?: string | null
+          bio?: string | null
+          button_label?: string | null
+          category?: string | null
+          club?: string | null
+          country_code?: string | null
+          created_at?: string
+          first_name?: string
+          id?: string
+          image_url?: string | null
+          last_name?: string
+          link_url?: string | null
+          piece_id: string
+          published?: boolean
+          skater_id?: string | null
+          sort_order?: number
+          specialty?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alt_image_url?: string | null
+          bio?: string | null
+          button_label?: string | null
+          category?: string | null
+          club?: string | null
+          country_code?: string | null
+          created_at?: string
+          first_name?: string
+          id?: string
+          image_url?: string | null
+          last_name?: string
+          link_url?: string | null
+          piece_id?: string
+          published?: boolean
+          skater_id?: string | null
+          sort_order?: number
+          specialty?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "special_piece_members_piece_id_fkey"
+            columns: ["piece_id"]
+            isOneToOne: false
+            referencedRelation: "special_pieces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "special_piece_members_skater_id_fkey"
+            columns: ["skater_id"]
+            isOneToOne: false
+            referencedRelation: "skaters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       special_pieces: {
         Row: {
           button_label: string | null
@@ -3584,6 +3709,7 @@ export type Database = {
           description: string
           excerpt: string
           external_url: string
+          feature_data: Json | null
           featured: boolean
           gallery: Json
           id: string
@@ -3614,6 +3740,7 @@ export type Database = {
           description?: string
           excerpt?: string
           external_url?: string
+          feature_data?: Json | null
           featured?: boolean
           gallery?: Json
           id?: string
@@ -3644,6 +3771,7 @@ export type Database = {
           description?: string
           excerpt?: string
           external_url?: string
+          feature_data?: Json | null
           featured?: boolean
           gallery?: Json
           id?: string
