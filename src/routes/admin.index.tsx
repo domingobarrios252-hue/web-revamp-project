@@ -123,7 +123,7 @@ function AdminNewsList() {
       supabase
         .from("news")
         .select(
-          "id, title, slug, excerpt, content, content_blocks, author, writer_id, category_id, legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code, live_active, live_event_id, live_start_at, live_end_at"
+          "id, title, slug, excerpt, content, content_blocks, author, writer_id, category_id, legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, featured, hero_order, published, status, section_id, review_feedback, views_count, published_at, country_code, live_active, live_event_id, live_start_at, live_end_at, zone_region_id, zone_city_id"
         )
         .order("published_at", { ascending: false }),
       supabase
@@ -225,7 +225,7 @@ function AdminNewsList() {
           <option value="es">España</option>
           <option value="co">Colombia</option>
           <option value="pt">Portugal</option>
-          <option value="mia">Miami</option>
+          <option value="mia">USA</option>
         </select>
         <button
           onClick={() => setEditing("new")}

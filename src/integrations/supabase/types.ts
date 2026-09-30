@@ -1516,6 +1516,8 @@ export type Database = {
           video_embed_url: string | null
           video_poster_url: string | null
           video_url: string | null
+          zone_city_id: string | null
+          zone_region_id: string | null
         }
         Insert: {
           approved_at?: string | null
@@ -1552,6 +1554,8 @@ export type Database = {
           video_embed_url?: string | null
           video_poster_url?: string | null
           video_url?: string | null
+          zone_city_id?: string | null
+          zone_region_id?: string | null
         }
         Update: {
           approved_at?: string | null
@@ -1588,8 +1592,25 @@ export type Database = {
           video_embed_url?: string | null
           video_poster_url?: string | null
           video_url?: string | null
+          zone_city_id?: string | null
+          zone_region_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "interviews_zone_city_id_fkey"
+            columns: ["zone_city_id"]
+            isOneToOne: false
+            referencedRelation: "territory_zones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interviews_zone_region_id_fkey"
+            columns: ["zone_region_id"]
+            isOneToOne: false
+            referencedRelation: "territory_zones"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       league_rounds: {
         Row: {
@@ -2314,6 +2335,8 @@ export type Database = {
           video_url: string | null
           views_count: number
           writer_id: string | null
+          zone_city_id: string | null
+          zone_region_id: string | null
         }
         Insert: {
           approved_at?: string | null
@@ -2355,6 +2378,8 @@ export type Database = {
           video_url?: string | null
           views_count?: number
           writer_id?: string | null
+          zone_city_id?: string | null
+          zone_region_id?: string | null
         }
         Update: {
           approved_at?: string | null
@@ -2396,6 +2421,8 @@ export type Database = {
           video_url?: string | null
           views_count?: number
           writer_id?: string | null
+          zone_city_id?: string | null
+          zone_region_id?: string | null
         }
         Relationships: [
           {
@@ -2424,6 +2451,20 @@ export type Database = {
             columns: ["writer_id"]
             isOneToOne: false
             referencedRelation: "writers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_zone_city_id_fkey"
+            columns: ["zone_city_id"]
+            isOneToOne: false
+            referencedRelation: "territory_zones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_zone_region_id_fkey"
+            columns: ["zone_region_id"]
+            isOneToOne: false
+            referencedRelation: "territory_zones"
             referencedColumns: ["id"]
           },
         ]
@@ -3886,6 +3927,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      territory_zones: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          parent_id: string | null
+          slug: string
+          sort_order: number
+          territory_code: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          parent_id?: string | null
+          slug: string
+          sort_order?: number
+          territory_code: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          parent_id?: string | null
+          slug?: string
+          sort_order?: number
+          territory_code?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "territory_zones_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "territory_zones"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ticker_items: {
         Row: {

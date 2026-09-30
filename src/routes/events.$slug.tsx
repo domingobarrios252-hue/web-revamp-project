@@ -19,7 +19,7 @@ export const Route = createFileRoute("/events/$slug")({
     return (
       <div className="mx-auto max-w-2xl px-6 py-16 text-center">
         <h1 className="font-display text-2xl tracking-widest">Error cargando resultados</h1>
-        <p className="mt-3 text-muted-foreground">{error.message}</p>
+        <p className="mt-3 text-muted-foreground">{(error as Error).message}</p>
         <button
           onClick={() => {
             router.invalidate();

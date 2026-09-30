@@ -1,47 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { TerritoryInterviewCard, TerritoryMasthead } from "@/components/territory/TerritoryCards";
-import { MIAMI } from "@/lib/territory/territories";
-import { useTerritoryInterviews } from "@/lib/territory/useTerritory";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-const TITLE = "Entrevistas Miami | RollerZone";
-const DESC = "Entrevistas a patinadores, entrenadores y protagonistas del patinaje en Miami.";
-
+/** Dirección antigua del hub Miami: redirige de forma permanente al hub USA. */
 export const Route = createFileRoute("/miami/entrevistas/")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://rollerzone.es/miami/entrevistas" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
-      { name: "twitter:description", content: DESC },
-    ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/miami/entrevistas" }],
-  }),
-  component: MiamiInterviewsIndex,
+  beforeLoad: () => {
+    throw redirect({ to: "/usa/entrevistas", statusCode: 301 });
+  },
 });
-
-function MiamiInterviewsIndex() {
-  const { items, loading } = useTerritoryInterviews(MIAMI.code, 60);
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <TerritoryMasthead territory={MIAMI} subtitle="Entrevistas · Edición Miami" />
-      {loading ? (
-        <p className="mt-8 text-muted-foreground">Cargando…</p>
-      ) : items.length === 0 ? (
-        <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
-          Aún no hay entrevistas publicadas en Miami.
-        </div>
-      ) : (
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((it) => (
-            <TerritoryInterviewCard key={it.id} item={it} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}

@@ -29,9 +29,9 @@ export type RealtimeResult = { ok: boolean; error: string | null; active: number
 
 const HUB_BY_SEG: Record<string, string> = {
   espana: "España", es: "España", colombia: "Colombia", co: "Colombia",
-  portugal: "Portugal", pt: "Portugal", miami: "Miami", mia: "Miami",
+  portugal: "Portugal", pt: "Portugal", miami: "USA", usa: "USA", mia: "USA",
 };
-const HUB_BY_CODE: Record<string, string> = { general: "General", es: "España", co: "Colombia", pt: "Portugal", mia: "Miami" };
+const HUB_BY_CODE: Record<string, string> = { general: "General", es: "España", co: "Colombia", pt: "Portugal", mia: "USA" };
 const DEV: Record<string, string> = { mobile: "Móvil", desktop: "Ordenador", tablet: "Tablet" };
 
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : 0);

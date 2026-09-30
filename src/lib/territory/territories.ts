@@ -13,9 +13,9 @@ export type Territory = {
   name: string;
   /** Bandera / emoji identificativo. */
   flag: string;
-  basePath: "/miami" | "/portugal";
-  newsPath: "/miami/noticias" | "/portugal/noticias";
-  interviewsPath: "/miami/entrevistas" | "/portugal/entrevistas";
+  basePath: "/usa" | "/portugal";
+  newsPath: "/usa/noticias" | "/portugal/noticias";
+  interviewsPath: "/usa/entrevistas" | "/portugal/entrevistas";
   dashboardPath: "/dashboard/miami" | "/dashboard/portugal";
   adminPath: "/admin/miami" | "/admin/portugal";
   subtitle: string;
@@ -23,14 +23,14 @@ export type Territory = {
 
 export const MIAMI: Territory = {
   code: "mia",
-  name: "Miami",
+  name: "USA",
   flag: "🇺🇸",
-  basePath: "/miami",
-  newsPath: "/miami/noticias",
-  interviewsPath: "/miami/entrevistas",
+  basePath: "/usa",
+  newsPath: "/usa/noticias",
+  interviewsPath: "/usa/entrevistas",
   dashboardPath: "/dashboard/miami",
   adminPath: "/admin/miami",
-  subtitle: "Noticias y entrevistas del patinaje de velocidad en Miami",
+  subtitle: "Noticias y entrevistas del patinaje de velocidad en Estados Unidos",
 };
 
 export const PORTUGAL: Territory = {

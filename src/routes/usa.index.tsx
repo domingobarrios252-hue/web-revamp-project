@@ -1,0 +1,113 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Newspaper, Mic } from "lucide-react";
+import { SectionHeading } from "@/components/home/SectionHeading";
+import {
+  TerritoryInterviewCard,
+  TerritoryLead,
+  TerritoryMasthead,
+  TerritoryNewsCard,
+} from "@/components/territory/TerritoryCards";
+import { MIAMI } from "@/lib/territory/territories";
+import { useTerritoryInterviews, useTerritoryNews, useTerritoryZones } from "@/lib/territory/useTerritory";
+import { UsaZoneNav } from "@/components/territory/UsaZoneNav";
+
+const TITLE = "RollerZone USA | Noticias y entrevistas del patinaje en Estados Unidos";
+const DESC =
+  "Edición de RollerZone en Estados Unidos: noticias y entrevistas del patinaje de velocidad en Florida, Miami y todo el país.";
+
+export const Route = createFileRoute("/usa/")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESC },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://rollerzone.es/usa" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
+    ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/usa" }],
+  }),
+  component: UsaHome,
+});
+
+function UsaHome() {
+  const { items: news, loading } = useTerritoryNews(MIAMI.code, 13);
+  const { items: interviews } = useTerritoryInterviews(MIAMI.code, 6);
+  const { zones } = useTerritoryZones(MIAMI.code);
+  const [lead, ...rest] = news;
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+      <TerritoryMasthead territory={MIAMI} />
+      <UsaZoneNav zones={zones} />
+
+      {loading ? (
+        <p className="mt-10 text-muted-foreground">Cargando…</p>
+      ) : (
+        <>
+          {lead ? (
+            <section className="mt-8">
+              <TerritoryLead item={lead} territory={MIAMI} />
+            </section>
+          ) : (
+            <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
+              Aún no hay contenido publicado en RollerZone USA. Muy pronto.
+            </div>
+          )}
+
+          {rest.length > 0 && (
+            <section className="mt-14">
+              <SectionHeading
+                kicker="USA"
+                icon={<Newspaper className="h-3.5 w-3.5" />}
+                title="ÚLTIMAS"
+                accent="NOTICIAS"
+                action={{ to: "/usa/noticias", label: "Ver todas las noticias" }}
+              />
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {rest.map((n) => (
+                  <TerritoryNewsCard key={n.id} item={n} territory={MIAMI} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {interviews.length > 0 && (
+            <section className="mt-14">
+              <SectionHeading
+                kicker="USA"
+                icon={<Mic className="h-3.5 w-3.5" />}
+                title="ENTRE"
+                accent="VISTAS"
+                action={{ to: "/usa/entrevistas", label: "Ver todas las entrevistas" }}
+              />
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {interviews.map((it) => (
+                  <TerritoryInterviewCard key={it.id} item={it} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <div className="mt-12 flex flex-wrap gap-3">
+            <Link
+              to="/usa/noticias"
+              className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+            >
+              Noticias USA
+            </Link>
+            <Link
+              to="/usa/entrevistas"
+              className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
+            >
+              Entrevistas USA
+            </Link>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

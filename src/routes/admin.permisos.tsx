@@ -269,7 +269,7 @@ function AdminPermissionsPage() {
                     className="min-h-11 border border-border bg-background px-3 text-sm"
                   >
                     <option value="">Sin territorio (editor general)</option>
-                    <option value="mia">Miami</option>
+                    <option value="mia">USA</option>
                     <option value="pt">Portugal</option>
                     <option value="es">España</option>
                     <option value="co">Colombia</option>

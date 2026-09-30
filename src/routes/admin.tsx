@@ -92,7 +92,7 @@ const GROUPS: AdminGroup[] = [
     links: [
       { to: "/admin/espana", label: "España", icon: <Flag className="h-4 w-4" /> },
       { to: "/admin/colombia", label: "Colombia", icon: <Globe2 className="h-4 w-4" /> },
-      { to: "/admin/miami", label: "Miami", icon: <Globe2 className="h-4 w-4" /> },
+      { to: "/admin/miami", label: "USA", icon: <Globe2 className="h-4 w-4" /> },
       { to: "/admin/portugal", label: "Portugal", icon: <Globe2 className="h-4 w-4" /> },
     ],
   },
