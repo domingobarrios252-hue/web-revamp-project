@@ -225,7 +225,7 @@ function AdminNewsList() {
           <option value="es">España</option>
           <option value="co">Colombia</option>
           <option value="pt">Portugal</option>
-          <option value="mia">Miami</option>
+          <option value="mia">USA</option>
         </select>
         <button
           onClick={() => setEditing("new")}

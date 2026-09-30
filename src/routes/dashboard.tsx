@@ -84,7 +84,7 @@ function DashboardLayout() {
             className="font-condensed flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:bg-background hover:text-gold"
             activeProps={{ className: "bg-background text-gold" }}
           >
-            <Globe2 className="h-4 w-4" /> Miami
+            <Globe2 className="h-4 w-4" /> USA
           </Link>
           <Link
             to="/dashboard/portugal"

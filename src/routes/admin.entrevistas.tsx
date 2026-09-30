@@ -496,7 +496,7 @@ function InterviewForm({
             {[
               { code: "es", label: "🇪🇸 España" },
               { code: "co", label: "🇨🇴 Colombia" },
-              { code: "mia", label: "🇺🇸 Miami" },
+              { code: "mia", label: "🇺🇸 USA" },
               { code: "pt", label: "🇵🇹 Portugal" },
             ].map((h) => (
 

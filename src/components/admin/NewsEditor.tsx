@@ -57,7 +57,7 @@ export const HUBS = [
   { value: "es", label: "España" },
   { value: "co", label: "Colombia" },
   { value: "pt", label: "Portugal" },
-  { value: "mia", label: "Miami" },
+  { value: "mia", label: "USA" },
 ] as const;
 type Hub = (typeof HUBS)[number]["value"];
 
