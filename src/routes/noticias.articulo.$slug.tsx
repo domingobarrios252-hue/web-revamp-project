@@ -60,7 +60,8 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
     const publishedIso = a.published_at ? new Date(a.published_at).toISOString() : undefined;
     const modifiedIso = a.updated_at ? new Date(a.updated_at).toISOString() : publishedIso;
     const FALLBACK_OG = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/96e18c62-051f-45d8-b718-d61cb204c1d5";
-    const rawImage = a.video_poster_url ?? a.image_url ?? null;
+    // The cover photo always wins so replacing it updates the share preview.
+    const rawImage = a.image_url || a.video_poster_url || null;
     const toAbsolute = (u: string | null): string => {
       if (!u) return FALLBACK_OG;
       if (/^https?:\/\//i.test(u)) return u;
@@ -68,7 +69,13 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
       if (u.startsWith("/")) return `https://rollerzone.es${u}`;
       return FALLBACK_OG;
     };
-    const image = toAbsolute(rawImage);
+    const baseImage = toAbsolute(rawImage);
+    // Version by last edit so crawlers never reuse a cached image URL.
+    const version = a.updated_at ? new Date(a.updated_at).getTime() : null;
+    const image =
+      rawImage && version
+        ? `${baseImage}${baseImage.includes("?") ? "&" : "?"}v=${version}`
+        : baseImage;
     const blocksText = blocksPlainText(parseBlocks(a.content_blocks));
     const plain = (blocksText || a.content || "").replace(/\s+/g, " ").trim();
     const wordCount = plain ? plain.split(" ").filter(Boolean).length : undefined;
