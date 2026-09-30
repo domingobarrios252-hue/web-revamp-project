@@ -3,8 +3,8 @@ import { TerritoryMasthead, TerritoryNewsCard } from "@/components/territory/Ter
 import { MIAMI } from "@/lib/territory/territories";
 import { useTerritoryNews } from "@/lib/territory/useTerritory";
 
-const TITLE = "Noticias Miami | RollerZone";
-const DESC = "Todas las noticias del patinaje de velocidad en Miami publicadas por RollerZone.";
+const TITLE = "Noticias USA | RollerZone";
+const DESC = "Todas las noticias del patinaje de velocidad en Estados Unidos publicadas por RollerZone.";
 
 export const Route = createFileRoute("/usa/noticias/")({
   head: () => ({
@@ -21,19 +21,19 @@ export const Route = createFileRoute("/usa/noticias/")({
     ],
     links: [{ rel: "canonical", href: "https://rollerzone.es/usa/noticias" }],
   }),
-  component: MiamiNewsIndex,
+  component: UsaNewsIndex,
 });
 
-function MiamiNewsIndex() {
+function UsaNewsIndex() {
   const { items, loading } = useTerritoryNews(MIAMI.code, 60);
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <TerritoryMasthead territory={MIAMI} subtitle="Noticias · Edición Miami" />
+      <TerritoryMasthead territory={MIAMI} subtitle="Noticias · Edición USA" />
       {loading ? (
         <p className="mt-8 text-muted-foreground">Cargando…</p>
       ) : items.length === 0 ? (
         <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
-          Aún no hay noticias publicadas en Miami.
+          Aún no hay noticias publicadas en Estados Unidos.
         </div>
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

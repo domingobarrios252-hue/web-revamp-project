@@ -3,8 +3,8 @@ import { TerritoryInterviewCard, TerritoryMasthead } from "@/components/territor
 import { MIAMI } from "@/lib/territory/territories";
 import { useTerritoryInterviews } from "@/lib/territory/useTerritory";
 
-const TITLE = "Entrevistas Miami | RollerZone";
-const DESC = "Entrevistas a patinadores, entrenadores y protagonistas del patinaje en Miami.";
+const TITLE = "Entrevistas USA | RollerZone";
+const DESC = "Entrevistas a patinadores, entrenadores y protagonistas del patinaje en Estados Unidos.";
 
 export const Route = createFileRoute("/usa/entrevistas/")({
   head: () => ({
@@ -21,19 +21,19 @@ export const Route = createFileRoute("/usa/entrevistas/")({
     ],
     links: [{ rel: "canonical", href: "https://rollerzone.es/usa/entrevistas" }],
   }),
-  component: MiamiInterviewsIndex,
+  component: UsaInterviewsIndex,
 });
 
-function MiamiInterviewsIndex() {
+function UsaInterviewsIndex() {
   const { items, loading } = useTerritoryInterviews(MIAMI.code, 60);
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <TerritoryMasthead territory={MIAMI} subtitle="Entrevistas · Edición Miami" />
+      <TerritoryMasthead territory={MIAMI} subtitle="Entrevistas · Edición USA" />
       {loading ? (
         <p className="mt-8 text-muted-foreground">Cargando…</p>
       ) : items.length === 0 ? (
         <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
-          Aún no hay entrevistas publicadas en Miami.
+          Aún no hay entrevistas publicadas en Estados Unidos.
         </div>
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

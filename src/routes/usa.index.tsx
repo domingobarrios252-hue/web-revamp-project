@@ -10,9 +10,9 @@ import {
 import { MIAMI } from "@/lib/territory/territories";
 import { useTerritoryInterviews, useTerritoryNews } from "@/lib/territory/useTerritory";
 
-const TITLE = "RollerZone Miami | Noticias y entrevistas del patinaje en Miami";
+const TITLE = "RollerZone USA | Noticias y entrevistas del patinaje en Estados Unidos";
 const DESC =
-  "Edición territorial de RollerZone en Miami: noticias y entrevistas del patinaje de velocidad en el sur de Florida.";
+  "Edición territorial de RollerZone en Estados Unidos: noticias y entrevistas del patinaje de velocidad en Estados Unidos: Florida, Miami y más.";
 
 export const Route = createFileRoute("/usa/")({
   head: () => ({
@@ -29,10 +29,10 @@ export const Route = createFileRoute("/usa/")({
     ],
     links: [{ rel: "canonical", href: "https://rollerzone.es/usa" }],
   }),
-  component: MiamiHome,
+  component: UsaHome,
 });
 
-function MiamiHome() {
+function UsaHome() {
   const { items: news, loading } = useTerritoryNews(MIAMI.code, 13);
   const { items: interviews } = useTerritoryInterviews(MIAMI.code, 6);
   const [lead, ...rest] = news;
@@ -51,14 +51,14 @@ function MiamiHome() {
             </section>
           ) : (
             <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
-              Aún no hay contenido publicado en RollerZone Miami. Muy pronto.
+              Aún no hay contenido publicado en RollerZone USA. Muy pronto.
             </div>
           )}
 
           {rest.length > 0 && (
             <section className="mt-14">
               <SectionHeading
-                kicker="Miami"
+                kicker="USA"
                 icon={<Newspaper className="h-3.5 w-3.5" />}
                 title="ÚLTIMAS"
                 accent="NOTICIAS"
@@ -75,7 +75,7 @@ function MiamiHome() {
           {interviews.length > 0 && (
             <section className="mt-14">
               <SectionHeading
-                kicker="Miami"
+                kicker="USA"
                 icon={<Mic className="h-3.5 w-3.5" />}
                 title="ENTRE"
                 accent="VISTAS"
@@ -94,13 +94,13 @@ function MiamiHome() {
               to="/usa/noticias"
               className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
-              Noticias Miami
+              Noticias USA
             </Link>
             <Link
               to="/usa/entrevistas"
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
-              Entrevistas Miami
+              Entrevistas USA
             </Link>
           </div>
         </>
