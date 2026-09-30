@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { TerritoryMasthead, TerritoryNewsCard } from "@/components/territory/TerritoryCards";
+import { TerritoryInterviewCard, TerritoryMasthead } from "@/components/territory/TerritoryCards";
 import { MIAMI } from "@/lib/territory/territories";
-import { useTerritoryNews } from "@/lib/territory/useTerritory";
+import { useTerritoryInterviews } from "@/lib/territory/useTerritory";
 
-const TITLE = "Noticias Miami | RollerZone";
-const DESC = "Todas las noticias del patinaje de velocidad en Miami publicadas por RollerZone.";
+const TITLE = "Entrevistas Miami | RollerZone";
+const DESC = "Entrevistas a patinadores, entrenadores y protagonistas del patinaje en Miami.";
 
-export const Route = createFileRoute("/miami/noticias/")({
+export const Route = createFileRoute("/usa/entrevistas/")({
   head: () => ({
     meta: [
       { title: TITLE },
@@ -14,31 +14,31 @@ export const Route = createFileRoute("/miami/noticias/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://rollerzone.es/miami/noticias" },
+      { property: "og:url", content: "https://rollerzone.es/usa/entrevistas" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/miami/noticias" }],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/usa/entrevistas" }],
   }),
-  component: MiamiNewsIndex,
+  component: MiamiInterviewsIndex,
 });
 
-function MiamiNewsIndex() {
-  const { items, loading } = useTerritoryNews(MIAMI.code, 60);
+function MiamiInterviewsIndex() {
+  const { items, loading } = useTerritoryInterviews(MIAMI.code, 60);
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <TerritoryMasthead territory={MIAMI} subtitle="Noticias · Edición Miami" />
+      <TerritoryMasthead territory={MIAMI} subtitle="Entrevistas · Edición Miami" />
       {loading ? (
         <p className="mt-8 text-muted-foreground">Cargando…</p>
       ) : items.length === 0 ? (
         <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
-          Aún no hay noticias publicadas en Miami.
+          Aún no hay entrevistas publicadas en Miami.
         </div>
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((n) => (
-            <TerritoryNewsCard key={n.id} item={n} territory={MIAMI} />
+          {items.map((it) => (
+            <TerritoryInterviewCard key={it.id} item={it} />
           ))}
         </div>
       )}

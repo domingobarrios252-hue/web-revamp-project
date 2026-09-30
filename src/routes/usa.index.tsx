@@ -14,7 +14,7 @@ const TITLE = "RollerZone Miami | Noticias y entrevistas del patinaje en Miami";
 const DESC =
   "Edición territorial de RollerZone en Miami: noticias y entrevistas del patinaje de velocidad en el sur de Florida.";
 
-export const Route = createFileRoute("/miami/")({
+export const Route = createFileRoute("/usa/")({
   head: () => ({
     meta: [
       { title: TITLE },
@@ -22,12 +22,12 @@ export const Route = createFileRoute("/miami/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://rollerzone.es/miami" },
+      { property: "og:url", content: "https://rollerzone.es/usa" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/miami" }],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/usa" }],
   }),
   component: MiamiHome,
 });
@@ -62,7 +62,7 @@ function MiamiHome() {
                 icon={<Newspaper className="h-3.5 w-3.5" />}
                 title="ÚLTIMAS"
                 accent="NOTICIAS"
-                action={{ to: "/miami/noticias", label: "Ver todas las noticias" }}
+                action={{ to: "/usa/noticias", label: "Ver todas las noticias" }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {rest.map((n) => (
@@ -79,7 +79,7 @@ function MiamiHome() {
                 icon={<Mic className="h-3.5 w-3.5" />}
                 title="ENTRE"
                 accent="VISTAS"
-                action={{ to: "/miami/entrevistas", label: "Ver todas las entrevistas" }}
+                action={{ to: "/usa/entrevistas", label: "Ver todas las entrevistas" }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {interviews.map((it) => (
@@ -91,13 +91,13 @@ function MiamiHome() {
 
           <div className="mt-12 flex flex-wrap gap-3">
             <Link
-              to="/miami/noticias"
+              to="/usa/noticias"
               className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
               Noticias Miami
             </Link>
             <Link
-              to="/miami/entrevistas"
+              to="/usa/entrevistas"
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
               Entrevistas Miami
