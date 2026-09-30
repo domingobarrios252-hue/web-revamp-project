@@ -1,3 +1,4 @@
+import { useTerritoryZones } from "@/lib/territory/useTerritory";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Eye, Save, Send, X, Check, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -135,6 +136,10 @@ export function NewsEditor({
   const [relFeds, setRelFeds] = useState<string[]>([]);
   const [visHome, setVisHome] = useState(true);
   const [hub, setHub] = useState<Hub>("general");
+  const itemZones = item as unknown as { zone_region_id?: string | null; zone_city_id?: string | null } | null | undefined;
+  const [zoneRegion, setZoneRegion] = useState<string>(itemZones?.zone_region_id ?? "");
+  const [zoneCity, setZoneCity] = useState<string>(itemZones?.zone_city_id ?? "");
+  const { zones } = useTerritoryZones("mia");
   const [liveActive, setLiveActive] = useState(item?.live_active ?? false);
   const [liveEventId, setLiveEventId] = useState(item?.live_event_id ?? "");
   const [liveStartAt, setLiveStartAt] = useState(toLocalOpt(item?.live_start_at));
@@ -254,6 +259,8 @@ export function NewsEditor({
           status: targetStatus,
           published_at: new Date(publishedAt).toISOString(),
           country_code: countryCode,
+          zone_region_id: hub === "mia" && zoneRegion ? zoneRegion : null,
+          zone_city_id: hub === "mia" && zoneRegion && zoneCity ? zoneCity : null,
           live_active: liveActive,
           live_event_id: liveActive && liveEventId ? liveEventId : null,
           live_start_at: liveActive && liveStartAt ? new Date(liveStartAt).toISOString() : null,
@@ -501,6 +508,45 @@ export function NewsEditor({
                   : "Sin destino: activa la portada general o elige un hub."
                 : `Se publicará en ${HUBS.find((h) => h.value === hub)?.label}${visHome ? " y en la portada general" : ""}.`}
             </p>
+            {hub === "mia" && (
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+                <label className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Estado / región
+                  <select
+                    className="input mt-1 w-full"
+                    value={zoneRegion}
+                    onChange={(e) => {
+                      setZoneRegion(e.target.value);
+                      setZoneCity("");
+                    }}
+                  >
+                    <option value="">Solo USA (sin estado)</option>
+                    {zones.filter((z) => !z.parent_id).map((z) => (
+                      <option key={z.id} value={z.id}>{z.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Ciudad
+                  <select
+                    className="input mt-1 w-full"
+                    value={zoneCity}
+                    onChange={(e) => {
+                      const c = zones.find((z) => z.id === e.target.value);
+                      setZoneCity(e.target.value);
+                      if (c?.parent_id) setZoneRegion(c.parent_id);
+                    }}
+                  >
+                    <option value="">Sin ciudad</option>
+                    {zones
+                      .filter((z) => z.parent_id && (!zoneRegion || z.parent_id === zoneRegion))
+                      .map((z) => (
+                        <option key={z.id} value={z.id}>{z.name}</option>
+                      ))}
+                  </select>
+                </label>
+              </div>
+            )}
           </Panel>
 
           <Panel title="Autor y categoría">
