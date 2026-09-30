@@ -8,3 +8,4 @@
 - The statistics route owns its QueryClientProvider and a stable per-mount QueryClient. Why: the app has no global React Query provider, and stats queries must not crash route mounting.
 - Special pieces reuse the news block editor (content_blocks jsonb); when empty the public page falls back to content_md. Why: one block system, full backward compatibility.
 - Selection pieces use special_piece_members + special_piece_member_results (per piece, CASCADE) and special_pieces.feature_data (summary/closing), independent from skaters (optional skater_id). Why: special cards/images must not alter public skater profiles.
+- Hub USA keeps internal code `mia`; sub-zones live in territory_zones (parent_id = state→city) and news/interviews.zone_region_id/zone_city_id; /miami/* 301-redirects to /usa/*. Why: no permission/RLS changes, zones addable without code.
