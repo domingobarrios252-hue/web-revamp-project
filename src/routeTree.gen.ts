@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsaRouteImport } from './routes/usa'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
@@ -20,7 +21,6 @@ import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
 import { Route as PortugalRouteImport } from './routes/portugal'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
 import { Route as PaisesRouteImport } from './routes/paises'
-import { Route as MiamiRouteImport } from './routes/miami'
 import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
 import { Route as EstablecerClaveRouteImport } from './routes/establecer-clave'
 import { Route as EquipoRouteImport } from './routes/equipo'
@@ -32,12 +32,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccesoInternoRouteImport } from './routes/acceso-interno'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsaIndexRouteImport } from './routes/usa.index'
 import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
 import { Route as RevistaIndexRouteImport } from './routes/revista.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as PortugalIndexRouteImport } from './routes/portugal.index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
-import { Route as MiamiIndexRouteImport } from './routes/miami.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EspecialesIndexRouteImport } from './routes/especiales.index'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
@@ -130,18 +130,18 @@ import { Route as AdminClasificacionesRouteImport } from './routes/admin.clasifi
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
+import { Route as UsaNoticiasIndexRouteImport } from './routes/usa.noticias.index'
+import { Route as UsaEntrevistasIndexRouteImport } from './routes/usa.entrevistas.index'
 import { Route as PortugalNoticiasIndexRouteImport } from './routes/portugal.noticias.index'
 import { Route as PortugalEntrevistasIndexRouteImport } from './routes/portugal.entrevistas.index'
-import { Route as MiamiNoticiasIndexRouteImport } from './routes/miami.noticias.index'
-import { Route as MiamiEntrevistasIndexRouteImport } from './routes/miami.entrevistas.index'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
+import { Route as UsaNoticiasSlugRouteImport } from './routes/usa.noticias.$slug'
+import { Route as UsaEntrevistasSlugRouteImport } from './routes/usa.entrevistas.$slug'
 import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
 import { Route as PortugalNoticiasSlugRouteImport } from './routes/portugal.noticias.$slug'
 import { Route as PortugalEntrevistasSlugRouteImport } from './routes/portugal.entrevistas.$slug'
 import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
-import { Route as MiamiNoticiasSlugRouteImport } from './routes/miami.noticias.$slug'
-import { Route as MiamiEntrevistasSlugRouteImport } from './routes/miami.entrevistas.$slug'
 import { Route as HubCountryTvRouteImport } from './routes/hub.$country.tv'
 import { Route as HubCountryRfepRouteImport } from './routes/hub.$country.rfep'
 import { Route as HubCountryPatinadoresRouteImport } from './routes/hub.$country.patinadores'
@@ -176,6 +176,11 @@ import { Route as HubCountryCompeticionLigaNacionalNoticiasRouteImport } from '.
 import { Route as HubCountryCompeticionLigaNacionalClasificacionesRouteImport } from './routes/hub.$country.competicion.liga-nacional.clasificaciones'
 import { Route as HubCountryCompeticionLigaNacionalCalendarioRouteImport } from './routes/hub.$country.competicion.liga-nacional.calendario'
 
+const UsaRoute = UsaRouteImport.update({
+  id: '/usa',
+  path: '/usa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TvRoute = TvRouteImport.update({
   id: '/tv',
   path: '/tv',
@@ -229,11 +234,6 @@ const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
 const PaisesRoute = PaisesRouteImport.update({
   id: '/paises',
   path: '/paises',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MiamiRoute = MiamiRouteImport.update({
-  id: '/miami',
-  path: '/miami',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MiBibliotecaRoute = MiBibliotecaRouteImport.update({
@@ -291,6 +291,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsaIndexRoute = UsaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UsaRoute,
+} as any)
 const SalonDeLaFamaIndexRoute = SalonDeLaFamaIndexRouteImport.update({
   id: '/salon-de-la-fama/',
   path: '/salon-de-la-fama/',
@@ -315,11 +320,6 @@ const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const MiamiIndexRoute = MiamiIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => MiamiRoute,
 } as any)
 const EventosIndexRoute = EventosIndexRouteImport.update({
   id: '/eventos/',
@@ -790,6 +790,16 @@ const CountrySplatRoute = CountrySplatRouteImport.update({
   path: '/$country/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsaNoticiasIndexRoute = UsaNoticiasIndexRouteImport.update({
+  id: '/noticias/',
+  path: '/noticias/',
+  getParentRoute: () => UsaRoute,
+} as any)
+const UsaEntrevistasIndexRoute = UsaEntrevistasIndexRouteImport.update({
+  id: '/entrevistas/',
+  path: '/entrevistas/',
+  getParentRoute: () => UsaRoute,
+} as any)
 const PortugalNoticiasIndexRoute = PortugalNoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
@@ -801,16 +811,6 @@ const PortugalEntrevistasIndexRoute =
     path: '/entrevistas/',
     getParentRoute: () => PortugalRoute,
   } as any)
-const MiamiNoticiasIndexRoute = MiamiNoticiasIndexRouteImport.update({
-  id: '/noticias/',
-  path: '/noticias/',
-  getParentRoute: () => MiamiRoute,
-} as any)
-const MiamiEntrevistasIndexRoute = MiamiEntrevistasIndexRouteImport.update({
-  id: '/entrevistas/',
-  path: '/entrevistas/',
-  getParentRoute: () => MiamiRoute,
-} as any)
 const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -820,6 +820,16 @@ const EspecialesSlugIndexRoute = EspecialesSlugIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => EspecialesSlugRoute,
+} as any)
+const UsaNoticiasSlugRoute = UsaNoticiasSlugRouteImport.update({
+  id: '/noticias/$slug',
+  path: '/noticias/$slug',
+  getParentRoute: () => UsaRoute,
+} as any)
+const UsaEntrevistasSlugRoute = UsaEntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
+  getParentRoute: () => UsaRoute,
 } as any)
 const RevistaLeerIdRoute = RevistaLeerIdRouteImport.update({
   id: '/leer/$id',
@@ -840,16 +850,6 @@ const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
   id: '/noticias/articulo/$slug',
   path: '/noticias/articulo/$slug',
   getParentRoute: () => rootRouteImport,
-} as any)
-const MiamiNoticiasSlugRoute = MiamiNoticiasSlugRouteImport.update({
-  id: '/noticias/$slug',
-  path: '/noticias/$slug',
-  getParentRoute: () => MiamiRoute,
-} as any)
-const MiamiEntrevistasSlugRoute = MiamiEntrevistasSlugRouteImport.update({
-  id: '/entrevistas/$slug',
-  path: '/entrevistas/$slug',
-  getParentRoute: () => MiamiRoute,
 } as any)
 const HubCountryTvRoute = HubCountryTvRouteImport.update({
   id: '/tv',
@@ -1040,7 +1040,6 @@ export interface FileRoutesByFullPath {
   '/equipo': typeof EquipoRoute
   '/establecer-clave': typeof EstablecerClaveRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
-  '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/portugal': typeof PortugalRouteWithChildren
@@ -1052,6 +1051,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tv': typeof TvRoute
+  '/usa': typeof UsaRouteWithChildren
   '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -1144,12 +1144,12 @@ export interface FileRoutesByFullPath {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
-  '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/portugal/': typeof PortugalIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
+  '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
@@ -1165,18 +1165,18 @@ export interface FileRoutesByFullPath {
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/hub/$country/rfep': typeof HubCountryRfepRoute
   '/hub/$country/tv': typeof HubCountryTvRouteWithChildren
-  '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
-  '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
+  '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug/': typeof EspecialesSlugIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
-  '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
-  '/miami/noticias/': typeof MiamiNoticiasIndexRoute
   '/portugal/entrevistas/': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias/': typeof PortugalNoticiasIndexRoute
+  '/usa/entrevistas/': typeof UsaEntrevistasIndexRoute
+  '/usa/noticias/': typeof UsaNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1304,12 +1304,12 @@ export interface FileRoutesByTo {
   '/entrevistas': typeof EntrevistasIndexRoute
   '/especiales': typeof EspecialesIndexRoute
   '/eventos': typeof EventosIndexRoute
-  '/miami': typeof MiamiIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/portugal': typeof PortugalIndexRoute
   '/resultados': typeof ResultadosIndexRoute
   '/revista': typeof RevistaIndexRoute
   '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
+  '/usa': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
@@ -1320,18 +1320,18 @@ export interface FileRoutesByTo {
   '/hub/$country/live': typeof HubCountryLiveRoute
   '/hub/$country/mvp': typeof HubCountryMvpRoute
   '/hub/$country/rfep': typeof HubCountryRfepRoute
-  '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
-  '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
+  '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug': typeof EspecialesSlugIndexRoute
   '/hub/$country': typeof HubCountryIndexRoute
-  '/miami/entrevistas': typeof MiamiEntrevistasIndexRoute
-  '/miami/noticias': typeof MiamiNoticiasIndexRoute
   '/portugal/entrevistas': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias': typeof PortugalNoticiasIndexRoute
+  '/usa/entrevistas': typeof UsaEntrevistasIndexRoute
+  '/usa/noticias': typeof UsaNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
@@ -1363,7 +1363,6 @@ export interface FileRoutesById {
   '/equipo': typeof EquipoRoute
   '/establecer-clave': typeof EstablecerClaveRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
-  '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/portugal': typeof PortugalRouteWithChildren
@@ -1375,6 +1374,7 @@ export interface FileRoutesById {
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tv': typeof TvRoute
+  '/usa': typeof UsaRouteWithChildren
   '/$country/$': typeof CountrySplatRoute
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
@@ -1467,12 +1467,12 @@ export interface FileRoutesById {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
-  '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/portugal/': typeof PortugalIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
+  '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
@@ -1488,18 +1488,18 @@ export interface FileRoutesById {
   '/hub/$country/patinadores': typeof HubCountryPatinadoresRouteWithChildren
   '/hub/$country/rfep': typeof HubCountryRfepRoute
   '/hub/$country/tv': typeof HubCountryTvRouteWithChildren
-  '/miami/entrevistas/$slug': typeof MiamiEntrevistasSlugRoute
-  '/miami/noticias/$slug': typeof MiamiNoticiasSlugRoute
   '/noticias/articulo/$slug': typeof NoticiasArticuloSlugRoute
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
+  '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug/': typeof EspecialesSlugIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
-  '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
-  '/miami/noticias/': typeof MiamiNoticiasIndexRoute
   '/portugal/entrevistas/': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias/': typeof PortugalNoticiasIndexRoute
+  '/usa/entrevistas/': typeof UsaEntrevistasIndexRoute
+  '/usa/noticias/': typeof UsaNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1533,7 +1533,6 @@ export interface FileRouteTypes {
     | '/equipo'
     | '/establecer-clave'
     | '/mi-biblioteca'
-    | '/miami'
     | '/paises'
     | '/patrocinadores'
     | '/portugal'
@@ -1545,6 +1544,7 @@ export interface FileRouteTypes {
     | '/sitemap-news.xml'
     | '/sitemap.xml'
     | '/tv'
+    | '/usa'
     | '/$country/$'
     | '/admin/banners'
     | '/admin/categorias'
@@ -1637,12 +1637,12 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/especiales/'
     | '/eventos/'
-    | '/miami/'
     | '/noticias/'
     | '/portugal/'
     | '/resultados/'
     | '/revista/'
     | '/salon-de-la-fama/'
+    | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
@@ -1658,18 +1658,18 @@ export interface FileRouteTypes {
     | '/hub/$country/patinadores'
     | '/hub/$country/rfep'
     | '/hub/$country/tv'
-    | '/miami/entrevistas/$slug'
-    | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/usa/entrevistas/$slug'
+    | '/usa/noticias/$slug'
     | '/especiales/$slug/'
     | '/hub/$country/'
-    | '/miami/entrevistas/'
-    | '/miami/noticias/'
     | '/portugal/entrevistas/'
     | '/portugal/noticias/'
+    | '/usa/entrevistas/'
+    | '/usa/noticias/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -1797,12 +1797,12 @@ export interface FileRouteTypes {
     | '/entrevistas'
     | '/especiales'
     | '/eventos'
-    | '/miami'
     | '/noticias'
     | '/portugal'
     | '/resultados'
     | '/revista'
     | '/salon-de-la-fama'
+    | '/usa'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
@@ -1813,18 +1813,18 @@ export interface FileRouteTypes {
     | '/hub/$country/live'
     | '/hub/$country/mvp'
     | '/hub/$country/rfep'
-    | '/miami/entrevistas/$slug'
-    | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/usa/entrevistas/$slug'
+    | '/usa/noticias/$slug'
     | '/especiales/$slug'
     | '/hub/$country'
-    | '/miami/entrevistas'
-    | '/miami/noticias'
     | '/portugal/entrevistas'
     | '/portugal/noticias'
+    | '/usa/entrevistas'
+    | '/usa/noticias'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
@@ -1855,7 +1855,6 @@ export interface FileRouteTypes {
     | '/equipo'
     | '/establecer-clave'
     | '/mi-biblioteca'
-    | '/miami'
     | '/paises'
     | '/patrocinadores'
     | '/portugal'
@@ -1867,6 +1866,7 @@ export interface FileRouteTypes {
     | '/sitemap-news.xml'
     | '/sitemap.xml'
     | '/tv'
+    | '/usa'
     | '/$country/$'
     | '/admin/banners'
     | '/admin/categorias'
@@ -1959,12 +1959,12 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/especiales/'
     | '/eventos/'
-    | '/miami/'
     | '/noticias/'
     | '/portugal/'
     | '/resultados/'
     | '/revista/'
     | '/salon-de-la-fama/'
+    | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
@@ -1980,18 +1980,18 @@ export interface FileRouteTypes {
     | '/hub/$country/patinadores'
     | '/hub/$country/rfep'
     | '/hub/$country/tv'
-    | '/miami/entrevistas/$slug'
-    | '/miami/noticias/$slug'
     | '/noticias/articulo/$slug'
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/usa/entrevistas/$slug'
+    | '/usa/noticias/$slug'
     | '/especiales/$slug/'
     | '/hub/$country/'
-    | '/miami/entrevistas/'
-    | '/miami/noticias/'
     | '/portugal/entrevistas/'
     | '/portugal/noticias/'
+    | '/usa/entrevistas/'
+    | '/usa/noticias/'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -2024,7 +2024,6 @@ export interface RootRouteChildren {
   EquipoRoute: typeof EquipoRoute
   EstablecerClaveRoute: typeof EstablecerClaveRoute
   MiBibliotecaRoute: typeof MiBibliotecaRoute
-  MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PortugalRoute: typeof PortugalRouteWithChildren
@@ -2036,6 +2035,7 @@ export interface RootRouteChildren {
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TvRoute: typeof TvRoute
+  UsaRoute: typeof UsaRouteWithChildren
   CountrySplatRoute: typeof CountrySplatRoute
   ColaboracionesSlugRoute: typeof ColaboracionesSlugRoute
   EditorMiamiRoute: typeof EditorMiamiRoute
@@ -2079,6 +2079,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/usa': {
+      id: '/usa'
+      path: '/usa'
+      fullPath: '/usa'
+      preLoaderRoute: typeof UsaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tv': {
       id: '/tv'
       path: '/tv'
@@ -2154,13 +2161,6 @@ declare module '@tanstack/react-router' {
       path: '/paises'
       fullPath: '/paises'
       preLoaderRoute: typeof PaisesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/miami': {
-      id: '/miami'
-      path: '/miami'
-      fullPath: '/miami'
-      preLoaderRoute: typeof MiamiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mi-biblioteca': {
@@ -2240,6 +2240,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/usa/': {
+      id: '/usa/'
+      path: '/'
+      fullPath: '/usa/'
+      preLoaderRoute: typeof UsaIndexRouteImport
+      parentRoute: typeof UsaRoute
+    }
     '/salon-de-la-fama/': {
       id: '/salon-de-la-fama/'
       path: '/salon-de-la-fama'
@@ -2274,13 +2281,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/noticias/'
       preLoaderRoute: typeof NoticiasIndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/miami/': {
-      id: '/miami/'
-      path: '/'
-      fullPath: '/miami/'
-      preLoaderRoute: typeof MiamiIndexRouteImport
-      parentRoute: typeof MiamiRoute
     }
     '/eventos/': {
       id: '/eventos/'
@@ -2926,6 +2926,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountrySplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/usa/noticias/': {
+      id: '/usa/noticias/'
+      path: '/noticias'
+      fullPath: '/usa/noticias/'
+      preLoaderRoute: typeof UsaNoticiasIndexRouteImport
+      parentRoute: typeof UsaRoute
+    }
+    '/usa/entrevistas/': {
+      id: '/usa/entrevistas/'
+      path: '/entrevistas'
+      fullPath: '/usa/entrevistas/'
+      preLoaderRoute: typeof UsaEntrevistasIndexRouteImport
+      parentRoute: typeof UsaRoute
+    }
     '/portugal/noticias/': {
       id: '/portugal/noticias/'
       path: '/noticias'
@@ -2940,20 +2954,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortugalEntrevistasIndexRouteImport
       parentRoute: typeof PortugalRoute
     }
-    '/miami/noticias/': {
-      id: '/miami/noticias/'
-      path: '/noticias'
-      fullPath: '/miami/noticias/'
-      preLoaderRoute: typeof MiamiNoticiasIndexRouteImport
-      parentRoute: typeof MiamiRoute
-    }
-    '/miami/entrevistas/': {
-      id: '/miami/entrevistas/'
-      path: '/entrevistas'
-      fullPath: '/miami/entrevistas/'
-      preLoaderRoute: typeof MiamiEntrevistasIndexRouteImport
-      parentRoute: typeof MiamiRoute
-    }
     '/hub/$country/': {
       id: '/hub/$country/'
       path: '/'
@@ -2967,6 +2967,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/especiales/$slug/'
       preLoaderRoute: typeof EspecialesSlugIndexRouteImport
       parentRoute: typeof EspecialesSlugRoute
+    }
+    '/usa/noticias/$slug': {
+      id: '/usa/noticias/$slug'
+      path: '/noticias/$slug'
+      fullPath: '/usa/noticias/$slug'
+      preLoaderRoute: typeof UsaNoticiasSlugRouteImport
+      parentRoute: typeof UsaRoute
+    }
+    '/usa/entrevistas/$slug': {
+      id: '/usa/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/usa/entrevistas/$slug'
+      preLoaderRoute: typeof UsaEntrevistasSlugRouteImport
+      parentRoute: typeof UsaRoute
     }
     '/revista/leer/$id': {
       id: '/revista/leer/$id'
@@ -2995,20 +3009,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/noticias/articulo/$slug'
       preLoaderRoute: typeof NoticiasArticuloSlugRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/miami/noticias/$slug': {
-      id: '/miami/noticias/$slug'
-      path: '/noticias/$slug'
-      fullPath: '/miami/noticias/$slug'
-      preLoaderRoute: typeof MiamiNoticiasSlugRouteImport
-      parentRoute: typeof MiamiRoute
-    }
-    '/miami/entrevistas/$slug': {
-      id: '/miami/entrevistas/$slug'
-      path: '/entrevistas/$slug'
-      fullPath: '/miami/entrevistas/$slug'
-      preLoaderRoute: typeof MiamiEntrevistasSlugRouteImport
-      parentRoute: typeof MiamiRoute
     }
     '/hub/$country/tv': {
       id: '/hub/$country/tv'
@@ -3398,24 +3398,6 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
-interface MiamiRouteChildren {
-  MiamiIndexRoute: typeof MiamiIndexRoute
-  MiamiEntrevistasSlugRoute: typeof MiamiEntrevistasSlugRoute
-  MiamiNoticiasSlugRoute: typeof MiamiNoticiasSlugRoute
-  MiamiEntrevistasIndexRoute: typeof MiamiEntrevistasIndexRoute
-  MiamiNoticiasIndexRoute: typeof MiamiNoticiasIndexRoute
-}
-
-const MiamiRouteChildren: MiamiRouteChildren = {
-  MiamiIndexRoute: MiamiIndexRoute,
-  MiamiEntrevistasSlugRoute: MiamiEntrevistasSlugRoute,
-  MiamiNoticiasSlugRoute: MiamiNoticiasSlugRoute,
-  MiamiEntrevistasIndexRoute: MiamiEntrevistasIndexRoute,
-  MiamiNoticiasIndexRoute: MiamiNoticiasIndexRoute,
-}
-
-const MiamiRouteWithChildren = MiamiRoute._addFileChildren(MiamiRouteChildren)
-
 interface PortugalRouteChildren {
   PortugalIndexRoute: typeof PortugalIndexRoute
   PortugalEntrevistasSlugRoute: typeof PortugalEntrevistasSlugRoute
@@ -3460,6 +3442,24 @@ const RevistaRouteChildren: RevistaRouteChildren = {
 
 const RevistaRouteWithChildren =
   RevistaRoute._addFileChildren(RevistaRouteChildren)
+
+interface UsaRouteChildren {
+  UsaIndexRoute: typeof UsaIndexRoute
+  UsaEntrevistasSlugRoute: typeof UsaEntrevistasSlugRoute
+  UsaNoticiasSlugRoute: typeof UsaNoticiasSlugRoute
+  UsaEntrevistasIndexRoute: typeof UsaEntrevistasIndexRoute
+  UsaNoticiasIndexRoute: typeof UsaNoticiasIndexRoute
+}
+
+const UsaRouteChildren: UsaRouteChildren = {
+  UsaIndexRoute: UsaIndexRoute,
+  UsaEntrevistasSlugRoute: UsaEntrevistasSlugRoute,
+  UsaNoticiasSlugRoute: UsaNoticiasSlugRoute,
+  UsaEntrevistasIndexRoute: UsaEntrevistasIndexRoute,
+  UsaNoticiasIndexRoute: UsaNoticiasIndexRoute,
+}
+
+const UsaRouteWithChildren = UsaRoute._addFileChildren(UsaRouteChildren)
 
 interface EspecialesSlugRouteChildren {
   EspecialesSlugPieceRoute: typeof EspecialesSlugPieceRoute
@@ -3626,7 +3626,6 @@ const rootRouteChildren: RootRouteChildren = {
   EquipoRoute: EquipoRoute,
   EstablecerClaveRoute: EstablecerClaveRoute,
   MiBibliotecaRoute: MiBibliotecaRoute,
-  MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PortugalRoute: PortugalRouteWithChildren,
@@ -3638,6 +3637,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TvRoute: TvRoute,
+  UsaRoute: UsaRouteWithChildren,
   CountrySplatRoute: CountrySplatRoute,
   ColaboracionesSlugRoute: ColaboracionesSlugRoute,
   EditorMiamiRoute: EditorMiamiRoute,
