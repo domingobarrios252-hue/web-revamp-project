@@ -107,7 +107,7 @@ export const Route = createFileRoute("/eventos/$slug")({
   ),
   errorComponent: ({ error }) => (
     <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-      <p className="text-destructive">Error: {error.message}</p>
+      <p className="text-destructive">Error: {(error as Error).message}</p>
       <Link to="/eventos" className="font-condensed mt-6 inline-block border border-border px-5 py-2 text-xs font-bold uppercase tracking-widest">
         Volver a Eventos
       </Link>

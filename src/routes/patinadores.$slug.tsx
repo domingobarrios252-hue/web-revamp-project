@@ -65,7 +65,7 @@ export const Route = createFileRoute("/patinadores/$slug")({
     const router = useRouter();
     return (
       <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-        <p className="text-destructive">{error.message}</p>
+        <p className="text-destructive">{(error as Error).message}</p>
         <button
           onClick={() => {
             router.invalidate();

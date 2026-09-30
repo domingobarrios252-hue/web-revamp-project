@@ -191,7 +191,7 @@ export const Route = createFileRoute("/resultados/$evento")({
     </div>
   ),
   errorComponent: ({ error }) => (
-    <div className="mx-auto max-w-3xl px-5 py-20 text-center text-destructive">Error: {error.message}</div>
+    <div className="mx-auto max-w-3xl px-5 py-20 text-center text-destructive">Error: {(error as Error).message}</div>
   ),
   component: ResultadosEventoPage,
 });
