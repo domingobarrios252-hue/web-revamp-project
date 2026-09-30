@@ -8,11 +8,12 @@ import {
   TerritoryNewsCard,
 } from "@/components/territory/TerritoryCards";
 import { MIAMI } from "@/lib/territory/territories";
-import { useTerritoryInterviews, useTerritoryNews } from "@/lib/territory/useTerritory";
+import { useTerritoryInterviews, useTerritoryNews, useTerritoryZones } from "@/lib/territory/useTerritory";
+import { UsaZoneNav } from "@/components/territory/UsaZoneNav";
 
 const TITLE = "RollerZone USA | Noticias y entrevistas del patinaje en Estados Unidos";
 const DESC =
-  "Edición territorial de RollerZone en Estados Unidos: noticias y entrevistas del patinaje de velocidad en Estados Unidos: Florida, Miami y más.";
+  "Edición de RollerZone en Estados Unidos: noticias y entrevistas del patinaje de velocidad en Florida, Miami y todo el país.";
 
 export const Route = createFileRoute("/usa/")({
   head: () => ({
@@ -35,11 +36,13 @@ export const Route = createFileRoute("/usa/")({
 function UsaHome() {
   const { items: news, loading } = useTerritoryNews(MIAMI.code, 13);
   const { items: interviews } = useTerritoryInterviews(MIAMI.code, 6);
+  const { zones } = useTerritoryZones(MIAMI.code);
   const [lead, ...rest] = news;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <TerritoryMasthead territory={MIAMI} />
+      <UsaZoneNav zones={zones} />
 
       {loading ? (
         <p className="mt-10 text-muted-foreground">Cargando…</p>

@@ -132,12 +132,14 @@ import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as CountrySplatRouteImport } from './routes/$country.$'
 import { Route as UsaNoticiasIndexRouteImport } from './routes/usa.noticias.index'
 import { Route as UsaEntrevistasIndexRouteImport } from './routes/usa.entrevistas.index'
+import { Route as UsaRegionIndexRouteImport } from './routes/usa.$region.index'
 import { Route as PortugalNoticiasIndexRouteImport } from './routes/portugal.noticias.index'
 import { Route as PortugalEntrevistasIndexRouteImport } from './routes/portugal.entrevistas.index'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as UsaNoticiasSlugRouteImport } from './routes/usa.noticias.$slug'
 import { Route as UsaEntrevistasSlugRouteImport } from './routes/usa.entrevistas.$slug'
+import { Route as UsaRegionCityRouteImport } from './routes/usa.$region.$city'
 import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
 import { Route as PortugalNoticiasSlugRouteImport } from './routes/portugal.noticias.$slug'
 import { Route as PortugalEntrevistasSlugRouteImport } from './routes/portugal.entrevistas.$slug'
@@ -800,6 +802,11 @@ const UsaEntrevistasIndexRoute = UsaEntrevistasIndexRouteImport.update({
   path: '/entrevistas/',
   getParentRoute: () => UsaRoute,
 } as any)
+const UsaRegionIndexRoute = UsaRegionIndexRouteImport.update({
+  id: '/$region/',
+  path: '/$region/',
+  getParentRoute: () => UsaRoute,
+} as any)
 const PortugalNoticiasIndexRoute = PortugalNoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
@@ -829,6 +836,11 @@ const UsaNoticiasSlugRoute = UsaNoticiasSlugRouteImport.update({
 const UsaEntrevistasSlugRoute = UsaEntrevistasSlugRouteImport.update({
   id: '/entrevistas/$slug',
   path: '/entrevistas/$slug',
+  getParentRoute: () => UsaRoute,
+} as any)
+const UsaRegionCityRoute = UsaRegionCityRouteImport.update({
+  id: '/$region/$city',
+  path: '/$region/$city',
   getParentRoute: () => UsaRoute,
 } as any)
 const RevistaLeerIdRoute = RevistaLeerIdRouteImport.update({
@@ -1169,12 +1181,14 @@ export interface FileRoutesByFullPath {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug/': typeof EspecialesSlugIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/portugal/entrevistas/': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias/': typeof PortugalNoticiasIndexRoute
+  '/usa/$region/': typeof UsaRegionIndexRoute
   '/usa/entrevistas/': typeof UsaEntrevistasIndexRoute
   '/usa/noticias/': typeof UsaNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -1324,12 +1338,14 @@ export interface FileRoutesByTo {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug': typeof EspecialesSlugIndexRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/portugal/entrevistas': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias': typeof PortugalNoticiasIndexRoute
+  '/usa/$region': typeof UsaRegionIndexRoute
   '/usa/entrevistas': typeof UsaEntrevistasIndexRoute
   '/usa/noticias': typeof UsaNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -1492,12 +1508,14 @@ export interface FileRoutesById {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug/': typeof EspecialesSlugIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/portugal/entrevistas/': typeof PortugalEntrevistasIndexRoute
   '/portugal/noticias/': typeof PortugalNoticiasIndexRoute
+  '/usa/$region/': typeof UsaRegionIndexRoute
   '/usa/entrevistas/': typeof UsaEntrevistasIndexRoute
   '/usa/noticias/': typeof UsaNoticiasIndexRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
@@ -1662,12 +1680,14 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
     | '/especiales/$slug/'
     | '/hub/$country/'
     | '/portugal/entrevistas/'
     | '/portugal/noticias/'
+    | '/usa/$region/'
     | '/usa/entrevistas/'
     | '/usa/noticias/'
     | '/hub/$country/clubes/$slug'
@@ -1817,12 +1837,14 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
     | '/especiales/$slug'
     | '/hub/$country'
     | '/portugal/entrevistas'
     | '/portugal/noticias'
+    | '/usa/$region'
     | '/usa/entrevistas'
     | '/usa/noticias'
     | '/hub/$country/clubes/$slug'
@@ -1984,12 +2006,14 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
     | '/especiales/$slug/'
     | '/hub/$country/'
     | '/portugal/entrevistas/'
     | '/portugal/noticias/'
+    | '/usa/$region/'
     | '/usa/entrevistas/'
     | '/usa/noticias/'
     | '/hub/$country/clubes/$slug'
@@ -2940,6 +2964,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsaEntrevistasIndexRouteImport
       parentRoute: typeof UsaRoute
     }
+    '/usa/$region/': {
+      id: '/usa/$region/'
+      path: '/$region'
+      fullPath: '/usa/$region/'
+      preLoaderRoute: typeof UsaRegionIndexRouteImport
+      parentRoute: typeof UsaRoute
+    }
     '/portugal/noticias/': {
       id: '/portugal/noticias/'
       path: '/noticias'
@@ -2980,6 +3011,13 @@ declare module '@tanstack/react-router' {
       path: '/entrevistas/$slug'
       fullPath: '/usa/entrevistas/$slug'
       preLoaderRoute: typeof UsaEntrevistasSlugRouteImport
+      parentRoute: typeof UsaRoute
+    }
+    '/usa/$region/$city': {
+      id: '/usa/$region/$city'
+      path: '/$region/$city'
+      fullPath: '/usa/$region/$city'
+      preLoaderRoute: typeof UsaRegionCityRouteImport
       parentRoute: typeof UsaRoute
     }
     '/revista/leer/$id': {
@@ -3445,16 +3483,20 @@ const RevistaRouteWithChildren =
 
 interface UsaRouteChildren {
   UsaIndexRoute: typeof UsaIndexRoute
+  UsaRegionCityRoute: typeof UsaRegionCityRoute
   UsaEntrevistasSlugRoute: typeof UsaEntrevistasSlugRoute
   UsaNoticiasSlugRoute: typeof UsaNoticiasSlugRoute
+  UsaRegionIndexRoute: typeof UsaRegionIndexRoute
   UsaEntrevistasIndexRoute: typeof UsaEntrevistasIndexRoute
   UsaNoticiasIndexRoute: typeof UsaNoticiasIndexRoute
 }
 
 const UsaRouteChildren: UsaRouteChildren = {
   UsaIndexRoute: UsaIndexRoute,
+  UsaRegionCityRoute: UsaRegionCityRoute,
   UsaEntrevistasSlugRoute: UsaEntrevistasSlugRoute,
   UsaNoticiasSlugRoute: UsaNoticiasSlugRoute,
+  UsaRegionIndexRoute: UsaRegionIndexRoute,
   UsaEntrevistasIndexRoute: UsaEntrevistasIndexRoute,
   UsaNoticiasIndexRoute: UsaNoticiasIndexRoute,
 }
