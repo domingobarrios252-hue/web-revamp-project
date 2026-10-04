@@ -135,9 +135,6 @@ function Asu26Hub() {
       <section className="asu-hero-bg relative isolate overflow-hidden border-b border-asu/40">
         <div className="asu-curve pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
         <div className="mx-auto max-w-[1500px] px-4 pb-8 pt-8 md:px-8 md:pb-12 md:pt-12">
-          <nav className="font-condensed mb-5 text-[11px] uppercase tracking-[2px] text-muted-foreground">
-            <Link to="/tv" className="hover:text-gold">Rollerzone.TV</Link> <span aria-hidden="true">/</span> ASU26
-          </nav>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div className="asu-reveal min-w-0">
               {cfg.logoAsu26Url && (
