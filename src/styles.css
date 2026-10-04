@@ -450,3 +450,22 @@ select.input {
     max-width: var(--mw-d);
   }
 }
+
+/* ASU26 broadcast hub — fondo abstracto ligero (solo CSS, sin imágenes) */
+.asu-hero-bg {
+  background:
+    radial-gradient(120% 80% at 85% 10%, color-mix(in oklab, var(--asu) 55%, transparent) 0%, transparent 60%),
+    radial-gradient(90% 70% at 0% 100%, color-mix(in oklab, var(--gold) 14%, transparent) 0%, transparent 55%),
+    repeating-linear-gradient(115deg, transparent 0 46px, color-mix(in oklab, var(--foreground) 4%, transparent) 46px 47px),
+    var(--asu-deep);
+}
+.asu-curve {
+  background:
+    radial-gradient(160% 120% at 110% 120%, transparent 58%, color-mix(in oklab, var(--gold) 55%, transparent) 58.3%, transparent 58.8%),
+    radial-gradient(160% 120% at 110% 120%, transparent 64%, color-mix(in oklab, var(--asu-light) 35%, transparent) 64.2%, transparent 64.6%);
+}
+@keyframes asu-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.asu-reveal { animation: asu-fade-up 0.3s ease-out both; }
+@keyframes asu-glow { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--tv-red) 45%, transparent); } 50% { box-shadow: 0 0 0 6px transparent; } }
+.asu-live-glow { animation: asu-glow 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .asu-reveal, .asu-live-glow { animation: none; } }
