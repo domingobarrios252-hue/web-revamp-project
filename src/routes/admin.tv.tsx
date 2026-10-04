@@ -1,3 +1,4 @@
+import { Asu26StreamingSettings } from "@/components/admin/Asu26StreamingSettings";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Save, ExternalLink } from "lucide-react";
@@ -213,6 +214,7 @@ function AdminTv() {
 
   return (
     <div className="space-y-6">
+      <Asu26StreamingSettings />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl tracking-widest">RollerZone TV</h1>
         <button
