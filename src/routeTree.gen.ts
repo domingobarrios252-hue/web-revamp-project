@@ -13,7 +13,6 @@ import { Route as UsaRouteImport } from './routes/usa'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
-import { Route as RollerzoneTvRouteImport } from './routes/rollerzone-tv'
 import { Route as RevistaRouteImport } from './routes/revista'
 import { Route as RedactoresRouteImport } from './routes/redactores'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
@@ -35,6 +34,7 @@ import { Route as AccesoInternoRouteImport } from './routes/acceso-interno'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsaIndexRouteImport } from './routes/usa.index'
 import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
+import { Route as RollerzoneTvIndexRouteImport } from './routes/rollerzone-tv.index'
 import { Route as RevistaIndexRouteImport } from './routes/revista.index'
 import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
 import { Route as PortugalIndexRouteImport } from './routes/portugal.index'
@@ -50,6 +50,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CountryIndexRouteImport } from './routes/$country.index'
 import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as SalonDeLaFamaSlugRouteImport } from './routes/salon-de-la-fama.$slug'
+import { Route as RollerzoneTvWorldSkateGamesAsu26RouteImport } from './routes/rollerzone-tv.world-skate-games-asu26'
 import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
 import { Route as RedactoresIdRouteImport } from './routes/redactores.$id'
 import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
@@ -204,11 +205,6 @@ const SitemapNewsDotxmlRoute = SitemapNewsDotxmlRouteImport.update({
   path: '/sitemap-news.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RollerzoneTvRoute = RollerzoneTvRouteImport.update({
-  id: '/rollerzone-tv',
-  path: '/rollerzone-tv',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RevistaRoute = RevistaRouteImport.update({
   id: '/revista',
   path: '/revista',
@@ -314,6 +310,11 @@ const SalonDeLaFamaIndexRoute = SalonDeLaFamaIndexRouteImport.update({
   path: '/salon-de-la-fama/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RollerzoneTvIndexRoute = RollerzoneTvIndexRouteImport.update({
+  id: '/rollerzone-tv/',
+  path: '/rollerzone-tv/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RevistaIndexRoute = RevistaIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -390,6 +391,12 @@ const SalonDeLaFamaSlugRoute = SalonDeLaFamaSlugRouteImport.update({
   path: '/salon-de-la-fama/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RollerzoneTvWorldSkateGamesAsu26Route =
+  RollerzoneTvWorldSkateGamesAsu26RouteImport.update({
+    id: '/rollerzone-tv/world-skate-games-asu26',
+    path: '/rollerzone-tv/world-skate-games-asu26',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ResultadosEventoRoute = ResultadosEventoRouteImport.update({
   id: '/resultados/$evento',
   path: '/resultados/$evento',
@@ -1096,7 +1103,6 @@ export interface FileRoutesByFullPath {
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
   '/revista': typeof RevistaRouteWithChildren
-  '/rollerzone-tv': typeof RollerzoneTvRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tv': typeof TvRoute
@@ -1183,6 +1189,7 @@ export interface FileRoutesByFullPath {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/rollerzone-tv/world-skate-games-asu26': typeof RollerzoneTvWorldSkateGamesAsu26Route
   '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country/': typeof CountryIndexRoute
@@ -1198,6 +1205,7 @@ export interface FileRoutesByFullPath {
   '/portugal/': typeof PortugalIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
+  '/rollerzone-tv/': typeof RollerzoneTvIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
@@ -1266,7 +1274,6 @@ export interface FileRoutesByTo {
   '/premios-mvp': typeof PremiosMvpRoute
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
-  '/rollerzone-tv': typeof RollerzoneTvRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tv': typeof TvRoute
@@ -1350,6 +1357,7 @@ export interface FileRoutesByTo {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/rollerzone-tv/world-skate-games-asu26': typeof RollerzoneTvWorldSkateGamesAsu26Route
   '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country': typeof CountryIndexRoute
@@ -1365,6 +1373,7 @@ export interface FileRoutesByTo {
   '/portugal': typeof PortugalIndexRoute
   '/resultados': typeof ResultadosIndexRoute
   '/revista': typeof RevistaIndexRoute
+  '/rollerzone-tv': typeof RollerzoneTvIndexRoute
   '/salon-de-la-fama': typeof SalonDeLaFamaIndexRoute
   '/usa': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
@@ -1434,7 +1443,6 @@ export interface FileRoutesById {
   '/privacidad': typeof PrivacidadRoute
   '/redactores': typeof RedactoresRouteWithChildren
   '/revista': typeof RevistaRouteWithChildren
-  '/rollerzone-tv': typeof RollerzoneTvRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tv': typeof TvRoute
@@ -1521,6 +1529,7 @@ export interface FileRoutesById {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/rollerzone-tv/world-skate-games-asu26': typeof RollerzoneTvWorldSkateGamesAsu26Route
   '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country/': typeof CountryIndexRoute
@@ -1536,6 +1545,7 @@ export interface FileRoutesById {
   '/portugal/': typeof PortugalIndexRoute
   '/resultados/': typeof ResultadosIndexRoute
   '/revista/': typeof RevistaIndexRoute
+  '/rollerzone-tv/': typeof RollerzoneTvIndexRoute
   '/salon-de-la-fama/': typeof SalonDeLaFamaIndexRoute
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
@@ -1612,7 +1622,6 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/redactores'
     | '/revista'
-    | '/rollerzone-tv'
     | '/sitemap-news.xml'
     | '/sitemap.xml'
     | '/tv'
@@ -1699,6 +1708,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/redactores/$id'
     | '/resultados/$evento'
+    | '/rollerzone-tv/world-skate-games-asu26'
     | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country/'
@@ -1714,6 +1724,7 @@ export interface FileRouteTypes {
     | '/portugal/'
     | '/resultados/'
     | '/revista/'
+    | '/rollerzone-tv/'
     | '/salon-de-la-fama/'
     | '/usa/'
     | '/api/og/premios-mvp.svg'
@@ -1782,7 +1793,6 @@ export interface FileRouteTypes {
     | '/premios-mvp'
     | '/privacidad'
     | '/redactores'
-    | '/rollerzone-tv'
     | '/sitemap-news.xml'
     | '/sitemap.xml'
     | '/tv'
@@ -1866,6 +1876,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/redactores/$id'
     | '/resultados/$evento'
+    | '/rollerzone-tv/world-skate-games-asu26'
     | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country'
@@ -1881,6 +1892,7 @@ export interface FileRouteTypes {
     | '/portugal'
     | '/resultados'
     | '/revista'
+    | '/rollerzone-tv'
     | '/salon-de-la-fama'
     | '/usa'
     | '/api/og/premios-mvp.svg'
@@ -1949,7 +1961,6 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/redactores'
     | '/revista'
-    | '/rollerzone-tv'
     | '/sitemap-news.xml'
     | '/sitemap.xml'
     | '/tv'
@@ -2036,6 +2047,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/redactores/$id'
     | '/resultados/$evento'
+    | '/rollerzone-tv/world-skate-games-asu26'
     | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country/'
@@ -2051,6 +2063,7 @@ export interface FileRouteTypes {
     | '/portugal/'
     | '/resultados/'
     | '/revista/'
+    | '/rollerzone-tv/'
     | '/salon-de-la-fama/'
     | '/usa/'
     | '/api/og/premios-mvp.svg'
@@ -2126,7 +2139,6 @@ export interface RootRouteChildren {
   PrivacidadRoute: typeof PrivacidadRoute
   RedactoresRoute: typeof RedactoresRouteWithChildren
   RevistaRoute: typeof RevistaRouteWithChildren
-  RollerzoneTvRoute: typeof RollerzoneTvRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TvRoute: typeof TvRoute
@@ -2155,6 +2167,7 @@ export interface RootRouteChildren {
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
   ResultadosEventoRoute: typeof ResultadosEventoRoute
+  RollerzoneTvWorldSkateGamesAsu26Route: typeof RollerzoneTvWorldSkateGamesAsu26Route
   SalonDeLaFamaSlugRoute: typeof SalonDeLaFamaSlugRoute
   SobreSlugRoute: typeof SobreSlugRoute
   CountryIndexRoute: typeof CountryIndexRoute
@@ -2164,6 +2177,7 @@ export interface RootRouteChildren {
   EventosIndexRoute: typeof EventosIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
   ResultadosIndexRoute: typeof ResultadosIndexRoute
+  RollerzoneTvIndexRoute: typeof RollerzoneTvIndexRoute
   SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
@@ -2200,13 +2214,6 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-news.xml'
       fullPath: '/sitemap-news.xml'
       preLoaderRoute: typeof SitemapNewsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rollerzone-tv': {
-      id: '/rollerzone-tv'
-      path: '/rollerzone-tv'
-      fullPath: '/rollerzone-tv'
-      preLoaderRoute: typeof RollerzoneTvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/revista': {
@@ -2356,6 +2363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SalonDeLaFamaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rollerzone-tv/': {
+      id: '/rollerzone-tv/'
+      path: '/rollerzone-tv'
+      fullPath: '/rollerzone-tv/'
+      preLoaderRoute: typeof RollerzoneTvIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/revista/': {
       id: '/revista/'
       path: '/'
@@ -2459,6 +2473,13 @@ declare module '@tanstack/react-router' {
       path: '/salon-de-la-fama/$slug'
       fullPath: '/salon-de-la-fama/$slug'
       preLoaderRoute: typeof SalonDeLaFamaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rollerzone-tv/world-skate-games-asu26': {
+      id: '/rollerzone-tv/world-skate-games-asu26'
+      path: '/rollerzone-tv/world-skate-games-asu26'
+      fullPath: '/rollerzone-tv/world-skate-games-asu26'
+      preLoaderRoute: typeof RollerzoneTvWorldSkateGamesAsu26RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resultados/$evento': {
@@ -3807,7 +3828,6 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadRoute: PrivacidadRoute,
   RedactoresRoute: RedactoresRouteWithChildren,
   RevistaRoute: RevistaRouteWithChildren,
-  RollerzoneTvRoute: RollerzoneTvRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TvRoute: TvRoute,
@@ -3836,6 +3856,7 @@ const rootRouteChildren: RootRouteChildren = {
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
   ResultadosEventoRoute: ResultadosEventoRoute,
+  RollerzoneTvWorldSkateGamesAsu26Route: RollerzoneTvWorldSkateGamesAsu26Route,
   SalonDeLaFamaSlugRoute: SalonDeLaFamaSlugRoute,
   SobreSlugRoute: SobreSlugRoute,
   CountryIndexRoute: CountryIndexRoute,
@@ -3845,6 +3866,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventosIndexRoute: EventosIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
   ResultadosIndexRoute: ResultadosIndexRoute,
+  RollerzoneTvIndexRoute: RollerzoneTvIndexRoute,
   SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,

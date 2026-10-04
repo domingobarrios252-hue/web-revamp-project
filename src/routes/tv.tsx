@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvTopStage, type TvStageStatus } from "@/components/tv/TvTopStage";
 import { TvMobileNav } from "@/components/tv/TvMobileNav";
+import { Asu26TvCard } from "@/components/tv/asu26/Asu26TvCard";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 import { TvAdSlot, useVisibleBanners } from "@/components/tv/TvAdSlot";
@@ -329,6 +330,7 @@ function TvPage() {
     <div className="w-full max-w-full min-w-0 overflow-x-clip bg-background">
       <TvMobileNav items={navItems} live={status === "live"} />
       <TvTopStage settings={settings} status={status} nextBroadcast={nextBroadcast} />
+      <Asu26TvCard />
       {rendered.map((b) => (
         <Fragment key={b.key}>{b.node}</Fragment>
       ))}
