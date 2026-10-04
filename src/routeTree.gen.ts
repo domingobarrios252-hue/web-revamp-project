@@ -9,284 +9,185 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AccesoInternoRouteImport } from './routes/acceso-interno'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
-import { Route as CaminoAlEuropeo2026RouteImport } from './routes/camino-al-europeo-2026'
-import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as EquipoRouteImport } from './routes/equipo'
-import { Route as EstablecerClaveRouteImport } from './routes/establecer-clave'
-import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
-import { Route as MiamiRouteImport } from './routes/miami'
-import { Route as PaisesRouteImport } from './routes/paises'
-import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
-import { Route as PortugalRouteImport } from './routes/portugal'
-import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
-import { Route as PrivacidadRouteImport } from './routes/privacidad'
-import { Route as RedactoresRouteImport } from './routes/redactores'
-import { Route as RevistaRouteImport } from './routes/revista'
-import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as TvRouteImport } from './routes/tv'
 import { Route as UsaRouteImport } from './routes/usa'
-import { Route as CountryIndexRouteImport } from './routes/$country.index'
-import { Route as CountrySplatRouteImport } from './routes/$country.$'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminBannersRouteImport } from './routes/admin.banners'
-import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
-import { Route as AdminClasificacionesRouteImport } from './routes/admin.clasificaciones'
-import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
-import { Route as AdminColaboracionesRouteImport } from './routes/admin.colaboraciones'
-import { Route as AdminColombiaRouteImport } from './routes/admin.colombia'
-import { Route as AdminComunidadRouteImport } from './routes/admin.comunidad'
-import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
-import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
-import { Route as AdminEspanaRouteImport } from './routes/admin.espana'
-import { Route as AdminEspecialesRouteImport } from './routes/admin.especiales'
-import { Route as AdminEstadisticasRouteImport } from './routes/admin.estadisticas'
-import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
-import { Route as AdminFederacionesRouteImport } from './routes/admin.federaciones'
-import { Route as AdminFormulariosRouteImport } from './routes/admin.formularios'
-import { Route as AdminHomeControlRouteImport } from './routes/admin.home-control'
-import { Route as AdminHubLigaRouteImport } from './routes/admin.hub-liga'
-import { Route as AdminLegalRouteImport } from './routes/admin.legal'
-import { Route as AdminLiveCenterRouteImport } from './routes/admin.live-center'
-import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-results'
-import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
-import { Route as AdminMiamiRouteImport } from './routes/admin.miami'
-import { Route as AdminPaginasRouteImport } from './routes/admin.paginas'
-import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
-import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
-import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
-import { Route as AdminPermisosRouteImport } from './routes/admin.permisos'
-import { Route as AdminPortugalRouteImport } from './routes/admin.portugal'
-import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
-import { Route as AdminRedRedactoresRouteImport } from './routes/admin.red-redactores'
-import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
-import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
-import { Route as AdminResultadosEventosRouteImport } from './routes/admin.resultados-eventos'
-import { Route as AdminResultadosImportarRouteImport } from './routes/admin.resultados-importar'
-import { Route as AdminResultadosPdfsRouteImport } from './routes/admin.resultados-pdfs'
-import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
-import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
-import { Route as AdminSalonDeLaFamaRouteImport } from './routes/admin.salon-de-la-fama'
-import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
-import { Route as AdminSectionsRouteImport } from './routes/admin.sections'
-import { Route as AdminSeguridadRouteImport } from './routes/admin.seguridad'
-import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nosotros'
-import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
-import { Route as AdminTvRouteImport } from './routes/admin.tv'
-import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisiones'
-import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlights'
-import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
-import { Route as AdminVideosRouteImport } from './routes/admin.videos'
-import { Route as CaminoAlEuropeo2026IndexRouteImport } from './routes/camino-al-europeo-2026.index'
-import { Route as CaminoAlEuropeo2026CalendarioYSedesRouteImport } from './routes/camino-al-europeo-2026.calendario-y-sedes'
-import { Route as CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport } from './routes/camino-al-europeo-2026.convocatoria-seleccion-espanola'
-import { Route as CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport } from './routes/camino-al-europeo-2026.entrevista-seleccionador'
-import { Route as CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport } from './routes/camino-al-europeo-2026.galeria-rollerzone-tv'
-import { Route as CaminoAlEuropeo2026InformacionCampeonatoRouteImport } from './routes/camino-al-europeo-2026.informacion-campeonato'
-import { Route as CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport } from './routes/camino-al-europeo-2026.presentacion-europeo-2026'
-import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
-import { Route as ColaboracionesIndexRouteImport } from './routes/colaboraciones.index'
-import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
-import { Route as DashboardMiamiRouteImport } from './routes/dashboard.miami'
-import { Route as DashboardPortugalRouteImport } from './routes/dashboard.portugal'
-import { Route as EditorMiamiRouteImport } from './routes/editor.miami'
-import { Route as EditorPortugalRouteImport } from './routes/editor.portugal'
-import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
-import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
-import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
-import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
-import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
-import { Route as EspanaFederacionesRouteImport } from './routes/espana.federaciones'
-import { Route as EspanaLiveRouteImport } from './routes/espana.live'
-import { Route as EspanaMvpRouteImport } from './routes/espana.mvp'
-import { Route as EspanaPatinadoresRouteImport } from './routes/espana.patinadores'
-import { Route as EspanaRollerzoneTvRouteImport } from './routes/espana.rollerzone-tv'
-import { Route as EspecialesIndexRouteImport } from './routes/especiales.index'
-import { Route as EspecialesSlugRouteImport } from './routes/especiales.$slug'
-import { Route as EventosIndexRouteImport } from './routes/eventos.index'
-import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
-import { Route as EventsSlugRouteImport } from './routes/events.$slug'
-import { Route as HubCountryRouteImport } from './routes/hub.$country'
-import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
-import { Route as LigaNacionalClasificacionesRouteImport } from './routes/liga-nacional.clasificaciones'
-import { Route as MiamiIndexRouteImport } from './routes/miami.index'
-import { Route as NewsletterBajaRouteImport } from './routes/newsletter.baja'
-import { Route as NewsletterConfirmarRouteImport } from './routes/newsletter.confirmar'
-import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
-import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
-import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
-import { Route as PortugalIndexRouteImport } from './routes/portugal.index'
-import { Route as RedactoresIdRouteImport } from './routes/redactores.$id'
-import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
-import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
-import { Route as RevistaIndexRouteImport } from './routes/revista.index'
-import { Route as RollerzoneTvIndexRouteImport } from './routes/rollerzone-tv.index'
-import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
-import { Route as SalonDeLaFamaSlugRouteImport } from './routes/salon-de-la-fama.$slug'
-import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
+import { Route as TvRouteImport } from './routes/tv'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
+import { Route as RevistaRouteImport } from './routes/revista'
+import { Route as RedactoresRouteImport } from './routes/redactores'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
+import { Route as PremiosMvpRouteImport } from './routes/premios-mvp'
+import { Route as PortugalRouteImport } from './routes/portugal'
+import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
+import { Route as PaisesRouteImport } from './routes/paises'
+import { Route as MiamiRouteImport } from './routes/miami'
+import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
+import { Route as EstablecerClaveRouteImport } from './routes/establecer-clave'
+import { Route as EquipoRouteImport } from './routes/equipo'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as CaminoAlEuropeo2026RouteImport } from './routes/camino-al-europeo-2026'
+import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AccesoInternoRouteImport } from './routes/acceso-interno'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsaIndexRouteImport } from './routes/usa.index'
-import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
-import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
-import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
-import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
-import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
-import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
-import { Route as HubCountryArchivoRouteImport } from './routes/hub.$country.archivo'
-import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.clubes'
-import { Route as HubCountryCompeticionRouteImport } from './routes/hub.$country.competicion'
-import { Route as HubCountryComunidadRouteImport } from './routes/hub.$country.comunidad'
-import { Route as HubCountryEntrevistasRouteImport } from './routes/hub.$country.entrevistas'
-import { Route as HubCountryFederacionesRouteImport } from './routes/hub.$country.federaciones'
-import { Route as HubCountryLiveRouteImport } from './routes/hub.$country.live'
-import { Route as HubCountryMvpRouteImport } from './routes/hub.$country.mvp'
-import { Route as HubCountryPatinadoresRouteImport } from './routes/hub.$country.patinadores'
-import { Route as HubCountryRfepRouteImport } from './routes/hub.$country.rfep'
-import { Route as HubCountryTvRouteImport } from './routes/hub.$country.tv'
-import { Route as MiamiEntrevistasIndexRouteImport } from './routes/miami.entrevistas.index'
-import { Route as MiamiEntrevistasSlugRouteImport } from './routes/miami.entrevistas.$slug'
-import { Route as MiamiNoticiasIndexRouteImport } from './routes/miami.noticias.index'
-import { Route as MiamiNoticiasSlugRouteImport } from './routes/miami.noticias.$slug'
-import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
-import { Route as PortugalEntrevistasIndexRouteImport } from './routes/portugal.entrevistas.index'
-import { Route as PortugalEntrevistasSlugRouteImport } from './routes/portugal.entrevistas.$slug'
-import { Route as PortugalNoticiasIndexRouteImport } from './routes/portugal.noticias.index'
-import { Route as PortugalNoticiasSlugRouteImport } from './routes/portugal.noticias.$slug'
-import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
-import { Route as UsaRegionIndexRouteImport } from './routes/usa.$region.index'
-import { Route as UsaRegionCityRouteImport } from './routes/usa.$region.$city'
-import { Route as UsaEntrevistasIndexRouteImport } from './routes/usa.entrevistas.index'
-import { Route as UsaEntrevistasSlugRouteImport } from './routes/usa.entrevistas.$slug'
+import { Route as SalonDeLaFamaIndexRouteImport } from './routes/salon-de-la-fama.index'
+import { Route as RollerzoneTvIndexRouteImport } from './routes/rollerzone-tv.index'
+import { Route as RevistaIndexRouteImport } from './routes/revista.index'
+import { Route as ResultadosIndexRouteImport } from './routes/resultados.index'
+import { Route as PortugalIndexRouteImport } from './routes/portugal.index'
+import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
+import { Route as MiamiIndexRouteImport } from './routes/miami.index'
+import { Route as EventosIndexRouteImport } from './routes/eventos.index'
+import { Route as EspecialesIndexRouteImport } from './routes/especiales.index'
+import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as ColaboracionesIndexRouteImport } from './routes/colaboraciones.index'
+import { Route as CaminoAlEuropeo2026IndexRouteImport } from './routes/camino-al-europeo-2026.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as CountryIndexRouteImport } from './routes/$country.index'
+import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
+import { Route as SalonDeLaFamaSlugRouteImport } from './routes/salon-de-la-fama.$slug'
+import { Route as RollerzoneTvWorldSkateGamesAsu26RouteImport } from './routes/rollerzone-tv.world-skate-games-asu26'
+import { Route as ResultadosEventoRouteImport } from './routes/resultados.$evento'
+import { Route as RedactoresIdRouteImport } from './routes/redactores.$id'
+import { Route as PatinadoresSlugRouteImport } from './routes/patinadores.$slug'
+import { Route as NoticiasSlugRouteImport } from './routes/noticias.$slug'
+import { Route as NewsletterConfirmarRouteImport } from './routes/newsletter.confirmar'
+import { Route as NewsletterBajaRouteImport } from './routes/newsletter.baja'
+import { Route as LigaNacionalClasificacionesRouteImport } from './routes/liga-nacional.clasificaciones'
+import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
+import { Route as HubCountryRouteImport } from './routes/hub.$country'
+import { Route as EventsSlugRouteImport } from './routes/events.$slug'
+import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
+import { Route as EspecialesSlugRouteImport } from './routes/especiales.$slug'
+import { Route as EspanaRollerzoneTvRouteImport } from './routes/espana.rollerzone-tv'
+import { Route as EspanaPatinadoresRouteImport } from './routes/espana.patinadores'
+import { Route as EspanaMvpRouteImport } from './routes/espana.mvp'
+import { Route as EspanaLiveRouteImport } from './routes/espana.live'
+import { Route as EspanaFederacionesRouteImport } from './routes/espana.federaciones'
+import { Route as EspanaComunidadRouteImport } from './routes/espana.comunidad'
+import { Route as EspanaClubesRouteImport } from './routes/espana.clubes'
+import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
+import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
+import { Route as EditorPortugalRouteImport } from './routes/editor.portugal'
+import { Route as EditorMiamiRouteImport } from './routes/editor.miami'
+import { Route as DashboardPortugalRouteImport } from './routes/dashboard.portugal'
+import { Route as DashboardMiamiRouteImport } from './routes/dashboard.miami'
+import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
+import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './routes/camino-al-europeo-2026.resultados-y-medallero'
+import { Route as CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport } from './routes/camino-al-europeo-2026.presentacion-europeo-2026'
+import { Route as CaminoAlEuropeo2026InformacionCampeonatoRouteImport } from './routes/camino-al-europeo-2026.informacion-campeonato'
+import { Route as CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport } from './routes/camino-al-europeo-2026.galeria-rollerzone-tv'
+import { Route as CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport } from './routes/camino-al-europeo-2026.entrevista-seleccionador'
+import { Route as CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport } from './routes/camino-al-europeo-2026.convocatoria-seleccion-espanola'
+import { Route as CaminoAlEuropeo2026CalendarioYSedesRouteImport } from './routes/camino-al-europeo-2026.calendario-y-sedes'
+import { Route as AdminVideosRouteImport } from './routes/admin.videos'
+import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
+import { Route as AdminTvHighlightsRouteImport } from './routes/admin.tv-highlights'
+import { Route as AdminTvEmisionesRouteImport } from './routes/admin.tv-emisiones'
+import { Route as AdminTvRouteImport } from './routes/admin.tv'
+import { Route as AdminTickerRouteImport } from './routes/admin.ticker'
+import { Route as AdminSobreNosotrosRouteImport } from './routes/admin.sobre-nosotros'
+import { Route as AdminSeguridadRouteImport } from './routes/admin.seguridad'
+import { Route as AdminSectionsRouteImport } from './routes/admin.sections'
+import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
+import { Route as AdminSalonDeLaFamaRouteImport } from './routes/admin.salon-de-la-fama'
+import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
+import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
+import { Route as AdminResultadosPdfsRouteImport } from './routes/admin.resultados-pdfs'
+import { Route as AdminResultadosImportarRouteImport } from './routes/admin.resultados-importar'
+import { Route as AdminResultadosEventosRouteImport } from './routes/admin.resultados-eventos'
+import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
+import { Route as AdminRedactoresRouteImport } from './routes/admin.redactores'
+import { Route as AdminRedRedactoresRouteImport } from './routes/admin.red-redactores'
+import { Route as AdminPremiosMvpRouteImport } from './routes/admin.premios-mvp'
+import { Route as AdminPortugalRouteImport } from './routes/admin.portugal'
+import { Route as AdminPermisosRouteImport } from './routes/admin.permisos'
+import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
+import { Route as AdminPatrocinadoresRouteImport } from './routes/admin.patrocinadores'
+import { Route as AdminPatinadoresRouteImport } from './routes/admin.patinadores'
+import { Route as AdminPaginasRouteImport } from './routes/admin.paginas'
+import { Route as AdminMiamiRouteImport } from './routes/admin.miami'
+import { Route as AdminMedalleroRouteImport } from './routes/admin.medallero'
+import { Route as AdminLiveResultsRouteImport } from './routes/admin.live-results'
+import { Route as AdminLiveCenterRouteImport } from './routes/admin.live-center'
+import { Route as AdminLegalRouteImport } from './routes/admin.legal'
+import { Route as AdminHubLigaRouteImport } from './routes/admin.hub-liga'
+import { Route as AdminHomeControlRouteImport } from './routes/admin.home-control'
+import { Route as AdminFormulariosRouteImport } from './routes/admin.formularios'
+import { Route as AdminFederacionesRouteImport } from './routes/admin.federaciones'
+import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
+import { Route as AdminEstadisticasRouteImport } from './routes/admin.estadisticas'
+import { Route as AdminEspecialesRouteImport } from './routes/admin.especiales'
+import { Route as AdminEspanaRouteImport } from './routes/admin.espana'
+import { Route as AdminEquipoRouteImport } from './routes/admin.equipo'
+import { Route as AdminEntrevistasRouteImport } from './routes/admin.entrevistas'
+import { Route as AdminComunidadRouteImport } from './routes/admin.comunidad'
+import { Route as AdminColombiaRouteImport } from './routes/admin.colombia'
+import { Route as AdminColaboracionesRouteImport } from './routes/admin.colaboraciones'
+import { Route as AdminClubesRouteImport } from './routes/admin.clubes'
+import { Route as AdminClasificacionesRouteImport } from './routes/admin.clasificaciones'
+import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
+import { Route as AdminBannersRouteImport } from './routes/admin.banners'
+import { Route as CountrySplatRouteImport } from './routes/$country.$'
 import { Route as UsaNoticiasIndexRouteImport } from './routes/usa.noticias.index'
+import { Route as UsaEntrevistasIndexRouteImport } from './routes/usa.entrevistas.index'
+import { Route as UsaRegionIndexRouteImport } from './routes/usa.$region.index'
+import { Route as PortugalNoticiasIndexRouteImport } from './routes/portugal.noticias.index'
+import { Route as PortugalEntrevistasIndexRouteImport } from './routes/portugal.entrevistas.index'
+import { Route as MiamiNoticiasIndexRouteImport } from './routes/miami.noticias.index'
+import { Route as MiamiEntrevistasIndexRouteImport } from './routes/miami.entrevistas.index'
+import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
+import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as UsaNoticiasSlugRouteImport } from './routes/usa.noticias.$slug'
-import { Route as HubCountryClubesIndexRouteImport } from './routes/hub.$country.clubes.index'
-import { Route as HubCountryClubesSlugRouteImport } from './routes/hub.$country.clubes.$slug'
-import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
-import { Route as HubCountryCompeticionLigaNacionalRouteImport } from './routes/hub.$country.competicion.liga-nacional'
-import { Route as HubCountryFederacionesIndexRouteImport } from './routes/hub.$country.federaciones.index'
-import { Route as HubCountryFederacionesSlugRouteImport } from './routes/hub.$country.federaciones.$slug'
-import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$country.patinadores.index'
-import { Route as HubCountryPatinadoresSlugRouteImport } from './routes/hub.$country.patinadores.$slug'
-import { Route as HubCountryRegionesCodeRouteImport } from './routes/hub.$country.regiones.$code'
+import { Route as UsaEntrevistasSlugRouteImport } from './routes/usa.entrevistas.$slug'
+import { Route as UsaRegionCityRouteImport } from './routes/usa.$region.$city'
+import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
+import { Route as PortugalNoticiasSlugRouteImport } from './routes/portugal.noticias.$slug'
+import { Route as PortugalEntrevistasSlugRouteImport } from './routes/portugal.entrevistas.$slug'
+import { Route as NoticiasArticuloSlugRouteImport } from './routes/noticias.articulo.$slug'
+import { Route as MiamiNoticiasSlugRouteImport } from './routes/miami.noticias.$slug'
+import { Route as MiamiEntrevistasSlugRouteImport } from './routes/miami.entrevistas.$slug'
+import { Route as HubCountryTvRouteImport } from './routes/hub.$country.tv'
+import { Route as HubCountryRfepRouteImport } from './routes/hub.$country.rfep'
+import { Route as HubCountryPatinadoresRouteImport } from './routes/hub.$country.patinadores'
+import { Route as HubCountryMvpRouteImport } from './routes/hub.$country.mvp'
+import { Route as HubCountryLiveRouteImport } from './routes/hub.$country.live'
+import { Route as HubCountryFederacionesRouteImport } from './routes/hub.$country.federaciones'
+import { Route as HubCountryEntrevistasRouteImport } from './routes/hub.$country.entrevistas'
+import { Route as HubCountryComunidadRouteImport } from './routes/hub.$country.comunidad'
+import { Route as HubCountryCompeticionRouteImport } from './routes/hub.$country.competicion'
+import { Route as HubCountryClubesRouteImport } from './routes/hub.$country.clubes'
+import { Route as HubCountryArchivoRouteImport } from './routes/hub.$country.archivo'
+import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
+import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
+import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
+import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as HubCountryTvIndexRouteImport } from './routes/hub.$country.tv.index'
-import { Route as HubCountryTvSlugRouteImport } from './routes/hub.$country.tv.$slug'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as HubCountryPatinadoresIndexRouteImport } from './routes/hub.$country.patinadores.index'
+import { Route as HubCountryFederacionesIndexRouteImport } from './routes/hub.$country.federaciones.index'
+import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
+import { Route as HubCountryClubesIndexRouteImport } from './routes/hub.$country.clubes.index'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as HubCountryTvSlugRouteImport } from './routes/hub.$country.tv.$slug'
+import { Route as HubCountryRegionesCodeRouteImport } from './routes/hub.$country.regiones.$code'
+import { Route as HubCountryPatinadoresSlugRouteImport } from './routes/hub.$country.patinadores.$slug'
+import { Route as HubCountryFederacionesSlugRouteImport } from './routes/hub.$country.federaciones.$slug'
+import { Route as HubCountryCompeticionLigaNacionalRouteImport } from './routes/hub.$country.competicion.liga-nacional'
+import { Route as HubCountryClubesSlugRouteImport } from './routes/hub.$country.clubes.$slug'
 import { Route as HubCountryCompeticionLigaNacionalIndexRouteImport } from './routes/hub.$country.competicion.liga-nacional.index'
-import { Route as HubCountryCompeticionLigaNacionalCalendarioRouteImport } from './routes/hub.$country.competicion.liga-nacional.calendario'
-import { Route as HubCountryCompeticionLigaNacionalClasificacionesRouteImport } from './routes/hub.$country.competicion.liga-nacional.clasificaciones'
-import { Route as HubCountryCompeticionLigaNacionalNoticiasRouteImport } from './routes/hub.$country.competicion.liga-nacional.noticias'
 import { Route as HubCountryCompeticionLigaNacionalResultadosRouteImport } from './routes/hub.$country.competicion.liga-nacional.resultados'
+import { Route as HubCountryCompeticionLigaNacionalNoticiasRouteImport } from './routes/hub.$country.competicion.liga-nacional.noticias'
+import { Route as HubCountryCompeticionLigaNacionalClasificacionesRouteImport } from './routes/hub.$country.competicion.liga-nacional.clasificaciones'
+import { Route as HubCountryCompeticionLigaNacionalCalendarioRouteImport } from './routes/hub.$country.competicion.liga-nacional.calendario'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AccesoInternoRoute = AccesoInternoRouteImport.update({
-  id: '/acceso-interno',
-  path: '/acceso-interno',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AvisoLegalRoute = AvisoLegalRouteImport.update({
-  id: '/aviso-legal',
-  path: '/aviso-legal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CaminoAlEuropeo2026Route = CaminoAlEuropeo2026RouteImport.update({
-  id: '/camino-al-europeo-2026',
-  path: '/camino-al-europeo-2026',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CookiesRoute = CookiesRouteImport.update({
-  id: '/cookies',
-  path: '/cookies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EquipoRoute = EquipoRouteImport.update({
-  id: '/equipo',
-  path: '/equipo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EstablecerClaveRoute = EstablecerClaveRouteImport.update({
-  id: '/establecer-clave',
-  path: '/establecer-clave',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MiBibliotecaRoute = MiBibliotecaRouteImport.update({
-  id: '/mi-biblioteca',
-  path: '/mi-biblioteca',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MiamiRoute = MiamiRouteImport.update({
-  id: '/miami',
-  path: '/miami',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaisesRoute = PaisesRouteImport.update({
-  id: '/paises',
-  path: '/paises',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
-  id: '/patrocinadores',
-  path: '/patrocinadores',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PortugalRoute = PortugalRouteImport.update({
-  id: '/portugal',
-  path: '/portugal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PremiosMvpRoute = PremiosMvpRouteImport.update({
-  id: '/premios-mvp',
-  path: '/premios-mvp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacidadRoute = PrivacidadRouteImport.update({
-  id: '/privacidad',
-  path: '/privacidad',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RedactoresRoute = RedactoresRouteImport.update({
-  id: '/redactores',
-  path: '/redactores',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RevistaRoute = RevistaRouteImport.update({
-  id: '/revista',
-  path: '/revista',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapNewsDotxmlRoute = SitemapNewsDotxmlRouteImport.update({
-  id: '/sitemap-news.xml',
-  path: '/sitemap-news.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const UsaRoute = UsaRouteImport.update({
+  id: '/usa',
+  path: '/usa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TvRoute = TvRouteImport.update({
@@ -294,397 +195,154 @@ const TvRoute = TvRouteImport.update({
   path: '/tv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UsaRoute = UsaRouteImport.update({
-  id: '/usa',
-  path: '/usa',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CountryIndexRoute = CountryIndexRouteImport.update({
-  id: '/$country/',
-  path: '/$country/',
+const SitemapNewsDotxmlRoute = SitemapNewsDotxmlRouteImport.update({
+  id: '/sitemap-news.xml',
+  path: '/sitemap-news.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CountrySplatRoute = CountrySplatRouteImport.update({
-  id: '/$country/$',
-  path: '/$country/$',
+const RevistaRoute = RevistaRouteImport.update({
+  id: '/revista',
+  path: '/revista',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBannersRoute = AdminBannersRouteImport.update({
-  id: '/banners',
-  path: '/banners',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
-  id: '/categorias',
-  path: '/categorias',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminClasificacionesRoute = AdminClasificacionesRouteImport.update({
-  id: '/clasificaciones',
-  path: '/clasificaciones',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminClubesRoute = AdminClubesRouteImport.update({
-  id: '/clubes',
-  path: '/clubes',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminColaboracionesRoute = AdminColaboracionesRouteImport.update({
-  id: '/colaboraciones',
-  path: '/colaboraciones',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminColombiaRoute = AdminColombiaRouteImport.update({
-  id: '/colombia',
-  path: '/colombia',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminComunidadRoute = AdminComunidadRouteImport.update({
-  id: '/comunidad',
-  path: '/comunidad',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEntrevistasRoute = AdminEntrevistasRouteImport.update({
-  id: '/entrevistas',
-  path: '/entrevistas',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEquipoRoute = AdminEquipoRouteImport.update({
-  id: '/equipo',
-  path: '/equipo',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEspanaRoute = AdminEspanaRouteImport.update({
-  id: '/espana',
-  path: '/espana',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEspecialesRoute = AdminEspecialesRouteImport.update({
-  id: '/especiales',
-  path: '/especiales',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEstadisticasRoute = AdminEstadisticasRouteImport.update({
-  id: '/estadisticas',
-  path: '/estadisticas',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEventosRoute = AdminEventosRouteImport.update({
-  id: '/eventos',
-  path: '/eventos',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminFederacionesRoute = AdminFederacionesRouteImport.update({
-  id: '/federaciones',
-  path: '/federaciones',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminFormulariosRoute = AdminFormulariosRouteImport.update({
-  id: '/formularios',
-  path: '/formularios',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminHomeControlRoute = AdminHomeControlRouteImport.update({
-  id: '/home-control',
-  path: '/home-control',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminHubLigaRoute = AdminHubLigaRouteImport.update({
-  id: '/hub-liga',
-  path: '/hub-liga',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLegalRoute = AdminLegalRouteImport.update({
-  id: '/legal',
-  path: '/legal',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLiveCenterRoute = AdminLiveCenterRouteImport.update({
-  id: '/live-center',
-  path: '/live-center',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLiveResultsRoute = AdminLiveResultsRouteImport.update({
-  id: '/live-results',
-  path: '/live-results',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMedalleroRoute = AdminMedalleroRouteImport.update({
-  id: '/medallero',
-  path: '/medallero',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMiamiRoute = AdminMiamiRouteImport.update({
-  id: '/miami',
-  path: '/miami',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPaginasRoute = AdminPaginasRouteImport.update({
-  id: '/paginas',
-  path: '/paginas',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPatinadoresRoute = AdminPatinadoresRouteImport.update({
-  id: '/patinadores',
-  path: '/patinadores',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPatrocinadoresRoute = AdminPatrocinadoresRouteImport.update({
-  id: '/patrocinadores',
-  path: '/patrocinadores',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPendientesRoute = AdminPendientesRouteImport.update({
-  id: '/pendientes',
-  path: '/pendientes',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPermisosRoute = AdminPermisosRouteImport.update({
-  id: '/permisos',
-  path: '/permisos',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPortugalRoute = AdminPortugalRouteImport.update({
-  id: '/portugal',
-  path: '/portugal',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
-  id: '/premios-mvp',
-  path: '/premios-mvp',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRedRedactoresRoute = AdminRedRedactoresRouteImport.update({
-  id: '/red-redactores',
-  path: '/red-redactores',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRedactoresRoute = AdminRedactoresRouteImport.update({
+const RedactoresRoute = RedactoresRouteImport.update({
   id: '/redactores',
   path: '/redactores',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminResultadosRoute = AdminResultadosRouteImport.update({
-  id: '/resultados',
-  path: '/resultados',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminResultadosEventosRoute = AdminResultadosEventosRouteImport.update({
-  id: '/resultados-eventos',
-  path: '/resultados-eventos',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminResultadosImportarRoute = AdminResultadosImportarRouteImport.update({
-  id: '/resultados-importar',
-  path: '/resultados-importar',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminResultadosPdfsRoute = AdminResultadosPdfsRouteImport.update({
-  id: '/resultados-pdfs',
-  path: '/resultados-pdfs',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRevistaCtaRoute = AdminRevistaCtaRouteImport.update({
-  id: '/revista-cta',
-  path: '/revista-cta',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRevistasRoute = AdminRevistasRouteImport.update({
-  id: '/revistas',
-  path: '/revistas',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSalonDeLaFamaRoute = AdminSalonDeLaFamaRouteImport.update({
-  id: '/salon-de-la-fama',
-  path: '/salon-de-la-fama',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminScheduleRoute = AdminScheduleRouteImport.update({
-  id: '/schedule',
-  path: '/schedule',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSectionsRoute = AdminSectionsRouteImport.update({
-  id: '/sections',
-  path: '/sections',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSeguridadRoute = AdminSeguridadRouteImport.update({
-  id: '/seguridad',
-  path: '/seguridad',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSobreNosotrosRoute = AdminSobreNosotrosRouteImport.update({
-  id: '/sobre-nosotros',
-  path: '/sobre-nosotros',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTickerRoute = AdminTickerRouteImport.update({
-  id: '/ticker',
-  path: '/ticker',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTvRoute = AdminTvRouteImport.update({
-  id: '/tv',
-  path: '/tv',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTvEmisionesRoute = AdminTvEmisionesRouteImport.update({
-  id: '/tv-emisiones',
-  path: '/tv-emisiones',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTvHighlightsRoute = AdminTvHighlightsRouteImport.update({
-  id: '/tv-highlights',
-  path: '/tv-highlights',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
-  id: '/usuarios',
-  path: '/usuarios',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminVideosRoute = AdminVideosRouteImport.update({
-  id: '/videos',
-  path: '/videos',
-  getParentRoute: () => AdminRoute,
-} as any)
-const CaminoAlEuropeo2026IndexRoute =
-  CaminoAlEuropeo2026IndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => CaminoAlEuropeo2026Route,
-  } as any)
-const CaminoAlEuropeo2026CalendarioYSedesRoute =
-  CaminoAlEuropeo2026CalendarioYSedesRouteImport.update({
-    id: '/calendario-y-sedes',
-    path: '/calendario-y-sedes',
-    getParentRoute: () => CaminoAlEuropeo2026Route,
-  } as any)
-const CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute =
-  CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport.update({
-    id: '/convocatoria-seleccion-espanola',
-    path: '/convocatoria-seleccion-espanola',
-    getParentRoute: () => CaminoAlEuropeo2026Route,
-  } as any)
-const CaminoAlEuropeo2026EntrevistaSeleccionadorRoute =
-  CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport.update({
-    id: '/entrevista-seleccionador',
-    path: '/entrevista-seleccionador',
-    getParentRoute: () => CaminoAlEuropeo2026Route,
-  } as any)
-const CaminoAlEuropeo2026GaleriaRollerzoneTvRoute =
-  CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport.update({
-    id: '/galeria-rollerzone-tv',
-    path: '/galeria-rollerzone-tv',
-    getParentRoute: () => CaminoAlEuropeo2026Route,
-  } as any)
-const CaminoAlEuropeo2026InformacionCampeonatoRoute =
-  CaminoAlEuropeo2026InformacionCampeonatoRouteImport.update({
-    id: '/informacion-campeonato',
-    path: '/informacion-campeonato',
-    getParentRoute: () => CaminoAlEuropeo2026Route,
-  } as any)
-const CaminoAlEuropeo2026PresentacionEuropeo2026Route =
-  CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport.update({
-    id: '/presentacion-europeo-2026',
-    path: '/presentacion-europeo-2026',
-    getParentRoute: () => CaminoAlEuropeo2026Route,
-  } as any)
-const CaminoAlEuropeo2026ResultadosYMedalleroRoute =
-  CaminoAlEuropeo2026ResultadosYMedalleroRouteImport.update({
-    id: '/resultados-y-medallero',
-    path: '/resultados-y-medallero',
-    getParentRoute: () => CaminoAlEuropeo2026Route,
-  } as any)
-const ColaboracionesIndexRoute = ColaboracionesIndexRouteImport.update({
-  id: '/colaboraciones/',
-  path: '/colaboraciones/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ColaboracionesSlugRoute = ColaboracionesSlugRouteImport.update({
-  id: '/colaboraciones/$slug',
-  path: '/colaboraciones/$slug',
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardRoute,
+const PremiosMvpRoute = PremiosMvpRouteImport.update({
+  id: '/premios-mvp',
+  path: '/premios-mvp',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardMiamiRoute = DashboardMiamiRouteImport.update({
-  id: '/miami',
-  path: '/miami',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardPortugalRoute = DashboardPortugalRouteImport.update({
+const PortugalRoute = PortugalRouteImport.update({
   id: '/portugal',
   path: '/portugal',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const EditorMiamiRoute = EditorMiamiRouteImport.update({
-  id: '/editor/miami',
-  path: '/editor/miami',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EditorPortugalRoute = EditorPortugalRouteImport.update({
-  id: '/editor/portugal',
-  path: '/editor/portugal',
+const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
+  id: '/patrocinadores',
+  path: '/patrocinadores',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EntrevistasIndexRoute = EntrevistasIndexRouteImport.update({
-  id: '/entrevistas/',
-  path: '/entrevistas/',
+const PaisesRoute = PaisesRouteImport.update({
+  id: '/paises',
+  path: '/paises',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
-  id: '/entrevistas/$slug',
-  path: '/entrevistas/$slug',
+const MiamiRoute = MiamiRouteImport.update({
+  id: '/miami',
+  path: '/miami',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspanaArchivoRoute = EspanaArchivoRouteImport.update({
-  id: '/espana/archivo',
-  path: '/espana/archivo',
+const MiBibliotecaRoute = MiBibliotecaRouteImport.update({
+  id: '/mi-biblioteca',
+  path: '/mi-biblioteca',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspanaClubesRoute = EspanaClubesRouteImport.update({
-  id: '/espana/clubes',
-  path: '/espana/clubes',
+const EstablecerClaveRoute = EstablecerClaveRouteImport.update({
+  id: '/establecer-clave',
+  path: '/establecer-clave',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspanaComunidadRoute = EspanaComunidadRouteImport.update({
-  id: '/espana/comunidad',
-  path: '/espana/comunidad',
+const EquipoRoute = EquipoRouteImport.update({
+  id: '/equipo',
+  path: '/equipo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspanaFederacionesRoute = EspanaFederacionesRouteImport.update({
-  id: '/espana/federaciones',
-  path: '/espana/federaciones',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspanaLiveRoute = EspanaLiveRouteImport.update({
-  id: '/espana/live',
-  path: '/espana/live',
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspanaMvpRoute = EspanaMvpRouteImport.update({
-  id: '/espana/mvp',
-  path: '/espana/mvp',
+const CaminoAlEuropeo2026Route = CaminoAlEuropeo2026RouteImport.update({
+  id: '/camino-al-europeo-2026',
+  path: '/camino-al-europeo-2026',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspanaPatinadoresRoute = EspanaPatinadoresRouteImport.update({
-  id: '/espana/patinadores',
-  path: '/espana/patinadores',
+const AvisoLegalRoute = AvisoLegalRouteImport.update({
+  id: '/aviso-legal',
+  path: '/aviso-legal',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspanaRollerzoneTvRoute = EspanaRollerzoneTvRouteImport.update({
-  id: '/espana/rollerzone-tv',
-  path: '/espana/rollerzone-tv',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccesoInternoRoute = AccesoInternoRouteImport.update({
+  id: '/acceso-interno',
+  path: '/acceso-interno',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsaIndexRoute = UsaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UsaRoute,
+} as any)
+const SalonDeLaFamaIndexRoute = SalonDeLaFamaIndexRouteImport.update({
+  id: '/salon-de-la-fama/',
+  path: '/salon-de-la-fama/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RollerzoneTvIndexRoute = RollerzoneTvIndexRouteImport.update({
+  id: '/rollerzone-tv/',
+  path: '/rollerzone-tv/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RevistaIndexRoute = RevistaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RevistaRoute,
+} as any)
+const ResultadosIndexRoute = ResultadosIndexRouteImport.update({
+  id: '/resultados/',
+  path: '/resultados/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortugalIndexRoute = PortugalIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PortugalRoute,
+} as any)
+const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
+  id: '/noticias/',
+  path: '/noticias/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MiamiIndexRoute = MiamiIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MiamiRoute,
+} as any)
+const EventosIndexRoute = EventosIndexRouteImport.update({
+  id: '/eventos/',
+  path: '/eventos/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EspecialesIndexRoute = EspecialesIndexRouteImport.update({
@@ -692,34 +350,81 @@ const EspecialesIndexRoute = EspecialesIndexRouteImport.update({
   path: '/especiales/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspecialesSlugRoute = EspecialesSlugRouteImport.update({
-  id: '/especiales/$slug',
-  path: '/especiales/$slug',
+const EntrevistasIndexRoute = EntrevistasIndexRouteImport.update({
+  id: '/entrevistas/',
+  path: '/entrevistas/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EventosIndexRoute = EventosIndexRouteImport.update({
-  id: '/eventos/',
-  path: '/eventos/',
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const ColaboracionesIndexRoute = ColaboracionesIndexRouteImport.update({
+  id: '/colaboraciones/',
+  path: '/colaboraciones/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EventosSlugRoute = EventosSlugRouteImport.update({
-  id: '/eventos/$slug',
-  path: '/eventos/$slug',
+const CaminoAlEuropeo2026IndexRoute =
+  CaminoAlEuropeo2026IndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const CountryIndexRoute = CountryIndexRouteImport.update({
+  id: '/$country/',
+  path: '/$country/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EventsSlugRoute = EventsSlugRouteImport.update({
-  id: '/events/$slug',
-  path: '/events/$slug',
+const SobreSlugRoute = SobreSlugRouteImport.update({
+  id: '/sobre/$slug',
+  path: '/sobre/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HubCountryRoute = HubCountryRouteImport.update({
-  id: '/hub/$country',
-  path: '/hub/$country',
+const SalonDeLaFamaSlugRoute = SalonDeLaFamaSlugRouteImport.update({
+  id: '/salon-de-la-fama/$slug',
+  path: '/salon-de-la-fama/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LegalSlugRoute = LegalSlugRouteImport.update({
-  id: '/legal/$slug',
-  path: '/legal/$slug',
+const RollerzoneTvWorldSkateGamesAsu26Route =
+  RollerzoneTvWorldSkateGamesAsu26RouteImport.update({
+    id: '/rollerzone-tv/world-skate-games-asu26',
+    path: '/rollerzone-tv/world-skate-games-asu26',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ResultadosEventoRoute = ResultadosEventoRouteImport.update({
+  id: '/resultados/$evento',
+  path: '/resultados/$evento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedactoresIdRoute = RedactoresIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => RedactoresRoute,
+} as any)
+const PatinadoresSlugRoute = PatinadoresSlugRouteImport.update({
+  id: '/patinadores/$slug',
+  path: '/patinadores/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
+  id: '/noticias/$slug',
+  path: '/noticias/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsletterConfirmarRoute = NewsletterConfirmarRouteImport.update({
+  id: '/newsletter/confirmar',
+  path: '/newsletter/confirmar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsletterBajaRoute = NewsletterBajaRouteImport.update({
+  id: '/newsletter/baja',
+  path: '/newsletter/baja',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LigaNacionalClasificacionesRoute =
@@ -728,230 +433,391 @@ const LigaNacionalClasificacionesRoute =
     path: '/liga-nacional/clasificaciones',
     getParentRoute: () => rootRouteImport,
   } as any)
-const MiamiIndexRoute = MiamiIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => MiamiRoute,
-} as any)
-const NewsletterBajaRoute = NewsletterBajaRouteImport.update({
-  id: '/newsletter/baja',
-  path: '/newsletter/baja',
+const LegalSlugRoute = LegalSlugRouteImport.update({
+  id: '/legal/$slug',
+  path: '/legal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NewsletterConfirmarRoute = NewsletterConfirmarRouteImport.update({
-  id: '/newsletter/confirmar',
-  path: '/newsletter/confirmar',
+const HubCountryRoute = HubCountryRouteImport.update({
+  id: '/hub/$country',
+  path: '/hub/$country',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
-  id: '/noticias/',
-  path: '/noticias/',
+const EventsSlugRoute = EventsSlugRouteImport.update({
+  id: '/events/$slug',
+  path: '/events/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NoticiasSlugRoute = NoticiasSlugRouteImport.update({
-  id: '/noticias/$slug',
-  path: '/noticias/$slug',
+const EventosSlugRoute = EventosSlugRouteImport.update({
+  id: '/eventos/$slug',
+  path: '/eventos/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PatinadoresSlugRoute = PatinadoresSlugRouteImport.update({
-  id: '/patinadores/$slug',
-  path: '/patinadores/$slug',
+const EspecialesSlugRoute = EspecialesSlugRouteImport.update({
+  id: '/especiales/$slug',
+  path: '/especiales/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PortugalIndexRoute = PortugalIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PortugalRoute,
-} as any)
-const RedactoresIdRoute = RedactoresIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => RedactoresRoute,
-} as any)
-const ResultadosIndexRoute = ResultadosIndexRouteImport.update({
-  id: '/resultados/',
-  path: '/resultados/',
+const EspanaRollerzoneTvRoute = EspanaRollerzoneTvRouteImport.update({
+  id: '/espana/rollerzone-tv',
+  path: '/espana/rollerzone-tv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResultadosEventoRoute = ResultadosEventoRouteImport.update({
-  id: '/resultados/$evento',
-  path: '/resultados/$evento',
+const EspanaPatinadoresRoute = EspanaPatinadoresRouteImport.update({
+  id: '/espana/patinadores',
+  path: '/espana/patinadores',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RevistaIndexRoute = RevistaIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => RevistaRoute,
-} as any)
-const RollerzoneTvIndexRoute = RollerzoneTvIndexRouteImport.update({
-  id: '/rollerzone-tv/',
-  path: '/rollerzone-tv/',
+const EspanaMvpRoute = EspanaMvpRouteImport.update({
+  id: '/espana/mvp',
+  path: '/espana/mvp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SalonDeLaFamaIndexRoute = SalonDeLaFamaIndexRouteImport.update({
-  id: '/salon-de-la-fama/',
-  path: '/salon-de-la-fama/',
+const EspanaLiveRoute = EspanaLiveRouteImport.update({
+  id: '/espana/live',
+  path: '/espana/live',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SalonDeLaFamaSlugRoute = SalonDeLaFamaSlugRouteImport.update({
-  id: '/salon-de-la-fama/$slug',
-  path: '/salon-de-la-fama/$slug',
+const EspanaFederacionesRoute = EspanaFederacionesRouteImport.update({
+  id: '/espana/federaciones',
+  path: '/espana/federaciones',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SobreSlugRoute = SobreSlugRouteImport.update({
-  id: '/sobre/$slug',
-  path: '/sobre/$slug',
+const EspanaComunidadRoute = EspanaComunidadRouteImport.update({
+  id: '/espana/comunidad',
+  path: '/espana/comunidad',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UsaIndexRoute = UsaIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => UsaRoute,
-} as any)
-const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
-  id: '/api/og/premios-mvp.svg',
-  path: '/api/og/premios-mvp.svg',
+const EspanaClubesRoute = EspanaClubesRouteImport.update({
+  id: '/espana/clubes',
+  path: '/espana/clubes',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicCspReportRoute = ApiPublicCspReportRouteImport.update({
-  id: '/api/public/csp-report',
-  path: '/api/public/csp-report',
+const EspanaArchivoRoute = EspanaArchivoRouteImport.update({
+  id: '/espana/archivo',
+  path: '/espana/archivo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EspecialesSlugIndexRoute = EspecialesSlugIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => EspecialesSlugRoute,
+const EntrevistasSlugRoute = EntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const EspecialesSlugPieceRoute = EspecialesSlugPieceRouteImport.update({
-  id: '/$piece',
-  path: '/$piece',
-  getParentRoute: () => EspecialesSlugRoute,
+const EditorPortugalRoute = EditorPortugalRouteImport.update({
+  id: '/editor/portugal',
+  path: '/editor/portugal',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => HubCountryRoute,
+const EditorMiamiRoute = EditorMiamiRouteImport.update({
+  id: '/editor/miami',
+  path: '/editor/miami',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const HubCountrySectionRoute = HubCountrySectionRouteImport.update({
-  id: '/$section',
-  path: '/$section',
-  getParentRoute: () => HubCountryRoute,
+const DashboardPortugalRoute = DashboardPortugalRouteImport.update({
+  id: '/portugal',
+  path: '/portugal',
+  getParentRoute: () => DashboardRoute,
 } as any)
-const HubCountryArchivoRoute = HubCountryArchivoRouteImport.update({
-  id: '/archivo',
-  path: '/archivo',
-  getParentRoute: () => HubCountryRoute,
+const DashboardMiamiRoute = DashboardMiamiRouteImport.update({
+  id: '/miami',
+  path: '/miami',
+  getParentRoute: () => DashboardRoute,
 } as any)
-const HubCountryClubesRoute = HubCountryClubesRouteImport.update({
-  id: '/clubes',
-  path: '/clubes',
-  getParentRoute: () => HubCountryRoute,
+const ColaboracionesSlugRoute = ColaboracionesSlugRouteImport.update({
+  id: '/colaboraciones/$slug',
+  path: '/colaboraciones/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const HubCountryCompeticionRoute = HubCountryCompeticionRouteImport.update({
-  id: '/competicion',
-  path: '/competicion',
-  getParentRoute: () => HubCountryRoute,
+const CaminoAlEuropeo2026ResultadosYMedalleroRoute =
+  CaminoAlEuropeo2026ResultadosYMedalleroRouteImport.update({
+    id: '/resultados-y-medallero',
+    path: '/resultados-y-medallero',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026PresentacionEuropeo2026Route =
+  CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport.update({
+    id: '/presentacion-europeo-2026',
+    path: '/presentacion-europeo-2026',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026InformacionCampeonatoRoute =
+  CaminoAlEuropeo2026InformacionCampeonatoRouteImport.update({
+    id: '/informacion-campeonato',
+    path: '/informacion-campeonato',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026GaleriaRollerzoneTvRoute =
+  CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport.update({
+    id: '/galeria-rollerzone-tv',
+    path: '/galeria-rollerzone-tv',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026EntrevistaSeleccionadorRoute =
+  CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport.update({
+    id: '/entrevista-seleccionador',
+    path: '/entrevista-seleccionador',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRoute =
+  CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport.update({
+    id: '/convocatoria-seleccion-espanola',
+    path: '/convocatoria-seleccion-espanola',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const CaminoAlEuropeo2026CalendarioYSedesRoute =
+  CaminoAlEuropeo2026CalendarioYSedesRouteImport.update({
+    id: '/calendario-y-sedes',
+    path: '/calendario-y-sedes',
+    getParentRoute: () => CaminoAlEuropeo2026Route,
+  } as any)
+const AdminVideosRoute = AdminVideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => AdminRoute,
 } as any)
-const HubCountryComunidadRoute = HubCountryComunidadRouteImport.update({
-  id: '/comunidad',
-  path: '/comunidad',
-  getParentRoute: () => HubCountryRoute,
+const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AdminRoute,
 } as any)
-const HubCountryEntrevistasRoute = HubCountryEntrevistasRouteImport.update({
-  id: '/entrevistas',
-  path: '/entrevistas',
-  getParentRoute: () => HubCountryRoute,
+const AdminTvHighlightsRoute = AdminTvHighlightsRouteImport.update({
+  id: '/tv-highlights',
+  path: '/tv-highlights',
+  getParentRoute: () => AdminRoute,
 } as any)
-const HubCountryFederacionesRoute = HubCountryFederacionesRouteImport.update({
-  id: '/federaciones',
-  path: '/federaciones',
-  getParentRoute: () => HubCountryRoute,
+const AdminTvEmisionesRoute = AdminTvEmisionesRouteImport.update({
+  id: '/tv-emisiones',
+  path: '/tv-emisiones',
+  getParentRoute: () => AdminRoute,
 } as any)
-const HubCountryLiveRoute = HubCountryLiveRouteImport.update({
-  id: '/live',
-  path: '/live',
-  getParentRoute: () => HubCountryRoute,
-} as any)
-const HubCountryMvpRoute = HubCountryMvpRouteImport.update({
-  id: '/mvp',
-  path: '/mvp',
-  getParentRoute: () => HubCountryRoute,
-} as any)
-const HubCountryPatinadoresRoute = HubCountryPatinadoresRouteImport.update({
-  id: '/patinadores',
-  path: '/patinadores',
-  getParentRoute: () => HubCountryRoute,
-} as any)
-const HubCountryRfepRoute = HubCountryRfepRouteImport.update({
-  id: '/rfep',
-  path: '/rfep',
-  getParentRoute: () => HubCountryRoute,
-} as any)
-const HubCountryTvRoute = HubCountryTvRouteImport.update({
+const AdminTvRoute = AdminTvRouteImport.update({
   id: '/tv',
   path: '/tv',
-  getParentRoute: () => HubCountryRoute,
+  getParentRoute: () => AdminRoute,
 } as any)
-const MiamiEntrevistasIndexRoute = MiamiEntrevistasIndexRouteImport.update({
-  id: '/entrevistas/',
-  path: '/entrevistas/',
-  getParentRoute: () => MiamiRoute,
+const AdminTickerRoute = AdminTickerRouteImport.update({
+  id: '/ticker',
+  path: '/ticker',
+  getParentRoute: () => AdminRoute,
 } as any)
-const MiamiEntrevistasSlugRoute = MiamiEntrevistasSlugRouteImport.update({
-  id: '/entrevistas/$slug',
-  path: '/entrevistas/$slug',
-  getParentRoute: () => MiamiRoute,
+const AdminSobreNosotrosRoute = AdminSobreNosotrosRouteImport.update({
+  id: '/sobre-nosotros',
+  path: '/sobre-nosotros',
+  getParentRoute: () => AdminRoute,
 } as any)
-const MiamiNoticiasIndexRoute = MiamiNoticiasIndexRouteImport.update({
-  id: '/noticias/',
-  path: '/noticias/',
-  getParentRoute: () => MiamiRoute,
+const AdminSeguridadRoute = AdminSeguridadRouteImport.update({
+  id: '/seguridad',
+  path: '/seguridad',
+  getParentRoute: () => AdminRoute,
 } as any)
-const MiamiNoticiasSlugRoute = MiamiNoticiasSlugRouteImport.update({
-  id: '/noticias/$slug',
-  path: '/noticias/$slug',
-  getParentRoute: () => MiamiRoute,
+const AdminSectionsRoute = AdminSectionsRouteImport.update({
+  id: '/sections',
+  path: '/sections',
+  getParentRoute: () => AdminRoute,
 } as any)
-const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
-  id: '/noticias/articulo/$slug',
-  path: '/noticias/articulo/$slug',
+const AdminScheduleRoute = AdminScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSalonDeLaFamaRoute = AdminSalonDeLaFamaRouteImport.update({
+  id: '/salon-de-la-fama',
+  path: '/salon-de-la-fama',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRevistasRoute = AdminRevistasRouteImport.update({
+  id: '/revistas',
+  path: '/revistas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRevistaCtaRoute = AdminRevistaCtaRouteImport.update({
+  id: '/revista-cta',
+  path: '/revista-cta',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultadosPdfsRoute = AdminResultadosPdfsRouteImport.update({
+  id: '/resultados-pdfs',
+  path: '/resultados-pdfs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultadosImportarRoute = AdminResultadosImportarRouteImport.update({
+  id: '/resultados-importar',
+  path: '/resultados-importar',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultadosEventosRoute = AdminResultadosEventosRouteImport.update({
+  id: '/resultados-eventos',
+  path: '/resultados-eventos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultadosRoute = AdminResultadosRouteImport.update({
+  id: '/resultados',
+  path: '/resultados',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRedactoresRoute = AdminRedactoresRouteImport.update({
+  id: '/redactores',
+  path: '/redactores',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRedRedactoresRoute = AdminRedRedactoresRouteImport.update({
+  id: '/red-redactores',
+  path: '/red-redactores',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPremiosMvpRoute = AdminPremiosMvpRouteImport.update({
+  id: '/premios-mvp',
+  path: '/premios-mvp',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPortugalRoute = AdminPortugalRouteImport.update({
+  id: '/portugal',
+  path: '/portugal',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPermisosRoute = AdminPermisosRouteImport.update({
+  id: '/permisos',
+  path: '/permisos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPendientesRoute = AdminPendientesRouteImport.update({
+  id: '/pendientes',
+  path: '/pendientes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPatrocinadoresRoute = AdminPatrocinadoresRouteImport.update({
+  id: '/patrocinadores',
+  path: '/patrocinadores',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPatinadoresRoute = AdminPatinadoresRouteImport.update({
+  id: '/patinadores',
+  path: '/patinadores',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPaginasRoute = AdminPaginasRouteImport.update({
+  id: '/paginas',
+  path: '/paginas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMiamiRoute = AdminMiamiRouteImport.update({
+  id: '/miami',
+  path: '/miami',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMedalleroRoute = AdminMedalleroRouteImport.update({
+  id: '/medallero',
+  path: '/medallero',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLiveResultsRoute = AdminLiveResultsRouteImport.update({
+  id: '/live-results',
+  path: '/live-results',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLiveCenterRoute = AdminLiveCenterRouteImport.update({
+  id: '/live-center',
+  path: '/live-center',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLegalRoute = AdminLegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHubLigaRoute = AdminHubLigaRouteImport.update({
+  id: '/hub-liga',
+  path: '/hub-liga',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHomeControlRoute = AdminHomeControlRouteImport.update({
+  id: '/home-control',
+  path: '/home-control',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFormulariosRoute = AdminFormulariosRouteImport.update({
+  id: '/formularios',
+  path: '/formularios',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFederacionesRoute = AdminFederacionesRouteImport.update({
+  id: '/federaciones',
+  path: '/federaciones',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEventosRoute = AdminEventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEstadisticasRoute = AdminEstadisticasRouteImport.update({
+  id: '/estadisticas',
+  path: '/estadisticas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEspecialesRoute = AdminEspecialesRouteImport.update({
+  id: '/especiales',
+  path: '/especiales',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEspanaRoute = AdminEspanaRouteImport.update({
+  id: '/espana',
+  path: '/espana',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEquipoRoute = AdminEquipoRouteImport.update({
+  id: '/equipo',
+  path: '/equipo',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEntrevistasRoute = AdminEntrevistasRouteImport.update({
+  id: '/entrevistas',
+  path: '/entrevistas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminComunidadRoute = AdminComunidadRouteImport.update({
+  id: '/comunidad',
+  path: '/comunidad',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminColombiaRoute = AdminColombiaRouteImport.update({
+  id: '/colombia',
+  path: '/colombia',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminColaboracionesRoute = AdminColaboracionesRouteImport.update({
+  id: '/colaboraciones',
+  path: '/colaboraciones',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminClubesRoute = AdminClubesRouteImport.update({
+  id: '/clubes',
+  path: '/clubes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminClasificacionesRoute = AdminClasificacionesRouteImport.update({
+  id: '/clasificaciones',
+  path: '/clasificaciones',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
+  id: '/categorias',
+  path: '/categorias',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBannersRoute = AdminBannersRouteImport.update({
+  id: '/banners',
+  path: '/banners',
+  getParentRoute: () => AdminRoute,
+} as any)
+const CountrySplatRoute = CountrySplatRouteImport.update({
+  id: '/$country/$',
+  path: '/$country/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PortugalEntrevistasIndexRoute =
-  PortugalEntrevistasIndexRouteImport.update({
-    id: '/entrevistas/',
-    path: '/entrevistas/',
-    getParentRoute: () => PortugalRoute,
-  } as any)
-const PortugalEntrevistasSlugRoute = PortugalEntrevistasSlugRouteImport.update({
-  id: '/entrevistas/$slug',
-  path: '/entrevistas/$slug',
-  getParentRoute: () => PortugalRoute,
-} as any)
-const PortugalNoticiasIndexRoute = PortugalNoticiasIndexRouteImport.update({
+const UsaNoticiasIndexRoute = UsaNoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
-  getParentRoute: () => PortugalRoute,
-} as any)
-const PortugalNoticiasSlugRoute = PortugalNoticiasSlugRouteImport.update({
-  id: '/noticias/$slug',
-  path: '/noticias/$slug',
-  getParentRoute: () => PortugalRoute,
-} as any)
-const RevistaLeerIdRoute = RevistaLeerIdRouteImport.update({
-  id: '/leer/$id',
-  path: '/leer/$id',
-  getParentRoute: () => RevistaRoute,
-} as any)
-const UsaRegionIndexRoute = UsaRegionIndexRouteImport.update({
-  id: '/$region/',
-  path: '/$region/',
-  getParentRoute: () => UsaRoute,
-} as any)
-const UsaRegionCityRoute = UsaRegionCityRouteImport.update({
-  id: '/$region/$city',
-  path: '/$region/$city',
   getParentRoute: () => UsaRoute,
 } as any)
 const UsaEntrevistasIndexRoute = UsaEntrevistasIndexRouteImport.update({
@@ -959,42 +825,172 @@ const UsaEntrevistasIndexRoute = UsaEntrevistasIndexRouteImport.update({
   path: '/entrevistas/',
   getParentRoute: () => UsaRoute,
 } as any)
-const UsaEntrevistasSlugRoute = UsaEntrevistasSlugRouteImport.update({
-  id: '/entrevistas/$slug',
-  path: '/entrevistas/$slug',
+const UsaRegionIndexRoute = UsaRegionIndexRouteImport.update({
+  id: '/$region/',
+  path: '/$region/',
   getParentRoute: () => UsaRoute,
 } as any)
-const UsaNoticiasIndexRoute = UsaNoticiasIndexRouteImport.update({
+const PortugalNoticiasIndexRoute = PortugalNoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
-  getParentRoute: () => UsaRoute,
+  getParentRoute: () => PortugalRoute,
+} as any)
+const PortugalEntrevistasIndexRoute =
+  PortugalEntrevistasIndexRouteImport.update({
+    id: '/entrevistas/',
+    path: '/entrevistas/',
+    getParentRoute: () => PortugalRoute,
+  } as any)
+const MiamiNoticiasIndexRoute = MiamiNoticiasIndexRouteImport.update({
+  id: '/noticias/',
+  path: '/noticias/',
+  getParentRoute: () => MiamiRoute,
+} as any)
+const MiamiEntrevistasIndexRoute = MiamiEntrevistasIndexRouteImport.update({
+  id: '/entrevistas/',
+  path: '/entrevistas/',
+  getParentRoute: () => MiamiRoute,
+} as any)
+const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const EspecialesSlugIndexRoute = EspecialesSlugIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EspecialesSlugRoute,
 } as any)
 const UsaNoticiasSlugRoute = UsaNoticiasSlugRouteImport.update({
   id: '/noticias/$slug',
   path: '/noticias/$slug',
   getParentRoute: () => UsaRoute,
 } as any)
-const HubCountryClubesIndexRoute = HubCountryClubesIndexRouteImport.update({
+const UsaEntrevistasSlugRoute = UsaEntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
+  getParentRoute: () => UsaRoute,
+} as any)
+const UsaRegionCityRoute = UsaRegionCityRouteImport.update({
+  id: '/$region/$city',
+  path: '/$region/$city',
+  getParentRoute: () => UsaRoute,
+} as any)
+const RevistaLeerIdRoute = RevistaLeerIdRouteImport.update({
+  id: '/leer/$id',
+  path: '/leer/$id',
+  getParentRoute: () => RevistaRoute,
+} as any)
+const PortugalNoticiasSlugRoute = PortugalNoticiasSlugRouteImport.update({
+  id: '/noticias/$slug',
+  path: '/noticias/$slug',
+  getParentRoute: () => PortugalRoute,
+} as any)
+const PortugalEntrevistasSlugRoute = PortugalEntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
+  getParentRoute: () => PortugalRoute,
+} as any)
+const NoticiasArticuloSlugRoute = NoticiasArticuloSlugRouteImport.update({
+  id: '/noticias/articulo/$slug',
+  path: '/noticias/articulo/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MiamiNoticiasSlugRoute = MiamiNoticiasSlugRouteImport.update({
+  id: '/noticias/$slug',
+  path: '/noticias/$slug',
+  getParentRoute: () => MiamiRoute,
+} as any)
+const MiamiEntrevistasSlugRoute = MiamiEntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
+  getParentRoute: () => MiamiRoute,
+} as any)
+const HubCountryTvRoute = HubCountryTvRouteImport.update({
+  id: '/tv',
+  path: '/tv',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryRfepRoute = HubCountryRfepRouteImport.update({
+  id: '/rfep',
+  path: '/rfep',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryPatinadoresRoute = HubCountryPatinadoresRouteImport.update({
+  id: '/patinadores',
+  path: '/patinadores',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryMvpRoute = HubCountryMvpRouteImport.update({
+  id: '/mvp',
+  path: '/mvp',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryLiveRoute = HubCountryLiveRouteImport.update({
+  id: '/live',
+  path: '/live',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryFederacionesRoute = HubCountryFederacionesRouteImport.update({
+  id: '/federaciones',
+  path: '/federaciones',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryEntrevistasRoute = HubCountryEntrevistasRouteImport.update({
+  id: '/entrevistas',
+  path: '/entrevistas',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryComunidadRoute = HubCountryComunidadRouteImport.update({
+  id: '/comunidad',
+  path: '/comunidad',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryCompeticionRoute = HubCountryCompeticionRouteImport.update({
+  id: '/competicion',
+  path: '/competicion',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryClubesRoute = HubCountryClubesRouteImport.update({
+  id: '/clubes',
+  path: '/clubes',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryArchivoRoute = HubCountryArchivoRouteImport.update({
+  id: '/archivo',
+  path: '/archivo',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountrySectionRoute = HubCountrySectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const EspecialesSlugPieceRoute = EspecialesSlugPieceRouteImport.update({
+  id: '/$piece',
+  path: '/$piece',
+  getParentRoute: () => EspecialesSlugRoute,
+} as any)
+const ApiPublicCspReportRoute = ApiPublicCspReportRouteImport.update({
+  id: '/api/public/csp-report',
+  path: '/api/public/csp-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOgPremiosMvpDotsvgRoute = ApiOgPremiosMvpDotsvgRouteImport.update({
+  id: '/api/og/premios-mvp.svg',
+  path: '/api/og/premios-mvp.svg',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HubCountryTvIndexRoute = HubCountryTvIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => HubCountryClubesRoute,
+  getParentRoute: () => HubCountryTvRoute,
 } as any)
-const HubCountryClubesSlugRoute = HubCountryClubesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => HubCountryClubesRoute,
-} as any)
-const HubCountryCompeticionIndexRoute =
-  HubCountryCompeticionIndexRouteImport.update({
+const HubCountryPatinadoresIndexRoute =
+  HubCountryPatinadoresIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => HubCountryCompeticionRoute,
-  } as any)
-const HubCountryCompeticionLigaNacionalRoute =
-  HubCountryCompeticionLigaNacionalRouteImport.update({
-    id: '/liga-nacional',
-    path: '/liga-nacional',
-    getParentRoute: () => HubCountryCompeticionRoute,
+    getParentRoute: () => HubCountryPatinadoresRoute,
   } as any)
 const HubCountryFederacionesIndexRoute =
   HubCountryFederacionesIndexRouteImport.update({
@@ -1002,48 +998,59 @@ const HubCountryFederacionesIndexRoute =
     path: '/',
     getParentRoute: () => HubCountryFederacionesRoute,
   } as any)
-const HubCountryFederacionesSlugRoute =
-  HubCountryFederacionesSlugRouteImport.update({
-    id: '/$slug',
-    path: '/$slug',
-    getParentRoute: () => HubCountryFederacionesRoute,
-  } as any)
-const HubCountryPatinadoresIndexRoute =
-  HubCountryPatinadoresIndexRouteImport.update({
+const HubCountryCompeticionIndexRoute =
+  HubCountryCompeticionIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => HubCountryPatinadoresRoute,
+    getParentRoute: () => HubCountryCompeticionRoute,
   } as any)
-const HubCountryPatinadoresSlugRoute =
-  HubCountryPatinadoresSlugRouteImport.update({
-    id: '/$slug',
-    path: '/$slug',
-    getParentRoute: () => HubCountryPatinadoresRoute,
-  } as any)
-const HubCountryRegionesCodeRoute = HubCountryRegionesCodeRouteImport.update({
-  id: '/regiones/$code',
-  path: '/regiones/$code',
-  getParentRoute: () => HubCountryRoute,
-} as any)
-const HubCountryTvIndexRoute = HubCountryTvIndexRouteImport.update({
+const HubCountryClubesIndexRoute = HubCountryClubesIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => HubCountryTvRoute,
+  getParentRoute: () => HubCountryClubesRoute,
 } as any)
-const HubCountryTvSlugRoute = HubCountryTvSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => HubCountryTvRoute,
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
-  getParentRoute: () => rootRouteImport,
+const HubCountryTvSlugRoute = HubCountryTvSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => HubCountryTvRoute,
+} as any)
+const HubCountryRegionesCodeRoute = HubCountryRegionesCodeRouteImport.update({
+  id: '/regiones/$code',
+  path: '/regiones/$code',
+  getParentRoute: () => HubCountryRoute,
+} as any)
+const HubCountryPatinadoresSlugRoute =
+  HubCountryPatinadoresSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => HubCountryPatinadoresRoute,
+  } as any)
+const HubCountryFederacionesSlugRoute =
+  HubCountryFederacionesSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => HubCountryFederacionesRoute,
+  } as any)
+const HubCountryCompeticionLigaNacionalRoute =
+  HubCountryCompeticionLigaNacionalRouteImport.update({
+    id: '/liga-nacional',
+    path: '/liga-nacional',
+    getParentRoute: () => HubCountryCompeticionRoute,
+  } as any)
+const HubCountryClubesSlugRoute = HubCountryClubesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => HubCountryClubesRoute,
 } as any)
 const HubCountryCompeticionLigaNacionalIndexRoute =
   HubCountryCompeticionLigaNacionalIndexRouteImport.update({
@@ -1051,16 +1058,10 @@ const HubCountryCompeticionLigaNacionalIndexRoute =
     path: '/',
     getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
   } as any)
-const HubCountryCompeticionLigaNacionalCalendarioRoute =
-  HubCountryCompeticionLigaNacionalCalendarioRouteImport.update({
-    id: '/calendario',
-    path: '/calendario',
-    getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
-  } as any)
-const HubCountryCompeticionLigaNacionalClasificacionesRoute =
-  HubCountryCompeticionLigaNacionalClasificacionesRouteImport.update({
-    id: '/clasificaciones',
-    path: '/clasificaciones',
+const HubCountryCompeticionLigaNacionalResultadosRoute =
+  HubCountryCompeticionLigaNacionalResultadosRouteImport.update({
+    id: '/resultados',
+    path: '/resultados',
     getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
   } as any)
 const HubCountryCompeticionLigaNacionalNoticiasRoute =
@@ -1069,10 +1070,16 @@ const HubCountryCompeticionLigaNacionalNoticiasRoute =
     path: '/noticias',
     getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
   } as any)
-const HubCountryCompeticionLigaNacionalResultadosRoute =
-  HubCountryCompeticionLigaNacionalResultadosRouteImport.update({
-    id: '/resultados',
-    path: '/resultados',
+const HubCountryCompeticionLigaNacionalClasificacionesRoute =
+  HubCountryCompeticionLigaNacionalClasificacionesRouteImport.update({
+    id: '/clasificaciones',
+    path: '/clasificaciones',
+    getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
+  } as any)
+const HubCountryCompeticionLigaNacionalCalendarioRoute =
+  HubCountryCompeticionLigaNacionalCalendarioRouteImport.update({
+    id: '/calendario',
+    path: '/calendario',
     getParentRoute: () => HubCountryCompeticionLigaNacionalRoute,
   } as any)
 
@@ -1182,6 +1189,7 @@ export interface FileRoutesByFullPath {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/rollerzone-tv/world-skate-games-asu26': typeof RollerzoneTvWorldSkateGamesAsu26Route
   '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country/': typeof CountryIndexRoute
@@ -1349,6 +1357,7 @@ export interface FileRoutesByTo {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/rollerzone-tv/world-skate-games-asu26': typeof RollerzoneTvWorldSkateGamesAsu26Route
   '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country': typeof CountryIndexRoute
@@ -1520,6 +1529,7 @@ export interface FileRoutesById {
   '/patinadores/$slug': typeof PatinadoresSlugRoute
   '/redactores/$id': typeof RedactoresIdRoute
   '/resultados/$evento': typeof ResultadosEventoRoute
+  '/rollerzone-tv/world-skate-games-asu26': typeof RollerzoneTvWorldSkateGamesAsu26Route
   '/salon-de-la-fama/$slug': typeof SalonDeLaFamaSlugRoute
   '/sobre/$slug': typeof SobreSlugRoute
   '/$country/': typeof CountryIndexRoute
@@ -1698,6 +1708,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/redactores/$id'
     | '/resultados/$evento'
+    | '/rollerzone-tv/world-skate-games-asu26'
     | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country/'
@@ -1865,6 +1876,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/redactores/$id'
     | '/resultados/$evento'
+    | '/rollerzone-tv/world-skate-games-asu26'
     | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country'
@@ -2035,6 +2047,7 @@ export interface FileRouteTypes {
     | '/patinadores/$slug'
     | '/redactores/$id'
     | '/resultados/$evento'
+    | '/rollerzone-tv/world-skate-games-asu26'
     | '/salon-de-la-fama/$slug'
     | '/sobre/$slug'
     | '/$country/'
@@ -2154,6 +2167,7 @@ export interface RootRouteChildren {
   NoticiasSlugRoute: typeof NoticiasSlugRoute
   PatinadoresSlugRoute: typeof PatinadoresSlugRoute
   ResultadosEventoRoute: typeof ResultadosEventoRoute
+  RollerzoneTvWorldSkateGamesAsu26Route: typeof RollerzoneTvWorldSkateGamesAsu26Route
   SalonDeLaFamaSlugRoute: typeof SalonDeLaFamaSlugRoute
   SobreSlugRoute: typeof SobreSlugRoute
   CountryIndexRoute: typeof CountryIndexRoute
@@ -2174,151 +2188,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/acceso-interno': {
-      id: '/acceso-interno'
-      path: '/acceso-interno'
-      fullPath: '/acceso-interno'
-      preLoaderRoute: typeof AccesoInternoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/aviso-legal': {
-      id: '/aviso-legal'
-      path: '/aviso-legal'
-      fullPath: '/aviso-legal'
-      preLoaderRoute: typeof AvisoLegalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/camino-al-europeo-2026': {
-      id: '/camino-al-europeo-2026'
-      path: '/camino-al-europeo-2026'
-      fullPath: '/camino-al-europeo-2026'
-      preLoaderRoute: typeof CaminoAlEuropeo2026RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/equipo': {
-      id: '/equipo'
-      path: '/equipo'
-      fullPath: '/equipo'
-      preLoaderRoute: typeof EquipoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/establecer-clave': {
-      id: '/establecer-clave'
-      path: '/establecer-clave'
-      fullPath: '/establecer-clave'
-      preLoaderRoute: typeof EstablecerClaveRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mi-biblioteca': {
-      id: '/mi-biblioteca'
-      path: '/mi-biblioteca'
-      fullPath: '/mi-biblioteca'
-      preLoaderRoute: typeof MiBibliotecaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/miami': {
-      id: '/miami'
-      path: '/miami'
-      fullPath: '/miami'
-      preLoaderRoute: typeof MiamiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/paises': {
-      id: '/paises'
-      path: '/paises'
-      fullPath: '/paises'
-      preLoaderRoute: typeof PaisesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/patrocinadores': {
-      id: '/patrocinadores'
-      path: '/patrocinadores'
-      fullPath: '/patrocinadores'
-      preLoaderRoute: typeof PatrocinadoresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/portugal': {
-      id: '/portugal'
-      path: '/portugal'
-      fullPath: '/portugal'
-      preLoaderRoute: typeof PortugalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/premios-mvp': {
-      id: '/premios-mvp'
-      path: '/premios-mvp'
-      fullPath: '/premios-mvp'
-      preLoaderRoute: typeof PremiosMvpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidad': {
-      id: '/privacidad'
-      path: '/privacidad'
-      fullPath: '/privacidad'
-      preLoaderRoute: typeof PrivacidadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/redactores': {
-      id: '/redactores'
-      path: '/redactores'
-      fullPath: '/redactores'
-      preLoaderRoute: typeof RedactoresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/revista': {
-      id: '/revista'
-      path: '/revista'
-      fullPath: '/revista'
-      preLoaderRoute: typeof RevistaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-news.xml': {
-      id: '/sitemap-news.xml'
-      path: '/sitemap-news.xml'
-      fullPath: '/sitemap-news.xml'
-      preLoaderRoute: typeof SitemapNewsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/usa': {
+      id: '/usa'
+      path: '/usa'
+      fullPath: '/usa'
+      preLoaderRoute: typeof UsaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tv': {
@@ -2328,704 +2202,151 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TvRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/usa': {
-      id: '/usa'
-      path: '/usa'
-      fullPath: '/usa'
-      preLoaderRoute: typeof UsaRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$country/': {
-      id: '/$country/'
-      path: '/$country'
-      fullPath: '/$country/'
-      preLoaderRoute: typeof CountryIndexRouteImport
+    '/sitemap-news.xml': {
+      id: '/sitemap-news.xml'
+      path: '/sitemap-news.xml'
+      fullPath: '/sitemap-news.xml'
+      preLoaderRoute: typeof SitemapNewsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$country/$': {
-      id: '/$country/$'
-      path: '/$country/$'
-      fullPath: '/$country/$'
-      preLoaderRoute: typeof CountrySplatRouteImport
+    '/revista': {
+      id: '/revista'
+      path: '/revista'
+      fullPath: '/revista'
+      preLoaderRoute: typeof RevistaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/banners': {
-      id: '/admin/banners'
-      path: '/banners'
-      fullPath: '/admin/banners'
-      preLoaderRoute: typeof AdminBannersRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/categorias': {
-      id: '/admin/categorias'
-      path: '/categorias'
-      fullPath: '/admin/categorias'
-      preLoaderRoute: typeof AdminCategoriasRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/clasificaciones': {
-      id: '/admin/clasificaciones'
-      path: '/clasificaciones'
-      fullPath: '/admin/clasificaciones'
-      preLoaderRoute: typeof AdminClasificacionesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/clubes': {
-      id: '/admin/clubes'
-      path: '/clubes'
-      fullPath: '/admin/clubes'
-      preLoaderRoute: typeof AdminClubesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/colaboraciones': {
-      id: '/admin/colaboraciones'
-      path: '/colaboraciones'
-      fullPath: '/admin/colaboraciones'
-      preLoaderRoute: typeof AdminColaboracionesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/colombia': {
-      id: '/admin/colombia'
-      path: '/colombia'
-      fullPath: '/admin/colombia'
-      preLoaderRoute: typeof AdminColombiaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/comunidad': {
-      id: '/admin/comunidad'
-      path: '/comunidad'
-      fullPath: '/admin/comunidad'
-      preLoaderRoute: typeof AdminComunidadRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/entrevistas': {
-      id: '/admin/entrevistas'
-      path: '/entrevistas'
-      fullPath: '/admin/entrevistas'
-      preLoaderRoute: typeof AdminEntrevistasRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/equipo': {
-      id: '/admin/equipo'
-      path: '/equipo'
-      fullPath: '/admin/equipo'
-      preLoaderRoute: typeof AdminEquipoRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/espana': {
-      id: '/admin/espana'
-      path: '/espana'
-      fullPath: '/admin/espana'
-      preLoaderRoute: typeof AdminEspanaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/especiales': {
-      id: '/admin/especiales'
-      path: '/especiales'
-      fullPath: '/admin/especiales'
-      preLoaderRoute: typeof AdminEspecialesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/estadisticas': {
-      id: '/admin/estadisticas'
-      path: '/estadisticas'
-      fullPath: '/admin/estadisticas'
-      preLoaderRoute: typeof AdminEstadisticasRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/eventos': {
-      id: '/admin/eventos'
-      path: '/eventos'
-      fullPath: '/admin/eventos'
-      preLoaderRoute: typeof AdminEventosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/federaciones': {
-      id: '/admin/federaciones'
-      path: '/federaciones'
-      fullPath: '/admin/federaciones'
-      preLoaderRoute: typeof AdminFederacionesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/formularios': {
-      id: '/admin/formularios'
-      path: '/formularios'
-      fullPath: '/admin/formularios'
-      preLoaderRoute: typeof AdminFormulariosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/home-control': {
-      id: '/admin/home-control'
-      path: '/home-control'
-      fullPath: '/admin/home-control'
-      preLoaderRoute: typeof AdminHomeControlRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/hub-liga': {
-      id: '/admin/hub-liga'
-      path: '/hub-liga'
-      fullPath: '/admin/hub-liga'
-      preLoaderRoute: typeof AdminHubLigaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/legal': {
-      id: '/admin/legal'
-      path: '/legal'
-      fullPath: '/admin/legal'
-      preLoaderRoute: typeof AdminLegalRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/live-center': {
-      id: '/admin/live-center'
-      path: '/live-center'
-      fullPath: '/admin/live-center'
-      preLoaderRoute: typeof AdminLiveCenterRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/live-results': {
-      id: '/admin/live-results'
-      path: '/live-results'
-      fullPath: '/admin/live-results'
-      preLoaderRoute: typeof AdminLiveResultsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/medallero': {
-      id: '/admin/medallero'
-      path: '/medallero'
-      fullPath: '/admin/medallero'
-      preLoaderRoute: typeof AdminMedalleroRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/miami': {
-      id: '/admin/miami'
-      path: '/miami'
-      fullPath: '/admin/miami'
-      preLoaderRoute: typeof AdminMiamiRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/paginas': {
-      id: '/admin/paginas'
-      path: '/paginas'
-      fullPath: '/admin/paginas'
-      preLoaderRoute: typeof AdminPaginasRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/patinadores': {
-      id: '/admin/patinadores'
-      path: '/patinadores'
-      fullPath: '/admin/patinadores'
-      preLoaderRoute: typeof AdminPatinadoresRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/patrocinadores': {
-      id: '/admin/patrocinadores'
-      path: '/patrocinadores'
-      fullPath: '/admin/patrocinadores'
-      preLoaderRoute: typeof AdminPatrocinadoresRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/pendientes': {
-      id: '/admin/pendientes'
-      path: '/pendientes'
-      fullPath: '/admin/pendientes'
-      preLoaderRoute: typeof AdminPendientesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/permisos': {
-      id: '/admin/permisos'
-      path: '/permisos'
-      fullPath: '/admin/permisos'
-      preLoaderRoute: typeof AdminPermisosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/portugal': {
-      id: '/admin/portugal'
-      path: '/portugal'
-      fullPath: '/admin/portugal'
-      preLoaderRoute: typeof AdminPortugalRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/premios-mvp': {
-      id: '/admin/premios-mvp'
-      path: '/premios-mvp'
-      fullPath: '/admin/premios-mvp'
-      preLoaderRoute: typeof AdminPremiosMvpRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/red-redactores': {
-      id: '/admin/red-redactores'
-      path: '/red-redactores'
-      fullPath: '/admin/red-redactores'
-      preLoaderRoute: typeof AdminRedRedactoresRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/redactores': {
-      id: '/admin/redactores'
+    '/redactores': {
+      id: '/redactores'
       path: '/redactores'
-      fullPath: '/admin/redactores'
-      preLoaderRoute: typeof AdminRedactoresRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/resultados': {
-      id: '/admin/resultados'
-      path: '/resultados'
-      fullPath: '/admin/resultados'
-      preLoaderRoute: typeof AdminResultadosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/resultados-eventos': {
-      id: '/admin/resultados-eventos'
-      path: '/resultados-eventos'
-      fullPath: '/admin/resultados-eventos'
-      preLoaderRoute: typeof AdminResultadosEventosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/resultados-importar': {
-      id: '/admin/resultados-importar'
-      path: '/resultados-importar'
-      fullPath: '/admin/resultados-importar'
-      preLoaderRoute: typeof AdminResultadosImportarRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/resultados-pdfs': {
-      id: '/admin/resultados-pdfs'
-      path: '/resultados-pdfs'
-      fullPath: '/admin/resultados-pdfs'
-      preLoaderRoute: typeof AdminResultadosPdfsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/revista-cta': {
-      id: '/admin/revista-cta'
-      path: '/revista-cta'
-      fullPath: '/admin/revista-cta'
-      preLoaderRoute: typeof AdminRevistaCtaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/revistas': {
-      id: '/admin/revistas'
-      path: '/revistas'
-      fullPath: '/admin/revistas'
-      preLoaderRoute: typeof AdminRevistasRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/salon-de-la-fama': {
-      id: '/admin/salon-de-la-fama'
-      path: '/salon-de-la-fama'
-      fullPath: '/admin/salon-de-la-fama'
-      preLoaderRoute: typeof AdminSalonDeLaFamaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/schedule': {
-      id: '/admin/schedule'
-      path: '/schedule'
-      fullPath: '/admin/schedule'
-      preLoaderRoute: typeof AdminScheduleRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/sections': {
-      id: '/admin/sections'
-      path: '/sections'
-      fullPath: '/admin/sections'
-      preLoaderRoute: typeof AdminSectionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/seguridad': {
-      id: '/admin/seguridad'
-      path: '/seguridad'
-      fullPath: '/admin/seguridad'
-      preLoaderRoute: typeof AdminSeguridadRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/sobre-nosotros': {
-      id: '/admin/sobre-nosotros'
-      path: '/sobre-nosotros'
-      fullPath: '/admin/sobre-nosotros'
-      preLoaderRoute: typeof AdminSobreNosotrosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/ticker': {
-      id: '/admin/ticker'
-      path: '/ticker'
-      fullPath: '/admin/ticker'
-      preLoaderRoute: typeof AdminTickerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/tv': {
-      id: '/admin/tv'
-      path: '/tv'
-      fullPath: '/admin/tv'
-      preLoaderRoute: typeof AdminTvRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/tv-emisiones': {
-      id: '/admin/tv-emisiones'
-      path: '/tv-emisiones'
-      fullPath: '/admin/tv-emisiones'
-      preLoaderRoute: typeof AdminTvEmisionesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/tv-highlights': {
-      id: '/admin/tv-highlights'
-      path: '/tv-highlights'
-      fullPath: '/admin/tv-highlights'
-      preLoaderRoute: typeof AdminTvHighlightsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/usuarios': {
-      id: '/admin/usuarios'
-      path: '/usuarios'
-      fullPath: '/admin/usuarios'
-      preLoaderRoute: typeof AdminUsuariosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/videos': {
-      id: '/admin/videos'
-      path: '/videos'
-      fullPath: '/admin/videos'
-      preLoaderRoute: typeof AdminVideosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/camino-al-europeo-2026/': {
-      id: '/camino-al-europeo-2026/'
-      path: '/'
-      fullPath: '/camino-al-europeo-2026/'
-      preLoaderRoute: typeof CaminoAlEuropeo2026IndexRouteImport
-      parentRoute: typeof CaminoAlEuropeo2026Route
-    }
-    '/camino-al-europeo-2026/calendario-y-sedes': {
-      id: '/camino-al-europeo-2026/calendario-y-sedes'
-      path: '/calendario-y-sedes'
-      fullPath: '/camino-al-europeo-2026/calendario-y-sedes'
-      preLoaderRoute: typeof CaminoAlEuropeo2026CalendarioYSedesRouteImport
-      parentRoute: typeof CaminoAlEuropeo2026Route
-    }
-    '/camino-al-europeo-2026/convocatoria-seleccion-espanola': {
-      id: '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
-      path: '/convocatoria-seleccion-espanola'
-      fullPath: '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
-      preLoaderRoute: typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport
-      parentRoute: typeof CaminoAlEuropeo2026Route
-    }
-    '/camino-al-europeo-2026/entrevista-seleccionador': {
-      id: '/camino-al-europeo-2026/entrevista-seleccionador'
-      path: '/entrevista-seleccionador'
-      fullPath: '/camino-al-europeo-2026/entrevista-seleccionador'
-      preLoaderRoute: typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport
-      parentRoute: typeof CaminoAlEuropeo2026Route
-    }
-    '/camino-al-europeo-2026/galeria-rollerzone-tv': {
-      id: '/camino-al-europeo-2026/galeria-rollerzone-tv'
-      path: '/galeria-rollerzone-tv'
-      fullPath: '/camino-al-europeo-2026/galeria-rollerzone-tv'
-      preLoaderRoute: typeof CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport
-      parentRoute: typeof CaminoAlEuropeo2026Route
-    }
-    '/camino-al-europeo-2026/informacion-campeonato': {
-      id: '/camino-al-europeo-2026/informacion-campeonato'
-      path: '/informacion-campeonato'
-      fullPath: '/camino-al-europeo-2026/informacion-campeonato'
-      preLoaderRoute: typeof CaminoAlEuropeo2026InformacionCampeonatoRouteImport
-      parentRoute: typeof CaminoAlEuropeo2026Route
-    }
-    '/camino-al-europeo-2026/presentacion-europeo-2026': {
-      id: '/camino-al-europeo-2026/presentacion-europeo-2026'
-      path: '/presentacion-europeo-2026'
-      fullPath: '/camino-al-europeo-2026/presentacion-europeo-2026'
-      preLoaderRoute: typeof CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport
-      parentRoute: typeof CaminoAlEuropeo2026Route
-    }
-    '/camino-al-europeo-2026/resultados-y-medallero': {
-      id: '/camino-al-europeo-2026/resultados-y-medallero'
-      path: '/resultados-y-medallero'
-      fullPath: '/camino-al-europeo-2026/resultados-y-medallero'
-      preLoaderRoute: typeof CaminoAlEuropeo2026ResultadosYMedalleroRouteImport
-      parentRoute: typeof CaminoAlEuropeo2026Route
-    }
-    '/colaboraciones/': {
-      id: '/colaboraciones/'
-      path: '/colaboraciones'
-      fullPath: '/colaboraciones/'
-      preLoaderRoute: typeof ColaboracionesIndexRouteImport
+      fullPath: '/redactores'
+      preLoaderRoute: typeof RedactoresRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/colaboraciones/$slug': {
-      id: '/colaboraciones/$slug'
-      path: '/colaboraciones/$slug'
-      fullPath: '/colaboraciones/$slug'
-      preLoaderRoute: typeof ColaboracionesSlugRouteImport
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRoute
+    '/premios-mvp': {
+      id: '/premios-mvp'
+      path: '/premios-mvp'
+      fullPath: '/premios-mvp'
+      preLoaderRoute: typeof PremiosMvpRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dashboard/miami': {
-      id: '/dashboard/miami'
-      path: '/miami'
-      fullPath: '/dashboard/miami'
-      preLoaderRoute: typeof DashboardMiamiRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/portugal': {
-      id: '/dashboard/portugal'
+    '/portugal': {
+      id: '/portugal'
       path: '/portugal'
-      fullPath: '/dashboard/portugal'
-      preLoaderRoute: typeof DashboardPortugalRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/editor/miami': {
-      id: '/editor/miami'
-      path: '/editor/miami'
-      fullPath: '/editor/miami'
-      preLoaderRoute: typeof EditorMiamiRouteImport
+      fullPath: '/portugal'
+      preLoaderRoute: typeof PortugalRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/editor/portugal': {
-      id: '/editor/portugal'
-      path: '/editor/portugal'
-      fullPath: '/editor/portugal'
-      preLoaderRoute: typeof EditorPortugalRouteImport
+    '/patrocinadores': {
+      id: '/patrocinadores'
+      path: '/patrocinadores'
+      fullPath: '/patrocinadores'
+      preLoaderRoute: typeof PatrocinadoresRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/entrevistas/': {
-      id: '/entrevistas/'
-      path: '/entrevistas'
-      fullPath: '/entrevistas/'
-      preLoaderRoute: typeof EntrevistasIndexRouteImport
+    '/paises': {
+      id: '/paises'
+      path: '/paises'
+      fullPath: '/paises'
+      preLoaderRoute: typeof PaisesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/entrevistas/$slug': {
-      id: '/entrevistas/$slug'
-      path: '/entrevistas/$slug'
-      fullPath: '/entrevistas/$slug'
-      preLoaderRoute: typeof EntrevistasSlugRouteImport
+    '/miami': {
+      id: '/miami'
+      path: '/miami'
+      fullPath: '/miami'
+      preLoaderRoute: typeof MiamiRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espana/archivo': {
-      id: '/espana/archivo'
-      path: '/espana/archivo'
-      fullPath: '/espana/archivo'
-      preLoaderRoute: typeof EspanaArchivoRouteImport
+    '/mi-biblioteca': {
+      id: '/mi-biblioteca'
+      path: '/mi-biblioteca'
+      fullPath: '/mi-biblioteca'
+      preLoaderRoute: typeof MiBibliotecaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espana/clubes': {
-      id: '/espana/clubes'
-      path: '/espana/clubes'
-      fullPath: '/espana/clubes'
-      preLoaderRoute: typeof EspanaClubesRouteImport
+    '/establecer-clave': {
+      id: '/establecer-clave'
+      path: '/establecer-clave'
+      fullPath: '/establecer-clave'
+      preLoaderRoute: typeof EstablecerClaveRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espana/comunidad': {
-      id: '/espana/comunidad'
-      path: '/espana/comunidad'
-      fullPath: '/espana/comunidad'
-      preLoaderRoute: typeof EspanaComunidadRouteImport
+    '/equipo': {
+      id: '/equipo'
+      path: '/equipo'
+      fullPath: '/equipo'
+      preLoaderRoute: typeof EquipoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espana/federaciones': {
-      id: '/espana/federaciones'
-      path: '/espana/federaciones'
-      fullPath: '/espana/federaciones'
-      preLoaderRoute: typeof EspanaFederacionesRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espana/live': {
-      id: '/espana/live'
-      path: '/espana/live'
-      fullPath: '/espana/live'
-      preLoaderRoute: typeof EspanaLiveRouteImport
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espana/mvp': {
-      id: '/espana/mvp'
-      path: '/espana/mvp'
-      fullPath: '/espana/mvp'
-      preLoaderRoute: typeof EspanaMvpRouteImport
+    '/camino-al-europeo-2026': {
+      id: '/camino-al-europeo-2026'
+      path: '/camino-al-europeo-2026'
+      fullPath: '/camino-al-europeo-2026'
+      preLoaderRoute: typeof CaminoAlEuropeo2026RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espana/patinadores': {
-      id: '/espana/patinadores'
-      path: '/espana/patinadores'
-      fullPath: '/espana/patinadores'
-      preLoaderRoute: typeof EspanaPatinadoresRouteImport
+    '/aviso-legal': {
+      id: '/aviso-legal'
+      path: '/aviso-legal'
+      fullPath: '/aviso-legal'
+      preLoaderRoute: typeof AvisoLegalRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/espana/rollerzone-tv': {
-      id: '/espana/rollerzone-tv'
-      path: '/espana/rollerzone-tv'
-      fullPath: '/espana/rollerzone-tv'
-      preLoaderRoute: typeof EspanaRollerzoneTvRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/especiales/': {
-      id: '/especiales/'
-      path: '/especiales'
-      fullPath: '/especiales/'
-      preLoaderRoute: typeof EspecialesIndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/especiales/$slug': {
-      id: '/especiales/$slug'
-      path: '/especiales/$slug'
-      fullPath: '/especiales/$slug'
-      preLoaderRoute: typeof EspecialesSlugRouteImport
+    '/acceso-interno': {
+      id: '/acceso-interno'
+      path: '/acceso-interno'
+      fullPath: '/acceso-interno'
+      preLoaderRoute: typeof AccesoInternoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/eventos/': {
-      id: '/eventos/'
-      path: '/eventos'
-      fullPath: '/eventos/'
-      preLoaderRoute: typeof EventosIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/eventos/$slug': {
-      id: '/eventos/$slug'
-      path: '/eventos/$slug'
-      fullPath: '/eventos/$slug'
-      preLoaderRoute: typeof EventosSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events/$slug': {
-      id: '/events/$slug'
-      path: '/events/$slug'
-      fullPath: '/events/$slug'
-      preLoaderRoute: typeof EventsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hub/$country': {
-      id: '/hub/$country'
-      path: '/hub/$country'
-      fullPath: '/hub/$country'
-      preLoaderRoute: typeof HubCountryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/legal/$slug': {
-      id: '/legal/$slug'
-      path: '/legal/$slug'
-      fullPath: '/legal/$slug'
-      preLoaderRoute: typeof LegalSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/liga-nacional/clasificaciones': {
-      id: '/liga-nacional/clasificaciones'
-      path: '/liga-nacional/clasificaciones'
-      fullPath: '/liga-nacional/clasificaciones'
-      preLoaderRoute: typeof LigaNacionalClasificacionesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/miami/': {
-      id: '/miami/'
+    '/': {
+      id: '/'
       path: '/'
-      fullPath: '/miami/'
-      preLoaderRoute: typeof MiamiIndexRouteImport
-      parentRoute: typeof MiamiRoute
-    }
-    '/newsletter/baja': {
-      id: '/newsletter/baja'
-      path: '/newsletter/baja'
-      fullPath: '/newsletter/baja'
-      preLoaderRoute: typeof NewsletterBajaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/newsletter/confirmar': {
-      id: '/newsletter/confirmar'
-      path: '/newsletter/confirmar'
-      fullPath: '/newsletter/confirmar'
-      preLoaderRoute: typeof NewsletterConfirmarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/noticias/': {
-      id: '/noticias/'
-      path: '/noticias'
-      fullPath: '/noticias/'
-      preLoaderRoute: typeof NoticiasIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/noticias/$slug': {
-      id: '/noticias/$slug'
-      path: '/noticias/$slug'
-      fullPath: '/noticias/$slug'
-      preLoaderRoute: typeof NoticiasSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/patinadores/$slug': {
-      id: '/patinadores/$slug'
-      path: '/patinadores/$slug'
-      fullPath: '/patinadores/$slug'
-      preLoaderRoute: typeof PatinadoresSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/portugal/': {
-      id: '/portugal/'
-      path: '/'
-      fullPath: '/portugal/'
-      preLoaderRoute: typeof PortugalIndexRouteImport
-      parentRoute: typeof PortugalRoute
-    }
-    '/redactores/$id': {
-      id: '/redactores/$id'
-      path: '/$id'
-      fullPath: '/redactores/$id'
-      preLoaderRoute: typeof RedactoresIdRouteImport
-      parentRoute: typeof RedactoresRoute
-    }
-    '/resultados/': {
-      id: '/resultados/'
-      path: '/resultados'
-      fullPath: '/resultados/'
-      preLoaderRoute: typeof ResultadosIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/resultados/$evento': {
-      id: '/resultados/$evento'
-      path: '/resultados/$evento'
-      fullPath: '/resultados/$evento'
-      preLoaderRoute: typeof ResultadosEventoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/revista/': {
-      id: '/revista/'
-      path: '/'
-      fullPath: '/revista/'
-      preLoaderRoute: typeof RevistaIndexRouteImport
-      parentRoute: typeof RevistaRoute
-    }
-    '/rollerzone-tv/': {
-      id: '/rollerzone-tv/'
-      path: '/rollerzone-tv'
-      fullPath: '/rollerzone-tv/'
-      preLoaderRoute: typeof RollerzoneTvIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/salon-de-la-fama/': {
-      id: '/salon-de-la-fama/'
-      path: '/salon-de-la-fama'
-      fullPath: '/salon-de-la-fama/'
-      preLoaderRoute: typeof SalonDeLaFamaIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/salon-de-la-fama/$slug': {
-      id: '/salon-de-la-fama/$slug'
-      path: '/salon-de-la-fama/$slug'
-      fullPath: '/salon-de-la-fama/$slug'
-      preLoaderRoute: typeof SalonDeLaFamaSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sobre/$slug': {
-      id: '/sobre/$slug'
-      path: '/sobre/$slug'
-      fullPath: '/sobre/$slug'
-      preLoaderRoute: typeof SobreSlugRouteImport
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/usa/': {
@@ -3035,207 +2356,711 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsaIndexRouteImport
       parentRoute: typeof UsaRoute
     }
-    '/api/og/premios-mvp.svg': {
-      id: '/api/og/premios-mvp.svg'
-      path: '/api/og/premios-mvp.svg'
-      fullPath: '/api/og/premios-mvp.svg'
-      preLoaderRoute: typeof ApiOgPremiosMvpDotsvgRouteImport
+    '/salon-de-la-fama/': {
+      id: '/salon-de-la-fama/'
+      path: '/salon-de-la-fama'
+      fullPath: '/salon-de-la-fama/'
+      preLoaderRoute: typeof SalonDeLaFamaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/csp-report': {
-      id: '/api/public/csp-report'
-      path: '/api/public/csp-report'
-      fullPath: '/api/public/csp-report'
-      preLoaderRoute: typeof ApiPublicCspReportRouteImport
+    '/rollerzone-tv/': {
+      id: '/rollerzone-tv/'
+      path: '/rollerzone-tv'
+      fullPath: '/rollerzone-tv/'
+      preLoaderRoute: typeof RollerzoneTvIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/especiales/$slug/': {
-      id: '/especiales/$slug/'
+    '/revista/': {
+      id: '/revista/'
       path: '/'
-      fullPath: '/especiales/$slug/'
-      preLoaderRoute: typeof EspecialesSlugIndexRouteImport
-      parentRoute: typeof EspecialesSlugRoute
-    }
-    '/especiales/$slug/$piece': {
-      id: '/especiales/$slug/$piece'
-      path: '/$piece'
-      fullPath: '/especiales/$slug/$piece'
-      preLoaderRoute: typeof EspecialesSlugPieceRouteImport
-      parentRoute: typeof EspecialesSlugRoute
-    }
-    '/hub/$country/': {
-      id: '/hub/$country/'
-      path: '/'
-      fullPath: '/hub/$country/'
-      preLoaderRoute: typeof HubCountryIndexRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/$section': {
-      id: '/hub/$country/$section'
-      path: '/$section'
-      fullPath: '/hub/$country/$section'
-      preLoaderRoute: typeof HubCountrySectionRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/archivo': {
-      id: '/hub/$country/archivo'
-      path: '/archivo'
-      fullPath: '/hub/$country/archivo'
-      preLoaderRoute: typeof HubCountryArchivoRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/clubes': {
-      id: '/hub/$country/clubes'
-      path: '/clubes'
-      fullPath: '/hub/$country/clubes'
-      preLoaderRoute: typeof HubCountryClubesRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/competicion': {
-      id: '/hub/$country/competicion'
-      path: '/competicion'
-      fullPath: '/hub/$country/competicion'
-      preLoaderRoute: typeof HubCountryCompeticionRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/comunidad': {
-      id: '/hub/$country/comunidad'
-      path: '/comunidad'
-      fullPath: '/hub/$country/comunidad'
-      preLoaderRoute: typeof HubCountryComunidadRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/entrevistas': {
-      id: '/hub/$country/entrevistas'
-      path: '/entrevistas'
-      fullPath: '/hub/$country/entrevistas'
-      preLoaderRoute: typeof HubCountryEntrevistasRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/federaciones': {
-      id: '/hub/$country/federaciones'
-      path: '/federaciones'
-      fullPath: '/hub/$country/federaciones'
-      preLoaderRoute: typeof HubCountryFederacionesRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/live': {
-      id: '/hub/$country/live'
-      path: '/live'
-      fullPath: '/hub/$country/live'
-      preLoaderRoute: typeof HubCountryLiveRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/mvp': {
-      id: '/hub/$country/mvp'
-      path: '/mvp'
-      fullPath: '/hub/$country/mvp'
-      preLoaderRoute: typeof HubCountryMvpRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/patinadores': {
-      id: '/hub/$country/patinadores'
-      path: '/patinadores'
-      fullPath: '/hub/$country/patinadores'
-      preLoaderRoute: typeof HubCountryPatinadoresRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/rfep': {
-      id: '/hub/$country/rfep'
-      path: '/rfep'
-      fullPath: '/hub/$country/rfep'
-      preLoaderRoute: typeof HubCountryRfepRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/hub/$country/tv': {
-      id: '/hub/$country/tv'
-      path: '/tv'
-      fullPath: '/hub/$country/tv'
-      preLoaderRoute: typeof HubCountryTvRouteImport
-      parentRoute: typeof HubCountryRoute
-    }
-    '/miami/entrevistas/': {
-      id: '/miami/entrevistas/'
-      path: '/entrevistas'
-      fullPath: '/miami/entrevistas/'
-      preLoaderRoute: typeof MiamiEntrevistasIndexRouteImport
-      parentRoute: typeof MiamiRoute
-    }
-    '/miami/entrevistas/$slug': {
-      id: '/miami/entrevistas/$slug'
-      path: '/entrevistas/$slug'
-      fullPath: '/miami/entrevistas/$slug'
-      preLoaderRoute: typeof MiamiEntrevistasSlugRouteImport
-      parentRoute: typeof MiamiRoute
-    }
-    '/miami/noticias/': {
-      id: '/miami/noticias/'
-      path: '/noticias'
-      fullPath: '/miami/noticias/'
-      preLoaderRoute: typeof MiamiNoticiasIndexRouteImport
-      parentRoute: typeof MiamiRoute
-    }
-    '/miami/noticias/$slug': {
-      id: '/miami/noticias/$slug'
-      path: '/noticias/$slug'
-      fullPath: '/miami/noticias/$slug'
-      preLoaderRoute: typeof MiamiNoticiasSlugRouteImport
-      parentRoute: typeof MiamiRoute
-    }
-    '/noticias/articulo/$slug': {
-      id: '/noticias/articulo/$slug'
-      path: '/noticias/articulo/$slug'
-      fullPath: '/noticias/articulo/$slug'
-      preLoaderRoute: typeof NoticiasArticuloSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/portugal/entrevistas/': {
-      id: '/portugal/entrevistas/'
-      path: '/entrevistas'
-      fullPath: '/portugal/entrevistas/'
-      preLoaderRoute: typeof PortugalEntrevistasIndexRouteImport
-      parentRoute: typeof PortugalRoute
-    }
-    '/portugal/entrevistas/$slug': {
-      id: '/portugal/entrevistas/$slug'
-      path: '/entrevistas/$slug'
-      fullPath: '/portugal/entrevistas/$slug'
-      preLoaderRoute: typeof PortugalEntrevistasSlugRouteImport
-      parentRoute: typeof PortugalRoute
-    }
-    '/portugal/noticias/': {
-      id: '/portugal/noticias/'
-      path: '/noticias'
-      fullPath: '/portugal/noticias/'
-      preLoaderRoute: typeof PortugalNoticiasIndexRouteImport
-      parentRoute: typeof PortugalRoute
-    }
-    '/portugal/noticias/$slug': {
-      id: '/portugal/noticias/$slug'
-      path: '/noticias/$slug'
-      fullPath: '/portugal/noticias/$slug'
-      preLoaderRoute: typeof PortugalNoticiasSlugRouteImport
-      parentRoute: typeof PortugalRoute
-    }
-    '/revista/leer/$id': {
-      id: '/revista/leer/$id'
-      path: '/leer/$id'
-      fullPath: '/revista/leer/$id'
-      preLoaderRoute: typeof RevistaLeerIdRouteImport
+      fullPath: '/revista/'
+      preLoaderRoute: typeof RevistaIndexRouteImport
       parentRoute: typeof RevistaRoute
     }
-    '/usa/$region/': {
-      id: '/usa/$region/'
-      path: '/$region'
-      fullPath: '/usa/$region/'
-      preLoaderRoute: typeof UsaRegionIndexRouteImport
-      parentRoute: typeof UsaRoute
+    '/resultados/': {
+      id: '/resultados/'
+      path: '/resultados'
+      fullPath: '/resultados/'
+      preLoaderRoute: typeof ResultadosIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/usa/$region/$city': {
-      id: '/usa/$region/$city'
-      path: '/$region/$city'
-      fullPath: '/usa/$region/$city'
-      preLoaderRoute: typeof UsaRegionCityRouteImport
+    '/portugal/': {
+      id: '/portugal/'
+      path: '/'
+      fullPath: '/portugal/'
+      preLoaderRoute: typeof PortugalIndexRouteImport
+      parentRoute: typeof PortugalRoute
+    }
+    '/noticias/': {
+      id: '/noticias/'
+      path: '/noticias'
+      fullPath: '/noticias/'
+      preLoaderRoute: typeof NoticiasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/miami/': {
+      id: '/miami/'
+      path: '/'
+      fullPath: '/miami/'
+      preLoaderRoute: typeof MiamiIndexRouteImport
+      parentRoute: typeof MiamiRoute
+    }
+    '/eventos/': {
+      id: '/eventos/'
+      path: '/eventos'
+      fullPath: '/eventos/'
+      preLoaderRoute: typeof EventosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/especiales/': {
+      id: '/especiales/'
+      path: '/especiales'
+      fullPath: '/especiales/'
+      preLoaderRoute: typeof EspecialesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrevistas/': {
+      id: '/entrevistas/'
+      path: '/entrevistas'
+      fullPath: '/entrevistas/'
+      preLoaderRoute: typeof EntrevistasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/colaboraciones/': {
+      id: '/colaboraciones/'
+      path: '/colaboraciones'
+      fullPath: '/colaboraciones/'
+      preLoaderRoute: typeof ColaboracionesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/camino-al-europeo-2026/': {
+      id: '/camino-al-europeo-2026/'
+      path: '/'
+      fullPath: '/camino-al-europeo-2026/'
+      preLoaderRoute: typeof CaminoAlEuropeo2026IndexRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/$country/': {
+      id: '/$country/'
+      path: '/$country'
+      fullPath: '/$country/'
+      preLoaderRoute: typeof CountryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre/$slug': {
+      id: '/sobre/$slug'
+      path: '/sobre/$slug'
+      fullPath: '/sobre/$slug'
+      preLoaderRoute: typeof SobreSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salon-de-la-fama/$slug': {
+      id: '/salon-de-la-fama/$slug'
+      path: '/salon-de-la-fama/$slug'
+      fullPath: '/salon-de-la-fama/$slug'
+      preLoaderRoute: typeof SalonDeLaFamaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rollerzone-tv/world-skate-games-asu26': {
+      id: '/rollerzone-tv/world-skate-games-asu26'
+      path: '/rollerzone-tv/world-skate-games-asu26'
+      fullPath: '/rollerzone-tv/world-skate-games-asu26'
+      preLoaderRoute: typeof RollerzoneTvWorldSkateGamesAsu26RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resultados/$evento': {
+      id: '/resultados/$evento'
+      path: '/resultados/$evento'
+      fullPath: '/resultados/$evento'
+      preLoaderRoute: typeof ResultadosEventoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redactores/$id': {
+      id: '/redactores/$id'
+      path: '/$id'
+      fullPath: '/redactores/$id'
+      preLoaderRoute: typeof RedactoresIdRouteImport
+      parentRoute: typeof RedactoresRoute
+    }
+    '/patinadores/$slug': {
+      id: '/patinadores/$slug'
+      path: '/patinadores/$slug'
+      fullPath: '/patinadores/$slug'
+      preLoaderRoute: typeof PatinadoresSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/noticias/$slug': {
+      id: '/noticias/$slug'
+      path: '/noticias/$slug'
+      fullPath: '/noticias/$slug'
+      preLoaderRoute: typeof NoticiasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletter/confirmar': {
+      id: '/newsletter/confirmar'
+      path: '/newsletter/confirmar'
+      fullPath: '/newsletter/confirmar'
+      preLoaderRoute: typeof NewsletterConfirmarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletter/baja': {
+      id: '/newsletter/baja'
+      path: '/newsletter/baja'
+      fullPath: '/newsletter/baja'
+      preLoaderRoute: typeof NewsletterBajaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/liga-nacional/clasificaciones': {
+      id: '/liga-nacional/clasificaciones'
+      path: '/liga-nacional/clasificaciones'
+      fullPath: '/liga-nacional/clasificaciones'
+      preLoaderRoute: typeof LigaNacionalClasificacionesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/$slug': {
+      id: '/legal/$slug'
+      path: '/legal/$slug'
+      fullPath: '/legal/$slug'
+      preLoaderRoute: typeof LegalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hub/$country': {
+      id: '/hub/$country'
+      path: '/hub/$country'
+      fullPath: '/hub/$country'
+      preLoaderRoute: typeof HubCountryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$slug': {
+      id: '/events/$slug'
+      path: '/events/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos/$slug': {
+      id: '/eventos/$slug'
+      path: '/eventos/$slug'
+      fullPath: '/eventos/$slug'
+      preLoaderRoute: typeof EventosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/especiales/$slug': {
+      id: '/especiales/$slug'
+      path: '/especiales/$slug'
+      fullPath: '/especiales/$slug'
+      preLoaderRoute: typeof EspecialesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/rollerzone-tv': {
+      id: '/espana/rollerzone-tv'
+      path: '/espana/rollerzone-tv'
+      fullPath: '/espana/rollerzone-tv'
+      preLoaderRoute: typeof EspanaRollerzoneTvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/patinadores': {
+      id: '/espana/patinadores'
+      path: '/espana/patinadores'
+      fullPath: '/espana/patinadores'
+      preLoaderRoute: typeof EspanaPatinadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/mvp': {
+      id: '/espana/mvp'
+      path: '/espana/mvp'
+      fullPath: '/espana/mvp'
+      preLoaderRoute: typeof EspanaMvpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/live': {
+      id: '/espana/live'
+      path: '/espana/live'
+      fullPath: '/espana/live'
+      preLoaderRoute: typeof EspanaLiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/federaciones': {
+      id: '/espana/federaciones'
+      path: '/espana/federaciones'
+      fullPath: '/espana/federaciones'
+      preLoaderRoute: typeof EspanaFederacionesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/comunidad': {
+      id: '/espana/comunidad'
+      path: '/espana/comunidad'
+      fullPath: '/espana/comunidad'
+      preLoaderRoute: typeof EspanaComunidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/clubes': {
+      id: '/espana/clubes'
+      path: '/espana/clubes'
+      fullPath: '/espana/clubes'
+      preLoaderRoute: typeof EspanaClubesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espana/archivo': {
+      id: '/espana/archivo'
+      path: '/espana/archivo'
+      fullPath: '/espana/archivo'
+      preLoaderRoute: typeof EspanaArchivoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrevistas/$slug': {
+      id: '/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/entrevistas/$slug'
+      preLoaderRoute: typeof EntrevistasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/editor/portugal': {
+      id: '/editor/portugal'
+      path: '/editor/portugal'
+      fullPath: '/editor/portugal'
+      preLoaderRoute: typeof EditorPortugalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/editor/miami': {
+      id: '/editor/miami'
+      path: '/editor/miami'
+      fullPath: '/editor/miami'
+      preLoaderRoute: typeof EditorMiamiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/portugal': {
+      id: '/dashboard/portugal'
+      path: '/portugal'
+      fullPath: '/dashboard/portugal'
+      preLoaderRoute: typeof DashboardPortugalRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/miami': {
+      id: '/dashboard/miami'
+      path: '/miami'
+      fullPath: '/dashboard/miami'
+      preLoaderRoute: typeof DashboardMiamiRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/colaboraciones/$slug': {
+      id: '/colaboraciones/$slug'
+      path: '/colaboraciones/$slug'
+      fullPath: '/colaboraciones/$slug'
+      preLoaderRoute: typeof ColaboracionesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/camino-al-europeo-2026/resultados-y-medallero': {
+      id: '/camino-al-europeo-2026/resultados-y-medallero'
+      path: '/resultados-y-medallero'
+      fullPath: '/camino-al-europeo-2026/resultados-y-medallero'
+      preLoaderRoute: typeof CaminoAlEuropeo2026ResultadosYMedalleroRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/presentacion-europeo-2026': {
+      id: '/camino-al-europeo-2026/presentacion-europeo-2026'
+      path: '/presentacion-europeo-2026'
+      fullPath: '/camino-al-europeo-2026/presentacion-europeo-2026'
+      preLoaderRoute: typeof CaminoAlEuropeo2026PresentacionEuropeo2026RouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/informacion-campeonato': {
+      id: '/camino-al-europeo-2026/informacion-campeonato'
+      path: '/informacion-campeonato'
+      fullPath: '/camino-al-europeo-2026/informacion-campeonato'
+      preLoaderRoute: typeof CaminoAlEuropeo2026InformacionCampeonatoRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/galeria-rollerzone-tv': {
+      id: '/camino-al-europeo-2026/galeria-rollerzone-tv'
+      path: '/galeria-rollerzone-tv'
+      fullPath: '/camino-al-europeo-2026/galeria-rollerzone-tv'
+      preLoaderRoute: typeof CaminoAlEuropeo2026GaleriaRollerzoneTvRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/entrevista-seleccionador': {
+      id: '/camino-al-europeo-2026/entrevista-seleccionador'
+      path: '/entrevista-seleccionador'
+      fullPath: '/camino-al-europeo-2026/entrevista-seleccionador'
+      preLoaderRoute: typeof CaminoAlEuropeo2026EntrevistaSeleccionadorRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/convocatoria-seleccion-espanola': {
+      id: '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
+      path: '/convocatoria-seleccion-espanola'
+      fullPath: '/camino-al-europeo-2026/convocatoria-seleccion-espanola'
+      preLoaderRoute: typeof CaminoAlEuropeo2026ConvocatoriaSeleccionEspanolaRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/camino-al-europeo-2026/calendario-y-sedes': {
+      id: '/camino-al-europeo-2026/calendario-y-sedes'
+      path: '/calendario-y-sedes'
+      fullPath: '/camino-al-europeo-2026/calendario-y-sedes'
+      preLoaderRoute: typeof CaminoAlEuropeo2026CalendarioYSedesRouteImport
+      parentRoute: typeof CaminoAlEuropeo2026Route
+    }
+    '/admin/videos': {
+      id: '/admin/videos'
+      path: '/videos'
+      fullPath: '/admin/videos'
+      preLoaderRoute: typeof AdminVideosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/usuarios': {
+      id: '/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tv-highlights': {
+      id: '/admin/tv-highlights'
+      path: '/tv-highlights'
+      fullPath: '/admin/tv-highlights'
+      preLoaderRoute: typeof AdminTvHighlightsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tv-emisiones': {
+      id: '/admin/tv-emisiones'
+      path: '/tv-emisiones'
+      fullPath: '/admin/tv-emisiones'
+      preLoaderRoute: typeof AdminTvEmisionesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tv': {
+      id: '/admin/tv'
+      path: '/tv'
+      fullPath: '/admin/tv'
+      preLoaderRoute: typeof AdminTvRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ticker': {
+      id: '/admin/ticker'
+      path: '/ticker'
+      fullPath: '/admin/ticker'
+      preLoaderRoute: typeof AdminTickerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sobre-nosotros': {
+      id: '/admin/sobre-nosotros'
+      path: '/sobre-nosotros'
+      fullPath: '/admin/sobre-nosotros'
+      preLoaderRoute: typeof AdminSobreNosotrosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/seguridad': {
+      id: '/admin/seguridad'
+      path: '/seguridad'
+      fullPath: '/admin/seguridad'
+      preLoaderRoute: typeof AdminSeguridadRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sections': {
+      id: '/admin/sections'
+      path: '/sections'
+      fullPath: '/admin/sections'
+      preLoaderRoute: typeof AdminSectionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/schedule': {
+      id: '/admin/schedule'
+      path: '/schedule'
+      fullPath: '/admin/schedule'
+      preLoaderRoute: typeof AdminScheduleRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/salon-de-la-fama': {
+      id: '/admin/salon-de-la-fama'
+      path: '/salon-de-la-fama'
+      fullPath: '/admin/salon-de-la-fama'
+      preLoaderRoute: typeof AdminSalonDeLaFamaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/revistas': {
+      id: '/admin/revistas'
+      path: '/revistas'
+      fullPath: '/admin/revistas'
+      preLoaderRoute: typeof AdminRevistasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/revista-cta': {
+      id: '/admin/revista-cta'
+      path: '/revista-cta'
+      fullPath: '/admin/revista-cta'
+      preLoaderRoute: typeof AdminRevistaCtaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/resultados-pdfs': {
+      id: '/admin/resultados-pdfs'
+      path: '/resultados-pdfs'
+      fullPath: '/admin/resultados-pdfs'
+      preLoaderRoute: typeof AdminResultadosPdfsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/resultados-importar': {
+      id: '/admin/resultados-importar'
+      path: '/resultados-importar'
+      fullPath: '/admin/resultados-importar'
+      preLoaderRoute: typeof AdminResultadosImportarRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/resultados-eventos': {
+      id: '/admin/resultados-eventos'
+      path: '/resultados-eventos'
+      fullPath: '/admin/resultados-eventos'
+      preLoaderRoute: typeof AdminResultadosEventosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/resultados': {
+      id: '/admin/resultados'
+      path: '/resultados'
+      fullPath: '/admin/resultados'
+      preLoaderRoute: typeof AdminResultadosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/redactores': {
+      id: '/admin/redactores'
+      path: '/redactores'
+      fullPath: '/admin/redactores'
+      preLoaderRoute: typeof AdminRedactoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/red-redactores': {
+      id: '/admin/red-redactores'
+      path: '/red-redactores'
+      fullPath: '/admin/red-redactores'
+      preLoaderRoute: typeof AdminRedRedactoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/premios-mvp': {
+      id: '/admin/premios-mvp'
+      path: '/premios-mvp'
+      fullPath: '/admin/premios-mvp'
+      preLoaderRoute: typeof AdminPremiosMvpRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/portugal': {
+      id: '/admin/portugal'
+      path: '/portugal'
+      fullPath: '/admin/portugal'
+      preLoaderRoute: typeof AdminPortugalRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/permisos': {
+      id: '/admin/permisos'
+      path: '/permisos'
+      fullPath: '/admin/permisos'
+      preLoaderRoute: typeof AdminPermisosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/pendientes': {
+      id: '/admin/pendientes'
+      path: '/pendientes'
+      fullPath: '/admin/pendientes'
+      preLoaderRoute: typeof AdminPendientesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/patrocinadores': {
+      id: '/admin/patrocinadores'
+      path: '/patrocinadores'
+      fullPath: '/admin/patrocinadores'
+      preLoaderRoute: typeof AdminPatrocinadoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/patinadores': {
+      id: '/admin/patinadores'
+      path: '/patinadores'
+      fullPath: '/admin/patinadores'
+      preLoaderRoute: typeof AdminPatinadoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/paginas': {
+      id: '/admin/paginas'
+      path: '/paginas'
+      fullPath: '/admin/paginas'
+      preLoaderRoute: typeof AdminPaginasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/miami': {
+      id: '/admin/miami'
+      path: '/miami'
+      fullPath: '/admin/miami'
+      preLoaderRoute: typeof AdminMiamiRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/medallero': {
+      id: '/admin/medallero'
+      path: '/medallero'
+      fullPath: '/admin/medallero'
+      preLoaderRoute: typeof AdminMedalleroRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/live-results': {
+      id: '/admin/live-results'
+      path: '/live-results'
+      fullPath: '/admin/live-results'
+      preLoaderRoute: typeof AdminLiveResultsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/live-center': {
+      id: '/admin/live-center'
+      path: '/live-center'
+      fullPath: '/admin/live-center'
+      preLoaderRoute: typeof AdminLiveCenterRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/legal': {
+      id: '/admin/legal'
+      path: '/legal'
+      fullPath: '/admin/legal'
+      preLoaderRoute: typeof AdminLegalRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/hub-liga': {
+      id: '/admin/hub-liga'
+      path: '/hub-liga'
+      fullPath: '/admin/hub-liga'
+      preLoaderRoute: typeof AdminHubLigaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/home-control': {
+      id: '/admin/home-control'
+      path: '/home-control'
+      fullPath: '/admin/home-control'
+      preLoaderRoute: typeof AdminHomeControlRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/formularios': {
+      id: '/admin/formularios'
+      path: '/formularios'
+      fullPath: '/admin/formularios'
+      preLoaderRoute: typeof AdminFormulariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/federaciones': {
+      id: '/admin/federaciones'
+      path: '/federaciones'
+      fullPath: '/admin/federaciones'
+      preLoaderRoute: typeof AdminFederacionesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/eventos': {
+      id: '/admin/eventos'
+      path: '/eventos'
+      fullPath: '/admin/eventos'
+      preLoaderRoute: typeof AdminEventosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/estadisticas': {
+      id: '/admin/estadisticas'
+      path: '/estadisticas'
+      fullPath: '/admin/estadisticas'
+      preLoaderRoute: typeof AdminEstadisticasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/especiales': {
+      id: '/admin/especiales'
+      path: '/especiales'
+      fullPath: '/admin/especiales'
+      preLoaderRoute: typeof AdminEspecialesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/espana': {
+      id: '/admin/espana'
+      path: '/espana'
+      fullPath: '/admin/espana'
+      preLoaderRoute: typeof AdminEspanaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/equipo': {
+      id: '/admin/equipo'
+      path: '/equipo'
+      fullPath: '/admin/equipo'
+      preLoaderRoute: typeof AdminEquipoRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/entrevistas': {
+      id: '/admin/entrevistas'
+      path: '/entrevistas'
+      fullPath: '/admin/entrevistas'
+      preLoaderRoute: typeof AdminEntrevistasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/comunidad': {
+      id: '/admin/comunidad'
+      path: '/comunidad'
+      fullPath: '/admin/comunidad'
+      preLoaderRoute: typeof AdminComunidadRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/colombia': {
+      id: '/admin/colombia'
+      path: '/colombia'
+      fullPath: '/admin/colombia'
+      preLoaderRoute: typeof AdminColombiaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/colaboraciones': {
+      id: '/admin/colaboraciones'
+      path: '/colaboraciones'
+      fullPath: '/admin/colaboraciones'
+      preLoaderRoute: typeof AdminColaboracionesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/clubes': {
+      id: '/admin/clubes'
+      path: '/clubes'
+      fullPath: '/admin/clubes'
+      preLoaderRoute: typeof AdminClubesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/clasificaciones': {
+      id: '/admin/clasificaciones'
+      path: '/clasificaciones'
+      fullPath: '/admin/clasificaciones'
+      preLoaderRoute: typeof AdminClasificacionesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categorias': {
+      id: '/admin/categorias'
+      path: '/categorias'
+      fullPath: '/admin/categorias'
+      preLoaderRoute: typeof AdminCategoriasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/banners': {
+      id: '/admin/banners'
+      path: '/banners'
+      fullPath: '/admin/banners'
+      preLoaderRoute: typeof AdminBannersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/$country/$': {
+      id: '/$country/$'
+      path: '/$country/$'
+      fullPath: '/$country/$'
+      preLoaderRoute: typeof CountrySplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usa/noticias/': {
+      id: '/usa/noticias/'
+      path: '/noticias'
+      fullPath: '/usa/noticias/'
+      preLoaderRoute: typeof UsaNoticiasIndexRouteImport
       parentRoute: typeof UsaRoute
     }
     '/usa/entrevistas/': {
@@ -3245,19 +3070,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsaEntrevistasIndexRouteImport
       parentRoute: typeof UsaRoute
     }
-    '/usa/entrevistas/$slug': {
-      id: '/usa/entrevistas/$slug'
-      path: '/entrevistas/$slug'
-      fullPath: '/usa/entrevistas/$slug'
-      preLoaderRoute: typeof UsaEntrevistasSlugRouteImport
+    '/usa/$region/': {
+      id: '/usa/$region/'
+      path: '/$region'
+      fullPath: '/usa/$region/'
+      preLoaderRoute: typeof UsaRegionIndexRouteImport
       parentRoute: typeof UsaRoute
     }
-    '/usa/noticias/': {
-      id: '/usa/noticias/'
+    '/portugal/noticias/': {
+      id: '/portugal/noticias/'
       path: '/noticias'
-      fullPath: '/usa/noticias/'
-      preLoaderRoute: typeof UsaNoticiasIndexRouteImport
-      parentRoute: typeof UsaRoute
+      fullPath: '/portugal/noticias/'
+      preLoaderRoute: typeof PortugalNoticiasIndexRouteImport
+      parentRoute: typeof PortugalRoute
+    }
+    '/portugal/entrevistas/': {
+      id: '/portugal/entrevistas/'
+      path: '/entrevistas'
+      fullPath: '/portugal/entrevistas/'
+      preLoaderRoute: typeof PortugalEntrevistasIndexRouteImport
+      parentRoute: typeof PortugalRoute
+    }
+    '/miami/noticias/': {
+      id: '/miami/noticias/'
+      path: '/noticias'
+      fullPath: '/miami/noticias/'
+      preLoaderRoute: typeof MiamiNoticiasIndexRouteImport
+      parentRoute: typeof MiamiRoute
+    }
+    '/miami/entrevistas/': {
+      id: '/miami/entrevistas/'
+      path: '/entrevistas'
+      fullPath: '/miami/entrevistas/'
+      preLoaderRoute: typeof MiamiEntrevistasIndexRouteImport
+      parentRoute: typeof MiamiRoute
+    }
+    '/hub/$country/': {
+      id: '/hub/$country/'
+      path: '/'
+      fullPath: '/hub/$country/'
+      preLoaderRoute: typeof HubCountryIndexRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/especiales/$slug/': {
+      id: '/especiales/$slug/'
+      path: '/'
+      fullPath: '/especiales/$slug/'
+      preLoaderRoute: typeof EspecialesSlugIndexRouteImport
+      parentRoute: typeof EspecialesSlugRoute
     }
     '/usa/noticias/$slug': {
       id: '/usa/noticias/$slug'
@@ -3266,68 +3126,166 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsaNoticiasSlugRouteImport
       parentRoute: typeof UsaRoute
     }
-    '/hub/$country/clubes/': {
-      id: '/hub/$country/clubes/'
-      path: '/'
-      fullPath: '/hub/$country/clubes/'
-      preLoaderRoute: typeof HubCountryClubesIndexRouteImport
-      parentRoute: typeof HubCountryClubesRoute
+    '/usa/entrevistas/$slug': {
+      id: '/usa/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/usa/entrevistas/$slug'
+      preLoaderRoute: typeof UsaEntrevistasSlugRouteImport
+      parentRoute: typeof UsaRoute
     }
-    '/hub/$country/clubes/$slug': {
-      id: '/hub/$country/clubes/$slug'
-      path: '/$slug'
-      fullPath: '/hub/$country/clubes/$slug'
-      preLoaderRoute: typeof HubCountryClubesSlugRouteImport
-      parentRoute: typeof HubCountryClubesRoute
+    '/usa/$region/$city': {
+      id: '/usa/$region/$city'
+      path: '/$region/$city'
+      fullPath: '/usa/$region/$city'
+      preLoaderRoute: typeof UsaRegionCityRouteImport
+      parentRoute: typeof UsaRoute
     }
-    '/hub/$country/competicion/': {
-      id: '/hub/$country/competicion/'
-      path: '/'
-      fullPath: '/hub/$country/competicion/'
-      preLoaderRoute: typeof HubCountryCompeticionIndexRouteImport
-      parentRoute: typeof HubCountryCompeticionRoute
+    '/revista/leer/$id': {
+      id: '/revista/leer/$id'
+      path: '/leer/$id'
+      fullPath: '/revista/leer/$id'
+      preLoaderRoute: typeof RevistaLeerIdRouteImport
+      parentRoute: typeof RevistaRoute
     }
-    '/hub/$country/competicion/liga-nacional': {
-      id: '/hub/$country/competicion/liga-nacional'
-      path: '/liga-nacional'
-      fullPath: '/hub/$country/competicion/liga-nacional'
-      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalRouteImport
-      parentRoute: typeof HubCountryCompeticionRoute
+    '/portugal/noticias/$slug': {
+      id: '/portugal/noticias/$slug'
+      path: '/noticias/$slug'
+      fullPath: '/portugal/noticias/$slug'
+      preLoaderRoute: typeof PortugalNoticiasSlugRouteImport
+      parentRoute: typeof PortugalRoute
     }
-    '/hub/$country/federaciones/': {
-      id: '/hub/$country/federaciones/'
-      path: '/'
-      fullPath: '/hub/$country/federaciones/'
-      preLoaderRoute: typeof HubCountryFederacionesIndexRouteImport
-      parentRoute: typeof HubCountryFederacionesRoute
+    '/portugal/entrevistas/$slug': {
+      id: '/portugal/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/portugal/entrevistas/$slug'
+      preLoaderRoute: typeof PortugalEntrevistasSlugRouteImport
+      parentRoute: typeof PortugalRoute
     }
-    '/hub/$country/federaciones/$slug': {
-      id: '/hub/$country/federaciones/$slug'
-      path: '/$slug'
-      fullPath: '/hub/$country/federaciones/$slug'
-      preLoaderRoute: typeof HubCountryFederacionesSlugRouteImport
-      parentRoute: typeof HubCountryFederacionesRoute
+    '/noticias/articulo/$slug': {
+      id: '/noticias/articulo/$slug'
+      path: '/noticias/articulo/$slug'
+      fullPath: '/noticias/articulo/$slug'
+      preLoaderRoute: typeof NoticiasArticuloSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/hub/$country/patinadores/': {
-      id: '/hub/$country/patinadores/'
-      path: '/'
-      fullPath: '/hub/$country/patinadores/'
-      preLoaderRoute: typeof HubCountryPatinadoresIndexRouteImport
-      parentRoute: typeof HubCountryPatinadoresRoute
+    '/miami/noticias/$slug': {
+      id: '/miami/noticias/$slug'
+      path: '/noticias/$slug'
+      fullPath: '/miami/noticias/$slug'
+      preLoaderRoute: typeof MiamiNoticiasSlugRouteImport
+      parentRoute: typeof MiamiRoute
     }
-    '/hub/$country/patinadores/$slug': {
-      id: '/hub/$country/patinadores/$slug'
-      path: '/$slug'
-      fullPath: '/hub/$country/patinadores/$slug'
-      preLoaderRoute: typeof HubCountryPatinadoresSlugRouteImport
-      parentRoute: typeof HubCountryPatinadoresRoute
+    '/miami/entrevistas/$slug': {
+      id: '/miami/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/miami/entrevistas/$slug'
+      preLoaderRoute: typeof MiamiEntrevistasSlugRouteImport
+      parentRoute: typeof MiamiRoute
     }
-    '/hub/$country/regiones/$code': {
-      id: '/hub/$country/regiones/$code'
-      path: '/regiones/$code'
-      fullPath: '/hub/$country/regiones/$code'
-      preLoaderRoute: typeof HubCountryRegionesCodeRouteImport
+    '/hub/$country/tv': {
+      id: '/hub/$country/tv'
+      path: '/tv'
+      fullPath: '/hub/$country/tv'
+      preLoaderRoute: typeof HubCountryTvRouteImport
       parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/rfep': {
+      id: '/hub/$country/rfep'
+      path: '/rfep'
+      fullPath: '/hub/$country/rfep'
+      preLoaderRoute: typeof HubCountryRfepRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/patinadores': {
+      id: '/hub/$country/patinadores'
+      path: '/patinadores'
+      fullPath: '/hub/$country/patinadores'
+      preLoaderRoute: typeof HubCountryPatinadoresRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/mvp': {
+      id: '/hub/$country/mvp'
+      path: '/mvp'
+      fullPath: '/hub/$country/mvp'
+      preLoaderRoute: typeof HubCountryMvpRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/live': {
+      id: '/hub/$country/live'
+      path: '/live'
+      fullPath: '/hub/$country/live'
+      preLoaderRoute: typeof HubCountryLiveRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/federaciones': {
+      id: '/hub/$country/federaciones'
+      path: '/federaciones'
+      fullPath: '/hub/$country/federaciones'
+      preLoaderRoute: typeof HubCountryFederacionesRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/entrevistas': {
+      id: '/hub/$country/entrevistas'
+      path: '/entrevistas'
+      fullPath: '/hub/$country/entrevistas'
+      preLoaderRoute: typeof HubCountryEntrevistasRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/comunidad': {
+      id: '/hub/$country/comunidad'
+      path: '/comunidad'
+      fullPath: '/hub/$country/comunidad'
+      preLoaderRoute: typeof HubCountryComunidadRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/competicion': {
+      id: '/hub/$country/competicion'
+      path: '/competicion'
+      fullPath: '/hub/$country/competicion'
+      preLoaderRoute: typeof HubCountryCompeticionRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/clubes': {
+      id: '/hub/$country/clubes'
+      path: '/clubes'
+      fullPath: '/hub/$country/clubes'
+      preLoaderRoute: typeof HubCountryClubesRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/archivo': {
+      id: '/hub/$country/archivo'
+      path: '/archivo'
+      fullPath: '/hub/$country/archivo'
+      preLoaderRoute: typeof HubCountryArchivoRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/$section': {
+      id: '/hub/$country/$section'
+      path: '/$section'
+      fullPath: '/hub/$country/$section'
+      preLoaderRoute: typeof HubCountrySectionRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/especiales/$slug/$piece': {
+      id: '/especiales/$slug/$piece'
+      path: '/$piece'
+      fullPath: '/especiales/$slug/$piece'
+      preLoaderRoute: typeof EspecialesSlugPieceRouteImport
+      parentRoute: typeof EspecialesSlugRoute
+    }
+    '/api/public/csp-report': {
+      id: '/api/public/csp-report'
+      path: '/api/public/csp-report'
+      fullPath: '/api/public/csp-report'
+      preLoaderRoute: typeof ApiPublicCspReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/og/premios-mvp.svg': {
+      id: '/api/og/premios-mvp.svg'
+      path: '/api/og/premios-mvp.svg'
+      fullPath: '/api/og/premios-mvp.svg'
+      preLoaderRoute: typeof ApiOgPremiosMvpDotsvgRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/hub/$country/tv/': {
       id: '/hub/$country/tv/'
@@ -3336,19 +3294,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryTvIndexRouteImport
       parentRoute: typeof HubCountryTvRoute
     }
-    '/hub/$country/tv/$slug': {
-      id: '/hub/$country/tv/$slug'
-      path: '/$slug'
-      fullPath: '/hub/$country/tv/$slug'
-      preLoaderRoute: typeof HubCountryTvSlugRouteImport
-      parentRoute: typeof HubCountryTvRoute
+    '/hub/$country/patinadores/': {
+      id: '/hub/$country/patinadores/'
+      path: '/'
+      fullPath: '/hub/$country/patinadores/'
+      preLoaderRoute: typeof HubCountryPatinadoresIndexRouteImport
+      parentRoute: typeof HubCountryPatinadoresRoute
     }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
-      parentRoute: typeof rootRouteImport
+    '/hub/$country/federaciones/': {
+      id: '/hub/$country/federaciones/'
+      path: '/'
+      fullPath: '/hub/$country/federaciones/'
+      preLoaderRoute: typeof HubCountryFederacionesIndexRouteImport
+      parentRoute: typeof HubCountryFederacionesRoute
+    }
+    '/hub/$country/competicion/': {
+      id: '/hub/$country/competicion/'
+      path: '/'
+      fullPath: '/hub/$country/competicion/'
+      preLoaderRoute: typeof HubCountryCompeticionIndexRouteImport
+      parentRoute: typeof HubCountryCompeticionRoute
+    }
+    '/hub/$country/clubes/': {
+      id: '/hub/$country/clubes/'
+      path: '/'
+      fullPath: '/hub/$country/clubes/'
+      preLoaderRoute: typeof HubCountryClubesIndexRouteImport
+      parentRoute: typeof HubCountryClubesRoute
     }
     '/lovable/email/auth/webhook': {
       id: '/lovable/email/auth/webhook'
@@ -3357,6 +3329,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hub/$country/tv/$slug': {
+      id: '/hub/$country/tv/$slug'
+      path: '/$slug'
+      fullPath: '/hub/$country/tv/$slug'
+      preLoaderRoute: typeof HubCountryTvSlugRouteImport
+      parentRoute: typeof HubCountryTvRoute
+    }
+    '/hub/$country/regiones/$code': {
+      id: '/hub/$country/regiones/$code'
+      path: '/regiones/$code'
+      fullPath: '/hub/$country/regiones/$code'
+      preLoaderRoute: typeof HubCountryRegionesCodeRouteImport
+      parentRoute: typeof HubCountryRoute
+    }
+    '/hub/$country/patinadores/$slug': {
+      id: '/hub/$country/patinadores/$slug'
+      path: '/$slug'
+      fullPath: '/hub/$country/patinadores/$slug'
+      preLoaderRoute: typeof HubCountryPatinadoresSlugRouteImport
+      parentRoute: typeof HubCountryPatinadoresRoute
+    }
+    '/hub/$country/federaciones/$slug': {
+      id: '/hub/$country/federaciones/$slug'
+      path: '/$slug'
+      fullPath: '/hub/$country/federaciones/$slug'
+      preLoaderRoute: typeof HubCountryFederacionesSlugRouteImport
+      parentRoute: typeof HubCountryFederacionesRoute
+    }
+    '/hub/$country/competicion/liga-nacional': {
+      id: '/hub/$country/competicion/liga-nacional'
+      path: '/liga-nacional'
+      fullPath: '/hub/$country/competicion/liga-nacional'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalRouteImport
+      parentRoute: typeof HubCountryCompeticionRoute
+    }
+    '/hub/$country/clubes/$slug': {
+      id: '/hub/$country/clubes/$slug'
+      path: '/$slug'
+      fullPath: '/hub/$country/clubes/$slug'
+      preLoaderRoute: typeof HubCountryClubesSlugRouteImport
+      parentRoute: typeof HubCountryClubesRoute
+    }
     '/hub/$country/competicion/liga-nacional/': {
       id: '/hub/$country/competicion/liga-nacional/'
       path: '/'
@@ -3364,18 +3385,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryCompeticionLigaNacionalIndexRouteImport
       parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
     }
-    '/hub/$country/competicion/liga-nacional/calendario': {
-      id: '/hub/$country/competicion/liga-nacional/calendario'
-      path: '/calendario'
-      fullPath: '/hub/$country/competicion/liga-nacional/calendario'
-      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalCalendarioRouteImport
-      parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
-    }
-    '/hub/$country/competicion/liga-nacional/clasificaciones': {
-      id: '/hub/$country/competicion/liga-nacional/clasificaciones'
-      path: '/clasificaciones'
-      fullPath: '/hub/$country/competicion/liga-nacional/clasificaciones'
-      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalClasificacionesRouteImport
+    '/hub/$country/competicion/liga-nacional/resultados': {
+      id: '/hub/$country/competicion/liga-nacional/resultados'
+      path: '/resultados'
+      fullPath: '/hub/$country/competicion/liga-nacional/resultados'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalResultadosRouteImport
       parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
     }
     '/hub/$country/competicion/liga-nacional/noticias': {
@@ -3385,11 +3399,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HubCountryCompeticionLigaNacionalNoticiasRouteImport
       parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
     }
-    '/hub/$country/competicion/liga-nacional/resultados': {
-      id: '/hub/$country/competicion/liga-nacional/resultados'
-      path: '/resultados'
-      fullPath: '/hub/$country/competicion/liga-nacional/resultados'
-      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalResultadosRouteImport
+    '/hub/$country/competicion/liga-nacional/clasificaciones': {
+      id: '/hub/$country/competicion/liga-nacional/clasificaciones'
+      path: '/clasificaciones'
+      fullPath: '/hub/$country/competicion/liga-nacional/clasificaciones'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalClasificacionesRouteImport
+      parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
+    }
+    '/hub/$country/competicion/liga-nacional/calendario': {
+      id: '/hub/$country/competicion/liga-nacional/calendario'
+      path: '/calendario'
+      fullPath: '/hub/$country/competicion/liga-nacional/calendario'
+      preLoaderRoute: typeof HubCountryCompeticionLigaNacionalCalendarioRouteImport
       parentRoute: typeof HubCountryCompeticionLigaNacionalRoute
     }
   }
@@ -3835,6 +3856,7 @@ const rootRouteChildren: RootRouteChildren = {
   NoticiasSlugRoute: NoticiasSlugRoute,
   PatinadoresSlugRoute: PatinadoresSlugRoute,
   ResultadosEventoRoute: ResultadosEventoRoute,
+  RollerzoneTvWorldSkateGamesAsu26Route: RollerzoneTvWorldSkateGamesAsu26Route,
   SalonDeLaFamaSlugRoute: SalonDeLaFamaSlugRoute,
   SobreSlugRoute: SobreSlugRoute,
   CountryIndexRoute: CountryIndexRoute,

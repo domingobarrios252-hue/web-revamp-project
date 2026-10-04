@@ -17,7 +17,7 @@ import { Asu26Results } from "@/components/tv/asu26/Asu26Results";
 import ogAsset from "@/assets/og-asu26-rollerzone-tv.jpg.asset.json";
 import rzLogo from "@/assets/rollerzone-logo.png";
 
-const URL = "https://rollerzone.es/rollerzone-tv/world-skate-games-asu26";
+const PAGE_URL = "https://rollerzone.es/rollerzone-tv/world-skate-games-asu26";
 const OG = `https://rollerzone.es${ogAsset.url}`;
 const TITLE = "World Skate Games ASU26 2026 en directo | Patinaje de Velocidad | Rollerzone.TV";
 const DESC =
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/rollerzone-tv/world-skate-games-asu26")({
       { property: "og:title", content: OG_TITLE },
       { property: "og:description", content: OG_DESC },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: URL },
+      { property: "og:url", content: PAGE_URL },
       { property: "og:image", content: OG },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/rollerzone-tv/world-skate-games-asu26")({
       { name: "twitter:description", content: OG_DESC },
       { name: "twitter:image", content: OG },
     ],
-    links: [{ rel: "canonical", href: URL }],
+    links: [{ rel: "canonical", href: PAGE_URL }],
   }),
   component: Asu26Hub,
 });
