@@ -94,6 +94,10 @@ export function Asu26StreamingSettings() {
         </button>
       </div>
 
+      <label className="inline-flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={c.tvPromoActive} onChange={(e) => set("tvPromoActive", e.target.checked)} /> Mostrar el hero ASU26 en la portada de Rollerzone TV (oculta temporalmente el reproductor principal)
+      </label>
+
       <div className="space-y-3">
         <label className="inline-flex items-center gap-2 text-sm">
           <input type="checkbox" checked={c.veloproEnabled} onChange={(e) => set("veloproEnabled", e.target.checked)} /> Activar resultados VeloPro (iframe/widget)

@@ -37,6 +37,8 @@ export type Asu26StreamingConfig = {
   title: string;
   subtitle: string;
   preStreamMessage: string;
+  /** Hero ASU26 en lugar del reproductor de la portada de TV (temporal). */
+  tvPromoActive: boolean;
   /** VeloPro: desactivado hasta tener la integración. */
   veloproEnabled: boolean;
   /** iframe/widget de VeloPro (https) cuando exista. */
@@ -66,6 +68,7 @@ export const ASU26_DEFAULTS: Asu26StreamingConfig = {
   title: "En directo",
   subtitle: "World Skate Games ASU26 · Patinaje de Velocidad",
   preStreamMessage: "La señal oficial se activará al comienzo de cada sesión de competición.",
+  tvPromoActive: true,
   veloproEnabled: false,
   veloproEmbedUrl: "",
   logoAsu26Url: "",

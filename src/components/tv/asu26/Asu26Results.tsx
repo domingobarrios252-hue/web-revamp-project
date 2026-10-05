@@ -34,6 +34,7 @@ export function Asu26Results({ cfg, results }: { cfg: Asu26StreamingConfig; resu
           <p className="font-display text-xl uppercase tracking-wide text-foreground md:text-2xl">
             Los resultados oficiales aparecerán aquí durante la competición.
           </p>
+          <p className="mt-2 text-sm text-muted-foreground">Integración de resultados en directo disponible durante ASU26.</p>
           <p className="font-condensed mt-3 text-xs uppercase tracking-[3px] text-muted-foreground">
             Proveedor oficial de resultados: VeloPro.
           </p>

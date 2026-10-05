@@ -6,6 +6,8 @@ import { videoEmbedUrl, videoThumbnail } from "@/lib/videoEmbed";
 import { TvTopStage, type TvStageStatus } from "@/components/tv/TvTopStage";
 import { TvMobileNav } from "@/components/tv/TvMobileNav";
 import { Asu26TvCard } from "@/components/tv/asu26/Asu26TvCard";
+import { Asu26TvHero } from "@/components/tv/asu26/Asu26TvHero";
+import { ASU26_DEFAULTS, loadAsu26Config, type Asu26StreamingConfig } from "@/lib/tv/asu26Streaming";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
 import { TvAdSlot, useVisibleBanners } from "@/components/tv/TvAdSlot";
@@ -131,6 +133,10 @@ function TvPage() {
   const [activeHighlight, setActiveHighlight] = useState<Highlight | null>(null);
   const [playerActive, setPlayerActive] = useState(false);
   const location = useLocation();
+  const [asu, setAsu] = useState<Asu26StreamingConfig>(ASU26_DEFAULTS);
+  useEffect(() => {
+    loadAsu26Config().then(setAsu).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const hash = location.hash?.replace(/^#/, "");
@@ -214,7 +220,7 @@ function TvPage() {
     ((settings?.next_event_title && settings.next_event_at && new Date(settings.next_event_at).getTime() > now.getTime()) ||
       !!nextBroadcast);
   const liveCenterBelow = hasLiveCenter && settings?.live_center_position === "bottom";
-  const topEndsWithAd = tv03.length > 0 && !nextShown && !liveCenterBelow;
+  const topEndsWithAd = !asu.tvPromoActive && tv03.length > 0 && !nextShown && !liveCenterBelow;
 
   type Block = { key: string; ad: boolean; node: React.ReactNode };
   const blocks: Block[] = [];
@@ -329,8 +335,14 @@ function TvPage() {
   return (
     <div className="w-full max-w-full min-w-0 overflow-x-clip bg-background">
       <TvMobileNav items={navItems} live={status === "live"} />
-      <TvTopStage settings={settings} status={status} nextBroadcast={nextBroadcast} />
-      <Asu26TvCard />
+      {asu.tvPromoActive ? (
+        <Asu26TvHero logoUrl={asu.logoAsu26Url} />
+      ) : (
+        <>
+          <TvTopStage settings={settings} status={status} nextBroadcast={nextBroadcast} />
+          <Asu26TvCard />
+        </>
+      )}
       {rendered.map((b) => (
         <Fragment key={b.key}>{b.node}</Fragment>
       ))}
