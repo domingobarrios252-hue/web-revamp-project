@@ -215,7 +215,7 @@ function Asu26Hub() {
             )}
             <Asu26Player cfg={cfg} nextIso={cfg.expectedStart || next?.scheduled_at || null} />
             <div className="mt-5 flex flex-col gap-1 border-l border-asu-light/50 pl-4">
-              <p className="font-display text-lg uppercase tracking-wide text-foreground">World Skate Games ASU26 2026</p>
+              <p className="font-display text-lg uppercase tracking-wide text-foreground">World Skate Games ASU26</p>
               <p className="text-sm text-muted-foreground">Patinaje de Velocidad · Asunción · Paraguay</p>
               <p className="text-xs text-muted-foreground">
                 Streaming autorizado por World Skate para Rollerzone.TV. Resultados oficiales proporcionados por VeloPro.

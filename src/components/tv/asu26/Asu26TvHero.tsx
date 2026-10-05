@@ -18,7 +18,7 @@ export function Asu26TvHero({ logoUrl }: { logoUrl?: string }) {
             </span>
             {logoUrl && <img src={logoUrl} alt="" className="mt-5 h-14 w-auto max-w-[220px] object-contain md:h-16" />}
             <h2 className="font-display mt-4 break-words text-4xl uppercase leading-[0.95] tracking-wide text-foreground sm:text-5xl md:text-7xl">
-              World Skate Games <span className="text-gold">ASU26 2026</span>
+              World Skate Games <span className="text-gold">ASU26</span>
             </h2>
             <p className="font-display mt-2 text-xl uppercase tracking-wider text-foreground/90 md:text-3xl">Patinaje de velocidad</p>
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-foreground/80">
