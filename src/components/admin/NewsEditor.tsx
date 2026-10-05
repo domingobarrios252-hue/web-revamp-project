@@ -145,6 +145,18 @@ export function NewsEditor({
   const [liveStartAt, setLiveStartAt] = useState(toLocalOpt(item?.live_start_at));
   const [liveEndAt, setLiveEndAt] = useState(toLocalOpt(item?.live_end_at));
   const [eventOptions, setEventOptions] = useState<EventOpt[]>([]);
+  const itemSp = item as unknown as { special_slug?: string | null; content_kind?: string | null } | null | undefined;
+  const [specialSlug, setSpecialSlug] = useState<string>(itemSp?.special_slug ?? "");
+  const [contentKind, setContentKind] = useState<string>(itemSp?.content_kind ?? "");
+  const [specialOpts, setSpecialOpts] = useState<{ slug: string; title: string }[]>([]);
+  useEffect(() => {
+    supabase
+      .from("special_editorials")
+      .select("slug,title")
+      .eq("status", "active")
+      .order("title")
+      .then(({ data }) => setSpecialOpts((data ?? []) as { slug: string; title: string }[]));
+  }, []);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [preview, setPreview] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -265,6 +277,8 @@ export function NewsEditor({
           live_event_id: liveActive && liveEventId ? liveEventId : null,
           live_start_at: liveActive && liveStartAt ? new Date(liveStartAt).toISOString() : null,
           live_end_at: liveActive && liveEndAt ? new Date(liveEndAt).toISOString() : null,
+          special_slug: specialSlug || null,
+          content_kind: contentKind || null,
         };
         let id = newsId;
         if (id) {
@@ -311,7 +325,7 @@ export function NewsEditor({
     [
       title, slug, excerpt, writerId, visHome, hub, blocks, writers, item, featured, newsId, categoryId,
       legacyTag, imageUrl, imageCrops, heroDisplayMode, readMinutes, publishedAt, liveActive, liveEventId,
-      liveStartAt, liveEndAt, relClubs, relSkaters, relFeds, onSaved,
+      liveStartAt, liveEndAt, relClubs, relSkaters, relFeds, onSaved, specialSlug, contentKind,
     ],
   );
 
@@ -319,7 +333,7 @@ export function NewsEditor({
   const fingerprint = JSON.stringify([
     title, slug, excerpt, blocks, writerId, categoryId, legacyTag, imageUrl, imageCrops, heroDisplayMode,
     manualMinutes, featured, publishedAt, relClubs, relSkaters, relFeds, visHome, hub, liveActive,
-    liveEventId, liveStartAt, liveEndAt,
+    liveEventId, liveStartAt, liveEndAt, specialSlug, contentKind,
   ]);
   const firstFp = useRef<string | null>(null);
   useEffect(() => {
@@ -571,6 +585,29 @@ export function NewsEditor({
             <label className="block">
               <span className={labelCls}>Etiqueta</span>
               <input value={legacyTag} onChange={(e) => setLegacyTag(e.target.value)} maxLength={60} placeholder="Ej. Liga Nacional" className={inputCls} />
+            </label>
+          </Panel>
+
+          <Panel title="Especial">
+            <label className="block">
+              <span className={labelCls}>Especial relacionado</span>
+              <select value={specialSlug} onChange={(e) => setSpecialSlug(e.target.value)} className={inputCls}>
+                <option value="">Ninguno</option>
+                {specialOpts.map((s) => (
+                  <option key={s.slug} value={s.slug}>{s.title}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className={labelCls}>Tipo de contenido</span>
+              <select value={contentKind} onChange={(e) => setContentKind(e.target.value)} className={inputCls}>
+                <option value="">—</option>
+                <option value="noticia">Noticia</option>
+                <option value="previa">Previa</option>
+                <option value="cronica">Crónica</option>
+                <option value="entrevista">Entrevista</option>
+                <option value="ultima_hora">Última hora</option>
+              </select>
             </label>
           </Panel>
 

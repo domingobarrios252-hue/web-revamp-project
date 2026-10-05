@@ -411,6 +411,22 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
       .then(({ data }: { data: MemberResult[] | null }) => setResults(data ?? []));
   }, [member.id]);
 
+  const [scheduleOpts, setScheduleOpts] = useState<{ id: string; label: string }[]>([]);
+  useEffect(() => {
+    db.from("schedule_items")
+      .select("id,event_name,category,scheduled_at")
+      .eq("result_event_id", "8af85269-de02-4b16-b98f-8a4e7b7df6ee")
+      .order("scheduled_at", { ascending: true })
+      .then(({ data }: { data: { id: string; event_name: string; category: string | null; scheduled_at: string }[] | null }) =>
+        setScheduleOpts(
+          (data ?? []).map((s) => ({
+            id: s.id,
+            label: `${new Intl.DateTimeFormat("es-ES", { timeZone: "America/Asuncion", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(s.scheduled_at))} · ${s.event_name}${s.category ? " · " + s.category : ""}`,
+          })),
+        ),
+      );
+  }, []);
+
   const txt = (k: keyof PieceMember) => ({
     value: (f[k] as string | null) ?? "",
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value }),
@@ -480,6 +496,19 @@ function MemberForm({ member, nameHint, onClose }: { member: PieceMember; nameHi
         <div><label className={label}>Club</label><input {...txt("club")} /></div>
         <div><label className={label}>Especialidad</label><input {...txt("specialty")} /></div>
         <div><label className={label}>País (código de 2 letras)</label><input {...txt("country_code")} placeholder="es" maxLength={2} /></div>
+        <div className="sm:col-span-2">
+          <label className={label}>Próxima prueba ASU26 (opcional)</label>
+          <select
+            value={f.next_schedule_item_id ?? ""}
+            onChange={(e) => setF({ ...f, next_schedule_item_id: e.target.value || null })}
+            className={input}
+          >
+            <option value="">— Ninguna —</option>
+            {scheduleOpts.map((s) => (
+              <option key={s.id} value={s.id}>{s.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <label className="flex min-h-11 items-center gap-2 text-xs">
         <input type="checkbox" checked={f.published} onChange={(e) => setF({ ...f, published: e.target.checked })} />

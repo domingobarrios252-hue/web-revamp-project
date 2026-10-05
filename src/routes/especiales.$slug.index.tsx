@@ -17,6 +17,7 @@ import {
   Asu26MobileAccess,
   Asu26StickyBar,
 } from "@/components/specials/live/Asu26SpecialHub";
+import { Asu26CardMeta, asu26ModuleFor } from "@/components/specials/live/Asu26PieceModules";
 import { loadEventResults, type NormalizedResult, type ResultsProviderKey } from "@/lib/results/provider";
 import {
   buildLiveNav,
@@ -308,6 +309,15 @@ function SpecialLanding() {
   );
 }
 
+const ASU_CTA: Record<string, string> = {
+  calendario: "Ver calendario",
+  seleccion: "Ver equipo",
+  noticias: "Ver todas",
+  resultados: "Ver resultados",
+  medallero: "Ver medallero",
+  tv: "Ver streaming",
+};
+
 function PieceCard({
   piece,
   specialSlug,
@@ -322,6 +332,7 @@ function PieceCard({
     ? /resultado|clasifica/i.test(txt) ? ASU26_RESULTADOS : /directo|stream|retransmis/i.test(txt) ? ASU26_DIRECTO : null
     : null;
   const img = piece.image_url || piece.thumbnail_url || (specialFallback as string);
+  const asuKind = specialSlug === ASU26_SPECIAL_SLUG ? (/seleccion/.test(piece.slug) ? "seleccion" : asu26ModuleFor(piece.slug)) : null;
   return (
     <li>
       <Link
@@ -358,8 +369,9 @@ function PieceCard({
               {piece.excerpt || piece.description}
             </p>
           )}
+          {asuKind && <Asu26CardMeta kind={asuKind} pieceSlug={piece.slug} />}
           <div className="font-condensed mt-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-            {tvHref ? "Ir a Rollerzone.TV" : "Leer pieza"} <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+            {asuKind ? ASU_CTA[asuKind] : tvHref ? "Ir a Rollerzone.TV" : "Leer pieza"} <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
           </div>
         </div>
       </Link>

@@ -1,3 +1,4 @@
+import { MemberAsu26Live } from "@/components/specials/live/Asu26PieceModules";
 import {
   flagEmoji,
   hasClosing,
@@ -72,7 +73,7 @@ export function SelectionSummary({ data }: { data: FeatureData }) {
   );
 }
 
-export function SelectionMembers({ members }: { members: PieceMember[] }) {
+export function SelectionMembers({ members, live = false }: { members: PieceMember[]; live?: boolean }) {
   if (members.length === 0) return null;
   return (
     <section className="bg-surface py-12 md:py-20">
@@ -84,7 +85,7 @@ export function SelectionMembers({ members }: { members: PieceMember[] }) {
         <ul className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-8">
           {members.map((m) => (
             <li key={m.id} className="min-w-0">
-              <MemberCard m={m} />
+              <MemberCard m={m} live={live} />
             </li>
           ))}
         </ul>
@@ -94,7 +95,7 @@ export function SelectionMembers({ members }: { members: PieceMember[] }) {
 }
 
 
-function MemberCard({ m }: { m: PieceMember }) {
+function MemberCard({ m, live = false }: { m: PieceMember; live?: boolean }) {
   const fullName = `${m.first_name} ${m.last_name}`.trim();
   const visible = m.display_name?.trim();
   const name = visible || fullName;
@@ -167,6 +168,7 @@ function MemberCard({ m }: { m: PieceMember }) {
           </div>
         )}
         {m.bio && <p className="text-[15px] leading-relaxed text-foreground/80">{m.bio}</p>}
+        {live && <MemberAsu26Live m={m} />}
         {m.link_url && (
           <a
             href={m.link_url}

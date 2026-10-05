@@ -1828,6 +1828,7 @@ export type Database = {
           distance: string | null
           event_name: string
           event_slug: string | null
+          external_ref: string | null
           featured_in_live_center: boolean
           federation: string | null
           gap: string | null
@@ -1861,6 +1862,7 @@ export type Database = {
           distance?: string | null
           event_name: string
           event_slug?: string | null
+          external_ref?: string | null
           featured_in_live_center?: boolean
           federation?: string | null
           gap?: string | null
@@ -1894,6 +1896,7 @@ export type Database = {
           distance?: string | null
           event_name?: string
           event_slug?: string | null
+          external_ref?: string | null
           featured_in_live_center?: boolean
           federation?: string | null
           gap?: string | null
@@ -2303,6 +2306,7 @@ export type Database = {
           competition_tag: string | null
           content: string | null
           content_blocks: Json
+          content_kind: string | null
           country_code: string
           created_at: string
           created_by: string | null
@@ -2326,6 +2330,7 @@ export type Database = {
           review_feedback: string | null
           section_id: string | null
           slug: string
+          special_slug: string | null
           status: Database["public"]["Enums"]["post_status"]
           submitted_at: string | null
           title: string
@@ -2346,6 +2351,7 @@ export type Database = {
           competition_tag?: string | null
           content?: string | null
           content_blocks?: Json
+          content_kind?: string | null
           country_code?: string
           created_at?: string
           created_by?: string | null
@@ -2369,6 +2375,7 @@ export type Database = {
           review_feedback?: string | null
           section_id?: string | null
           slug: string
+          special_slug?: string | null
           status?: Database["public"]["Enums"]["post_status"]
           submitted_at?: string | null
           title: string
@@ -2389,6 +2396,7 @@ export type Database = {
           competition_tag?: string | null
           content?: string | null
           content_blocks?: Json
+          content_kind?: string | null
           country_code?: string
           created_at?: string
           created_by?: string | null
@@ -2412,6 +2420,7 @@ export type Database = {
           review_feedback?: string | null
           section_id?: string | null
           slug?: string
+          special_slug?: string | null
           status?: Database["public"]["Enums"]["post_status"]
           submitted_at?: string | null
           title?: string
@@ -3676,6 +3685,7 @@ export type Database = {
           image_url: string | null
           last_name: string
           link_url: string | null
+          next_schedule_item_id: string | null
           piece_id: string
           published: boolean
           skater_id: string | null
@@ -3697,6 +3707,7 @@ export type Database = {
           image_url?: string | null
           last_name?: string
           link_url?: string | null
+          next_schedule_item_id?: string | null
           piece_id: string
           published?: boolean
           skater_id?: string | null
@@ -3718,6 +3729,7 @@ export type Database = {
           image_url?: string | null
           last_name?: string
           link_url?: string | null
+          next_schedule_item_id?: string | null
           piece_id?: string
           published?: boolean
           skater_id?: string | null
@@ -3726,6 +3738,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "special_piece_members_next_schedule_item_id_fkey"
+            columns: ["next_schedule_item_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_items"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "special_piece_members_piece_id_fkey"
             columns: ["piece_id"]

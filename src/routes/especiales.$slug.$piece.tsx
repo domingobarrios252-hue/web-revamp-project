@@ -9,6 +9,8 @@ import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
 import { parseBlocks } from "@/lib/newsBlocks";
 import specialFallback from "@/assets/special-fallback.svg";
 import { parseFeatureData, type MemberResult, type PieceMember } from "@/lib/specials/pieceMembers";
+import { Asu26PieceModule, asu26ModuleFor } from "@/components/specials/live/Asu26PieceModules";
+import { ASU26_SPECIAL_SLUG } from "@/lib/tv/asu26Streaming";
 import { SelectionSummary, SelectionMembers, SelectionClosing } from "@/components/specials/SelectionFeature";
 
 const SITE = "https://rollerzone.es";
@@ -175,6 +177,8 @@ function PiecePage() {
   const kicker = piece.kicker || piece.category || "";
   const blocks = parseBlocks(piece.content_blocks);
   const secondary = piece.secondary_image_url?.trim() || "";
+  const isAsu = slug === ASU26_SPECIAL_SLUG;
+  const mod = isAsu ? asu26ModuleFor(piece.slug) : null;
 
   return (
     <>
@@ -226,9 +230,10 @@ function PiecePage() {
       <SelectionSummary data={feature} />
 
       {/* Contenido */}
-      <article className="bg-background py-10 md:py-16">
+      {mod && <Asu26PieceModule kind={mod} />}
+      <article className={"bg-background " + (mod ? "py-2" : "py-10 md:py-16")}>
         <div className="mx-auto max-w-3xl px-4 md:px-6">
-          {blocks.length > 0 ? (
+          {mod ? null : blocks.length > 0 ? (
             <NewsContentBlocks blocks={blocks} title={piece.title} />
           ) : html ? (
             <div
@@ -298,7 +303,7 @@ function PiecePage() {
         )}
       </article>
 
-      <SelectionMembers members={members} />
+      <SelectionMembers members={members} live={isAsu} />
       <SelectionClosing data={feature} />
 
       {/* Volver al especial */}
