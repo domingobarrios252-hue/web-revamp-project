@@ -11,7 +11,7 @@ export function Asu26TvHero({ logoUrl }: { logoUrl?: string }) {
       {/* Grafismo geométrico ASU26: curvas de pista y diagonales */}
       <svg
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-40 md:opacity-100"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-20 md:opacity-100"
         viewBox="0 0 1440 520"
         preserveAspectRatio="xMidYMid slice"
       >
