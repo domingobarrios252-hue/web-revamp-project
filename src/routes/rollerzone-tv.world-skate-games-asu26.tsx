@@ -16,8 +16,8 @@ import { Asu26Player } from "@/components/tv/asu26/Asu26Player";
 import { DualTime, TzLegend } from "@/components/tv/asu26/Asu26Time";
 import { Asu26Results } from "@/components/tv/asu26/Asu26Results";
 import { Asu26LiveUpdates, type Asu26TimelineEntry } from "@/components/tv/asu26/Asu26LiveUpdates";
+import { Asu26LogosBlock } from "@/components/tv/asu26/Asu26LogosBlock";
 import ogAsset from "@/assets/og-asu26-rollerzone-tv.jpg.asset.json";
-import rzLogo from "@/assets/rollerzone-logo.png";
 
 const PAGE_URL = "https://rollerzone.es/rollerzone-tv/world-skate-games-asu26";
 const OG = `https://rollerzone.es${ogAsset.url}`;
@@ -79,14 +79,6 @@ function dayLabel(day: string) {
   );
 }
 
-function Wordmark({ url, text, className = "" }: { url: string; text: string; className?: string }) {
-  return url ? (
-    <img src={url} alt={text} loading="lazy" decoding="async" className={`h-auto max-h-12 w-auto max-w-[130px] object-contain md:max-h-[60px] md:max-w-[180px] ${className}`} />
-  ) : (
-    <span className={`font-display text-3xl uppercase tracking-wider text-foreground md:text-4xl ${className}`}>{text}</span>
-  );
-}
-
 function Asu26Hub() {
   const [cfg, setCfg] = useState<Asu26StreamingConfig>(ASU26_DEFAULTS);
   const [items, setItems] = useState<Item[] | null>(null);
@@ -141,36 +133,48 @@ function Asu26Hub() {
   return (
     <div className="w-full min-w-0 overflow-x-clip bg-background">
       {/* HERO */}
-      <section className="asu-hero-bg relative isolate overflow-hidden border-b border-asu/40">
+      <section className="asu-hero-bg relative isolate overflow-hidden">
+        <img src={cfg.heroImageUrl || ogAsset.url} alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-35" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/70 to-asu-deep/40" aria-hidden="true" />
         <div className="asu-curve pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
-        <div className="mx-auto max-w-[1500px] px-4 pb-12 pt-10 md:px-8 md:pb-20 md:pt-16">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="asu-reveal min-w-0">
-              {cfg.logoAsu26Url && (
-                <img src={cfg.logoAsu26Url} alt="World Skate Games ASU26" className="mb-8 h-16 w-auto max-w-[260px] object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)] md:h-24" fetchPriority="high" />
+        <div className="asu-speed pointer-events-none absolute inset-y-0 right-0 -z-10 hidden w-1/2 md:block" aria-hidden="true" />
+        <div className="mx-auto max-w-[1500px] px-4 pb-8 pt-8 md:px-8 md:pb-14 md:pt-16">
+          <div className="asu-reveal min-w-0">
+            <div className="flex flex-wrap items-center gap-3">
+              {live ? (
+                <span className="asu-live-glow font-condensed inline-flex items-center gap-2 rounded-full bg-tv-red px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-foreground">
+                  <span className="live-dot h-2 w-2 rounded-full bg-foreground" /> En directo ahora
+                </span>
+              ) : (
+                <span className="font-condensed inline-flex items-center gap-2 rounded-full bg-asu-coral px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-background">
+                  <Clock className="h-3.5 w-3.5" /> {cfg.streamStatus === "finished" ? "Retransmisión finalizada" : "Próxima retransmisión"}
+                  {cfg.streamStatus !== "finished" && (cfg.expectedStart || next) ? ` · ${timeInTz(cfg.expectedStart || next!.scheduled_at, ASU26_TZ)} PY` : ""}
+                </span>
               )}
-              <h1 className="break-words uppercase">
-                <span className="font-condensed block text-sm font-bold tracking-[5px] text-asu-light md:text-base">World Skate Games</span>
-                <span className="font-display mt-2 block text-7xl leading-[0.9] tracking-wide text-foreground sm:text-8xl md:text-[9rem]">ASU<span className="text-gold">26</span></span>
-              </h1>
-              <p className="font-display mt-3 text-2xl uppercase tracking-[0.12em] text-foreground/90 md:text-3xl">Patinaje de velocidad</p>
-              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-1.5 text-xs uppercase tracking-[2px] text-foreground/60">
-                <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5 text-asu-light" /> 10 — 18 octubre 2026</span>
-                <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-asu-light" /> Asunción · Paraguay</span>
-              </div>
-            </div>
-            <div className="asu-reveal flex flex-col items-start gap-2 border-l border-asu-light/50 pl-4 md:items-end md:border-l-0 md:border-r md:pl-0 md:pr-4 md:text-right">
-              <span className="font-condensed text-xs font-bold uppercase tracking-[4px] text-foreground/90">Streaming oficial en Rollerzone.TV</span>
               <span className="font-condensed inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[2.5px] text-asu-light">
                 <ShieldCheck className="h-3.5 w-3.5" /> Señal autorizada por World Skate
               </span>
+            </div>
+            {cfg.logoAsu26Url && (
+              <img src={cfg.logoAsu26Url} alt="World Skate Games ASU26" className="mt-6 h-14 w-auto max-w-[220px] object-contain md:h-20" />
+            )}
+            <h1 className="mt-5 break-words uppercase">
+              <span className="font-condensed block text-sm font-bold tracking-[5px] text-asu-cream md:text-base">World Skate Games</span>
+              <span className="font-display mt-1 block text-6xl leading-[0.9] tracking-wide text-foreground sm:text-8xl md:text-[9rem]">ASU<span className="text-asu-coral">26</span></span>
+            </h1>
+            <div className="asu-stripe mt-4 h-[3px] w-24 md:w-40" aria-hidden="true" />
+            <p className="font-display mt-4 text-2xl uppercase tracking-[0.12em] text-foreground/90 md:text-3xl">Patinaje de velocidad</p>
+            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs uppercase tracking-[2px] text-asu-cream/80">
+              <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5 text-asu-light" /> 10 — 18 octubre 2026</span>
+              <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-asu-light" /> Asunción · Paraguay</span>
+              <span className="font-condensed font-bold text-gold">Rollerzone.TV</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* NAV sticky */}
-      <nav aria-label="Secciones ASU26" className="sticky top-0 z-30 border-b border-asu/30 bg-background/90 backdrop-blur">
+      <nav aria-label="Secciones ASU26" className="sticky top-0 z-30 border-y border-asu/30 bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-[1500px] gap-1 overflow-x-auto px-2 py-1.5 [scrollbar-width:none] md:px-6">
           {NAV.map((n) => (
             <a
@@ -180,7 +184,7 @@ function Asu26Hub() {
                 e.preventDefault();
                 document.getElementById(n.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="font-condensed inline-flex min-h-11 shrink-0 items-center rounded-md px-3 text-xs font-bold uppercase tracking-[2px] text-muted-foreground transition-colors hover:bg-surface hover:text-gold"
+              className="font-condensed inline-flex min-h-11 shrink-0 items-center rounded-md px-3 text-xs font-bold uppercase tracking-[2px] text-muted-foreground transition-colors hover:bg-surface hover:text-asu-cream"
             >
               {n.label}
             </a>
@@ -191,14 +195,14 @@ function Asu26Hub() {
       {/* STREAMING */}
       <section id="directo" className="asu-track-soft scroll-mt-16 py-10 md:py-16">
         <div className="mx-auto grid max-w-[1500px] gap-6 px-4 md:px-8 xl:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="min-w-0">
+          <div className="flex min-w-0 flex-col">
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-6xl">{cfg.title}</h2>
               <StatusBadge status={cfg.streamStatus} />
             </div>
             <p className="font-condensed -mt-2 mb-4 text-xs uppercase tracking-[3px] text-muted-foreground">{cfg.subtitle}</p>
             {!live && (
-              <div className="mb-6 rounded-2xl bg-asu-deep/50 p-5 md:p-6">
+              <div className="order-2 mt-4 rounded-2xl bg-asu-deep/50 p-4 md:order-none md:mb-6 md:mt-0 md:p-6">
                 <p className="font-condensed text-[11px] font-bold uppercase tracking-[3px] text-asu-light">
                   {cfg.streamStatus === "finished" ? "Retransmisión finalizada" : "Próxima retransmisión"}
                 </p>
@@ -221,18 +225,16 @@ function Asu26Hub() {
                 {cfg.preStreamMessage && <p className="mt-1 text-sm text-muted-foreground">{cfg.preStreamMessage}</p>}
               </div>
             )}
-            <Asu26Player cfg={cfg} nextIso={cfg.expectedStart || next?.scheduled_at || null} />
-            <div className="mt-5 flex flex-col gap-1 border-l border-asu-light/50 pl-4">
-              <p className="font-display text-lg uppercase tracking-wide text-foreground">World Skate Games ASU26</p>
-              <p className="text-sm text-muted-foreground">Patinaje de Velocidad · Asunción · Paraguay</p>
-              <p className="text-xs text-muted-foreground">
-                Streaming autorizado por World Skate para Rollerzone.TV. Resultados oficiales proporcionados por VeloPro.
-              </p>
+            <div className="asu-frame order-1 overflow-hidden rounded-2xl md:order-none">
+              <Asu26Player cfg={cfg} nextIso={cfg.expectedStart || next?.scheduled_at || null} />
             </div>
+            <div className="order-3 md:order-none"><Asu26LogosBlock cfg={cfg} /></div>
+            <div className="order-4 md:order-none">
             <Asu26LiveUpdates entries={liveUpdates} />
+            </div>
           </div>
 
-          <aside id="horarios" className="scroll-mt-16 min-w-0">
+          <aside id="horarios" className="scroll-mt-16 min-w-0 self-start rounded-2xl bg-asu-deep/50 p-4 md:p-5 xl:sticky xl:top-16">
             <h2 className="font-display text-3xl uppercase tracking-wide text-foreground md:text-4xl">Próximas pruebas</h2>
             <TzLegend className="mb-3 mt-1" />
             {items === null ? (
@@ -241,13 +243,14 @@ function Asu26Hub() {
               <p className="rounded-xl border border-border bg-surface/60 p-4 text-sm text-muted-foreground">No hay próximas pruebas programadas.</p>
             ) : (
               <ul className="divide-y divide-border/60">
-                {upcoming.map((it) => {
+                {upcoming.map((it, idx) => {
                   const st = raceState(it, results);
+                  const lead = idx === 0;
                   return (
                     <li
                       key={it.id}
-                      className={`asu-reveal grid grid-cols-[5.5rem_1fr] gap-3 px-1 py-4 transition-colors duration-200 hover:bg-asu-deep/30 ${
-                        st.hot ? "bg-tv-red/10" : ""
+                      className={`asu-reveal grid grid-cols-[5.5rem_1fr] gap-3 rounded-xl px-2 py-4 transition-colors duration-200 hover:bg-asu-deep/40 ${
+                        st.hot ? "bg-tv-red/10" : lead ? "bg-asu/25 ring-1 ring-asu-light/40" : ""
                       }`}
                     >
                       <div className="text-center">
@@ -260,7 +263,8 @@ function Asu26Hub() {
                         <p className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu-light">
                           {[it.category, it.gender].filter(Boolean).join(" ")}
                         </p>
-                        <p className="font-display truncate text-lg uppercase tracking-wide text-foreground">{it.event_name}</p>
+                        {lead && !st.hot && <p className="font-condensed text-[9px] font-bold uppercase tracking-[3px] text-asu-coral">Siguiente</p>}
+                        <p className="font-display break-words text-lg uppercase leading-tight tracking-wide text-foreground">{it.event_name}</p>
                         <div className="mt-1 flex flex-wrap items-center gap-2">
                           {it.venue_type && <span className="font-condensed text-[11px] font-bold uppercase tracking-widest text-foreground/75">{it.venue_type} ·</span>}
                           <span className={`font-condensed rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${st.hot ? "bg-tv-red text-foreground" : "border border-border text-muted-foreground"}`}>
@@ -273,31 +277,13 @@ function Asu26Hub() {
                 })}
               </ul>
             )}
+            <a
+              href={specialLink(cfg.links.calendario)}
+              className="font-condensed mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-gold px-5 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-light"
+            >
+              Ver calendario completo <ArrowRight className="h-4 w-4" />
+            </a>
           </aside>
-        </div>
-      </section>
-
-      {/* INSTITUCIONAL */}
-      <section className="relative bg-asu-deep/30 py-12 md:py-16">
-        <div className="asu-divider absolute inset-x-0 top-0" aria-hidden="true" />
-        <div className="asu-divider absolute inset-x-0 bottom-0" aria-hidden="true" />
-        <div className="mx-auto max-w-[1500px] px-4 md:px-8">
-          <p className="font-condensed mb-8 text-center text-[10px] uppercase tracking-[3px] text-muted-foreground/80">
-            Streaming oficial autorizado por World Skate para Rollerzone.TV
-          </p>
-          <div className="grid gap-8 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border/50">
-            {[
-              { logo: <Wordmark url={cfg.logoWorldSkateUrl} text="World Skate" />, a: "Organización internacional", b: "Streaming autorizado" },
-              { logo: <Wordmark url={cfg.logoVeloproUrl} text="VeloPro" />, a: "Proveedor de resultados oficiales", b: "" },
-              { logo: <Wordmark url={rzLogo} text="Rollerzone.TV" />, a: "Rollerzone.TV", b: "Cobertura digital de patinaje de velocidad" },
-            ].map((x, i) => (
-              <div key={i} className="flex h-full flex-col items-center px-5 py-2 text-center md:px-6">
-                <div className="flex h-[70px] w-[160px] items-center justify-center md:h-[90px] md:w-[220px]">{x.logo}</div>
-                <p className="font-condensed mt-3 text-xs font-semibold uppercase tracking-[1.5px] text-foreground/90">{x.a}</p>
-                <p className="mt-1 min-h-[1rem] text-[11px] text-muted-foreground/80">{x.b}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -313,7 +299,10 @@ function Asu26Hub() {
               <img src={cfg.logoPoweredByVeloproUrl} alt="Powered by VeloPro" className="h-9 w-auto max-w-[180px] object-contain" loading="lazy" />
             ) : null}
           </div>
-          <Asu26Results cfg={cfg} results={results} />
+          <div className="overflow-hidden rounded-2xl bg-asu-deep/40 p-3 ring-1 ring-asu-light/20 md:p-6">
+            <div className="asu-stripe -mx-3 -mt-3 mb-4 h-[3px] md:-mx-6 md:-mt-6 md:mb-6" aria-hidden="true" />
+            <Asu26Results cfg={cfg} results={results} />
+          </div>
         </div>
       </section>
 

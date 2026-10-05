@@ -119,6 +119,22 @@ export function Asu26StreamingSettings() {
         ))}
       </div>
 
+      <div className="space-y-3 rounded-lg border border-border p-4">
+        <p className="font-condensed text-xs font-bold uppercase tracking-widest text-gold">Personalización visual streaming ASU26</p>
+        <p className="text-xs text-muted-foreground">Si se dejan vacías, la página usa el diseño por defecto.</p>
+        <div className="grid gap-4 md:grid-cols-2">
+          {([
+            ["heroImageUrl", "Imagen de cabecera streaming ASU26 (recomendado 1920×800)"],
+            ["logosImageUrl", "Imagen bloque logos streaming ASU26 (recomendado 1600×300)"],
+          ] as const).map(([k, l]) => (
+            <div key={k}>
+              <p className={lbl}>{l}</p>
+              <ImageUploadField value={c[k]} onChange={(v) => set(k, v)} folder="tv/asu26" nameHint={k} previewClassName="mt-2 aspect-[16/6] w-full rounded object-cover" />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid gap-3 md:grid-cols-3">
         {(Object.keys(c.links) as (keyof Asu26StreamingConfig["links"])[]).map((k) => (
           <label key={k} className={lbl}>Enlace {k} (pieza o URL)
