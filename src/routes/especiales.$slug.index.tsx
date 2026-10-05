@@ -304,6 +304,7 @@ function SpecialLanding() {
           )}
         </div>
       </section>
+      {isAsu && <Asu26StickyBar />}
     </>
   );
 }
