@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Play, ShieldCheck } from "lucide-react";
 import rzLogo from "@/assets/rollerzone-logo.png";
+import medalArt from "@/assets/asu26-medal-art.jpg.asset.json";
 
 /** Cabecera especial de Rollerzone TV durante los World Skate Games ASU26 (identidad crema/verde/coral). */
 export function Asu26TvHero({ logoUrl }: { logoUrl?: string }) {
@@ -9,26 +10,28 @@ export function Asu26TvHero({ logoUrl }: { logoUrl?: string }) {
       {/* Grafismo geométrico ASU26: curvas de pista y diagonales */}
       <svg
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-40 md:opacity-100"
         viewBox="0 0 1440 520"
         preserveAspectRatio="xMidYMid slice"
       >
-        <path d="M1440 0H980C900 120 930 300 1080 400C1180 466 1320 480 1440 470Z" className="fill-asu" />
-        <path d="M1440 0H1130C1070 110 1100 250 1220 320C1300 366 1380 372 1440 366Z" className="fill-asu-deep" />
-        <path d="M1440 360C1330 380 1220 420 1160 520H1440Z" className="fill-asu-coral" />
-        <path d="M940 520C990 430 1060 390 1140 380L1180 520Z" className="fill-asu-pink" />
-        <path d="M0 520V430C140 400 260 430 360 520Z" className="fill-asu-coral/90" />
-        <path d="M0 520V470C90 455 170 470 230 520Z" className="fill-asu" />
-        <path d="M860 0L940 0L720 520L640 520Z" className="fill-asu-pink/60" />
-        <path
-          d="M1000 0C930 140 960 320 1110 420"
-          fill="none"
-          strokeWidth="3"
-          className="stroke-asu-cream/70"
-        />
+        <path d="M0 40L520 -10L560 30L0 90Z" className="fill-asu/80" />
+        <path d="M480 70H900L870 98H450Z" className="fill-asu-coral/80" />
+        <path d="M560 110H880L860 128H540Z" className="fill-asu-pink/70" />
+        <path d="M1440 140C1300 150 1220 190 1180 260L1440 300Z" className="fill-asu-pink/60" />
+        <path d="M1440 300C1320 300 1240 340 1200 420L1440 440Z" className="fill-asu-coral/85" />
+        <path d="M1440 440C1340 440 1270 480 1250 520H1440Z" className="fill-asu/85" />
+        <path d="M420 520L1100 380L1120 410L520 520Z" className="fill-asu/70" />
+        <path d="M640 520L1180 420L1190 440L720 520Z" className="fill-asu-coral/70" />
+        <path d="M820 520L1210 450L1215 465L880 520Z" className="fill-asu-pink/70" />
       </svg>
 
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-9 md:grid-cols-[1.35fr_1fr] md:items-center md:px-8 md:py-14">
+      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-9 md:grid-cols-[1.4fr_1fr] md:items-center lg:grid-cols-[minmax(0,300px)_1.4fr_1fr] md:px-8 md:py-14">
+        <img
+          src={medalArt.url}
+          alt="Medalla World Skate Games ASU26 · Asunción - Paraguay"
+          className="order-last mx-auto hidden h-auto w-full max-w-[300px] object-contain mix-blend-multiply [mask-image:radial-gradient(closest-side,black_72%,transparent)] lg:order-none lg:block"
+          loading="eager"
+        />
         <div className="asu-reveal min-w-0">
           <p className="font-condensed text-sm font-bold uppercase tracking-[3px] text-asu md:text-base">
             World Skate Games <span className="text-asu-coral">ASU26</span> · Patinaje de velocidad
