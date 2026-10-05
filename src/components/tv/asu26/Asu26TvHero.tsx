@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Play, ShieldCheck } from "lucide-react";
 import rzLogo from "@/assets/rollerzone-logo.png";
+import veloproLogo from "@/assets/logo-velopro.png.asset.json";
 import medalArt from "@/assets/asu26-medal-art.jpg.asset.json";
 
 /** Cabecera especial de Rollerzone TV durante los World Skate Games ASU26 (identidad crema/verde/coral). */
@@ -29,17 +30,17 @@ export function Asu26TvHero({ logoUrl }: { logoUrl?: string }) {
         <img
           src={medalArt.url}
           alt="Medalla World Skate Games ASU26 · Asunción - Paraguay"
-          className="order-last mx-auto hidden h-auto w-full max-w-[300px] object-contain mix-blend-multiply [mask-image:radial-gradient(closest-side,black_72%,transparent)] lg:order-none lg:block"
+          className="order-last mx-auto hidden h-auto w-full max-w-[300px] object-contain mix-blend-multiply [mask-image:radial-gradient(closest-side,black_60%,transparent_98%)] lg:order-none lg:block"
           loading="eager"
         />
-        <div className="asu-reveal min-w-0">
+        <div className="asu-reveal flex min-w-0 flex-col">
           <p className="font-condensed text-sm font-bold uppercase tracking-[3px] text-asu md:text-base">
             World Skate Games <span className="text-asu-coral">ASU26</span> · Patinaje de velocidad
           </p>
           <h1 className="font-display mt-3 break-words text-[2.6rem] uppercase leading-[0.92] tracking-wide sm:text-6xl lg:text-7xl">
             En directo por <span className="block text-asu">Rollerzone<span className="text-asu-coral">.TV</span></span>
           </h1>
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-sm font-semibold md:text-base">
+          <div className="order-last mt-4 flex flex-wrap gap-x-5 md:order-none gap-y-1.5 text-sm font-semibold md:text-base">
             <span className="inline-flex items-center gap-1.5">
               <CalendarDays className="h-4 w-4 text-asu-coral" /> Del 10 al 18 de octubre
             </span>
@@ -66,11 +67,15 @@ export function Asu26TvHero({ logoUrl }: { logoUrl?: string }) {
             <img src={rzLogo} alt="Rollerzone.es" className="h-auto w-[55%] min-w-0 object-contain" />
             {logoUrl && <img src={logoUrl} alt="World Skate Games ASU26" className="h-12 w-auto max-w-[40%] object-contain" />}
           </div>
-          <div className="w-full max-w-sm rounded-2xl bg-asu-cream/90 p-4 ring-1 ring-asu/25 backdrop-blur-sm">
-            <p className="font-condensed text-[11px] font-bold uppercase tracking-[2px] text-asu-coral">Resultados oficiales</p>
-            <p className="font-display mt-1 text-xl uppercase tracking-wide">
-              Ofrecidos por <span className="text-asu">VeloPro</span>
-            </p>
+          <div className="w-full max-w-sm rounded-2xl bg-asu-cream p-4 ring-1 ring-asu/25">
+            <p className="font-display text-2xl uppercase leading-none tracking-wide text-asu-ink">Resultados oficiales</p>
+            <p className="font-condensed mt-1 text-[11px] font-semibold uppercase tracking-[2px] text-asu-ink/60">ofrecidos por VeloPro</p>
+            <img
+              src={veloproLogo.url}
+              alt="VeloPro"
+              className="mt-3 h-auto w-[78%] max-w-[240px] object-contain mix-blend-multiply"
+              loading="eager"
+            />
           </div>
         </div>
       </div>
