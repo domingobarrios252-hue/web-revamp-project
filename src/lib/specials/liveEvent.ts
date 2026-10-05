@@ -77,7 +77,7 @@ const NAV: { key: NavKey; label: string; match: RegExp | null }[] = [
   { key: "galeria", label: "Galería", match: /galer|foto/i },
 ];
 
-export type NavItem = { key: NavKey; label: string; pieceSlug: string | null; anchor?: string };
+export type NavItem = { key: NavKey; label: string; pieceSlug: string | null; anchor?: string; href?: string };
 
 /**
  * Navegación LIVE: cada acceso apunta a la pieza existente que corresponde.
