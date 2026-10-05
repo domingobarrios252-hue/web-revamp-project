@@ -456,13 +456,26 @@ select.input {
   background:
     radial-gradient(120% 80% at 85% 10%, color-mix(in oklab, var(--asu) 55%, transparent) 0%, transparent 60%),
     radial-gradient(90% 70% at 0% 100%, color-mix(in oklab, var(--gold) 14%, transparent) 0%, transparent 55%),
-    repeating-linear-gradient(115deg, transparent 0 46px, color-mix(in oklab, var(--foreground) 4%, transparent) 46px 47px),
+    linear-gradient(180deg, transparent 60%, color-mix(in oklab, var(--background) 70%, transparent) 100%),
     var(--asu-deep);
 }
 .asu-curve {
   background:
     radial-gradient(160% 120% at 110% 120%, transparent 58%, color-mix(in oklab, var(--gold) 55%, transparent) 58.3%, transparent 58.8%),
-    radial-gradient(160% 120% at 110% 120%, transparent 64%, color-mix(in oklab, var(--asu-light) 35%, transparent) 64.2%, transparent 64.6%);
+    radial-gradient(160% 120% at 110% 120%, transparent 64%, color-mix(in oklab, var(--asu-light) 35%, transparent) 64.2%, transparent 64.6%),
+    radial-gradient(160% 120% at 110% 120%, transparent 70%, color-mix(in oklab, var(--asu-light) 22%, transparent) 70.2%, transparent 70.5%),
+    radial-gradient(140% 110% at -20% -30%, transparent 62%, color-mix(in oklab, var(--asu-light) 18%, transparent) 62.2%, transparent 62.5%);
+}
+/* Identidad de pista continua para secciones (sutil). */
+.asu-track-soft {
+  background:
+    radial-gradient(150% 110% at 105% 115%, transparent 66%, color-mix(in oklab, var(--asu-light) 14%, transparent) 66.2%, transparent 66.5%),
+    radial-gradient(150% 110% at 105% 115%, transparent 72%, color-mix(in oklab, var(--asu-light) 9%, transparent) 72.2%, transparent 72.5%),
+    radial-gradient(80% 60% at 100% 0%, color-mix(in oklab, var(--asu) 18%, transparent) 0%, transparent 70%);
+}
+.asu-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--asu-light) 45%, transparent) 30%, color-mix(in oklab, var(--asu-light) 45%, transparent) 70%, transparent);
 }
 @keyframes asu-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .asu-reveal { animation: asu-fade-up 0.3s ease-out both; }

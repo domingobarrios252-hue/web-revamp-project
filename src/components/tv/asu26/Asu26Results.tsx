@@ -30,7 +30,7 @@ export function Asu26Results({ cfg, results }: { cfg: Asu26StreamingConfig; resu
           <iframe src={embed} title="Resultados oficiales VeloPro" className="h-full w-full" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" />
         </div>
       ) : results.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-surface/60 px-5 py-6 text-center md:py-7">
+        <div className="asu-hero-bg relative overflow-hidden rounded-2xl px-6 py-8 text-center md:py-10">
           <p className="font-display text-xl uppercase tracking-wide text-foreground md:text-2xl">
             Los resultados oficiales aparecerán aquí durante la competición.
           </p>
