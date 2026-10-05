@@ -134,7 +134,7 @@ function Asu26Hub() {
     <div className="w-full min-w-0 overflow-x-clip bg-background">
       {/* HERO */}
       <section className="asu-hero-bg relative isolate overflow-hidden">
-        <img src={cfg.heroImageUrl || ogAsset.url} alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-35" />
+        <img src={cfg.heroImageUrl || ogAsset.url} alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-20" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/70 to-asu-deep/40" aria-hidden="true" />
         <div className="asu-curve pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
         <div className="asu-speed pointer-events-none absolute inset-y-0 right-0 -z-10 hidden w-1/2 md:block" aria-hidden="true" />
@@ -194,7 +194,7 @@ function Asu26Hub() {
 
       {/* STREAMING */}
       <section id="directo" className="asu-track-soft scroll-mt-16 py-10 md:py-16">
-        <div className="mx-auto grid max-w-[1500px] gap-6 px-4 md:px-8 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="mx-auto grid max-w-[1560px] gap-6 px-4 md:px-8 xl:grid-cols-[minmax(0,1fr)_320px]">
           <div className="flex min-w-0 flex-col">
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-6xl">{cfg.title}</h2>
@@ -202,7 +202,7 @@ function Asu26Hub() {
             </div>
             <p className="font-condensed -mt-2 mb-4 text-xs uppercase tracking-[3px] text-muted-foreground">{cfg.subtitle}</p>
             {!live && (
-              <div className="order-2 mt-4 rounded-2xl bg-asu-deep/50 p-4 md:order-none md:mb-6 md:mt-0 md:p-6">
+              <div className="order-1 mt-4 rounded-2xl bg-asu-deep/50 p-4 md:order-none md:mb-6 md:mt-0 md:p-6">
                 <p className="font-condensed text-[11px] font-bold uppercase tracking-[3px] text-asu-light">
                   {cfg.streamStatus === "finished" ? "Retransmisión finalizada" : "Próxima retransmisión"}
                 </p>
@@ -225,7 +225,7 @@ function Asu26Hub() {
                 {cfg.preStreamMessage && <p className="mt-1 text-sm text-muted-foreground">{cfg.preStreamMessage}</p>}
               </div>
             )}
-            <div className="asu-frame order-1 overflow-hidden rounded-2xl md:order-none">
+            <div className="asu-frame order-2 overflow-hidden rounded-2xl md:order-none">
               <Asu26Player cfg={cfg} nextIso={cfg.expectedStart || next?.scheduled_at || null} />
             </div>
             <div className="order-3 md:order-none"><Asu26LogosBlock cfg={cfg} /></div>
@@ -234,7 +234,7 @@ function Asu26Hub() {
             </div>
           </div>
 
-          <aside id="horarios" className="scroll-mt-16 min-w-0 self-start rounded-2xl bg-asu-deep/50 p-4 md:p-5 xl:sticky xl:top-16">
+          <aside id="horarios" className="scroll-mt-16 min-w-0 self-start rounded-2xl bg-asu-deep/50 p-4 md:p-6 xl:sticky xl:top-16 xl:p-7">
             <h2 className="font-display text-3xl uppercase tracking-wide text-foreground md:text-4xl">Próximas pruebas</h2>
             <TzLegend className="mb-3 mt-1" />
             {items === null ? (
@@ -249,7 +249,7 @@ function Asu26Hub() {
                   return (
                     <li
                       key={it.id}
-                      className={`asu-reveal grid grid-cols-[5.5rem_1fr] gap-3 rounded-xl px-2 py-4 transition-colors duration-200 hover:bg-asu-deep/40 ${
+                      className={`asu-reveal grid grid-cols-[5.5rem_1fr] gap-3 rounded-xl px-2 py-4 transition-colors duration-200 hover:bg-asu-deep/40 xl:py-5 ${
                         st.hot ? "bg-tv-red/10" : lead ? "bg-asu/25 ring-1 ring-asu-light/40" : ""
                       }`}
                     >
