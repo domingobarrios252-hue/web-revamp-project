@@ -42,8 +42,8 @@ export function Asu26Results({ cfg, results }: { cfg: Asu26StreamingConfig; resu
       ) : (
         <div className="grid gap-5 lg:grid-cols-2">
           {[...groups].map(([name, rows]) => (
-            <article key={name} className="overflow-hidden rounded-2xl border border-border bg-surface">
-              <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+            <article key={name} className="overflow-hidden rounded-2xl bg-surface/70">
+              <header className="flex items-center justify-between gap-3 border-b border-asu-light/30 bg-asu-deep/60 px-4 py-3">
                 <h3 className="font-display min-w-0 text-lg uppercase tracking-wide text-foreground">{name}</h3>
                 <span className="font-condensed shrink-0 rounded-full border border-asu-light/50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-asu-light">
                   {RESULT_STATE_LABEL[rows[0].state]}
@@ -54,12 +54,12 @@ export function Asu26Results({ cfg, results }: { cfg: Asu26StreamingConfig; resu
                   const p = r.position ?? 0;
                   const code = (r.country ?? "").toUpperCase().slice(0, 3);
                   return (
-                    <li key={r.id} className="grid grid-cols-[2.25rem_1fr_auto] items-center gap-3 border-b border-border/60 px-4 py-3 last:border-0">
-                      <span className={`font-display flex h-9 w-9 items-center justify-center rounded-full text-lg ${p >= 1 && p <= 3 ? MEDAL_CLS[p - 1] : "bg-surface-2 text-foreground"}`} title={p >= 1 && p <= 3 ? MEDAL[p - 1] : undefined}>
+                    <li key={r.id} className="grid grid-cols-[2.75rem_1fr_auto] items-center gap-3 border-b border-border/60 px-4 py-3 last:border-0">
+                      <span className={`font-display flex h-11 w-11 items-center justify-center rounded-full text-2xl ${p >= 1 && p <= 3 ? MEDAL_CLS[p - 1] : "bg-surface-2 text-foreground"}`} title={p >= 1 && p <= 3 ? MEDAL[p - 1] : undefined}>
                         {r.position ?? "–"}
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-foreground">
+                        <p className="truncate text-base font-semibold text-foreground">
                           {FLAG[code] && <span className="mr-1.5" aria-hidden="true">{FLAG[code]}</span>}
                           {r.athlete}
                         </p>
@@ -68,7 +68,7 @@ export function Asu26Results({ cfg, results }: { cfg: Asu26StreamingConfig; resu
                         </p>
                       </div>
                       <div className="text-right">
-                        {r.time && <p className="font-display text-lg tabular-nums text-foreground">{r.time}</p>}
+                        {r.time && <p className="font-display text-xl tabular-nums text-foreground">{r.time}</p>}
                         {r.gap && <p className="text-xs tabular-nums text-muted-foreground">{r.gap}</p>}
                       </div>
                     </li>
