@@ -10,7 +10,7 @@ export function Asu26TvHero({ logoUrl }: { logoUrl?: string }) {
       {/* Grafismo geométrico ASU26: curvas de pista y diagonales */}
       <svg
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-40 md:opacity-100"
         viewBox="0 0 1440 520"
         preserveAspectRatio="xMidYMid slice"
       >
@@ -29,7 +29,7 @@ export function Asu26TvHero({ logoUrl }: { logoUrl?: string }) {
         <img
           src={medalArt.url}
           alt="Medalla World Skate Games ASU26 · Asunción - Paraguay"
-          className="order-last mx-auto hidden h-auto w-full max-w-[300px] object-contain mix-blend-multiply lg:order-none lg:block"
+          className="order-last mx-auto hidden h-auto w-full max-w-[300px] object-contain mix-blend-multiply [mask-image:radial-gradient(closest-side,black_72%,transparent)] lg:order-none lg:block"
           loading="eager"
         />
         <div className="asu-reveal min-w-0">
