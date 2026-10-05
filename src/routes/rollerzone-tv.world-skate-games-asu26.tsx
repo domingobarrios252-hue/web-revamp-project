@@ -165,8 +165,9 @@ function Asu26Hub() {
           {NAV.map((n) => (
             <a
               key={n.label}
-              href={`#${n.id}`}
+              href={"link" in n && n.link ? specialLink(cfg.links[n.link]) : `#${n.id}`}
               onClick={(e) => {
+                if ("link" in n && n.link) return;
                 e.preventDefault();
                 document.getElementById(n.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
