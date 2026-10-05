@@ -29,6 +29,8 @@ export type PieceMember = {
   button_label: string | null;
   link_url: string | null;
   skater_id: string | null;
+  /** Próxima prueba ASU26 (schedule_items); opcional. */
+  next_schedule_item_id?: string | null;
   results?: MemberResult[];
 };
 
