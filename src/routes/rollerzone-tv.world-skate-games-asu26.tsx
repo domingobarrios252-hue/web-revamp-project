@@ -15,6 +15,7 @@ import {
 import { Asu26Player } from "@/components/tv/asu26/Asu26Player";
 import { DualTime, TzLegend } from "@/components/tv/asu26/Asu26Time";
 import { Asu26Results } from "@/components/tv/asu26/Asu26Results";
+import { Asu26LiveUpdates, type Asu26TimelineEntry } from "@/components/tv/asu26/Asu26LiveUpdates";
 import ogAsset from "@/assets/og-asu26-rollerzone-tv.jpg.asset.json";
 import rzLogo from "@/assets/rollerzone-logo.png";
 
@@ -91,13 +92,14 @@ function Asu26Hub() {
   const [cfg, setCfg] = useState<Asu26StreamingConfig>(ASU26_DEFAULTS);
   const [items, setItems] = useState<Item[] | null>(null);
   const [results, setResults] = useState<NormalizedResult[]>([]);
+  const [liveUpdates, setLiveUpdates] = useState<Asu26TimelineEntry[]>([]);
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 60_000);
     let off = false;
     (async () => {
-      const [c, s] = await Promise.all([
+      const [c, s, updates] = await Promise.all([
         loadAsu26Config(),
         supabase
           .from("schedule_items")
@@ -106,11 +108,18 @@ function Asu26Hub() {
           .eq("published", true)
           .order("scheduled_at")
           .order("sort_order"),
+        supabase
+          .from("live_timeline")
+          .select("id,message,occurred_at")
+          .eq("result_event_id", ASU26_RESULT_EVENT_ID)
+          .eq("published", true)
+          .order("occurred_at", { ascending: false }),
       ]);
       if (off) return;
       setCfg(c);
       const list = ((s.data ?? []) as Item[]);
       setItems(list);
+      setLiveUpdates((updates.data ?? []) as Asu26TimelineEntry[]);
       const times = new Map(list.map((i) => [i.id, i.scheduled_at]));
       const r = await loadEventResults(supabase, ASU26_RESULT_EVENT_ID, null, times).catch(() => []);
       if (!off) setResults(r);
@@ -221,6 +230,7 @@ function Asu26Hub() {
                 Streaming autorizado por World Skate para Rollerzone.TV. Resultados oficiales proporcionados por VeloPro.
               </p>
             </div>
+            <Asu26LiveUpdates entries={liveUpdates} />
           </div>
 
           <aside id="horarios" className="scroll-mt-16 min-w-0">
