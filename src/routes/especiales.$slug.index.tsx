@@ -132,12 +132,15 @@ export const Route = createFileRoute("/especiales/$slug/")({
       };
     }
     const { special, url } = loaderData;
+    const isAsuSeo = special.slug === "world-skate-games-asu26-patinaje-velocidad";
     const title = `${special.title} | Rollerzone`;
-    const description = (
-      special.description ||
-      special.subtitle ||
-      `Cobertura especial de Rollerzone: ${special.title}.`
-    ).slice(0, 300);
+    const description = isAsuSeo
+      ? "Sigue los World Skate Games ASU26 de patinaje de velocidad en Rollerzone: calendario, selección española, resultados oficiales, medallero, noticias y streaming en directo."
+      : (
+          special.description ||
+          special.subtitle ||
+          `Cobertura especial de Rollerzone: ${special.title}.`
+        ).slice(0, 300);
     const image = (special.hero_image_url || special.cover_url || "").trim();
     const meta: Array<Record<string, string>> = [
       { title },

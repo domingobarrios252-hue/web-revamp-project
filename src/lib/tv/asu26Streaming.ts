@@ -13,7 +13,7 @@ export const ASU26_SETTINGS_KEY = "asu26_streaming";
 /** Evento ASU26 existente (calendario + resultados). */
 export const ASU26_RESULT_EVENT_ID = "8af85269-de02-4b16-b98f-8a4e7b7df6ee";
 /** Especial ASU26 publicado (las piezas enlazan aquí). */
-export const ASU26_SPECIAL_SLUG = "world-skate-games-asu26-patinaje-velocidad-copia-vmrz";
+export const ASU26_SPECIAL_SLUG = "world-skate-games-asu26-patinaje-velocidad";
 export const ASU26_TZ = "America/Asuncion";
 export const ASU26_PATH = "/rollerzone-tv/world-skate-games-asu26";
 

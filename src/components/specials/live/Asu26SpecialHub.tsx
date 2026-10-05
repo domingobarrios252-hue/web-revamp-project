@@ -5,7 +5,7 @@ import { ASU26_TZ } from "@/lib/tv/asu26Streaming";
 import type { NavItem, ScheduleItem } from "@/lib/specials/liveEvent";
 
 /** Slug del especial ASU26: DIRECTO y RESULTADOS viven solo en Rollerzone.TV. */
-export const ASU26_SPECIAL_SLUG = "world-skate-games-asu26-patinaje-velocidad-copia-vmrz";
+export const ASU26_SPECIAL_SLUG = "world-skate-games-asu26-patinaje-velocidad";
 export const ASU26_TV_PATH = "/rollerzone-tv/world-skate-games-asu26";
 export const ASU26_DIRECTO = `${ASU26_TV_PATH}#directo`;
 export const ASU26_RESULTADOS = `${ASU26_TV_PATH}#resultados`;
