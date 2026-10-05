@@ -81,9 +81,9 @@ function dayLabel(day: string) {
 
 function Wordmark({ url, text, className = "" }: { url: string; text: string; className?: string }) {
   return url ? (
-    <img src={url} alt={text} loading="lazy" decoding="async" className={`h-10 w-auto max-w-[160px] object-contain ${className}`} />
+    <img src={url} alt={text} loading="lazy" decoding="async" className={`h-auto max-h-12 w-auto max-w-[130px] object-contain md:max-h-[60px] md:max-w-[180px] ${className}`} />
   ) : (
-    <span className={`font-display text-2xl uppercase tracking-wider text-foreground ${className}`}>{text}</span>
+    <span className={`font-display text-3xl uppercase tracking-wider text-foreground md:text-4xl ${className}`}>{text}</span>
   );
 }
 
@@ -141,9 +141,9 @@ function Asu26Hub() {
               {cfg.logoAsu26Url && (
                 <img src={cfg.logoAsu26Url} alt="World Skate Games ASU26" className="mb-4 h-16 w-auto max-w-[260px] object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)] md:h-24" fetchPriority="high" />
               )}
-              <p className="font-condensed text-xs font-bold uppercase tracking-[4px] text-asu-light">World Skate Games</p>
-              <h1 className="font-display mt-1 break-words text-5xl uppercase leading-[0.95] tracking-wide text-foreground sm:text-6xl md:text-7xl">
-                ASU26 <span className="text-gold">2026</span>
+              <h1 className="break-words uppercase">
+                <span className="font-condensed block text-sm font-bold tracking-[5px] text-asu-light md:text-base">World Skate Games</span>
+                <span className="font-display mt-1 block text-6xl leading-[0.95] tracking-wide text-foreground sm:text-7xl md:text-8xl">ASU<span className="text-gold">26</span></span>
               </h1>
               <p className="font-display mt-1 text-2xl uppercase tracking-wider text-foreground/90 md:text-3xl">Patinaje de velocidad</p>
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-foreground/80">
@@ -237,7 +237,7 @@ function Asu26Hub() {
                   return (
                     <li
                       key={it.id}
-                      className={`asu-reveal grid grid-cols-[4.75rem_1fr] gap-3 rounded-xl border p-3 transition-colors duration-200 hover:border-gold/60 ${
+                      className={`asu-reveal grid grid-cols-[5.5rem_1fr] gap-3 rounded-xl border p-3 transition-colors duration-200 hover:border-gold/60 ${
                         st.hot ? "border-tv-red/70 bg-tv-red/10" : "border-border bg-surface"
                       }`}
                     >
@@ -251,9 +251,9 @@ function Asu26Hub() {
                         <p className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu-light">
                           {[it.category, it.gender].filter(Boolean).join(" ")}
                         </p>
-                        <p className="font-display truncate text-base uppercase tracking-wide text-foreground">{it.event_name}</p>
+                        <p className="font-display truncate text-lg uppercase tracking-wide text-foreground">{it.event_name}</p>
                         <div className="mt-1 flex flex-wrap items-center gap-2">
-                          {it.venue_type && <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{it.venue_type}</span>}
+                          {it.venue_type && <span className="font-condensed text-[11px] font-bold uppercase tracking-widest text-foreground/75">{it.venue_type} ·</span>}
                           <span className={`font-condensed rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${st.hot ? "bg-tv-red text-foreground" : "border border-border text-muted-foreground"}`}>
                             {st.label}
                           </span>
@@ -271,19 +271,19 @@ function Asu26Hub() {
       {/* INSTITUCIONAL */}
       <section className="border-y border-border bg-surface/40 py-8">
         <div className="mx-auto max-w-[1500px] px-4 md:px-8">
-          <p className="font-condensed mb-5 text-center text-[11px] uppercase tracking-[3px] text-muted-foreground">
+          <p className="font-condensed mb-5 text-center text-[10px] uppercase tracking-[3px] text-muted-foreground/80">
             Streaming oficial autorizado por World Skate para Rollerzone.TV
           </p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
-              { logo: <Wordmark url={cfg.logoWorldSkateUrl} text="World Skate" />, a: "Organizador internacional", b: "Streaming autorizado" },
+              { logo: <Wordmark url={cfg.logoWorldSkateUrl} text="World Skate" />, a: "Organización internacional", b: "Streaming autorizado" },
               { logo: <Wordmark url={cfg.logoVeloproUrl} text="VeloPro" />, a: "Proveedor de resultados oficiales", b: "" },
-              { logo: <img src={rzLogo} alt="Rollerzone.TV" className="h-10 w-auto max-w-[160px] object-contain" loading="lazy" />, a: "Rollerzone.TV", b: "Cobertura digital de patinaje de velocidad" },
+              { logo: <Wordmark url={rzLogo} text="Rollerzone.TV" />, a: "Rollerzone.TV", b: "Cobertura digital de patinaje de velocidad" },
             ].map((x, i) => (
-              <div key={i} className="flex min-h-36 flex-col items-center justify-center gap-2 rounded-xl border border-border bg-background/60 p-5 text-center transition-colors duration-200 hover:border-asu-light/50">
-                {x.logo}
-                <p className="font-condensed text-[11px] font-bold uppercase tracking-[2px] text-foreground/90">{x.a}</p>
-                {x.b && <p className="text-xs text-muted-foreground">{x.b}</p>}
+              <div key={i} className="flex h-full flex-col items-center rounded-xl border border-border bg-background/60 px-5 py-6 text-center transition-colors duration-200 hover:border-foreground/20 md:px-6 md:py-7">
+                <div className="flex h-[70px] w-[160px] items-center justify-center md:h-[90px] md:w-[220px]">{x.logo}</div>
+                <p className="font-condensed mt-3 text-xs font-semibold uppercase tracking-[1.5px] text-foreground/90">{x.a}</p>
+                <p className="mt-1 min-h-[1rem] text-[11px] text-muted-foreground/80">{x.b}</p>
               </div>
             ))}
           </div>
@@ -307,7 +307,7 @@ function Asu26Hub() {
       </section>
 
       {/* HOY */}
-      <section id="calendario" className={`scroll-mt-16 border-y border-asu/30 bg-asu-deep/60 ${todays.length === 0 ? "py-7" : "py-10"}`}>
+      <section id="calendario" className={`scroll-mt-16 border-y border-asu/30 bg-asu-deep/60 ${todays.length === 0 ? "py-6" : "py-10"}`}>
         <div className="mx-auto max-w-[1500px] px-4 md:px-8">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="font-display text-3xl uppercase tracking-wider text-foreground">Hoy en ASU26</h2>

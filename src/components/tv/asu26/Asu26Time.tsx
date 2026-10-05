@@ -39,11 +39,14 @@ export function DualTime({ iso, variant = "stack" }: { iso: string; variant?: "s
   if (variant === "compact")
     return (
       <div className="text-center leading-none">
-        <p className="font-display text-2xl text-foreground">{official}</p>
-        <p className="font-condensed mt-0.5 text-[9px] font-bold uppercase tracking-[2px] text-gold">PY</p>
+        <p className="font-display text-[1.6rem] font-bold text-foreground">
+          {official}
+          <span className="font-condensed ml-1 align-top text-[10px] font-bold tracking-[1.5px] text-gold">PY</span>
+        </p>
         {showLocal && (
-          <p className="font-condensed mt-1.5 text-[11px] text-muted-foreground">
-            {local} <span className="text-[9px] uppercase tracking-[1.5px]">local</span>
+          <p className="font-display mt-1.5 text-[1.3rem] text-muted-foreground">
+            {local}
+            <span className="font-condensed ml-1 align-top text-[9px] font-bold uppercase tracking-[1.5px]">Local</span>
           </p>
         )}
       </div>
