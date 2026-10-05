@@ -29,16 +29,16 @@ export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextI
 
   if (!tab) {
     return (
-      <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-border bg-asu-deep p-6 text-center text-sm text-muted-foreground">
+      <div className="flex aspect-video w-full items-center justify-center asu-dark rounded-2xl border border-border bg-asu-deep p-6 text-center text-sm text-muted-foreground">
         Señal no disponible en este momento.
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="asu-dark overflow-hidden rounded-2xl bg-background">
       {tabs.length > 1 && (
-        <div role="tablist" aria-label="Seleccionar señal" className="mb-4 grid grid-cols-4 gap-1 border-b border-border/60">
+        <div role="tablist" aria-label="Seleccionar señal" className="grid grid-cols-4 gap-1 border-b border-border/60 px-2">
           {tabs.map((t) => {
             const on = t.key === tab.key;
             return (
@@ -53,7 +53,7 @@ export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextI
                   setLoading(true);
                 }}
                 className={`font-condensed min-h-11 -mb-px border-b-2 px-2 text-xs font-bold uppercase tracking-[2px] transition-all duration-200 sm:text-sm ${
-                  on ? "border-asu-light text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                  on ? "border-asu-coral text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {t.label}
@@ -63,7 +63,7 @@ export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextI
         </div>
       )}
 
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-asu-deep shadow-[0_30px_80px_-30px_color-mix(in_oklab,var(--asu)_60%,transparent)]">
+      <div className="relative aspect-video w-full overflow-hidden bg-asu-deep">
         {started ? (
           <ExternalEmbedGate provider="World Skate" sourceUrl={src}>
             {loading && <div className="absolute inset-0 animate-pulse bg-surface-2" aria-hidden="true" />}
@@ -85,7 +85,7 @@ export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextI
             type="button"
             onClick={() => setStarted(true)}
             aria-label={`Reproducir señal ${label}`}
-            className="asu-hero-bg group absolute inset-0 flex flex-col items-center justify-center gap-4"
+            className="asu-player-bg group absolute inset-0 flex flex-col items-center justify-center gap-4"
           >
             <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gold text-background shadow-2xl transition-transform duration-300 group-hover:scale-110 md:h-20 md:w-20">
               <Play className="ml-1 h-7 w-7 md:h-9 md:w-9" fill="currentColor" />
