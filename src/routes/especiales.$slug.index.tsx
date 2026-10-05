@@ -326,8 +326,9 @@ function PieceCard({
   return (
     <li>
       <Link
-        to={tvHref ?? "/especiales/$slug/$piece"}
-        params={tvHref ? undefined : { slug: specialSlug, piece: piece.slug }}
+        to={(tvHref ? "/rollerzone-tv/world-skate-games-asu26" : "/especiales/$slug/$piece") as "/especiales/$slug/$piece"}
+        hash={tvHref ? tvHref.split("#")[1] : undefined}
+        params={{ slug: specialSlug, piece: piece.slug }}
         className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-lg transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.35)]"
       >
         <div className={"relative overflow-hidden bg-surface-2 " + (large ? "aspect-[16/9]" : "aspect-[16/9]")}>
