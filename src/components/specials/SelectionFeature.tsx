@@ -1,3 +1,4 @@
+import { MemberAsu26Live } from "@/components/specials/live/Asu26PieceModules";
 import {
   flagEmoji,
   hasClosing,
@@ -72,7 +73,7 @@ export function SelectionSummary({ data }: { data: FeatureData }) {
   );
 }
 
-export function SelectionMembers({ members }: { members: PieceMember[] }) {
+export function SelectionMembers({ members, live = false }: { members: PieceMember[]; live?: boolean }) {
   if (members.length === 0) return null;
   return (
     <section className="bg-surface py-12 md:py-20">
@@ -94,7 +95,7 @@ export function SelectionMembers({ members }: { members: PieceMember[] }) {
 }
 
 
-function MemberCard({ m }: { m: PieceMember }) {
+function MemberCard({ m, live = false }: { m: PieceMember; live?: boolean }) {
   const fullName = `${m.first_name} ${m.last_name}`.trim();
   const visible = m.display_name?.trim();
   const name = visible || fullName;
@@ -167,6 +168,7 @@ function MemberCard({ m }: { m: PieceMember }) {
           </div>
         )}
         {m.bio && <p className="text-[15px] leading-relaxed text-foreground/80">{m.bio}</p>}
+        {live && <MemberAsu26Live m={m} />}
         {m.link_url && (
           <a
             href={m.link_url}
