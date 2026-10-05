@@ -43,11 +43,26 @@ export const Route = createFileRoute("/rollerzone-tv/world-skate-games-asu26")({
       { name: "twitter:title", content: OG_TITLE },
       { name: "twitter:description", content: OG_DESC },
       { name: "twitter:image", content: OG },
+      { name: "apple-mobile-web-app-title", content: "ASU26 TV" },
     ],
     links: [{ rel: "canonical", href: PAGE_URL }],
   }),
-  component: Asu26Hub,
+  component: Asu26HubWithShortcut,
 });
+
+// Acceso directo propio («ASU26 TV») con el icono general de Rollerzone.
+function Asu26HubWithShortcut() {
+  useEffect(() => {
+    const link = document.head.querySelector('link[rel="manifest"]');
+    if (!link) return;
+    const prev = link.getAttribute("href");
+    link.setAttribute("href", "/manifest-asu26-tv.webmanifest");
+    return () => {
+      if (prev) link.setAttribute("href", prev);
+    };
+  }, []);
+  return <Asu26Hub />;
+}
 
 type Item = ScheduleItem;
 
