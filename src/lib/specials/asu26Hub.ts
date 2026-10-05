@@ -141,8 +141,8 @@ async function load(): Promise<Omit<Asu26HubData, "loading">> {
     const { data } = await sb.from("special_piece_members").select("category").eq("piece_id", mem.data.id).eq("published", true);
     const rows = (data ?? []) as { category: string | null }[];
     members = {
-      junior: rows.filter((r) => /junior/i.test(r.category ?? "")).length,
-      senior: rows.filter((r) => /senior/i.test(r.category ?? "")).length,
+      junior: rows.filter((r) => /junior/i.test((r.category ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))).length,
+      senior: rows.filter((r) => /senior/i.test((r.category ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, ""))).length,
       total: rows.length,
     };
   }
