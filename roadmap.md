@@ -7,3 +7,6 @@
 - [ ] Registrar dimensión personalizada stream_title en GA4 (usuario)
 - [ ] Revisión visual del editor de noticias (bloqueado: MFA)
 - [ ] Lista de noticias antiguas candidatas a General (tras revisión visual)
+- [x] Especial ASU26 como hub dinámico (calendario, TV, resultados, medallero, noticias, tarjetas)
+- [ ] Vincular las 5 noticias ASU26 existentes al especial (espera visto bueno)
+- [ ] Publicar las 4 fichas ocultas de la Selección (decisión del usuario)
