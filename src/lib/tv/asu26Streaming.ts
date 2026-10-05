@@ -48,6 +48,9 @@ export type Asu26StreamingConfig = {
   logoWorldSkateUrl: string;
   logoVeloproUrl: string;
   logoPoweredByVeloproUrl: string;
+  /** Personalización visual: imagen de cabecera y bloque de logos (vacío → diseño por defecto). */
+  heroImageUrl: string;
+  logosImageUrl: string;
   /** Enlaces del especial (slug de pieza o URL completa). */
   links: Record<"calendario" | "resultados" | "espana" | "medallero" | "noticias" | "galeria", string>;
 };
@@ -75,6 +78,8 @@ export const ASU26_DEFAULTS: Asu26StreamingConfig = {
   logoWorldSkateUrl: "",
   logoVeloproUrl: "",
   logoPoweredByVeloproUrl: "",
+  heroImageUrl: "",
+  logosImageUrl: "",
   links: {
     calendario: "calendario-competicion",
     resultados: "resultados",
