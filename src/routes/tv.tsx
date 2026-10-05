@@ -287,31 +287,6 @@ function TvPage() {
   }
   // Sin Programación: TV-05 se coloca después de Highlights (nunca pegado a TV-04).
   if (!hasProgram && tv05Block) blocks.push(tv05Block);
-  blocks.push({
-    key: "cta",
-    ad: false,
-    node: (
-      <section className="border-t border-gold/30 bg-background">
-        <div className="mx-auto max-w-3xl px-4 py-12 text-center lg:px-8">
-          <h2 className="font-display text-2xl tracking-widest text-foreground md:text-3xl">
-            {settings?.subscribe_title ?? "¿No te quieres perder nada?"}
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            {settings?.subscribe_text ??
-              "Suscríbete a nuestro canal y activa las notificaciones para no perderte ningún directo."}
-          </p>
-          <a
-            href={settings?.subscribe_button_url ?? "https://www.youtube.com/@rollerzonespain?sub_confirmation=1"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-condensed mt-5 inline-flex min-h-11 items-center gap-2 bg-gold px-6 text-xs font-bold uppercase tracking-widest text-primary-foreground transition-colors hover:bg-gold-dark"
-          >
-            {settings?.subscribe_button_text ?? "Suscribirse al canal"}
-          </a>
-        </div>
-      </section>
-    ),
-  });
   if (partners.length) {
     // Partners = bloque comercial a efectos de separación (nunca pegado a un banner).
     blocks.push({ key: "partners", ad: true, node: <TvPartners items={partners} /> });
