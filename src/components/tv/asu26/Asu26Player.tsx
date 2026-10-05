@@ -38,7 +38,7 @@ export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextI
   return (
     <div>
       {tabs.length > 1 && (
-        <div role="tablist" aria-label="Seleccionar señal" className="mb-3 grid grid-cols-4 gap-1.5 rounded-xl border border-border bg-background/70 p-1.5">
+        <div role="tablist" aria-label="Seleccionar señal" className="mb-4 grid grid-cols-4 gap-1 border-b border-border/60">
           {tabs.map((t) => {
             const on = t.key === tab.key;
             return (
@@ -52,8 +52,8 @@ export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextI
                   setActive(t.key);
                   setLoading(true);
                 }}
-                className={`font-condensed min-h-11 rounded-lg px-2 text-xs font-bold uppercase tracking-[2px] transition-all duration-200 sm:text-sm ${
-                  on ? "bg-asu text-foreground shadow-md" : "text-muted-foreground hover:bg-surface-2 hover:text-foreground"
+                className={`font-condensed min-h-11 -mb-px border-b-2 px-2 text-xs font-bold uppercase tracking-[2px] transition-all duration-200 sm:text-sm ${
+                  on ? "border-asu-light text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {t.label}
@@ -63,7 +63,7 @@ export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextI
         </div>
       )}
 
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-asu/50 bg-asu-deep shadow-2xl">
+      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-asu-deep shadow-[0_30px_80px_-30px_color-mix(in_oklab,var(--asu)_60%,transparent)]">
         {started ? (
           <ExternalEmbedGate provider="World Skate" sourceUrl={src}>
             {loading && <div className="absolute inset-0 animate-pulse bg-surface-2" aria-hidden="true" />}
