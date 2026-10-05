@@ -53,9 +53,8 @@ type Item = ScheduleItem;
 
 const NAV = [
   { id: "directo", label: "Directo" },
-  { id: "horarios", label: "Horarios" },
-  { id: "resultados", label: "Resultados" },
   { id: "calendario", label: "Calendario" },
+  { id: "resultados", label: "Resultados" },
   { id: "especial", label: "España", link: "espana" as const },
   { id: "especial", label: "Medallero", link: "medallero" as const },
   { id: "especial", label: "Noticias", link: "noticias" as const },
