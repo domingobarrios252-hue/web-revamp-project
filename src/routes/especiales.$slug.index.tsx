@@ -8,6 +8,15 @@ import { LiveSchedule } from "@/components/specials/live/LiveSchedule";
 import { LiveStream, streamMode } from "@/components/specials/live/LiveStream";
 import { LiveUpdates, type TimelineRow } from "@/components/specials/live/LiveUpdates";
 import { LiveResults } from "@/components/specials/live/LiveResults";
+import {
+  ASU26_SPECIAL_SLUG,
+  ASU26_DIRECTO,
+  ASU26_RESULTADOS,
+  asu26Nav,
+  Asu26Today,
+  Asu26MobileAccess,
+  Asu26StickyBar,
+} from "@/components/specials/live/Asu26SpecialHub";
 import { loadEventResults, type NormalizedResult, type ResultsProviderKey } from "@/lib/results/provider";
 import {
   buildLiveNav,
@@ -162,6 +171,16 @@ function SpecialLanding() {
   const rest = pieces.filter((p) => !p.featured);
   const isLiveHub = Boolean(special.result_event_id || special.event_id);
   const live = isEventLive(event);
+  const isAsu = slug === ASU26_SPECIAL_SLUG;
+  const baseNav = buildLiveNav(pieces, { hasSchedule: schedule.length > 0, hasStream, hasResults: Boolean(special.result_event_id) });
+  const pieceNav = buildLiveNav(pieces);
+  const nav = isAsu ? asu26Nav(pieceNav) : baseNav;
+  const ctas = isAsu
+    ? [
+        { label: "Ver directo →", url: ASU26_DIRECTO, visible: true },
+        { label: "Resultados oficiales →", url: ASU26_RESULTADOS, visible: true },
+      ]
+    : resolveCtas(special, pieces).map((c) => (c.url === `/especiales/${slug}` ? { ...c, url: "#hoy" } : c));
 
   return (
     <>
@@ -173,11 +192,12 @@ function SpecialLanding() {
               start_date: special.start_date ?? event?.start_date ?? null,
               end_date: special.end_date ?? event?.end_date ?? null,
             }}
-            ctas={resolveCtas(special, pieces).map((c) => (c.url === `/especiales/${slug}` ? { ...c, url: "#hoy" } : c))}
+            ctas={ctas}
             live={live}
             location={special.location?.trim() || event?.city || event?.location || ""}
           />
-          <LiveEventNav slug={slug} items={buildLiveNav(pieces, { hasSchedule: schedule.length > 0, hasStream, hasResults: Boolean(special.result_event_id) })} live={live} />
+          <LiveEventNav slug={slug} items={nav} live={live} />
+          {isAsu && <Asu26MobileAccess slug={slug} nav={pieceNav} />}
         </>
       ) : (
       <section className="relative overflow-hidden bg-surface">
@@ -222,7 +242,13 @@ function SpecialLanding() {
       )}
 
       <div id="hoy" className="scroll-mt-14" />
-      {isLiveHub && (
+      {isLiveHub && isAsu && (
+        <>
+          <Asu26Today items={schedule} slug={slug} calendarPiece={pieceNav.find((x) => x.key === "calendario")?.pieceSlug ?? null} />
+          <LiveUpdates items={timeline} tz={venueTimeZone(event?.country)} />
+        </>
+      )}
+      {isLiveHub && !isAsu && (
         <>
         <LiveStream stream={stream} city={event?.city ? event.city.charAt(0) + event.city.slice(1).toLowerCase() : ""} tz={venueTimeZone(event?.country)} />
         <LiveUpdates items={timeline} tz={venueTimeZone(event?.country)} />
