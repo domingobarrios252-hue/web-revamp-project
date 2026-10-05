@@ -245,7 +245,6 @@ function SpecialLanding() {
       {isLiveHub && isAsu && (
         <>
           <Asu26Today items={schedule} slug={slug} calendarPiece={pieceNav.find((x) => x.key === "calendario")?.pieceSlug ?? null} />
-          <LiveUpdates items={timeline} tz={venueTimeZone(event?.country)} />
         </>
       )}
       {isLiveHub && !isAsu && (

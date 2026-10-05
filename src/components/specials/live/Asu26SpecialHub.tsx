@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowRight, Radio, Trophy, CalendarDays, Flag } from "lucide-react";
 import { ASU26_TZ } from "@/lib/tv/asu26Streaming";
 import type { NavItem, ScheduleItem } from "@/lib/specials/liveEvent";
@@ -117,6 +118,13 @@ export function Asu26MobileAccess({ slug, nav }: { slug: string; nav: NavItem[] 
 
 /** Barra fija inferior solo en móvil. */
 export function Asu26StickyBar() {
+  // Solo visible durante ASU26 (10–18 oct 2026, hora Asunción); se evalúa tras hidratar.
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    const d = dayKey(new Date().toISOString());
+    setActive(d >= "2026-10-10" && d <= "2026-10-18");
+  }, []);
+  if (!active) return null;
   return (
     <>
       <div className="h-16 md:hidden" aria-hidden="true" />
