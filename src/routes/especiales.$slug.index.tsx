@@ -318,12 +318,16 @@ function PieceCard({
   specialSlug: string;
   large?: boolean;
 }) {
+  const txt = `${piece.slug} ${piece.kicker} ${piece.category}`;
+  const tvHref = specialSlug === ASU26_SPECIAL_SLUG
+    ? /resultado|clasifica/i.test(txt) ? ASU26_RESULTADOS : /directo|stream|retransmis/i.test(txt) ? ASU26_DIRECTO : null
+    : null;
   const img = piece.image_url || piece.thumbnail_url || (specialFallback as string);
   return (
     <li>
       <Link
-        to="/especiales/$slug/$piece"
-        params={{ slug: specialSlug, piece: piece.slug }}
+        to={tvHref ?? "/especiales/$slug/$piece"}
+        params={tvHref ? undefined : { slug: specialSlug, piece: piece.slug }}
         className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-lg transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.35)]"
       >
         <div className={"relative overflow-hidden bg-surface-2 " + (large ? "aspect-[16/9]" : "aspect-[16/9]")}>
@@ -355,7 +359,7 @@ function PieceCard({
             </p>
           )}
           <div className="font-condensed mt-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-            Leer pieza <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+            {tvHref ? "Ir a Rollerzone.TV" : "Leer pieza"} <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
           </div>
         </div>
       </Link>
