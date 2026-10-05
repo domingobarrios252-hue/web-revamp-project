@@ -8,13 +8,16 @@ import {
   type Asu26StreamKey,
   type Asu26StreamingConfig,
 } from "@/lib/tv/asu26Streaming";
+import { ASU26_TZ } from "@/lib/tv/asu26Streaming";
+import { hhmm, useViewerTz } from "./Asu26Time";
 
 /**
  * Reproductor ASU26. Solo existe UN iframe montado: el de la señal
  * seleccionada. Al cambiar de señal se desmonta el anterior (key) y se monta
  * el nuevo. No se carga nada hasta que el usuario pulsa Play.
  */
-export function Asu26Player({ cfg }: { cfg: Asu26StreamingConfig }) {
+export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextIso?: string | null }) {
+  const vtz = useViewerTz();
   const tabs = STREAM_TABS.filter((t) => cfg[t.show] && httpsOnly(cfg[t.url] as string));
   const initial = tabs.find((t) => t.key === cfg.defaultStream)?.key ?? tabs[0]?.key ?? null;
   const [active, setActive] = useState<Asu26StreamKey | null>(initial);
@@ -90,6 +93,15 @@ export function Asu26Player({ cfg }: { cfg: Asu26StreamingConfig }) {
             <span className="font-condensed text-xs font-bold uppercase tracking-[3px] text-foreground/90">
               Señal {label}
             </span>
+            {nextIso && cfg.streamStatus !== "live" && (
+              <span className="font-condensed rounded-lg border border-foreground/15 bg-background/50 px-4 py-2 text-center text-[11px] uppercase tracking-[2px] text-foreground/85 backdrop-blur">
+                <span className="block font-bold text-gold">Próxima transmisión</span>
+                <span className="mt-0.5 block">
+                  {new Intl.DateTimeFormat("es-ES", { timeZone: ASU26_TZ, day: "numeric", month: "short" }).format(new Date(nextIso))} · {hhmm(nextIso, ASU26_TZ)} Asunción
+                </span>
+                {vtz && vtz !== ASU26_TZ && <span className="block text-muted-foreground">Tu hora: {hhmm(nextIso, vtz)}</span>}
+              </span>
+            )}
           </button>
         )}
       </div>
