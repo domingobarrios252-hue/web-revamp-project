@@ -220,7 +220,7 @@ function TvPage() {
     ((settings?.next_event_title && settings.next_event_at && new Date(settings.next_event_at).getTime() > now.getTime()) ||
       !!nextBroadcast);
   const liveCenterBelow = hasLiveCenter && settings?.live_center_position === "bottom";
-  const topEndsWithAd = tv03.length > 0 && !nextShown && !liveCenterBelow;
+  const topEndsWithAd = !asu.tvPromoActive && tv03.length > 0 && !nextShown && !liveCenterBelow;
 
   type Block = { key: string; ad: boolean; node: React.ReactNode };
   const blocks: Block[] = [];
