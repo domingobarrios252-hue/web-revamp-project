@@ -505,3 +505,37 @@ select.input {
     0 0 60px -20px color-mix(in oklab, var(--asu-coral) 35%, transparent);
 }
 .asu-stripe { background: linear-gradient(90deg, var(--asu-light), var(--asu-cream) 50%, var(--asu-coral)); }
+
+/* ASU26 directo: tema claro crema (scoped) y zonas oscuras dentro */
+.asu-light {
+  --background: var(--asu-cream);
+  --foreground: var(--asu-ink);
+  --surface: oklch(0.975 0.015 85);
+  --surface-2: oklch(0.92 0.025 85);
+  --muted-foreground: oklch(0.42 0.03 160);
+  --border: color-mix(in oklab, var(--asu) 22%, transparent);
+  --gold: oklch(0.8 0.15 85);
+  --gold-light: oklch(0.85 0.15 88);
+  --asu-light: var(--asu);
+  background: var(--asu-cream);
+  color: var(--asu-ink);
+}
+.asu-dark {
+  --background: oklch(0.17 0.03 160);
+  --foreground: #F5F5F5;
+  --surface: oklch(0.22 0.04 160);
+  --surface-2: oklch(0.26 0.04 160);
+  --muted-foreground: #BDBDBD;
+  --border: oklch(0.32 0.04 160);
+  --asu-light: oklch(0.72 0.15 155);
+  --gold: #D4A017;
+  color: var(--foreground);
+}
+.asu-player-bg {
+  background:
+    radial-gradient(140% 110% at 110% 120%, transparent 60%, color-mix(in oklab, var(--asu-coral) 55%, transparent) 60.4%, transparent 61.2%),
+    radial-gradient(140% 110% at 110% 120%, transparent 64%, color-mix(in oklab, var(--asu-pink) 40%, transparent) 64.3%, transparent 65%),
+    radial-gradient(120% 100% at -10% -20%, transparent 62%, color-mix(in oklab, #fff 6%, transparent) 62.2%, transparent 62.6%),
+    radial-gradient(90% 80% at 80% 0%, oklch(0.28 0.06 160) 0%, transparent 70%),
+    oklch(0.17 0.035 160);
+}

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, MapPin, ShieldCheck, Clock, ArrowRight } from "lucide-react";
+import { CalendarDays, MapPin, ShieldCheck, Clock, ArrowRight, ListOrdered, Users, Medal, Newspaper } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { loadEventResults, type NormalizedResult } from "@/lib/results/provider";
 import { dayInTz, timeInTz, type ScheduleItem } from "@/lib/specials/liveEvent";
@@ -13,7 +13,8 @@ import {
   type Asu26StreamingConfig,
 } from "@/lib/tv/asu26Streaming";
 import { Asu26Player } from "@/components/tv/asu26/Asu26Player";
-import { DualTime, TzLegend } from "@/components/tv/asu26/Asu26Time";
+import { hhmm, useViewerTz } from "@/components/tv/asu26/Asu26Time";
+import veloproLogo from "@/assets/logo-velopro-tight.png.asset.json";
 import { Asu26Results } from "@/components/tv/asu26/Asu26Results";
 import { Asu26LiveUpdates, type Asu26TimelineEntry } from "@/components/tv/asu26/Asu26LiveUpdates";
 import { Asu26LogosBlock } from "@/components/tv/asu26/Asu26LogosBlock";
@@ -145,52 +146,22 @@ function Asu26Hub() {
   const next = upcoming.find((i) => i.status === "programada");
   const live = cfg.streamStatus === "live";
 
-  return (
-    <div className="w-full min-w-0 overflow-x-clip bg-background">
-      {/* HERO */}
-      <section className="asu-hero-bg relative isolate overflow-hidden">
-        <img src={cfg.heroImageUrl || ogAsset.url} alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-20" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/70 to-asu-deep/40" aria-hidden="true" />
-        <div className="asu-curve pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
-        <div className="asu-speed pointer-events-none absolute inset-y-0 right-0 -z-10 hidden w-1/2 md:block" aria-hidden="true" />
-        <div className="mx-auto max-w-[1500px] px-4 pb-8 pt-8 md:px-8 md:pb-14 md:pt-16">
-          <div className="asu-reveal min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
-              {live ? (
-                <span className="asu-live-glow font-condensed inline-flex items-center gap-2 rounded-full bg-tv-red px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-foreground">
-                  <span className="live-dot h-2 w-2 rounded-full bg-foreground" /> En directo ahora
-                </span>
-              ) : (
-                <span className="font-condensed inline-flex items-center gap-2 rounded-full bg-asu-coral px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-background">
-                  <Clock className="h-3.5 w-3.5" /> {cfg.streamStatus === "finished" ? "Retransmisión finalizada" : "Próxima retransmisión"}
-                  {cfg.streamStatus !== "finished" && (cfg.expectedStart || next) ? ` · ${timeInTz(cfg.expectedStart || next!.scheduled_at, ASU26_TZ)} PY` : ""}
-                </span>
-              )}
-              <span className="font-condensed inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[2.5px] text-asu-light">
-                <ShieldCheck className="h-3.5 w-3.5" /> Señal autorizada por World Skate
-              </span>
-            </div>
-            {cfg.logoAsu26Url && (
-              <img src={cfg.logoAsu26Url} alt="World Skate Games ASU26" className="mt-6 h-14 w-auto max-w-[220px] object-contain md:h-20" />
-            )}
-            <h1 className="mt-5 break-words uppercase">
-              <span className="font-condensed block text-sm font-bold tracking-[5px] text-asu-cream md:text-base">World Skate Games</span>
-              <span className="font-display mt-1 block text-6xl leading-[0.9] tracking-wide text-foreground sm:text-8xl md:text-[9rem]">ASU<span className="text-asu-coral">26</span></span>
-            </h1>
-            <div className="asu-stripe mt-4 h-[3px] w-24 md:w-40" aria-hidden="true" />
-            <p className="font-display mt-4 text-2xl uppercase tracking-[0.12em] text-foreground/90 md:text-3xl">Patinaje de velocidad</p>
-            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs uppercase tracking-[2px] text-asu-cream/80">
-              <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5 text-asu-light" /> 10 — 18 octubre 2026</span>
-              <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-asu-light" /> Asunción · Paraguay</span>
-              <span className="font-condensed font-bold text-gold">Rollerzone.TV</span>
-            </div>
-          </div>
-        </div>
-      </section>
+  const nextIso = cfg.expectedStart || next?.scheduled_at || null;
+  const statusPill = <StatusBadge status={cfg.streamStatus} />;
 
-      {/* NAV sticky */}
-      <nav aria-label="Secciones ASU26" className="sticky top-0 z-30 border-y border-asu/30 bg-background/90 backdrop-blur">
-        <div className="mx-auto flex max-w-[1500px] gap-1 overflow-x-auto px-2 py-1.5 [scrollbar-width:none] md:px-6">
+  return (
+    <div className="asu-light relative isolate w-full min-w-0 overflow-x-clip">
+      {/* Grafismo ASU26 solo en bordes */}
+      <svg aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden h-[900px] w-full md:block" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMin slice">
+        <path d="M0 0H300C220 40 120 60 0 140Z" className="fill-asu-pink/40" />
+        <path d="M0 160C60 120 120 110 170 120L0 230Z" className="fill-asu-coral/35" />
+        <path d="M1440 0H1060C1180 40 1320 100 1440 200Z" className="fill-asu/25" />
+        <path d="M1440 220C1400 200 1360 190 1330 200L1440 300Z" className="fill-asu-coral/35" />
+      </svg>
+
+      {/* NAV del especial (oscuro) */}
+      <nav aria-label="Secciones ASU26" className="asu-dark sticky top-0 z-30 border-b border-border bg-asu-deep">
+        <div className="mx-auto flex max-w-[1500px] gap-1 overflow-x-auto px-2 py-1 [scrollbar-width:none] md:px-6">
           {NAV.map((n) => (
             <a
               key={n.label}
@@ -199,7 +170,7 @@ function Asu26Hub() {
                 e.preventDefault();
                 document.getElementById(n.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="font-condensed inline-flex min-h-11 shrink-0 items-center rounded-md px-3 text-xs font-bold uppercase tracking-[2px] text-muted-foreground transition-colors hover:bg-surface hover:text-asu-cream"
+              className="font-condensed inline-flex min-h-11 shrink-0 items-center border-b-2 border-transparent px-3 text-xs font-bold uppercase tracking-[2px] text-muted-foreground transition-colors first:border-asu-coral first:text-foreground hover:text-foreground"
             >
               {n.label}
             </a>
@@ -207,130 +178,141 @@ function Asu26Hub() {
         </div>
       </nav>
 
-      {/* STREAMING */}
-      <section id="directo" className="asu-track-soft scroll-mt-16 py-10 md:py-16">
-        <div className="mx-auto grid max-w-[1560px] gap-6 px-4 md:px-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+      {/* DIRECTO */}
+      <section id="directo" className="scroll-mt-14 pb-10 pt-8 md:pb-14 md:pt-10">
+        <div className="mx-auto grid max-w-[1500px] gap-6 px-4 md:px-8 xl:grid-cols-[minmax(0,1fr)_340px]">
           <div className="flex min-w-0 flex-col">
-            <div className="mb-4 flex flex-wrap items-center gap-3">
-              <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-6xl">{cfg.title}</h2>
-              <StatusBadge status={cfg.streamStatus} />
+            <p className="font-condensed text-xs font-bold uppercase tracking-[2.5px] text-asu-coral md:text-sm">
+              <ShieldCheck className="mr-1.5 inline h-4 w-4 align-[-3px]" />World Skate Games ASU26
+              <span className="text-asu-ink/70"> · Patinaje de velocidad</span>
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <h1 className="font-display text-6xl uppercase leading-[0.95] tracking-wide md:text-8xl">
+                <span className="text-asu-ink">En </span><span className="text-asu-coral">directo</span>
+              </h1>
+              {statusPill}
             </div>
-            <p className="font-condensed -mt-2 mb-4 text-xs uppercase tracking-[3px] text-muted-foreground">{cfg.subtitle}</p>
-            {!live && (
-              <div className="order-1 mt-4 rounded-2xl bg-asu-deep/50 p-4 md:order-none md:mb-6 md:mt-0 md:p-6">
-                <p className="font-condensed text-[11px] font-bold uppercase tracking-[3px] text-asu-light">
-                  {cfg.streamStatus === "finished" ? "Retransmisión finalizada" : "Próxima retransmisión"}
-                </p>
-                {(cfg.expectedStart || next) && (
-                  <div className="mt-2">
-                    <p className="font-display text-lg uppercase tracking-wide text-foreground/90">
-                      {dayLabel(dayInTz((cfg.expectedStart || next!.scheduled_at), ASU26_TZ)).replace(/ de /g, " ").replace(",", "")}
-                    </p>
-                    <div className="mt-2"><DualTime iso={cfg.expectedStart || next!.scheduled_at} /></div>
-                    {!cfg.expectedStart && next && (
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
-                        <p className="font-display text-xl uppercase tracking-wide text-foreground">{next.event_name}</p>
-                        {next.venue_type && <span className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu-light">{next.venue_type}</span>}
-                        <span className="font-condensed rounded-full border border-border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">Próximamente</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-                <TzLegend className="mt-3" />
-                {cfg.preStreamMessage && <p className="mt-1 text-sm text-muted-foreground">{cfg.preStreamMessage}</p>}
+            {nextIso && cfg.streamStatus !== "finished" && (
+              <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-7 gap-y-2 text-sm font-bold uppercase tracking-[2.5px] text-asu-ink md:text-base">
+                <span className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4 text-asu-coral" />{dayLabel(dayInTz(nextIso, ASU26_TZ))}</span>
+                <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-asu-coral" />{timeInTz(nextIso, ASU26_TZ)}</span>
+                <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-asu" />Asunción, Paraguay</span>
               </div>
             )}
-            <div className="asu-frame order-2 overflow-hidden rounded-2xl md:order-none">
-              <Asu26Player cfg={cfg} nextIso={cfg.expectedStart || next?.scheduled_at || null} />
+
+            {!live && (
+              <div className="mt-6 grid gap-4 rounded-2xl border border-asu/30 bg-surface/80 p-5 md:grid-cols-[auto_1fr] md:items-center md:gap-8 md:p-6">
+                <div className="md:border-r md:border-asu/20 md:pr-8">
+                  <p className="font-condensed text-xs font-bold uppercase tracking-[2.5px] text-asu">
+                    {cfg.streamStatus === "finished" ? "Retransmisión finalizada" : "Próxima transmisión"}
+                  </p>
+                  {nextIso && <div className="mt-2"><NextTime iso={nextIso} /></div>}
+                </div>
+                <div className="min-w-0">
+                  {!cfg.expectedStart && next && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-display text-2xl uppercase tracking-wide text-asu-ink md:text-3xl">{next.event_name}</p>
+                      {next.venue_type && <span className="font-condensed rounded-full bg-asu-coral px-3 py-0.5 text-[11px] font-bold uppercase tracking-[2px] text-asu-ink">{next.venue_type}</span>}
+                      <span className="font-condensed rounded-full border border-asu px-3 py-0.5 text-[11px] font-bold uppercase tracking-[2px] text-asu">Próximamente</span>
+                    </div>
+                  )}
+                  <p className="font-condensed mt-2 text-[11px] font-bold uppercase tracking-[2px] text-asu">Horarios oficiales · Hora local de Asunción (PY)</p>
+                  {cfg.preStreamMessage && <p className="mt-1 text-sm text-asu-ink/80">{cfg.preStreamMessage}</p>}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6">
+              <Asu26Player cfg={cfg} nextIso={nextIso} />
             </div>
-            <div className="order-3 md:order-none"><Asu26LogosBlock cfg={cfg} /></div>
-            <div className="order-4 md:order-none">
-            <Asu26LiveUpdates entries={liveUpdates} />
+            <div className="asu-dark">
+              <Asu26LiveUpdates entries={liveUpdates} />
             </div>
           </div>
 
-          <aside id="horarios" className="scroll-mt-16 min-w-0 self-start rounded-2xl bg-asu-deep/50 p-4 md:p-6 xl:sticky xl:top-16 xl:p-7">
-            <h2 className="font-display text-3xl uppercase tracking-wide text-foreground md:text-4xl">Próximas pruebas</h2>
-            <TzLegend className="mb-3 mt-1" />
-            {items === null ? (
-              <div className="space-y-2">{[0, 1, 2].map((i) => <div key={i} className="h-20 animate-pulse rounded-xl bg-surface" />)}</div>
-            ) : upcoming.length === 0 ? (
-              <p className="rounded-xl border border-border bg-surface/60 p-4 text-sm text-muted-foreground">No hay próximas pruebas programadas.</p>
-            ) : (
-              <ul className="divide-y divide-border/60">
-                {upcoming.map((it, idx) => {
-                  const st = raceState(it, results);
-                  const lead = idx === 0;
-                  return (
-                    <li
-                      key={it.id}
-                      className={`asu-reveal grid grid-cols-[5.5rem_1fr] gap-3 rounded-xl px-2 py-4 transition-colors duration-200 hover:bg-asu-deep/40 xl:py-5 ${
-                        st.hot ? "bg-tv-red/10" : lead ? "bg-asu/25 ring-1 ring-asu-light/40" : ""
-                      }`}
-                    >
-                      <div className="text-center">
-                        <DualTime iso={it.scheduled_at} variant="compact" />
-                        <p className="font-condensed mt-1.5 text-[10px] uppercase tracking-widest text-muted-foreground">
-                          {dayLabel(dayInTz(it.scheduled_at, ASU26_TZ)).split(",")[1]?.trim() ?? ""}
-                        </p>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu-light">
-                          {[it.category, it.gender].filter(Boolean).join(" ")}
-                        </p>
-                        {lead && !st.hot && <p className="font-condensed text-[9px] font-bold uppercase tracking-[3px] text-asu-coral">Siguiente</p>}
-                        <p className="font-display break-words text-lg uppercase leading-tight tracking-wide text-foreground">{it.event_name}</p>
-                        <div className="mt-1 flex flex-wrap items-center gap-2">
-                          {it.venue_type && <span className="font-condensed text-[11px] font-bold uppercase tracking-widest text-foreground/75">{it.venue_type} ·</span>}
-                          <span className={`font-condensed rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${st.hot ? "bg-tv-red text-foreground" : "border border-border text-muted-foreground"}`}>
-                            {st.label}
-                          </span>
+          <aside id="horarios" className="scroll-mt-16 min-w-0 self-start overflow-hidden rounded-2xl border border-asu/25 bg-surface xl:sticky xl:top-16">
+            <div className="asu-dark bg-asu-deep px-5 py-4">
+              <h2 className="font-display text-3xl uppercase tracking-wide text-foreground">Próximas pruebas</h2>
+              <p className="font-condensed mt-0.5 text-[10px] font-bold uppercase tracking-[2px] text-asu-light">Horarios oficiales · Hora local de Asunción (PY)</p>
+            </div>
+            <div className="px-5 pb-5">
+              {items === null ? (
+                <div className="space-y-2 pt-4">{[0, 1, 2].map((i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-surface-2" />)}</div>
+              ) : upcoming.length === 0 ? (
+                <p className="pt-4 text-sm text-muted-foreground">No hay próximas pruebas programadas.</p>
+              ) : (
+                <ul className="divide-y divide-asu/15">
+                  {upcoming.map((it) => {
+                    const st = raceState(it, results);
+                    return (
+                      <li key={it.id} className={`grid grid-cols-[5.25rem_minmax(0,1fr)] gap-3 py-4 ${st.hot ? "bg-tv-red/5" : ""}`}>
+                        <div>
+                          <RowTime iso={it.scheduled_at} />
+                          <p className="font-condensed mt-1.5 text-[10px] font-bold uppercase tracking-[1.5px] text-asu-ink/70">
+                            {dayLabel(dayInTz(it.scheduled_at, ASU26_TZ)).split(",")[1]?.trim() ?? ""}
+                          </p>
                         </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-            <a
-              href={specialLink(cfg.links.calendario)}
-              className="font-condensed mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-gold px-5 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-light"
-            >
-              Ver calendario completo <ArrowRight className="h-4 w-4" />
-            </a>
+                        <div className="min-w-0">
+                          <p className="font-display break-words text-lg uppercase leading-tight tracking-wide text-asu-ink">{it.event_name}</p>
+                          <p className="font-condensed text-[10px] font-bold uppercase tracking-[1.5px] text-asu-ink/60">{[it.category, it.gender].filter(Boolean).join(" ")}</p>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                            {it.venue_type && <span className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu-ink/80">{it.venue_type} ·</span>}
+                            <span className={`font-condensed rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[1.5px] ${st.hot ? "bg-tv-red text-white" : "border border-asu text-asu"}`}>{st.label}</span>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              <a
+                href={specialLink(cfg.links.calendario)}
+                className="font-condensed mt-2 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-gold px-5 text-xs font-bold uppercase tracking-widest text-asu-ink transition-colors hover:bg-gold-light"
+              >
+                Ver calendario completo <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
           </aside>
+        </div>
+
+        <div className="mx-auto mt-6 max-w-[1500px] px-4 md:px-8">
+          <Asu26LogosBlock cfg={cfg} />
         </div>
       </section>
 
       {/* RESULTADOS */}
-      <section id="resultados" className="asu-track-soft scroll-mt-16 py-12 md:py-20">
+      <section id="resultados" className="scroll-mt-14 pb-12 md:pb-16">
         <div className="mx-auto max-w-[1500px] px-4 md:px-8">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-6xl">Resultados oficiales</h2>
-              <p className="font-condensed mt-1 text-xs uppercase tracking-[3px] text-muted-foreground">Powered by VeloPro</p>
+          <div className="rounded-2xl border border-asu/20 bg-surface/70 p-4 md:p-7">
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="font-display text-4xl uppercase tracking-wide md:text-6xl">
+                  <span className="text-asu-ink">Resultados </span><span className="text-asu-coral">oficiales</span>
+                </h2>
+                <p className="font-condensed mt-1 text-xs font-bold uppercase tracking-[3px] text-asu">Powered by VeloPro</p>
+              </div>
+              <img src={veloproLogo.url} alt="VeloPro" className="h-10 w-auto max-w-[180px] object-contain mix-blend-multiply md:h-12" loading="lazy" />
             </div>
-            {cfg.logoPoweredByVeloproUrl ? (
-              <img src={cfg.logoPoweredByVeloproUrl} alt="Powered by VeloPro" className="h-9 w-auto max-w-[180px] object-contain" loading="lazy" />
-            ) : null}
-          </div>
-          <div className="overflow-hidden rounded-2xl bg-asu-deep/40 p-3 ring-1 ring-asu-light/20 md:p-6">
-            <div className="asu-stripe -mx-3 -mt-3 mb-4 h-[3px] md:-mx-6 md:-mt-6 md:mb-6" aria-hidden="true" />
-            <Asu26Results cfg={cfg} results={results} />
+            <div className="asu-dark overflow-hidden rounded-xl bg-asu-deep p-3 md:p-5">
+              <Asu26Results cfg={cfg} results={results} />
+            </div>
           </div>
         </div>
       </section>
 
       {/* HOY */}
-      <section id="calendario" className={`scroll-mt-16 bg-asu-deep/60 ${todays.length === 0 ? "py-6" : "py-10"}`}>
+      <section id="calendario" className="relative scroll-mt-14 overflow-hidden pb-12 md:pb-16">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-24 top-0 -z-10 hidden h-72 w-72 rounded-full bg-asu-light/15 md:block" />
         <div className="mx-auto max-w-[1500px] px-4 md:px-8">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-5xl">Hoy en ASU26</h2>
-            <TzLegend />
+            <h2 className="font-display text-4xl uppercase tracking-wide md:text-6xl">
+              <span className="text-asu-ink">Hoy en </span><span className="text-asu-coral">ASU26</span>
+            </h2>
+            <p className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu">Horarios oficiales · Hora local de Asunción (PY)</p>
           </div>
-          <p className="font-condensed mt-1 text-xs uppercase tracking-[3px] text-asu-light first-letter:uppercase">{dayLabel(today)}</p>
+          <p className="font-condensed mt-1 text-xs font-bold uppercase tracking-[3px] text-asu first-letter:uppercase">{dayLabel(today)}</p>
           {todays.length === 0 ? (
-            <p className="mt-2 text-sm text-muted-foreground">No hay pruebas de velocidad programadas hoy.</p>
+            <p className="mt-2 text-sm text-asu-ink/80">No hay pruebas de velocidad programadas hoy.</p>
           ) : (
             <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
               <Stat k="Modalidad" v={[...new Set(todays.map((t) => t.venue_type).filter(Boolean))].join(" · ") || "—"} />
@@ -341,7 +323,7 @@ function Asu26Hub() {
           )}
           <a
             href={specialLink(cfg.links.calendario)}
-            className={`font-condensed ${todays.length === 0 ? "mt-4" : "mt-6"} inline-flex min-h-11 items-center gap-2 rounded-md bg-gold px-5 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-light`}
+            className="font-condensed mt-5 inline-flex min-h-11 items-center gap-2 rounded-lg bg-gold px-5 text-xs font-bold uppercase tracking-widest text-asu-ink transition-colors hover:bg-gold-light"
           >
             Ver calendario completo <ArrowRight className="h-4 w-4" />
           </a>
@@ -349,29 +331,32 @@ function Asu26Hub() {
       </section>
 
       {/* ESPECIAL */}
-      <section id="especial" className="scroll-mt-16 py-10 md:py-14">
+      <section id="especial" className="scroll-mt-14 border-t border-asu/15 py-10 md:py-14">
         <div className="mx-auto max-w-[1500px] px-4 md:px-8">
-          <h2 className="font-display mb-8 text-4xl uppercase tracking-wide text-foreground md:text-5xl">Descubre el especial ASU26</h2>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+          <h2 className="font-display mb-6 text-4xl uppercase tracking-wide md:text-5xl">
+            <span className="text-asu-ink">Descubre el especial </span><span className="text-asu-coral">ASU26</span>
+          </h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {(
               [
-                ["calendario", "Calendario", "Todas las pruebas"],
-                ["resultados", "Resultados", "Clasificaciones oficiales"],
-                ["espana", "España", "Selección española"],
-                ["medallero", "Medallero", "Países y medallas"],
-                ["noticias", "Noticias", "Actualidad ASU26"],
+                ["calendario", "Calendario", "Todas las pruebas", CalendarDays],
+                ["resultados", "Resultados", "Clasificaciones oficiales", ListOrdered],
+                ["espana", "España", "Selección española", Users],
+                ["medallero", "Medallero", "Países y medallas", Medal],
+                ["noticias", "Noticias", "Actualidad ASU26", Newspaper],
               ] as const
-            ).map(([k, label, sub]) => (
+            ).map(([k, label, sub, Icon]) => (
               <a
                 key={k}
                 href={specialLink(cfg.links[k])}
-                className="group flex min-h-24 flex-col justify-between rounded-xl bg-surface/70 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-asu-deep/60"
+                className="group flex items-start gap-4 rounded-xl border border-asu/20 bg-surface p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-asu/50"
               >
-                <span>
-                  <span className="font-display block text-xl uppercase tracking-wide text-foreground group-hover:text-gold">{label}</span>
-                  <span className="mt-0.5 block text-xs text-muted-foreground">{sub}</span>
+                <Icon className="h-8 w-8 shrink-0 text-asu" aria-hidden="true" />
+                <span className="min-w-0">
+                  <span className="font-display block text-xl uppercase tracking-wide text-asu-ink">{label}</span>
+                  <span className="block text-xs text-asu-ink/70">{sub}</span>
+                  <ArrowRight className="mt-2 h-4 w-4 text-asu-coral transition-transform group-hover:translate-x-1" />
                 </span>
-                <ArrowRight className="h-4 w-4 text-asu-light transition-transform group-hover:translate-x-1" />
               </a>
             ))}
           </div>
@@ -381,9 +366,41 @@ function Asu26Hub() {
   );
 }
 
+function NextTime({ iso }: { iso: string }) {
+  const tz = useViewerTz();
+  const showLocal = !!tz && tz !== ASU26_TZ;
+  return (
+    <div className="flex items-end gap-4">
+      <p className="font-display text-6xl leading-none text-asu-ink md:text-7xl">{hhmm(iso, ASU26_TZ)}</p>
+      {showLocal && (
+        <div className="pb-1">
+          <p className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu">Tu hora</p>
+          <p className="font-display text-3xl leading-none text-asu-ink/80">{hhmm(iso, tz!)}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RowTime({ iso }: { iso: string }) {
+  const tz = useViewerTz();
+  const showLocal = !!tz && tz !== ASU26_TZ;
+  return (
+    <div className="leading-none">
+      <p className="font-display text-3xl text-asu-ink">{hhmm(iso, ASU26_TZ)}</p>
+      {showLocal && (
+        <p className="mt-1 flex items-baseline gap-1 text-asu-ink/60">
+          <span className="font-display text-xl">{hhmm(iso, tz!)}</span>
+          <span className="font-condensed text-[8px] font-bold uppercase tracking-[1px]">Tu hora</span>
+        </p>
+      )}
+    </div>
+  );
+}
+
 function Stat({ k, v }: { k: string; v: string }) {
   return (
-    <div className="min-w-0 rounded-xl bg-background/50 p-4">
+    <div className="min-w-0 rounded-xl border border-asu/20 bg-surface p-4">
       <p className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">{k}</p>
       <p className="mt-1 break-words text-sm font-semibold text-foreground">{v}</p>
     </div>
@@ -393,13 +410,13 @@ function Stat({ k, v }: { k: string; v: string }) {
 function StatusBadge({ status }: { status: Asu26StreamingConfig["streamStatus"] }) {
   if (status === "live")
     return (
-      <span className="asu-live-glow font-condensed inline-flex items-center gap-2 rounded-full bg-tv-red px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-foreground">
-        <span className="live-dot h-2 w-2 rounded-full bg-foreground" /> En directo
+      <span className="asu-live-glow font-condensed inline-flex min-h-11 items-center gap-2 rounded-full bg-tv-red px-5 text-sm font-bold uppercase tracking-[3px] text-white">
+        <span className="live-dot h-2 w-2 rounded-full bg-white" /> En directo
       </span>
     );
   return (
-    <span className="font-condensed inline-flex items-center gap-1.5 rounded-full bg-asu-deep/70 px-3 py-1 text-[11px] font-bold uppercase tracking-[2px] text-asu-light">
-      <Clock className="h-3.5 w-3.5" /> {status === "finished" ? "Finalizado" : "Próximamente"}
+    <span className="font-condensed inline-flex min-h-11 items-center gap-2 rounded-full bg-asu-deep px-5 text-sm font-bold uppercase tracking-[3px] text-asu-cream">
+      <span className={`h-2 w-2 rounded-full ${status === "finished" ? "bg-asu-cream/50" : "bg-asu-coral"}`} /> {status === "finished" ? "Finalizado" : "Próximamente"}
     </span>
   );
 }
