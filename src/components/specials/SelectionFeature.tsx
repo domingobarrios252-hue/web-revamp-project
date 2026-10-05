@@ -85,7 +85,7 @@ export function SelectionMembers({ members, live = false }: { members: PieceMemb
         <ul className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-3 lg:gap-8">
           {members.map((m) => (
             <li key={m.id} className="min-w-0">
-              <MemberCard m={m} />
+              <MemberCard m={m} live={live} />
             </li>
           ))}
         </ul>
