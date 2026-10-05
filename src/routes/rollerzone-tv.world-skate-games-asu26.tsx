@@ -337,7 +337,7 @@ function Asu26Hub() {
       <section id="especial" className="scroll-mt-16 py-10 md:py-14">
         <div className="mx-auto max-w-[1500px] px-4 md:px-8">
           <h2 className="font-display mb-8 text-4xl uppercase tracking-wide text-foreground md:text-5xl">Descubre el especial ASU26</h2>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
             {(
               [
                 ["calendario", "Calendario", "Todas las pruebas"],
@@ -345,7 +345,6 @@ function Asu26Hub() {
                 ["espana", "España", "Selección española"],
                 ["medallero", "Medallero", "Países y medallas"],
                 ["noticias", "Noticias", "Actualidad ASU26"],
-                ["galeria", "Galería", "Imágenes del campeonato"],
               ] as const
             ).map(([k, label, sub]) => (
               <a
