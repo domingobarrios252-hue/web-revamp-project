@@ -195,14 +195,14 @@ function Asu26Hub() {
       {/* STREAMING */}
       <section id="directo" className="asu-track-soft scroll-mt-16 py-10 md:py-16">
         <div className="mx-auto grid max-w-[1500px] gap-6 px-4 md:px-8 xl:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="min-w-0">
+          <div className="flex min-w-0 flex-col">
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-6xl">{cfg.title}</h2>
               <StatusBadge status={cfg.streamStatus} />
             </div>
             <p className="font-condensed -mt-2 mb-4 text-xs uppercase tracking-[3px] text-muted-foreground">{cfg.subtitle}</p>
             {!live && (
-              <div className="mb-6 rounded-2xl bg-asu-deep/50 p-5 md:p-6">
+              <div className="order-2 mt-4 rounded-2xl bg-asu-deep/50 p-4 md:order-none md:mb-6 md:mt-0 md:p-6">
                 <p className="font-condensed text-[11px] font-bold uppercase tracking-[3px] text-asu-light">
                   {cfg.streamStatus === "finished" ? "Retransmisión finalizada" : "Próxima retransmisión"}
                 </p>
@@ -225,11 +225,13 @@ function Asu26Hub() {
                 {cfg.preStreamMessage && <p className="mt-1 text-sm text-muted-foreground">{cfg.preStreamMessage}</p>}
               </div>
             )}
-            <div className="asu-frame overflow-hidden rounded-2xl">
+            <div className="asu-frame order-1 overflow-hidden rounded-2xl md:order-none">
               <Asu26Player cfg={cfg} nextIso={cfg.expectedStart || next?.scheduled_at || null} />
             </div>
-            <Asu26LogosBlock cfg={cfg} />
+            <div className="order-3 md:order-none"><Asu26LogosBlock cfg={cfg} /></div>
+            <div className="order-4 md:order-none">
             <Asu26LiveUpdates entries={liveUpdates} />
+            </div>
           </div>
 
           <aside id="horarios" className="scroll-mt-16 min-w-0 self-start rounded-2xl bg-asu-deep/50 p-4 md:p-5 xl:sticky xl:top-16">
