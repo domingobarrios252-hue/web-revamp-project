@@ -234,7 +234,7 @@ function Asu26Hub() {
             </div>
           </div>
 
-          <aside id="horarios" className="scroll-mt-16 min-w-0 self-start rounded-2xl bg-asu-deep/50 p-4 md:p-6 xl:p-7">
+          <aside id="horarios" className="scroll-mt-16 min-w-0 self-start rounded-2xl bg-asu-deep/50 p-4 md:p-6 xl:sticky xl:top-16 xl:p-7">
             <h2 className="font-display text-3xl uppercase tracking-wide text-foreground md:text-4xl">Próximas pruebas</h2>
             <TzLegend className="mb-3 mt-1" />
             {items === null ? (
@@ -249,7 +249,7 @@ function Asu26Hub() {
                   return (
                     <li
                       key={it.id}
-                      className={`asu-reveal grid grid-cols-[5.5rem_1fr] gap-3 rounded-xl px-2 py-4 transition-colors duration-200 hover:bg-asu-deep/40 ${
+                      className={`asu-reveal grid grid-cols-[5.5rem_1fr] gap-3 rounded-xl px-2 py-4 transition-colors duration-200 hover:bg-asu-deep/40 xl:py-5 ${
                         st.hot ? "bg-tv-red/10" : lead ? "bg-asu/25 ring-1 ring-asu-light/40" : ""
                       }`}
                     >
