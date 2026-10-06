@@ -194,7 +194,7 @@ function CountryForm({ value, onCancel, onSave }: { value: Asu26MedalCountry; on
             <input value={c.iso} maxLength={3} onChange={(e) => setC({ ...c, iso: e.target.value.toUpperCase() })} className="w-full border border-border bg-background px-3 py-2 text-sm uppercase" />
             <span className="mt-1 block text-xs text-muted-foreground">Bandera automática: {flagFor(c.iso) || "—"}</span>
           </label>
-          <ImageUploadField label="Bandera (opcional, sustituye a la automática)" value={c.flagUrl} onChange={(url) => setC({ ...c, flagUrl: url ?? "" })} />
+          <div><span className="font-condensed mb-1 block text-xs uppercase tracking-widest text-muted-foreground">Bandera (opcional, sustituye a la automática)</span><ImageUploadField value={c.flagUrl} folder="medals" previewClassName="mt-2 h-8 w-12 object-cover" onChange={(url) => setC({ ...c, flagUrl: url ?? "" })} /></div>
           <div className="grid grid-cols-3 gap-3">{num("gold")}{num("silver")}{num("bronze")}</div>
           <p className="text-xs text-muted-foreground">Total: {c.gold + c.silver + c.bronze} (automático)</p>
         </div>
