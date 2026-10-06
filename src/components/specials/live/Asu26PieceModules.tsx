@@ -269,7 +269,7 @@ function MedalModule() {
         ) : (
           <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
             <div className="asu-stripe h-[3px]" aria-hidden="true" />
-            <div className="font-condensed grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-border px-3 py-2.5 text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5">
+            <div className="font-condensed grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-border px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.5px] text-muted-foreground md:text-[10px] md:tracking-[2px] md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5">
               <span>Pos.</span><span>País</span><span className="text-center">Oro</span><span className="text-center">Plata</span><span className="text-center">Bronce</span><span className="text-center text-gold">Total</span>
             </div>
             <ol>
