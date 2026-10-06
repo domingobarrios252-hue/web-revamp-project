@@ -235,7 +235,7 @@ function Asu26Hub() {
           <aside id="horarios" className="scroll-mt-16 min-w-0 self-start overflow-hidden rounded-2xl border border-asu/25 bg-surface xl:sticky xl:top-16">
             <div className="asu-dark bg-asu-deep px-5 py-4">
               <h2 className="font-display text-3xl uppercase tracking-wide text-foreground">Próximas pruebas</h2>
-              <p className="mt-0.5 text-[11px] text-asu-cream/80">Horario oficial de Asunción (PY) y conversión a tu hora local.</p>
+              <p className="mt-0.5 text-[11px] text-asu-cream/80">Horario oficial de Asunción (PY) y conversión automática a la hora local del visitante.</p>
             </div>
             <div className="px-5 pb-5">
               {items === null ? (
