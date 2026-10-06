@@ -20,8 +20,8 @@ export function Asu26LogosBlock({ cfg }: { cfg: Asu26StreamingConfig }) {
     );
   const items = [
     { tag: "Evento oficial", logo: <Mark url={cfg.logoAsu26Url} text="ASU26" h="h-16 md:h-20" />, a: "World Skate Games ASU26", b: "Patinaje de velocidad · Asunción 2026" },
-    { tag: "Resultados oficiales", logo: <Mark url={cfg.logoVeloproUrl} text="VeloPro" h="h-12 md:h-14" />, a: "VeloPro", b: "Proveedor oficial de resultados" },
-    { tag: "Cobertura digital", logo: <Mark url={rzLogo} text="Rollerzone TV" h="h-12 md:h-[3.75rem]" />, a: "Rollerzone TV", b: "Retransmisión y seguimiento especial en directo" },
+    { tag: "Resultados oficiales", logo: <Mark url={cfg.logoVeloproUrl} text="VeloPro" h="h-14 md:h-[4.5rem]" />, a: "VeloPro", b: "Proveedor oficial de resultados" },
+    { tag: "Cobertura digital", logo: <Mark url={rzLogo} text="Rollerzone TV" h="h-14 md:h-16" />, a: "Rollerzone TV", b: "Retransmisión y seguimiento especial en directo" },
   ];
   return (
     <section aria-label="Organización y cobertura" className="asu-dark mt-6 overflow-hidden rounded-2xl border border-asu-cream/10 bg-asu-deep shadow-[0_20px_50px_-30px_oklch(0.15_0.04_160/0.8)]">
