@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { ASU26_OFFICIAL_MEDALS_URL, MEDAL_STATUS_LABEL, flagUrlFor, formatUpdated, isSpainCountry, loadAsu26Medals, rankMedals, type Asu26Medals } from "@/lib/specials/asu26Medals";
 import { Link } from "@tanstack/react-router";
 import {
   ES_TZ,
@@ -229,64 +230,76 @@ function ResultsModule() {
 /* ---------------- Medallero ---------------- */
 
 function MedalModule() {
-  const { loading, results } = useAsu26Hub();
-  const table = medalTable(results);
-  const es = table.find((c) => isSpain(c.country)) ?? { country: "ESP", oro: 0, plata: 0, bronce: 0, total: 0 };
+  const [m, setM] = useState<Asu26Medals | null>(null);
+  useEffect(() => {
+    loadAsu26Medals().then(setM).catch(() => setM(null));
+  }, []);
+  const ranked = useMemo(() => rankMedals(m?.countries ?? []), [m]);
+  const stIcon = { soon: "⏳", updating: "🟡", updated: "🟢", final: "🏁" } as const;
+  const coin = (cls: string, v: number, label: string) => (
+    <span className="inline-flex items-center justify-center gap-1 md:gap-1.5" aria-label={`${v} ${label}`}>
+      <span aria-hidden="true" className={`h-2.5 w-2.5 shrink-0 rounded-full md:h-3.5 md:w-3.5 shadow-inner ${cls}`} />
+      <span className="font-display text-lg tabular-nums text-foreground md:text-xl">{v}</span>
+    </span>
+  );
+  const GOLD = "bg-[radial-gradient(circle_at_30%_30%,#fff3b0,#d4a017_60%,#8a6508)]";
+  const SILVER = "bg-[radial-gradient(circle_at_30%_30%,#ffffff,#c0c4c8_60%,#6f757a)]";
+  const BRONZE = "bg-[radial-gradient(circle_at_30%_30%,#ffd2a8,#c27a3a_60%,#6e3f17)]";
   return (
-    <Section title="Medallero">
-      <div className="rounded-2xl border border-gold/40 bg-surface p-5 md:p-6">
-        <p className="font-condensed text-xs font-bold uppercase tracking-[3px] text-gold">🇪🇸 España</p>
-        <div className="mt-3 grid grid-cols-4 gap-2 text-center">
-          {(
-            [
-              ["Oro", es.oro],
-              ["Plata", es.plata],
-              ["Bronce", es.bronce],
-              ["Total", es.total],
-            ] as const
-          ).map(([l, v]) => (
-            <div key={l}>
-              <div className="font-display text-3xl text-foreground md:text-4xl">{v}</div>
-              <div className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{l}</div>
+    <section className="bg-background py-10 md:py-14">
+      <div className="mx-auto max-w-5xl px-4 md:px-6">
+        <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-6xl">Medallero</h2>
+        <p className="font-condensed mt-1 text-xs font-bold uppercase tracking-[3px] text-gold md:text-sm">World Skate Games ASU26 · Patinaje de Velocidad</p>
+        <div className="mt-3 h-[3px] w-16 bg-gold" />
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <p className="font-display text-xl uppercase tracking-wide text-foreground md:text-2xl">Clasificación por países</p>
+          <div className="font-condensed flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-bold uppercase tracking-[2px] text-muted-foreground">
+            <span className="text-asu-light">Datos oficiales ASU26</span>
+            {m && <span>{stIcon[m.status]} {MEDAL_STATUS_LABEL[m.status]}</span>}
+            {m?.updatedAt && <span>Última actualización: {formatUpdated(m.updatedAt)}</span>}
+          </div>
+        </div>
+
+        {m === null ? (
+          <div className="mt-6"><Loading /></div>
+        ) : ranked.length === 0 ? (
+          <p className="mt-6 rounded-2xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+            El medallero se publicará con las primeras finales, a partir del 10 de octubre.
+          </p>
+        ) : (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
+            <div className="asu-stripe h-[3px]" aria-hidden="true" />
+            <div className="font-condensed grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-border px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.5px] text-muted-foreground md:text-[10px] md:tracking-[2px] md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5">
+              <span>Pos.</span><span>País</span><span className="text-center">Oro</span><span className="text-center">Plata</span><span className="text-center">Bronce</span><span className="text-center text-gold">Total</span>
             </div>
-          ))}
+            <ol>
+              {ranked.map((c) => {
+                const es = isSpainCountry(c);
+                return (
+                  <li key={c.id} className={"grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-border/50 px-3 py-3 last:border-0 md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5 " + (es ? "relative bg-gold/10 shadow-[inset_3px_0_0_var(--color-gold)] outline outline-1 -outline-offset-1 outline-gold/50" : "")}>
+                    <span className={"font-display text-xl md:text-2xl " + (c.pos <= 3 ? "text-gold" : "text-muted-foreground")}>{c.pos}</span>
+                    <span className="flex min-w-0 items-center gap-2">
+                      {c.flagUrl ? <img src={c.flagUrl} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : (flagUrlFor(c.iso) ? <img src={flagUrlFor(c.iso)} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : null)}
+                      <span className={"truncate text-sm font-semibold md:text-base " + (es ? "text-gold" : "text-foreground")}>{c.name}</span>
+                      <span className="hidden font-mono text-[10px] text-muted-foreground sm:inline">{c.iso}</span>
+                    </span>
+                    {coin(GOLD, c.gold, "oros")}
+                    {coin(SILVER, c.silver, "platas")}
+                    {coin(BRONZE, c.bronze, "bronces")}
+                    <span className="mx-auto inline-flex min-w-9 justify-center rounded-md bg-gold/15 px-1.5 md:min-w-10 md:px-2 py-1 font-display text-xl tabular-nums text-gold md:text-2xl">{c.total}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        )}
+
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground">Fuente de resultados: World Skate Games ASU26</p>
+          <a href={ASU26_OFFICIAL_MEDALS_URL} target="_blank" rel="noopener noreferrer" className={btnGhost}>Consultar medallero oficial ↗</a>
         </div>
       </div>
-      {loading ? (
-        <div className="mt-6"><Loading /></div>
-      ) : table.length === 0 ? (
-        <p className="mt-6 text-sm text-muted-foreground">
-          El medallero se actualizará automáticamente con los resultados oficiales. Comienza el 10 de octubre.
-        </p>
-      ) : (
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full min-w-[320px] text-sm">
-            <thead>
-              <tr className="font-condensed border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground">
-                <th className="py-2 text-left">Pos.</th>
-                <th className="py-2 text-left">País</th>
-                <th className="py-2">Oro</th>
-                <th className="py-2">Plata</th>
-                <th className="py-2">Bronce</th>
-                <th className="py-2">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {table.map((c, i) => (
-                <tr key={c.country} className={"border-b border-border/50 " + (isSpain(c.country) ? "text-gold" : "text-foreground")}>
-                  <td className="py-2">{i + 1}</td>
-                  <td className="py-2">{flagEmoji(c.country)} {c.country}</td>
-                  <td className="py-2 text-center">{c.oro}</td>
-                  <td className="py-2 text-center">{c.plata}</td>
-                  <td className="py-2 text-center">{c.bronce}</td>
-                  <td className="py-2 text-center font-bold">{c.total}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </Section>
+    </section>
   );
 }
 
