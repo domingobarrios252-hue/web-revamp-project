@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ASU26_OFFICIAL_MEDALS_URL, MEDAL_STATUS_LABEL, flagFor, formatUpdated, isSpainCountry, loadAsu26Medals, rankMedals, type Asu26Medals } from "@/lib/specials/asu26Medals";
+import { ASU26_OFFICIAL_MEDALS_URL, MEDAL_STATUS_LABEL, flagUrlFor, formatUpdated, isSpainCountry, loadAsu26Medals, rankMedals, type Asu26Medals } from "@/lib/specials/asu26Medals";
 import { Link } from "@tanstack/react-router";
 import {
   ES_TZ,
@@ -237,8 +237,8 @@ function MedalModule() {
   const ranked = useMemo(() => rankMedals(m?.countries ?? []), [m]);
   const stIcon = { soon: "⏳", updating: "🟡", updated: "🟢", final: "🏁" } as const;
   const coin = (cls: string, v: number, label: string) => (
-    <span className="inline-flex items-center justify-center gap-1.5" aria-label={`${v} ${label}`}>
-      <span aria-hidden="true" className={`h-3.5 w-3.5 shrink-0 rounded-full shadow-inner ${cls}`} />
+    <span className="inline-flex items-center justify-center gap-1 md:gap-1.5" aria-label={`${v} ${label}`}>
+      <span aria-hidden="true" className={`h-2.5 w-2.5 shrink-0 rounded-full md:h-3.5 md:w-3.5 shadow-inner ${cls}`} />
       <span className="font-display text-lg tabular-nums text-foreground md:text-xl">{v}</span>
     </span>
   );
@@ -269,24 +269,24 @@ function MedalModule() {
         ) : (
           <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
             <div className="asu-stripe h-[3px]" aria-hidden="true" />
-            <div className="font-condensed grid grid-cols-[2.25rem_minmax(0,1fr)_repeat(3,3rem)_3.5rem] items-center gap-1 border-b border-border px-3 py-2.5 text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5">
+            <div className="font-condensed grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-border px-3 py-2.5 text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5">
               <span>Pos.</span><span>País</span><span className="text-center">Oro</span><span className="text-center">Plata</span><span className="text-center">Bronce</span><span className="text-center text-gold">Total</span>
             </div>
             <ol>
               {ranked.map((c) => {
                 const es = isSpainCountry(c);
                 return (
-                  <li key={c.id} className={"grid grid-cols-[2.25rem_minmax(0,1fr)_repeat(3,3rem)_3.5rem] items-center gap-1 border-b border-border/50 px-3 py-3 last:border-0 md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5 " + (es ? "relative bg-gold/10 shadow-[inset_3px_0_0_var(--color-gold)] outline outline-1 -outline-offset-1 outline-gold/50" : "")}>
+                  <li key={c.id} className={"grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-border/50 px-3 py-3 last:border-0 md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5 " + (es ? "relative bg-gold/10 shadow-[inset_3px_0_0_var(--color-gold)] outline outline-1 -outline-offset-1 outline-gold/50" : "")}>
                     <span className={"font-display text-xl md:text-2xl " + (c.pos <= 3 ? "text-gold" : "text-muted-foreground")}>{c.pos}</span>
                     <span className="flex min-w-0 items-center gap-2">
-                      {c.flagUrl ? <img src={c.flagUrl} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : <span className="shrink-0 text-lg leading-none" aria-hidden="true">{flagFor(c.iso)}</span>}
+                      {c.flagUrl ? <img src={c.flagUrl} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : (flagUrlFor(c.iso) ? <img src={flagUrlFor(c.iso)} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : null)}
                       <span className={"truncate text-sm font-semibold md:text-base " + (es ? "text-gold" : "text-foreground")}>{c.name}</span>
                       <span className="hidden font-mono text-[10px] text-muted-foreground sm:inline">{c.iso}</span>
                     </span>
                     {coin(GOLD, c.gold, "oros")}
                     {coin(SILVER, c.silver, "platas")}
                     {coin(BRONZE, c.bronze, "bronces")}
-                    <span className="mx-auto inline-flex min-w-10 justify-center rounded-md bg-gold/15 px-2 py-1 font-display text-xl tabular-nums text-gold md:text-2xl">{c.total}</span>
+                    <span className="mx-auto inline-flex min-w-9 justify-center rounded-md bg-gold/15 px-1.5 md:min-w-10 md:px-2 py-1 font-display text-xl tabular-nums text-gold md:text-2xl">{c.total}</span>
                   </li>
                 );
               })}

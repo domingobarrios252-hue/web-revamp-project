@@ -116,3 +116,9 @@ export function formatUpdated(iso: string | null): string {
   const time = new Intl.DateTimeFormat("es-ES", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" }).format(d);
   return `${date} · ${time}`;
 }
+
+/** Bandera automática (imagen) a partir del código ISO; funciona en todos los sistemas. */
+export function flagUrlFor(code: string): string {
+  const c = iso2(code).toLowerCase();
+  return c ? `https://flagcdn.com/w40/${c}.png` : "";
+}

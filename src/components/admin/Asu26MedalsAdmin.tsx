@@ -5,7 +5,7 @@ import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import {
   ASU26_MEDALS_DEFAULTS,
   MEDAL_STATUS_LABEL,
-  flagFor,
+  flagUrlFor,
   formatUpdated,
   loadAsu26Medals,
   rankMedals,
@@ -138,7 +138,7 @@ export function Asu26MedalsAdmin() {
                 <tr key={c.id} className="border-b border-border/60 last:border-0">
                   <td className="px-3 py-2 font-display text-gold">{c.pos}</td>
                   <td className="px-3 py-2">
-                    <span className="mr-2">{c.flagUrl ? <img src={c.flagUrl} alt="" className="inline h-4 w-6 object-cover" /> : flagFor(c.iso)}</span>
+                    <span className="mr-2">{c.flagUrl ? <img src={c.flagUrl} alt="" className="inline h-4 w-6 object-cover" /> : flagUrlFor(c.iso) ? <img src={flagUrlFor(c.iso)} alt="" className="inline h-4 w-6 object-cover" /> : null}</span>
                     {c.name} <span className="font-mono text-[10px] text-muted-foreground">{c.iso}</span>
                   </td>
                   {FIELDS.map(([f, l]) => (
@@ -192,7 +192,7 @@ function CountryForm({ value, onCancel, onSave }: { value: Asu26MedalCountry; on
           <label className="block">
             <span className="font-condensed mb-1 block text-xs uppercase tracking-widest text-muted-foreground">Código ISO (ESP, COL, ITA…)</span>
             <input value={c.iso} maxLength={3} onChange={(e) => setC({ ...c, iso: e.target.value.toUpperCase() })} className="w-full border border-border bg-background px-3 py-2 text-sm uppercase" />
-            <span className="mt-1 block text-xs text-muted-foreground">Bandera automática: {flagFor(c.iso) || "—"}</span>
+            <span className="mt-1 block text-xs text-muted-foreground">Bandera automática: {flagUrlFor(c.iso) ? <img src={flagUrlFor(c.iso)} alt="" className="inline h-3 w-5 object-cover" /> : "— (código no reconocido)"}</span>
           </label>
           <div><span className="font-condensed mb-1 block text-xs uppercase tracking-widest text-muted-foreground">Bandera (opcional, sustituye a la automática)</span><ImageUploadField value={c.flagUrl} folder="medals" previewClassName="mt-2 h-8 w-12 object-cover" onChange={(url) => setC({ ...c, flagUrl: url ?? "" })} /></div>
           <div className="grid grid-cols-3 gap-3">{num("gold")}{num("silver")}{num("bronze")}</div>
