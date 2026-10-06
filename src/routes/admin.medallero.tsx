@@ -7,11 +7,26 @@ import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 import { ResultadosHubTabs } from "@/components/admin/ResultadosHubTabs";
+import { Asu26MedalsAdmin } from "@/components/admin/Asu26MedalsAdmin";
 
 export const Route = createFileRoute("/admin/medallero")({
   head: () => ({ meta: [{ title: "Admin · Medallero" }, { name: "robots", content: "noindex" }] }),
-  component: () => (<><ResultadosHubTabs active="medallero" /><AdminMedallero /></>),
+  component: () => (<><ResultadosHubTabs active="medallero" /><MedalleroSwitch /></>),
 });
+
+function MedalleroSwitch() {
+  const [which, setWhich] = useState<"asu26" | "europeo">("asu26");
+  return (
+    <div>
+      <div className="mb-5 flex gap-2">
+        {([["asu26", "World Skate Games ASU26"], ["europeo", "Europeo 2026"]] as const).map(([k, l]) => (
+          <button key={k} onClick={() => setWhich(k)} className={"font-condensed rounded-md border px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest " + (which === k ? "border-gold bg-gold text-background" : "border-border text-muted-foreground")}>{l}</button>
+        ))}
+      </div>
+      {which === "asu26" ? (<><h1 className="font-display mb-5 text-2xl tracking-widest">Medallero ASU26</h1><Asu26MedalsAdmin /></>) : <AdminMedallero />}
+    </div>
+  );
+}
 
 const schema = z.object({
   country_name: z.string().trim().min(2).max(80),
