@@ -3,6 +3,7 @@
  * Se guarda en site_settings (clave ASU26_MEDALS_KEY); el orden y el total
  * se calculan siempre aquí, nunca se escriben a mano.
  */
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const ASU26_MEDALS_KEY = "asu26_medals";
@@ -121,4 +122,23 @@ export function formatUpdated(iso: string | null): string {
 export function flagUrlFor(code: string): string {
   const c = iso2(code).toLowerCase();
   return c ? `https://flagcdn.com/w40/${c}.png` : "";
+}
+
+/** Lectura compartida (página y tarjeta): se refresca cada minuto y al volver a la pestaña. */
+export function useAsu26Medals(): Asu26Medals | null {
+  const [m, setM] = useState<Asu26Medals | null>(null);
+  useEffect(() => {
+    let off = false;
+    const load = () => loadAsu26Medals().then((v) => !off && setM(v)).catch(() => {});
+    load();
+    const t = setInterval(load, 60_000);
+    const onVis = () => document.visibilityState === "visible" && load();
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      off = true;
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
+  return m;
 }

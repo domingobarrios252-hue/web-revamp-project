@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ASU26_OFFICIAL_MEDALS_URL, MEDAL_STATUS_LABEL, flagUrlFor, formatUpdated, isSpainCountry, loadAsu26Medals, rankMedals, type Asu26Medals } from "@/lib/specials/asu26Medals";
+import { ASU26_OFFICIAL_MEDALS_URL, MEDAL_STATUS_LABEL, flagUrlFor, formatUpdated, isSpainCountry, rankMedals, useAsu26Medals } from "@/lib/specials/asu26Medals";
 import { Link } from "@tanstack/react-router";
 import {
   ES_TZ,
@@ -10,7 +10,6 @@ import {
   fmtLongDay,
   isSpain,
   itemState,
-  medalTable,
   modalityOf,
   nextItem,
   useAsu26Hub,
@@ -230,10 +229,7 @@ function ResultsModule() {
 /* ---------------- Medallero ---------------- */
 
 function MedalModule() {
-  const [m, setM] = useState<Asu26Medals | null>(null);
-  useEffect(() => {
-    loadAsu26Medals().then(setM).catch(() => setM(null));
-  }, []);
+  const m = useAsu26Medals();
   const ranked = useMemo(() => rankMedals(m?.countries ?? []), [m]);
   const stIcon = { soon: "⏳", updating: "🟡", updated: "🟢", final: "🏁" } as const;
   const coin = (cls: string, v: number, label: string) => (
@@ -403,7 +399,28 @@ export function MemberAsu26Live({ m }: { m: PieceMember }) {
 
 /* ---------------- Tarjetas dinámicas de la portada ---------------- */
 
+function MedalCardMeta() {
+  const m = useAsu26Medals();
+  if (!m) return null;
+  const ranked = rankMedals(m.countries);
+  const es = ranked.find(isSpainCountry);
+  const has = m.status !== "soon" && ranked.some((c) => c.total > 0);
+  const cls = "font-condensed mt-3 line-clamp-2 text-[11px] font-bold uppercase tracking-[2px] text-foreground";
+  if (!has) return <p className={cls}>Medallero disponible desde el 10 de octubre</p>;
+  if (!es) return <p className={cls}>{ranked.reduce((a, c) => a + c.total, 0)} medallas repartidas</p>;
+  return (
+    <p className={cls}>
+      🇪🇸 España · 🥇 {es.gold} 🥈 {es.silver} 🥉 {es.bronze} · Total {es.total} · {es.pos}.º puesto
+    </p>
+  );
+}
+
 export function Asu26CardMeta({ kind, pieceSlug }: { kind: Asu26Module | "seleccion"; pieceSlug: string }) {
+  if (kind === "medallero") return <MedalCardMeta key={pieceSlug} />;
+  return <HubCardMeta kind={kind} pieceSlug={pieceSlug} />;
+}
+
+function HubCardMeta({ kind, pieceSlug }: { kind: Asu26Module | "seleccion"; pieceSlug: string }) {
   const d = useAsu26Hub();
   if (d.loading) return null;
   let line = "";
@@ -416,9 +433,6 @@ export function Asu26CardMeta({ kind, pieceSlug }: { kind: Asu26Module | "selecc
     line = d.news[0]?.title ?? "";
   } else if (kind === "resultados") {
     line = "Powered by VeloPro";
-  } else if (kind === "medallero") {
-    const t = medalTable(d.results).reduce((a, c) => a + c.total, 0);
-    line = t ? `${t} medallas repartidas` : "Comienza el 10 de octubre";
   } else if (kind === "tv") {
     const n = nextItem(d.schedule);
     const live = d.cfg.streamStatus === "live" || (n && itemState(n.status) === "live");
