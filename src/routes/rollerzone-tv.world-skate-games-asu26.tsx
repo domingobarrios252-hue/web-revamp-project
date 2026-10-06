@@ -13,7 +13,7 @@ import {
   type Asu26StreamingConfig,
 } from "@/lib/tv/asu26Streaming";
 import { Asu26Player } from "@/components/tv/asu26/Asu26Player";
-import { hhmm, useViewerTz } from "@/components/tv/asu26/Asu26Time";
+import { ASU_ZONE, ZoneTag, hhmm, useViewerZone } from "@/components/tv/asu26/Asu26Time";
 import veloproLogo from "@/assets/logo-velopro-tight.png.asset.json";
 import { Asu26Results } from "@/components/tv/asu26/Asu26Results";
 import { Asu26LiveUpdates, type Asu26TimelineEntry } from "@/components/tv/asu26/Asu26LiveUpdates";
@@ -147,6 +147,7 @@ function Asu26Hub() {
   const live = cfg.streamStatus === "live";
 
   const nextIso = cfg.expectedStart || next?.scheduled_at || null;
+  const viewerZone = useViewerZone();
   const statusPill = <StatusBadge status={cfg.streamStatus} />;
 
   return (
@@ -196,7 +197,7 @@ function Asu26Hub() {
             {nextIso && cfg.streamStatus !== "finished" && (
               <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-7 gap-y-2 text-sm font-bold uppercase tracking-[2.5px] text-asu-ink md:text-base">
                 <span className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4 text-asu-coral" />{dayLabel(dayInTz(nextIso, ASU26_TZ))}</span>
-                <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-asu-coral" />{timeInTz(nextIso, ASU26_TZ)}</span>
+                <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-asu-coral" />{timeInTz(nextIso, ASU26_TZ)} · Asunción{viewerZone && <span className="text-asu-ink/70">· {hhmm(nextIso, viewerZone.tz)} {viewerZone.label}</span>}</span>
                 <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-asu" />Asunción, Paraguay</span>
               </div>
             )}
@@ -217,7 +218,7 @@ function Asu26Hub() {
                       <span className="font-condensed rounded-full border border-asu px-3 py-0.5 text-[11px] font-bold uppercase tracking-[2px] text-asu">Próximamente</span>
                     </div>
                   )}
-                  <p className="font-condensed mt-2 text-[11px] font-bold uppercase tracking-[2px] text-asu">Horarios oficiales · Hora local de Asunción (PY)</p>
+                  <p className="mt-2 text-xs text-asu-ink/70">Horario oficial de Asunción (PY) y conversión automática a la hora local del visitante.</p>
                   {cfg.preStreamMessage && <p className="mt-1 text-sm text-asu-ink/80">{cfg.preStreamMessage}</p>}
                 </div>
               </div>
@@ -234,7 +235,7 @@ function Asu26Hub() {
           <aside id="horarios" className="scroll-mt-16 min-w-0 self-start overflow-hidden rounded-2xl border border-asu/25 bg-surface xl:sticky xl:top-16">
             <div className="asu-dark bg-asu-deep px-5 py-4">
               <h2 className="font-display text-3xl uppercase tracking-wide text-foreground">Próximas pruebas</h2>
-              <p className="font-condensed mt-0.5 text-[10px] font-bold uppercase tracking-[2px] text-asu-light">Horarios oficiales · Hora local de Asunción (PY)</p>
+              <p className="mt-0.5 text-[11px] text-asu-cream/80">Horario oficial de Asunción (PY) y conversión a tu hora local.</p>
             </div>
             <div className="px-5 pb-5">
               {items === null ? (
@@ -246,7 +247,7 @@ function Asu26Hub() {
                   {upcoming.map((it) => {
                     const st = raceState(it, results);
                     return (
-                      <li key={it.id} className={`grid grid-cols-[5.25rem_minmax(0,1fr)] gap-3 py-4 ${st.hot ? "bg-tv-red/5" : ""}`}>
+                      <li key={it.id} className={`grid grid-cols-[6rem_minmax(0,1fr)] gap-3 py-4 ${st.hot ? "bg-tv-red/5" : ""}`}>
                         <div>
                           <RowTime iso={it.scheduled_at} />
                           <p className="font-condensed mt-1.5 text-[10px] font-bold uppercase tracking-[1.5px] text-asu-ink/70">
@@ -368,32 +369,36 @@ function Asu26Hub() {
 }
 
 function NextTime({ iso }: { iso: string }) {
-  const tz = useViewerTz();
-  const showLocal = !!tz && tz !== ASU26_TZ;
+  const zone = useViewerZone();
   return (
-    <div className="flex items-end gap-4">
-      <p className="font-display text-6xl leading-none text-asu-ink md:text-7xl">{hhmm(iso, ASU26_TZ)}</p>
-      {showLocal && (
-        <div className="pb-1">
-          <p className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu">Tu hora</p>
-          <p className="font-display text-3xl leading-none text-asu-ink/80">{hhmm(iso, tz!)}</p>
+    <div>
+      <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
+        <div>
+          <p className="font-display text-6xl leading-none text-asu-ink md:text-7xl">{hhmm(iso, ASU26_TZ)}</p>
+          <ZoneTag zone={ASU_ZONE} className="mt-1.5 text-[11px] tracking-[2.5px] text-asu" />
         </div>
-      )}
+        {zone && (
+          <div className="pb-0.5">
+            <p className="font-display text-4xl leading-none text-asu-ink/85 md:text-5xl">{hhmm(iso, zone.tz)}</p>
+            <ZoneTag zone={{ ...zone, label: zone.label === "Hora local" ? "Tu zona horaria" : `${zone.label} · hora local` }} className="mt-1.5 text-[10px] tracking-[2px] text-asu-ink/75" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 function RowTime({ iso }: { iso: string }) {
-  const tz = useViewerTz();
-  const showLocal = !!tz && tz !== ASU26_TZ;
+  const zone = useViewerZone();
   return (
     <div className="leading-none">
       <p className="font-display text-3xl text-asu-ink">{hhmm(iso, ASU26_TZ)}</p>
-      {showLocal && (
-        <p className="mt-1 flex items-baseline gap-1 text-asu-ink/60">
-          <span className="font-display text-xl">{hhmm(iso, tz!)}</span>
-          <span className="font-condensed text-[8px] font-bold uppercase tracking-[1px]">Tu hora</span>
-        </p>
+      <ZoneTag zone={{ label: "PY", flag: ASU_ZONE.flag }} className="mt-1 text-[9px] tracking-[1.5px] text-asu" />
+      {zone && (
+        <div className="mt-1.5">
+          <p className="font-display text-xl text-asu-ink/75">{hhmm(iso, zone.tz)}</p>
+          <ZoneTag zone={zone} className="mt-0.5 text-[9px] tracking-[1px] text-asu-ink/70" />
+        </div>
       )}
     </div>
   );
