@@ -539,3 +539,16 @@ select.input {
     radial-gradient(90% 80% at 80% 0%, oklch(0.28 0.06 160) 0%, transparent 70%),
     oklch(0.17 0.035 160);
 }
+
+/* ===== ASU26 TV ticker ===== */
+.asu-ticker-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  animation: ticker var(--asu-ticker-dur, 40s) linear infinite;
+  will-change: transform;
+}
+.asu-ticker:hover .asu-ticker-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .asu-ticker-track { animation: none; }
+}
