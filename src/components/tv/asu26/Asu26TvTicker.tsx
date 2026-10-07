@@ -9,8 +9,8 @@ type Row = { id: string; event_name: string; category: string | null; gender: st
 
 const live = (s: string) => ["en_curso", "live", "en_directo"].includes(s);
 const done = (s: string) => ["finalizada", "finished", "finalizado", "cerrada", "cancelada"].includes(s);
-/** Píxeles por segundo: lectura cómoda, como una cinta de TV deportiva. */
-const SPEED_PX_S = 50;
+/** Velocidad única del ticker en px/s: 35 = lento, 50 = normal, 65 = rápido. */
+const TICKER_SPEED_PX_PER_SECOND = 50;
 const raceName = (r: Row) => [r.event_name, r.category, r.gender].filter(Boolean).join(" ");
 
 /** Banda tipo news ticker bajo la cabecera ASU26 de /tv. Jornada según la fecha de Asunción. */
@@ -81,7 +81,7 @@ export function Asu26TvTicker() {
     if (!el) return;
     const measure = () => {
       const w = el.getBoundingClientRect().width;
-      if (w > 0) setDur(Math.round((w / SPEED_PX_S) * 100) / 100);
+      if (w > 0) setDur(w / TICKER_SPEED_PX_PER_SECOND);
     };
     measure();
     const ro = new ResizeObserver(measure);
