@@ -72,7 +72,7 @@ export function Asu26TvTicker() {
   }, [rows, now]);
 
   if (!view) return null;
-  const seq = view.items;
+  const seq = [...view.items, ...view.items];
   const dur = Math.max(22, seq.join(" ").length * 0.22);
   const Run = ({ hidden }: { hidden?: boolean }) => (
     <span aria-hidden={hidden || undefined} className="flex shrink-0 items-center">
