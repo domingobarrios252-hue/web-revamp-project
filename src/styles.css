@@ -541,12 +541,18 @@ select.input {
 }
 
 /* ===== ASU26 TV ticker ===== */
+@keyframes asu-ticker {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
 .asu-ticker-track {
   display: flex;
   width: max-content;
   white-space: nowrap;
-  animation: ticker var(--asu-ticker-dur, 40s) linear infinite;
+  animation: asu-ticker var(--asu-ticker-dur, 60s) linear infinite;
   will-change: transform;
+  backface-visibility: hidden;
+  transition: none;
 }
 .asu-ticker:hover .asu-ticker-track { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { dayInTz } from "@/lib/specials/liveEvent";
@@ -9,6 +9,8 @@ type Row = { id: string; event_name: string; category: string | null; gender: st
 
 const live = (s: string) => ["en_curso", "live", "en_directo"].includes(s);
 const done = (s: string) => ["finalizada", "finished", "finalizado", "cerrada", "cancelada"].includes(s);
+/** Píxeles por segundo: lectura cómoda, como una cinta de TV deportiva. */
+const SPEED_PX_S = 50;
 const raceName = (r: Row) => [r.event_name, r.category, r.gender].filter(Boolean).join(" ");
 
 /** Banda tipo news ticker bajo la cabecera ASU26 de /tv. Jornada según la fecha de Asunción. */
@@ -70,11 +72,28 @@ export function Asu26TvTicker() {
     };
   }, [rows, msgs, now]);
 
+  // Velocidad constante (px/s) en cualquier pantalla: duración = ancho real de una copia / velocidad.
+  const copyRef = useRef<HTMLSpanElement>(null);
+  const [dur, setDur] = useState<number | null>(null);
+  const key = view ? view.label + view.items.join("|") : "";
+  useLayoutEffect(() => {
+    const el = copyRef.current;
+    if (!el) return;
+    const measure = () => {
+      const w = el.getBoundingClientRect().width;
+      if (w > 0) setDur(Math.round((w / SPEED_PX_S) * 100) / 100);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    document.fonts?.ready.then(measure).catch(() => {});
+    return () => ro.disconnect();
+  }, [key]);
+
   if (!view) return null;
   const seq = [...view.items, ...view.items];
-  const dur = Math.max(22, seq.join(" ").length * 0.22);
-  const Run = ({ hidden }: { hidden?: boolean }) => (
-    <span aria-hidden={hidden || undefined} className="flex shrink-0 items-center">
+  const run = (hidden: boolean) => (
+    <span ref={hidden ? undefined : copyRef} aria-hidden={hidden || undefined} className="flex shrink-0 items-center">
       {seq.map((t, i) => (
         <span key={i} className="flex items-center">
           <span className={i === 0 ? "text-gold" : "text-asu-cream"}>{t}</span>
@@ -95,9 +114,9 @@ export function Asu26TvTicker() {
         {view.label}
       </span>
       <span className="font-condensed relative flex min-w-0 flex-1 items-center overflow-hidden text-xs font-bold uppercase tracking-[2px] transition-colors group-hover:bg-asu-cream/[0.03] md:text-sm">
-        <span className="asu-ticker-track" style={{ ["--asu-ticker-dur" as string]: `${dur}s` }}>
-          <Run />
-          <Run hidden />
+        <span key={key} className="asu-ticker-track" style={{ ["--asu-ticker-dur" as string]: `${dur ?? 60}s`, visibility: dur ? undefined : "hidden" }}>
+          {run(false)}
+          {run(true)}
         </span>
       </span>
     </Link>
