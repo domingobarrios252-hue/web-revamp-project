@@ -23,6 +23,8 @@ import { parseBlocks, cleanBlocks, type NewsBlock } from "@/lib/newsBlocks";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { GalleryUploadField } from "@/components/admin/GalleryUploadField";
 import { SpecialPieceMembersEditor } from "@/components/admin/SpecialPieceMembersEditor";
+import { Asu26TickerAdmin } from "@/components/admin/Asu26TickerAdmin";
+import { ASU26_SPECIAL_SLUG } from "@/lib/tv/asu26Streaming";
 import type { ImageCrops } from "@/lib/imageCrops";
 import {
   DndContext,
@@ -941,6 +943,8 @@ function PiecesPanel({ special, onBack }: { special: Special; onBack: () => void
           <Plus className="h-4 w-4" /> Nueva pieza
         </button>
       </div>
+
+      {special.slug === ASU26_SPECIAL_SLUG && <Asu26TickerAdmin />}
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-1 border border-border bg-surface p-1">
