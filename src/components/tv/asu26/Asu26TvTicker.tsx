@@ -88,7 +88,7 @@ export function Asu26TvTicker() {
     <Link
       to={ASU26_PATH}
       hash="directo"
-      aria-label={`${view.label}: ${seq.join(" · ")}`}
+      aria-label={`${view.label}: ${view.items.join(" · ")}`}
       className="asu-ticker group relative flex h-10 w-full min-w-0 cursor-pointer items-stretch overflow-hidden border-y border-asu-cream/10 bg-asu-deep md:h-12"
     >
       <span className="font-condensed relative z-10 flex shrink-0 items-center gap-2 bg-asu px-3 text-[11px] font-bold uppercase tracking-[2px] text-asu-cream shadow-[8px_0_14px_-6px_oklch(0.17_0.035_160)] md:px-5 md:text-xs">
