@@ -7,8 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const ASU26_TICKER_KEY = "asu26_ticker";
 
-export type TickerMsgType = "entrenamientos" | "cuenta_atras" | "sin_competicion" | "especial" | "finalizada";
+export type TickerMsgType = "previa" | "entrenamientos" | "cuenta_atras" | "sin_competicion" | "especial" | "finalizada";
 export const TICKER_TYPE_LABEL: Record<TickerMsgType, string> = {
+  previa: "Previa de jornada",
   entrenamientos: "Entrenamientos",
   cuenta_atras: "Cuenta atrás",
   sin_competicion: "Sin competición",
@@ -16,7 +17,24 @@ export const TICKER_TYPE_LABEL: Record<TickerMsgType, string> = {
   finalizada: "Jornada finalizada",
 };
 
-export type TickerMsg = { id: string; date: string; type: TickerMsgType; text: string; active: boolean };
+export type TickerMsg = {
+  id: string;
+  date: string;
+  type: TickerMsgType;
+  text: string;
+  active: boolean;
+  /** Solo «Previa de jornada»: franja HH:MM en hora de Asunción. */
+  start?: string;
+  end?: string;
+};
+
+const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+/** ¿La hora actual de Asunción ("HH:MM") está dentro de la franja de la previa? */
+export function inWindow(m: TickerMsg, nowHHMM: string) {
+  if (!m.start || !m.end || !HHMM.test(m.start) || !HHMM.test(m.end)) return false;
+  return nowHHMM >= m.start && nowHHMM < m.end;
+}
 
 /** Valores iniciales (los textos que ya mostraba el ticker). */
 export const ASU26_TICKER_DEFAULTS: TickerMsg[] = [
@@ -39,6 +57,8 @@ export function mergeTicker(raw: unknown): TickerMsg[] {
       type: (TYPES.includes(m?.type) ? m.type : "especial") as TickerMsgType,
       text: String(m?.text ?? ""),
       active: m?.active !== false,
+      start: typeof m?.start === "string" ? m.start : undefined,
+      end: typeof m?.end === "string" ? m.end : undefined,
     }))
     .filter((m) => /^\d{4}-\d{2}-\d{2}$/.test(m.date));
 }
