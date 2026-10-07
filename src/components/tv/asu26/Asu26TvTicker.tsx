@@ -2,23 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { dayInTz } from "@/lib/specials/liveEvent";
+import { loadAsu26Ticker, splitTicker, type TickerMsg } from "@/lib/tv/asu26Ticker";
 import { ASU26_PATH, ASU26_RESULT_EVENT_ID, ASU26_TZ } from "@/lib/tv/asu26Streaming";
 
 type Row = { id: string; event_name: string; category: string | null; gender: string | null; scheduled_at: string; status: string };
-
-/**
- * Jornadas ASU26 Speed fuera de competición (textos editables aquí).
- * Los días de competición NO se listan: las pruebas salen del calendario (schedule_items).
- */
-export const ASU26_TICKER_DAYS: Record<string, { label: string; items: string[] }> = {
-  "2026-10-07": { label: "ASU26 · Hoy", items: ["Jornada de entrenamientos", "Las selecciones preparan el inicio del Mundial de patinaje de velocidad", "La competición comienza el 10 de octubre", "Síguelo en Rollerzone.TV"] },
-  "2026-10-08": { label: "ASU26 · Hoy", items: ["Cuenta atrás para el Mundial", "Entrenamientos y preparación de las selecciones", "Patinaje de velocidad del 10 al 18 de octubre", "Streaming en Rollerzone.TV"] },
-  "2026-10-09": { label: "ASU26 · Hoy", items: ["Cuenta atrás para el Mundial", "Entrenamientos y preparación de las selecciones", "Patinaje de velocidad del 10 al 18 de octubre", "Streaming en Rollerzone.TV"] },
-  "2026-10-13": { label: "ASU26 · Hoy", items: ["Jornada sin competición de patinaje de velocidad", "La acción regresa mañana con las pruebas de circuito", "Sigue toda la información en Rollerzone.es"] },
-  "2026-10-16": { label: "ASU26 · Hoy", items: ["Jornada sin competición de patinaje de velocidad", "El Mundial continúa mañana", "Calendario, resultados y noticias en Rollerzone.es"] },
-};
-const FIRST = "2026-10-07";
-const LAST = "2026-10-18";
 
 const live = (s: string) => ["en_curso", "live", "en_directo"].includes(s);
 const done = (s: string) => ["finalizada", "finished", "finalizado", "cerrada", "cancelada"].includes(s);
@@ -27,9 +14,12 @@ const raceName = (r: Row) => [r.event_name, r.category, r.gender].filter(Boolean
 /** Banda tipo news ticker bajo la cabecera ASU26 de /tv. Jornada según la fecha de Asunción. */
 export function Asu26TvTicker() {
   const [rows, setRows] = useState<Row[] | null>(null);
+  const [msgs, setMsgs] = useState<TickerMsg[] | null>(null);
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
-    const load = () =>
+    const load = () => {
+      loadAsu26Ticker().then(setMsgs).catch(() => setMsgs([]));
+      return supabase
       supabase
         .from("schedule_items")
         .select("id,event_name,category,gender,scheduled_at,status")
@@ -37,6 +27,7 @@ export function Asu26TvTicker() {
         .eq("published", true)
         .order("scheduled_at")
         .then(({ data }) => setRows((data as Row[]) ?? []));
+    };
     load();
     const t = setInterval(() => {
       setNow(new Date());
@@ -46,13 +37,14 @@ export function Asu26TvTicker() {
   }, []);
 
   const view = useMemo(() => {
-    if (!rows) return null;
+    if (!rows || !msgs) return null;
     const day = dayInTz(now, ASU26_TZ);
-    if (day < FIRST || day > LAST) return null;
     const todays = rows.filter((r) => dayInTz(r.scheduled_at, ASU26_TZ) === day);
+    const msgOf = (types: TickerMsg["type"][]) =>
+      msgs.find((m) => m.active && m.date === day && types.includes(m.type) && splitTicker(m.text).length);
     if (todays.length === 0) {
-      const d = ASU26_TICKER_DAYS[day];
-      return d ? { label: d.label, items: d.items, pulse: false } : null;
+      const m = msgOf(["entrenamientos", "cuenta_atras", "sin_competicion", "especial"]);
+      return m ? { label: "ASU26 · Hoy", items: splitTicker(m.text), pulse: false } : null;
     }
     const running = todays.filter((r) => live(r.status));
     if (running.length)
@@ -61,15 +53,18 @@ export function Asu26TvTicker() {
         items: ["World Skate Games ASU26", ...running.map(raceName), "Mira la carrera en Rollerzone.TV", "Resultados oficiales VeloPro"],
         pulse: true,
       };
-    if (todays.every((r) => done(r.status)))
+    if (todays.every((r) => done(r.status))) {
+      const f = msgOf(["finalizada"]);
+      if (f) return { label: "Jornada finalizada", items: splitTicker(f.text), pulse: false };
       return { label: "Jornada finalizada", items: [...todays.map((r) => r.event_name), "Resultados completos en Rollerzone.es"], pulse: false };
+    }
     const names = [...new Set(todays.map((r) => r.event_name))];
     return {
       label: "Hoy en ASU26",
       items: ["Patinaje de velocidad", ...names, "Horarios de Asunción 🇵🇾", "Streaming en directo en Rollerzone.TV", "Resultados oficiales VeloPro"],
       pulse: true,
     };
-  }, [rows, now]);
+  }, [rows, msgs, now]);
 
   if (!view) return null;
   const seq = [...view.items, ...view.items];
