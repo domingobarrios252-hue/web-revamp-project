@@ -7,6 +7,7 @@ import { TvTopStage, type TvStageStatus } from "@/components/tv/TvTopStage";
 import { TvMobileNav } from "@/components/tv/TvMobileNav";
 import { Asu26TvCard } from "@/components/tv/asu26/Asu26TvCard";
 import { Asu26TvHero } from "@/components/tv/asu26/Asu26TvHero";
+import { Asu26TvTicker } from "@/components/tv/asu26/Asu26TvTicker";
 import { ASU26_DEFAULTS, loadAsu26Config, type Asu26StreamingConfig } from "@/lib/tv/asu26Streaming";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
@@ -311,7 +312,10 @@ function TvPage() {
     <div className="w-full max-w-full min-w-0 overflow-x-clip bg-background">
       <TvMobileNav items={navItems} live={status === "live"} />
       {asu.tvPromoActive ? (
-        <Asu26TvHero logoUrl={asu.logoAsu26Url} />
+        <>
+          <Asu26TvHero logoUrl={asu.logoAsu26Url} />
+          <Asu26TvTicker />
+        </>
       ) : (
         <>
           <TvTopStage settings={settings} status={status} nextBroadcast={nextBroadcast} />
