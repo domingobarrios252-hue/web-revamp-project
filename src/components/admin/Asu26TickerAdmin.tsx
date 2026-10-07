@@ -21,6 +21,8 @@ export function Asu26TickerAdmin() {
   const save = async () => {
     if (!list) return;
     if (list.some((m) => !m.date || !m.text.trim())) return toast.error("Cada mensaje necesita fecha y texto");
+    if (list.some((m) => m.type === "previa" && (!m.start || !m.end || m.start >= m.end)))
+      return toast.error("La previa necesita hora de inicio y de fin (la de fin, posterior)");
     setSaving(true);
     const { error } = await saveAsu26Ticker([...list].sort((a, b) => a.date.localeCompare(b.date)));
     setSaving(false);
@@ -34,7 +36,7 @@ export function Asu26TickerAdmin() {
         <div>
           <h2 className="font-display text-xl tracking-widest">TICKER ROLLERZONE TV</h2>
           <p className="mt-1 max-w-2xl text-xs text-muted-foreground">
-            Prioridad: carrera «En curso» → «En directo ahora»; si hay carreras ese día se muestran las del calendario
+            Prioridad: carrera «En curso» → «En directo ahora»; «Previa de jornada» activa dentro de su franja (hora de Asunción) → «ASU26 · Previa»; si hay carreras ese día se muestran las del calendario
             (un mensaje «Jornada finalizada» activo sustituye al texto automático al terminar). Sin carreras se usa el
             mensaje activo de esa fecha; si no hay ninguno, el ticker se oculta. Separa frases con «·».
           </p>
@@ -75,10 +77,24 @@ export function Asu26TickerAdmin() {
                   {(Object.keys(TICKER_TYPE_LABEL) as TickerMsgType[]).map((k) => <option key={k} value={k}>{TICKER_TYPE_LABEL[k]}</option>)}
                 </select>
               </label>
+              <div className="space-y-2">
+              {m.type === "previa" && (
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="block">
+                    <span className="font-condensed mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">Hora inicio (PY)</span>
+                    <input type="time" value={m.start ?? ""} onChange={(e) => set(m.id, { start: e.target.value })} className="w-full border border-border bg-surface px-2 py-1.5 text-sm" />
+                  </label>
+                  <label className="block">
+                    <span className="font-condensed mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">Hora fin (PY)</span>
+                    <input type="time" value={m.end ?? ""} onChange={(e) => set(m.id, { end: e.target.value })} className="w-full border border-border bg-surface px-2 py-1.5 text-sm" />
+                  </label>
+                </div>
+              )}
               <label className="block">
                 <span className="font-condensed mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">Texto</span>
                 <textarea value={m.text} rows={2} onChange={(e) => set(m.id, { text: e.target.value })} className="w-full border border-border bg-surface px-2 py-1.5 text-sm" placeholder="Frase 1 · Frase 2 · Frase 3" />
               </label>
+              </div>
               <label className="flex items-center gap-2 md:mt-6">
                 <input type="checkbox" checked={m.active} onChange={(e) => set(m.id, { active: e.target.checked })} />
                 <span className="font-condensed text-[11px] uppercase tracking-widest">{m.active ? "Activo" : "Inactivo"}</span>

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { dayInTz } from "@/lib/specials/liveEvent";
-import { loadAsu26Ticker, splitTicker, type TickerMsg } from "@/lib/tv/asu26Ticker";
+import { inWindow, loadAsu26Ticker, splitTicker, type TickerMsg } from "@/lib/tv/asu26Ticker";
 import { ASU26_PATH, ASU26_RESULT_EVENT_ID, ASU26_TZ } from "@/lib/tv/asu26Streaming";
 
 type Row = { id: string; event_name: string; category: string | null; gender: string | null; scheduled_at: string; status: string };
@@ -41,11 +41,16 @@ export function Asu26TvTicker() {
     const todays = rows.filter((r) => dayInTz(r.scheduled_at, ASU26_TZ) === day);
     const msgOf = (types: TickerMsg["type"][]) =>
       msgs.find((m) => m.active && m.date === day && types.includes(m.type) && splitTicker(m.text).length);
+    const running = todays.filter((r) => live(r.status));
+    if (!running.length) {
+      const nowHHMM = new Intl.DateTimeFormat("en-GB", { timeZone: ASU26_TZ, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(now);
+      const pre = msgs.find((m) => m.active && m.type === "previa" && m.date === day && inWindow(m, nowHHMM) && splitTicker(m.text).length);
+      if (pre) return { label: "ASU26 · Previa", items: splitTicker(pre.text), pulse: false };
+    }
     if (todays.length === 0) {
       const m = msgOf(["entrenamientos", "cuenta_atras", "sin_competicion", "especial"]);
       return m ? { label: "ASU26 · Hoy", items: splitTicker(m.text), pulse: false } : null;
     }
-    const running = todays.filter((r) => live(r.status));
     if (running.length)
       return {
         label: "En directo ahora",
