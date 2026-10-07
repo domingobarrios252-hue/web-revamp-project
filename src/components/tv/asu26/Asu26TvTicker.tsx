@@ -19,7 +19,6 @@ export function Asu26TvTicker() {
   useEffect(() => {
     const load = () => {
       loadAsu26Ticker().then(setMsgs).catch(() => setMsgs([]));
-      return supabase
       supabase
         .from("schedule_items")
         .select("id,event_name,category,gender,scheduled_at,status")
