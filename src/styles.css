@@ -198,7 +198,6 @@
   animation: ticker 27s linear infinite;
   white-space: nowrap;
 }
-.ticker-track:hover { animation-play-state: paused; }
 
 /* ===== Diagonal lines pattern (hero) ===== */
 .diagonal-lines-bg {
@@ -554,7 +553,6 @@ select.input {
   backface-visibility: hidden;
   transition: none;
 }
-.asu-ticker:hover .asu-ticker-track { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   .asu-ticker-track { animation: none; }
 }
