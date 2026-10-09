@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BarChart3, Calendar, FileText, FileType2, Radio, Medal, LayoutDashboard } from "lucide-react";
+import { BarChart3, Calendar, FileText, FileType2, Radio, Medal, LayoutDashboard, RefreshCw } from "lucide-react";
 
 export type ResultadosTab =
   | "resumen"
@@ -8,7 +8,8 @@ export type ResultadosTab =
   | "csv"
   | "pdfs"
   | "live"
-  | "medallero";
+  | "medallero"
+  | "sync";
 
 const TABS: { id: ResultadosTab; label: string; to: string; icon: React.ReactNode }[] = [
   { id: "resumen", label: "Resumen", to: "/admin/resultados", icon: <LayoutDashboard className="h-3.5 w-3.5" /> },
@@ -18,6 +19,7 @@ const TABS: { id: ResultadosTab; label: string; to: string; icon: React.ReactNod
   { id: "pdfs", label: "PDFs oficiales", to: "/admin/resultados-pdfs", icon: <FileType2 className="h-3.5 w-3.5" /> },
   { id: "live", label: "Live Center", to: "/admin/live-center", icon: <Radio className="h-3.5 w-3.5" /> },
   { id: "medallero", label: "Medallero", to: "/admin/medallero", icon: <Medal className="h-3.5 w-3.5" /> },
+  { id: "sync", label: "Sincronización ASU26", to: "/admin/resultados-sync", icon: <RefreshCw className="h-3.5 w-3.5" /> },
 ];
 
 export function ResultadosHubTabs({ active }: { active: ResultadosTab }) {

@@ -62,6 +62,7 @@ type ManualRow = {
   result_status: string | null;
   status: string | null;
   sort_order: number | null;
+  source?: string | null;
 };
 
 function toState(r: ManualRow): ResultState {
@@ -78,11 +79,11 @@ async function loadManual(
   sb: SupabaseClient,
   resultEventId: string,
   scheduleTimes: Map<string, string>,
-): Promise<NormalizedResult[]> {
+): Promise<(NormalizedResult & { _source: string })[]> {
   const { data, error } = await sb
     .from("live_results")
     .select(
-      "id,schedule_item_id,race,distance,category,gender,round,position,bib,athlete_name,country,club,federation,race_time,gap,points,record_mark,notes,result_status,status,sort_order",
+      "id,schedule_item_id,race,distance,category,gender,round,position,bib,athlete_name,country,club,federation,race_time,gap,points,record_mark,notes,result_status,status,sort_order,source",
     )
     .eq("result_event_id", resultEventId)
     .eq("published", true)
@@ -96,7 +97,7 @@ async function loadManual(
     category: r.category,
     gender: r.gender,
     phase: r.round,
-    position: r.position,
+    position: r.source === "official" && r.position === 0 ? null : r.position,
     bib: r.bib,
     athlete: r.athlete_name,
     country: r.country,
@@ -110,7 +111,33 @@ async function loadManual(
     state: toState(r),
     scheduledAt: r.schedule_item_id ? (scheduleTimes.get(r.schedule_item_id) ?? null) : null,
     sort: r.sort_order ?? 0,
+    _source: r.source ?? "manual",
   }));
+}
+
+/**
+ * Prioridad oficial/manual por prueba (definida en Admin). En una prueba con
+ * prioridad "official" y resultados oficiales, se ocultan los manuales; con
+ * "manual" y resultados manuales, se ocultan los oficiales. Sin datos del
+ * lado prioritario, se muestra el otro. Los manuales nunca se modifican.
+ */
+async function applyPriority(sb: SupabaseClient, resultEventId: string, rows: (NormalizedResult & { _source: string })[]) {
+  if (!rows.some((r) => r._source === "official")) return rows;
+  const { data } = await sb.rpc("results_priority_map", { _event: resultEventId });
+  const prio = new Map(((data as { schedule_item_id: string; priority: string }[] | null) ?? []).map((p) => [p.schedule_item_id, p.priority]));
+  const has = new Map<string, Set<string>>();
+  for (const r of rows) {
+    if (!r.scheduleItemId) continue;
+    if (!has.has(r.scheduleItemId)) has.set(r.scheduleItemId, new Set());
+    has.get(r.scheduleItemId)!.add(r._source);
+  }
+  return rows.filter((r) => {
+    if (!r.scheduleItemId) return true;
+    const kinds = has.get(r.scheduleItemId)!;
+    if (kinds.size < 2) return true;
+    const p = prio.get(r.scheduleItemId) ?? "official";
+    return p === "official" ? r._source === "official" : r._source !== "official";
+  });
 }
 
 /**
@@ -124,5 +151,7 @@ export async function loadEventResults(
   _provider: ResultsProviderKey | null | undefined,
   scheduleTimes: Map<string, string>,
 ): Promise<NormalizedResult[]> {
-  return loadManual(sb, resultEventId, scheduleTimes);
+  const rows = await loadManual(sb, resultEventId, scheduleTimes);
+  const filtered = await applyPriority(sb, resultEventId, rows).catch(() => rows);
+  return filtered.map(({ _source: _s, ...r }) => r);
 }

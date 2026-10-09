@@ -70,6 +70,7 @@ import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminResultadosEventosRouteImport } from './routes/admin.resultados-eventos'
 import { Route as AdminResultadosImportarRouteImport } from './routes/admin.resultados-importar'
 import { Route as AdminResultadosPdfsRouteImport } from './routes/admin.resultados-pdfs'
+import { Route as AdminResultadosSyncRouteImport } from './routes/admin.resultados-sync'
 import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminSalonDeLaFamaRouteImport } from './routes/admin.salon-de-la-fama'
@@ -166,6 +167,7 @@ import { Route as UsaEntrevistasIndexRouteImport } from './routes/usa.entrevista
 import { Route as UsaEntrevistasSlugRouteImport } from './routes/usa.entrevistas.$slug'
 import { Route as UsaNoticiasIndexRouteImport } from './routes/usa.noticias.index'
 import { Route as UsaNoticiasSlugRouteImport } from './routes/usa.noticias.$slug'
+import { Route as ApiPublicCronResultsSyncRouteImport } from './routes/api/public/cron/results-sync'
 import { Route as HubCountryClubesIndexRouteImport } from './routes/hub.$country.clubes.index'
 import { Route as HubCountryClubesSlugRouteImport } from './routes/hub.$country.clubes.$slug'
 import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
@@ -488,6 +490,11 @@ const AdminResultadosImportarRoute = AdminResultadosImportarRouteImport.update({
 const AdminResultadosPdfsRoute = AdminResultadosPdfsRouteImport.update({
   id: '/resultados-pdfs',
   path: '/resultados-pdfs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultadosSyncRoute = AdminResultadosSyncRouteImport.update({
+  id: '/resultados-sync',
+  path: '/resultados-sync',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRevistaCtaRoute = AdminRevistaCtaRouteImport.update({
@@ -981,6 +988,12 @@ const UsaNoticiasSlugRoute = UsaNoticiasSlugRouteImport.update({
   path: '/noticias/$slug',
   getParentRoute: () => UsaRoute,
 } as any)
+const ApiPublicCronResultsSyncRoute =
+  ApiPublicCronResultsSyncRouteImport.update({
+    id: '/api/public/cron/results-sync',
+    path: '/api/public/cron/results-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const HubCountryClubesIndexRoute = HubCountryClubesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -1143,6 +1156,7 @@ export interface FileRoutesByFullPath {
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
+  '/admin/resultados-sync': typeof AdminResultadosSyncRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -1241,6 +1255,7 @@ export interface FileRoutesByFullPath {
   '/usa/$region/': typeof UsaRegionIndexRoute
   '/usa/entrevistas/': typeof UsaEntrevistasIndexRoute
   '/usa/noticias/': typeof UsaNoticiasIndexRoute
+  '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1313,6 +1328,7 @@ export interface FileRoutesByTo {
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
+  '/admin/resultados-sync': typeof AdminResultadosSyncRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -1404,6 +1420,7 @@ export interface FileRoutesByTo {
   '/usa/$region': typeof UsaRegionIndexRoute
   '/usa/entrevistas': typeof UsaEntrevistasIndexRoute
   '/usa/noticias': typeof UsaNoticiasIndexRoute
+  '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
@@ -1483,6 +1500,7 @@ export interface FileRoutesById {
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
+  '/admin/resultados-sync': typeof AdminResultadosSyncRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -1581,6 +1599,7 @@ export interface FileRoutesById {
   '/usa/$region/': typeof UsaRegionIndexRoute
   '/usa/entrevistas/': typeof UsaEntrevistasIndexRoute
   '/usa/noticias/': typeof UsaNoticiasIndexRoute
+  '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1662,6 +1681,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
     | '/admin/resultados-pdfs'
+    | '/admin/resultados-sync'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -1760,6 +1780,7 @@ export interface FileRouteTypes {
     | '/usa/$region/'
     | '/usa/entrevistas/'
     | '/usa/noticias/'
+    | '/api/public/cron/results-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -1832,6 +1853,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
     | '/admin/resultados-pdfs'
+    | '/admin/resultados-sync'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -1923,6 +1945,7 @@ export interface FileRouteTypes {
     | '/usa/$region'
     | '/usa/entrevistas'
     | '/usa/noticias'
+    | '/api/public/cron/results-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
@@ -2001,6 +2024,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
     | '/admin/resultados-pdfs'
+    | '/admin/resultados-sync'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -2099,6 +2123,7 @@ export interface FileRouteTypes {
     | '/usa/$region/'
     | '/usa/entrevistas/'
     | '/usa/noticias/'
+    | '/api/public/cron/results-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -2182,6 +2207,7 @@ export interface RootRouteChildren {
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
+  ApiPublicCronResultsSyncRoute: typeof ApiPublicCronResultsSyncRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
@@ -2613,6 +2639,13 @@ declare module '@tanstack/react-router' {
       path: '/resultados-pdfs'
       fullPath: '/admin/resultados-pdfs'
       preLoaderRoute: typeof AdminResultadosPdfsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/resultados-sync': {
+      id: '/admin/resultados-sync'
+      path: '/resultados-sync'
+      fullPath: '/admin/resultados-sync'
+      preLoaderRoute: typeof AdminResultadosSyncRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/revista-cta': {
@@ -3287,6 +3320,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsaNoticiasSlugRouteImport
       parentRoute: typeof UsaRoute
     }
+    '/api/public/cron/results-sync': {
+      id: '/api/public/cron/results-sync'
+      path: '/api/public/cron/results-sync'
+      fullPath: '/api/public/cron/results-sync'
+      preLoaderRoute: typeof ApiPublicCronResultsSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hub/$country/clubes/': {
       id: '/hub/$country/clubes/'
       path: '/'
@@ -3452,6 +3492,7 @@ interface AdminRouteChildren {
   AdminResultadosEventosRoute: typeof AdminResultadosEventosRoute
   AdminResultadosImportarRoute: typeof AdminResultadosImportarRoute
   AdminResultadosPdfsRoute: typeof AdminResultadosPdfsRoute
+  AdminResultadosSyncRoute: typeof AdminResultadosSyncRoute
   AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminSalonDeLaFamaRoute: typeof AdminSalonDeLaFamaRoute
@@ -3504,6 +3545,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminResultadosEventosRoute: AdminResultadosEventosRoute,
   AdminResultadosImportarRoute: AdminResultadosImportarRoute,
   AdminResultadosPdfsRoute: AdminResultadosPdfsRoute,
+  AdminResultadosSyncRoute: AdminResultadosSyncRoute,
   AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminSalonDeLaFamaRoute: AdminSalonDeLaFamaRoute,
@@ -3871,6 +3913,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
+  ApiPublicCronResultsSyncRoute: ApiPublicCronResultsSyncRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }

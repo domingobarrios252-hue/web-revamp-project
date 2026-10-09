@@ -230,6 +230,57 @@ export type Database = {
           },
         ]
       }
+      asu26_results_links: {
+        Row: {
+          competition_date: string | null
+          label: string
+          link_status: string
+          priority: string | null
+          schedule_item_id: string | null
+          source_competition_id: string
+          source_state: string | null
+          sync_key: string
+          updated_at: string
+        }
+        Insert: {
+          competition_date?: string | null
+          label?: string
+          link_status?: string
+          priority?: string | null
+          schedule_item_id?: string | null
+          source_competition_id: string
+          source_state?: string | null
+          sync_key: string
+          updated_at?: string
+        }
+        Update: {
+          competition_date?: string | null
+          label?: string
+          link_status?: string
+          priority?: string | null
+          schedule_item_id?: string | null
+          source_competition_id?: string
+          source_state?: string | null
+          sync_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asu26_results_links_schedule_item_id_fkey"
+            columns: ["schedule_item_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asu26_results_links_sync_key_fkey"
+            columns: ["sync_key"]
+            isOneToOne: false
+            referencedRelation: "results_sync_state"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
       club_hubs: {
         Row: {
           club_id: string
@@ -1849,6 +1900,10 @@ export type Database = {
           round: string | null
           schedule_item_id: string | null
           sort_order: number
+          source: string
+          source_competition_id: string | null
+          source_missing_passes: number
+          source_result_id: string | null
           status: Database["public"]["Enums"]["live_result_status"]
           updated_at: string
         }
@@ -1883,6 +1938,10 @@ export type Database = {
           round?: string | null
           schedule_item_id?: string | null
           sort_order?: number
+          source?: string
+          source_competition_id?: string | null
+          source_missing_passes?: number
+          source_result_id?: string | null
           status?: Database["public"]["Enums"]["live_result_status"]
           updated_at?: string
         }
@@ -1917,6 +1976,10 @@ export type Database = {
           round?: string | null
           schedule_item_id?: string | null
           sort_order?: number
+          source?: string
+          source_competition_id?: string | null
+          source_missing_passes?: number
+          source_result_id?: string | null
           status?: Database["public"]["Enums"]["live_result_status"]
           updated_at?: string
         }
@@ -3241,6 +3304,92 @@ export type Database = {
             columns: ["race_id"]
             isOneToOne: false
             referencedRelation: "races"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      results_sync_state: {
+        Row: {
+          active_from: string
+          active_to: string
+          consecutive_failures: number
+          default_priority: string
+          emergency_stop: boolean
+          enabled: boolean
+          halt_reason: string | null
+          halted: boolean
+          halted_at: string | null
+          key: string
+          label: string
+          last_attempt_at: string | null
+          last_error: string | null
+          last_rows: number | null
+          last_success_at: string | null
+          lock_until: string | null
+          modalidad_slug: string
+          off_window_mode: string
+          reactivated_at: string | null
+          reactivated_by: string | null
+          source_base_url: string
+          target_result_event_id: string
+          updated_at: string
+        }
+        Insert: {
+          active_from?: string
+          active_to?: string
+          consecutive_failures?: number
+          default_priority?: string
+          emergency_stop?: boolean
+          enabled?: boolean
+          halt_reason?: string | null
+          halted?: boolean
+          halted_at?: string | null
+          key: string
+          label?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          last_rows?: number | null
+          last_success_at?: string | null
+          lock_until?: string | null
+          modalidad_slug: string
+          off_window_mode?: string
+          reactivated_at?: string | null
+          reactivated_by?: string | null
+          source_base_url: string
+          target_result_event_id: string
+          updated_at?: string
+        }
+        Update: {
+          active_from?: string
+          active_to?: string
+          consecutive_failures?: number
+          default_priority?: string
+          emergency_stop?: boolean
+          enabled?: boolean
+          halt_reason?: string | null
+          halted?: boolean
+          halted_at?: string | null
+          key?: string
+          label?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          last_rows?: number | null
+          last_success_at?: string | null
+          lock_until?: string | null
+          modalidad_slug?: string
+          off_window_mode?: string
+          reactivated_at?: string | null
+          reactivated_by?: string | null
+          source_base_url?: string
+          target_result_event_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "results_sync_state_target_result_event_id_fkey"
+            columns: ["target_result_event_id"]
+            isOneToOne: false
+            referencedRelation: "result_events"
             referencedColumns: ["id"]
           },
         ]
@@ -4691,6 +4840,17 @@ export type Database = {
       register_news_view: {
         Args: { _news_id: string; _visitor_hash: string }
         Returns: number
+      }
+      results_priority_map: {
+        Args: { _event: string }
+        Returns: {
+          priority: string
+          schedule_item_id: string
+        }[]
+      }
+      results_sync_control: {
+        Args: { _action: string; _key: string; _value?: string }
+        Returns: undefined
       }
     }
     Enums: {
