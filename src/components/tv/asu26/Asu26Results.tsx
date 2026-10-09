@@ -71,8 +71,9 @@ export function Asu26Results({ cfg, results, limit, emptyText }: { cfg: Asu26Str
                 {rows.map((r) => {
                   const p = r.position ?? 0;
                   const code = (r.country ?? "").toUpperCase().slice(0, 3);
+                  const isEsp = code === "ESP";
                   return (
-                    <li key={r.id} className="grid grid-cols-[2.75rem_1fr_auto] items-center gap-3 border-b border-border/60 px-4 py-3 last:border-0">
+                    <li key={r.id} className={`grid grid-cols-[2.75rem_1fr_auto] items-center gap-3 border-b border-border/60 px-4 py-3 last:border-0 ${isEsp ? "border-l-2 border-l-gold bg-gold/10" : ""}`}>
                       <span className={`font-display flex h-11 w-11 items-center justify-center rounded-full text-2xl ${p >= 1 && p <= 3 ? MEDAL_CLS[p - 1] : "bg-surface-2 text-foreground"}`} title={p >= 1 && p <= 3 ? MEDAL[p - 1] : undefined}>
                         {r.position ?? "–"}
                       </span>
