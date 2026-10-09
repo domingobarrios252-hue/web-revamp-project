@@ -13,7 +13,7 @@ import {
   type Asu26StreamingConfig,
 } from "@/lib/tv/asu26Streaming";
 import { Asu26Player } from "@/components/tv/asu26/Asu26Player";
-import { ASU_ZONE, ZoneTag, hhmm, useViewerZone } from "@/components/tv/asu26/Asu26Time";
+import { ASU_ZONE, ZoneTag, hhmm, localHhmm, localSuffix, useViewerZone } from "@/components/tv/asu26/Asu26Time";
 import veloproLogo from "@/assets/logo-velopro-tight.png.asset.json";
 import { Asu26Results } from "@/components/tv/asu26/Asu26Results";
 import { Asu26LiveUpdates, type Asu26TimelineEntry } from "@/components/tv/asu26/Asu26LiveUpdates";
@@ -197,7 +197,7 @@ function Asu26Hub() {
             {nextIso && cfg.streamStatus !== "finished" && (
               <div className="font-condensed mt-4 flex flex-wrap items-center gap-x-7 gap-y-2 text-sm font-bold uppercase tracking-[2.5px] text-asu-ink md:text-base">
                 <span className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4 text-asu-coral" />{dayLabel(dayInTz(nextIso, ASU26_TZ))}</span>
-                <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-asu-coral" />{timeInTz(nextIso, ASU26_TZ)} · Asunción{viewerZone && <span className="text-asu-ink/70">· {hhmm(nextIso, viewerZone.tz)} {viewerZone.label}</span>}</span>
+                <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-asu-coral" />{timeInTz(nextIso, ASU26_TZ)} · Asunción{viewerZone && <span className="text-asu-ink/70">· {localHhmm(nextIso, viewerZone.tz)} {viewerZone.label}</span>}</span>
                 <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-asu" />Asunción, Paraguay</span>
               </div>
             )}
@@ -327,8 +327,8 @@ function Asu26Hub() {
             <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
               <Stat k="Modalidad" v={[...new Set(todays.map((t) => t.venue_type).filter(Boolean))].join(" · ") || "—"} />
               <Stat k="Carreras" v={String(todays.length)} />
-              <Stat k="Primera prueba" v={`${timeInTz(todays[0].scheduled_at, ASU26_TZ)} PY · ${todays[0].event_name}`} />
-              <Stat k="Última prueba" v={`${timeInTz(todays[todays.length - 1].scheduled_at, ASU26_TZ)} PY · ${todays[todays.length - 1].event_name}`} />
+              <Stat k="Primera prueba" v={`${timeInTz(todays[0].scheduled_at, ASU26_TZ)} PY${localSuffix(todays[0].scheduled_at, viewerZone)} · ${todays[0].event_name}`} />
+              <Stat k="Última prueba" v={`${timeInTz(todays[todays.length - 1].scheduled_at, ASU26_TZ)} PY${localSuffix(todays[todays.length - 1].scheduled_at, viewerZone)} · ${todays[todays.length - 1].event_name}`} />
             </div>
           )}
           <a
@@ -387,7 +387,7 @@ function NextTime({ iso }: { iso: string }) {
         </div>
         {zone && (
           <div className="pb-0.5">
-            <p className="font-display text-4xl leading-none text-asu-ink/85 md:text-5xl">{hhmm(iso, zone.tz)}</p>
+            <p className="font-display text-4xl leading-none text-asu-ink/85 md:text-5xl">{localHhmm(iso, zone.tz)}</p>
             <ZoneTag zone={{ ...zone, label: zone.label === "Hora local" ? "Tu zona horaria" : `${zone.label} · hora local` }} className="mt-1.5 text-[10px] tracking-[2px] text-asu-ink/75" />
           </div>
         )}
@@ -404,7 +404,7 @@ function RowTime({ iso }: { iso: string }) {
       <ZoneTag zone={{ label: "PY", flag: ASU_ZONE.flag }} className="mt-1 text-[9px] tracking-[1.5px] text-asu" />
       {zone && (
         <div className="mt-1.5">
-          <p className="font-display text-xl text-asu-ink/75">{hhmm(iso, zone.tz)}</p>
+          <p className="font-display text-xl text-asu-ink/75">{localHhmm(iso, zone.tz)}</p>
           <ZoneTag zone={zone} className="mt-0.5 text-[9px] tracking-[1px] text-asu-ink/70" />
         </div>
       )}
