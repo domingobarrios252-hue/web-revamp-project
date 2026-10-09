@@ -166,6 +166,7 @@ import { Route as UsaEntrevistasIndexRouteImport } from './routes/usa.entrevista
 import { Route as UsaEntrevistasSlugRouteImport } from './routes/usa.entrevistas.$slug'
 import { Route as UsaNoticiasIndexRouteImport } from './routes/usa.noticias.index'
 import { Route as UsaNoticiasSlugRouteImport } from './routes/usa.noticias.$slug'
+import { Route as ApiPublicCronResultsSyncRouteImport } from './routes/api/public/cron/results-sync'
 import { Route as HubCountryClubesIndexRouteImport } from './routes/hub.$country.clubes.index'
 import { Route as HubCountryClubesSlugRouteImport } from './routes/hub.$country.clubes.$slug'
 import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
@@ -981,6 +982,12 @@ const UsaNoticiasSlugRoute = UsaNoticiasSlugRouteImport.update({
   path: '/noticias/$slug',
   getParentRoute: () => UsaRoute,
 } as any)
+const ApiPublicCronResultsSyncRoute =
+  ApiPublicCronResultsSyncRouteImport.update({
+    id: '/api/public/cron/results-sync',
+    path: '/api/public/cron/results-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const HubCountryClubesIndexRoute = HubCountryClubesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -1241,6 +1248,7 @@ export interface FileRoutesByFullPath {
   '/usa/$region/': typeof UsaRegionIndexRoute
   '/usa/entrevistas/': typeof UsaEntrevistasIndexRoute
   '/usa/noticias/': typeof UsaNoticiasIndexRoute
+  '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1404,6 +1412,7 @@ export interface FileRoutesByTo {
   '/usa/$region': typeof UsaRegionIndexRoute
   '/usa/entrevistas': typeof UsaEntrevistasIndexRoute
   '/usa/noticias': typeof UsaNoticiasIndexRoute
+  '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
@@ -1581,6 +1590,7 @@ export interface FileRoutesById {
   '/usa/$region/': typeof UsaRegionIndexRoute
   '/usa/entrevistas/': typeof UsaEntrevistasIndexRoute
   '/usa/noticias/': typeof UsaNoticiasIndexRoute
+  '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1760,6 +1770,7 @@ export interface FileRouteTypes {
     | '/usa/$region/'
     | '/usa/entrevistas/'
     | '/usa/noticias/'
+    | '/api/public/cron/results-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -1923,6 +1934,7 @@ export interface FileRouteTypes {
     | '/usa/$region'
     | '/usa/entrevistas'
     | '/usa/noticias'
+    | '/api/public/cron/results-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
@@ -2099,6 +2111,7 @@ export interface FileRouteTypes {
     | '/usa/$region/'
     | '/usa/entrevistas/'
     | '/usa/noticias/'
+    | '/api/public/cron/results-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -2182,6 +2195,7 @@ export interface RootRouteChildren {
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
+  ApiPublicCronResultsSyncRoute: typeof ApiPublicCronResultsSyncRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
@@ -3287,6 +3301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsaNoticiasSlugRouteImport
       parentRoute: typeof UsaRoute
     }
+    '/api/public/cron/results-sync': {
+      id: '/api/public/cron/results-sync'
+      path: '/api/public/cron/results-sync'
+      fullPath: '/api/public/cron/results-sync'
+      preLoaderRoute: typeof ApiPublicCronResultsSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hub/$country/clubes/': {
       id: '/hub/$country/clubes/'
       path: '/'
@@ -3871,6 +3892,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
+  ApiPublicCronResultsSyncRoute: ApiPublicCronResultsSyncRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }
