@@ -1,3 +1,4 @@
+import { hhmm, localSuffix, useViewerZone } from "@/components/tv/asu26/Asu26Time";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Radio, Trophy, CalendarDays, Flag } from "lucide-react";
@@ -30,14 +31,14 @@ export function asu26Nav(base: NavItem[]): NavItem[] {
 
 const dayKey = (iso: string) =>
   new Intl.DateTimeFormat("en-CA", { timeZone: ASU26_TZ, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(iso));
-const hm = (iso: string) =>
-  new Intl.DateTimeFormat("es-ES", { timeZone: ASU26_TZ, hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+const hm = (iso: string) => hhmm(iso, ASU26_TZ);
 const dayLabel = (iso: string) =>
   new Intl.DateTimeFormat("es-ES", { timeZone: ASU26_TZ, weekday: "long", day: "numeric", month: "long" }).format(new Date(iso));
 
 /** Bloque compacto: nº de pruebas, primera, última y modalidad. */
 export function Asu26Today({ items, slug, calendarPiece }: { items: ScheduleItem[]; slug: string; calendarPiece: string | null }) {
   const sorted = [...items].filter((x) => x.scheduled_at).sort((a, b) => a.scheduled_at.localeCompare(b.scheduled_at));
+  const zone = useViewerZone();
   if (sorted.length === 0) return null;
   const today = dayKey(new Date().toISOString());
   let day = sorted.filter((x) => dayKey(x.scheduled_at) === today);
@@ -60,8 +61,8 @@ export function Asu26Today({ items, slug, calendarPiece }: { items: ScheduleItem
         </p>
         <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 border-y border-border py-5 md:grid-cols-4">
           <div><dt className="text-xs text-muted-foreground">Pruebas</dt><dd className="font-display text-2xl text-foreground">{day.length}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Primera</dt><dd className="text-sm text-foreground"><b className="text-gold">{hm(first.scheduled_at)}</b> · {first.event_name}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Última</dt><dd className="text-sm text-foreground"><b className="text-gold">{hm(last.scheduled_at)}</b> · {last.event_name}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">Primera</dt><dd className="text-sm text-foreground"><b className="text-gold">{hm(first.scheduled_at)} PY</b>{zone && <span className="text-muted-foreground">{localSuffix(first.scheduled_at, zone)}</span>} · {first.event_name}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">Última</dt><dd className="text-sm text-foreground"><b className="text-gold">{hm(last.scheduled_at)} PY</b>{zone && <span className="text-muted-foreground">{localSuffix(last.scheduled_at, zone)}</span>} · {last.event_name}</dd></div>
           <div><dt className="text-xs text-muted-foreground">Modalidad</dt><dd className="text-sm uppercase text-foreground">{mods.join(" · ") || "—"}</dd></div>
         </dl>
         <div className="mt-5">
