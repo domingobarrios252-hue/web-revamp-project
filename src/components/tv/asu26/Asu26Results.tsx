@@ -63,7 +63,7 @@ export function Asu26Results({ cfg, results, limit, emptyText }: { cfg: Asu26Str
             <article key={`${rows[0].scheduleItemId}-${name}`} className="overflow-hidden rounded-2xl bg-surface/70">
               <header className="flex items-center justify-between gap-3 border-b border-asu-light/30 bg-asu-deep/60 px-4 py-3">
                 <h3 className="font-display min-w-0 text-lg uppercase tracking-wide text-foreground">{name}</h3>
-                <span className={`font-condensed shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${rows.some((r) => r.state !== "official") ? "border-asu-coral/70 text-asu-coral" : "border-asu-light/50 text-asu-light"}`} data-x=" px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-asu-light">
+                <span className={`font-condensed shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${rows.some((r) => r.state !== "official") ? "border-asu-coral/70 text-asu-coral" : "border-asu-light/50 text-asu-light"}`}>
                   {RESULT_STATE_LABEL[rows.some((r) => r.state === "in_progress") ? "in_progress" : rows.some((r) => r.state === "provisional") ? "provisional" : "official"]}
                 </span>
               </header>
