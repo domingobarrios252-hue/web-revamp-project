@@ -9,7 +9,7 @@ import {
   type Asu26StreamingConfig,
 } from "@/lib/tv/asu26Streaming";
 import { ASU26_TZ } from "@/lib/tv/asu26Streaming";
-import { hhmm, useViewerTz, zoneInfo } from "./Asu26Time";
+import { hhmm, localHhmm, useViewerTz, zoneInfo } from "./Asu26Time";
 
 /**
  * Reproductor ASU26. Solo existe UN iframe montado: el de la señal
@@ -99,7 +99,7 @@ export function Asu26Player({ cfg, nextIso }: { cfg: Asu26StreamingConfig; nextI
                 <span className="mt-0.5 block">
                   {new Intl.DateTimeFormat("es-ES", { timeZone: ASU26_TZ, day: "numeric", month: "short" }).format(new Date(nextIso))} · {hhmm(nextIso, ASU26_TZ)} Asunción
                 </span>
-                {vtz && vtz !== ASU26_TZ && <span className="block text-muted-foreground">{hhmm(nextIso, vtz)} · {zoneInfo(vtz).label}</span>}
+                {vtz && vtz !== ASU26_TZ && <span className="block text-muted-foreground">{localHhmm(nextIso, vtz)} · {zoneInfo(vtz).label}</span>}
               </span>
             )}
           </button>

@@ -17,7 +17,7 @@ import {
   type Modality,
 } from "@/lib/specials/asu26Hub";
 import { ASU26_PATH, ASU26_TZ } from "@/lib/tv/asu26Streaming";
-import { hhmm } from "@/components/tv/asu26/Asu26Time";
+import { hhmm, localHhmm, localSuffix, useViewerZone } from "@/components/tv/asu26/Asu26Time";
 import { flagEmoji, type PieceMember } from "@/lib/specials/pieceMembers";
 
 export type Asu26Module = "calendario" | "tv" | "resultados" | "medallero" | "noticias";
@@ -132,13 +132,16 @@ function CalendarModule() {
 
 function ScheduleRow({ x }: { x: HubScheduleItem }) {
   const st = itemState(x.status);
+  const zone = useViewerZone();
   return (
     <li className="grid grid-cols-[4.5rem_1fr] items-center gap-3 py-3 sm:grid-cols-[5.5rem_1fr_auto]">
       <div className="leading-tight">
         <div className="font-display text-xl text-gold">{hhmm(x.scheduled_at, ASU26_TZ)}</div>
-        <div className="text-[11px] text-muted-foreground">
-          <span className="font-condensed text-[9px] uppercase tracking-wider">ES</span> {hhmm(x.scheduled_at, ES_TZ)}
-        </div>
+        {zone && (
+          <div className="text-[11px] text-muted-foreground">
+            {localHhmm(x.scheduled_at, zone.tz)} <span className="font-condensed text-[9px] uppercase tracking-wider">{zone.label}</span>
+          </div>
+        )}
       </div>
       <div className="min-w-0">
         <div className="break-words text-sm font-semibold text-foreground md:text-base">{x.event_name}</div>
@@ -167,6 +170,7 @@ function ScheduleRow({ x }: { x: HubScheduleItem }) {
 export function NextBroadcast({ compact = false }: { compact?: boolean }) {
   const { loading, schedule, cfg } = useAsu26Hub();
   const n = nextItem(schedule);
+  const zone = useViewerZone();
   const live = cfg.streamStatus === "live" || (n ? itemState(n.status) === "live" : false);
   if (loading) return <Loading />;
   return (
@@ -182,8 +186,8 @@ export function NextBroadcast({ compact = false }: { compact?: boolean }) {
         <>
           <p className="mt-2 break-words text-lg font-semibold text-foreground md:text-2xl">{n.event_name}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {fmtLongDay(n.scheduled_at, ASU26_TZ)} · <strong className="text-foreground">{hhmm(n.scheduled_at, ASU26_TZ)} PY</strong> ·{" "}
-            {hhmm(n.scheduled_at, ES_TZ)} ES · {STATE_LABEL[itemState(n.status)]}
+            {fmtLongDay(n.scheduled_at, ASU26_TZ)} · <strong className="text-foreground">{hhmm(n.scheduled_at, ASU26_TZ)} PY</strong>
+            {localSuffix(n.scheduled_at, zone)} · {STATE_LABEL[itemState(n.status)]}
           </p>
         </>
       ) : (
@@ -368,6 +372,7 @@ export function MemberAsu26Live({ m }: { m: PieceMember }) {
   const mine = results.filter((r) => names.includes(norm(r.athlete)));
   const next = m.next_schedule_item_id ? schedule.find((x) => x.id === m.next_schedule_item_id) : null;
   const showNext = next && itemState(next.status) !== "finished";
+  const zone = useViewerZone();
   if (!showNext && mine.length === 0) return null;
   return (
     <div className="mb-4 rounded-lg border border-gold/30 bg-surface p-3 text-sm">
@@ -375,7 +380,7 @@ export function MemberAsu26Live({ m }: { m: PieceMember }) {
       {showNext && next && (
         <p className="mt-1 text-foreground">
           <span className="text-muted-foreground">Próxima: </span>
-          {next.event_name} · {fmtDay(next.scheduled_at, ASU26_TZ)} {hhmm(next.scheduled_at, ASU26_TZ)} PY
+          {next.event_name} · {fmtDay(next.scheduled_at, ASU26_TZ)} {hhmm(next.scheduled_at, ASU26_TZ)} PY{localSuffix(next.scheduled_at, zone)}
         </p>
       )}
       {mine.length > 0 && (
@@ -422,11 +427,12 @@ export function Asu26CardMeta({ kind, pieceSlug }: { kind: Asu26Module | "selecc
 
 function HubCardMeta({ kind, pieceSlug }: { kind: Asu26Module | "seleccion"; pieceSlug: string }) {
   const d = useAsu26Hub();
+  const zone = useViewerZone();
   if (d.loading) return null;
   let line = "";
   if (kind === "calendario") {
     const n = nextItem(d.schedule);
-    line = n ? `Próxima prueba: ${fmtDay(n.scheduled_at, ASU26_TZ)} · ${hhmm(n.scheduled_at, ASU26_TZ)} PY` : "Competición finalizada";
+    line = n ? `Próxima prueba: ${fmtDay(n.scheduled_at, ASU26_TZ)} · ${hhmm(n.scheduled_at, ASU26_TZ)} PY${localSuffix(n.scheduled_at, zone)}` : "Competición finalizada";
   } else if (kind === "seleccion") {
     line = d.members.total ? `${d.members.total} patinadores · ${d.members.junior} Junior · ${d.members.senior} Senior` : "";
   } else if (kind === "noticias") {
@@ -436,7 +442,7 @@ function HubCardMeta({ kind, pieceSlug }: { kind: Asu26Module | "seleccion"; pie
   } else if (kind === "tv") {
     const n = nextItem(d.schedule);
     const live = d.cfg.streamStatus === "live" || (n && itemState(n.status) === "live");
-    line = live ? "🔴 En directo" : n ? `Próxima retransmisión: ${fmtDay(n.scheduled_at, ASU26_TZ)} · ${hhmm(n.scheduled_at, ASU26_TZ)} PY` : "";
+    line = live ? "🔴 En directo" : n ? `Próxima retransmisión: ${fmtDay(n.scheduled_at, ASU26_TZ)} · ${hhmm(n.scheduled_at, ASU26_TZ)} PY${localSuffix(n.scheduled_at, zone)}` : "";
   }
   if (!line) return null;
   return (

@@ -16,7 +16,7 @@ export function useViewerTz() {
 
 /** Zona IANA → país legible (sin geolocalización: solo la zona del navegador). */
 const TZ_COUNTRY: Record<string, [string, string]> = {
-  "Europe/Madrid": ["España", "es"], "Atlantic/Canary": ["Canarias", "es"], "Africa/Ceuta": ["España", "es"],
+  "Europe/Madrid": ["España peninsular", "es"], "Atlantic/Canary": ["Canarias", "es"], "Africa/Ceuta": ["España", "es"],
   "Europe/Lisbon": ["Portugal", "pt"], "Atlantic/Madeira": ["Portugal", "pt"], "Atlantic/Azores": ["Azores", "pt"],
   "America/Bogota": ["Colombia", "co"], "America/Asuncion": ["Paraguay", "py"],
   "Europe/Rome": ["Italia", "it"], "Europe/Paris": ["Francia", "fr"], "Europe/Brussels": ["Bélgica", "be"],
@@ -71,7 +71,7 @@ export function hhmm(iso: string, tz: string) {
 }
 
 /** Día del visitante distinto del día en Asunción → "+1"/"-1". */
-function dayShift(iso: string, tz: string) {
+export function dayShift(iso: string, tz: string) {
   const f = (z: string) => new Intl.DateTimeFormat("en-CA", { timeZone: z, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(iso));
   const a = f(ASU26_TZ), b = f(tz);
   if (a === b) return "";
@@ -128,6 +128,16 @@ export function DualTime({ iso, variant = "stack" }: { iso: string; variant?: "s
       )}
     </div>
   );
+}
+
+/** Hora del visitante (24 h, con +1/-1 si cambia de día respecto a Asunción). Función única para todo ASU26. */
+export function localHhmm(iso: string, tz: string) {
+  return hhmm(iso, tz) + dayShift(iso, tz);
+}
+
+/** Sufijo " · HH:MM Zona" para textos; vacío si el visitante está en Asunción o su zona no se identifica. */
+export function localSuffix(iso: string, zone: ViewerZone | null) {
+  return zone ? ` · ${localHhmm(iso, zone.tz)} ${zone.label}` : "";
 }
 
 export function TzLegend({ className = "" }: { className?: string }) {

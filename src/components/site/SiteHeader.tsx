@@ -28,6 +28,7 @@ type NavItem =
 const NAV_ITEMS: NavItem[] = [
   { label: "Inicio", to: "/", slug: "inicio" },
   { label: "Actualidad", to: "/noticias", slug: "noticias" },
+  { label: "RollerZone TV", to: "/tv", slug: "rollerzone-tv" },
   { label: "España", to: "/hub/$country", params: { country: "es" }, slug: "espana" },
   { label: "Colombia", to: "/hub/$country", params: { country: "co" }, slug: "colombia" },
   { label: "USA", to: "/usa", slug: "usa" },
@@ -35,7 +36,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Salón de la Fama", to: "/salon-de-la-fama", slug: "salon-de-la-fama" },
   { label: "Eventos", to: "/eventos", slug: "eventos" },
   { label: "Resultados", to: "/resultados", slug: "resultados" },
-  { label: "RollerZone TV", to: "/tv", slug: "rollerzone-tv" },
   { label: "Revista", to: "/revista", slug: "revista" },
   { label: "MVP", to: "/premios-mvp", slug: "premios-mvp" },
 ];
