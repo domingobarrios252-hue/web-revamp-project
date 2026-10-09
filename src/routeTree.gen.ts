@@ -161,6 +161,7 @@ import { Route as PortugalEntrevistasSlugRouteImport } from './routes/portugal.e
 import { Route as PortugalNoticiasIndexRouteImport } from './routes/portugal.noticias.index'
 import { Route as PortugalNoticiasSlugRouteImport } from './routes/portugal.noticias.$slug'
 import { Route as RevistaLeerIdRouteImport } from './routes/revista.leer.$id'
+import { Route as RollerzoneTvWorldSkateGamesAsu26ResultadosRouteImport } from './routes/rollerzone-tv.world-skate-games-asu26_.resultados'
 import { Route as UsaRegionIndexRouteImport } from './routes/usa.$region.index'
 import { Route as UsaRegionCityRouteImport } from './routes/usa.$region.$city'
 import { Route as UsaEntrevistasIndexRouteImport } from './routes/usa.entrevistas.index'
@@ -958,6 +959,12 @@ const RevistaLeerIdRoute = RevistaLeerIdRouteImport.update({
   path: '/leer/$id',
   getParentRoute: () => RevistaRoute,
 } as any)
+const RollerzoneTvWorldSkateGamesAsu26ResultadosRoute =
+  RollerzoneTvWorldSkateGamesAsu26ResultadosRouteImport.update({
+    id: '/rollerzone-tv/world-skate-games-asu26_/resultados',
+    path: '/rollerzone-tv/world-skate-games-asu26/resultados',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const UsaRegionIndexRoute = UsaRegionIndexRouteImport.update({
   id: '/$region/',
   path: '/$region/',
@@ -1243,6 +1250,7 @@ export interface FileRoutesByFullPath {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/rollerzone-tv/world-skate-games-asu26/resultados': typeof RollerzoneTvWorldSkateGamesAsu26ResultadosRoute
   '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
@@ -1408,6 +1416,7 @@ export interface FileRoutesByTo {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/rollerzone-tv/world-skate-games-asu26/resultados': typeof RollerzoneTvWorldSkateGamesAsu26ResultadosRoute
   '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
@@ -1587,6 +1596,7 @@ export interface FileRoutesById {
   '/portugal/entrevistas/$slug': typeof PortugalEntrevistasSlugRoute
   '/portugal/noticias/$slug': typeof PortugalNoticiasSlugRoute
   '/revista/leer/$id': typeof RevistaLeerIdRoute
+  '/rollerzone-tv/world-skate-games-asu26_/resultados': typeof RollerzoneTvWorldSkateGamesAsu26ResultadosRoute
   '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
@@ -1768,6 +1778,7 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/rollerzone-tv/world-skate-games-asu26/resultados'
     | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
@@ -1933,6 +1944,7 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/rollerzone-tv/world-skate-games-asu26/resultados'
     | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
@@ -2111,6 +2123,7 @@ export interface FileRouteTypes {
     | '/portugal/entrevistas/$slug'
     | '/portugal/noticias/$slug'
     | '/revista/leer/$id'
+    | '/rollerzone-tv/world-skate-games-asu26_/resultados'
     | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
@@ -2207,6 +2220,7 @@ export interface RootRouteChildren {
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
+  RollerzoneTvWorldSkateGamesAsu26ResultadosRoute: typeof RollerzoneTvWorldSkateGamesAsu26ResultadosRoute
   ApiPublicCronResultsSyncRoute: typeof ApiPublicCronResultsSyncRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -3278,6 +3292,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RevistaLeerIdRouteImport
       parentRoute: typeof RevistaRoute
     }
+    '/rollerzone-tv/world-skate-games-asu26_/resultados': {
+      id: '/rollerzone-tv/world-skate-games-asu26_/resultados'
+      path: '/rollerzone-tv/world-skate-games-asu26/resultados'
+      fullPath: '/rollerzone-tv/world-skate-games-asu26/resultados'
+      preLoaderRoute: typeof RollerzoneTvWorldSkateGamesAsu26ResultadosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/usa/$region/': {
       id: '/usa/$region/'
       path: '/$region'
@@ -3913,6 +3934,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
+  RollerzoneTvWorldSkateGamesAsu26ResultadosRoute:
+    RollerzoneTvWorldSkateGamesAsu26ResultadosRoute,
   ApiPublicCronResultsSyncRoute: ApiPublicCronResultsSyncRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

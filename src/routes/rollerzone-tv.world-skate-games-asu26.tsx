@@ -70,7 +70,7 @@ type Item = ScheduleItem;
 const NAV = [
   { id: "directo", label: "Directo" },
   { id: "calendario", label: "Calendario" },
-  { id: "resultados", label: "Resultados" },
+  { id: "resultados", label: "Resultados", href: "/rollerzone-tv/world-skate-games-asu26/resultados" },
   { id: "especial", label: "España", link: "espana" as const },
   { id: "especial", label: "Medallero", link: "medallero" as const },
   { id: "especial", label: "Noticias", link: "noticias" as const },
@@ -166,9 +166,9 @@ function Asu26Hub() {
           {NAV.map((n) => (
             <a
               key={n.label}
-              href={"link" in n && n.link ? specialLink(cfg.links[n.link]) : `#${n.id}`}
+              href={"href" in n && n.href ? n.href : "link" in n && n.link ? specialLink(cfg.links[n.link]) : `#${n.id}`}
               onClick={(e) => {
-                if ("link" in n && n.link) return;
+                if (("link" in n && n.link) || ("href" in n && n.href)) return;
                 e.preventDefault();
                 document.getElementById(n.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
@@ -296,7 +296,15 @@ function Asu26Hub() {
               <img src={veloproLogo.url} alt="VeloPro" className="h-10 w-auto max-w-[180px] object-contain mix-blend-multiply md:h-12" loading="lazy" />
             </div>
             <div className="asu-dark overflow-hidden rounded-xl bg-asu-deep p-3 md:p-5">
-              <Asu26Results cfg={cfg} results={results} />
+              <Asu26Results cfg={cfg} results={results} limit={4} />
+            </div>
+            <div className="mt-5 flex justify-center">
+              <Link
+                to="/rollerzone-tv/world-skate-games-asu26/resultados"
+                className="font-condensed inline-flex min-h-12 items-center gap-2 rounded-lg bg-asu-coral px-6 text-sm font-bold uppercase tracking-widest text-background transition-opacity hover:opacity-90"
+              >
+                Ver todos los resultados <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </div>

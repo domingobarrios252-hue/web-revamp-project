@@ -8,7 +8,7 @@ import type { NavItem, ScheduleItem } from "@/lib/specials/liveEvent";
 export const ASU26_SPECIAL_SLUG = "world-skate-games-asu26-patinaje-velocidad";
 export const ASU26_TV_PATH = "/rollerzone-tv/world-skate-games-asu26";
 export const ASU26_DIRECTO = `${ASU26_TV_PATH}#directo`;
-export const ASU26_RESULTADOS = `${ASU26_TV_PATH}#resultados`;
+export const ASU26_RESULTADOS = `${ASU26_TV_PATH}/resultados`;
 
 const ORDER = ["calendario", "espana", "medallero", "noticias", "galeria"] as const;
 const LABELS: Record<string, string> = {
