@@ -97,7 +97,7 @@ async function loadManual(
     category: r.category,
     gender: r.gender,
     phase: r.round,
-    position: r.position,
+    position: r.source === "official" && r.position === 0 ? null : r.position,
     bib: r.bib,
     athlete: r.athlete_name,
     country: r.country,

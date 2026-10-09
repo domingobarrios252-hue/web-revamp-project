@@ -47,7 +47,7 @@ function SyncAdmin() {
   const control = async (action: string, value?: string) => {
     if (action === "reactivate" && !confirm("¿Autorizas reactivar las consultas a la web oficial de ASU26?")) return;
     setBusy(true);
-    const { error } = await supabase.rpc("results_sync_control", { _key: KEY, _action: action, _value: value ?? null });
+    const { error } = await supabase.rpc("results_sync_control", { _key: KEY, _action: action, _value: value });
     setBusy(false);
     if (error) toast.error("No se pudo aplicar el cambio");
     else toast.success("Cambio aplicado");

@@ -250,7 +250,8 @@ async function syncCore(st: State) {
       race: info?.race || [s(r.disciplina), s(r.sub_disciplina)].filter(Boolean).join(" · ") || null,
       category: info?.category ?? s(r.nivel),
       gender: info?.gender ?? (r.genero ? (GENDER[String(r.genero)] ?? String(r.genero)) : null),
-      position: typeof r.puesto === "number" ? r.puesto : r.puesto ? Number(r.puesto) || null : null,
+      // Sin puesto en la fuente (p. ej. DNF): se guarda 0 y se muestra como «—».
+      position: typeof r.puesto === "number" ? r.puesto : Number(r.puesto) || 0,
       bib: s(r.dorsal) ?? s(v.bib),
       athlete_name: team && !person ? team : person || team || "—",
       club: team && person ? team : null,
