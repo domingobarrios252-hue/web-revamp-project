@@ -27,7 +27,10 @@ Diseño público, streaming, noticias, calendario (las 42 pruebas), medallero ma
 ### 3. Programación
 - Un aviso cada 5 minutos llama a una dirección protegida con clave secreta.
 - Dentro de las jornadas activas, sincroniza en cada aviso. Fuera de ellas, una vez cada 6 horas o en pausa, según el ajuste de Admin.
-- Si hay 5 fallos seguidos, la frecuencia baja a 15 minutos hasta el siguiente éxito.
+- **Parada total de seguridad:** la sincronización se detiene por completo si hay 5 errores seguidos, si la web responde 429 (demasiadas consultas) o si niega el acceso (401/403). No se reduce la frecuencia: se para. El motivo y la hora quedan visibles en Admin.
+- **Interruptor de emergencia en Admin:** al activarlo, bloquea al instante todas las consultas a ASU26, tanto las automáticas como «Sincronizar ahora». Antes de cada consulta se comprueba el bloqueo.
+- **Reactivación solo con tu autorización:** tras una parada o un bloqueo de emergencia no se reanuda nada sola. Hay que pulsar «Reactivar» en Admin, solo disponible para administradores. Queda registrado quién lo hizo y cuándo.
+- Los resultados ya guardados se siguen mostrando durante cualquier parada.
 - **Queda desactivada hasta tu aprobación tras la prueba.**
 
 ### 4. Vinculación con el calendario
@@ -42,6 +45,7 @@ Diseño público, streaming, noticias, calendario (las 42 pruebas), medallero ma
 ### 6. Panel Admin (dentro de Resultados → Eventos ASU26)
 - Estado: última actualización, último éxito, filas importadas y último error legible.
 - Botones «Sincronizar ahora» y activar o desactivar la automatización.
+- Interruptor de emergencia y botón «Reactivar» (solo administradores), con el motivo de la última parada.
 - Lista de equivalencias con su estado y acciones confirmar, cambiar o ignorar.
 - Selector de prioridad y vista previa de lo que verá el público.
 
@@ -51,7 +55,7 @@ La sección Resultados actual de Rollerzone.TV ASU26 recibe estos datos por la m
 ## Prueba antes de activar
 1. Importación manual de prueba: hoy Speed está vacío, así que se prueba con una modalidad que ya tiene resultados (Skate Cross), en un evento de prueba no visible. Se comprueban el formato, los países y los tiempos.
 2. Se ejecuta dos y tres veces seguidas para comprobar que el nº de filas no cambia (sin duplicados).
-3. Se simula un error de conexión y se comprueba que los datos se conservan.
+3. Se simula un error de conexión y se comprueba que los datos se conservan. También se simulan 5 errores seguidos y una respuesta 429/403, y se comprueba que la sincronización se para y no se reanuda sin reactivación. Por último, se comprueba que el interruptor de emergencia bloquea también «Sincronizar ahora».
 4. Se borra todo lo de prueba y se comprueba que los manuales y las 42 pruebas siguen intactos.
 5. Te presento el resultado y, con tu aprobación, se activa Speed cada 5 minutos.
 6. El primer resultado real de Speed (10 de octubre) se revisa en cuanto aparezca.
