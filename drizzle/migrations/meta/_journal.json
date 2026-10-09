@@ -29,6 +29,13 @@
       "when": 1791564222931,
       "tag": "0003_enable_cron_net",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791564237830,
+      "tag": "0004_results_sync_cron_token",
+      "breakpoints": true
     }
   ]
 }
