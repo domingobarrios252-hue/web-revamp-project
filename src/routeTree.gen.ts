@@ -70,6 +70,7 @@ import { Route as AdminResultadosRouteImport } from './routes/admin.resultados'
 import { Route as AdminResultadosEventosRouteImport } from './routes/admin.resultados-eventos'
 import { Route as AdminResultadosImportarRouteImport } from './routes/admin.resultados-importar'
 import { Route as AdminResultadosPdfsRouteImport } from './routes/admin.resultados-pdfs'
+import { Route as AdminResultadosSyncRouteImport } from './routes/admin.resultados-sync'
 import { Route as AdminRevistaCtaRouteImport } from './routes/admin.revista-cta'
 import { Route as AdminRevistasRouteImport } from './routes/admin.revistas'
 import { Route as AdminSalonDeLaFamaRouteImport } from './routes/admin.salon-de-la-fama'
@@ -489,6 +490,11 @@ const AdminResultadosImportarRoute = AdminResultadosImportarRouteImport.update({
 const AdminResultadosPdfsRoute = AdminResultadosPdfsRouteImport.update({
   id: '/resultados-pdfs',
   path: '/resultados-pdfs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminResultadosSyncRoute = AdminResultadosSyncRouteImport.update({
+  id: '/resultados-sync',
+  path: '/resultados-sync',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRevistaCtaRoute = AdminRevistaCtaRouteImport.update({
@@ -1150,6 +1156,7 @@ export interface FileRoutesByFullPath {
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
+  '/admin/resultados-sync': typeof AdminResultadosSyncRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -1321,6 +1328,7 @@ export interface FileRoutesByTo {
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
+  '/admin/resultados-sync': typeof AdminResultadosSyncRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -1492,6 +1500,7 @@ export interface FileRoutesById {
   '/admin/resultados-eventos': typeof AdminResultadosEventosRoute
   '/admin/resultados-importar': typeof AdminResultadosImportarRoute
   '/admin/resultados-pdfs': typeof AdminResultadosPdfsRoute
+  '/admin/resultados-sync': typeof AdminResultadosSyncRoute
   '/admin/revista-cta': typeof AdminRevistaCtaRoute
   '/admin/revistas': typeof AdminRevistasRoute
   '/admin/salon-de-la-fama': typeof AdminSalonDeLaFamaRoute
@@ -1672,6 +1681,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
     | '/admin/resultados-pdfs'
+    | '/admin/resultados-sync'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -1843,6 +1853,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
     | '/admin/resultados-pdfs'
+    | '/admin/resultados-sync'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -2013,6 +2024,7 @@ export interface FileRouteTypes {
     | '/admin/resultados-eventos'
     | '/admin/resultados-importar'
     | '/admin/resultados-pdfs'
+    | '/admin/resultados-sync'
     | '/admin/revista-cta'
     | '/admin/revistas'
     | '/admin/salon-de-la-fama'
@@ -2627,6 +2639,13 @@ declare module '@tanstack/react-router' {
       path: '/resultados-pdfs'
       fullPath: '/admin/resultados-pdfs'
       preLoaderRoute: typeof AdminResultadosPdfsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/resultados-sync': {
+      id: '/admin/resultados-sync'
+      path: '/resultados-sync'
+      fullPath: '/admin/resultados-sync'
+      preLoaderRoute: typeof AdminResultadosSyncRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/revista-cta': {
@@ -3473,6 +3492,7 @@ interface AdminRouteChildren {
   AdminResultadosEventosRoute: typeof AdminResultadosEventosRoute
   AdminResultadosImportarRoute: typeof AdminResultadosImportarRoute
   AdminResultadosPdfsRoute: typeof AdminResultadosPdfsRoute
+  AdminResultadosSyncRoute: typeof AdminResultadosSyncRoute
   AdminRevistaCtaRoute: typeof AdminRevistaCtaRoute
   AdminRevistasRoute: typeof AdminRevistasRoute
   AdminSalonDeLaFamaRoute: typeof AdminSalonDeLaFamaRoute
@@ -3525,6 +3545,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminResultadosEventosRoute: AdminResultadosEventosRoute,
   AdminResultadosImportarRoute: AdminResultadosImportarRoute,
   AdminResultadosPdfsRoute: AdminResultadosPdfsRoute,
+  AdminResultadosSyncRoute: AdminResultadosSyncRoute,
   AdminRevistaCtaRoute: AdminRevistaCtaRoute,
   AdminRevistasRoute: AdminRevistasRoute,
   AdminSalonDeLaFamaRoute: AdminSalonDeLaFamaRoute,
