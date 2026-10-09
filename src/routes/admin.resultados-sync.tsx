@@ -145,7 +145,7 @@ function SyncAdmin() {
                   <li key={l.source_competition_id} className="grid gap-2 p-3 text-sm lg:grid-cols-[1fr_1.4fr_auto]">
                     <div className="min-w-0">
                       <div className="font-semibold">{l.label || l.source_competition_id}</div>
-                      <div className="text-xs text-muted-foreground">{l.competition_date} · fuente: {l.source_state ?? "—"} · {LINK_LABEL[l.link_status]}</div>
+                      <div className="text-xs text-muted-foreground">{l.competition_date} · fuente: {l.source_state ?? "—"} · {l.link_status === "pending" && l.schedule_item_id ? "Sugerencia pendiente de revisión (no se publica)" : LINK_LABEL[l.link_status]}</div>
                     </div>
                     <select
                       value={l.schedule_item_id ?? ""}
@@ -160,7 +160,7 @@ function SyncAdmin() {
                       ))}
                     </select>
                     <div className="flex flex-wrap gap-1">
-                      {l.link_status === "auto" && <button onClick={() => saveLink(l, { link_status: "confirmed" })} className={btn + " border-gold text-gold"}>Confirmar</button>}
+                      {(l.link_status === "auto" || (l.link_status === "pending" && l.schedule_item_id)) && <button onClick={() => saveLink(l, { link_status: "confirmed" })} className={btn + " border-gold text-gold"}>Confirmar</button>}
                       <button onClick={() => saveLink(l, { link_status: l.link_status === "ignored" ? "pending" : "ignored" })} className={btn + " border-border"}>
                         {l.link_status === "ignored" ? "Recuperar" : "Ignorar"}
                       </button>

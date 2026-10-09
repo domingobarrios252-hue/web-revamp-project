@@ -193,10 +193,13 @@ async function syncCore(st: State) {
     let schedule_item_id = prev?.schedule_item_id ?? null;
     let link_status = prev?.link_status ?? "pending";
     if (!prev || (prev.link_status === "pending" && !prev.schedule_item_id)) {
-      const cand = autoMatch(sched ?? [], s(c.fecha), s(d.nombre), s(d.sub_disciplina), category);
+      const cand = autoMatch(sched ?? [], s(c.fecha), s(d.nombre), s(d.sub_disciplina), category, gender);
       if (cand) {
-        schedule_item_id = cand;
-        link_status = "auto";
+        schedule_item_id = cand.id;
+        // Solo es automática si la prueba del calendario fija la MISMA categoría y género.
+        // Si la prueba es compartida (sin categoría/género), queda como sugerencia pendiente:
+        // no se publica hasta que Admin la confirme.
+        link_status = cand.exact ? "auto" : "pending";
       }
     }
     newLinks.push({
@@ -291,14 +294,16 @@ async function syncCore(st: State) {
 const norm = (t: string | null | undefined) => (t ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 const distance = (t: string | null) => (t ?? "").toLowerCase().match(/\d+\s*m\b|\d+m/)?.[0]?.replace(/\s/g, "") ?? "";
 
-/** Propuesta automática: solo si hay UNA coincidencia clara (fecha + tipo + distancia + categoría compatible). */
+/** Sugerencia: solo si hay UNA coincidencia (fecha + tipo + distancia + categoría/género compatibles).
+ *  exact=true únicamente cuando la prueba del calendario especifica la misma categoría y el mismo género. */
 function autoMatch(
-  sched: { id: string; event_name: string | null; category: string | null; scheduled_at: string | null; venue_type: string | null; phase: string | null }[],
+  sched: { id: string; event_name: string | null; category: string | null; gender?: string | null; scheduled_at: string | null; venue_type: string | null; phase: string | null }[],
   fecha: string | null,
   venue: string | null,
   sub: string | null,
   category: string | null,
-): string | null {
+  gender: string | null,
+): { id: string; exact: boolean } | null {
   if (!fecha || !sub) return null;
   const dist = distance(sub);
   const kind = norm(sub).replace(/\d+m?/g, "").slice(0, 6);
@@ -311,8 +316,12 @@ function autoMatch(
     if (dist && distance(x.event_name) !== dist) return false;
     if (kind && !norm(x.event_name).includes(kind.slice(0, 4))) return false;
     if (category && x.category && norm(x.category) !== norm(category)) return false;
+    if (gender && x.gender && norm(x.gender) !== norm(gender)) return false;
     if (!/final/i.test(x.phase ?? "") || /semi|quarter/i.test(x.phase ?? "")) return false;
     return true;
   });
-  return cands.length === 1 ? cands[0].id : null;
+  if (cands.length !== 1) return null;
+  const c = cands[0];
+  const exact = !!category && !!gender && !!c.category && !!c.gender && norm(c.category) === norm(category) && norm(c.gender) === norm(gender);
+  return { id: c.id, exact };
 }
