@@ -8,6 +8,7 @@ import { TvMobileNav } from "@/components/tv/TvMobileNav";
 import { Asu26TvCard } from "@/components/tv/asu26/Asu26TvCard";
 import { Asu26TvHero } from "@/components/tv/asu26/Asu26TvHero";
 import { Asu26TvTicker } from "@/components/tv/asu26/Asu26TvTicker";
+import { Asu26TvLatestResults } from "@/components/tv/asu26/Asu26TvLatestResults";
 import { ASU26_DEFAULTS, loadAsu26Config, type Asu26StreamingConfig } from "@/lib/tv/asu26Streaming";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
 import { TvPremiumBanner } from "@/components/tv/TvPremiumBanner";
@@ -315,6 +316,7 @@ function TvPage() {
         <>
           <Asu26TvHero logoUrl={asu.logoAsu26Url} />
           <Asu26TvTicker />
+          <Asu26TvLatestResults />
         </>
       ) : (
         <>
