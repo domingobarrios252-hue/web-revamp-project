@@ -59,7 +59,7 @@ export function Asu26TvLatestResults() {
 
   const byId = useMemo(() => new Map(items.map((i) => [i.id, i])), [items]);
   const groups = useMemo(
-    () => groupResults(results.filter((r) => r.scheduleItemId && byId.has(r.scheduleItemId) && r.athlete)).slice(0, 5),
+    () => groupResults(results.filter((r) => r.scheduleItemId && byId.has(r.scheduleItemId) && r.athlete && r.category && r.gender)).slice(0, 5),
     [results, byId],
   );
 
