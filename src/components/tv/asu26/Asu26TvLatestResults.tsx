@@ -96,7 +96,7 @@ export function Asu26TvLatestResults() {
                 <Link
                   key={name + (f.scheduleItemId ?? "")}
                   to="/rollerzone-tv/world-skate-games-asu26/resultados"
-                  className="group flex flex-col rounded-2xl border border-border bg-background/70 p-4 transition-colors hover:border-gold/60"
+                  className="group flex min-w-0 flex-col rounded-2xl border border-border bg-background/70 p-4 transition-colors hover:border-gold/60"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="font-display min-w-0 text-base uppercase leading-tight text-foreground">{f.race ?? name}</h3>
