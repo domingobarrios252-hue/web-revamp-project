@@ -3414,6 +3414,7 @@ export type Database = {
       }
       schedule_items: {
         Row: {
+          auto_finalized_at: string | null
           category: string | null
           country_code: string
           created_at: string
@@ -3434,6 +3435,7 @@ export type Database = {
           venue_type: string | null
         }
         Insert: {
+          auto_finalized_at?: string | null
           category?: string | null
           country_code?: string
           created_at?: string
@@ -3454,6 +3456,7 @@ export type Database = {
           venue_type?: string | null
         }
         Update: {
+          auto_finalized_at?: string | null
           category?: string | null
           country_code?: string
           created_at?: string
