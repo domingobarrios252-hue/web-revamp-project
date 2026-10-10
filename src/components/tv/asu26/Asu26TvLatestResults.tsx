@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { loadEventResults, RESULT_STATE_LABEL, type NormalizedResult } from "@/lib/results/provider";
 import { ASU26_RESULT_EVENT_ID } from "@/lib/tv/asu26Streaming";
 import { groupResults } from "./Asu26Results";
+import { RollerzoneMark, VeloproCredit } from "./ResultsBrand";
 
 const FLAG: Record<string, string> = {
   ESP: "🇪🇸", COL: "🇨🇴", FRA: "🇫🇷", ITA: "🇮🇹", POR: "🇵🇹", BEL: "🇧🇪", NED: "🇳🇱", GER: "🇩🇪",
@@ -98,10 +99,16 @@ export function Asu26TvLatestResults() {
                   className="group flex flex-col rounded-2xl border border-border bg-background/70 p-4 transition-colors hover:border-gold/60"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-display text-base uppercase leading-tight text-foreground">{f.race ?? name}</h3>
-                    <span className={`font-condensed shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${final ? "border-asu-light/50 text-asu-light" : "border-asu-coral/70 text-asu-coral"}`}>
-                      {RESULT_STATE_LABEL[state]}
-                    </span>
+                    <h3 className="font-display min-w-0 text-base uppercase leading-tight text-foreground">{f.race ?? name}</h3>
+                    <RollerzoneMark />
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                    <VeloproCredit />
+                    {state !== "unconfirmed" && (
+                      <span className={`font-condensed shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${final ? "border-asu-light/50 text-asu-light" : "border-asu-coral/70 text-asu-coral"}`}>
+                        {RESULT_STATE_LABEL[state]}
+                      </span>
+                    )}
                   </div>
                   <p className="font-condensed mt-1 text-[11px] uppercase tracking-[2px] text-muted-foreground">
                     {[modality(it), f.category, f.gender, f.phase].filter(Boolean).join(" · ")}
