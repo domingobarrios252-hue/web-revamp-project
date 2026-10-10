@@ -69,7 +69,8 @@ export function Asu26Results({ cfg, results, limit, emptyText }: { cfg: Asu26Str
               </header>
               <ol>
                 {rows.map((r) => {
-                  const p = r.position ?? 0;
+                  // Medallas solo con resultado oficial confirmado.
+                  const p = r.state === "official" ? (r.position ?? 0) : 0;
                   const code = (r.country ?? "").toUpperCase().slice(0, 3);
                   const isEsp = code === "ESP";
                   return (
