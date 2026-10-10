@@ -3351,6 +3351,8 @@ export type Database = {
           source_base_url: string
           target_result_event_id: string
           updated_at: string
+          vensport_home_fetched_at: string | null
+          vensport_last_fetch_at: string | null
         }
         Insert: {
           active_from?: string
@@ -3376,6 +3378,8 @@ export type Database = {
           source_base_url: string
           target_result_event_id: string
           updated_at?: string
+          vensport_home_fetched_at?: string | null
+          vensport_last_fetch_at?: string | null
         }
         Update: {
           active_from?: string
@@ -3401,6 +3405,8 @@ export type Database = {
           source_base_url?: string
           target_result_event_id?: string
           updated_at?: string
+          vensport_home_fetched_at?: string | null
+          vensport_last_fetch_at?: string | null
         }
         Relationships: [
           {
@@ -4386,6 +4392,51 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vensport_pages: {
+        Row: {
+          competition_date: string | null
+          complete: boolean
+          created_at: string
+          division_id: string
+          is_section: boolean
+          last_fetched_at: string | null
+          last_status: string | null
+          row_count: number
+          section: string
+          source_competition_id: string | null
+          sync_key: string
+          title: string
+        }
+        Insert: {
+          competition_date?: string | null
+          complete?: boolean
+          created_at?: string
+          division_id: string
+          is_section?: boolean
+          last_fetched_at?: string | null
+          last_status?: string | null
+          row_count?: number
+          section?: string
+          source_competition_id?: string | null
+          sync_key: string
+          title: string
+        }
+        Update: {
+          competition_date?: string | null
+          complete?: boolean
+          created_at?: string
+          division_id?: string
+          is_section?: boolean
+          last_fetched_at?: string | null
+          last_status?: string | null
+          row_count?: number
+          section?: string
+          source_competition_id?: string | null
+          sync_key?: string
+          title?: string
         }
         Relationships: []
       }
