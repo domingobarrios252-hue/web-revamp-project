@@ -1,6 +1,7 @@
 import type { NormalizedResult } from "@/lib/results/provider";
 import { RESULT_STATE_LABEL } from "@/lib/results/provider";
 import { httpsOnly, type Asu26StreamingConfig } from "@/lib/tv/asu26Streaming";
+import { RollerzoneMark, VeloproCredit } from "./ResultsBrand";
 
 const FLAG: Record<string, string> = {
   ESP: "🇪🇸", COL: "🇨🇴", FRA: "🇫🇷", ITA: "🇮🇹", POR: "🇵🇹", BEL: "🇧🇪", NED: "🇳🇱", GER: "🇩🇪",
@@ -58,14 +59,22 @@ export function Asu26Results({ cfg, results, limit, emptyText }: { cfg: Asu26Str
           </p>
         </div>
       ) : (
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           {groups.map(([name, rows]) => (
-            <article key={`${rows[0].scheduleItemId}-${name}`} className="overflow-hidden rounded-2xl bg-surface/70">
-              <header className="flex items-center justify-between gap-3 border-b border-asu-light/30 bg-asu-deep/60 px-4 py-3">
-                <h3 className="font-display min-w-0 text-lg uppercase tracking-wide text-foreground">{name}</h3>
-                <span className={`font-condensed shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${rows.some((r) => r.state !== "official") ? "border-asu-coral/70 text-asu-coral" : "border-asu-light/50 text-asu-light"}`}>
-                  {RESULT_STATE_LABEL[rows.some((r) => r.state === "in_progress") ? "in_progress" : rows.some((r) => r.state === "provisional") ? "provisional" : rows.some((r) => r.state === "unconfirmed") ? "unconfirmed" : "official"]}
-                </span>
+            <article key={`${rows[0].scheduleItemId}-${name}`} className="min-w-0 overflow-hidden rounded-2xl bg-surface/70">
+              <header className="border-b border-asu-light/30 bg-asu-deep/60 px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-display min-w-0 text-lg uppercase tracking-wide text-foreground">{name}</h3>
+                  <RollerzoneMark />
+                </div>
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                  <VeloproCredit />
+                  {rows.every((r) => r.state === "unconfirmed") ? null : (
+                    <span className={`font-condensed shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${rows.some((r) => r.state !== "official") ? "border-asu-coral/70 text-asu-coral" : "border-asu-light/50 text-asu-light"}`}>
+                      {RESULT_STATE_LABEL[rows.some((r) => r.state === "in_progress") ? "in_progress" : rows.some((r) => r.state === "provisional") ? "provisional" : rows.some((r) => r.state === "unconfirmed") ? "unconfirmed" : "official"]}
+                    </span>
+                  )}
+                </div>
               </header>
               <ol>
                 {rows.map((r) => {
