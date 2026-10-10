@@ -1,46 +1,12 @@
 /**
  * Importación de clasificaciones Vensport (autorizada por VeloPro). Solo servidor.
  * Respeta Crawl-delay 30 s, la parada de emergencia y la parada de seguridad de results_sync_state.
- * Aún NO está conectada al aviso programado: solo importación controlada por pruebas concretas.
  */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   VENSPORT_BASE, VENSPORT_MIN_DELAY_MS, VENSPORT_UA,
   matchLink, parseFinalRanking, parseHomeSections, parseRaceTitle, parseSectionRaces, rankingToRows, type VensportLink,
 } from "@/lib/results/vensportSource";
-
-type Item = { divisionId: string; title: string; section: string };
-export type VensportImportReport = { ok: boolean; error?: string; races: { title: string; link: string | null; complete: boolean; rows: number }[] };
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-export async function runVensportImport(key: string, items: Item[]): Promise<VensportImportReport> {
-  const { data: st } = await supabaseAdmin.from("results_sync_state").select("emergency_stop,halted,target_result_event_id").eq("key", key).maybeSingle();
-  if (!st) return { ok: false, error: "Configuración no encontrada", races: [] };
-  if (st.emergency_stop) return { ok: false, error: "Interruptor de emergencia activo", races: [] };
-  if (st.halted) return { ok: false, error: "Sincronización detenida", races: [] };
-  const { data: links } = await supabaseAdmin.from("asu26_results_links").select("source_competition_id,label,schedule_item_id,link_status").eq("sync_key", key);
-  const report: VensportImportReport = { ok: true, races: [] };
-  for (const [i, it] of items.slice(0, 8).entries()) {
-    if (i) await sleep(VENSPORT_MIN_DELAY_MS + 1000);
-    const res = await fetch(`${VENSPORT_BASE}/divisions/${it.divisionId}`, { headers: { "User-Agent": VENSPORT_UA }, signal: AbortSignal.timeout(20000) });
-    if (res.status === 429 || res.status === 401 || res.status === 403) {
-      await supabaseAdmin.from("results_sync_state").update({ halted: true, halted_at: new Date().toISOString(), halt_reason: `Vensport respondió ${res.status}` }).eq("key", key);
-      return { ...report, ok: false, error: `Vensport respondió ${res.status}: sincronización detenida` };
-    }
-    if (!res.ok) return { ...report, ok: false, error: `Vensport respondió ${res.status}` };
-    const race = parseRaceTitle(it.divisionId, it.title, it.section);
-    const rk = parseFinalRanking(await res.text(), race);
-    const link = matchLink(race, (links ?? []) as VensportLink[]);
-    const rows = link ? rankingToRows(rk, link, st.target_result_event_id) : [];
-    if (rows.length) {
-      const { error } = await supabaseAdmin.from("live_results").upsert(rows as never, { onConflict: "result_event_id,source_result_id" });
-      if (error) return { ...report, ok: false, error: `No se pudieron guardar: ${error.message}` };
-    }
-    report.races.push({ title: race.title, link: link?.label ?? null, complete: rk.complete, rows: rows.length });
-  }
-  return report;
-}
 
 // ───────────── Sincronización automática (1 página por aviso, avisos cada 30 s) ─────────────
 
@@ -51,7 +17,7 @@ const COMPLETE_EVERY_MS = 10 * 60_000; // clasificaciones completas (correccione
 const asuDay = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Asuncion" }).format(d);
 
 type Page = { division_id: string; title: string; section: string; is_section: boolean; source_competition_id: string | null; competition_date: string | null; complete: boolean; last_fetched_at: string | null };
-export type TickOutcome = { ok: boolean; skipped?: string; page?: string; rows?: number; complete?: boolean; error?: string; halted?: boolean };
+export type TickOutcome = { ok: boolean; skipped?: string; page?: string; rows?: number; complete?: boolean; retired?: number; error?: string; halted?: boolean };
 
 function pickPage(pages: Page[], now: number): Page | null {
   const today = asuDay(new Date(now));
@@ -66,15 +32,17 @@ function pickPage(pages: Page[], now: number): Page | null {
   return secs[0] ?? null;
 }
 
-export async function runVensportTick(key: string): Promise<TickOutcome> {
+export async function runVensportTick(key: string, mode: "scheduled" | "manual" = "scheduled"): Promise<TickOutcome> {
   const { data: st } = await supabaseAdmin.from("results_sync_state").select("*").eq("key", key).maybeSingle();
   if (!st) return { ok: false, error: "Configuración no encontrada" };
   if (st.emergency_stop) return { ok: true, skipped: "Interruptor de emergencia activo" };
   if (st.halted) return { ok: true, skipped: "Sincronización detenida: requiere reactivación en Admin" };
-  if (!st.enabled) return { ok: true, skipped: "Automatización desactivada" };
   const now = new Date();
-  const day = asuDay(now);
-  if (day < st.active_from || day > st.active_to) return { ok: true, skipped: "Fuera de jornada" };
+  if (mode === "scheduled") {
+    if (!st.enabled) return { ok: true, skipped: "Automatización desactivada" };
+    const day = asuDay(now);
+    if (day < st.active_from || day > st.active_to) return { ok: true, skipped: "Fuera de jornada" };
+  }
 
   // Reserva atómica: nunca menos de 30 s entre consultas a Vensport.
   const cutoff = new Date(now.getTime() - VENSPORT_MIN_DELAY_MS + 1000).toISOString();
@@ -87,7 +55,7 @@ export async function runVensportTick(key: string): Promise<TickOutcome> {
   if (!got || got.length === 0) return { ok: true, skipped: "Menos de 30 s desde la última consulta" };
 
   try {
-    const out = await tickCore(key, st as never, now);
+    const out = await tickCore(key, st as never, now, mode);
     await supabaseAdmin.from("results_sync_state").update({ last_success_at: new Date().toISOString(), last_error: null, consecutive_failures: 0, ...(out.rows !== undefined ? { last_rows: out.rows } : {}) } as never).eq("key", key);
     return out;
   } catch (e) {
@@ -117,7 +85,7 @@ async function vget(path: string): Promise<string> {
   return res.text();
 }
 
-async function tickCore(key: string, st: { target_result_event_id: string; vensport_home_fetched_at: string | null }, now: Date): Promise<TickOutcome> {
+async function tickCore(key: string, st: { target_result_event_id: string; vensport_home_fetched_at: string | null }, now: Date, mode: "scheduled" | "manual" = "scheduled"): Promise<TickOutcome> {
   const homeAge = now.getTime() - (st.vensport_home_fetched_at ? Date.parse(st.vensport_home_fetched_at) : 0);
   const { data: pagesData } = await supabaseAdmin.from("vensport_pages").select("*").eq("sync_key", key);
   const pages = (pagesData ?? []) as Page[];
@@ -135,7 +103,8 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
     return { ok: true, page: "portada", rows: 0 };
   }
 
-  const page = pickPage(pages, now.getTime());
+  // «Sincronizar ahora»: lee ya la prueba más prioritaria aunque no le toque por tiempo.
+  const page = pickPage(pages, now.getTime()) ?? (mode === "manual" ? pickPage(pages, now.getTime() + COMPLETE_EVERY_MS + HOME_EVERY_MS) : null);
   if (!page) return { ok: true, skipped: "Nada pendiente" };
   const html = await vget(`/divisions/${page.division_id}`);
 
@@ -154,10 +123,38 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
   const rk = parseFinalRanking(html, me);
   const link = matchLink(me, links);
   const rows = link ? rankingToRows(rk, link, st.target_result_event_id) : [];
-  if (rows.length) {
+  let diff: Record<string, unknown> | null = null;
+  let retired = 0;
+  if (rows.length && link) {
+    // Diferencias con lo guardado (solo con clasificación completa; nunca ante lecturas incompletas).
+    const { data: cur } = await supabaseAdmin
+      .from("live_results")
+      .select("id,source_result_id,bib,athlete_name,position,race_time,points,published,source_missing_passes")
+      .eq("result_event_id", st.target_result_event_id).eq("source", "vensport").eq("source_competition_id", link.source_competition_id);
+    const current = cur ?? [];
+    const newIds = new Set(rows.map((r) => r.source_result_id));
+    const curIds = new Set(current.map((r) => r.source_result_id as string));
+    const byName = new Map(current.map((r) => [String(r.athlete_name).toLowerCase(), r]));
+    const added = rows.filter((r) => !curIds.has(r.source_result_id));
+    const missing = current.filter((r) => !newIds.has(r.source_result_id as string));
+    const bibChanged = added.filter((r) => byName.has(r.athlete_name.toLowerCase())).map((r) => ({ name: r.athlete_name, from: byName.get(r.athlete_name.toLowerCase())!.bib, to: r.bib }));
+    const changed = rows.filter((r) => { const c = current.find((x) => x.source_result_id === r.source_result_id); return c && (c.position !== r.position || (c.race_time ?? null) !== r.race_time || (c.points ?? null) !== r.points); }).length;
+    // Seguridad: si desaparece más de la mitad de golpe, se considera lectura dudosa y no se retira nada.
+    const suspicious = current.length > 0 && missing.length > current.length / 2;
     const { error } = await supabaseAdmin.from("live_results").upsert(rows as never, { onConflict: "result_event_id,source_result_id" });
     if (error) throw new Error(`no se pudieron guardar: ${error.message}`);
+    if (!suspicious) {
+      for (const m of missing) {
+        const passes = (m.source_missing_passes ?? 0) + 1;
+        // Retirada solo tras 2 lecturas completas consecutivas sin la fila (oculta, nunca borra).
+        await supabaseAdmin.from("live_results").update((passes >= 2 ? { source_missing_passes: passes, published: false } : { source_missing_passes: passes }) as never).eq("id", m.id);
+        if (passes >= 2 && m.published) retired++;
+      }
+    }
+    if (added.length || missing.length || changed) {
+      diff = { at: now.toISOString(), added: added.length, missing: missing.map((m) => ({ name: m.athlete_name, bib: m.bib, passes: (m.source_missing_passes ?? 0) + 1 })), bibChanged, changed, retired, suspicious };
+    }
   }
-  await supabaseAdmin.from("vensport_pages").update({ complete: rk.complete, row_count: rows.length, last_fetched_at: now.toISOString(), last_status: link ? (rk.complete ? "completa" : "sin clasificación completa") : "sin equivalencia" } as never).eq("division_id", page.division_id);
-  return { ok: true, page: me.title, rows: rows.length, complete: rk.complete };
+  await supabaseAdmin.from("vensport_pages").update({ complete: rk.complete, row_count: rows.length, last_fetched_at: now.toISOString(), last_status: link ? (rk.complete ? "completa" : "sin clasificación completa") : "sin equivalencia", ...(diff ? { last_diff: diff } : {}) } as never).eq("division_id", page.division_id);
+  return { ok: true, page: me.title, rows: rows.length, complete: rk.complete, ...(retired ? { retired } : {}) };
 }
