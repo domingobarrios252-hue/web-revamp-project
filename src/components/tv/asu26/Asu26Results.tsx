@@ -59,7 +59,7 @@ export function Asu26Results({ cfg, results, limit, emptyText }: { cfg: Asu26Str
           </p>
         </div>
       ) : (
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           {groups.map(([name, rows]) => (
             <article key={`${rows[0].scheduleItemId}-${name}`} className="min-w-0 overflow-hidden rounded-2xl bg-surface/70">
               <header className="border-b border-asu-light/30 bg-asu-deep/60 px-4 py-3">

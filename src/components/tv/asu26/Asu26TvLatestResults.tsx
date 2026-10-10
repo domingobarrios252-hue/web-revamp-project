@@ -85,7 +85,7 @@ export function Asu26TvLatestResults() {
             <p className="mt-2 text-sm text-muted-foreground">Próximamente podrás consultar aquí los resultados oficiales de ASU26.</p>
           </div>
         ) : (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {groups.map(([name, rows]) => {
               const f = rows[0];
               const it = f.scheduleItemId ? byId.get(f.scheduleItemId) : undefined;
