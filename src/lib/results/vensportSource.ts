@@ -18,7 +18,7 @@ const ISO2_TO_IOC: Record<string, string> = {
   es: "ESP", fr: "FRA", gb: "GBR", gt: "GUA", hk: "HKG", hu: "HUN", in: "IND", id: "INA", ie: "IRL", il: "ISR",
   ir: "IRI", it: "ITA", jp: "JPN", kr: "KOR", lv: "LAT", mx: "MEX", my: "MAS", nl: "NED", nz: "NZL", pa: "PAN",
   pe: "PER", ph: "PHI", pl: "POL", pr: "PUR", pt: "POR", py: "PAR", ru: "RUS", sv: "ESA", se: "SWE", sk: "SVK",
-  tw: "TPE", ua: "UKR", us: "USA", uy: "URU", ve: "VEN", za: "RSA", hn: "HON", ni: "NCA", gr: "GRE", tr: "TUR",
+  cd: "COD", pk: "PAK", sn: "SEN", tw: "TPE", ua: "UKR", us: "USA", uy: "URU", ve: "VEN", za: "RSA", hn: "HON", ni: "NCA", gr: "GRE", tr: "TUR",
 };
 
 export type VensportRace = { divisionId: string; title: string; modality: "Track" | "Road" | "Marathon" | null; category: string | null; gender: string | null };
