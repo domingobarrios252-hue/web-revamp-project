@@ -170,6 +170,7 @@ import { Route as UsaNoticiasIndexRouteImport } from './routes/usa.noticias.inde
 import { Route as UsaNoticiasSlugRouteImport } from './routes/usa.noticias.$slug'
 import { Route as ApiPublicCronResultsSyncRouteImport } from './routes/api/public/cron/results-sync'
 import { Route as ApiPublicCronVensportImportRouteImport } from './routes/api/public/cron/vensport-import'
+import { Route as ApiPublicCronVensportSyncRouteImport } from './routes/api/public/cron/vensport-sync'
 import { Route as HubCountryClubesIndexRouteImport } from './routes/hub.$country.clubes.index'
 import { Route as HubCountryClubesSlugRouteImport } from './routes/hub.$country.clubes.$slug'
 import { Route as HubCountryCompeticionIndexRouteImport } from './routes/hub.$country.competicion.index'
@@ -1008,6 +1009,12 @@ const ApiPublicCronVensportImportRoute =
     path: '/api/public/cron/vensport-import',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronVensportSyncRoute =
+  ApiPublicCronVensportSyncRouteImport.update({
+    id: '/api/public/cron/vensport-sync',
+    path: '/api/public/cron/vensport-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const HubCountryClubesIndexRoute = HubCountryClubesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -1272,6 +1279,7 @@ export interface FileRoutesByFullPath {
   '/usa/noticias/': typeof UsaNoticiasIndexRoute
   '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/api/public/cron/vensport-import': typeof ApiPublicCronVensportImportRoute
+  '/api/public/cron/vensport-sync': typeof ApiPublicCronVensportSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1439,6 +1447,7 @@ export interface FileRoutesByTo {
   '/usa/noticias': typeof UsaNoticiasIndexRoute
   '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/api/public/cron/vensport-import': typeof ApiPublicCronVensportImportRoute
+  '/api/public/cron/vensport-sync': typeof ApiPublicCronVensportSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
   '/hub/$country/patinadores/$slug': typeof HubCountryPatinadoresSlugRoute
@@ -1620,6 +1629,7 @@ export interface FileRoutesById {
   '/usa/noticias/': typeof UsaNoticiasIndexRoute
   '/api/public/cron/results-sync': typeof ApiPublicCronResultsSyncRoute
   '/api/public/cron/vensport-import': typeof ApiPublicCronVensportImportRoute
+  '/api/public/cron/vensport-sync': typeof ApiPublicCronVensportSyncRoute
   '/hub/$country/clubes/$slug': typeof HubCountryClubesSlugRoute
   '/hub/$country/competicion/liga-nacional': typeof HubCountryCompeticionLigaNacionalRouteWithChildren
   '/hub/$country/federaciones/$slug': typeof HubCountryFederacionesSlugRoute
@@ -1803,6 +1813,7 @@ export interface FileRouteTypes {
     | '/usa/noticias/'
     | '/api/public/cron/results-sync'
     | '/api/public/cron/vensport-import'
+    | '/api/public/cron/vensport-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -1970,6 +1981,7 @@ export interface FileRouteTypes {
     | '/usa/noticias'
     | '/api/public/cron/results-sync'
     | '/api/public/cron/vensport-import'
+    | '/api/public/cron/vensport-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/federaciones/$slug'
     | '/hub/$country/patinadores/$slug'
@@ -2150,6 +2162,7 @@ export interface FileRouteTypes {
     | '/usa/noticias/'
     | '/api/public/cron/results-sync'
     | '/api/public/cron/vensport-import'
+    | '/api/public/cron/vensport-sync'
     | '/hub/$country/clubes/$slug'
     | '/hub/$country/competicion/liga-nacional'
     | '/hub/$country/federaciones/$slug'
@@ -2236,6 +2249,7 @@ export interface RootRouteChildren {
   RollerzoneTvWorldSkateGamesAsu26ResultadosRoute: typeof RollerzoneTvWorldSkateGamesAsu26ResultadosRoute
   ApiPublicCronResultsSyncRoute: typeof ApiPublicCronResultsSyncRoute
   ApiPublicCronVensportImportRoute: typeof ApiPublicCronVensportImportRoute
+  ApiPublicCronVensportSyncRoute: typeof ApiPublicCronVensportSyncRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
@@ -3369,6 +3383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronVensportImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/vensport-sync': {
+      id: '/api/public/cron/vensport-sync'
+      path: '/api/public/cron/vensport-sync'
+      fullPath: '/api/public/cron/vensport-sync'
+      preLoaderRoute: typeof ApiPublicCronVensportSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hub/$country/clubes/': {
       id: '/hub/$country/clubes/'
       path: '/'
@@ -3959,6 +3980,7 @@ const rootRouteChildren: RootRouteChildren = {
     RollerzoneTvWorldSkateGamesAsu26ResultadosRoute,
   ApiPublicCronResultsSyncRoute: ApiPublicCronResultsSyncRoute,
   ApiPublicCronVensportImportRoute: ApiPublicCronVensportImportRoute,
+  ApiPublicCronVensportSyncRoute: ApiPublicCronVensportSyncRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }

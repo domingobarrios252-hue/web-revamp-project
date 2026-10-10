@@ -6,7 +6,7 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   VENSPORT_BASE, VENSPORT_MIN_DELAY_MS, VENSPORT_UA,
-  matchLink, parseFinalRanking, parseRaceTitle, rankingToRows, type VensportLink,
+  matchLink, parseFinalRanking, parseHomeSections, parseRaceTitle, parseSectionRaces, rankingToRows, type VensportLink,
 } from "@/lib/results/vensportSource";
 
 type Item = { divisionId: string; title: string; section: string };
@@ -43,7 +43,6 @@ export async function runVensportImport(key: string, items: Item[]): Promise<Ven
 }
 
 // ───────────── Sincronización automática (1 página por aviso, avisos cada 30 s) ─────────────
-import { parseHomeSections, parseSectionRaces } from "@/lib/results/vensportSource";
 
 const MAX_FAILURES = 5;
 const HOME_EVERY_MS = 60 * 60_000; // portada y apartados: 1 vez por hora
