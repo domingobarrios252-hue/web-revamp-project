@@ -108,3 +108,53 @@ export function raceKey(text: string): string | null {
   if (/marat/.test(t)) return "marathon";
   return null;
 }
+
+export type VensportLink = { source_competition_id: string; label: string; schedule_item_id: string | null; link_status: string };
+
+const linkCategory = (l: string) => (/MASTER/.test(l) ? "MASTER" : /\bPro\b/.test(l) ? "Pro" : /Junior/.test(l) ? "Junior" : /Senior/.test(l) ? "Senior" : null);
+const linkGender = (l: string) => (/Femenino/.test(l) ? "Femenino" : /Masculino/.test(l) ? "Masculino" : null);
+
+/** Equivalencia inequívoca: misma prueba, categoría y género; exactamente una. */
+export function matchLink(race: VensportRace, links: VensportLink[]): VensportLink | null {
+  const k = raceKey(race.title);
+  if (!k || !race.category || !race.gender) return null;
+  const m = links.filter((l) => raceKey(l.label) === k && linkCategory(l.label) === race.category && linkGender(l.label) === race.gender);
+  return m.length === 1 ? m[0] : null;
+}
+
+/** Filas para live_results. Solo clasificaciones completas; sin estado oficial/provisional (unconfirmed). */
+export function rankingToRows(rk: VensportRanking, link: VensportLink, resultEventId: string) {
+  if (!rk.complete) return [];
+  const visible = !!link.schedule_item_id && (link.link_status === "confirmed" || link.link_status === "auto");
+  const parts = link.label.split(" · ");
+  const seen = new Set<string>();
+  return rk.rows.map((r, i) => {
+    let id = `vensport:${rk.race.divisionId}:${r.bib ?? norm(r.name)}`;
+    while (seen.has(id)) id += "+";
+    seen.add(id);
+    return {
+      source: "vensport",
+      source_result_id: id,
+      source_competition_id: link.source_competition_id,
+      source_missing_passes: 0,
+      result_event_id: resultEventId,
+      schedule_item_id: visible ? link.schedule_item_id : null,
+      published: visible,
+      event_name: "World Skate Games ASU26",
+      race: parts.slice(0, parts.length - 2).join(" · ") || rk.race.title,
+      category: rk.race.category,
+      gender: rk.race.gender,
+      position: r.position ?? 0,
+      bib: r.bib,
+      athlete_name: r.name,
+      club: null,
+      country: r.country,
+      race_time: r.markKind === "time" ? r.mark : null,
+      points: r.markKind === "points" && r.mark ? Number(r.mark) || null : null,
+      notes: r.sanction,
+      result_status: "unconfirmed",
+      status: "finalizado",
+      sort_order: i,
+    };
+  });
+}
