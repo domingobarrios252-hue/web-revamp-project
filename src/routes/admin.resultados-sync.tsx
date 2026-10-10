@@ -59,7 +59,7 @@ function SyncAdmin() {
     try {
       const r: any = await run({ data: { key: KEY } });
       if (r.ok && r.skipped) toast.message(r.skipped);
-      else if (r.ok) toast.success(`Sincronizado: ${r.rows ?? 0} filas (${r.inserted ?? 0} nuevas)`);
+      else if (r.ok) toast.success(`Vensport · ${r.page ?? "sin página"}: ${r.rows ?? 0} filas${r.complete === false ? " (clasificación aún incompleta)" : ""}`);
       else toast.error(r.halted ? `Detenida: ${r.error}` : r.error);
     } catch {
       toast.error("No se pudo sincronizar");

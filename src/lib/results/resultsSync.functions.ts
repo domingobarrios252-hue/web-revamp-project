@@ -11,6 +11,7 @@ export const syncResultsNow = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
     if (!isAdmin) throw new Error("Solo administradores");
-    const { runResultsSync } = await import("@/lib/results/asu26Sync.server");
-    return runResultsSync(data.key, "manual");
+    // Fuente actual: Vensport. Respeta 30 s entre consultas, emergencia y parada de seguridad.
+    const { runVensportTick } = await import("@/lib/results/vensportSync.server");
+    return runVensportTick(data.key, "manual");
   });

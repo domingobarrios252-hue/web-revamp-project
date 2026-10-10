@@ -4402,6 +4402,7 @@ export type Database = {
           created_at: string
           division_id: string
           is_section: boolean
+          last_diff: Json | null
           last_fetched_at: string | null
           last_status: string | null
           row_count: number
@@ -4416,6 +4417,7 @@ export type Database = {
           created_at?: string
           division_id: string
           is_section?: boolean
+          last_diff?: Json | null
           last_fetched_at?: string | null
           last_status?: string | null
           row_count?: number
@@ -4430,6 +4432,7 @@ export type Database = {
           created_at?: string
           division_id?: string
           is_section?: boolean
+          last_diff?: Json | null
           last_fetched_at?: string | null
           last_status?: string | null
           row_count?: number
