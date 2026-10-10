@@ -57,6 +57,13 @@
       "when": 1791673734036,
       "tag": "0007_vensport_sync",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791675186160,
+      "tag": "0008_result_docs_admin_only_and_vensport_diff",
+      "breakpoints": true
     }
   ]
 }
