@@ -36,6 +36,13 @@
       "when": 1791564237830,
       "tag": "0004_results_sync_cron_token",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791633921812,
+      "tag": "0005_schedule_items_auto_finalized",
+      "breakpoints": true
     }
   ]
 }

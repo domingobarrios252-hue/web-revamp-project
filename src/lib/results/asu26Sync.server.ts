@@ -175,7 +175,7 @@ async function syncCore(st: State) {
   const linkMap = new Map((existingLinks ?? []).map((l) => [l.source_competition_id, l]));
   const { data: sched } = await supabaseAdmin
     .from("schedule_items")
-    .select("id,event_name,category,gender,phase,scheduled_at,venue_type")
+    .select("id,event_name,category,gender,phase,scheduled_at,venue_type,status,auto_finalized_at")
     .eq("result_event_id", st.target_result_event_id);
 
   const compInfo = new Map<string, { label: string; race: string; category: string | null; gender: string | null; estado: string | null }>();
@@ -288,7 +288,56 @@ async function syncCore(st: State) {
     if (passes >= 2 && row.published) retired++;
   }
 
+  // 4) Finalización automática del calendario (solo Finales y Maratón). Nunca rompe la sincronización.
+  try {
+    const withResults = new Set(rows.map((r) => r.source_competition_id));
+    const ids = finalizableItems(
+      (sched ?? []) as FinalizeItem[],
+      newLinks.map((l) => ({ schedule_item_id: l.schedule_item_id as string | null, link_status: String(l.link_status), comp: String(l.source_competition_id) })),
+      (cid) => compInfo.get(cid)?.estado ?? null,
+      (cid) => withResults.has(cid),
+    );
+    if (ids.length) {
+      await supabaseAdmin
+        .from("schedule_items")
+        .update({ status: "finalizada", auto_finalized_at: new Date().toISOString() } as never)
+        .in("id", ids)
+        .in("status", ["programada", "en_curso"])
+        .is("auto_finalized_at", null);
+    }
+  } catch (e) {
+    console.error("[asu26 sync] finalización automática omitida:", e instanceof Error ? e.message : e);
+  }
+
   return { rows: rows.length, inserted, updated: rows.length - inserted, retired };
+}
+
+export type FinalizeItem = { id: string; event_name: string | null; phase: string | null; status: string | null; auto_finalized_at: string | null };
+
+/** Pruebas a marcar «finalizada»: Final o Maratón, en programada/en_curso, nunca auto-finalizada antes,
+ *  con al menos una competición vinculada y TODAS con resultados y estado oficial «finalizada». */
+export function finalizableItems(
+  sched: FinalizeItem[],
+  links: { schedule_item_id: string | null; link_status: string; comp: string }[],
+  estadoOf: (comp: string) => string | null,
+  hasResults: (comp: string) => boolean,
+): string[] {
+  const byItem = new Map<string, string[]>();
+  for (const l of links) {
+    if (!l.schedule_item_id || (l.link_status !== "confirmed" && l.link_status !== "auto")) continue;
+    byItem.set(l.schedule_item_id, [...(byItem.get(l.schedule_item_id) ?? []), l.comp]);
+  }
+  return sched
+    .filter((x) => {
+      const ph = (x.phase ?? "").toLowerCase().trim();
+      const isFinal = ph === "final";
+      const isMarathon = !ph && /marat/i.test(x.event_name ?? "");
+      if (!isFinal && !isMarathon) return false;
+      if (x.auto_finalized_at || !["programada", "en_curso"].includes(x.status ?? "")) return false;
+      const comps = byItem.get(x.id) ?? [];
+      return comps.length > 0 && comps.every((c) => hasResults(c) && estadoOf(c) === "finalizada");
+    })
+    .map((x) => x.id);
 }
 
 const norm = (t: string | null | undefined) => (t ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");

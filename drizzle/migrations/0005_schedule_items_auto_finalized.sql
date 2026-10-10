@@ -1,0 +1,2 @@
+ALTER TABLE public.schedule_items ADD COLUMN IF NOT EXISTS auto_finalized_at timestamptz;
+COMMENT ON COLUMN public.schedule_items.auto_finalized_at IS 'Set once when the official results sync marked the item finalizada; never re-applied so manual admin changes win.';
