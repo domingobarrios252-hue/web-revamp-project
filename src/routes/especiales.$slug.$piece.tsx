@@ -12,6 +12,7 @@ import { parseFeatureData, type MemberResult, type PieceMember } from "@/lib/spe
 import { Asu26PieceModule, asu26ModuleFor } from "@/components/specials/live/Asu26PieceModules";
 import { ASU26_SPECIAL_SLUG } from "@/lib/tv/asu26Streaming";
 import { SelectionSummary, SelectionMembers, SelectionClosing } from "@/components/specials/SelectionFeature";
+import { SpainResults } from "@/components/specials/live/SpainResults";
 
 const SITE = "https://rollerzone.es";
 
@@ -303,6 +304,7 @@ function PiecePage() {
         )}
       </article>
 
+      {isAsu && piece.slug === "seleccion-espanola" && members.length > 0 && <SpainResults members={members} />}
       <SelectionMembers members={members} live={isAsu} />
       <SelectionClosing data={feature} />
 
