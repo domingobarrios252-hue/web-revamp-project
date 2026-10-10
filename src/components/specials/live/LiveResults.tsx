@@ -17,7 +17,7 @@ const FILTER_LABEL: Record<FilterKey, string> = {
   phase: "Fase",
 };
 
-const STATE_RANK: Record<ResultState, number> = { in_progress: 0, provisional: 1, upcoming: 2, official: 3 };
+const STATE_RANK: Record<ResultState, number> = { in_progress: 0, provisional: 1, upcoming: 2, unconfirmed: 3, official: 4 };
 
 function valueOf(r: NormalizedResult, k: FilterKey, tz: string) {
   if (k === "day") return r.scheduledAt ? dayInTz(r.scheduledAt, tz) : null;

@@ -43,6 +43,13 @@
       "when": 1791633921812,
       "tag": "0005_schedule_items_auto_finalized",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791673188218,
+      "tag": "0006_migration",
+      "breakpoints": true
     }
   ]
 }

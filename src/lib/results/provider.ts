@@ -7,7 +7,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type ResultsProviderKey = "manual" | "velopro_api" | "velopro_widget" | "velopro_embed";
-export type ResultState = "upcoming" | "in_progress" | "provisional" | "official";
+export type ResultState = "upcoming" | "in_progress" | "provisional" | "official" | "unconfirmed";
 
 export type NormalizedResult = {
   id: string;
@@ -38,6 +38,8 @@ export const RESULT_STATE_LABEL: Record<ResultState, string> = {
   in_progress: "En curso",
   provisional: "Provisional",
   official: "Oficial",
+  /** Vensport no indica si es oficial o provisional: solo se acredita la fuente. */
+  unconfirmed: "Fuente: VeloPro",
 };
 
 type ManualRow = {
@@ -67,7 +69,7 @@ type ManualRow = {
 
 function toState(r: ManualRow): ResultState {
   const s = r.result_status;
-  if (s === "upcoming" || s === "in_progress" || s === "provisional" || s === "official") {
+  if (s === "upcoming" || s === "in_progress" || s === "provisional" || s === "official" || s === "unconfirmed") {
     // Una carrera aún en vivo nunca se presenta como oficial.
     if (r.status === "en_vivo" && s === "official") return "in_progress";
     return s;
@@ -97,7 +99,7 @@ async function loadManual(
     category: r.category,
     gender: r.gender,
     phase: r.round,
-    position: r.source === "official" && r.position === 0 ? null : r.position,
+    position: (r.source === "official" || r.source === "vensport") && r.position === 0 ? null : r.position,
     bib: r.bib,
     athlete: r.athlete_name,
     country: r.country,
@@ -111,7 +113,8 @@ async function loadManual(
     state: toState(r),
     scheduledAt: r.schedule_item_id ? (scheduleTimes.get(r.schedule_item_id) ?? null) : null,
     sort: r.sort_order ?? 0,
-    _source: r.source ?? "manual",
+    // Vensport cuenta como fuente oficial para la prioridad oficial/manual.
+    _source: r.source === "vensport" ? "official" : (r.source ?? "manual"),
   }));
 }
 

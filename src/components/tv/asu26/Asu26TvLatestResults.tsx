@@ -88,7 +88,7 @@ export function Asu26TvLatestResults() {
             {groups.map(([name, rows]) => {
               const f = rows[0];
               const it = f.scheduleItemId ? byId.get(f.scheduleItemId) : undefined;
-              const state = rows.some((r) => r.state === "in_progress") ? "in_progress" : rows.some((r) => r.state === "provisional") ? "provisional" : "official";
+              const state = rows.some((r) => r.state === "in_progress") ? "in_progress" : rows.some((r) => r.state === "provisional") ? "provisional" : rows.some((r) => r.state === "unconfirmed") ? "unconfirmed" : "official";
               const final = state === "official";
               const top = rows.filter((r) => r.position != null).slice(0, 3);
               return (

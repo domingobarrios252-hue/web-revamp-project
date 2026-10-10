@@ -1,0 +1,2 @@
+ALTER TABLE public.live_results DROP CONSTRAINT live_results_result_status_chk;
+ALTER TABLE public.live_results ADD CONSTRAINT live_results_result_status_chk CHECK (result_status IS NULL OR result_status = ANY (ARRAY['upcoming','in_progress','provisional','official','unconfirmed']));
