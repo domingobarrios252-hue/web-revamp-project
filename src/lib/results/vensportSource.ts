@@ -64,29 +64,26 @@ export function parseHomeSections(html: string): { divisionId: string; label: st
 export function parseFinalRanking(html: string, race: VensportRace): VensportRanking {
   const tbl = html.match(/<table[^>]*race-standings-table[^>]*>([\s\S]*?)<\/table>/);
   if (!tbl) return { race, complete: false, rows: [] };
-  const heads = [...tbl[1].matchAll(/<th[^>]*>([\s\S]*?)<\/th>/g)].map((h) => decode(h[1]).toLowerCase());
-  const col = (n: string) => heads.indexOf(n);
-  const iPlace = col("place"), iBid = col("bid"), iName = col("name"), iCountry = col("country"), iSanc = col("sanc"), iProg = col("progress");
-  const iTime = col("time"), iPts = col("points");
-  const iMark = iTime >= 0 ? iTime : iPts;
-  const markKind = iTime >= 0 ? "time" : iPts >= 0 ? "points" : null;
+  const markHead = decode(tbl[1].match(/<th[^>]*race-col-score[^>]*>([\s\S]*?)<\/th>/)?.[1] ?? "").toLowerCase();
+  const markKind: VensportRow["markKind"] = /point|pts/.test(markHead) ? "points" : markHead ? "time" : null;
   const rows: VensportRow[] = [];
   for (const tr of tbl[1].matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)) {
-    const cells = [...tr[1].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((c) => c[1]);
-    if (cells.length < 3) continue;
-    const txt = cells.map(decode);
-    const flag = (iCountry >= 0 ? cells[iCountry] : tr[1]).match(/country_flags\/flags\/([a-z]{2})\./i)?.[1]?.toLowerCase();
-    const pos = Number(txt[iPlace]);
+    const cell = (cls: string) => tr[1].match(new RegExp(`<td[^>]*class='[^']*race-col-${cls}[^']*'[^>]*>([\\s\\S]*?)<\\/td>`))?.[1] ?? null;
+    const nameHtml = cell("name");
+    if (nameHtml === null) continue;
+    const flag = nameHtml.match(/country_flags\/flags\/([a-z]{2})\./i)?.[1]?.toLowerCase();
+    const txt = (cls: string) => { const c = cell(cls); return c === null ? null : decode(c) || null; };
+    const pos = Number(txt("placement"));
     rows.push({
       position: Number.isFinite(pos) && pos > 0 ? pos : null,
-      bib: txt[iBid] || null,
-      name: txt[iName] || "—",
-      countryName: iCountry >= 0 ? txt[iCountry] || null : null,
+      bib: txt("race-number"),
+      name: decode(nameHtml) || "—",
+      countryName: txt("club"),
       country: flag ? (ISO2_TO_IOC[flag] ?? flag.toUpperCase()) : null,
-      mark: iMark >= 0 ? txt[iMark] || null : null,
+      mark: txt("score"),
       markKind,
-      sanction: iSanc >= 0 ? txt[iSanc] || null : null,
-      progress: iProg >= 0 ? txt[iProg] || null : null,
+      sanction: txt("sanction"),
+      progress: txt("progression"),
     });
   }
   // Completa = todas las filas tienen puesto. Sin puestos = clasificación aún sin cerrar (no se publica).
