@@ -248,7 +248,8 @@ function MedalModule() {
   const SILVER = "bg-[radial-gradient(circle_at_30%_30%,#ffffff,#c0c4c8_60%,#6f757a)]";
   const BRONZE = "bg-[radial-gradient(circle_at_30%_30%,#ffd2a8,#c27a3a_60%,#6e3f17)]";
   return (
-    <section className="bg-background py-10 md:py-14">
+    <section className="asu-hero-bg relative isolate overflow-hidden py-10 md:py-14">
+      <div className="asu-curve pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
       <div className="mx-auto max-w-5xl px-4 md:px-6">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
           <div className="min-w-0">
@@ -257,10 +258,10 @@ function MedalModule() {
             <div className="mt-3 h-[3px] w-16 bg-gold" />
           </div>
           <div className="flex w-full max-w-[300px] flex-col border-l border-gold/40 pl-4 md:w-[280px] md:shrink-0 md:pl-6">
-            <p className="font-condensed text-[10px] font-bold uppercase tracking-[2.5px] text-muted-foreground">Medallero publicado por</p>
+            <p className="font-condensed text-[10px] font-bold uppercase tracking-[2.5px] text-foreground/75">Medallero publicado por</p>
             <img src={rzWordmark.url} alt="Rollerzone.es" className="mt-2 aspect-[1589/200] w-[200px] object-cover object-top md:w-[230px]" />
             <div className="my-3 h-px w-full bg-gradient-to-r from-gold/50 to-transparent" aria-hidden="true" />
-            <p className="font-condensed text-[10px] font-bold uppercase tracking-[2.5px] text-muted-foreground">Datos oficiales facilitados por</p>
+            <p className="font-condensed text-[10px] font-bold uppercase tracking-[2.5px] text-foreground/75">Datos oficiales facilitados por</p>
             <span className="mt-2 inline-flex w-fit rounded-md bg-foreground px-2 py-1">
               <img src={veloproLogo.url} alt="VeloPro" className="aspect-[1920/440] w-[190px] object-cover md:w-[220px]" />
             </span>
@@ -268,7 +269,7 @@ function MedalModule() {
         </div>
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
           <p className="font-display text-xl uppercase tracking-wide text-foreground md:text-2xl">Clasificación por países</p>
-          <div className="font-condensed flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-bold uppercase tracking-[2px] text-muted-foreground">
+          <div className="font-condensed flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-bold uppercase tracking-[2px] text-foreground/75">
             <span className="text-asu-light">Datos oficiales ASU26</span>
             {m && <span>{stIcon[m.status]} {MEDAL_STATUS_LABEL[m.status]}</span>}
             {m?.updatedAt && <span>Última actualización: {formatUpdated(m.updatedAt)}</span>}
@@ -278,25 +279,25 @@ function MedalModule() {
         {m === null ? (
           <div className="mt-6"><Loading /></div>
         ) : ranked.length === 0 ? (
-          <p className="mt-6 rounded-2xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+          <p className="mt-6 rounded-2xl border border-asu-light/25 bg-asu-deep/80 shadow-[0_20px_40px_-24px_var(--asu-ink)] backdrop-blur-sm p-6 text-sm text-foreground/75">
             El medallero se publicará con las primeras finales, a partir del 10 de octubre.
           </p>
         ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="mt-6 overflow-hidden rounded-2xl border border-asu-light/25 bg-asu-deep/80 shadow-[0_20px_40px_-24px_var(--asu-ink)] backdrop-blur-sm">
             <div className="asu-stripe h-[3px]" aria-hidden="true" />
-            <div className="font-condensed grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-border px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.5px] text-muted-foreground md:text-[10px] md:tracking-[2px] md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5">
+            <div className="font-condensed grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-asu-light/20 bg-asu-ink/40 px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.5px] text-foreground/75 md:text-[10px] md:tracking-[2px] md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5">
               <span>Pos.</span><span>País</span><span className="text-center">Oro</span><span className="text-center">Plata</span><span className="text-center">Bronce</span><span className="text-center text-gold">Total</span>
             </div>
             <ol>
               {ranked.map((c) => {
                 const es = isSpainCountry(c);
                 return (
-                  <li key={c.id} className={"grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-border/50 px-3 py-3 last:border-0 md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5 " + (es ? "relative bg-gold/10 shadow-[inset_3px_0_0_var(--color-gold)] outline outline-1 -outline-offset-1 outline-gold/50" : "")}>
-                    <span className={"font-display text-xl md:text-2xl " + (c.pos <= 3 ? "text-gold" : "text-muted-foreground")}>{c.pos}</span>
+                  <li key={c.id} className={"grid grid-cols-[1.75rem_minmax(0,1fr)_repeat(3,2.4rem)_2.75rem] items-center gap-1 border-b border-asu-light/10 px-3 py-3 last:border-0 md:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,5.5rem)_6rem] md:px-5 " + (es ? "relative bg-gold/10 shadow-[inset_3px_0_0_var(--color-gold)] outline outline-1 -outline-offset-1 outline-gold/50" : "")}>
+                    <span className={"font-display text-xl md:text-2xl " + (c.pos <= 3 ? "text-gold" : "text-foreground/75")}>{c.pos}</span>
                     <span className="flex min-w-0 items-center gap-2">
                       {c.flagUrl ? <img src={c.flagUrl} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : (flagUrlFor(c.iso) ? <img src={flagUrlFor(c.iso)} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : null)}
                       <span className={"truncate text-sm font-semibold md:text-base " + (es ? "text-gold" : "text-foreground")}>{c.name}</span>
-                      <span className="hidden font-mono text-[10px] text-muted-foreground sm:inline">{c.iso}</span>
+                      <span className="hidden font-mono text-[10px] text-foreground/75 sm:inline">{c.iso}</span>
                     </span>
                     {coin(GOLD, c.gold, "oros")}
                     {coin(SILVER, c.silver, "platas")}
@@ -306,14 +307,14 @@ function MedalModule() {
                 );
               })}
             </ol>
-            <p className="font-condensed border-t border-border bg-background/40 px-3 py-2 text-right text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground md:px-5 md:text-[11px]">
+            <p className="font-condensed border-t border-asu-light/20 bg-asu-ink/40 px-3 py-2 text-right text-[10px] font-bold uppercase tracking-[2px] text-foreground/75 md:px-5 md:text-[11px]">
               <span className="text-gold">Rollerzone.es</span> · Datos oficiales VeloPro
             </p>
           </div>
         )}
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-muted-foreground">Fuente de resultados: World Skate Games ASU26</p>
+          <p className="text-xs text-foreground/75">Fuente de resultados: World Skate Games ASU26</p>
           <a href={ASU26_OFFICIAL_MEDALS_URL} target="_blank" rel="noopener noreferrer" className={btnGhost}>Consultar medallero oficial ↗</a>
         </div>
       </div>
