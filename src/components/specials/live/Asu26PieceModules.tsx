@@ -296,7 +296,7 @@ function MedalModule() {
                     <span className={"font-display text-xl md:text-2xl " + (c.pos <= 3 ? "text-gold" : "text-foreground/75")}>{c.pos}</span>
                     <span className="flex min-w-0 items-center gap-2">
                       {c.flagUrl ? <img src={c.flagUrl} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : (flagUrlFor(c.iso) ? <img src={flagUrlFor(c.iso)} alt="" className="h-4 w-6 shrink-0 rounded-sm object-cover" loading="lazy" /> : null)}
-                      <span className={"truncate text-sm font-semibold md:text-base " + (es ? "text-gold" : "text-foreground")}>{c.name}</span>
+                      <span className={"min-w-0 break-words text-[13px] font-semibold leading-tight sm:text-sm md:truncate md:text-base " + (es ? "text-gold" : "text-foreground")}>{c.name}</span>
                       <span className="hidden font-mono text-[10px] text-foreground/75 sm:inline">{c.iso}</span>
                     </span>
                     {coin(GOLD, c.gold, "oros")}
