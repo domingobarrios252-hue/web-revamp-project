@@ -2,6 +2,7 @@ import type { NormalizedResult } from "@/lib/results/provider";
 import { RESULT_STATE_LABEL } from "@/lib/results/provider";
 import { httpsOnly, type Asu26StreamingConfig } from "@/lib/tv/asu26Streaming";
 import { RollerzoneMark, VeloproCredit } from "./ResultsBrand";
+import { phaseOrder } from "@/lib/results/vensportSource";
 
 const FLAG: Record<string, string> = {
   ESP: "🇪🇸", COL: "🇨🇴", FRA: "🇫🇷", ITA: "🇮🇹", POR: "🇵🇹", BEL: "🇧🇪", NED: "🇳🇱", GER: "🇩🇪",
@@ -33,7 +34,8 @@ export function groupResults(results: NormalizedResult[]): [string, NormalizedRe
       g.rows.sort((a, b) => (a.position ?? 9999) - (b.position ?? 9999) || a.sort - b.sort);
       return g;
     })
-    .sort((a, b) => t(b.rows) - t(a.rows))
+    // Más reciente primero; dentro de una prueba: clasificación final, Final, Semis, Cuartos, Series.
+    .sort((a, b) => t(b.rows) - t(a.rows) || phaseOrder(a.rows[0].phase) - phaseOrder(b.rows[0].phase))
     .map((g) => [g.name, g.rows]);
 }
 
@@ -93,7 +95,7 @@ export function Asu26Results({ cfg, results, limit, emptyText }: { cfg: Asu26Str
                           {r.athlete}
                         </p>
                         <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                          {[code, r.bib ? `Dorsal ${r.bib}` : null].filter(Boolean).join(" · ")}
+                          {[code, r.bib ? `Dorsal ${r.bib}` : null, r.phase ? r.notes : null].filter(Boolean).join(" · ")}
                         </p>
                       </div>
                       <div className="text-right">

@@ -67,6 +67,9 @@ type ManualRow = {
   source?: string | null;
 };
 
+/** Origen de las series/fases de Vensport: separado de la clasificación final. */
+export const PHASE_SOURCE = "vensport_phase";
+
 function toState(r: ManualRow): ResultState {
   const s = r.result_status;
   if (s === "upcoming" || s === "in_progress" || s === "provisional" || s === "official" || s === "unconfirmed") {
@@ -81,25 +84,41 @@ async function loadManual(
   sb: SupabaseClient,
   resultEventId: string,
   scheduleTimes: Map<string, string>,
+  phases = false,
 ): Promise<(NormalizedResult & { _source: string })[]> {
+  const COLS =
+    "id,schedule_item_id,race,distance,category,gender,round,position,bib,athlete_name,country,club,federation,race_time,gap,points,record_mark,notes,result_status,status,sort_order,source";
   const { data, error } = await sb
     .from("live_results")
-    .select(
-      "id,schedule_item_id,race,distance,category,gender,round,position,bib,athlete_name,country,club,federation,race_time,gap,points,record_mark,notes,result_status,status,sort_order,source",
-    )
+    .select(COLS)
     .eq("result_event_id", resultEventId)
     .eq("published", true)
+    .neq("source", PHASE_SOURCE)
     .order("sort_order", { ascending: true })
     .limit(2000);
   if (error || !data) return [];
-  return (data as ManualRow[]).map((r) => ({
+  let all = data as ManualRow[];
+  if (phases) {
+    // Series/fases: el público solo ve las publicadas (RLS); el equipo editorial también las aún ocultas
+    // (vista previa interna). Las retiradas (2 lecturas sin la fila) nunca se muestran.
+    const { data: ph } = await sb
+      .from("live_results")
+      .select(COLS)
+      .eq("result_event_id", resultEventId)
+      .eq("source", PHASE_SOURCE)
+      .lt("source_missing_passes", 2)
+      .order("sort_order", { ascending: true })
+      .limit(5000);
+    all = all.concat((ph ?? []) as ManualRow[]);
+  }
+  return all.map((r) => ({
     id: r.id,
     scheduleItemId: r.schedule_item_id,
     race: r.race || r.distance,
     category: r.category,
     gender: r.gender,
     phase: r.round,
-    position: (r.source === "official" || r.source === "vensport") && r.position === 0 ? null : r.position,
+    position: (r.source === "official" || r.source === "vensport" || r.source === PHASE_SOURCE) && r.position === 0 ? null : r.position,
     bib: r.bib,
     athlete: r.athlete_name,
     country: r.country,
@@ -114,7 +133,7 @@ async function loadManual(
     scheduledAt: r.schedule_item_id ? (scheduleTimes.get(r.schedule_item_id) ?? null) : null,
     sort: r.sort_order ?? 0,
     // Vensport cuenta como fuente oficial para la prioridad oficial/manual.
-    _source: r.source === "vensport" ? "official" : (r.source ?? "manual"),
+    _source: r.source === "vensport" || r.source === PHASE_SOURCE ? "official" : (r.source ?? "manual"),
   }));
 }
 
@@ -153,8 +172,9 @@ export async function loadEventResults(
   resultEventId: string,
   _provider: ResultsProviderKey | null | undefined,
   scheduleTimes: Map<string, string>,
+  opts: { phases?: boolean } = {},
 ): Promise<NormalizedResult[]> {
-  const rows = await loadManual(sb, resultEventId, scheduleTimes);
+  const rows = await loadManual(sb, resultEventId, scheduleTimes, !!opts.phases);
   const filtered = await applyPriority(sb, resultEventId, rows).catch(() => rows);
   return filtered.map(({ _source: _s, ...r }) => r);
 }

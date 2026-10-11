@@ -6,6 +6,7 @@ import { loadEventResults, type NormalizedResult } from "@/lib/results/provider"
 import { dayInTz, timeInTz, type ScheduleItem } from "@/lib/specials/liveEvent";
 import { ASU26_DEFAULTS, ASU26_RESULT_EVENT_ID, ASU26_TZ, loadAsu26Config, type Asu26StreamingConfig } from "@/lib/tv/asu26Streaming";
 import { Asu26Results } from "@/components/tv/asu26/Asu26Results";
+import { phaseOrder } from "@/lib/results/vensportSource";
 import veloproLogo from "@/assets/logo-velopro-tight.png.asset.json";
 
 const PAGE_URL = "https://rollerzone.es/rollerzone-tv/world-skate-games-asu26/resultados";
@@ -59,7 +60,7 @@ function Asu26ResultsPage() {
   const [items, setItems] = useState<ScheduleItem[]>([]);
   const [results, setResults] = useState<NormalizedResult[]>([]);
   const [loading, setLoading] = useState(true);
-  const [f, setF] = useState({ day: "", mod: "", race: "", cat: "", gen: "" });
+  const [f, setF] = useState({ day: "", mod: "", race: "", cat: "", gen: "", ph: "" });
 
   useEffect(() => {
     let off = false;
@@ -75,7 +76,7 @@ function Asu26ResultsPage() {
           .order("sort_order"),
       ]);
       const list = (s.data ?? []) as ScheduleItem[];
-      const r = await loadEventResults(supabase, ASU26_RESULT_EVENT_ID, null, new Map(list.map((i) => [i.id, i.scheduled_at]))).catch(() => []);
+      const r = await loadEventResults(supabase, ASU26_RESULT_EVENT_ID, null, new Map(list.map((i) => [i.id, i.scheduled_at])), { phases: true }).catch(() => []);
       if (off) return;
       setCfg(c);
       setItems(list);
@@ -98,6 +99,12 @@ function Asu26ResultsPage() {
       race: uniq(items.map((i) => norm(i.event_name))).map((v) => [v, v] as [string, string]),
       cat: uniq(results.map((r) => norm(r.category))).map((v) => [v, v] as [string, string]),
       gen: uniq(results.map((r) => norm(r.gender))).map((v) => [v, v] as [string, string]),
+      ph: [
+        ["__final", "Clasificación final"] as [string, string],
+        ...[...new Set(results.map((r) => (r.phase ?? "").split(" · ")[0]).filter(Boolean))]
+          .sort((a, b) => phaseOrder(a) - phaseOrder(b))
+          .map((v) => [v, v] as [string, string]),
+      ],
     }),
     [items, results],
   );
@@ -113,6 +120,8 @@ function Asu26ResultsPage() {
     if ((f.day || f.mod || f.race) && !itemOk(it)) return false;
     if (f.cat && norm(r.category) !== f.cat) return false;
     if (f.gen && norm(r.gender) !== f.gen) return false;
+    if (f.ph === "__final" && r.phase) return false;
+    if (f.ph && f.ph !== "__final" && (r.phase ?? "").split(" · ")[0] !== f.ph) return false;
     return true;
   });
   const withResults = new Set(results.filter((r) => r.state !== "upcoming").map((r) => r.scheduleItemId));
@@ -139,7 +148,7 @@ function Asu26ResultsPage() {
           <img src={veloproLogo.url} alt="VeloPro" className="h-10 w-auto max-w-[180px] object-contain mix-blend-multiply md:h-12" />
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-3 rounded-2xl border border-asu/20 bg-surface/70 p-4 md:grid-cols-5">
+        <div className="mt-6 grid grid-cols-2 gap-3 rounded-2xl border border-asu/20 bg-surface/70 p-4 md:grid-cols-3 lg:grid-cols-6">
           <Select label="Fecha" value={f.day} onChange={(day) => setF({ ...f, day })} options={opts.day} />
           <Select label="Modalidad" value={f.mod} onChange={(mod) => setF({ ...f, mod })} options={opts.mod} />
           <div className="col-span-2 md:col-span-1">
@@ -147,11 +156,12 @@ function Asu26ResultsPage() {
           </div>
           <Select label="Categoría" value={f.cat} onChange={(cat) => setF({ ...f, cat })} options={opts.cat} />
           <Select label="Género" value={f.gen} onChange={(gen) => setF({ ...f, gen })} options={opts.gen} />
+          {opts.ph.length > 1 && <Select label="Fase" value={f.ph} onChange={(ph) => setF({ ...f, ph })} options={opts.ph} />}
           {hasFilter && (
             <button
               type="button"
-              onClick={() => setF({ day: "", mod: "", race: "", cat: "", gen: "" })}
-              className="font-condensed col-span-2 min-h-11 rounded-lg border border-asu-coral/60 text-xs font-bold uppercase tracking-widest text-asu-coral md:col-span-5"
+              onClick={() => setF({ day: "", mod: "", race: "", cat: "", gen: "", ph: "" })}
+              className="font-condensed col-span-2 min-h-11 rounded-lg border border-asu-coral/60 text-xs font-bold uppercase tracking-widest text-asu-coral md:col-span-3 lg:col-span-6"
             >
               Quitar filtros
             </button>

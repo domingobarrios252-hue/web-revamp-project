@@ -60,14 +60,12 @@ export function parseHomeSections(html: string): { divisionId: string; label: st
   return [...out].map(([divisionId, label]) => ({ divisionId, label }));
 }
 
-/** «Final Rankings»: primera tabla race-standings-table de la página de la prueba. */
-export function parseFinalRanking(html: string, race: VensportRace): VensportRanking {
-  const tbl = html.match(/<table[^>]*race-standings-table[^>]*>([\s\S]*?)<\/table>/);
-  if (!tbl) return { race, complete: false, rows: [] };
-  const markHead = decode(tbl[1].match(/<th[^>]*race-col-score[^>]*>([\s\S]*?)<\/th>/)?.[1] ?? "").toLowerCase();
+/** Filas de una tabla race-standings-table (común a la clasificación final y a cada serie). */
+function parseStandingsTable(tblHtml: string): (VensportRow & { qualified: string | null })[] {
+  const markHead = decode(tblHtml.match(/<th[^>]*race-col-score[^>]*>([\s\S]*?)<\/th>/)?.[1] ?? "").toLowerCase();
   const markKind: VensportRow["markKind"] = /point|pts/.test(markHead) ? "points" : markHead ? "time" : null;
-  const rows: VensportRow[] = [];
-  for (const tr of tbl[1].matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)) {
+  const rows: (VensportRow & { qualified: string | null })[] = [];
+  for (const tr of tblHtml.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)) {
     const cell = (cls: string) => tr[1].match(new RegExp(`<td[^>]*class='[^']*race-col-${cls}[^']*'[^>]*>([\\s\\S]*?)<\\/td>`))?.[1] ?? null;
     const nameHtml = cell("name");
     if (nameHtml === null) continue;
@@ -84,11 +82,104 @@ export function parseFinalRanking(html: string, race: VensportRace): VensportRan
       markKind,
       sanction: txt("sanction"),
       progress: txt("progression"),
+      qualified: txt("qualified"),
     });
   }
+  return rows;
+}
+
+/** «Final Rankings»: primera tabla race-standings-table de la página de la prueba. */
+export function parseFinalRanking(html: string, race: VensportRace): VensportRanking {
+  const tbl = html.match(/<table[^>]*race-standings-table[^>]*>([\s\S]*?)<\/table>/);
+  if (!tbl) return { race, complete: false, rows: [] };
+  const rows: VensportRow[] = parseStandingsTable(tbl[1]).map(({ qualified: _q, ...r }) => r);
   // Completa = todas las filas tienen puesto. Sin puestos = clasificación aún sin cerrar (no se publica).
   const complete = rows.length > 0 && rows.every((r) => r.position !== null);
   return { race, complete, rows };
+}
+
+// ───────────── Fases (series, cuartos, semifinales, final) ─────────────
+
+export type VensportPhase = { rawLabel: string; label: string; complete: boolean; rows: (VensportRow & { qualified: string | null })[] };
+
+const ROUND_ES: [RegExp, string][] = [
+  [/quarter/i, "Cuartos de final"],
+  [/semi/i, "Semifinal"],
+  [/repech/i, "Repesca"],
+  [/qualif|prelim/i, "Clasificatoria"],
+  [/final/i, "Final"],
+];
+
+/** «Qualification - Heat 1» → «Clasificatoria · Serie 1»; «Final - Final» → «Final». Desconocido: texto original. */
+export function phaseLabel(raw: string): string {
+  const [round, ...rest] = raw.split(/\s+-\s+/);
+  const r = ROUND_ES.find(([re]) => re.test(round))?.[1] ?? round.trim();
+  const heatRaw = rest.join(" - ").trim();
+  const heat = heatRaw.replace(/^heat\s*/i, "Serie ").replace(/^group\s*/i, "Grupo ").trim();
+  if (!heat || heat.toLowerCase() === round.trim().toLowerCase() || (r === "Final" && /^final$/i.test(heatRaw))) return r;
+  return `${r} · ${heat}`;
+}
+
+/** Orden de presentación: Final → Semifinal → Cuartos → Repesca → Clasificatoria; después nº de serie. */
+export function phaseOrder(label: string | null | undefined): number {
+  if (!label) return 0; // clasificación final
+  const base = label.split(" · ")[0];
+  const i = ["Final", "Semifinal", "Cuartos de final", "Repesca", "Clasificatoria"].indexOf(base);
+  const n = Number(label.match(/(\d+)\s*$/)?.[1] ?? 0);
+  return (i < 0 ? 6 : i + 1) * 100 + n;
+}
+
+/** Todas las tablas de la página salvo «Final Rankings», cada una con su encabezado. Misma página: sin consultas extra. */
+export function parsePhases(html: string): VensportPhase[] {
+  const out: VensportPhase[] = [];
+  for (const m of html.matchAll(/<div class='small-bottom'>\s*<b>([\s\S]*?)<\/b>\s*<\/div>\s*<table[^>]*race-standings-table[^>]*>([\s\S]*?)<\/table>/g)) {
+    const rawLabel = decode(m[1]);
+    if (!rawLabel || /final rankings/i.test(rawLabel)) continue;
+    const rows = parseStandingsTable(m[2]);
+    // Completa = hay puestos y cada fila tiene puesto o sanción (DNS/DSQ…). Si no, no se publica.
+    const complete = rows.length > 0 && rows.some((r) => r.position !== null) && rows.every((r) => r.position !== null || !!r.sanction);
+    out.push({ rawLabel, label: phaseLabel(rawLabel), complete, rows });
+  }
+  return out;
+}
+
+/** Filas de fase para live_results: origen propio (vensport_phase), id propio; nunca tocan la clasificación final. */
+export function phaseToRows(ph: VensportPhase, race: VensportRace, link: VensportLink, resultEventId: string, publish: boolean) {
+  if (!ph.complete) return [];
+  const visible = publish && !!link.schedule_item_id && (link.link_status === "confirmed" || link.link_status === "auto");
+  const parts = link.label.split(" · ");
+  const slug = norm(ph.rawLabel);
+  const seen = new Set<string>();
+  return ph.rows.map((r, i) => {
+    let id = `vensport:${race.divisionId}:ph:${slug}:${r.bib ?? norm(r.name)}`;
+    while (seen.has(id)) id += "+";
+    seen.add(id);
+    return {
+      source: "vensport_phase",
+      source_result_id: id,
+      source_competition_id: link.source_competition_id,
+      source_missing_passes: 0,
+      result_event_id: resultEventId,
+      schedule_item_id: link.schedule_item_id,
+      published: visible,
+      event_name: "World Skate Games ASU26",
+      race: parts.slice(0, parts.length - 2).join(" · ") || race.title,
+      category: race.category,
+      gender: race.gender,
+      round: ph.label,
+      position: r.position ?? 0,
+      bib: r.bib,
+      athlete_name: r.name,
+      club: null,
+      country: r.country,
+      race_time: r.markKind === "time" ? r.mark : null,
+      points: r.markKind === "points" && r.mark ? Number(r.mark) || null : null,
+      notes: [r.sanction, r.qualified].filter(Boolean).join(" · ") || null,
+      result_status: "unconfirmed",
+      status: "finalizado",
+      sort_order: i,
+    };
+  });
 }
 
 const norm = (t: string | null | undefined) => (t ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");

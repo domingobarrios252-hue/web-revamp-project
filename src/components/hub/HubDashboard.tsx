@@ -126,6 +126,7 @@ export function HubDashboard({ country }: { country: string }) {
             .from("live_results")
             .select("id,athlete_name,position,event_name,category,race_time")
             .eq("published", true)
+        .neq("source", "vensport_phase")
             .order("created_at", { ascending: false })
             .limit(8),
           supabase
