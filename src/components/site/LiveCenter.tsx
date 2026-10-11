@@ -110,7 +110,8 @@ export function LiveCenter() {
       let resultsQuery = supabase
         .from("live_results")
         .select("id, event_name, event_slug, race, category, position, athlete_name, club, country, race_time, status, sort_order, updated_at")
-        .eq("published", true);
+        .eq("published", true)
+        .neq("source", "vensport_phase");
       if (feat?.slug) resultsQuery = resultsQuery.eq("event_slug", feat.slug);
 
       const [streamRes, scheduleRes, resultsRes, eventsRes] = await Promise.all([

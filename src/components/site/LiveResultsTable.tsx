@@ -94,6 +94,7 @@ export function LiveResultsTable({ compact = false }: { compact?: boolean } = {}
         )
         .eq("published", true)
         .order("sort_order", { ascending: true })
+        .neq("source", "vensport_phase")
         .order("position", { ascending: true })
         .limit(200);
       if (!cancelled) {
