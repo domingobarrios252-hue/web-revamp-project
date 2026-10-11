@@ -4,6 +4,7 @@ import { loadEventResults, type NormalizedResult } from "@/lib/results/provider"
 import { ASU26_RESULT_EVENT_ID, ASU26_TZ } from "@/lib/tv/asu26Streaming";
 import { modalityOf } from "@/lib/specials/asu26Hub";
 import type { PieceMember } from "@/lib/specials/pieceMembers";
+import { SPAIN_LINKS, linkSpainResult } from "@/lib/specials/spainLinks";
 import { RollerzoneMark, VeloproCredit } from "@/components/tv/asu26/ResultsBrand";
 
 type Item = { id: string; event_name: string; discipline: string | null; scheduled_at: string };
@@ -11,17 +12,12 @@ type Mod = "pista" | "circuito" | "maraton";
 const MOD_LABEL: Record<Mod, string> = { pista: "Pista", circuito: "Circuito", maraton: "Maratón" };
 const MEDAL_CLS = ["bg-gold text-background", "bg-foreground/80 text-background", "bg-gold-dark/80 text-background"];
 
-const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/).filter(Boolean);
-
-/** ¿El nombre de la clasificación corresponde a esta ficha? (nombre + primer apellido, o nombre visible). */
-function matches(m: PieceMember, athlete: string) {
-  const a = new Set(norm(athlete));
-  const f = norm(m.first_name)[0];
-  const l = norm(m.last_name)[0];
-  if (f && l && a.has(f) && a.has(l)) return true;
-  const d = norm(m.display_name ?? "");
-  return d.length >= 2 && d.every((t) => a.has(t));
+function memberLabel(m: PieceMember) {
+  const sport = SPAIN_LINKS[m.id]?.sportName;
+  const base = m.display_name?.trim() || `${m.first_name} ${m.last_name}`.trim();
+  return sport ? `${sport} (${`${m.first_name.split(" ")[0]} ${m.last_name.split(" ")[0]}`.trim()})` : base;
 }
+const normLabel = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 function modOf(i?: Item): Mod {
   if (!i) return "pista";
@@ -73,15 +69,15 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
         .filter((r) => (r.country ?? "").toUpperCase() === "ESP" && r.state !== "upcoming" && r.position != null)
         .map((r) => {
           const it = r.scheduleItemId ? byId.get(r.scheduleItemId) : undefined;
-          return { r, it, mod: modOf(it), member: members.find((m) => matches(m, r.athlete)) };
+          return { r, it, mod: modOf(it), member: members.find((m) => m.id === linkSpainResult(r, members.map((x) => x.id))) };
         })
         .sort((a, b) => (a.r.scheduledAt ?? "").localeCompare(b.r.scheduledAt ?? "") || (a.r.race ?? "").localeCompare(b.r.race ?? "") || (a.r.position ?? 0) - (b.r.position ?? 0)),
     [results, byId, members],
   );
 
-  const skaterName = (x: (typeof esp)[number]) => x.member ? (x.member.display_name?.trim() || `${x.member.first_name} ${x.member.last_name}`) : x.r.athlete;
+  const skaterName = (x: (typeof esp)[number]) => (x.member ? memberLabel(x.member) : x.r.athlete);
   const skaters = useMemo(() => {
-    const s = new Set<string>(members.map((m) => m.display_name?.trim() || `${m.first_name} ${m.last_name}`.trim()));
+    const s = new Set<string>(members.map(memberLabel));
     esp.forEach((x) => s.add(skaterName(x)));
     return [...s];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,7 +130,7 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
               </p>
             ) : (
               <ol className="mt-6 overflow-hidden rounded-2xl border border-border bg-background/70">
-                {shown.map(({ r, it, mod: m }) => {
+                {shown.map(({ r, it, mod: m, member }) => {
                   const p = r.position ?? 0;
                   const podium = p >= 1 && p <= 3;
                   return (
@@ -146,7 +142,8 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
                         {p}
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate text-base font-semibold text-foreground">🇪🇸 {r.athlete}</p>
+                        <p className="truncate text-base font-semibold text-foreground">🇪🇸 {member ? memberLabel(member) : r.athlete}</p>
+                        {member && normLabel(memberLabel(member)) !== normLabel(r.athlete) && <p className="truncate text-xs text-muted-foreground">En la clasificación: {r.athlete}{r.bib ? ` · Dorsal ${r.bib}` : ""}</p>}
                         <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
                           {[r.race, r.category, r.gender, r.phase, MOD_LABEL[m]].filter(Boolean).join(" · ")}
                           {it && ` · ${new Date(it.scheduled_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: ASU26_TZ })}`}
@@ -168,7 +165,7 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {pending.map((m) => (
                     <li key={m.id} className="rounded-full border border-border bg-background/50 px-3 py-1.5 text-sm text-foreground">
-                      {m.display_name?.trim() || `${m.first_name} ${m.last_name}`}
+                      {memberLabel(m)}
                     </li>
                   ))}
                 </ul>
