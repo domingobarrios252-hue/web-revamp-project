@@ -11,9 +11,9 @@ export const SPAIN_LINKS: Record<string, SpainLink> = {
   "ed51b5b5-eb74-45b7-8fa8-4b4fba3642d0": { bibs: ["79"], aliases: ["Carla Plana Olivares", "Carla Plana"] },
   "53190d1b-c1a8-4008-af65-db07996d4397": { bibs: ["80"], aliases: ["Paula Rodriguez"] },
   "76b6d773-0ee5-4fc4-8818-ccb431d55b7e": { bibs: ["191"], aliases: ["Iker Breton Barasoain", "Iker Breton"] },
-  "cae2caca-4554-48c3-a76e-e77a2b458858": { bibs: [], aliases: ["Aura Quintana"] },
-  "d9e8f7d5-b78f-4a33-a810-d34b5bb37780": { bibs: [], aliases: ["Patxi Peula", "Francisco Jose Patxi Peula", "Francisco Jose Peula"] },
-  "e0523f71-8a1d-4c89-9fb0-6ef0b91ac5de": { bibs: [], aliases: ["Manu Taibo", "Manuel Taibo"] },
+  "cae2caca-4554-48c3-a76e-e77a2b458858": { bibs: ["284"], aliases: ["Aura Quintana"] },
+  "d9e8f7d5-b78f-4a33-a810-d34b5bb37780": { bibs: ["404"], aliases: ["Patxi Peula", "Francisco Jose Patxi Peula", "Francisco Jose Peula"] },
+  "e0523f71-8a1d-4c89-9fb0-6ef0b91ac5de": { bibs: ["406"], aliases: ["Manu Taibo", "Manuel Taibo"] },
 };
 
 export const normName = (s: string) =>
