@@ -19,6 +19,8 @@ import {
 import { ASU26_PATH, ASU26_TZ } from "@/lib/tv/asu26Streaming";
 import { hhmm, localHhmm, localSuffix, useViewerZone } from "@/components/tv/asu26/Asu26Time";
 import { flagEmoji, type PieceMember } from "@/lib/specials/pieceMembers";
+import rzWordmark from "@/assets/rollerzone-es-wordmark.png.asset.json";
+import veloproLogo from "@/assets/velopro-horizontal.png.asset.json";
 
 export type Asu26Module = "calendario" | "tv" | "resultados" | "medallero" | "noticias";
 
@@ -248,9 +250,22 @@ function MedalModule() {
   return (
     <section className="bg-background py-10 md:py-14">
       <div className="mx-auto max-w-5xl px-4 md:px-6">
-        <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-6xl">Medallero</h2>
-        <p className="font-condensed mt-1 text-xs font-bold uppercase tracking-[3px] text-gold md:text-sm">World Skate Games ASU26 · Patinaje de Velocidad</p>
-        <div className="mt-3 h-[3px] w-16 bg-gold" />
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
+          <div className="min-w-0">
+            <h2 className="font-display text-4xl uppercase tracking-wide text-foreground md:text-6xl">Medallero</h2>
+            <p className="font-condensed mt-1 text-xs font-bold uppercase tracking-[3px] text-gold md:text-sm">World Skate Games ASU26 · Patinaje de Velocidad</p>
+            <div className="mt-3 h-[3px] w-16 bg-gold" />
+          </div>
+          <div className="flex w-full max-w-[300px] flex-col border-l border-gold/40 pl-4 md:w-[280px] md:shrink-0 md:pl-6">
+            <p className="font-condensed text-[10px] font-bold uppercase tracking-[2.5px] text-muted-foreground">Medallero publicado por</p>
+            <img src={rzWordmark.url} alt="Rollerzone.es" className="mt-2 aspect-[1589/200] w-[200px] object-cover object-top md:w-[230px]" />
+            <div className="my-3 h-px w-full bg-gradient-to-r from-gold/50 to-transparent" aria-hidden="true" />
+            <p className="font-condensed text-[10px] font-bold uppercase tracking-[2.5px] text-muted-foreground">Datos oficiales facilitados por</p>
+            <span className="mt-2 inline-flex w-fit rounded-md bg-foreground px-2 py-1">
+              <img src={veloproLogo.url} alt="VeloPro" className="aspect-[1920/440] w-[190px] object-cover md:w-[220px]" />
+            </span>
+          </div>
+        </div>
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
           <p className="font-display text-xl uppercase tracking-wide text-foreground md:text-2xl">Clasificación por países</p>
           <div className="font-condensed flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-bold uppercase tracking-[2px] text-muted-foreground">
@@ -291,6 +306,9 @@ function MedalModule() {
                 );
               })}
             </ol>
+            <p className="font-condensed border-t border-border bg-background/40 px-3 py-2 text-right text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground md:px-5 md:text-[11px]">
+              <span className="text-gold">Rollerzone.es</span> · Datos oficiales VeloPro
+            </p>
           </div>
         )}
 
