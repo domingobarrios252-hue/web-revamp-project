@@ -262,7 +262,7 @@ function MedalModule() {
             <div className="my-3 h-px w-full bg-gradient-to-r from-gold/50 to-transparent" aria-hidden="true" />
             <p className="font-condensed text-[10px] font-bold uppercase tracking-[2.5px] text-muted-foreground">Datos oficiales facilitados por</p>
             <span className="mt-2 inline-flex w-fit rounded-md bg-foreground px-2 py-1">
-              <img src={veloproLogo.url} alt="VeloPro" className="h-10 w-auto md:h-12" />
+              <img src={veloproLogo.url} alt="VeloPro" className="aspect-[1920/440] w-[190px] object-cover md:w-[220px]" />
             </span>
           </div>
         </div>
