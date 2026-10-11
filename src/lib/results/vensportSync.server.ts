@@ -6,6 +6,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   VENSPORT_BASE, VENSPORT_MIN_DELAY_MS, VENSPORT_UA,
   matchLink, parseFinalRanking, parseHomeSections, parseRaceTitle, parseSectionRaces, rankingToRows, type VensportLink,
+  parsePhases, phaseToRows, type VensportRace,
 } from "@/lib/results/vensportSource";
 
 // ───────────── Sincronización automática (1 página por aviso, avisos cada 30 s) ─────────────
@@ -155,6 +156,17 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
       diff = { at: now.toISOString(), added: added.length, missing: missing.map((m) => ({ name: m.athlete_name, bib: m.bib, passes: (m.source_missing_passes ?? 0) + 1 })), bibChanged, changed, retired, suspicious };
     }
   }
+  // Fases (series/cuartos/semis/final) de la MISMA página ya descargada: sin consultas extra.
+  // Aisladas: origen propio y cualquier fallo aquí no afecta a la clasificación final.
+  let phaseRows = 0;
+  if (link) {
+    try {
+      phaseRows = await syncPhases(html, me, link, st.target_result_event_id);
+    } catch {
+      /* se ignora: la clasificación final ya está guardada */
+    }
+  }
   await supabaseAdmin.from("vensport_pages").update({ complete: rk.complete, row_count: rows.length, last_fetched_at: now.toISOString(), last_status: link ? (rk.complete ? "completa" : "sin clasificación completa") : "sin equivalencia", ...(diff ? { last_diff: diff } : {}) } as never).eq("division_id", page.division_id);
+  void phaseRows;
   return { ok: true, page: me.title, rows: rows.length, complete: rk.complete, ...(retired ? { retired } : {}) };
 }
