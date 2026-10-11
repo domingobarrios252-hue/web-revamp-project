@@ -170,3 +170,40 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
   void phaseRows;
   return { ok: true, page: me.title, rows: rows.length, complete: rk.complete, ...(retired ? { retired } : {}) };
 }
+
+/** Visibilidad pública de las fases (site_settings «vensport_phases» → { public: true }). Por defecto ocultas. */
+async function phasesPublic(): Promise<boolean> {
+  const { data } = await supabaseAdmin.from("site_settings").select("value").eq("key", "vensport_phases").maybeSingle();
+  return (data?.value as { public?: boolean } | null)?.public === true;
+}
+
+/**
+ * Guarda las series completas de la página. Mismas garantías que la final: upsert por id único,
+ * retirada solo tras 2 lecturas completas sin la fila (se oculta, nunca se borra) y solo dentro de
+ * las fases leídas ahora; si desaparece más de la mitad de golpe, no se retira nada.
+ */
+async function syncPhases(html: string, race: VensportRace, link: VensportLink, resultEventId: string): Promise<number> {
+  const phases = parsePhases(html).filter((p) => p.complete);
+  if (!phases.length) return 0;
+  const publish = await phasesPublic();
+  const rows = phases.flatMap((p) => phaseToRows(p, race, link, resultEventId, publish));
+  if (!rows.length) return 0;
+  const rounds = new Set(phases.map((p) => p.label));
+  const { data: cur } = await supabaseAdmin
+    .from("live_results")
+    .select("id,source_result_id,round,published,source_missing_passes")
+    .eq("result_event_id", resultEventId).eq("source", "vensport_phase").eq("source_competition_id", link.source_competition_id);
+  const current = (cur ?? []).filter((r) => rounds.has(r.round as string));
+  const newIds = new Set(rows.map((r) => r.source_result_id));
+  const missing = current.filter((r) => !newIds.has(r.source_result_id as string));
+  const suspicious = current.length > 0 && missing.length > current.length / 2;
+  const { error } = await supabaseAdmin.from("live_results").upsert(rows as never, { onConflict: "result_event_id,source_result_id" });
+  if (error) throw new Error(error.message);
+  if (!suspicious) {
+    for (const m of missing) {
+      const passes = (m.source_missing_passes ?? 0) + 1;
+      await supabaseAdmin.from("live_results").update((passes >= 2 ? { source_missing_passes: passes, published: false } : { source_missing_passes: passes }) as never).eq("id", m.id);
+    }
+  }
+  return rows.length;
+}
