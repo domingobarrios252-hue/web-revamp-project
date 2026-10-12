@@ -80,6 +80,8 @@ function raceState(it: Item, results: NormalizedResult[]) {
   if (it.status === "en_curso") return { label: "En curso", hot: true };
   if (it.status === "aplazada") return { label: "Aplazada", hot: false };
   if (it.status === "cancelada") return { label: "Cancelada", hot: false };
+  if (it.status === "suspendida") return { label: "Suspendida", hot: false };
+  if ((it as { pending_scheduled_at?: string | null }).pending_scheduled_at) return { label: "Horario en revisión", hot: false };
   if (it.status === "finalizada") {
     const rs = results.filter((r) => r.scheduleItemId === it.id);
     if (rs.some((r) => r.state === "official")) return { label: "Oficial", hot: false };
@@ -110,7 +112,7 @@ function Asu26Hub() {
         loadAsu26Config(),
         supabase
           .from("schedule_items")
-          .select("id,event_name,event_name_en,category,gender,phase,discipline,venue_type,location,scheduled_at,status,featured,sort_order")
+          .select("id,event_name,event_name_en,category,gender,phase,discipline,venue_type,location,scheduled_at,status,featured,sort_order,pending_scheduled_at,original_scheduled_at")
           .eq("result_event_id", ASU26_RESULT_EVENT_ID)
           .eq("published", true)
           .order("scheduled_at")

@@ -144,7 +144,7 @@ function groupByVenue(list: ScheduleItem[]): [string, ScheduleItem[]][] {
 function ScheduleRow({ item, tz, streamAnchor, hasResults }: { item: ScheduleItem; tz: string; streamAnchor?: string; hasResults?: boolean }) {
   const meta = [item.category, item.gender].filter(Boolean).join(" · ");
   const live = item.status === "en_curso";
-  const off = item.status === "cancelada" || item.status === "aplazada";
+  const off = item.status === "cancelada" || item.status === "aplazada" || item.status === "suspendida";
   return (
     <li
       className={
@@ -160,6 +160,11 @@ function ScheduleRow({ item, tz, streamAnchor, hasResults }: { item: ScheduleIte
         {(item.phase || meta) && (
           <div className="font-condensed mt-0.5 text-[11px] uppercase tracking-[1.5px] text-muted-foreground">
             {[item.phase, meta].filter(Boolean).join(" · ")}
+          </div>
+        )}
+        {(item.pending_scheduled_at || item.original_scheduled_at) && (
+          <div className="font-condensed mt-0.5 text-[10px] font-bold uppercase tracking-[1.5px] text-gold/80">
+            {item.pending_scheduled_at ? "Horario en revisión" : `Reprogramada · antes ${dayInTz(item.original_scheduled_at!, tz).slice(8, 10)}/${dayInTz(item.original_scheduled_at!, tz).slice(5, 7)} ${timeInTz(item.original_scheduled_at!, tz)}`}
           </div>
         )}
         {live && streamAnchor && (
