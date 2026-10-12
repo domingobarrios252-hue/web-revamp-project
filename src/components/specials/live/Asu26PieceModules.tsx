@@ -15,6 +15,7 @@ import {
   useAsu26Hub,
   type HubScheduleItem,
   type Modality,
+  itemLabel,
 } from "@/lib/specials/asu26Hub";
 import { ASU26_PATH, ASU26_TZ } from "@/lib/tv/asu26Streaming";
 import { hhmm, localHhmm, localSuffix, useViewerZone } from "@/components/tv/asu26/Asu26Time";
@@ -160,7 +161,7 @@ function ScheduleRow({ x }: { x: HubScheduleItem }) {
         ) : st === "finished" ? (
           <Link {...RESULTADOS} className={btnGhost}>Ver resultados</Link>
         ) : (
-          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{STATE_LABEL[st]}</span>
+          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{itemLabel(x)}</span>
         )}
       </div>
     </li>
@@ -400,6 +401,7 @@ export function MemberAsu26Live({ m }: { m: PieceMember }) {
         <p className="mt-1 text-foreground">
           <span className="text-muted-foreground">Próxima: </span>
           {next.event_name} · {fmtDay(next.scheduled_at, ASU26_TZ)} {hhmm(next.scheduled_at, ASU26_TZ)} PY{localSuffix(next.scheduled_at, zone)}
+          {itemLabel(next) !== "Próximamente" && <span className="font-condensed ml-2 text-[10px] font-bold uppercase tracking-[1.5px] text-gold">{itemLabel(next)}</span>}
         </p>
       )}
       {mine.length > 0 && (
