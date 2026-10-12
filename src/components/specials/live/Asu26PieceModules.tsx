@@ -401,6 +401,7 @@ export function MemberAsu26Live({ m }: { m: PieceMember }) {
         <p className="mt-1 text-foreground">
           <span className="text-muted-foreground">Próxima: </span>
           {next.event_name} · {fmtDay(next.scheduled_at, ASU26_TZ)} {hhmm(next.scheduled_at, ASU26_TZ)} PY{localSuffix(next.scheduled_at, zone)}
+          {itemLabel(next) !== "Próximamente" && <span className="font-condensed ml-2 text-[10px] font-bold uppercase tracking-[1.5px] text-gold">{itemLabel(next)}</span>}
         </p>
       )}
       {mine.length > 0 && (
