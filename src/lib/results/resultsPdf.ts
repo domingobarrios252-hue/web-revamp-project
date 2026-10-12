@@ -130,11 +130,13 @@ export async function buildResultsPdf(rows: PdfRow[], meta: PdfMeta, opts: { gen
     facts.forEach(([k, v], i) => {
       const w = ((W - 2 * M) * fr[i]) / tot - 2;
       doc.setFont("RZ", "bold"); doc.setFontSize(6); doc.setTextColor(MUTED);
-      doc.text(k.toUpperCase(), x, y + 3.5, { maxWidth: w });
+      const kl = doc.splitTextToSize(k.toUpperCase(), w) as string[];
+      doc.text(kl, x, y + 3.5);
       doc.setFontSize(8.5); doc.setTextColor(DARK);
       const vl = doc.splitTextToSize(v || "—", w) as string[];
-      doc.text(vl, x, y + 8);
-      maxH = Math.max(maxH, 8 + vl.length * 3.8);
+      const vy = y + 3.5 + kl.length * 2.6 + 2.6;
+      doc.text(vl, x, vy);
+      maxH = Math.max(maxH, vy - y + vl.length * 3.8);
       x += w + 2;
     });
     return y + maxH + 4;
