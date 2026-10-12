@@ -140,7 +140,7 @@ function Asu26Hub() {
   }, []);
 
   const upcoming = useMemo(
-    () => (items ?? []).filter((i) => i.status === "en_curso" || (i.status === "programada" && new Date(i.scheduled_at) >= new Date(now.getTime() - 30 * 60_000))).slice(0, 6),
+    () => (items ?? []).filter((i) => i.status === "en_curso" || (["programada", "aplazada", "suspendida"].includes(i.status) && new Date(i.scheduled_at) >= new Date(now.getTime() - 30 * 60_000))).slice(0, 6),
     [items, now],
   );
   const today = dayInTz(now, ASU26_TZ);
