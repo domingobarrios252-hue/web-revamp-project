@@ -38,6 +38,8 @@ function ResultadosIndex() {
   const [events, setEvents] = useState<ResultEvent[] | null>(null);
   const [legacy, setLegacy] = useState<{ slug: string; name: string }[]>([]);
   const [fCountry, setFCountry] = useState("");
+  const [fYear, setFYear] = useState("");
+  const [fMod, setFMod] = useState("");
   const [fStatus, setFStatus] = useState<"" | ResultEvent["status"]>("");
 
   useEffect(() => {
@@ -93,8 +95,11 @@ function ResultadosIndex() {
   ];
 
   const countryOpts = Array.from(new Set(all.map((e) => e.country).filter((c): c is string => !!c))).sort();
+  const yearOpts = Array.from(new Set(all.map((e) => e.event_date?.slice(0, 4)).filter((y): y is string => !!y))).sort().reverse();
+  const modOf = (n: string) => (/marat/i.test(n) ? "Maratón" : /ruta|road/i.test(n) ? "Ruta" : /pista|track/i.test(n) ? "Pista" : /velocidad|speed/i.test(n) ? "Velocidad" : "");
+  const modOpts = Array.from(new Set(all.map((e) => modOf(e.name)).filter(Boolean))).sort();
   const filtered = all.filter(
-    (e) => (!fCountry || e.country === fCountry) && (!fStatus || e.status === fStatus),
+    (e) => (!fCountry || e.country === fCountry) && (!fStatus || e.status === fStatus) && (!fYear || e.event_date?.startsWith(fYear)) && (!fMod || modOf(e.name) === fMod),
   );
 
   return (
@@ -115,6 +120,14 @@ function ResultadosIndex() {
           <select value={fCountry} onChange={(e) => setFCountry(e.target.value)} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
             <option value="">Todos los países</option>
             {countryOpts.map((c) => (<option key={c} value={c}>{c}</option>))}
+          </select>
+          <select value={fYear} onChange={(e) => setFYear(e.target.value)} aria-label="Año" className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
+            <option value="">Todos los años</option>
+            {yearOpts.map((y) => (<option key={y} value={y}>{y}</option>))}
+          </select>
+          <select value={fMod} onChange={(e) => setFMod(e.target.value)} aria-label="Modalidad" className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
+            <option value="">Todas las modalidades</option>
+            {modOpts.map((m) => (<option key={m} value={m}>{m}</option>))}
           </select>
           <select value={fStatus} onChange={(e) => setFStatus(e.target.value as "" | ResultEvent["status"])} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
             <option value="">Todos los estados</option>
