@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/i18n/format";
 import { exportCsv, exportPdf, exportXlsx, type ExportRow } from "@/lib/resultsExport";
 import { toast } from "sonner";
 import { getViewableStorageUrl } from "@/lib/signedStorageUrl";
+import { ChampionshipArchive } from "@/components/results/ChampionshipArchive";
 
 
 
@@ -69,6 +70,9 @@ type SearchParams = {
   ronda?: string;
   club?: string;
   federacion?: string;
+  modalidad?: string;
+  pais?: string;
+  nombre?: string;
 };
 
 function pickString(v: unknown): string | undefined {
@@ -83,6 +87,9 @@ export const Route = createFileRoute("/resultados/$evento")({
     ronda: pickString(s.ronda),
     club: pickString(s.club),
     federacion: pickString(s.federacion),
+    modalidad: pickString(s.modalidad),
+    pais: pickString(s.pais),
+    nombre: pickString(s.nombre),
   }),
   loader: async ({ params }) => {
     const [{ data: meta }, { data: rows, error }] = await Promise.all([
@@ -197,6 +204,16 @@ export const Route = createFileRoute("/resultados/$evento")({
 });
 
 function ResultadosEventoPage() {
+  const data = Route.useLoaderData();
+  const search = Route.useSearch();
+  // Campeonatos enlazados por ID (p. ej. ASU26): archivo histórico de solo lectura.
+  if (data.meta?.id && data.rows.length === 0) {
+    return <ChampionshipArchive eventId={data.meta.id} slug={data.evento} name={data.meta.name} eventDate={data.meta.event_date} search={search} />;
+  }
+  return <LegacyEventPage />;
+}
+
+function LegacyEventPage() {
   const data = Route.useLoaderData();
   const search = Route.useSearch();
   const rows: ResultRow[] = data.rows;
