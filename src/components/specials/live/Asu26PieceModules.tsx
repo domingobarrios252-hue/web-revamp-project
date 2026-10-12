@@ -15,7 +15,7 @@ import {
   useAsu26Hub,
   type HubScheduleItem,
   type Modality,
-} from "@/lib/specials/asu26Hub";
+, itemLabel } from "@/lib/specials/asu26Hub";
 import { ASU26_PATH, ASU26_TZ } from "@/lib/tv/asu26Streaming";
 import { hhmm, localHhmm, localSuffix, useViewerZone } from "@/components/tv/asu26/Asu26Time";
 import { flagEmoji, type PieceMember } from "@/lib/specials/pieceMembers";
@@ -160,7 +160,7 @@ function ScheduleRow({ x }: { x: HubScheduleItem }) {
         ) : st === "finished" ? (
           <Link {...RESULTADOS} className={btnGhost}>Ver resultados</Link>
         ) : (
-          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{STATE_LABEL[st]}</span>
+          <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{itemLabel(x)}</span>
         )}
       </div>
     </li>

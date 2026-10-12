@@ -22,7 +22,18 @@ export type HubScheduleItem = {
   discipline: string | null;
   scheduled_at: string;
   status: string;
+  pending_scheduled_at?: string | null;
+  original_scheduled_at?: string | null;
 };
+
+const STOPPED: Record<string, string> = { aplazada: "Aplazada", suspendida: "Suspendida", cancelada: "Cancelada" };
+/** Etiqueta pública de una prueba: estado parado o reprogramación antes que el estado genérico. */
+export function itemLabel(x: { status: string; pending_scheduled_at?: string | null; original_scheduled_at?: string | null }): string {
+  if (STOPPED[x.status]) return STOPPED[x.status];
+  if (x.pending_scheduled_at && itemState(x.status) !== "finished") return "Horario en revisión";
+  const base = STATE_LABEL[itemState(x.status)];
+  return x.original_scheduled_at && itemState(x.status) === "upcoming" ? `${base} · Reprogramada` : base;
+}
 
 export type HubNews = {
   id: string;
@@ -114,7 +125,7 @@ async function load(): Promise<Omit<Asu26HubData, "loading">> {
   const [si, cfg, nw, mem] = await Promise.all([
     sb
       .from("schedule_items")
-      .select("id,event_name,category,gender,phase,discipline,scheduled_at,status")
+      .select("id,event_name,category,gender,phase,discipline,scheduled_at,status,pending_scheduled_at,original_scheduled_at")
       .eq("result_event_id", ASU26_RESULT_EVENT_ID)
       .eq("published", true)
       .order("scheduled_at", { ascending: true }),
@@ -169,7 +180,7 @@ export function nextItem(schedule: HubScheduleItem[]): HubScheduleItem | null {
   const now = Date.now();
   return (
     schedule.find((x) => itemState(x.status) === "live") ??
-    schedule.find((x) => itemState(x.status) === "upcoming" && new Date(x.scheduled_at).getTime() >= now - 3600_000) ??
+    schedule.find((x) => itemState(x.status) === "upcoming" && !STOPPED[x.status] && new Date(x.scheduled_at).getTime() >= now - 3600_000) ??
     null
   );
 }
