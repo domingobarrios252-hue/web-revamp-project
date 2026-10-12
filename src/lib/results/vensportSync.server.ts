@@ -162,8 +162,9 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
   if (link) {
     try {
       phaseRows = await syncPhases(html, me, link, st.target_result_event_id);
-    } catch {
-      /* se ignora: la clasificación final ya está guardada */
+    } catch (e) {
+      // La clasificación final ya está guardada; solo se detiene la importación de fases.
+      await stopPhases(e).catch(() => {});
     }
   }
   await supabaseAdmin.from("vensport_pages").update({ complete: rk.complete, row_count: rows.length, last_fetched_at: now.toISOString(), last_status: link ? (rk.complete ? "completa" : "sin clasificación completa") : "sin equivalencia", ...(diff ? { last_diff: diff } : {}) } as never).eq("division_id", page.division_id);
@@ -172,9 +173,15 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
 }
 
 /** Visibilidad pública de las fases (site_settings «vensport_phases» → { public: true }). Por defecto ocultas. */
-async function phasesPublic(): Promise<boolean> {
+type PhaseCfg = { public?: boolean; enabled?: boolean; stopped_at?: string; error?: string };
+async function phaseCfg(): Promise<PhaseCfg> {
   const { data } = await supabaseAdmin.from("site_settings").select("value").eq("key", "vensport_phases").maybeSingle();
-  return (data?.value as { public?: boolean } | null)?.public === true;
+  return (data?.value as PhaseCfg | null) ?? {};
+}
+/** Ante cualquier error, se detiene SOLO la importación de fases (la final sigue). */
+async function stopPhases(err: unknown) {
+  const cur = await phaseCfg().catch(() => ({}) as PhaseCfg);
+  await supabaseAdmin.from("site_settings").upsert({ key: "vensport_phases", value: { ...cur, enabled: false, stopped_at: new Date().toISOString(), error: String((err as Error)?.message ?? err).slice(0, 300) } } as never, { onConflict: "key" });
 }
 
 /**
@@ -183,9 +190,11 @@ async function phasesPublic(): Promise<boolean> {
  * las fases leídas ahora; si desaparece más de la mitad de golpe, no se retira nada.
  */
 async function syncPhases(html: string, race: VensportRace, link: VensportLink, resultEventId: string): Promise<number> {
+  const cfg = await phaseCfg();
+  if (cfg.enabled !== true) return 0;
   const phases = parsePhases(html).filter((p) => p.complete);
   if (!phases.length) return 0;
-  const publish = await phasesPublic();
+  const publish = cfg.public === true;
   const rows = phases.flatMap((p) => phaseToRows(p, race, link, resultEventId, publish));
   if (!rows.length) return 0;
   const rounds = new Set(phases.map((p) => p.label));
