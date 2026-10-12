@@ -104,16 +104,14 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
     return { ok: true, page: "portada", rows: 0 };
   }
 
+  // Recuperación de fases de días anteriores: como máximo una de cada dos pasadas (≥ 60 s entre recuperaciones).
+  if (mode === "scheduled") {
+    const bf = await backfillPhases(pages, links, st.target_result_event_id, now);
+    if (bf) return bf;
+  }
   // «Sincronizar ahora»: lee ya la prueba más prioritaria aunque no le toque por tiempo.
   const page = pickPage(pages, now.getTime()) ?? (mode === "manual" ? pickPage(pages, now.getTime() + COMPLETE_EVERY_MS + HOME_EVERY_MS) : null);
-  if (!page) {
-    // Recuperación de fases de días anteriores: solo en huecos libres (nunca retrasa la sincronización habitual).
-    if (mode === "scheduled") {
-      const bf = await backfillPhases(pages, links, st.target_result_event_id);
-      if (bf) return bf;
-    }
-    return { ok: true, skipped: "Nada pendiente" };
-  }
+  if (!page) return { ok: true, skipped: "Nada pendiente" };
   const html = await vget(`/divisions/${page.division_id}`);
 
   // Pruebas hermanas listadas en la página (descubre nuevas clasificaciones).
