@@ -1,0 +1,1 @@
+UPDATE public.site_settings SET value = jsonb_set(value, '{backfill}', '["162110"]'::jsonb) WHERE key = 'vensport_phases';
