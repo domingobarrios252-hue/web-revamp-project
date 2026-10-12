@@ -10,5 +10,5 @@
 - [x] Especial ASU26 como hub dinámico (calendario, TV, resultados, medallero, noticias, tarjetas)
 - [ ] Vincular las 5 noticias ASU26 existentes al especial (espera visto bueno)
 - [ ] Publicar las 4 fichas ocultas de la Selección (decisión del usuario)
-- [ ] PDF resultados: códigos de sanción sin interpretaciones; «Clasificación final» en una línea; prueba y categoría discretas en páginas 2+ (preview, sin publicar)
+- [x] PDF resultados: códigos de sanción sin interpretaciones; «Clasificación final» en una línea; prueba y categoría discretas en páginas 2+ (preview, sin publicar)
 - [ ] Descarga pública PDF en resultados ASU26 y archivo histórico (pendiente de autorización)
