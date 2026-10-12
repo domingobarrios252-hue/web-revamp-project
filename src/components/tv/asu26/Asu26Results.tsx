@@ -3,6 +3,40 @@ import { RESULT_STATE_LABEL } from "@/lib/results/provider";
 import { httpsOnly, type Asu26StreamingConfig } from "@/lib/tv/asu26Streaming";
 import { RollerzoneMark, VeloproCredit } from "./ResultsBrand";
 import { phaseOrder } from "@/lib/results/vensportSource";
+import { useState } from "react";
+import { FileDown } from "lucide-react";
+
+/** Descarga la clasificación de una tarjeta como PDF (datos ya cargados en la página). */
+function PdfButton({ name, rows }: { name: string; rows: NormalizedResult[] }) {
+  const [busy, setBusy] = useState(false);
+  const go = async () => {
+    setBusy(true);
+    try {
+      const { buildResultsPdf, pdfFileName } = await import("@/lib/results/resultsPdf");
+      const r0 = rows[0];
+      const parts = (r0.race ?? "").split(" · ");
+      const dist = (parts[parts.length - 1] || name).replace(/dual time trial/i, "Dual Time Trial").replace(/points race/i, "Puntos").replace(/elimination/i, "Eliminación").replace(/relay race/i, "Relevos");
+      const mod = /^track/i.test(parts[0] ?? "") ? "Velocidad · Pista" : /^road/i.test(parts[0] ?? "") ? "Velocidad · Ruta" : "Patinaje de velocidad";
+      const date = r0.scheduledAt ? new Intl.DateTimeFormat("es-ES", { timeZone: "America/Asuncion", day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(r0.scheduledAt)) : null;
+      const meta = {
+        championship: "World Skate Games ASU26",
+        title: [dist, [r0.category, (r0.gender ?? "").toLowerCase()].filter(Boolean).join(" ")].filter(Boolean).join(" · "),
+        competitionDate: date, modality: mod, distance: dist, category: r0.category, gender: r0.gender, phase: r0.phase,
+        source: "VeloPro", unconfirmed: rows.some((r) => r.state === "unconfirmed"),
+      };
+      const doc = await buildResultsPdf(rows.map((r) => ({ position: r.position, bib: r.bib, athlete: r.athlete ?? "", country: r.country, time: r.time, points: r.points, gap: r.gap, notes: r.notes })), meta);
+      doc.save(pdfFileName(meta));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <button type="button" onClick={go} disabled={busy} className="font-condensed inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border border-gold/60 px-3 text-[10px] font-bold uppercase tracking-[2px] text-gold transition-colors hover:bg-gold/10 disabled:opacity-60">
+      <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
+      {busy ? "Generando…" : "Descargar clasificación en PDF"}
+    </button>
+  );
+}
 
 const FLAG: Record<string, string> = {
   ESP: "🇪🇸", COL: "🇨🇴", FRA: "🇫🇷", ITA: "🇮🇹", POR: "🇵🇹", BEL: "🇧🇪", NED: "🇳🇱", GER: "🇩🇪",
@@ -39,7 +73,7 @@ export function groupResults(results: NormalizedResult[]): [string, NormalizedRe
     .map((g) => [g.name, g.rows]);
 }
 
-export function Asu26Results({ cfg, results, limit, emptyText }: { cfg: Asu26StreamingConfig; results: NormalizedResult[]; limit?: number; emptyText?: string }) {
+export function Asu26Results({ cfg, results, limit, emptyText, pdf }: { cfg: Asu26StreamingConfig; results: NormalizedResult[]; limit?: number; emptyText?: string; pdf?: boolean }) {
   const embed = cfg.veloproEnabled ? httpsOnly(cfg.veloproEmbedUrl) : "";
   const all = groupResults(results);
   const groups = limit ? all.slice(0, limit) : all;
@@ -77,6 +111,11 @@ export function Asu26Results({ cfg, results, limit, emptyText }: { cfg: Asu26Str
                     </span>
                   )}
                 </div>
+                {pdf && (
+                  <div className="mt-2">
+                    <PdfButton name={name} rows={rows} />
+                  </div>
+                )}
               </header>
               <ol>
                 {rows.map((r) => {

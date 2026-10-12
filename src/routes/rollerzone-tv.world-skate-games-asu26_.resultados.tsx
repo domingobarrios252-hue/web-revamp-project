@@ -175,6 +175,7 @@ function Asu26ResultsPage() {
             <Asu26Results
               cfg={{ ...cfg, veloproEnabled: false }}
               results={filtered}
+              pdf
               emptyText={results.length && hasFilter ? "No hay clasificaciones publicadas con estos filtros." : undefined}
             />
           )}
