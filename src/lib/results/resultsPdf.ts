@@ -108,6 +108,11 @@ export async function buildResultsPdf(rows: PdfRow[], meta: PdfMeta, opts: { gen
     doc.setFont("RZ", "normal"); doc.setTextColor(MUTED);
     doc.text(`Fuente de resultados: ${meta.source}`, W / 2, H - 9.5, { align: "center" });
     doc.setTextColor(DARK); doc.text(`Página ${page}`, W - M, H - 9.5, { align: "right" });
+    if (page > 1) {
+      // Recordatorio discreto de la prueba en páginas siguientes.
+      doc.setFont("RZ", "normal"); doc.setFontSize(7); doc.setTextColor(MUTED);
+      doc.text([meta.title, meta.phase ?? "Clasificación final"].join(" · "), M, HDR + 5.5, { maxWidth: W - 2 * M });
+    }
   };
 
   const intro = (doc: JsPDF): number => {
@@ -119,7 +124,7 @@ export async function buildResultsPdf(rows: PdfRow[], meta: PdfMeta, opts: { gen
     const tl = doc.splitTextToSize(meta.title, W - 2 * M) as string[];
     doc.text(tl, M, y); y += tl.length * 7 + 1;
     const facts: [string, string | null][] = [["Fecha de competición", meta.competitionDate], ["Modalidad", meta.modality], ["Distancia / prueba", meta.distance], ["Categoría", meta.category], ["Género", meta.gender], ["Fase", meta.phase ?? "Clasificación final"]];
-    const fr = [1.25, 1.9, 1.6, 0.75, 0.85, 1.25], tot = fr.reduce((a, b) => a + b, 0);
+    const fr = [1.25, 1.6, 1.5, 0.75, 0.85, 1.6], tot = fr.reduce((a, b) => a + b, 0);
     doc.setDrawColor(GOLD); doc.setLineWidth(0.4); doc.line(M, y, W - M, y);
     let x = M, maxH = 0;
     facts.forEach(([k, v], i) => {
@@ -143,7 +148,7 @@ export async function buildResultsPdf(rows: PdfRow[], meta: PdfMeta, opts: { gen
 
   const runTable = (doc: JsPDF, chunk: string[][], offset: number, startY: number, pad: number, track?: number[]) => {
     autoTable(doc, {
-      head, body: chunk, startY, margin: { left: M, right: M, top: HDR + 7, bottom: 20 },
+      head, body: chunk, startY, margin: { left: M, right: M, top: HDR + 9, bottom: 20 },
       theme: "plain", showHead: "everyPage",
       styles: { font: "RZ", fontSize: 8.5, textColor: DARK, cellPadding: { top: pad, bottom: pad, left: 1.6, right: 1.6 }, lineColor: LINE, valign: "middle", overflow: "linebreak" },
       headStyles: { fillColor: DARK, textColor: GOLD, fontStyle: "bold", fontSize: 7.5 },
@@ -193,12 +198,12 @@ export async function buildResultsPdf(rows: PdfRow[], meta: PdfMeta, opts: { gen
   const doc = make();
   let y = intro(doc), off = 0;
   g.forEach((idxs, gi) => {
-    if (gi > 0) { doc.addPage(); y = HDR + 7; }
+    if (gi > 0) { doc.addPage(); y = HDR + 9; }
     y = runTable(doc, idxs.map((i) => body[i]), off, y, pad);
     off += idxs.length;
   });
   const H = doc.internal.pageSize.getHeight(), W = doc.internal.pageSize.getWidth();
-  if (y + tailH > H - 20) { doc.addPage(); y = HDR + 7; }
+  if (y + tailH > H - 20) { doc.addPage(); y = HDR + 9; }
   y += 5;
   doc.setFont("RZ", "normal"); doc.setFontSize(7); doc.setTextColor(MUTED);
   for (const t of tailLines) { const l = doc.splitTextToSize(t, W - 2 * M) as string[]; doc.text(l, M, y); y += l.length * 3.4 + 1.2; }
