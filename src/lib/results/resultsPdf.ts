@@ -134,7 +134,7 @@ export async function buildResultsPdf(rows: PdfRow[], meta: PdfMeta, opts: { gen
       doc.text(kl, x, y + 3.5);
       doc.setFontSize(8.5); doc.setTextColor(DARK);
       const vl = doc.splitTextToSize(v || "—", w) as string[];
-      const vy = y + 3.5 + kl.length * 2.6 + 2.6;
+      const vy = y + 3.5 + 2 * 2.6 + 2.6; // todos los valores en la misma línea
       doc.text(vl, x, vy);
       maxH = Math.max(maxH, vy - y + vl.length * 3.8);
       x += w + 2;
