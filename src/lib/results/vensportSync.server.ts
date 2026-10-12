@@ -106,7 +106,14 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
 
   // «Sincronizar ahora»: lee ya la prueba más prioritaria aunque no le toque por tiempo.
   const page = pickPage(pages, now.getTime()) ?? (mode === "manual" ? pickPage(pages, now.getTime() + COMPLETE_EVERY_MS + HOME_EVERY_MS) : null);
-  if (!page) return { ok: true, skipped: "Nada pendiente" };
+  if (!page) {
+    // Recuperación de fases de días anteriores: solo en huecos libres (nunca retrasa la sincronización habitual).
+    if (mode === "scheduled") {
+      const bf = await backfillPhases(pages, links, st.target_result_event_id);
+      if (bf) return bf;
+    }
+    return { ok: true, skipped: "Nada pendiente" };
+  }
   const html = await vget(`/divisions/${page.division_id}`);
 
   // Pruebas hermanas listadas en la página (descubre nuevas clasificaciones).
@@ -173,7 +180,38 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
 }
 
 /** Visibilidad pública de las fases (site_settings «vensport_phases» → { public: true }). Por defecto ocultas. */
-type PhaseCfg = { public?: boolean; enabled?: boolean; stopped_at?: string; error?: string };
+type PhaseCfg = { public?: boolean; enabled?: boolean; stopped_at?: string; error?: string; backfill?: string[]; backfill_done?: Record<string, { at: string; rows: number }> };
+
+/**
+ * Lee una página pendiente de la lista «backfill» SOLO para sus fases: no toca la clasificación
+ * final ni el estado de la página. Se quita de la lista tras leerla (una consulta por prueba).
+ */
+async function backfillPhases(pages: Page[], links: VensportLink[], resultEventId: string): Promise<TickOutcome | null> {
+  const cfg = await phaseCfg();
+  if (cfg.enabled !== true || !cfg.backfill?.length) return null;
+  const id = cfg.backfill[0];
+  const page = pages.find((p) => p.division_id === id);
+  const rest = cfg.backfill.slice(1);
+  if (!page) {
+    await supabaseAdmin.from("site_settings").upsert({ key: "vensport_phases", value: { ...cfg, backfill: rest } } as never, { onConflict: "key" });
+    return null;
+  }
+  const html = await vget(`/divisions/${page.division_id}`);
+  const me = parseSectionRaces(html, page.section).find((r) => r.divisionId === page.division_id) ?? parseRaceTitle(page.division_id, page.title, page.section);
+  const link = matchLink(me, links);
+  let rows = 0;
+  if (link) {
+    try {
+      rows = await syncPhases(html, me, link, resultEventId);
+    } catch (e) {
+      await stopPhases(e).catch(() => {});
+      return { ok: true, page: `fases: ${me.title}`, rows: 0 };
+    }
+  }
+  const latest = await phaseCfg();
+  await supabaseAdmin.from("site_settings").upsert({ key: "vensport_phases", value: { ...latest, backfill: (latest.backfill ?? []).filter((x) => x !== id), backfill_done: { ...(latest.backfill_done ?? {}), [id]: { at: new Date().toISOString(), rows } } } } as never, { onConflict: "key" });
+  return { ok: true, page: `fases: ${me.title}`, rows };
+}
 async function phaseCfg(): Promise<PhaseCfg> {
   const { data } = await supabaseAdmin.from("site_settings").select("value").eq("key", "vensport_phases").maybeSingle();
   return (data?.value as PhaseCfg | null) ?? {};
