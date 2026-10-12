@@ -5,6 +5,7 @@
  * llamadas externas y siempre vuelven a MANUAL como respaldo.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { displayPhase } from "@/lib/results/vensportSource";
 
 export type ResultsProviderKey = "manual" | "velopro_api" | "velopro_widget" | "velopro_embed";
 export type ResultState = "upcoming" | "in_progress" | "provisional" | "official" | "unconfirmed";
@@ -117,7 +118,7 @@ async function loadManual(
     race: r.race || r.distance,
     category: r.category,
     gender: r.gender,
-    phase: r.round,
+    phase: r.source === PHASE_SOURCE ? displayPhase(r.round) : r.round,
     position: (r.source === "official" || r.source === "vensport" || r.source === PHASE_SOURCE) && r.position === 0 ? null : r.position,
     bib: r.bib,
     athlete: r.athlete_name,

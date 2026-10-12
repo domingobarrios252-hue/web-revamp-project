@@ -120,12 +120,32 @@ export function phaseLabel(raw: string): string {
   return `${r} · ${heat}`;
 }
 
+/** Traducción SOLO de presentación (los datos e identificadores guardados no cambian). */
+const DISPLAY_ES: [RegExp, string][] = [
+  [/results?\s+after\s+tie-?break/gi, "Resultados tras el desempate"],
+  [/tie-?break\s+bron[cz]e?\s+medal/gi, "Desempate por la medalla de bronce"],
+  [/tie-?break\s+silver\s+medal/gi, "Desempate por la medalla de plata"],
+  [/tie-?break\s+gold\s+medal/gi, "Desempate por la medalla de oro"],
+  [/tie-?break/gi, "Desempate"],
+  [/final\s+times/gi, "Tiempos finales"],
+  [/final\s+results?/gi, "Resultados finales"],
+  [/\bheat\s+(\d+)/gi, "Serie $1"],
+  [/\bgroup\s+(\d+)/gi, "Grupo $1"],
+  [/\bround\s+(\d+)/gi, "Ronda $1"],
+];
+export function displayPhase(label: string | null | undefined): string | null {
+  if (!label) return label ?? null;
+  return DISPLAY_ES.reduce((t, [re, es]) => t.replace(re, es), label);
+}
+
 /** Orden de presentación: Final → Semifinal → Cuartos → Repesca → Clasificatoria; después nº de serie. */
 export function phaseOrder(label: string | null | undefined): number {
   if (!label) return 0; // clasificación final
   const base = label.split(" · ")[0];
   const i = ["Final", "Semifinal", "Cuartos de final", "Repesca", "Clasificatoria"].indexOf(base);
   const n = Number(label.match(/(\d+)\s*$/)?.[1] ?? 0);
+  // Desempates: después de la final y antes de semifinales/clasificatorias.
+  if (/desempate|tie-?break/i.test(base)) return 150 + (/^resultados/i.test(base) ? 10 : 0) + (label.includes(" · ") ? 1 : 0);
   return (i < 0 ? 6 : i + 1) * 100 + n;
 }
 
