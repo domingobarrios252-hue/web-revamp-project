@@ -91,7 +91,7 @@ export const Route = createFileRoute("/especiales/$slug/")({
       timeline = (tl ?? []) as TimelineRow[];
       const { data: si } = await sb
         .from("schedule_items")
-        .select("id,event_name,event_name_en,category,gender,phase,discipline,venue_type,location,scheduled_at,status,featured,sort_order")
+        .select("id,event_name,event_name_en,category,gender,phase,discipline,venue_type,location,scheduled_at,status,featured,sort_order,pending_scheduled_at,original_scheduled_at")
         .eq("result_event_id", sp.result_event_id)
         .eq("published", true)
         .order("scheduled_at", { ascending: true });

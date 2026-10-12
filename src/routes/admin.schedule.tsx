@@ -19,7 +19,7 @@ export const Route = createFileRoute("/admin/schedule")({
   component: AdminSchedule,
 });
 
-const STATUSES: ScheduleStatus[] = ["programada", "en_curso", "finalizada", "aplazada", "cancelada"];
+const STATUSES: ScheduleStatus[] = ["programada", "en_curso", "finalizada", "aplazada", "suspendida", "cancelada"];
 
 const schema = z.object({
   event_name: z.string().trim().min(2, "Nombre obligatorio").max(150),
@@ -31,7 +31,7 @@ const schema = z.object({
   venue_type: z.string().trim().max(60),
   location: z.string().trim().max(150),
   scheduled_at: z.string().min(1, "Fecha y hora requeridas"),
-  status: z.enum(["programada", "en_curso", "finalizada", "aplazada", "cancelada"]),
+  status: z.enum(["programada", "en_curso", "finalizada", "aplazada", "cancelada", "suspendida"]),
   published: z.boolean(),
   featured: z.boolean(),
   sort_order: z.number().int().min(0),
@@ -55,6 +55,9 @@ type Row = {
   sort_order: number;
   country_code: string;
   result_event_id: string | null;
+  pending_scheduled_at?: string | null;
+  reschedule_note?: string | null;
+  original_scheduled_at?: string | null;
 };
 
 type Ev = { id: string; name: string; country: string | null; event_date: string | null };
@@ -193,6 +196,11 @@ export function AdminSchedule() {
                       <span className="font-condensed inline-block bg-gold/20 px-2 py-0.5 text-[10px] uppercase tracking-widest text-gold">
                         {SCHEDULE_STATUS_LABEL[r.status]}
                       </span>
+                      {r.pending_scheduled_at && (
+                        <span className="mt-1 block font-mono text-[10px] text-tv-red">
+                          Pendiente: {dayInTz(r.pending_scheduled_at, tz).slice(5)} · {timeInTz(r.pending_scheduled_at, tz)}
+                        </span>
+                      )}
                     </td>
                     <td className="px-3 py-2">{r.published ? "✓" : "—"}</td>
                     <td className="px-3 py-2">
@@ -369,6 +377,8 @@ function EditDialog({
           </div>
         </div>
 
+        {row.id && <Reschedule row={row} tz={tz} onDone={onSaved} />}
+
         <div className="mt-5 flex justify-end gap-2">
           <button onClick={onClose} className="font-condensed border border-border px-4 py-2 text-xs font-bold uppercase tracking-widest">
             Cancelar
@@ -392,5 +402,65 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="font-condensed mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">{label}</span>
       {children}
     </label>
+  );
+}
+
+/** Reprogramación en dos pasos: el nuevo horario no es público hasta «Confirmar horario oficial». El id no cambia. */
+function Reschedule({ row, tz, onDone }: { row: Row; tz: string; onDone: () => void }) {
+  const [when, setWhen] = useState(row.pending_scheduled_at ? utcToLocalInput(row.pending_scheduled_at, tz) : "");
+  const [note, setNote] = useState(row.reschedule_note ?? "");
+  const [busy, setBusy] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any;
+  const run = async (payload: Record<string, unknown>, msg: string) => {
+    setBusy(true);
+    const { error } = await db.from("schedule_items").update(payload).eq("id", row.id);
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success(msg);
+    onDone();
+  };
+  const savePending = () => {
+    if (!when) return toast.error("Indica la nueva fecha y hora");
+    run({ pending_scheduled_at: localToUtcIso(when, tz), reschedule_note: note.trim() || null }, "Nuevo horario pendiente de confirmación");
+  };
+  const confirmOfficial = () => {
+    if (!row.pending_scheduled_at) return;
+    if (!confirm("¿Confirmar y publicar el nuevo horario oficial?")) return;
+    run({
+      original_scheduled_at: row.original_scheduled_at ?? row.scheduled_at,
+      scheduled_at: row.pending_scheduled_at,
+      pending_scheduled_at: null,
+      rescheduled_at: new Date().toISOString(),
+      status: row.status === "aplazada" || row.status === "suspendida" ? "programada" : row.status,
+    }, "Horario oficial publicado");
+  };
+  const discard = () => run({ pending_scheduled_at: null, reschedule_note: null }, "Cambio pendiente descartado");
+  const btn = "font-condensed border px-3 py-2 text-[11px] font-bold uppercase tracking-widest disabled:opacity-50";
+  return (
+    <div className="mt-5 border border-gold/40 p-4">
+      <h3 className="font-condensed text-xs font-bold uppercase tracking-[2px] text-gold">Reprogramar</h3>
+      <p className="mt-1 text-xs text-muted-foreground">
+        El nuevo horario queda pendiente y la web muestra «Horario en revisión» hasta confirmarlo. Resultados y vínculos VeloPro no cambian.
+        {row.original_scheduled_at && <> Horario original: {dayInTz(row.original_scheduled_at, tz).slice(5)} · {timeInTz(row.original_scheduled_at, tz)}.</>}
+      </p>
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <Field label={`Nuevo horario (hora local · ${tz})`}>
+          <input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} className="input" />
+        </Field>
+        <Field label="Motivo (interno)">
+          <input value={note} onChange={(e) => setNote(e.target.value)} className="input" placeholder="Lluvia, decisión del jurado…" />
+        </Field>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button disabled={busy} onClick={savePending} className={`${btn} border-gold text-gold`}>Guardar como pendiente</button>
+        {row.pending_scheduled_at && (
+          <>
+            <button disabled={busy} onClick={confirmOfficial} className={`${btn} border-gold bg-gold text-background`}>Confirmar horario oficial</button>
+            <button disabled={busy} onClick={discard} className={`${btn} border-border`}>Descartar cambio</button>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
