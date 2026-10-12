@@ -40,6 +40,7 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
         .from("schedule_items")
         .select("id,event_name,discipline,scheduled_at")
         .eq("result_event_id", ASU26_RESULT_EVENT_ID)
+        .not("status", "in", "(cancelada,suspendida)")
         .eq("published", true);
       if (s.error) return;
       const list = (s.data ?? []) as Item[];

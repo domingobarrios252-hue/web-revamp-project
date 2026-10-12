@@ -8,7 +8,7 @@ import { ASU26_PATH, ASU26_RESULT_EVENT_ID, ASU26_TZ } from "@/lib/tv/asu26Strea
 type Row = { id: string; event_name: string; category: string | null; gender: string | null; scheduled_at: string; status: string };
 
 const live = (s: string) => ["en_curso", "live", "en_directo"].includes(s);
-const done = (s: string) => ["finalizada", "finished", "finalizado", "cerrada", "cancelada"].includes(s);
+const done = (s: string) => ["finalizada", "finished", "finalizado", "cerrada", "cancelada", "suspendida"].includes(s);
 /** Velocidad única del ticker en px/s: 35 = lento, 50 = normal, 65 = rápido. */
 const TICKER_SPEED_PX_PER_SECOND = 50;
 const raceName = (r: Row) => [r.event_name, r.category, r.gender].filter(Boolean).join(" ");

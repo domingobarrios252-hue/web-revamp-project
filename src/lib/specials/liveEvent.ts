@@ -173,7 +173,7 @@ export async function loadLinkedEvent(sb: any, sp: { result_event_id?: string | 
 
 // ---- Calendario de pruebas (schedule_items) ----------------------------------
 
-export type ScheduleStatus = "programada" | "en_curso" | "finalizada" | "aplazada" | "cancelada";
+export type ScheduleStatus = "programada" | "en_curso" | "finalizada" | "aplazada" | "cancelada" | "suspendida";
 
 export type ScheduleItem = {
   id: string;
@@ -189,7 +189,13 @@ export type ScheduleItem = {
   status: ScheduleStatus;
   featured: boolean;
   sort_order: number;
+  pending_scheduled_at?: string | null;
+  original_scheduled_at?: string | null;
 };
+
+/** Solo «En curso» cuenta como directo; aplazadas, suspendidas o canceladas nunca. */
+export const isLiveEligible = (s: string | null | undefined) => s === "en_curso";
+export const isStoppedStatus = (s: string | null | undefined) => s === "aplazada" || s === "suspendida" || s === "cancelada";
 
 export const SCHEDULE_STATUS_LABEL: Record<ScheduleStatus, string> = {
   programada: "Próximamente",
@@ -197,6 +203,7 @@ export const SCHEDULE_STATUS_LABEL: Record<ScheduleStatus, string> = {
   finalizada: "Finalizada",
   aplazada: "Aplazada",
   cancelada: "Cancelada",
+  suspendida: "Suspendida",
 };
 
 /** Zona horaria de la sede según el país del evento (hora local mostrada). */
