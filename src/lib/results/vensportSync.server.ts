@@ -178,15 +178,17 @@ async function tickCore(key: string, st: { target_result_event_id: string; vensp
 }
 
 /** Visibilidad pública de las fases (site_settings «vensport_phases» → { public: true }). Por defecto ocultas. */
-type PhaseCfg = { public?: boolean; enabled?: boolean; stopped_at?: string; error?: string; backfill?: string[]; backfill_done?: Record<string, { at: string; rows: number }> };
+type PhaseCfg = { public?: boolean; enabled?: boolean; stopped_at?: string; error?: string; backfill?: string[]; backfill_done?: Record<string, { at: string; rows: number }>; last_backfill_at?: string };
 
 /**
  * Lee una página pendiente de la lista «backfill» SOLO para sus fases: no toca la clasificación
  * final ni el estado de la página. Se quita de la lista tras leerla (una consulta por prueba).
  */
-async function backfillPhases(pages: Page[], links: VensportLink[], resultEventId: string): Promise<TickOutcome | null> {
+async function backfillPhases(pages: Page[], links: VensportLink[], resultEventId: string, now: Date): Promise<TickOutcome | null> {
   const cfg = await phaseCfg();
   if (cfg.enabled !== true || !cfg.backfill?.length) return null;
+  if (cfg.last_backfill_at && now.getTime() - Date.parse(cfg.last_backfill_at) < 59_000) return null;
+  await supabaseAdmin.from("site_settings").upsert({ key: "vensport_phases", value: { ...cfg, last_backfill_at: now.toISOString() } } as never, { onConflict: "key" });
   const id = cfg.backfill[0];
   const page = pages.find((p) => p.division_id === id);
   const rest = cfg.backfill.slice(1);
