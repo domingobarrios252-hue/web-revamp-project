@@ -3431,8 +3431,12 @@ export type Database = {
           gender: string | null
           id: string
           location: string | null
+          original_scheduled_at: string | null
+          pending_scheduled_at: string | null
           phase: string | null
           published: boolean
+          reschedule_note: string | null
+          rescheduled_at: string | null
           result_event_id: string | null
           scheduled_at: string
           sort_order: number
@@ -3452,8 +3456,12 @@ export type Database = {
           gender?: string | null
           id?: string
           location?: string | null
+          original_scheduled_at?: string | null
+          pending_scheduled_at?: string | null
           phase?: string | null
           published?: boolean
+          reschedule_note?: string | null
+          rescheduled_at?: string | null
           result_event_id?: string | null
           scheduled_at: string
           sort_order?: number
@@ -3473,8 +3481,12 @@ export type Database = {
           gender?: string | null
           id?: string
           location?: string | null
+          original_scheduled_at?: string | null
+          pending_scheduled_at?: string | null
           phase?: string | null
           published?: boolean
+          reschedule_note?: string | null
+          rescheduled_at?: string | null
           result_event_id?: string | null
           scheduled_at?: string
           sort_order?: number
@@ -4951,6 +4963,7 @@ export type Database = {
         | "finalizada"
         | "aplazada"
         | "cancelada"
+        | "suspendida"
       visibility_channel: "global_home" | "featured" | "breaking" | "country"
     }
     CompositeTypes: {
@@ -5102,6 +5115,7 @@ export const Constants = {
         "finalizada",
         "aplazada",
         "cancelada",
+        "suspendida",
       ],
       visibility_channel: ["global_home", "featured", "breaking", "country"],
     },
