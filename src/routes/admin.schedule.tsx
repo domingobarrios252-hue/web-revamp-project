@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Save, Trash2, X, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { computeHints, HINT_LABEL, type Hint, type HintPage } from "@/lib/specials/finalizationHints";
 import { ResultadosHubTabs } from "@/components/admin/ResultadosHubTabs";
 import { z } from "zod";
 import {
@@ -75,10 +76,29 @@ export function AdminSchedule() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any;
 
+  const [pages, setPages] = useState<HintPage[]>([]);
+  const [counter, setCounter] = useState<CounterId | null>(null);
+
   const load = async () => {
     setLoading(true);
-    const { data } = await db.from("schedule_items").select("*").order("scheduled_at", { ascending: true });
+    // Dos lecturas ligeras en paralelo: calendario + resumen de páginas VeloPro ya guardadas (sin consultar VeloPro).
+    const [{ data }, { data: links }, { data: vp }] = await Promise.all([
+      db.from("schedule_items").select("*").order("scheduled_at", { ascending: true }),
+      db.from("asu26_results_links").select("schedule_item_id,source_competition_id").not("schedule_item_id", "is", null),
+      db.from("vensport_pages").select("source_competition_id,title,complete,row_count,is_section").eq("is_section", false),
+    ]);
     setRows((data as Row[]) ?? []);
+    const byComp = new Map<string, { title: string; complete: boolean; row_count: number | null }[]>();
+    for (const p of (vp ?? []) as { source_competition_id: string; title: string; complete: boolean; row_count: number | null }[]) {
+      const l = byComp.get(p.source_competition_id) ?? [];
+      l.push(p);
+      byComp.set(p.source_competition_id, l);
+    }
+    setPages(
+      ((links ?? []) as { schedule_item_id: string; source_competition_id: string }[]).flatMap((l) =>
+        (byComp.get(l.source_competition_id) ?? []).map((p) => ({ schedule_item_id: l.schedule_item_id, title: p.title, complete: p.complete, row_count: p.row_count })),
+      ),
+    );
     setLoading(false);
   };
 
@@ -95,8 +115,16 @@ export function AdminSchedule() {
   const tzFor = (r: { result_event_id: string | null }) =>
     r.result_event_id ? venueTimeZone(evById.get(r.result_event_id)?.country) : BROWSER_TZ;
 
-  const visible = rows.filter((r) =>
-    eventFilter === "all" ? true : eventFilter === "none" ? !r.result_event_id : r.result_event_id === eventFilter,
+  const hints = useMemo(
+    () => computeHints(rows, pages, (it) => tzFor(it as unknown as Row)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rows, pages, evById],
+  );
+
+  const visible = rows.filter(
+    (r) =>
+      (eventFilter === "all" ? true : eventFilter === "none" ? !r.result_event_id : r.result_event_id === eventFilter) &&
+      (!counter || matchesCounter(counter, r, hints.get(r.id))),
   );
 
   const onNew = () =>
@@ -155,13 +183,36 @@ export function AdminSchedule() {
         hora local de la sede.
       </p>
 
+      <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+        {COUNTERS.map((c) => {
+          const n = rows.filter((r) => matchesCounter(c.id, r, hints.get(r.id))).length;
+          const on = counter === c.id;
+          return (
+            <button
+              key={c.id}
+              onClick={() => setCounter(on ? null : c.id)}
+              aria-pressed={on}
+              className={`border px-3 py-2 text-left transition-colors ${on ? "border-gold bg-gold/10" : "border-border bg-surface hover:border-gold/60"}`}
+            >
+              <span className="font-display block text-2xl text-foreground">{n}</span>
+              <span className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{c.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="mb-4 text-[11px] text-muted-foreground">
+        Indicadores informativos calculados con las clasificaciones VeloPro ya guardadas. Nunca cambian el estado: la
+        finalización se confirma a mano en «Editar → Revisar resultados». Una prueba puede haberse disputado aunque sus
+        resultados estén incompletos.
+      </p>
+
       {loading ? (
         <p className="text-muted-foreground">Cargando…</p>
       ) : visible.length === 0 ? (
-        <p className="text-muted-foreground">Sin pruebas. Crea la primera.</p>
+        <p className="text-muted-foreground">Sin pruebas para este filtro.</p>
       ) : (
         <div className="overflow-x-auto border border-border bg-surface">
-          <table className="w-full min-w-[820px] text-sm">
+          <table className="w-full min-w-[920px] text-sm">
             <thead className="border-b border-border">
               <tr className="font-condensed text-left text-[10px] uppercase tracking-widest text-muted-foreground">
                 <th className="px-3 py-2">Día · hora local</th>
@@ -170,6 +221,7 @@ export function AdminSchedule() {
                 <th className="px-3 py-2">Categoría</th>
                 <th className="px-3 py-2">Evento</th>
                 <th className="px-3 py-2">Estado</th>
+                <th className="px-3 py-2">Indicador</th>
                 <th className="px-3 py-2">Pub.</th>
                 <th className="px-3 py-2"></th>
               </tr>
@@ -234,6 +286,7 @@ export function AdminSchedule() {
           row={editing}
           events={events}
           tzFor={tzFor}
+          hint={hints.get(editing.id)}
           onClose={() => setEditing(null)}
           onSaved={() => {
             setEditing(null);
