@@ -5,6 +5,8 @@ import { ASU26_RESULT_EVENT_ID, ASU26_TZ } from "@/lib/tv/asu26Streaming";
 import { modalityOf } from "@/lib/specials/asu26Hub";
 import type { PieceMember } from "@/lib/specials/pieceMembers";
 import { SPAIN_LINKS, linkSpainResult } from "@/lib/specials/spainLinks";
+import { ChevronDown } from "lucide-react";
+import { phaseOrder } from "@/lib/results/vensportSource";
 import { RollerzoneMark, VeloproCredit } from "@/components/tv/asu26/ResultsBrand";
 
 type Item = { id: string; event_name: string; discipline: string | null; scheduled_at: string };
@@ -129,34 +131,7 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
                 {skater ? "Pendiente de resultados." : "Todavía no hay clasificaciones de la Selección Española."}
               </p>
             ) : (
-              <ol className="mt-6 overflow-hidden rounded-2xl border border-border bg-background/70">
-                {shown.map(({ r, it, mod: m, member }) => {
-                  const p = r.position ?? 0;
-                  const podium = p >= 1 && p <= 3;
-                  return (
-                    <li key={r.id} className="grid grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-3 border-b border-l-2 border-b-border/60 border-l-gold bg-gold/5 px-4 py-3 last:border-b-0">
-                      <span
-                        className={`font-display flex h-11 w-11 items-center justify-center rounded-full text-xl ${podium ? MEDAL_CLS[p - 1] : "bg-surface-2 text-foreground"}`}
-                        title={podium && r.state !== "official" ? "Puesto de podio (oficialidad no confirmada)" : undefined}
-                      >
-                        {p}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="truncate text-base font-semibold text-foreground">🇪🇸 {member ? memberLabel(member) : r.athlete}</p>
-                        {member && normLabel(memberLabel(member)) !== normLabel(r.athlete) && <p className="truncate text-xs text-muted-foreground">En la clasificación: {r.athlete}{r.bib ? ` · Dorsal ${r.bib}` : ""}</p>}
-                        <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                          {[r.race, r.category, r.gender, r.phase, MOD_LABEL[m]].filter(Boolean).join(" · ")}
-                          {it && ` · ${new Date(it.scheduled_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: ASU26_TZ })}`}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        {r.time && <p className="font-display text-lg tabular-nums text-foreground">{r.time}</p>}
-                        {r.points != null && <p className={r.time ? "text-xs tabular-nums text-muted-foreground" : "font-display text-lg tabular-nums text-foreground"}>{r.points} pts</p>}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
+              <SpainGroups shown={shown} name={skaterName} />
             )}
 
             {!skater && pending.length > 0 && (
@@ -176,5 +151,103 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
         )}
       </div>
     </section>
+  );
+}
+
+
+type Row = { r: NormalizedResult; it?: Item; mod: Mod; member?: PieceMember };
+const perf = (r: NormalizedResult) => [r.time, r.points != null ? `${r.points} pts` : null].filter(Boolean).join(" · ") || "—";
+const fmtDay = (it?: Item) => (it ? new Date(it.scheduled_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: ASU26_TZ }) : "");
+
+/** Agrupa por patinador y prueba; solo presentación, conserva todas las filas. */
+function SpainGroups({ shown, name }: { shown: Row[]; name: (x: Row) => string }) {
+  const bySkater = new Map<string, Map<string, Row[]>>();
+  for (const x of shown) {
+    const n = name(x);
+    if (!bySkater.has(n)) bySkater.set(n, new Map());
+    const k = [x.r.scheduleItemId ?? x.r.race, x.r.category, x.r.gender].join("|");
+    const m = bySkater.get(n)!;
+    if (!m.has(k)) m.set(k, []);
+    m.get(k)!.push(x);
+  }
+  return (
+    <div className="mt-6 space-y-6">
+      {[...bySkater].map(([n, races]) => (
+        <section key={n} className="overflow-hidden rounded-2xl border border-border border-l-2 border-l-gold bg-background/70">
+          <h3 className="font-display bg-gold/10 px-4 py-3 text-lg uppercase tracking-wide text-foreground">🇪🇸 {n}</h3>
+          <ul>
+            {[...races.values()].map((rows) => (
+              <RaceBlock key={rows[0].r.id} rows={rows} />
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function RaceBlock({ rows }: { rows: Row[] }) {
+  const [open, setOpen] = useState(false);
+  const h = rows[0];
+  const general = rows.filter((x) => !x.r.phase);
+  const phases = rows
+    .filter((x) => x.r.phase)
+    .sort((a, b) => phaseOrder((a.r.phase ?? "").split(" · ")[0]) - phaseOrder((b.r.phase ?? "").split(" · ")[0]) || (a.r.phase ?? "").localeCompare(b.r.phase ?? "", "es"))
+    .reverse();
+  const latest = phases[0];
+  const alias = rows.find((x) => x.member && normLabel(memberLabel(x.member)) !== normLabel(x.r.athlete));
+  return (
+    <li className="border-t border-border/60 px-4 py-3">
+      <p className="font-display text-base uppercase leading-tight text-foreground">{h.r.race || "Prueba"}</p>
+      <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
+        {[h.r.category, h.r.gender, MOD_LABEL[h.mod], fmtDay(h.it), phases.length ? `${phases.length} ${phases.length === 1 ? "fase" : "fases"}` : ""].filter(Boolean).join(" · ")}
+      </p>
+      {alias && <p className="text-xs text-muted-foreground">En la clasificación: {alias.r.athlete}{alias.r.bib ? ` · Dorsal ${alias.r.bib}` : ""}</p>}
+
+      {general.map(({ r }) => {
+        const p = r.position ?? 0;
+        const medal = r.state === "official" && p >= 1 && p <= 3;
+        return (
+          <div key={r.id} className="mt-2 flex items-center gap-3 rounded-xl bg-gold/5 px-3 py-2">
+            <span className={`font-display flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg ${medal ? MEDAL_CLS[p - 1] : "bg-surface-2 text-foreground"}`}>{p}</span>
+            <div className="min-w-0 flex-1">
+              <p className="font-condensed text-[11px] font-bold uppercase tracking-widest text-gold">Clasificación general</p>
+              <p className="font-condensed text-[10px] uppercase tracking-widest text-muted-foreground">{r.state === "official" ? "Oficial" : "Oficialidad no confirmada"}</p>
+            </div>
+            <span className="font-display text-base tabular-nums text-foreground">{perf(r)}</span>
+          </div>
+        );
+      })}
+
+      {phases.length > 0 && (
+        <>
+          {general.length === 0 && (
+            <p className="mt-2 text-xs text-muted-foreground">Sin clasificación general publicada · resultados por fases</p>
+          )}
+          <button
+            type="button"
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+            className="font-condensed mt-2 flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-border px-3 text-left text-[11px] font-bold uppercase tracking-widest text-foreground"
+          >
+            <span className="min-w-0 truncate">
+              {open ? "Ocultar fases" : `Última fase: ${latest.r.phase} · ${latest.r.position}º · ${perf(latest.r)}`}
+            </span>
+            <ChevronDown className={"h-4 w-4 shrink-0 transition-transform " + (open ? "rotate-180" : "")} />
+          </button>
+          {open && (
+            <ol className="mt-1">
+              {[...phases].reverse().map(({ r }) => (
+                <li key={r.id} className="grid grid-cols-[2.5rem_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/40 px-1 py-2 last:border-b-0">
+                  <span className="font-display flex h-8 w-8 items-center justify-center rounded-full bg-surface-2 text-sm text-foreground">{r.position}</span>
+                  <span className="font-condensed min-w-0 break-words text-[11px] uppercase tracking-widest text-muted-foreground">{r.phase}</span>
+                  <span className="font-display text-sm tabular-nums text-foreground">{perf(r)}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </>
+      )}
+    </li>
   );
 }
