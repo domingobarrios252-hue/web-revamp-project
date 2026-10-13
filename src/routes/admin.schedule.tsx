@@ -82,16 +82,22 @@ export function AdminSchedule() {
   const load = async () => {
     setLoading(true);
     // Dos lecturas ligeras en paralelo: calendario + resumen de páginas VeloPro ya guardadas (sin consultar VeloPro).
-    const [{ data }, { data: links }, { data: vp }] = await Promise.all([
+    const [{ data }, { data: links }, { data: vp }, { data: fin }] = await Promise.all([
       db.from("schedule_items").select("*").order("scheduled_at", { ascending: true }),
       db.from("asu26_results_links").select("schedule_item_id,source_competition_id").not("schedule_item_id", "is", null),
       db.from("vensport_pages").select("source_competition_id,title,complete,row_count,is_section"),
+      // Filas de la fase «Final» ya guardadas (cuando VeloPro no publica la clasificación general).
+      db.from("live_results").select("source_competition_id").eq("source", "vensport_phase").eq("round", "Final").eq("published", true).limit(5000),
     ]);
     setRows((data as Row[]) ?? []);
+    const finals = new Map<string, number>();
+    for (const f of ((fin ?? []) as { source_competition_id: string | null }[]))
+      if (f.source_competition_id) finals.set(f.source_competition_id, (finals.get(f.source_competition_id) ?? 0) + 1);
     const byComp = new Map<string, { title: string; complete: boolean; row_count: number | null }[]>();
     for (const p of ((vp ?? []) as { source_competition_id: string; title: string; complete: boolean; row_count: number | null; is_section: boolean | null }[])) {
       const l = byComp.get(p.source_competition_id) ?? [];
-      l.push(p);
+      const nf = finals.get(p.source_competition_id) ?? 0;
+      l.push(!p.complete && nf > 0 ? { title: `${p.title} · Final guardada por fases`, complete: true, row_count: nf } : p);
       byComp.set(p.source_competition_id, l);
     }
     setPages(

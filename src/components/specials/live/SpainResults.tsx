@@ -44,7 +44,7 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
       if (s.error) return;
       const list = (s.data ?? []) as Item[];
       try {
-        const r = await loadEventResults(supabase, ASU26_RESULT_EVENT_ID, null, new Map(list.map((i) => [i.id, i.scheduled_at])));
+        const r = await loadEventResults(supabase, ASU26_RESULT_EVENT_ID, null, new Map(list.map((i) => [i.id, i.scheduled_at])), { phases: true });
         if (off) return;
         setItems(list);
         setResults(r);
