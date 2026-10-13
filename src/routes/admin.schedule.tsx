@@ -543,3 +543,107 @@ function Reschedule({ row, tz, onDone }: { row: Row; tz: string; onDone: () => v
     </div>
   );
 }
+
+type CounterId = "finalizadas" | "programadas" | "detenidas" | "revisar";
+const COUNTERS: { id: CounterId; label: string }[] = [
+  { id: "finalizadas", label: "Finalizadas" },
+  { id: "programadas", label: "Programadas" },
+  { id: "detenidas", label: "Suspendidas o aplazadas" },
+  { id: "revisar", label: "Resultados por revisar" },
+];
+function matchesCounter(id: CounterId, r: Row, h: Hint | undefined) {
+  if (id === "finalizadas") return r.status === "finalizada";
+  if (id === "programadas") return r.status === "programada" || r.status === "en_curso";
+  if (id === "detenidas") return r.status === "suspendida" || r.status === "aplazada" || r.status === "cancelada";
+  return !!h && (h.kind === "sugerida" || h.kind === "incompleta" || h.kind === "revisar");
+}
+
+const HINT_CLASS: Record<Hint["kind"], string> = {
+  sugerida: "border-gold bg-gold/15 text-gold",
+  incompleta: "border-border bg-background text-foreground",
+  revisar: "border-tv-red/70 bg-tv-red/10 text-tv-red",
+  ok: "border-border text-muted-foreground",
+};
+
+function HintBadge({ hint }: { hint: Hint }) {
+  return (
+    <span title={hint.warnings.join(" · ") || undefined} className="inline-block">
+      <span className={`font-condensed inline-block border px-2 py-0.5 text-[10px] uppercase tracking-widest ${HINT_CLASS[hint.kind]}`}>
+        {HINT_LABEL[hint.kind]}
+      </span>
+      {hint.warnings.length > 0 && <span className="mt-1 block max-w-[220px] text-[10px] leading-tight text-muted-foreground">{hint.warnings[0]}</span>}
+    </span>
+  );
+}
+
+/** Revisión manual: muestra las clasificaciones guardadas y permite marcar «Finalizada» tras confirmar. */
+function ReviewResults({ row, hint, tz, onDone }: { row: Row; hint: Hint; tz: string; onDone: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const incomplete = hint.pages.filter((p) => !p.complete);
+  const canFinalize = row.status !== "finalizada" && !["aplazada", "suspendida", "cancelada"].includes(row.status);
+  const finalize = async () => {
+    const extra = incomplete.length ? `\n\nAtención: ${incomplete.length} clasificación(es) siguen incompletas en VeloPro.` : "";
+    if (!confirm(`¿Marcar «${row.event_name}${row.phase ? " · " + row.phase : ""}» como FINALIZADA?\nSolo cambia el estado; horario, resultados e identificadores no se modifican.${extra}`)) return;
+    setBusy(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any).from("schedule_items").update({ status: "finalizada" }).eq("id", row.id);
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Prueba marcada como finalizada");
+    onDone();
+  };
+  return (
+    <div className="mt-5 border border-border p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="font-condensed text-xs font-bold uppercase tracking-[2px] text-gold">Finalización</h3>
+          <HintBadge hint={{ ...hint, warnings: [] }} />
+        </div>
+        <button onClick={() => setOpen((v) => !v)} className="font-condensed border border-gold px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gold">
+          {open ? "Ocultar resultados" : "Revisar resultados"}
+        </button>
+      </div>
+      {open && (
+        <div className="mt-3 space-y-3 text-xs">
+          <p className="text-muted-foreground">
+            {row.event_name}{row.phase ? ` · ${row.phase}` : ""} — {dayInTz(row.scheduled_at, tz).slice(5)} · {timeInTz(row.scheduled_at, tz)} ·
+            Estado: <span className="text-foreground">{SCHEDULE_STATUS_LABEL[row.status]}</span>
+          </p>
+          {hint.warnings.length > 0 && (
+            <ul className="list-disc space-y-1 pl-5 text-tv-red">
+              {hint.warnings.map((w) => <li key={w}>{w}</li>)}
+            </ul>
+          )}
+          {hint.pages.length === 0 ? (
+            <p className="text-muted-foreground">No hay clasificaciones VeloPro guardadas para esta prueba.</p>
+          ) : (
+            <>
+              {hint.source === "final" && <p className="text-muted-foreground">Fase previa: se muestran las clasificaciones de la final de esta prueba.</p>}
+              <ul className="divide-y divide-border border border-border">
+                {hint.pages.map((p) => (
+                  <li key={p.title} className="flex items-center justify-between gap-2 px-3 py-2">
+                    <span className="capitalize">{p.title}</span>
+                    <span className={p.complete ? "text-gold" : "text-tv-red"}>
+                      {p.complete ? "Completa" : "Incompleta"} · {p.row_count ?? 0} filas
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <div className="flex flex-wrap gap-2">
+            <a href="/rollerzone-tv/world-skate-games-asu26/resultados" target="_blank" rel="noreferrer" className="font-condensed border border-border px-3 py-2 text-[11px] font-bold uppercase tracking-widest hover:border-gold">
+              Ver clasificaciones
+            </a>
+            {canFinalize && (
+              <button disabled={busy} onClick={finalize} className="font-condensed border border-gold bg-gold px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-background disabled:opacity-50">
+                Marcar como finalizada
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
