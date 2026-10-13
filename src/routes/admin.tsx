@@ -74,6 +74,7 @@ const GROUPS: AdminGroup[] = [
     links: [
       { to: "/admin/resultados", label: "Gestor de Resultados", icon: <BarChart3 className="h-4 w-4" />, exact: true },
       { to: "/admin/resultados-eventos", label: "Eventos", icon: <Calendar className="h-4 w-4" /> },
+      { to: "/admin/schedule", label: "Calendario ASU26 / Pruebas programadas", icon: <Calendar className="h-4 w-4" /> },
       { to: "/admin/live-results", label: "Resultados (manual)", icon: <BarChart3 className="h-4 w-4" /> },
       { to: "/admin/resultados-importar", label: "Importar CSV", icon: <FileText className="h-4 w-4" /> },
       { to: "/admin/resultados-pdfs", label: "PDFs oficiales", icon: <FileText className="h-4 w-4" /> },
