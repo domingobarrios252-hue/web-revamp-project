@@ -9,11 +9,12 @@ export type ResultadosTab =
   | "pdfs"
   | "live"
   | "medallero"
-  | "sync";
-
+  | "sync"
+  | "calendario";
 const TABS: { id: ResultadosTab; label: string; to: string; icon: React.ReactNode }[] = [
   { id: "resumen", label: "Resumen", to: "/admin/resultados", icon: <LayoutDashboard className="h-3.5 w-3.5" /> },
   { id: "eventos", label: "Eventos", to: "/admin/resultados-eventos", icon: <Calendar className="h-3.5 w-3.5" /> },
+  { id: "calendario", label: "Calendario ASU26 / Pruebas programadas", to: "/admin/schedule", icon: <Calendar className="h-3.5 w-3.5" /> },
   { id: "manual", label: "Resultados manuales", to: "/admin/live-results", icon: <BarChart3 className="h-3.5 w-3.5" /> },
   { id: "csv", label: "Importar CSV", to: "/admin/resultados-importar", icon: <FileText className="h-3.5 w-3.5" /> },
   { id: "pdfs", label: "PDFs oficiales", to: "/admin/resultados-pdfs", icon: <FileType2 className="h-3.5 w-3.5" /> },
