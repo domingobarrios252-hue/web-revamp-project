@@ -155,7 +155,7 @@ export function SpainResults({ members }: { members: PieceMember[] }) {
 }
 
 
-type Row = { r: NormalizedResult; it?: Item; mod: Mod; member?: PieceMember };
+type Row = { r: NormalizedResult; it: Item | undefined; mod: Mod; member: PieceMember | undefined };
 const perf = (r: NormalizedResult) => [r.time, r.points != null ? `${r.points} pts` : null].filter(Boolean).join(" · ") || "—";
 const fmtDay = (it?: Item) => (it ? new Date(it.scheduled_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", timeZone: ASU26_TZ }) : "");
 
@@ -192,8 +192,7 @@ function RaceBlock({ rows }: { rows: Row[] }) {
   const general = rows.filter((x) => !x.r.phase);
   const phases = rows
     .filter((x) => x.r.phase)
-    .sort((a, b) => phaseOrder((a.r.phase ?? "").split(" · ")[0]) - phaseOrder((b.r.phase ?? "").split(" · ")[0]) || (a.r.phase ?? "").localeCompare(b.r.phase ?? "", "es"))
-    .reverse();
+    .sort((a, b) => phaseOrder((a.r.phase ?? "").split(" · ")[0]) - phaseOrder((b.r.phase ?? "").split(" · ")[0]) || (a.r.phase ?? "").localeCompare(b.r.phase ?? "", "es"));
   const latest = phases[0];
   const alias = rows.find((x) => x.member && normLabel(memberLabel(x.member)) !== normLabel(x.r.athlete));
   return (
