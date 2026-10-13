@@ -89,7 +89,7 @@ export function AdminSchedule() {
     ]);
     setRows((data as Row[]) ?? []);
     const byComp = new Map<string, { title: string; complete: boolean; row_count: number | null }[]>();
-    for (const p of ((vp ?? []) as { source_competition_id: string; title: string; complete: boolean; row_count: number | null; is_section: boolean | null }[]).filter((x) => x.is_section !== true)) {
+    for (const p of ((vp ?? []) as { source_competition_id: string; title: string; complete: boolean; row_count: number | null; is_section: boolean | null }[])) {
       const l = byComp.get(p.source_competition_id) ?? [];
       l.push(p);
       byComp.set(p.source_competition_id, l);
