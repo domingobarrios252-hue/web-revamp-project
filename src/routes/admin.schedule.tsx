@@ -204,6 +204,9 @@ export function AdminSchedule() {
                         </span>
                       )}
                     </td>
+                    <td className="px-3 py-2">
+                      {hints.get(r.id) && <HintBadge hint={hints.get(r.id)!} />}
+                    </td>
                     <td className="px-3 py-2">{r.published ? "✓" : "—"}</td>
                     <td className="px-3 py-2">
                       <div className="flex justify-end gap-2">
@@ -246,12 +249,14 @@ function EditDialog({
   row,
   events,
   tzFor,
+  hint,
   onClose,
   onSaved,
 }: {
   row: Row;
   events: Ev[];
   tzFor: (r: { result_event_id: string | null }) => string;
+  hint?: Hint;
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -378,6 +383,8 @@ function EditDialog({
             </label>
           </div>
         </div>
+
+        {row.id && hint && <ReviewResults row={row} hint={hint} tz={tz} onDone={onSaved} />}
 
         {row.id && <Reschedule row={row} tz={tz} onDone={onSaved} />}
 
