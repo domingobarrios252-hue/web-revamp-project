@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Save, Trash2, X, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ResultadosHubTabs } from "@/components/admin/ResultadosHubTabs";
 import { z } from "zod";
 import {
   SCHEDULE_STATUS_LABEL,
@@ -128,6 +129,7 @@ export function AdminSchedule() {
 
   return (
     <div>
+      <ResultadosHubTabs active="calendario" />
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl tracking-widest">Pruebas programadas</h1>
         <div className="flex flex-wrap items-center gap-2">
