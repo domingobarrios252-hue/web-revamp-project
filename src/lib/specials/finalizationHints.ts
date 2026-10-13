@@ -20,7 +20,7 @@ export const isCeremony = (name: string) => /ceremon/i.test(name);
 const isFinalPhase = (p: string | null) => !p || /^(final|marat)/i.test(p.trim());
 const norm = (s: string) => s.toLowerCase().replace(/[.\s]/g, "");
 
-export function computeHints(items: HintItem[], pages: HintPage[], tz: string): Map<string, Hint> {
+export function computeHints(items: HintItem[], pages: HintPage[], tzOf: (it: HintItem) => string): Map<string, Hint> {
   const byItem = new Map<string, HintPage[]>();
   for (const p of pages) {
     const list = byItem.get(p.schedule_item_id) ?? [];
@@ -33,7 +33,7 @@ export function computeHints(items: HintItem[], pages: HintPage[], tz: string): 
   for (const it of items) {
     const warnings: string[] = [];
     // Hora inusual (00:00–05:59 en la sede): posible error de escritura.
-    const h = Number(new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", hourCycle: "h23" }).format(new Date(it.scheduled_at)));
+    const h = Number(new Intl.DateTimeFormat("en-GB", { timeZone: tzOf(it), hour: "2-digit", hourCycle: "h23" }).format(new Date(it.scheduled_at)));
     if (h < 6) warnings.push("Hora inusual (madrugada): revisar horario");
     if (it.original_scheduled_at && new Date(it.original_scheduled_at).getTime() === new Date(it.scheduled_at).getTime())
       warnings.push("Reprogramación sin cambio de horario");
