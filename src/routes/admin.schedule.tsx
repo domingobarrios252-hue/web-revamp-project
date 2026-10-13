@@ -85,11 +85,11 @@ export function AdminSchedule() {
     const [{ data }, { data: links }, { data: vp }] = await Promise.all([
       db.from("schedule_items").select("*").order("scheduled_at", { ascending: true }),
       db.from("asu26_results_links").select("schedule_item_id,source_competition_id").not("schedule_item_id", "is", null),
-      db.from("vensport_pages").select("source_competition_id,title,complete,row_count,is_section").eq("is_section", false),
+      db.from("vensport_pages").select("source_competition_id,title,complete,row_count,is_section"),
     ]);
     setRows((data as Row[]) ?? []);
     const byComp = new Map<string, { title: string; complete: boolean; row_count: number | null }[]>();
-    for (const p of (vp ?? []) as { source_competition_id: string; title: string; complete: boolean; row_count: number | null }[]) {
+    for (const p of ((vp ?? []) as { source_competition_id: string; title: string; complete: boolean; row_count: number | null; is_section: boolean | null }[]).filter((x) => x.is_section !== true)) {
       const l = byComp.get(p.source_competition_id) ?? [];
       l.push(p);
       byComp.set(p.source_competition_id, l);

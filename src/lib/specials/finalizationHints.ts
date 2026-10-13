@@ -71,7 +71,7 @@ export function computeHints(items: HintItem[], pages: HintPage[], tzOf: (it: Hi
       else if (warnings.length) kind = "revisar";
     } else if (complete < total) {
       kind = it.status === "finalizada" ? "revisar" : "incompleta";
-      warnings.push(`${total - complete} de ${total} clasificaciones incompletas`);
+      warnings.push(`${total - complete} de ${total} clasificaciones incompletas${source === "final" ? " (en la final de esta prueba)" : ""}`);
     } else {
       kind = it.status === "finalizada" ? (warnings.length ? "revisar" : "ok") : "sugerida";
     }
