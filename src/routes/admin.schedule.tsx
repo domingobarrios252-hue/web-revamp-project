@@ -411,33 +411,41 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function Reschedule({ row, tz, onDone }: { row: Row; tz: string; onDone: () => void }) {
   const [when, setWhen] = useState(row.pending_scheduled_at ? utcToLocalInput(row.pending_scheduled_at, tz) : "");
   const [note, setNote] = useState(row.reschedule_note ?? "");
+  const [pending, setPending] = useState<string | null>(row.pending_scheduled_at ?? null);
   const [busy, setBusy] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any;
-  const run = async (payload: Record<string, unknown>, msg: string) => {
+  const run = async (payload: Record<string, unknown>, msg: string, close: boolean) => {
     setBusy(true);
     const { error } = await db.from("schedule_items").update(payload).eq("id", row.id);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return false;
+    }
     toast.success(msg);
-    onDone();
+    if (close) onDone();
+    return true;
   };
-  const savePending = () => {
+  const savePending = async () => {
     if (!when) return toast.error("Indica la nueva fecha y hora");
-    run({ pending_scheduled_at: localToUtcIso(when, tz), reschedule_note: note.trim() || null }, "Nuevo horario pendiente de confirmación");
+    const iso = localToUtcIso(when, tz);
+    // La ventana permanece abierta: aparecen al momento «Confirmar» y «Descartar».
+    if (await run({ pending_scheduled_at: iso, reschedule_note: note.trim() || null }, "Nuevo horario pendiente de confirmación", false))
+      setPending(iso);
   };
   const confirmOfficial = () => {
-    if (!row.pending_scheduled_at) return;
+    if (!pending) return;
     if (!confirm("¿Confirmar y publicar el nuevo horario oficial?")) return;
     run({
       original_scheduled_at: row.original_scheduled_at ?? row.scheduled_at,
-      scheduled_at: row.pending_scheduled_at,
+      scheduled_at: pending,
       pending_scheduled_at: null,
       rescheduled_at: new Date().toISOString(),
       status: row.status === "aplazada" || row.status === "suspendida" ? "programada" : row.status,
-    }, "Horario oficial publicado");
+    }, "Horario oficial publicado", true);
   };
-  const discard = () => run({ pending_scheduled_at: null, reschedule_note: null }, "Cambio pendiente descartado");
+  const discard = () => run({ pending_scheduled_at: null, reschedule_note: null }, "Cambio pendiente descartado", true);
   const btn = "font-condensed border px-3 py-2 text-[11px] font-bold uppercase tracking-widest disabled:opacity-50";
   return (
     <div className="mt-5 border border-gold/40 p-4">
@@ -446,6 +454,13 @@ function Reschedule({ row, tz, onDone }: { row: Row; tz: string; onDone: () => v
         El nuevo horario queda pendiente y la web muestra «Horario en revisión» hasta confirmarlo. Resultados y vínculos VeloPro no cambian.
         {row.original_scheduled_at && <> Horario original: {dayInTz(row.original_scheduled_at, tz).slice(5)} · {timeInTz(row.original_scheduled_at, tz)}.</>}
       </p>
+      {pending && (
+        <div role="status" className="mt-3 border border-tv-red/60 bg-tv-red/10 px-3 py-2 text-xs text-foreground">
+          <strong className="font-condensed uppercase tracking-widest text-tv-red">Horario pendiente de confirmación:</strong>{" "}
+          {dayInTz(pending, tz).slice(5)} · {timeInTz(pending, tz)} (hora local de la sede). La web sigue mostrando el horario actual
+          con «Horario en revisión» hasta que pulses «Confirmar horario oficial».
+        </div>
+      )}
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         <Field label={`Nuevo horario (hora local · ${tz})`}>
           <input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} className="input" />
@@ -455,8 +470,10 @@ function Reschedule({ row, tz, onDone }: { row: Row; tz: string; onDone: () => v
         </Field>
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        <button disabled={busy} onClick={savePending} className={`${btn} border-gold text-gold`}>Guardar como pendiente</button>
-        {row.pending_scheduled_at && (
+        <button disabled={busy} onClick={savePending} className={`${btn} border-gold text-gold`}>
+          {pending ? "Actualizar pendiente" : "Guardar como pendiente"}
+        </button>
+        {pending && (
           <>
             <button disabled={busy} onClick={confirmOfficial} className={`${btn} border-gold bg-gold text-background`}>Confirmar horario oficial</button>
             <button disabled={busy} onClick={discard} className={`${btn} border-border`}>Descartar cambio</button>
