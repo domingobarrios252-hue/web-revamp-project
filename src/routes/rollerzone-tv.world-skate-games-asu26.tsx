@@ -105,8 +105,20 @@ function Asu26Hub() {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 60_000);
     let off = false;
+    // Relee el calendario cada minuto: los cambios de estado hechos en Admin
+    // (p. ej. «Finalizada») salen de «Próximas pruebas» sin recargar la página.
+    const t = setInterval(async () => {
+      setNow(new Date());
+      const { data } = await supabase
+        .from("schedule_items")
+        .select("id,event_name,event_name_en,category,gender,phase,discipline,venue_type,location,scheduled_at,status,featured,sort_order,pending_scheduled_at,original_scheduled_at")
+        .eq("result_event_id", ASU26_RESULT_EVENT_ID)
+        .eq("published", true)
+        .order("scheduled_at")
+        .order("sort_order");
+      if (!off && data) setItems(data as Item[]);
+    }, 60_000);
     (async () => {
       const [c, s, updates] = await Promise.all([
         loadAsu26Config(),
