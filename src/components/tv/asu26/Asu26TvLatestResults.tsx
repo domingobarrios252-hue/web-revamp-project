@@ -41,7 +41,7 @@ export function Asu26TvLatestResults() {
       if (s.error) return;
       const list = (s.data ?? []) as Item[];
       try {
-        const r = await loadEventResults(supabase, ASU26_RESULT_EVENT_ID, null, new Map(list.map((i) => [i.id, i.scheduled_at])));
+        const r = await loadEventResults(supabase, ASU26_RESULT_EVENT_ID, null, new Map(list.map((i) => [i.id, i.scheduled_at])), { phases: true });
         if (off) return;
         setItems(list);
         setResults(r);
@@ -60,7 +60,18 @@ export function Asu26TvLatestResults() {
 
   const byId = useMemo(() => new Map(items.map((i) => [i.id, i])), [items]);
   const groups = useMemo(
-    () => groupResults(results.filter((r) => r.scheduleItemId && byId.has(r.scheduleItemId) && r.athlete && r.category && r.gender)).slice(0, 5),
+    () => {
+      // Misma fuente que Resultados ASU26 (clasificaciones generales + fases). Orden: momento real
+      // en que cada clasificación se guardó por primera vez (no la hora programada, que no refleja
+      // retrasos ni reprogramaciones); empate → criterio de Resultados.
+      const all = groupResults(results.filter((r) => r.scheduleItemId && byId.has(r.scheduleItemId) && r.athlete && r.category && r.gender));
+      const pub = (rows: NormalizedResult[]) => Math.min(...rows.map((r) => (r.createdAt ? Date.parse(r.createdAt) : Infinity)));
+      return all
+        .map((g, i) => ({ g, i, t: pub(g[1]) }))
+        .sort((a, b) => (Number.isFinite(b.t) ? b.t : 0) - (Number.isFinite(a.t) ? a.t : 0) || a.i - b.i)
+        .slice(0, 5)
+        .map((x) => x.g);
+    },
     [results, byId],
   );
 
