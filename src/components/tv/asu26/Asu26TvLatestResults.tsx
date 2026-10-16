@@ -44,7 +44,8 @@ export function Asu26TvLatestResults() {
         const r = await loadEventResults(supabase, ASU26_RESULT_EVENT_ID, null, new Map(list.map((i) => [i.id, i.scheduled_at])), { phases: true });
         if (off) return;
         setItems(list);
-        setResults(r);
+        // Una lectura vacía (fallo transitorio) nunca borra los últimos datos válidos.
+        setResults((prev) => (r.length ? r : prev));
         setUpdated(new Date());
       } catch {
         /* conserva lo último correcto */
