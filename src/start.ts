@@ -14,7 +14,7 @@ const cspReportOnly = [
   `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://cdn.gpteng.co`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   'font-src \'self\' data: https://fonts.gstatic.com',
-  `img-src 'self' data: blob: ${SUPABASE_HOST} https://i.ytimg.com https://img.youtube.com https://www.google-analytics.com https://*.lovable.app https://*.lovableproject.com https://vumbnail.com https://*.cloudfront.net`,
+  `img-src 'self' data: blob: ${SUPABASE_HOST} https://i.ytimg.com https://img.youtube.com https://www.google-analytics.com https://*.lovable.app https://*.lovableproject.com https://vumbnail.com https://*.cloudfront.net https://flagcdn.com`,
   `media-src 'self' blob: data: ${SUPABASE_HOST} https://players.cdn.enetres.net`,
   `connect-src 'self' ${SUPABASE_HOST} wss://*.supabase.co https://www.google-analytics.com https://region1.google-analytics.com https://challenges.cloudflare.com`,
   [

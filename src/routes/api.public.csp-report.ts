@@ -1,5 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 
+/** Fracción de informes CSP que se guardan (2 %). */
+const CSP_SAMPLE_RATE = 0.02
+
 type CspBody = {
   'csp-report'?: Record<string, unknown>
   [key: string]: unknown
@@ -19,6 +22,9 @@ export const Route = createFileRoute('/api/public/csp-report')({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // Muestreo: guardar cada informe saturaba la base de datos (y con ella
+        // la carga de imágenes de Storage). Basta una muestra para diagnosticar.
+        if (Math.random() >= CSP_SAMPLE_RATE) return new Response(null, { status: 204 })
         try {
           const text = await request.text()
           if (!text || text.length > 20_000) return new Response(null, { status: 204 })
