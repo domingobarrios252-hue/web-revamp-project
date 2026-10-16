@@ -32,6 +32,8 @@ export type NormalizedResult = {
   /** Fecha/hora de la prueba vinculada (para el filtro por día). */
   scheduledAt: string | null;
   sort: number;
+  /** Primera vez que la fila se guardó en nuestra base (momento real de publicación). */
+  createdAt?: string | null;
 };
 
 export const RESULT_STATE_LABEL: Record<ResultState, string> = {
@@ -66,6 +68,7 @@ type ManualRow = {
   status: string | null;
   sort_order: number | null;
   source?: string | null;
+  created_at?: string | null;
 };
 
 /** Origen de las series/fases de Vensport: separado de la clasificación final. */
@@ -88,7 +91,7 @@ async function loadManual(
   phases = false,
 ): Promise<(NormalizedResult & { _source: string })[]> {
   const COLS =
-    "id,schedule_item_id,race,distance,category,gender,round,position,bib,athlete_name,country,club,federation,race_time,gap,points,record_mark,notes,result_status,status,sort_order,source";
+    "id,schedule_item_id,race,distance,category,gender,round,position,bib,athlete_name,country,club,federation,race_time,gap,points,record_mark,notes,result_status,status,sort_order,source,created_at";
   const { data, error } = await sb
     .from("live_results")
     .select(COLS)
@@ -133,6 +136,7 @@ async function loadManual(
     state: toState(r),
     scheduledAt: r.schedule_item_id ? (scheduleTimes.get(r.schedule_item_id) ?? null) : null,
     sort: r.sort_order ?? 0,
+    createdAt: r.created_at ?? null,
     // Vensport cuenta como fuente oficial para la prioridad oficial/manual.
     _source: r.source === "vensport" || r.source === PHASE_SOURCE ? "official" : (r.source ?? "manual"),
   }));
