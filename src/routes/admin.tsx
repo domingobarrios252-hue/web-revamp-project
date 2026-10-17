@@ -32,7 +32,7 @@ type AdminPath =
   | "/admin/legal" | "/admin/sobre-nosotros" | "/admin/schedule"
   | "/admin/medallero" | "/admin/live-results" | "/admin/sections"
   | "/admin/pendientes" | "/admin/comunidad" | "/admin/home-control"
-  | "/admin/espana" | "/admin/colombia" | "/admin/miami" | "/admin/portugal" | "/admin/resultados"
+  | "/admin/espana" | "/admin/colombia" | "/admin/miami" | "/admin/portugal" | "/admin/francia" | "/admin/resultados"
   | "/admin/resultados-eventos" | "/admin/resultados-pdfs"
   | "/admin/resultados-importar" | "/admin/salon-de-la-fama" | "/admin/especiales" | "/admin/formularios" | "/admin/videos" | "/admin/colaboraciones" | "/admin/paginas" | "/admin/red-redactores" | "/admin/seguridad" | "/admin/permisos" | "/admin/estadisticas" | "/dashboard";
 
@@ -95,6 +95,7 @@ const GROUPS: AdminGroup[] = [
       { to: "/admin/colombia", label: "Colombia", icon: <Globe2 className="h-4 w-4" /> },
       { to: "/admin/miami", label: "USA", icon: <Globe2 className="h-4 w-4" /> },
       { to: "/admin/portugal", label: "Portugal", icon: <Globe2 className="h-4 w-4" /> },
+      { to: "/admin/francia", label: "Francia", icon: <Globe2 className="h-4 w-4" />, adminOnly: true },
     ],
   },
   {

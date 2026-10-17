@@ -105,17 +105,26 @@ function slugify(s: string) {
 }
 
 export const Route = createFileRoute("/admin/")({
+  head: () => ({ meta: [
+    { title: "Noticias · Administración | Rollerzone" },
+    { name: "description", content: "Gestión editorial de noticias de Rollerzone." },
+    { property: "og:title", content: "Noticias · Administración | Rollerzone" },
+    { property: "og:description", content: "Gestión editorial de noticias de Rollerzone." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: AdminNewsList,
 });
 
-function AdminNewsList() {
+export function AdminNewsList({ initialHub = "all" }: { initialHub?: string }) {
   const { isAdmin } = useAuth();
   const [news, setNews] = useState<News[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [writers, setWriters] = useState<Writer[]>([]);
   const [editing, setEditing] = useState<News | "new" | null>(null);
   const [loading, setLoading] = useState(true);
-  const [hubFilter, setHubFilter] = useState<string>("all");
+  const [hubFilter, setHubFilter] = useState<string>(initialHub);
 
   const reload = async () => {
     setLoading(true);
@@ -226,6 +235,7 @@ function AdminNewsList() {
           <option value="co">Colombia</option>
           <option value="pt">Portugal</option>
           <option value="mia">USA</option>
+          <option value="fr">Francia</option>
         </select>
         <button
           onClick={() => setEditing("new")}
@@ -331,6 +341,7 @@ function AdminNewsList() {
 
       {editing && (
         <NewsEditor
+          defaultHub={hubFilter === "fr" ? "fr" : "general"}
           item={editing === "new" ? null : editing}
           categories={categories}
           writers={writers}

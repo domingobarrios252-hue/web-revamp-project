@@ -5,7 +5,7 @@
  * interviews.country_code = code. No hay tablas ni flujos paralelos, y las
  * políticas RLS + triggers del servidor ya son genéricas por territorio.
  */
-export type TerritoryCode = "mia" | "pt";
+export type TerritoryCode = "mia" | "pt" | "fr";
 
 export type Territory = {
   code: TerritoryCode;
@@ -13,11 +13,11 @@ export type Territory = {
   name: string;
   /** Bandera / emoji identificativo. */
   flag: string;
-  basePath: "/usa" | "/portugal";
-  newsPath: "/usa/noticias" | "/portugal/noticias";
-  interviewsPath: "/usa/entrevistas" | "/portugal/entrevistas";
-  dashboardPath: "/dashboard/miami" | "/dashboard/portugal";
-  adminPath: "/admin/miami" | "/admin/portugal";
+  basePath: "/usa" | "/portugal" | "/francia";
+  newsPath: "/usa/noticias" | "/portugal/noticias" | "/francia/noticias";
+  interviewsPath: "/usa/entrevistas" | "/portugal/entrevistas" | "/francia/entrevistas";
+  dashboardPath: "/dashboard/miami" | "/dashboard/portugal" | "/dashboard";
+  adminPath: "/admin/miami" | "/admin/portugal" | "/admin/francia";
   subtitle: string;
 };
 
@@ -45,9 +45,22 @@ export const PORTUGAL: Territory = {
   subtitle: "Noticias y entrevistas del patinaje de velocidade em Portugal",
 };
 
+export const FRANCE: Territory = {
+  code: "fr",
+  name: "Francia",
+  flag: "🇫🇷",
+  basePath: "/francia",
+  newsPath: "/francia/noticias",
+  interviewsPath: "/francia/entrevistas",
+  dashboardPath: "/dashboard",
+  adminPath: "/admin/francia",
+  subtitle: "Actualidad del patinaje de velocidad francés.",
+};
+
 export const TERRITORIES: Record<TerritoryCode, Territory> = {
   mia: MIAMI,
   pt: PORTUGAL,
+  fr: FRANCE,
 };
 
 /** Compatibilidad con el código previo de Miami. */
