@@ -35,7 +35,10 @@ await blocked(fr.client.from('community_submissions').select('id'),'private prop
 const ownPath=`news/security-${crypto.randomUUID()}.png`,otherPath=`news/security-${crypto.randomUUID()}.png`,bytes=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64');files.push(ownPath,otherPath);
 assert.ifError((await fr.client.storage.from('media').upload(ownPath,bytes,{contentType:'image/png'})).error);check(true,'own photograph upload');assert.ifError((await pt.client.storage.from('media').upload(otherPath,bytes,{contentType:'image/png'})).error);
 check((await fr.client.storage.from('media').upload(otherPath,bytes,{contentType:'image/png',upsert:true})).error,'other photograph overwrite blocked');await fr.client.storage.from('media').remove([otherPath]);check(!(await service.storage.from('media').download(otherPath)).error,'other photograph survives deletion');
-for(const bucket of ['magazine-pages','community-pending','result-documents']){const r=await fr.client.storage.from(bucket).list('',{limit:10});check(r.error||r.data.length===0,`${bucket} private files hidden`)}
+for(const bucket of ['magazine-pages','community-pending']){const r=await fr.client.storage.from(bucket).list('',{limit:10});check(r.error||r.data.length===0,`${bucket} private files hidden`)}
+// Result files published for everyone must remain accessible; test only a hidden object.
+const hiddenPath=`security-private-${crypto.randomUUID()}.pdf`;
+try{assert.ifError((await service.storage.from('result-documents').upload(hiddenPath,Buffer.from('%PDF-1.4\n'),{contentType:'application/pdf'})).error);check((await fr.client.storage.from('result-documents').download(hiddenPath)).error,'private result document inaccessible')}finally{assert.ifError((await service.storage.from('result-documents').remove([hiddenPath])).error)}
 check((await fr.client.from('profiles').update({suspended_at:new Date().toISOString()}).eq('user_id',fr.id)).error,'own suspension field protected');
 assert.ifError((await admin.client.from('profiles').update({suspended_at:new Date().toISOString()}).eq('user_id',fr.id)).error);
 await blocked(fr.client.from('news').select('id'),'existing suspended session blocked');await blocked(fr.client.from('profiles').update({suspended_at:null}).eq('user_id',fr.id).select('id'),'self reactivation blocked');
