@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Seguridad: limitar permisos editoriales, archivos y suspensión en servidor; verificar sin acceder al Admin ni publicar
 - [x] Francia: página, navegación, gestión existente y sitemap; publicado en rollerzone.es y comprobado en ordenador y móvil
 - [ ] Francia: creación y edición verificadas en Admin (bloqueado: no acceder a la cuenta del usuario)
 - [x] Evento tv_play en Rollerzone TV (solo con consentimiento Analíticas)
