@@ -105,6 +105,9 @@ function slugify(s: string) {
 }
 
 export const Route = createFileRoute("/admin/")({
+  validateSearch: (search: Record<string, unknown>): { hub?: string } => ({
+    hub: typeof search.hub === "string" ? search.hub : undefined,
+  }),
   head: () => ({ meta: [
     { title: "Noticias · Administración | Rollerzone" },
     { name: "description", content: "Gestión editorial de noticias de Rollerzone." },
@@ -117,7 +120,8 @@ export const Route = createFileRoute("/admin/")({
   component: AdminNewsList,
 });
 
-export function AdminNewsList({ initialHub = "all" }: { initialHub?: string }) {
+function AdminNewsList() {
+  const { hub: initialHub = "all" } = Route.useSearch();
   const { isAdmin } = useAuth();
   const [news, setNews] = useState<News[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
