@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Francia: página, navegación, gestión existente y comprobaciones en preview (sin publicar)
 - [x] Evento tv_play en Rollerzone TV (solo con consentimiento Analíticas)
 - [x] Secretos GA4 guardados; clave válida
 - [x] GA4 conectado y leyendo datos reales; tv_play llega a GA4
