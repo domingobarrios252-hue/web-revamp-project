@@ -142,7 +142,9 @@ import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-
 import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
 import { Route as FranciaEntrevistasIndexRouteImport } from './routes/francia.entrevistas.index'
+import { Route as FranciaEntrevistasSlugRouteImport } from './routes/francia.entrevistas.$slug'
 import { Route as FranciaNoticiasIndexRouteImport } from './routes/francia.noticias.index'
+import { Route as FranciaNoticiasSlugRouteImport } from './routes/francia.noticias.$slug'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as HubCountryArchivoRouteImport } from './routes/hub.$country.archivo'
@@ -869,9 +871,19 @@ const FranciaEntrevistasIndexRoute = FranciaEntrevistasIndexRouteImport.update({
   path: '/entrevistas/',
   getParentRoute: () => FranciaRoute,
 } as any)
+const FranciaEntrevistasSlugRoute = FranciaEntrevistasSlugRouteImport.update({
+  id: '/entrevistas/$slug',
+  path: '/entrevistas/$slug',
+  getParentRoute: () => FranciaRoute,
+} as any)
 const FranciaNoticiasIndexRoute = FranciaNoticiasIndexRouteImport.update({
   id: '/noticias/',
   path: '/noticias/',
+  getParentRoute: () => FranciaRoute,
+} as any)
+const FranciaNoticiasSlugRoute = FranciaNoticiasSlugRouteImport.update({
+  id: '/noticias/$slug',
+  path: '/noticias/$slug',
   getParentRoute: () => FranciaRoute,
 } as any)
 const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
@@ -1272,6 +1284,8 @@ export interface FileRoutesByFullPath {
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
+  '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
+  '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
@@ -1448,6 +1462,8 @@ export interface FileRoutesByTo {
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
+  '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
+  '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/comunidad': typeof HubCountryComunidadRoute
@@ -1629,6 +1645,8 @@ export interface FileRoutesById {
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
+  '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
+  '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
@@ -1817,6 +1835,8 @@ export interface FileRouteTypes {
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
+    | '/francia/entrevistas/$slug'
+    | '/francia/noticias/$slug'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
     | '/hub/$country/clubes'
@@ -1993,6 +2013,8 @@ export interface FileRouteTypes {
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
+    | '/francia/entrevistas/$slug'
+    | '/francia/noticias/$slug'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
     | '/hub/$country/comunidad'
@@ -2173,6 +2195,8 @@ export interface FileRouteTypes {
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
+    | '/francia/entrevistas/$slug'
+    | '/francia/noticias/$slug'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
     | '/hub/$country/clubes'
@@ -3232,11 +3256,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FranciaEntrevistasIndexRouteImport
       parentRoute: typeof FranciaRoute
     }
+    '/francia/entrevistas/$slug': {
+      id: '/francia/entrevistas/$slug'
+      path: '/entrevistas/$slug'
+      fullPath: '/francia/entrevistas/$slug'
+      preLoaderRoute: typeof FranciaEntrevistasSlugRouteImport
+      parentRoute: typeof FranciaRoute
+    }
     '/francia/noticias/': {
       id: '/francia/noticias/'
       path: '/noticias'
       fullPath: '/francia/noticias/'
       preLoaderRoute: typeof FranciaNoticiasIndexRouteImport
+      parentRoute: typeof FranciaRoute
+    }
+    '/francia/noticias/$slug': {
+      id: '/francia/noticias/$slug'
+      path: '/noticias/$slug'
+      fullPath: '/francia/noticias/$slug'
+      preLoaderRoute: typeof FranciaNoticiasSlugRouteImport
       parentRoute: typeof FranciaRoute
     }
     '/hub/$country/': {
@@ -3752,12 +3790,16 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 interface FranciaRouteChildren {
   FranciaIndexRoute: typeof FranciaIndexRoute
+  FranciaEntrevistasSlugRoute: typeof FranciaEntrevistasSlugRoute
+  FranciaNoticiasSlugRoute: typeof FranciaNoticiasSlugRoute
   FranciaEntrevistasIndexRoute: typeof FranciaEntrevistasIndexRoute
   FranciaNoticiasIndexRoute: typeof FranciaNoticiasIndexRoute
 }
 
 const FranciaRouteChildren: FranciaRouteChildren = {
   FranciaIndexRoute: FranciaIndexRoute,
+  FranciaEntrevistasSlugRoute: FranciaEntrevistasSlugRoute,
+  FranciaNoticiasSlugRoute: FranciaNoticiasSlugRoute,
   FranciaEntrevistasIndexRoute: FranciaEntrevistasIndexRoute,
   FranciaNoticiasIndexRoute: FranciaNoticiasIndexRoute,
 }
