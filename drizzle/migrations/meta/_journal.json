@@ -92,6 +92,13 @@
       "when": 1792231343207,
       "tag": "0012_allow_france_news_country",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792250155114,
+      "tag": "0013_editorial_least_privilege_and_suspension",
+      "breakpoints": true
     }
   ]
 }
