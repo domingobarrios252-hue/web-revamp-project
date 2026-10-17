@@ -2,7 +2,6 @@ import { describe, expect, mock, test } from "bun:test";
 import { FRANCE, MIAMI, PORTUGAL } from "../src/lib/territory/territories";
 
 const calls: unknown[][] = [];
-const pending: Promise<unknown>[] = [];
 const query = {
   select(...args: unknown[]) { calls.push(["select", ...args]); return this; },
   eq(...args: unknown[]) { calls.push(["eq", ...args]); return this; },
