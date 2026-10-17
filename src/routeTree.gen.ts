@@ -116,7 +116,8 @@ import { Route as EspecialesSlugRouteImport } from './routes/especiales.$slug'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as EventosSlugRouteImport } from './routes/eventos.$slug'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
-import { Route as FranciaIndexRouteImport } from './routes/francia.index'
+import { Route as FranciaEntrevistasRouteImport } from './routes/francia_.entrevistas'
+import { Route as FranciaNoticiasRouteImport } from './routes/francia_.noticias'
 import { Route as HubCountryRouteImport } from './routes/hub.$country'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as LigaNacionalClasificacionesRouteImport } from './routes/liga-nacional.clasificaciones'
@@ -141,10 +142,8 @@ import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premi
 import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
 import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
-import { Route as FranciaEntrevistasIndexRouteImport } from './routes/francia.entrevistas.index'
-import { Route as FranciaEntrevistasSlugRouteImport } from './routes/francia.entrevistas.$slug'
-import { Route as FranciaNoticiasIndexRouteImport } from './routes/francia.noticias.index'
-import { Route as FranciaNoticiasSlugRouteImport } from './routes/francia.noticias.$slug'
+import { Route as FranciaEntrevistasSlugRouteImport } from './routes/francia_.entrevistas_.$slug'
+import { Route as FranciaNoticiasSlugRouteImport } from './routes/francia_.noticias_.$slug'
 import { Route as HubCountryIndexRouteImport } from './routes/hub.$country.index'
 import { Route as HubCountrySectionRouteImport } from './routes/hub.$country.$section'
 import { Route as HubCountryArchivoRouteImport } from './routes/hub.$country.archivo'
@@ -739,10 +738,15 @@ const EventsSlugRoute = EventsSlugRouteImport.update({
   path: '/events/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FranciaIndexRoute = FranciaIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => FranciaRoute,
+const FranciaEntrevistasRoute = FranciaEntrevistasRouteImport.update({
+  id: '/francia_/entrevistas',
+  path: '/francia/entrevistas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FranciaNoticiasRoute = FranciaNoticiasRouteImport.update({
+  id: '/francia_/noticias',
+  path: '/francia/noticias',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HubCountryRoute = HubCountryRouteImport.update({
   id: '/hub/$country',
@@ -866,25 +870,15 @@ const EspecialesSlugPieceRoute = EspecialesSlugPieceRouteImport.update({
   path: '/$piece',
   getParentRoute: () => EspecialesSlugRoute,
 } as any)
-const FranciaEntrevistasIndexRoute = FranciaEntrevistasIndexRouteImport.update({
-  id: '/entrevistas/',
-  path: '/entrevistas/',
-  getParentRoute: () => FranciaRoute,
-} as any)
 const FranciaEntrevistasSlugRoute = FranciaEntrevistasSlugRouteImport.update({
-  id: '/entrevistas/$slug',
-  path: '/entrevistas/$slug',
-  getParentRoute: () => FranciaRoute,
-} as any)
-const FranciaNoticiasIndexRoute = FranciaNoticiasIndexRouteImport.update({
-  id: '/noticias/',
-  path: '/noticias/',
-  getParentRoute: () => FranciaRoute,
+  id: '/francia_/entrevistas_/$slug',
+  path: '/francia/entrevistas/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const FranciaNoticiasSlugRoute = FranciaNoticiasSlugRouteImport.update({
-  id: '/noticias/$slug',
-  path: '/noticias/$slug',
-  getParentRoute: () => FranciaRoute,
+  id: '/francia_/noticias_/$slug',
+  path: '/francia/noticias/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HubCountryIndexRoute = HubCountryIndexRouteImport.update({
   id: '/',
@@ -1163,7 +1157,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/equipo': typeof EquipoRoute
   '/establecer-clave': typeof EstablecerClaveRoute
-  '/francia': typeof FranciaRouteWithChildren
+  '/francia': typeof FranciaRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
@@ -1252,6 +1246,8 @@ export interface FileRoutesByFullPath {
   '/especiales/$slug': typeof EspecialesSlugRouteWithChildren
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
+  '/francia/entrevistas': typeof FranciaEntrevistasRoute
+  '/francia/noticias': typeof FranciaNoticiasRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
   '/legal/$slug': typeof LegalSlugRoute
   '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
@@ -1272,7 +1268,6 @@ export interface FileRoutesByFullPath {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
-  '/francia/': typeof FranciaIndexRoute
   '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/portugal/': typeof PortugalIndexRoute
@@ -1309,8 +1304,6 @@ export interface FileRoutesByFullPath {
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug/': typeof EspecialesSlugIndexRoute
-  '/francia/entrevistas/': typeof FranciaEntrevistasIndexRoute
-  '/francia/noticias/': typeof FranciaNoticiasIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias/': typeof MiamiNoticiasIndexRoute
@@ -1348,6 +1341,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/equipo': typeof EquipoRoute
   '/establecer-clave': typeof EstablecerClaveRoute
+  '/francia': typeof FranciaRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
@@ -1431,6 +1425,8 @@ export interface FileRoutesByTo {
   '/espana/rollerzone-tv': typeof EspanaRollerzoneTvRoute
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
+  '/francia/entrevistas': typeof FranciaEntrevistasRoute
+  '/francia/noticias': typeof FranciaNoticiasRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
   '/newsletter/baja': typeof NewsletterBajaRoute
@@ -1450,7 +1446,6 @@ export interface FileRoutesByTo {
   '/entrevistas': typeof EntrevistasIndexRoute
   '/especiales': typeof EspecialesIndexRoute
   '/eventos': typeof EventosIndexRoute
-  '/francia': typeof FranciaIndexRoute
   '/miami': typeof MiamiIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/portugal': typeof PortugalIndexRoute
@@ -1482,8 +1477,6 @@ export interface FileRoutesByTo {
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug': typeof EspecialesSlugIndexRoute
-  '/francia/entrevistas': typeof FranciaEntrevistasIndexRoute
-  '/francia/noticias': typeof FranciaNoticiasIndexRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/miami/entrevistas': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias': typeof MiamiNoticiasIndexRoute
@@ -1524,7 +1517,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/equipo': typeof EquipoRoute
   '/establecer-clave': typeof EstablecerClaveRoute
-  '/francia': typeof FranciaRouteWithChildren
+  '/francia': typeof FranciaRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
@@ -1613,6 +1606,8 @@ export interface FileRoutesById {
   '/especiales/$slug': typeof EspecialesSlugRouteWithChildren
   '/eventos/$slug': typeof EventosSlugRoute
   '/events/$slug': typeof EventsSlugRoute
+  '/francia_/entrevistas': typeof FranciaEntrevistasRoute
+  '/francia_/noticias': typeof FranciaNoticiasRoute
   '/hub/$country': typeof HubCountryRouteWithChildren
   '/legal/$slug': typeof LegalSlugRoute
   '/liga-nacional/clasificaciones': typeof LigaNacionalClasificacionesRoute
@@ -1633,7 +1628,6 @@ export interface FileRoutesById {
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
-  '/francia/': typeof FranciaIndexRoute
   '/miami/': typeof MiamiIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/portugal/': typeof PortugalIndexRoute
@@ -1645,8 +1639,8 @@ export interface FileRoutesById {
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
-  '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
-  '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
+  '/francia_/entrevistas_/$slug': typeof FranciaEntrevistasSlugRoute
+  '/francia_/noticias_/$slug': typeof FranciaNoticiasSlugRoute
   '/hub/$country/$section': typeof HubCountrySectionRoute
   '/hub/$country/archivo': typeof HubCountryArchivoRoute
   '/hub/$country/clubes': typeof HubCountryClubesRouteWithChildren
@@ -1670,8 +1664,6 @@ export interface FileRoutesById {
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
   '/especiales/$slug/': typeof EspecialesSlugIndexRoute
-  '/francia/entrevistas/': typeof FranciaEntrevistasIndexRoute
-  '/francia/noticias/': typeof FranciaNoticiasIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
   '/miami/noticias/': typeof MiamiNoticiasIndexRoute
@@ -1803,6 +1795,8 @@ export interface FileRouteTypes {
     | '/especiales/$slug'
     | '/eventos/$slug'
     | '/events/$slug'
+    | '/francia/entrevistas'
+    | '/francia/noticias'
     | '/hub/$country'
     | '/legal/$slug'
     | '/liga-nacional/clasificaciones'
@@ -1823,7 +1817,6 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/especiales/'
     | '/eventos/'
-    | '/francia/'
     | '/miami/'
     | '/noticias/'
     | '/portugal/'
@@ -1860,8 +1853,6 @@ export interface FileRouteTypes {
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
     | '/especiales/$slug/'
-    | '/francia/entrevistas/'
-    | '/francia/noticias/'
     | '/hub/$country/'
     | '/miami/entrevistas/'
     | '/miami/noticias/'
@@ -1899,6 +1890,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/equipo'
     | '/establecer-clave'
+    | '/francia'
     | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
@@ -1982,6 +1974,8 @@ export interface FileRouteTypes {
     | '/espana/rollerzone-tv'
     | '/eventos/$slug'
     | '/events/$slug'
+    | '/francia/entrevistas'
+    | '/francia/noticias'
     | '/legal/$slug'
     | '/liga-nacional/clasificaciones'
     | '/newsletter/baja'
@@ -2001,7 +1995,6 @@ export interface FileRouteTypes {
     | '/entrevistas'
     | '/especiales'
     | '/eventos'
-    | '/francia'
     | '/miami'
     | '/noticias'
     | '/portugal'
@@ -2033,8 +2026,6 @@ export interface FileRouteTypes {
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
     | '/especiales/$slug'
-    | '/francia/entrevistas'
-    | '/francia/noticias'
     | '/hub/$country'
     | '/miami/entrevistas'
     | '/miami/noticias'
@@ -2163,6 +2154,8 @@ export interface FileRouteTypes {
     | '/especiales/$slug'
     | '/eventos/$slug'
     | '/events/$slug'
+    | '/francia_/entrevistas'
+    | '/francia_/noticias'
     | '/hub/$country'
     | '/legal/$slug'
     | '/liga-nacional/clasificaciones'
@@ -2183,7 +2176,6 @@ export interface FileRouteTypes {
     | '/entrevistas/'
     | '/especiales/'
     | '/eventos/'
-    | '/francia/'
     | '/miami/'
     | '/noticias/'
     | '/portugal/'
@@ -2195,8 +2187,8 @@ export interface FileRouteTypes {
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
     | '/especiales/$slug/$piece'
-    | '/francia/entrevistas/$slug'
-    | '/francia/noticias/$slug'
+    | '/francia_/entrevistas_/$slug'
+    | '/francia_/noticias_/$slug'
     | '/hub/$country/$section'
     | '/hub/$country/archivo'
     | '/hub/$country/clubes'
@@ -2220,8 +2212,6 @@ export interface FileRouteTypes {
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
     | '/especiales/$slug/'
-    | '/francia/entrevistas/'
-    | '/francia/noticias/'
     | '/hub/$country/'
     | '/miami/entrevistas/'
     | '/miami/noticias/'
@@ -2263,7 +2253,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   EquipoRoute: typeof EquipoRoute
   EstablecerClaveRoute: typeof EstablecerClaveRoute
-  FranciaRoute: typeof FranciaRouteWithChildren
+  FranciaRoute: typeof FranciaRoute
   MiBibliotecaRoute: typeof MiBibliotecaRoute
   MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
@@ -2293,6 +2283,8 @@ export interface RootRouteChildren {
   EspecialesSlugRoute: typeof EspecialesSlugRouteWithChildren
   EventosSlugRoute: typeof EventosSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
+  FranciaEntrevistasRoute: typeof FranciaEntrevistasRoute
+  FranciaNoticiasRoute: typeof FranciaNoticiasRoute
   HubCountryRoute: typeof HubCountryRouteWithChildren
   LegalSlugRoute: typeof LegalSlugRoute
   LigaNacionalClasificacionesRoute: typeof LigaNacionalClasificacionesRoute
@@ -2315,6 +2307,8 @@ export interface RootRouteChildren {
   SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
+  FranciaEntrevistasSlugRoute: typeof FranciaEntrevistasSlugRoute
+  FranciaNoticiasSlugRoute: typeof FranciaNoticiasSlugRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
   RollerzoneTvWorldSkateGamesAsu26ResultadosRoute: typeof RollerzoneTvWorldSkateGamesAsu26ResultadosRoute
   ApiPublicCronResultsSyncRoute: typeof ApiPublicCronResultsSyncRoute
@@ -3074,12 +3068,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/francia/': {
-      id: '/francia/'
-      path: '/'
-      fullPath: '/francia/'
-      preLoaderRoute: typeof FranciaIndexRouteImport
-      parentRoute: typeof FranciaRoute
+    '/francia_/entrevistas': {
+      id: '/francia_/entrevistas'
+      path: '/francia/entrevistas'
+      fullPath: '/francia/entrevistas'
+      preLoaderRoute: typeof FranciaEntrevistasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/francia_/noticias': {
+      id: '/francia_/noticias'
+      path: '/francia/noticias'
+      fullPath: '/francia/noticias'
+      preLoaderRoute: typeof FranciaNoticiasRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/hub/$country': {
       id: '/hub/$country'
@@ -3249,33 +3250,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EspecialesSlugPieceRouteImport
       parentRoute: typeof EspecialesSlugRoute
     }
-    '/francia/entrevistas/': {
-      id: '/francia/entrevistas/'
-      path: '/entrevistas'
-      fullPath: '/francia/entrevistas/'
-      preLoaderRoute: typeof FranciaEntrevistasIndexRouteImport
-      parentRoute: typeof FranciaRoute
-    }
-    '/francia/entrevistas/$slug': {
-      id: '/francia/entrevistas/$slug'
-      path: '/entrevistas/$slug'
+    '/francia_/entrevistas_/$slug': {
+      id: '/francia_/entrevistas_/$slug'
+      path: '/francia/entrevistas/$slug'
       fullPath: '/francia/entrevistas/$slug'
       preLoaderRoute: typeof FranciaEntrevistasSlugRouteImport
-      parentRoute: typeof FranciaRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/francia/noticias/': {
-      id: '/francia/noticias/'
-      path: '/noticias'
-      fullPath: '/francia/noticias/'
-      preLoaderRoute: typeof FranciaNoticiasIndexRouteImport
-      parentRoute: typeof FranciaRoute
-    }
-    '/francia/noticias/$slug': {
-      id: '/francia/noticias/$slug'
-      path: '/noticias/$slug'
+    '/francia_/noticias_/$slug': {
+      id: '/francia_/noticias_/$slug'
+      path: '/francia/noticias/$slug'
       fullPath: '/francia/noticias/$slug'
       preLoaderRoute: typeof FranciaNoticiasSlugRouteImport
-      parentRoute: typeof FranciaRoute
+      parentRoute: typeof rootRouteImport
     }
     '/hub/$country/': {
       id: '/hub/$country/'
@@ -3788,25 +3775,6 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
-interface FranciaRouteChildren {
-  FranciaIndexRoute: typeof FranciaIndexRoute
-  FranciaEntrevistasSlugRoute: typeof FranciaEntrevistasSlugRoute
-  FranciaNoticiasSlugRoute: typeof FranciaNoticiasSlugRoute
-  FranciaEntrevistasIndexRoute: typeof FranciaEntrevistasIndexRoute
-  FranciaNoticiasIndexRoute: typeof FranciaNoticiasIndexRoute
-}
-
-const FranciaRouteChildren: FranciaRouteChildren = {
-  FranciaIndexRoute: FranciaIndexRoute,
-  FranciaEntrevistasSlugRoute: FranciaEntrevistasSlugRoute,
-  FranciaNoticiasSlugRoute: FranciaNoticiasSlugRoute,
-  FranciaEntrevistasIndexRoute: FranciaEntrevistasIndexRoute,
-  FranciaNoticiasIndexRoute: FranciaNoticiasIndexRoute,
-}
-
-const FranciaRouteWithChildren =
-  FranciaRoute._addFileChildren(FranciaRouteChildren)
-
 interface MiamiRouteChildren {
   MiamiIndexRoute: typeof MiamiIndexRoute
   MiamiEntrevistasSlugRoute: typeof MiamiEntrevistasSlugRoute
@@ -4056,7 +4024,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   EquipoRoute: EquipoRoute,
   EstablecerClaveRoute: EstablecerClaveRoute,
-  FranciaRoute: FranciaRouteWithChildren,
+  FranciaRoute: FranciaRoute,
   MiBibliotecaRoute: MiBibliotecaRoute,
   MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,
@@ -4086,6 +4054,8 @@ const rootRouteChildren: RootRouteChildren = {
   EspecialesSlugRoute: EspecialesSlugRouteWithChildren,
   EventosSlugRoute: EventosSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
+  FranciaEntrevistasRoute: FranciaEntrevistasRoute,
+  FranciaNoticiasRoute: FranciaNoticiasRoute,
   HubCountryRoute: HubCountryRouteWithChildren,
   LegalSlugRoute: LegalSlugRoute,
   LigaNacionalClasificacionesRoute: LigaNacionalClasificacionesRoute,
@@ -4108,6 +4078,8 @@ const rootRouteChildren: RootRouteChildren = {
   SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
+  FranciaEntrevistasSlugRoute: FranciaEntrevistasSlugRoute,
+  FranciaNoticiasSlugRoute: FranciaNoticiasSlugRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
   RollerzoneTvWorldSkateGamesAsu26ResultadosRoute:
     RollerzoneTvWorldSkateGamesAsu26ResultadosRoute,
