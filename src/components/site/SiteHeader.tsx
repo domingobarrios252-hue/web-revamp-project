@@ -33,6 +33,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Colombia", to: "/hub/$country", params: { country: "co" }, slug: "colombia" },
   { label: "USA", to: "/usa", slug: "usa" },
   { label: "Portugal", to: "/portugal", slug: "portugal" },
+  { label: "Francia", to: "/francia", slug: "francia" },
   { label: "Salón de la Fama", to: "/salon-de-la-fama", slug: "salon-de-la-fama" },
   { label: "Eventos", to: "/eventos", slug: "eventos" },
   { label: "Resultados", to: "/resultados", slug: "resultados" },

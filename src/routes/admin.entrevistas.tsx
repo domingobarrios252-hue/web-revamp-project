@@ -498,6 +498,7 @@ function InterviewForm({
               { code: "co", label: "🇨🇴 Colombia" },
               { code: "mia", label: "🇺🇸 USA" },
               { code: "pt", label: "🇵🇹 Portugal" },
+              { code: "fr", label: "🇫🇷 Francia" },
             ].map((h) => (
 
               <label key={h.code} className="flex items-center gap-2">

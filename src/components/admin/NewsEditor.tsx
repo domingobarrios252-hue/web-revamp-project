@@ -59,6 +59,7 @@ export const HUBS = [
   { value: "co", label: "Colombia" },
   { value: "pt", label: "Portugal" },
   { value: "mia", label: "USA" },
+  { value: "fr", label: "Francia" },
 ] as const;
 type Hub = (typeof HUBS)[number]["value"];
 
@@ -98,12 +99,14 @@ export function NewsEditor({
   writers,
   onClose,
   onSaved,
+  defaultHub = "general",
 }: {
   item: NewsEditorItem | null;
   categories: Category[];
   writers: Writer[];
   onClose: () => void;
   onSaved: () => void;
+  defaultHub?: Hub;
 }) {
   const [newsId, setNewsId] = useState<string | null>(item?.id ?? null);
   const [title, setTitle] = useState(item?.title ?? "");
@@ -135,7 +138,7 @@ export function NewsEditor({
   const [relSkaters, setRelSkaters] = useState<string[]>([]);
   const [relFeds, setRelFeds] = useState<string[]>([]);
   const [visHome, setVisHome] = useState(true);
-  const [hub, setHub] = useState<Hub>("general");
+  const [hub, setHub] = useState<Hub>(defaultHub);
   const itemZones = item as unknown as { zone_region_id?: string | null; zone_city_id?: string | null } | null | undefined;
   const [zoneRegion, setZoneRegion] = useState<string>(itemZones?.zone_region_id ?? "");
   const [zoneCity, setZoneCity] = useState<string>(itemZones?.zone_city_id ?? "");

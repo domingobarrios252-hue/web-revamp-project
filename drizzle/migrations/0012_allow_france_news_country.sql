@@ -1,0 +1,2 @@
+ALTER TABLE public.news DROP CONSTRAINT news_country_code_hub_check;
+ALTER TABLE public.news ADD CONSTRAINT news_country_code_hub_check CHECK (country_code = ANY (ARRAY['general'::text, 'es'::text, 'co'::text, 'pt'::text, 'mia'::text, 'fr'::text]));

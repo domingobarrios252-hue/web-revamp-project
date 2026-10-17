@@ -1,0 +1,47 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { TerritoryMasthead, TerritoryNewsCard } from "@/components/territory/TerritoryCards";
+import { FRANCE } from "@/lib/territory/territories";
+import { useTerritoryNews } from "@/lib/territory/useTerritory";
+
+const TITLE = "Noticias de patinaje de velocidad en Francia | Rollerzone";
+const DESC = "Todas las noticias del patinaje de velocidad en Francia publicadas por RollerZone.";
+
+export const Route = createFileRoute("/francia_/noticias")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESC },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://rollerzone.es/francia/noticias" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
+    ],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/francia/noticias" }],
+  }),
+  component: FranciaNewsIndex,
+});
+
+function FranciaNewsIndex() {
+  const { items, loading } = useTerritoryNews(FRANCE.code, 60);
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+      <TerritoryMasthead territory={FRANCE} subtitle="Noticias · Edición Francia" />
+      {loading ? (
+        <p className="mt-8 text-muted-foreground">Cargando…</p>
+      ) : items.length === 0 ? (
+        <div className="mt-8 border border-border bg-surface p-8 text-center text-muted-foreground">
+          Aún no hay noticias publicadas en Francia.
+        </div>
+      ) : (
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((n) => (
+            <TerritoryNewsCard key={n.id} item={n} territory={FRANCE} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
