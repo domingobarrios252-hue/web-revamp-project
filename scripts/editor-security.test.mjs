@@ -42,7 +42,7 @@ await blocked(fr.client.from('news').select('id'),'existing suspended session bl
 const suspendedPath=`news/security-suspended-${crypto.randomUUID()}.png`;files.push(suspendedPath);check((await fr.client.storage.from('media').upload(suspendedPath,bytes,{contentType:'image/png'})).error,'suspended upload blocked');
 assert.ifError((await admin.client.from('profiles').update({suspended_at:null}).eq('user_id',fr.id)).error);check((await fr.client.from('news').select('id')).data.length>0,'administrator reactivation');console.log(`PASS ${checks} authenticated security checks`);
 }finally{
-assert.ifError((await service.storage.from('media').remove(files)).error);
+if(files.length)assert.ifError((await service.storage.from('media').remove(files)).error);
 for(const t of ['news','interviews'])if(rows[t].length)assert.ifError((await service.from(t).delete().in('id',rows[t])).error);
 for(const id of users){await service.from('editor_permissions').delete().eq('user_id',id);await service.from('editor_countries').delete().eq('user_id',id);assert.ifError((await service.auth.admin.deleteUser(id)).error)}
 console.log('Temporary accounts, content and files cleaned up');
