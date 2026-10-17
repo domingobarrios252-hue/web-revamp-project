@@ -1,7 +1,7 @@
 import {createClient} from '@supabase/supabase-js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_ANON_KEY,secret=process.env.SUPABASE_SERVICE_ROLE_KEY;
+const url=process.env.SUPABASE_URL||process.env.VITE_SUPABASE_URL,key=process.env.SUPABASE_ANON_KEY||process.env.VITE_SUPABASE_PUBLISHABLE_KEY,secret=process.env.SUPABASE_SERVICE_ROLE_KEY;
 assert.ok(url&&key&&secret);
 const opts={auth:{persistSession:false,autoRefreshToken:false}},service=createClient(url,secret,opts);
 const users=[],rows={news:[],interviews:[]},files=[];let checks=0;
