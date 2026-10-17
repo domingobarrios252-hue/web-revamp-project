@@ -6,7 +6,7 @@ import { useTerritoryInterviews } from "@/lib/territory/useTerritory";
 const TITLE = "Entrevistas Francia | RollerZone";
 const DESC = "Entrevistas a patinadores, entrenadores y protagonistas del patinaje en Francia.";
 
-export const Route = createFileRoute("/francia/entrevistas/")({
+export const Route = createFileRoute("/francia_/entrevistas")({
   head: () => ({
     meta: [
       { title: TITLE },

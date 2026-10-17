@@ -6,7 +6,7 @@ import { useTerritoryNews } from "@/lib/territory/useTerritory";
 const TITLE = "Noticias de patinaje de velocidad en Francia | Rollerzone";
 const DESC = "Todas las noticias del patinaje de velocidad en Francia publicadas por RollerZone.";
 
-export const Route = createFileRoute("/francia/noticias/")({
+export const Route = createFileRoute("/francia_/noticias")({
   head: () => ({
     meta: [
       { title: TITLE },
