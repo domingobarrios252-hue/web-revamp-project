@@ -99,6 +99,13 @@
       "when": 1792250155114,
       "tag": "0013_editorial_least_privilege_and_suspension",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792250298731,
+      "tag": "0014_preserve_editorial_publication_defaults",
+      "breakpoints": true
     }
   ]
 }
