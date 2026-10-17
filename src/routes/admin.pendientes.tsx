@@ -31,6 +31,7 @@ const TERRITORIES: { code: string; label: string }[] = [
   { code: "all", label: "Todos los territorios" },
   { code: "mia", label: "USA" },
   { code: "pt", label: "Portugal" },
+  { code: "fr", label: "Francia" },
   { code: "es", label: "España" },
   { code: "co", label: "Colombia" },
   { code: "ve", label: "Venezuela" },
