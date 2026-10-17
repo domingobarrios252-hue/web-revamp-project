@@ -1,5 +1,5 @@
 # Roadmap
-- [x] Francia: página, navegación, gestión existente y pruebas públicas ordenador/tablet/móvil (sin publicar)
+- [x] Francia: página, navegación, gestión existente y sitemap; publicado en rollerzone.es y comprobado en ordenador y móvil
 - [ ] Francia: creación y edición verificadas en Admin (bloqueado: no acceder a la cuenta del usuario)
 - [x] Evento tv_play en Rollerzone TV (solo con consentimiento Analíticas)
 - [x] Secretos GA4 guardados; clave válida
