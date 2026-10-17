@@ -4818,6 +4818,7 @@ export type Database = {
       }
     }
     Functions: {
+      account_is_active: { Args: { _user_id: string }; Returns: boolean }
       admin_list_account_details: {
         Args: never
         Returns: {
@@ -4869,8 +4870,22 @@ export type Database = {
         }
       }
       admin_mfa_ok: { Args: never; Returns: boolean }
+      can_access_own_editorial: {
+        Args: {
+          _action: string
+          _country: string
+          _kind: string
+          _owner: string
+          _section_id: string
+        }
+        Returns: boolean
+      }
       can_edit_country: {
         Args: { _country: string; _user_id: string }
+        Returns: boolean
+      }
+      can_manage_section: {
+        Args: { _action: string; _section: string }
         Returns: boolean
       }
       check_rate_limit: {

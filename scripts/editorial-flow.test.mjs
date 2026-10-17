@@ -35,6 +35,7 @@ let otherSectionNewsId;
 async function cleanup() {
   await admin.from("news").delete().in("slug", [pendingSlug, rejectedSlug, otherSectionSlugNews]);
   if (editorUserId) {
+    await admin.from("editor_permissions").delete().eq("user_id", editorUserId);
     await admin.from("user_roles").delete().eq("user_id", editorUserId);
     await admin.from("profiles").delete().eq("user_id", editorUserId);
     await admin.auth.admin.deleteUser(editorUserId);
@@ -83,6 +84,7 @@ try {
   await admin.from("user_roles").delete().eq("user_id", editorUserId);
   const { error: roleError } = await admin.from("user_roles").insert({ user_id: editorUserId, role: "editor" });
   assert.ifError(roleError);
+  assert.ifError((await admin.from("editor_permissions").insert({ user_id: editorUserId, section: "noticias", can_create: true, can_edit: true, can_delete: false, can_publish: false })).error);
 
   const { error: profileError } = await admin
     .from("profiles")
