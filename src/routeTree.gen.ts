@@ -97,8 +97,10 @@ import { Route as CaminoAlEuropeo2026ResultadosYMedalleroRouteImport } from './r
 import { Route as ColaboracionesIndexRouteImport } from './routes/colaboraciones.index'
 import { Route as ColaboracionesSlugRouteImport } from './routes/colaboraciones.$slug'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardFranciaRouteImport } from './routes/dashboard.francia'
 import { Route as DashboardMiamiRouteImport } from './routes/dashboard.miami'
 import { Route as DashboardPortugalRouteImport } from './routes/dashboard.portugal'
+import { Route as EditorFranciaRouteImport } from './routes/editor.francia'
 import { Route as EditorMiamiRouteImport } from './routes/editor.miami'
 import { Route as EditorPortugalRouteImport } from './routes/editor.portugal'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
@@ -643,6 +645,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardFranciaRoute = DashboardFranciaRouteImport.update({
+  id: '/francia',
+  path: '/francia',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardMiamiRoute = DashboardMiamiRouteImport.update({
   id: '/miami',
   path: '/miami',
@@ -652,6 +659,11 @@ const DashboardPortugalRoute = DashboardPortugalRouteImport.update({
   id: '/portugal',
   path: '/portugal',
   getParentRoute: () => DashboardRoute,
+} as any)
+const EditorFranciaRoute = EditorFranciaRouteImport.update({
+  id: '/editor/francia',
+  path: '/editor/francia',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EditorMiamiRoute = EditorMiamiRouteImport.update({
   id: '/editor/miami',
@@ -1230,8 +1242,10 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
+  '/dashboard/francia': typeof DashboardFranciaRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
   '/dashboard/portugal': typeof DashboardPortugalRoute
+  '/editor/francia': typeof EditorFranciaRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
@@ -1410,8 +1424,10 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
+  '/dashboard/francia': typeof DashboardFranciaRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
   '/dashboard/portugal': typeof DashboardPortugalRoute
+  '/editor/francia': typeof EditorFranciaRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
@@ -1590,8 +1606,10 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/presentacion-europeo-2026': typeof CaminoAlEuropeo2026PresentacionEuropeo2026Route
   '/camino-al-europeo-2026/resultados-y-medallero': typeof CaminoAlEuropeo2026ResultadosYMedalleroRoute
   '/colaboraciones/$slug': typeof ColaboracionesSlugRoute
+  '/dashboard/francia': typeof DashboardFranciaRoute
   '/dashboard/miami': typeof DashboardMiamiRoute
   '/dashboard/portugal': typeof DashboardPortugalRoute
+  '/editor/francia': typeof EditorFranciaRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/editor/portugal': typeof EditorPortugalRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
@@ -1779,8 +1797,10 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
+    | '/dashboard/francia'
     | '/dashboard/miami'
     | '/dashboard/portugal'
+    | '/editor/francia'
     | '/editor/miami'
     | '/editor/portugal'
     | '/entrevistas/$slug'
@@ -1959,8 +1979,10 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
+    | '/dashboard/francia'
     | '/dashboard/miami'
     | '/dashboard/portugal'
+    | '/editor/francia'
     | '/editor/miami'
     | '/editor/portugal'
     | '/entrevistas/$slug'
@@ -2138,8 +2160,10 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/presentacion-europeo-2026'
     | '/camino-al-europeo-2026/resultados-y-medallero'
     | '/colaboraciones/$slug'
+    | '/dashboard/francia'
     | '/dashboard/miami'
     | '/dashboard/portugal'
+    | '/editor/francia'
     | '/editor/miami'
     | '/editor/portugal'
     | '/entrevistas/$slug'
@@ -2269,6 +2293,7 @@ export interface RootRouteChildren {
   UsaRoute: typeof UsaRouteWithChildren
   CountrySplatRoute: typeof CountrySplatRoute
   ColaboracionesSlugRoute: typeof ColaboracionesSlugRoute
+  EditorFranciaRoute: typeof EditorFranciaRoute
   EditorMiamiRoute: typeof EditorMiamiRoute
   EditorPortugalRoute: typeof EditorPortugalRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
@@ -2935,6 +2960,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/francia': {
+      id: '/dashboard/francia'
+      path: '/francia'
+      fullPath: '/dashboard/francia'
+      preLoaderRoute: typeof DashboardFranciaRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/miami': {
       id: '/dashboard/miami'
       path: '/miami'
@@ -2948,6 +2980,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/portugal'
       preLoaderRoute: typeof DashboardPortugalRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/editor/francia': {
+      id: '/editor/francia'
+      path: '/editor/francia'
+      fullPath: '/editor/francia'
+      preLoaderRoute: typeof EditorFranciaRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/editor/miami': {
       id: '/editor/miami'
@@ -3760,12 +3799,14 @@ const CaminoAlEuropeo2026RouteWithChildren =
   CaminoAlEuropeo2026Route._addFileChildren(CaminoAlEuropeo2026RouteChildren)
 
 interface DashboardRouteChildren {
+  DashboardFranciaRoute: typeof DashboardFranciaRoute
   DashboardMiamiRoute: typeof DashboardMiamiRoute
   DashboardPortugalRoute: typeof DashboardPortugalRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardFranciaRoute: DashboardFranciaRoute,
   DashboardMiamiRoute: DashboardMiamiRoute,
   DashboardPortugalRoute: DashboardPortugalRoute,
   DashboardIndexRoute: DashboardIndexRoute,
@@ -4040,6 +4081,7 @@ const rootRouteChildren: RootRouteChildren = {
   UsaRoute: UsaRouteWithChildren,
   CountrySplatRoute: CountrySplatRoute,
   ColaboracionesSlugRoute: ColaboracionesSlugRoute,
+  EditorFranciaRoute: EditorFranciaRoute,
   EditorMiamiRoute: EditorMiamiRoute,
   EditorPortugalRoute: EditorPortugalRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,

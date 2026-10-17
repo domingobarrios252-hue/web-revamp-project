@@ -16,7 +16,7 @@ export type Territory = {
   basePath: "/usa" | "/portugal" | "/francia";
   newsPath: "/usa/noticias" | "/portugal/noticias" | "/francia/noticias";
   interviewsPath: "/usa/entrevistas" | "/portugal/entrevistas" | "/francia/entrevistas";
-  dashboardPath: "/dashboard/miami" | "/dashboard/portugal" | "/dashboard";
+  dashboardPath: "/dashboard/miami" | "/dashboard/portugal" | "/dashboard/francia";
   adminPath: "/admin/miami" | "/admin/portugal" | "/admin/francia";
   subtitle: string;
 };
@@ -52,7 +52,7 @@ export const FRANCE: Territory = {
   basePath: "/francia",
   newsPath: "/francia/noticias",
   interviewsPath: "/francia/entrevistas",
-  dashboardPath: "/dashboard",
+  dashboardPath: "/dashboard/francia",
   adminPath: "/admin/francia",
   subtitle: "Actualidad del patinaje de velocidad francés.",
 };
