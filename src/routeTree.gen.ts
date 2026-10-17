@@ -19,6 +19,7 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as EquipoRouteImport } from './routes/equipo'
 import { Route as EstablecerClaveRouteImport } from './routes/establecer-clave'
+import { Route as FranciaRouteImport } from './routes/francia'
 import { Route as MiBibliotecaRouteImport } from './routes/mi-biblioteca'
 import { Route as MiamiRouteImport } from './routes/miami'
 import { Route as PaisesRouteImport } from './routes/paises'
@@ -50,6 +51,7 @@ import { Route as AdminEstadisticasRouteImport } from './routes/admin.estadistic
 import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
 import { Route as AdminFederacionesRouteImport } from './routes/admin.federaciones'
 import { Route as AdminFormulariosRouteImport } from './routes/admin.formularios'
+import { Route as AdminFranciaRouteImport } from './routes/admin.francia'
 import { Route as AdminHomeControlRouteImport } from './routes/admin.home-control'
 import { Route as AdminHubLigaRouteImport } from './routes/admin.hub-liga'
 import { Route as AdminLegalRouteImport } from './routes/admin.legal'
@@ -239,6 +241,11 @@ const EstablecerClaveRoute = EstablecerClaveRouteImport.update({
   path: '/establecer-clave',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FranciaRoute = FranciaRouteImport.update({
+  id: '/francia',
+  path: '/francia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MiBibliotecaRoute = MiBibliotecaRouteImport.update({
   id: '/mi-biblioteca',
   path: '/mi-biblioteca',
@@ -392,6 +399,11 @@ const AdminFederacionesRoute = AdminFederacionesRouteImport.update({
 const AdminFormulariosRoute = AdminFormulariosRouteImport.update({
   id: '/formularios',
   path: '/formularios',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFranciaRoute = AdminFranciaRouteImport.update({
+  id: '/francia',
+  path: '/francia',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminHomeControlRoute = AdminHomeControlRouteImport.update({
@@ -1121,6 +1133,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/equipo': typeof EquipoRoute
   '/establecer-clave': typeof EstablecerClaveRoute
+  '/francia': typeof FranciaRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
@@ -1150,6 +1163,7 @@ export interface FileRoutesByFullPath {
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/formularios': typeof AdminFormulariosRoute
+  '/admin/francia': typeof AdminFranciaRoute
   '/admin/home-control': typeof AdminHomeControlRoute
   '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
@@ -1299,6 +1313,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/equipo': typeof EquipoRoute
   '/establecer-clave': typeof EstablecerClaveRoute
+  '/francia': typeof FranciaRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/paises': typeof PaisesRoute
   '/patrocinadores': typeof PatrocinadoresRoute
@@ -1324,6 +1339,7 @@ export interface FileRoutesByTo {
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/formularios': typeof AdminFormulariosRoute
+  '/admin/francia': typeof AdminFranciaRoute
   '/admin/home-control': typeof AdminHomeControlRoute
   '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
@@ -1469,6 +1485,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/equipo': typeof EquipoRoute
   '/establecer-clave': typeof EstablecerClaveRoute
+  '/francia': typeof FranciaRoute
   '/mi-biblioteca': typeof MiBibliotecaRoute
   '/miami': typeof MiamiRouteWithChildren
   '/paises': typeof PaisesRoute
@@ -1498,6 +1515,7 @@ export interface FileRoutesById {
   '/admin/eventos': typeof AdminEventosRoute
   '/admin/federaciones': typeof AdminFederacionesRoute
   '/admin/formularios': typeof AdminFormulariosRoute
+  '/admin/francia': typeof AdminFranciaRoute
   '/admin/home-control': typeof AdminHomeControlRoute
   '/admin/hub-liga': typeof AdminHubLigaRoute
   '/admin/legal': typeof AdminLegalRoute
@@ -1652,6 +1670,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/equipo'
     | '/establecer-clave'
+    | '/francia'
     | '/mi-biblioteca'
     | '/miami'
     | '/paises'
@@ -1681,6 +1700,7 @@ export interface FileRouteTypes {
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/formularios'
+    | '/admin/francia'
     | '/admin/home-control'
     | '/admin/hub-liga'
     | '/admin/legal'
@@ -1830,6 +1850,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/equipo'
     | '/establecer-clave'
+    | '/francia'
     | '/mi-biblioteca'
     | '/paises'
     | '/patrocinadores'
@@ -1855,6 +1876,7 @@ export interface FileRouteTypes {
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/formularios'
+    | '/admin/francia'
     | '/admin/home-control'
     | '/admin/hub-liga'
     | '/admin/legal'
@@ -1999,6 +2021,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/equipo'
     | '/establecer-clave'
+    | '/francia'
     | '/mi-biblioteca'
     | '/miami'
     | '/paises'
@@ -2028,6 +2051,7 @@ export interface FileRouteTypes {
     | '/admin/eventos'
     | '/admin/federaciones'
     | '/admin/formularios'
+    | '/admin/francia'
     | '/admin/home-control'
     | '/admin/hub-liga'
     | '/admin/legal'
@@ -2181,6 +2205,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   EquipoRoute: typeof EquipoRoute
   EstablecerClaveRoute: typeof EstablecerClaveRoute
+  FranciaRoute: typeof FranciaRoute
   MiBibliotecaRoute: typeof MiBibliotecaRoute
   MiamiRoute: typeof MiamiRouteWithChildren
   PaisesRoute: typeof PaisesRoute
@@ -2310,6 +2335,13 @@ declare module '@tanstack/react-router' {
       path: '/establecer-clave'
       fullPath: '/establecer-clave'
       preLoaderRoute: typeof EstablecerClaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/francia': {
+      id: '/francia'
+      path: '/francia'
+      fullPath: '/francia'
+      preLoaderRoute: typeof FranciaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mi-biblioteca': {
@@ -2527,6 +2559,13 @@ declare module '@tanstack/react-router' {
       path: '/formularios'
       fullPath: '/admin/formularios'
       preLoaderRoute: typeof AdminFormulariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/francia': {
+      id: '/admin/francia'
+      path: '/francia'
+      fullPath: '/admin/francia'
+      preLoaderRoute: typeof AdminFranciaRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/home-control': {
@@ -3514,6 +3553,7 @@ interface AdminRouteChildren {
   AdminEventosRoute: typeof AdminEventosRoute
   AdminFederacionesRoute: typeof AdminFederacionesRoute
   AdminFormulariosRoute: typeof AdminFormulariosRoute
+  AdminFranciaRoute: typeof AdminFranciaRoute
   AdminHomeControlRoute: typeof AdminHomeControlRoute
   AdminHubLigaRoute: typeof AdminHubLigaRoute
   AdminLegalRoute: typeof AdminLegalRoute
@@ -3567,6 +3607,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEventosRoute: AdminEventosRoute,
   AdminFederacionesRoute: AdminFederacionesRoute,
   AdminFormulariosRoute: AdminFormulariosRoute,
+  AdminFranciaRoute: AdminFranciaRoute,
   AdminHomeControlRoute: AdminHomeControlRoute,
   AdminHubLigaRoute: AdminHubLigaRoute,
   AdminLegalRoute: AdminLegalRoute,
@@ -3903,6 +3944,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   EquipoRoute: EquipoRoute,
   EstablecerClaveRoute: EstablecerClaveRoute,
+  FranciaRoute: FranciaRoute,
   MiBibliotecaRoute: MiBibliotecaRoute,
   MiamiRoute: MiamiRouteWithChildren,
   PaisesRoute: PaisesRoute,
