@@ -66,19 +66,19 @@ El idioma de una URL explícita determina su contenido y lo que recibe Google. L
 
 ## Alcance técnico y conservación
 
-Archivos principales: `src/lib/i18n/*`, `LanguageToggle`, `SiteHeader`, `SiteFooter`, `Breadcrumbs`, `GlobalSearch`, `__root.tsx`; traducciones de noticias, `TranslationPanel`, `NewsEditor`, `NewsArticleView` y rutas de artículos; vistas compartidas de portada, territorios, TV, resultados, especiales y páginas complementarias; rutas inglesas y ambos sitemaps.
+Archivos principales: `src/lib/i18n/*`, cabecera/selector, pie, búsqueda, migas y `__root.tsx`; funciones de traducción, `TranslationPanel`, `NewsEditor`, `NewsArticleView`; vistas compartidas de las secciones, rutas inglesas y ambos sitemaps.
 
-La primera ampliación de base de datos prevista es **correctiva**, sobre reglas y controles de `news_translations`; no es destructiva y debe cubrir también vigencia del original. No crear otro catálogo deportivo ni duplicar artículos. Antes de aplicarla, verificar compatibilidad con los borradores existentes y los permisos actuales.
+La ampliación de base de datos prevista es **correctiva**, sobre reglas, vigencia y conservación de versiones de `news_translations`; no destructiva y compatible con borradores y permisos actuales. No duplicar artículos ni catálogos deportivos.
 
-La base de datos sirve también a la web publicada: sus correcciones de seguridad pueden tener efecto inmediato aunque la interfaz nueva no se publique. La autorización de implementación cubrirá únicamente estas correcciones del sistema bilingüe; no ampliará los privilegios de colaboradores ni cambiará otros sistemas.
+La base de datos es compartida con la web publicada: sus correcciones pueden tener efecto inmediato sin publicar la interfaz. La autorización cubrirá solo el sistema bilingüe, sin ampliar privilegios ni cambiar otros sistemas.
 
 ## Riesgos, esfuerzo y costes
 
 - **Riesgos principales:** publicar una traducción sin autorización, mezclar idiomas entre documento inicial y navegación, mostrar inglés desactualizado, multiplicar consultas y dejar rutas inglesas parcialmente traducidas. Los bloques 1 y 2 resuelven las dependencias antes de extender secciones.
 - **Esfuerzo:** alto en conjunto por la amplitud de la web; medio-alto en seguridad/noticias y navegación/SEO; medio por grupo de secciones al compartir vistas. Se ejecutará en bloques coherentes, sin pedir permiso por archivo.
-- **Créditos:** consumo moderado-alto para la ampliación completa; menor que reconstruir o traducir cada visita. No puedo calcular una cifra fiable de créditos ni una duración exacta antes de ejecutar y medir las partes afectadas.
-- **Costes nuevos previstos:** ninguna biblioteca ni servicio de pago adicional. Consultar diccionarios no consume IA. Generar o regenerar contenido editorial seguirá consumiendo la IA existente y su cuota; más traducciones almacenadas pueden aumentar ligeramente almacenamiento y lecturas. Cualquier gasto nuevo se comunicará antes de habilitarlo.
+- **Créditos:** consumo moderado-alto total; menor que reconstruir. No puedo calcular créditos ni duración exactos antes de ejecutar y medir.
+- **Costes:** ningún servicio nuevo previsto; diccionarios sin IA. Generación editorial consume la IA existente y más traducciones incrementan almacenamiento/lecturas. Comunicar gastos nuevos antes de habilitarlos.
 
 ## Autorización
 
-Ahora: análisis y plan únicamente, sin modificar código, permisos, datos editoriales ni publicar. Tras aprobar el plan: ejecutar los bloques descritos; detenerse ante un riesgo importante, gasto nuevo o decisión funcional que salga de este alcance. Aprobar el plan **no aprueba las tres noticias piloto ni autoriza publicar la web**.
+Ahora: solo análisis, sin cambiar código, permisos ni datos. Tras autorización: ejecutar los bloques y detenerse ante riesgos importantes, gastos nuevos o decisiones fuera del alcance. Aprobar el plan **no aprueba el piloto ni autoriza publicar la web**.
