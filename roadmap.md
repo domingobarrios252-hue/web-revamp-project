@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Internacionalización premium ES/EN: auditoría breve y plan agrupado; implementar solo tras autorización, conservando piloto y sistemas deportivos
 - [x] Transición posterior a ASU26: analizar TV, administración, archivo histórico y sincronización; preparar plan detallado
 - [x] Implementar transición posterior a ASU26: TV compartida, gestor, archivo, conservación; 52 pruebas de permisos y 13 unitarias, flujo temporal autenticado y móvil/ordenador verificados
 - [ ] Publicar transición TV/ASU26 (bloqueado: autorización expresa; estados globales ya aplicados al backend compartido)
