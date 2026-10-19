@@ -5,7 +5,7 @@
 - **Hay una base reutilizable:** `LanguageProvider`, diccionarios ES/EN y selector en la cabecera. Los diccionarios ya contienen textos de portada, noticias, TV, resultados, revista y otras áreas; su uso todavía es parcial. No hace falta instalar una nueva biblioteca de idiomas.
 - **Noticias:** existe una única noticia española y su traducción vinculada en `news_translations`, funciones de generación/guardado/aprobación, editor y una vista de artículo compartida. La única ruta inglesa existente es `/en/news/$slug`; no existe todavía una portada `/en/` ni navegación inglesa general.
 - **Piloto conservado:** lectura actual de la base de datos confirma Marine, Chevi y Ecuador en `draft`, sin persona ni fecha de aprobación. No se han repetido sus pruebas ni modificado sus textos.
-- **Textos fijos frente a gestionados:** navegación, filtros, estados y botones pertenecen a los diccionarios; artículos, presentaciones administrables, datos de eventos y descripciones de revistas proceden de contenido almacenado. Traducir la interfaz no autoriza traducir automáticamente ese contenido editorial.
+- **Textos:** navegación, filtros y botones van en diccionarios; artículos, presentaciones y descripciones administrables necesitan traducciones almacenadas y revisadas.
 - **Dependencias protegidas:** TV comparte reproductores y catálogo; resultados comparten `provider.ts`; especiales y territorios reutilizan sus vistas y datos. Se traducirán etiquetas alrededor de estos sistemas, no su funcionamiento.
 
 Esta revisión es de código, reglas actuales y antecedentes del piloto. No equivale a nuevas pruebas autenticadas ni a certificar resultados deportivos o indexación real en Google.
@@ -19,13 +19,13 @@ Esta revisión es de código, reglas actuales y antecedentes del piloto. No equi
 5. **Selector y navegación:** el menú completo desborda a 1280 px según el piloto; el selector solo cambia de URL en el artículo global. El idioma guardado y el idioma de la URL todavía no forman una única regla.
 6. **SEO:** el documento inicial declara español incluso en la ruta inglesa; el idioma cambia después en el navegador. Faltan páginas inglesas generales y su incorporación al sitemap permanente. Parte del canonical general se añade únicamente después de cargar la página.
 
-Las variantes de nombres en leyendas, la homologación del récord y los antecedentes deportivos pendientes del piloto requieren revisión editorial independiente; no se corregirán por inferencia ni impedirán trabajar en la interfaz.
+Los nombres en leyendas y datos deportivos pendientes del piloto requieren revisión independiente, nunca corrección por inferencia.
 
 ## Solución única: ampliar lo existente
 
-Una sola web, mismos datos, mismas vistas y diccionarios ampliables. Las rutas inglesas serán entradas ligeras a las vistas compartidas, no copias de las páginas. Español conserva todas sus direcciones; inglés utiliza `/en/` y mantiene las URLs de artículos ingleses ya creadas.
+Una sola web y vistas compartidas: rutas inglesas ligeras bajo `/en/`, conservando las URLs españolas y las inglesas de artículos existentes.
 
-El idioma de una URL explícita determina su contenido y lo que recibe Google. La preferencia guardada se utiliza al elegir idioma y navegar, sin transformar silenciosamente una URL española en una página inglesa ni provocar redirecciones innecesarias. El selector lleva a la página equivalente y mantiene los filtros compatibles. Cuando falta una traducción editorial, lo indica y conserva el original sin presentarlo como inglés indexable.
+La URL determina el idioma servido; la preferencia guardada guía la navegación sin cambiar silenciosamente el idioma de una URL española. El selector conserva página y filtros compatibles. Sin traducción editorial, indicar el original y no indexarlo como inglés.
 
 ## Bloques de ejecución, tras autorización
 
@@ -54,8 +54,8 @@ El idioma de una URL explícita determina su contenido y lo que recibe Google. L
 
 ### 4. TV, resultados, especiales y páginas complementarias
 - Traducir la presentación de `RollerzoneTvPage`, catálogo, archivo ASU26, calendarios y resultados, incluidos filtros, categorías y estados mediante correspondencias de etiquetas que no cambien sus valores internos.
-- Reutilizar vistas de especiales, revista, patrocinadores, equipo y contacto. Traducir presentaciones y descripciones revisadas; conservar nombres, destinatarios, logos, enlaces, datos oficiales y PDF.
-- Aprovechar configuraciones existentes para presentaciones traducidas cuando encajen; no crear una segunda base de datos ni un sistema de traducción paralelo. Cualquier ampliación de almacenamiento será mínima y justificada.
+- Reutilizar especiales, revista, patrocinadores, equipo y contacto: presentaciones revisadas, conservando nombres, destinatarios, logos, enlaces, datos y PDF.
+- Reutilizar configuraciones para presentaciones traducidas; cualquier ampliación de almacenamiento será mínima y justificada, sin sistema paralelo.
 - **Verificación:** mismos resultados, orden, filtros, enlaces de vídeo y archivos antes/después; sin escrituras sobre resultados ni ajustes de sincronización, streaming o medallero.
 
 ### 5. SEO y comprobación final dirigida
@@ -74,7 +74,7 @@ La base de datos es compartida con la web publicada: sus correcciones pueden ten
 
 ## Riesgos, esfuerzo y costes
 
-- **Riesgos principales:** publicar una traducción sin autorización, mezclar idiomas entre documento inicial y navegación, mostrar inglés desactualizado, multiplicar consultas y dejar rutas inglesas parcialmente traducidas. Los bloques 1 y 2 resuelven las dependencias antes de extender secciones.
+- **Riesgos:** publicación indebida, inglés desactualizado, idiomas mezclados y consultas multiplicadas. Resolver primero los bloques 1 y 2.
 - **Esfuerzo:** alto en conjunto por la amplitud de la web; medio-alto en seguridad/noticias y navegación/SEO; medio por grupo de secciones al compartir vistas. Se ejecutará en bloques coherentes, sin pedir permiso por archivo.
 - **Créditos:** consumo moderado-alto total; menor que reconstruir. No puedo calcular créditos ni duración exactos antes de ejecutar y medir.
 - **Costes:** ningún servicio nuevo previsto; diccionarios sin IA. Generación editorial consume la IA existente y más traducciones incrementan almacenamiento/lecturas. Comunicar gastos nuevos antes de habilitarlos.
