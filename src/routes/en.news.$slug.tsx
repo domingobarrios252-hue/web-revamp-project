@@ -106,9 +106,9 @@ export const Route = createFileRoute("/en/news/$slug")({
       ],
       links: [
         { rel: "canonical", href: enCanonical },
-        { rel: "alternate", hrefLang: "es", href: esCanonical },
-        ...(tr ? [{ rel: "alternate", hrefLang: "en", href: enCanonical }] : []),
-        { rel: "alternate", hrefLang: "x-default", href: esCanonical },
+        { rel: "alternate", hreflang: "es", href: esCanonical },
+        ...(tr ? [{ rel: "alternate", hreflang: "en", href: enCanonical }] : []),
+        { rel: "alternate", hreflang: "x-default", href: esCanonical },
       ],
       scripts: [
         { type: "application/ld+json", children: JSON.stringify(newsLd).replace(/</g, "\\u003c") },
