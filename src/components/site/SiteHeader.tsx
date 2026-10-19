@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import logoUrl from "@/assets/rollerzone-logo.png";
 import { GlobalSearch } from "@/components/site/GlobalSearch";
+import { LanguageToggle } from "@/components/site/LanguageToggle";
 import { usePageSettings } from "@/lib/pageSettings";
 
 const NAV_LINK =
@@ -144,6 +145,7 @@ export function SiteHeader() {
 
         {/* Right actions */}
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           <button
             onClick={() => setSearchOpen((v) => !v)}
             aria-label="Buscar"
