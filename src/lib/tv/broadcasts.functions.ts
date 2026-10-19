@@ -23,7 +23,7 @@ export const getPublicBroadcasts = createServerFn({ method: 'GET' }).handler(asy
 });
 
 export const getAdminBroadcasts = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
-  const { data: admin } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
+  const { data: admin } = await context.supabase.rpc('admin_mfa_ok');
   if (!admin) throw new Error('Acceso reservado al administrador');
   const [events, settings] = await Promise.all([
     context.supabase.from('result_events').select(BROADCAST_COLUMNS).order('event_date', { ascending: false }),
@@ -34,7 +34,7 @@ export const getAdminBroadcasts = createServerFn({ method: 'POST' }).middleware(
 });
 
 export const saveBroadcast = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).inputValidator(broadcastSchema).handler(async ({ data, context }) => {
-  const { data: admin } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
+  const { data: admin } = await context.supabase.rpc('admin_mfa_ok');
   if (!admin) throw new Error('Acceso reservado al administrador');
   const { id, name, ...fields } = data;
   if (id === ASU26_EVENT_ID) throw new Error('ASU26 se conserva en su gestor específico');
@@ -47,7 +47,7 @@ export const saveBroadcast = createServerFn({ method: 'POST' }).middleware([requ
 });
 
 export const changeBroadcast = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).inputValidator(z.object({ id: z.string().uuid().nullable(), action: z.enum(['feature', 'archive', 'restore', 'publish', 'hide']) })).handler(async ({ data, context }) => {
-  const { data: admin } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
+  const { data: admin } = await context.supabase.rpc('admin_mfa_ok');
   if (!admin) throw new Error('Acceso reservado al administrador');
   if (!data.id && data.action !== 'feature') throw new Error('Selecciona un campeonato');
   if (data.action === 'feature') {

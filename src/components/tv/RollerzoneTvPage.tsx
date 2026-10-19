@@ -147,7 +147,7 @@ export function RollerzoneTvPage() {
     live_center_position: 'right' as const, show_full_results_button: true,
   } : settings;
   // Estado: solo manual (activación en Admin TV). Nunca se autoactiva por horario.
-  const status: TvStageStatus = featured ? featured.stream_status : settings?.live_is_active || settings?.status_label === "live"
+  const status: TvStageStatus = featured ? featured.stream_status : settings?.live_center_event_slug === 'world-skate-games-asu26-patinaje-de-velocidad' && asu.streamStatus === 'finished' ? 'finished' : settings?.live_is_active || settings?.status_label === "live"
     ? "live"
     : settings?.status_label === "finished"
       ? "finished"
@@ -167,6 +167,8 @@ export function RollerzoneTvPage() {
   const hasHighlights = !!highlights && highlights.length > 0;
   const navItems = [
     { id: "directo", label: "Directo" },
+    { id: 'retransmisiones', label: 'Retransmisiones' },
+    { id: 'archivo', label: 'Archivo' },
     ...(hasLiveCenter ? [{ id: "live-center", label: "Live Center" }] : []),
     ...(hasProgram ? [{ id: "emisiones", label: "Programación" }] : []),
     ...(hasHighlights ? [{ id: "highlights", label: "Highlights" }] : []),
