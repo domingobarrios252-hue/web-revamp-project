@@ -19,3 +19,5 @@
 - [ ] Publicar las 4 fichas ocultas de la Selección (decisión del usuario)
 - [x] PDF resultados: códigos de sanción sin interpretaciones; «Clasificación final» en una línea; prueba y categoría discretas en páginas 2+ (preview, sin publicar)
 - [ ] Descarga pública PDF en resultados ASU26 y archivo histórico (pendiente de autorización)
+
+- [ ] Piloto EN autorizado: Marine Lefeuvre, Chevi Guzmán y Ecuador; generar solo borradores, revisar fidelidad, selector/SEO y móvil/ordenador; entregar textos y pruebas sin publicar
