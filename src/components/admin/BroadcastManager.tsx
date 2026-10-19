@@ -1,0 +1,41 @@
+import { useEffect, useState } from 'react';
+import { useServerFn } from '@tanstack/react-start';
+import { Archive, Pencil, Star, Eye, EyeOff, Undo2, Plus, Save } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
+import { ASU26_EVENT_ID, BROADCAST_LABELS, broadcastSchema, selectableBroadcast, type BroadcastInput, type ChampionshipBroadcast } from '@/lib/tv/broadcasts';
+import { getAdminBroadcasts, saveBroadcast, changeBroadcast } from '@/lib/tv/broadcasts.functions';
+
+const empty: BroadcastInput = { name: '', stream_title: '', stream_description: '', stream_url: '', stream_poster_url: '', stream_scheduled_at: null, stream_ends_at: null, stream_status: 'upcoming', stream_provider: '', stream_attribution: '', stream_published: false };
+const local = (v: string | null) => { if (!v) return ''; const d = new Date(v); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
+
+export function BroadcastManager() {
+  const load = useServerFn(getAdminBroadcasts), save = useServerFn(saveBroadcast), change = useServerFn(changeBroadcast);
+  const [events, setEvents] = useState<ChampionshipBroadcast[]>([]), [featured, setFeatured] = useState<string | null>(null), [draft, setDraft] = useState<BroadcastInput | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState('');
+  const refresh = async () => { try { const data = await load(); setEvents(data.events); setFeatured(data.settings?.featured_result_event_id ?? null); setError(''); } catch (e) { setError(e instanceof Error ? e.message : 'No se pudo cargar'); } };
+  useEffect(() => { void refresh(); }, []);
+  const action = async (id: string | null, kind: 'feature' | 'archive' | 'restore' | 'publish' | 'hide') => { setBusy(true); try { await change({ data: { id, action: kind } }); await refresh(); toast.success('Retransmisión actualizada'); } catch (e) { toast.error(e instanceof Error ? e.message : 'No se pudo guardar'); } finally { setBusy(false); } };
+  const edit = (e: ChampionshipBroadcast) => setDraft({ id: e.id, name: e.name, stream_title: e.stream_title ?? '', stream_description: e.stream_description ?? '', stream_url: e.stream_embed_url || e.stream_url || '', stream_poster_url: e.stream_poster_url ?? '', stream_scheduled_at: e.stream_scheduled_at, stream_ends_at: e.stream_ends_at, stream_status: e.stream_status, stream_provider: e.stream_provider ?? '', stream_attribution: e.stream_attribution ?? '', stream_published: e.stream_published });
+  const submit = async () => { if (!draft) return; setBusy(true); try { broadcastSchema.parse(draft); await save({ data: draft }); setDraft(null); await refresh(); toast.success('Retransmisión guardada'); } catch (e) { toast.error(e instanceof Error ? e.message : 'Datos no válidos'); } finally { setBusy(false); } };
+  const field = <K extends keyof BroadcastInput>(key: K, value: BroadcastInput[K]) => { if (draft) setDraft({ ...draft, [key]: value }); };
+  return <div className="space-y-5">
+    <div className="flex flex-wrap items-center justify-between gap-3"><h1 className="font-display text-2xl uppercase">Retransmisiones</h1><Button onClick={() => setDraft({ ...empty })}><Plus className="h-4 w-4" /> Nueva retransmisión</Button></div>
+    {error && <p role="alert" className="text-destructive">{error}</p>}
+    {draft && <section className="space-y-4 border-y border-border py-5"><h2 className="font-display text-xl">{draft.id ? 'Editar retransmisión' : 'Nueva retransmisión'}</h2><div className="grid gap-4 md:grid-cols-2">
+      <label>Campeonato<input aria-label="Campeonato" className="input mt-1" value={draft.name} disabled={Boolean(draft.id)} onChange={e => field('name', e.target.value)} /></label>
+      <label>Título de retransmisión<input className="input mt-1" value={draft.stream_title} onChange={e => field('stream_title', e.target.value)} /></label>
+      <label>Inicio ({Intl.DateTimeFormat().resolvedOptions().timeZone})<input aria-label="Inicio" type="datetime-local" className="input mt-1" value={local(draft.stream_scheduled_at)} onChange={e => field('stream_scheduled_at', e.target.value ? new Date(e.target.value).toISOString() : null)} /></label>
+      <label>Fin ({Intl.DateTimeFormat().resolvedOptions().timeZone})<input aria-label="Fin" type="datetime-local" className="input mt-1" value={local(draft.stream_ends_at)} onChange={e => field('stream_ends_at', e.target.value ? new Date(e.target.value).toISOString() : null)} /></label>
+      <label>Estado<select aria-label="Estado de retransmisión" className="input mt-1" value={draft.stream_status} onChange={e => field('stream_status', e.target.value as BroadcastInput['stream_status'])}>{Object.entries(BROADCAST_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+      <label>Proveedor<input className="input mt-1" value={draft.stream_provider} onChange={e => field('stream_provider', e.target.value)} /></label>
+      <label className="md:col-span-2">Vídeo o inserción autorizada<input aria-label="Vídeo o inserción autorizada" className="input mt-1" value={draft.stream_url} onChange={e => field('stream_url', e.target.value)} /></label>
+      <div><span className="mb-1 block">Imagen de portada</span><ImageUploadField folder="streaming" value={draft.stream_poster_url} onChange={v => field('stream_poster_url', v)} /></div>
+      <label>Atribución<input className="input mt-1" value={draft.stream_attribution} onChange={e => field('stream_attribution', e.target.value)} /></label>
+      <label className="md:col-span-2">Descripción<textarea className="input mt-1" value={draft.stream_description} onChange={e => field('stream_description', e.target.value)} /></label>
+      <label className="flex items-center gap-2"><input type="checkbox" checked={draft.stream_published} onChange={e => field('stream_published', e.target.checked)} /> Publicar en TV</label>
+    </div><div className="flex gap-2"><Button disabled={busy} onClick={submit}><Save className="h-4 w-4" /> Guardar retransmisión</Button><Button variant="outline" onClick={() => setDraft(null)}>Cancelar</Button></div></section>}
+    {featured && <Button variant="outline" disabled={busy} onClick={() => action(null, 'feature')}><Star className="h-4 w-4" /> Quitar destacado</Button>}
+    <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-border text-left text-muted-foreground"><th className="p-3">Campeonato</th><th className="p-3">Estado</th><th className="p-3">Publicación</th><th className="p-3">Acciones</th></tr></thead><tbody>{events.map(e => <tr key={e.id} className="border-b border-border"><td className="p-3">{e.name}{e.id === featured && <Star className="ml-2 inline h-4 w-4 text-gold" />}</td><td className="p-3">{e.stream_archived_at ? 'Archivado' : BROADCAST_LABELS[e.stream_status]}</td><td className="p-3">{e.stream_published ? 'Publicado' : 'Oculto'}</td><td className="p-3">{e.id === ASU26_EVENT_ID ? <a href="/admin/tv" className="text-gold underline">Gestión ASU26</a> : <div className="flex gap-1"><Button title="Editar" aria-label={`Editar ${e.name}`} variant="ghost" size="icon" disabled={busy} onClick={() => edit(e)}><Pencil className="h-4 w-4" /></Button><Button title={e.stream_published ? 'Ocultar' : 'Publicar'} aria-label={`${e.stream_published ? 'Ocultar' : 'Publicar'} ${e.name}`} variant="ghost" size="icon" disabled={busy} onClick={() => action(e.id, e.stream_published ? 'hide' : 'publish')}>{e.stream_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button><Button title="Destacar" aria-label={`Destacar ${e.name}`} variant="ghost" size="icon" disabled={busy || !selectableBroadcast(e)} onClick={() => action(e.id, 'feature')}><Star className="h-4 w-4" /></Button><Button title={e.stream_archived_at ? 'Restaurar' : 'Archivar'} aria-label={`${e.stream_archived_at ? 'Restaurar' : 'Archivar'} ${e.name}`} variant="ghost" size="icon" disabled={busy} onClick={() => action(e.id, e.stream_archived_at ? 'restore' : 'archive')}>{e.stream_archived_at ? <Undo2 className="h-4 w-4" /> : <Archive className="h-4 w-4" />}</Button></div>}</td></tr>)}</tbody></table></div>
+  </div>;
+}
