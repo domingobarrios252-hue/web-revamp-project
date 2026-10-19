@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { sourceHash, type NewsTranslation } from "@/lib/news/translations";
+import type { Json } from "@/integrations/supabase/types";
 import { parseBlocks, blocksPlainText } from "@/lib/newsBlocks";
 
 const TRANSLATION_JSON_SCHEMA = {
@@ -35,7 +36,7 @@ type AiTranslation = {
   subtitle: string;
   excerpt: string;
   content: string;
-  content_blocks: unknown[];
+  content_blocks: Json[];
   seo_title: string;
   seo_description: string;
 };

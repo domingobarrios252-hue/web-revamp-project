@@ -1,5 +1,6 @@
 // Utilidades compartidas para las versiones en inglés de las noticias.
 import { blocksPlainText, parseBlocks, type NewsBlock } from "@/lib/newsBlocks";
+import type { Json } from "@/integrations/supabase/types";
 
 export type TranslationStatus = "draft" | "pending" | "approved";
 
@@ -11,7 +12,7 @@ export type NewsTranslation = {
   subtitle: string | null;
   excerpt: string | null;
   content: string | null;
-  content_blocks: unknown;
+  content_blocks: Json;
   seo_title: string | null;
   seo_description: string | null;
   status: TranslationStatus;
