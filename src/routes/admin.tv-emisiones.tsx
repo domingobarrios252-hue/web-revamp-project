@@ -5,10 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { videoThumbnail } from "@/lib/videoEmbed";
+import { BroadcastManager } from "@/components/admin/BroadcastManager";
 
 export const Route = createFileRoute("/admin/tv-emisiones")({
   head: () => ({ meta: [{ title: "Admin · Emisiones TV" }, { name: "robots", content: "noindex" }] }),
-  component: AdminTvEmisiones,
+  component: () => <><BroadcastManager /><details className="mt-8 border-t border-border pt-4"><summary className="cursor-pointer font-display text-xl">Emisiones existentes</summary><div className="mt-5"><AdminTvEmisiones /></div></details></>,
 });
 
 type Item = {

@@ -28,7 +28,7 @@ type NavItem =
 const NAV_ITEMS: NavItem[] = [
   { label: "Inicio", to: "/", slug: "inicio" },
   { label: "Actualidad", to: "/noticias", slug: "noticias" },
-  { label: "RollerZone TV", to: "/tv", slug: "rollerzone-tv" },
+  { label: "RollerZone TV", to: "/rollerzone-tv", slug: "rollerzone-tv" },
   { label: "España", to: "/hub/$country", params: { country: "es" }, slug: "espana" },
   { label: "Colombia", to: "/hub/$country", params: { country: "co" }, slug: "colombia" },
   { label: "USA", to: "/usa", slug: "usa" },

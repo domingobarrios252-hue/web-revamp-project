@@ -14,11 +14,13 @@ export function LiveEventHero({
   ctas,
   live,
   location,
+  finished = false,
 }: {
   special: LiveSpecial;
   ctas: SpecialCta[];
   live: boolean;
   location: string;
+  finished?: boolean;
 }) {
   const desktop = special.hero_image_url?.trim() || special.cover_url?.trim() || "";
   const mobile = special.hero_image_mobile_url?.trim() || desktop;
@@ -45,6 +47,7 @@ export function LiveEventHero({
 
       <div className="mx-auto flex min-h-[300px] max-w-7xl flex-col justify-end px-4 pb-6 pt-10 sm:min-h-[340px] md:min-h-[400px] md:px-6 md:pb-10">
         <div className="flex flex-wrap items-center gap-2">
+          {finished && <span className="font-condensed border border-gold px-2.5 py-1 text-[10px] font-bold uppercase text-gold">Finalizado · Archivo ASU26</span>}
           {live && (
             <span className="font-condensed inline-flex items-center gap-1.5 bg-destructive px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-destructive-foreground">
               <span className="live-dot h-1.5 w-1.5 rounded-full bg-destructive-foreground" /> En directo
