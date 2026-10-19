@@ -20,4 +20,6 @@
 - [x] PDF resultados: códigos de sanción sin interpretaciones; «Clasificación final» en una línea; prueba y categoría discretas en páginas 2+ (preview, sin publicar)
 - [ ] Descarga pública PDF en resultados ASU26 y archivo histórico (pendiente de autorización)
 
-- [ ] Piloto EN autorizado: Marine Lefeuvre, Chevi Guzmán y Ecuador; generar solo borradores, revisar fidelidad, selector/SEO y móvil/ordenador; entregar textos y pruebas sin publicar
+- [x] Piloto EN: Marine, Chevi y Ecuador guardados como borradores sin aprobación; fidelidad revisada, español conservado, selector/SEO y presentación probados con límites explícitos; textos completos e informe entregados
+- [ ] Publicación bilingüe (bloqueado: revisión y autorización del usuario; incidencias de seguridad, selector a 1280 px, generación Admin y SEO pendientes de corrección autorizada)
+- [ ] Certificar afirmaciones deportivas del piloto (bloqueado: fuente federativa para homologación del récord, 4:25.880 del relevo Ecuador y antecedentes 2024/2025; no cambiar el original ni inventar datos)
