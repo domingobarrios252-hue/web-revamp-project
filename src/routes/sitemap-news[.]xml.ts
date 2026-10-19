@@ -35,6 +35,14 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           country_code: string | null;
         }> = [];
 
+        const enItems: Array<{
+          slug: string;
+          title: string;
+          published_at: string;
+          image_url: string | null;
+          category: string | null;
+        }> = [];
+
         if (url && key) {
           const supabase = createClient<Database>(url, key, {
             auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
