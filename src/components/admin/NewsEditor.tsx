@@ -7,6 +7,7 @@ import { z } from "zod";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { EntityRelationsField, loadRelations, saveRelations } from "@/components/admin/EntityRelationsField";
 import { ContentBlocksEditor } from "@/components/admin/ContentBlocksEditor";
+import { TranslationPanel } from "@/components/admin/TranslationPanel";
 import { NewsContentBlocks } from "@/components/site/NewsContentBlocks";
 import {
   cleanBlocks,
@@ -613,6 +614,13 @@ export function NewsEditor({
               </select>
             </label>
           </Panel>
+
+          {newsId && (
+            <TranslationPanel
+              newsId={newsId}
+              source={{ title, excerpt, blocks }}
+            />
+          )}
 
           <Panel title="Relacionados">
             <EntityRelationsField compact kind="clubs" label="Clubes" value={relClubs} onChange={setRelClubs} />

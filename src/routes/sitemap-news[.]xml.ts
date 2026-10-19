@@ -35,6 +35,14 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           country_code: string | null;
         }> = [];
 
+        const enItems: Array<{
+          slug: string;
+          title: string;
+          published_at: string;
+          image_url: string | null;
+          category: string | null;
+        }> = [];
+
         if (url && key) {
           const supabase = createClient<Database>(url, key, {
             auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
@@ -69,6 +77,34 @@ export const Route = createFileRoute("/sitemap-news.xml")({
               country_code: n.country_code,
             });
           }
+
+          // Versiones en inglés aprobadas de noticias recientes.
+          const { data: trs } = await supabase
+            .from("news_translations")
+            .select("title, news!inner(slug, published_at, image_url, news_categories(name))")
+            .eq("lang", "en")
+            .eq("status", "approved")
+            .gte("news.published_at", since)
+            .limit(1000);
+
+          for (const t of (trs ?? []) as Array<{
+            title: string | null;
+            news: {
+              slug: string | null;
+              published_at: string | null;
+              image_url: string | null;
+              news_categories: { name: string | null } | null;
+            } | null;
+          }>) {
+            if (!t.news?.slug || !t.title || !t.news.published_at) continue;
+            enItems.push({
+              slug: t.news.slug,
+              title: t.title,
+              published_at: new Date(t.news.published_at).toISOString(),
+              image_url: t.news.image_url,
+              category: t.news.news_categories?.name ?? null,
+            });
+          }
         }
 
         const urls = items.map((n) => {
@@ -94,12 +130,35 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           return parts.join("\n");
         });
 
+        const enUrls = enItems.map((n) => {
+          const loc = `${BASE_URL}/en/news/${n.slug}`;
+          const parts = [
+            `  <url>`,
+            `    <loc>${xmlEscape(loc)}</loc>`,
+            `    <news:news>`,
+            `      <news:publication>`,
+            `        <news:name>${xmlEscape(PUBLICATION_NAME)}</news:name>`,
+            `        <news:language>en</news:language>`,
+            `      </news:publication>`,
+            `      <news:publication_date>${n.published_at}</news:publication_date>`,
+            `      <news:title>${xmlEscape(n.title)}</news:title>`,
+            n.category ? `      <news:keywords>${xmlEscape(n.category)}</news:keywords>` : null,
+            `    </news:news>`,
+            n.image_url
+              ? `    <image:image><image:loc>${xmlEscape(n.image_url)}</image:loc><image:title>${xmlEscape(n.title)}</image:title></image:image>`
+              : null,
+            `  </url>`,
+          ].filter(Boolean);
+          return parts.join("\n");
+        });
+
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,
           `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"`,
           `        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"`,
           `        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`,
           ...urls,
+          ...enUrls,
           `</urlset>`,
         ].join("\n");
 

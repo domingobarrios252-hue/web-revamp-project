@@ -2690,6 +2690,74 @@ export type Database = {
           },
         ]
       }
+      news_translations: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          content: string | null
+          content_blocks: Json
+          created_at: string
+          excerpt: string | null
+          id: string
+          lang: string
+          news_id: string
+          seo_description: string | null
+          seo_title: string | null
+          source_hash: string | null
+          status: string
+          subtitle: string | null
+          title: string
+          translated_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          content?: string | null
+          content_blocks?: Json
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          lang?: string
+          news_id: string
+          seo_description?: string | null
+          seo_title?: string | null
+          source_hash?: string | null
+          status?: string
+          subtitle?: string | null
+          title?: string
+          translated_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          content?: string | null
+          content_blocks?: Json
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          lang?: string
+          news_id?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          source_hash?: string | null
+          status?: string
+          subtitle?: string | null
+          title?: string
+          translated_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_translations_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news_views: {
         Row: {
           id: string
