@@ -33,6 +33,7 @@ const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/patrocinadores", changefreq: "monthly", priority: "0.4" },
   { path: "/revista", changefreq: "weekly", priority: "0.6" },
   { path: "/tv", changefreq: "weekly", priority: "0.6" },
+  { path: "/rollerzone-tv", changefreq: "weekly", priority: "0.7" },
   { path: "/paises", changefreq: "monthly", priority: "0.5" },
   { path: "/hub/es", changefreq: "daily", priority: "0.8" },
   { path: "/hub/co", changefreq: "daily", priority: "0.8" },

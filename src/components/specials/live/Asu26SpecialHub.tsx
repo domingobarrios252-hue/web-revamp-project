@@ -17,9 +17,9 @@ const LABELS: Record<string, string> = {
 };
 
 /** Navegación del especial: DIRECTO y RESULTADOS primero, hacia Rollerzone.TV. */
-export function asu26Nav(base: NavItem[]): NavItem[] {
+export function asu26Nav(base: NavItem[], finished = false): NavItem[] {
   const out: NavItem[] = [
-    { key: "directo", label: "Directo", pieceSlug: null, href: ASU26_DIRECTO },
+    { key: "directo", label: finished ? "Retransmisiones" : "Directo", pieceSlug: null, href: ASU26_DIRECTO },
     { key: "resultados", label: "Resultados oficiales", pieceSlug: null, href: ASU26_RESULTADOS },
   ];
   for (const k of ORDER) {
@@ -80,13 +80,13 @@ export function Asu26Today({ items, slug, calendarPiece }: { items: ScheduleItem
 }
 
 /** Accesos rápidos móviles: Directo, Resultados, Hoy, España, después el resto. */
-export function Asu26MobileAccess({ slug, nav }: { slug: string; nav: NavItem[] }) {
+export function Asu26MobileAccess({ slug, nav, finished = false }: { slug: string; nav: NavItem[]; finished?: boolean }) {
   const piece = (k: string) => nav.find((x) => x.key === k)?.pieceSlug ?? null;
   const card = "flex min-h-[72px] items-center gap-3 rounded-lg border border-border bg-surface px-4 text-sm font-bold uppercase tracking-wider text-foreground active:border-gold";
   const big: { label: string; href?: string; piece?: string | null; icon: React.ReactNode }[] = [
-    { label: "Directo", href: ASU26_DIRECTO, icon: <Radio className="h-5 w-5 text-destructive" /> },
+    { label: finished ? "TV ASU26" : "Directo", href: ASU26_DIRECTO, icon: <Radio className="h-5 w-5 text-destructive" /> },
     { label: "Resultados", href: ASU26_RESULTADOS, icon: <Trophy className="h-5 w-5 text-gold" /> },
-    { label: "Hoy", href: "#hoy-asu26", icon: <CalendarDays className="h-5 w-5 text-gold" /> },
+    { label: finished ? "Archivo" : "Hoy", href: finished ? "#hoy" : "#hoy-asu26", icon: <CalendarDays className="h-5 w-5 text-gold" /> },
     { label: "España", piece: piece("espana"), icon: <Flag className="h-5 w-5 text-gold" /> },
   ];
   const rest = (["calendario", "medallero", "noticias", "galeria"] as const)
@@ -106,7 +106,7 @@ export function Asu26MobileAccess({ slug, nav }: { slug: string; nav: NavItem[] 
       {rest.length > 0 && (
         <div className="mt-3 grid grid-cols-2 gap-3">
           {rest.map(({ k, p }) => (
-            <Link key={k} to="/especiales/$slug/$piece" params={{ slug, piece: p! }}
+            <Link key={k} to="/especiales/$slug/$piece" params={{ slug, piece: p ?? "" }}
               className="flex min-h-12 items-center justify-center rounded-lg border border-border px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground active:text-gold">
               {LABELS[k]}
             </Link>

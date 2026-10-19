@@ -116,7 +116,7 @@ const GROUPS: AdminGroup[] = [
     links: [
       { to: "/admin/tv", label: "TV — Directo", icon: <Tv className="h-4 w-4" /> },
       { to: "/admin/videos", label: "Vídeos (hub)", icon: <Film className="h-4 w-4" /> },
-      { to: "/admin/tv-emisiones", label: "Emisiones", icon: <Radio className="h-4 w-4" /> },
+      { to: "/admin/tv-emisiones", label: "Retransmisiones y archivo", icon: <Radio className="h-4 w-4" /> },
       { to: "/admin/tv-highlights", label: "Highlights", icon: <Film className="h-4 w-4" /> },
       { to: "/admin/banners", label: "Banners premium TV", icon: <Megaphone className="h-4 w-4" /> },
     ],

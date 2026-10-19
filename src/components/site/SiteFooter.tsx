@@ -36,7 +36,7 @@ export function SiteFooter() {
   const navLinks = [
     { to: "/noticias", label: t("nav.news"), Icon: Newspaper, slug: "noticias" },
     { to: "/eventos", label: t("nav.events"), Icon: Calendar, slug: "eventos" },
-    { to: "/tv", label: "RollerZone TV", Icon: Tv, slug: "rollerzone-tv" },
+    { to: "/rollerzone-tv", label: "RollerZone TV", Icon: Tv, slug: "rollerzone-tv" },
     { to: "/premios-mvp", label: t("nav.mvpAwards"), Icon: Trophy, slug: "premios-mvp" },
     { to: "/revista", label: t("nav.magazine"), Icon: BookOpen, slug: "revista" },
   ].filter((l) => isVisible(l.slug));

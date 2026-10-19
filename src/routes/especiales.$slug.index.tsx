@@ -135,7 +135,7 @@ export const Route = createFileRoute("/especiales/$slug/")({
     const isAsuSeo = special.slug === "world-skate-games-asu26-patinaje-velocidad";
     const title = `${special.title} | Rollerzone`;
     const description = isAsuSeo
-      ? "Sigue los World Skate Games ASU26 de patinaje de velocidad en Rollerzone: calendario, selección española, resultados oficiales, medallero, noticias y streaming en directo."
+      ? "Archivo histórico de los World Skate Games ASU26: calendario, selección española, resultados, medallero, noticias y retransmisiones conservadas."
       : (
           special.description ||
           special.subtitle ||
@@ -176,12 +176,13 @@ function SpecialLanding() {
   const isLiveHub = Boolean(special.result_event_id || special.event_id);
   const live = isEventLive(event);
   const isAsu = slug === ASU26_SPECIAL_SLUG;
+  const finished = isAsu && event?.status === "finished";
   const baseNav = buildLiveNav(pieces, { hasSchedule: schedule.length > 0, hasStream, hasResults: Boolean(special.result_event_id) });
   const pieceNav = buildLiveNav(pieces);
-  const nav = isAsu ? asu26Nav(pieceNav) : baseNav;
+  const nav = isAsu ? asu26Nav(pieceNav, finished) : baseNav;
   const ctas = isAsu
     ? [
-        { label: "Ver directo →", url: ASU26_DIRECTO, visible: true },
+        { label: finished ? "Archivo TV ASU26 →" : "Ver directo →", url: ASU26_DIRECTO, visible: true },
         { label: "Resultados oficiales →", url: ASU26_RESULTADOS, visible: true },
       ]
     : resolveCtas(special, pieces).map((c) => (c.url === `/especiales/${slug}` ? { ...c, url: "#hoy" } : c));
@@ -198,10 +199,11 @@ function SpecialLanding() {
             }}
             ctas={ctas}
             live={live}
+            finished={finished}
             location={special.location?.trim() || event?.city || event?.location || ""}
           />
           <LiveEventNav slug={slug} items={nav} live={live} />
-          {isAsu && <Asu26MobileAccess slug={slug} nav={pieceNav} />}
+          {isAsu && <Asu26MobileAccess slug={slug} nav={pieceNav} finished={finished} />}
         </>
       ) : (
       <section className="relative overflow-hidden bg-surface">
@@ -246,7 +248,7 @@ function SpecialLanding() {
       )}
 
       <div id="hoy" className="scroll-mt-14" />
-      {isLiveHub && isAsu && (
+      {isLiveHub && isAsu && !finished && (
         <>
           <Asu26Today items={schedule} slug={slug} calendarPiece={pieceNav.find((x) => x.key === "calendario")?.pieceSlug ?? null} />
         </>
@@ -307,7 +309,7 @@ function SpecialLanding() {
           )}
         </div>
       </section>
-      {isAsu && <Asu26StickyBar />}
+      {isAsu && !finished && <Asu26StickyBar />}
     </>
   );
 }

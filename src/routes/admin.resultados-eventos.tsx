@@ -320,6 +320,7 @@ function StreamFields({ draft, setDraft }: { draft: Draft; setDraft: (d: Draft) 
   return (
     <div className="mt-6 border-t border-border pt-4">
       <h3 className="font-display mb-1 text-base uppercase tracking-widest text-gold">Directo / streaming</h3>
+      <Link to="/admin/tv-emisiones" className="mb-3 inline-flex text-sm text-gold underline">Publicación en TV, destacado y archivo</Link>
       <p className="mb-3 text-xs text-muted-foreground">
         Solo se muestra en la web si está activo y hay un reproductor autorizado. "En directo" solo aparece si lo eliges aquí; nunca por la hora.
       </p>
