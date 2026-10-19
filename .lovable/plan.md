@@ -33,7 +33,7 @@ Preparar Rollerzone TV para retransmitir futuras competiciones de patinaje de ve
 - `site_settings`, clave `asu26_streaming`: `streamStatus` → `finished` y `tvPromoActive` → `false`, conservando el resto del objeto y sus enlaces.
 - Mantener `special_editorials.status = active`, las publicaciones y los enlaces por ID.
 
-El fin del campeonato **no** convierte automáticamente sus resultados en oficiales. No se cambiarán `live_results.result_status`, sus fuentes ni las clasificaciones. Actualmente hay 3.383 filas de origen Vensport/VeloPro, incluidas fases, marcadas `unconfirmed`; conservarán su atribución y condición actual.
+FINALIZADO no significa resultados oficiales: las 3.383 filas Vensport/VeloPro, incluidas fases, conservan fuente y `result_status = unconfirmed`. No se cambiarán clasificaciones.
 
 ## 4. Rollerzone TV permanente
 
@@ -83,7 +83,7 @@ Aceptar HTTPS y proveedores ya admitidos. Extraer solo la URL válida de una ins
 | `src/lib/tv/asu26Streaming.ts` | Lectura coherente de la configuración histórica, conservando los valores del resto del objeto. |
 | Navegación compartida y sitemap, si precisan ajuste | TV general y enlace permanente a Especiales; conservar URL existentes. |
 
-No está previsto modificar `provider.ts`, los parsers/sincronizadores VeloPro ni la lógica de filtros/PDF de Resultados. Tampoco corregir el fallo previo de “Quitar filtros”: queda fuera de esta solicitud.
+Sin cambios en `provider.ts`, VeloPro ni filtros/PDF; “Quitar filtros” queda fuera de alcance.
 
 ### Cambios aditivos de esquema
 
@@ -95,7 +95,7 @@ No está previsto modificar `provider.ts`, los parsers/sincronizadores VeloPro n
 - Validar fechas y valores admitidos. Mantener las políticas y concesiones actuales; no alterar roles ni funciones de autorización.
 - `tv_broadcasts`, `tv_highlights`, noticias, pruebas, resultados y medallero: sin cambios de esquema ni eliminación de datos.
 
-La ampliación del esquema se aplicaría al backend compartido tras aprobar el plan; no queda aislada por no publicar la web. Será aditiva y compatible con la versión publicada. Antes de los cambios de estado se guardarán los valores originales para poder revertirlos sin tocar contenidos.
+El esquema y los estados afectan al backend compartido, incluso sin publicar. Se aplicarán tras aprobar el plan, con compatibilidad y copia de los valores previos para reversión.
 
 ## 7. Sincronización: revisión y propuesta, no desactivación
 
@@ -117,11 +117,3 @@ Antes de proponer detenerla:
 - Revisar errores, seguridad y regresiones en portada, Francia, Portugal, USA y páginas principales.
 - Entregar cambios y pendientes en vista previa; publicar solo con autorización explícita.
 
-## Orden de ejecución tras aprobación
-
-1. Salvaguarda e inventario de datos y configuración.
-2. Ampliación compatible de los campos existentes y gestor reutilizado.
-3. TV general compartida y catálogo/archivo.
-4. Estado global y presentación histórica ASU26.
-5. Pruebas y revisión de sincronización en lectura.
-6. Entrega en vista previa, esperando autorización de publicación y, por separado, cualquier pausa de sincronización.
