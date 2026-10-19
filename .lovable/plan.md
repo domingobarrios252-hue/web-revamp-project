@@ -31,9 +31,11 @@ El idioma de una URL explícita determina su contenido y lo que recibe Google. L
 
 ### 1. Noticias: seguridad y correcciones del piloto
 - Reforzar lectura pública, inserciones, cambios de estado y edición de traducciones aprobadas en funciones y reglas de la base de datos, reutilizando las comprobaciones actuales de administrador, propietario, país y cuenta activa.
+- Comprobar autorización de edición antes de consumir IA, no inferirla de poder leer una noticia publicada. Si falla la comprobación de cuota, detener la generación; no saltarse el límite.
 - Una edición del inglés aprobado lo retira a revisión y elimina su aprobación; no cambia silenciosamente texto público. Un cambio del original marca la traducción como desactualizada y bloquea su presentación como versión vigente y una nueva aprobación hasta revisarla. No generar ni sustituir textos automáticamente.
 - Unificar la huella sobre los campos originales traducibles y comprobarla al guardar y aprobar. Guardar una traducción sobre un original que cambió exige actualizarla y revisarla primero.
 - Integrar generación por campos cerrados y reconstrucción de bloques, conservando identificadores, tipos, orden, enlaces y archivos. Mantener corrección manual de bloques y texto plano.
+- Conservar de forma reversible la versión aprobada anterior antes de regenerar o editar; no sobrescribirla sin conservar su contenido. Reutilizar almacenamiento existente cuando sea suficiente y justificar cualquier extensión mínima.
 - Conservar las tres traducciones como borradores. Mantener los límites de 30 traducciones al día por sitio y 3 por artículo al día.
 - **Verificación:** pruebas específicas de inserción aprobada no autorizada, edición aprobada, país/propiedad, suspensión, lectura pública y autenticada, huella, bloque completo, texto plano y límites. Sin acceder a la cuenta Admin del usuario.
 
