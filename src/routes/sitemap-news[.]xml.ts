@@ -130,6 +130,28 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           return parts.join("\n");
         });
 
+        const enUrls = enItems.map((n) => {
+          const loc = `${BASE_URL}/en/news/${n.slug}`;
+          const parts = [
+            `  <url>`,
+            `    <loc>${xmlEscape(loc)}</loc>`,
+            `    <news:news>`,
+            `      <news:publication>`,
+            `        <news:name>${xmlEscape(PUBLICATION_NAME)}</news:name>`,
+            `        <news:language>en</news:language>`,
+            `      </news:publication>`,
+            `      <news:publication_date>${n.published_at}</news:publication_date>`,
+            `      <news:title>${xmlEscape(n.title)}</news:title>`,
+            n.category ? `      <news:keywords>${xmlEscape(n.category)}</news:keywords>` : null,
+            `    </news:news>`,
+            n.image_url
+              ? `    <image:image><image:loc>${xmlEscape(n.image_url)}</image:loc><image:title>${xmlEscape(n.title)}</image:title></image:image>`
+              : null,
+            `  </url>`,
+          ].filter(Boolean);
+          return parts.join("\n");
+        });
+
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,
           `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"`,
