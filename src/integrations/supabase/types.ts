@@ -3113,15 +3113,18 @@ export type Database = {
           source_url: string | null
           status: Database["public"]["Enums"]["live_result_status"]
           stream_active: boolean
+          stream_archived_at: string | null
           stream_attribution: string | null
           stream_cta_label: string | null
           stream_cta_url: string | null
           stream_description: string | null
           stream_embed_url: string | null
+          stream_ends_at: string | null
           stream_poster_alt: string | null
           stream_poster_mobile_url: string | null
           stream_poster_url: string | null
           stream_provider: string | null
+          stream_published: boolean
           stream_scheduled_at: string | null
           stream_status: string
           stream_title: string | null
@@ -3160,15 +3163,18 @@ export type Database = {
           source_url?: string | null
           status?: Database["public"]["Enums"]["live_result_status"]
           stream_active?: boolean
+          stream_archived_at?: string | null
           stream_attribution?: string | null
           stream_cta_label?: string | null
           stream_cta_url?: string | null
           stream_description?: string | null
           stream_embed_url?: string | null
+          stream_ends_at?: string | null
           stream_poster_alt?: string | null
           stream_poster_mobile_url?: string | null
           stream_poster_url?: string | null
           stream_provider?: string | null
+          stream_published?: boolean
           stream_scheduled_at?: string | null
           stream_status?: string
           stream_title?: string | null
@@ -3207,15 +3213,18 @@ export type Database = {
           source_url?: string | null
           status?: Database["public"]["Enums"]["live_result_status"]
           stream_active?: boolean
+          stream_archived_at?: string | null
           stream_attribution?: string | null
           stream_cta_label?: string | null
           stream_cta_url?: string | null
           stream_description?: string | null
           stream_embed_url?: string | null
+          stream_ends_at?: string | null
           stream_poster_alt?: string | null
           stream_poster_mobile_url?: string | null
           stream_poster_url?: string | null
           stream_provider?: string | null
+          stream_published?: boolean
           stream_scheduled_at?: string | null
           stream_status?: string
           stream_title?: string | null
@@ -4307,6 +4316,7 @@ export type Database = {
       }
       tv_settings: {
         Row: {
+          featured_result_event_id: string | null
           id: string
           live_center_event_slug: string | null
           live_center_position: string
@@ -4333,6 +4343,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          featured_result_event_id?: string | null
           id?: string
           live_center_event_slug?: string | null
           live_center_position?: string
@@ -4359,6 +4370,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          featured_result_event_id?: string | null
           id?: string
           live_center_event_slug?: string | null
           live_center_position?: string
@@ -4384,7 +4396,15 @@ export type Database = {
           subscribe_title?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tv_settings_featured_result_event_id_fkey"
+            columns: ["featured_result_event_id"]
+            isOneToOne: false
+            referencedRelation: "result_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
