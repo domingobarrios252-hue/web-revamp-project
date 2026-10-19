@@ -8,7 +8,7 @@ import { videoThumbnail } from "@/lib/videoEmbed";
 import { BroadcastManager } from "@/components/admin/BroadcastManager";
 
 export const Route = createFileRoute("/admin/tv-emisiones")({
-  head: () => ({ meta: [{ title: "Admin · Emisiones TV" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Retransmisiones · Admin Rollerzone" }, { name: "description", content: "Gestión de retransmisiones y archivo de Rollerzone TV." }, { property: "og:title", content: "Retransmisiones · Rollerzone" }, { property: "og:description", content: "Administración de retransmisiones y archivo." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   component: () => <><BroadcastManager /><details className="mt-8 border-t border-border pt-4"><summary className="cursor-pointer font-display text-xl">Emisiones existentes</summary><div className="mt-5"><AdminTvEmisiones /></div></details></>,
 });
 

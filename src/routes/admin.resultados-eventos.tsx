@@ -88,12 +88,13 @@ const empty: Omit<ResultEvent, "id"> = {
 };
 
 
+import { BroadcastStatusSelect } from "@/components/admin/BroadcastStatusSelect";
 import { ResultadosHubTabs } from "@/components/admin/ResultadosHubTabs";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { extractEmbedSrc } from "@/lib/specials/liveEvent";
 
 export const Route = createFileRoute("/admin/resultados-eventos")({
-  head: () => ({ meta: [{ title: "Admin · Eventos de Resultados" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Eventos de Resultados · Admin Rollerzone" }, { name: "description", content: "Gestión de campeonatos, resultados y retransmisiones de Rollerzone." }, { property: "og:title", content: "Eventos de Resultados · Rollerzone" }, { property: "og:description", content: "Administración de eventos y sus retransmisiones." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   component: () => (<><ResultadosHubTabs active="eventos" /><AdminResultados /></>),
 });
 
@@ -329,11 +330,7 @@ function StreamFields({ draft, setDraft }: { draft: Draft; setDraft: (d: Draft) 
           <input type="checkbox" checked={draft.stream_active} onChange={(e) => set("stream_active", e.target.checked)} /> Streaming activo
         </label>
         <Field label="Estado">
-          <select className="input" value={draft.stream_status} onChange={(e) => set("stream_status", e.target.value as Draft["stream_status"])}>
-            <option value="upcoming">Próximamente</option>
-            <option value="live">En directo</option>
-            <option value="finished">Finalizado</option>
-          </select>
+<BroadcastStatusSelect value={draft.stream_status} onChange={value => set("stream_status", value)} />
         </Field>
         <Field label="Título"><input className="input" value={draft.stream_title ?? ""} onChange={(e) => set("stream_title", e.target.value)} /></Field>
         <Field label="Hora prevista (tu hora local)"><input type="datetime-local" className="input" value={draft.stream_scheduled_at ? toLocal(draft.stream_scheduled_at) : ""} onChange={(e) => set("stream_scheduled_at", e.target.value ? new Date(e.target.value).toISOString() : null)} /></Field>

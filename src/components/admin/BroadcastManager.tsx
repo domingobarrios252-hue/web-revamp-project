@@ -3,6 +3,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { Archive, Pencil, Star, Eye, EyeOff, Undo2, Plus, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { BroadcastStatusSelect } from '@/components/admin/BroadcastStatusSelect';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
 import { ASU26_EVENT_ID, BROADCAST_LABELS, broadcastSchema, selectableBroadcast, type BroadcastInput, type ChampionshipBroadcast } from '@/lib/tv/broadcasts';
 import { getAdminBroadcasts, saveBroadcast, changeBroadcast } from '@/lib/tv/broadcasts.functions';
@@ -17,7 +18,7 @@ export function BroadcastManager() {
   useEffect(() => { void refresh(); }, []);
   const action = async (id: string | null, kind: 'feature' | 'archive' | 'restore' | 'publish' | 'hide') => { setBusy(true); try { await change({ data: { id, action: kind } }); await refresh(); toast.success('Retransmisión actualizada'); } catch (e) { toast.error(e instanceof Error ? e.message : 'No se pudo guardar'); } finally { setBusy(false); } };
   const edit = (e: ChampionshipBroadcast) => setDraft({ id: e.id, name: e.name, stream_title: e.stream_title ?? '', stream_description: e.stream_description ?? '', stream_url: e.stream_embed_url || e.stream_url || '', stream_poster_url: e.stream_poster_url ?? '', stream_scheduled_at: e.stream_scheduled_at, stream_ends_at: e.stream_ends_at, stream_status: e.stream_status, stream_provider: e.stream_provider ?? '', stream_attribution: e.stream_attribution ?? '', stream_published: e.stream_published });
-  const submit = async () => { if (!draft) return; setBusy(true); try { broadcastSchema.parse(draft); await save({ data: draft }); setDraft(null); await refresh(); toast.success('Retransmisión guardada'); } catch (e) { toast.error(e instanceof Error ? e.message : 'Datos no válidos'); } finally { setBusy(false); } };
+  const submit = async () => { if (!draft) return; setBusy(true); try { const normalized = { ...draft, stream_scheduled_at: draft.stream_scheduled_at ? new Date(draft.stream_scheduled_at).toISOString() : null, stream_ends_at: draft.stream_ends_at ? new Date(draft.stream_ends_at).toISOString() : null }; broadcastSchema.parse(normalized); await save({ data: normalized }); setDraft(null); await refresh(); toast.success('Retransmisión guardada'); } catch (e) { toast.error(e instanceof Error ? e.message : 'Datos no válidos'); } finally { setBusy(false); } };
   const field = <K extends keyof BroadcastInput>(key: K, value: BroadcastInput[K]) => { if (draft) setDraft({ ...draft, [key]: value }); };
   return <div className="space-y-5">
     <div className="flex flex-wrap items-center justify-between gap-3"><h1 className="font-display text-2xl uppercase">Retransmisiones</h1><Button onClick={() => setDraft({ ...empty })}><Plus className="h-4 w-4" /> Nueva retransmisión</Button></div>
@@ -27,7 +28,7 @@ export function BroadcastManager() {
       <label>Título de retransmisión<input className="input mt-1" value={draft.stream_title} onChange={e => field('stream_title', e.target.value)} /></label>
       <label>Inicio ({Intl.DateTimeFormat().resolvedOptions().timeZone})<input aria-label="Inicio" type="datetime-local" className="input mt-1" value={local(draft.stream_scheduled_at)} onChange={e => field('stream_scheduled_at', e.target.value ? new Date(e.target.value).toISOString() : null)} /></label>
       <label>Fin ({Intl.DateTimeFormat().resolvedOptions().timeZone})<input aria-label="Fin" type="datetime-local" className="input mt-1" value={local(draft.stream_ends_at)} onChange={e => field('stream_ends_at', e.target.value ? new Date(e.target.value).toISOString() : null)} /></label>
-      <label>Estado<select aria-label="Estado de retransmisión" className="input mt-1" value={draft.stream_status} onChange={e => field('stream_status', e.target.value as BroadcastInput['stream_status'])}>{Object.entries(BROADCAST_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+      <label>Estado<BroadcastStatusSelect value={draft.stream_status} onChange={value => field("stream_status", value)} /></label>
       <label>Proveedor<input className="input mt-1" value={draft.stream_provider} onChange={e => field('stream_provider', e.target.value)} /></label>
       <label className="md:col-span-2">Vídeo o inserción autorizada<input aria-label="Vídeo o inserción autorizada" className="input mt-1" value={draft.stream_url} onChange={e => field('stream_url', e.target.value)} /></label>
       <div><span className="mb-1 block">Imagen de portada</span><ImageUploadField folder="streaming" value={draft.stream_poster_url} onChange={v => field('stream_poster_url', v)} /></div>

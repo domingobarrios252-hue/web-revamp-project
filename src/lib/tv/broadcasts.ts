@@ -23,14 +23,14 @@ export const broadcastSchema = z.object({
   stream_title: z.string().trim().max(200),
   stream_description: z.string().trim().max(2000),
   stream_poster_url: z.string().trim().url().or(z.literal('')),
-  stream_scheduled_at: z.string().datetime().nullable(),
-  stream_ends_at: z.string().datetime().nullable(),
+  stream_scheduled_at: z.string().datetime({ offset: true }).nullable(),
+  stream_ends_at: z.string().datetime({ offset: true }).nullable(),
   stream_url: z.string().max(3000).transform(authorizedVideo),
   stream_status: broadcastStatus,
   stream_provider: z.string().trim().max(150),
   stream_attribution: z.string().trim().max(300),
   stream_published: z.boolean(),
-}).refine(d => !d.stream_ends_at || !d.stream_scheduled_at || d.stream_ends_at >= d.stream_scheduled_at, { message: 'El fin debe ser posterior al inicio' });
+}).refine(d => !d.stream_ends_at || !d.stream_scheduled_at || Date.parse(d.stream_ends_at) >= Date.parse(d.stream_scheduled_at), { message: 'El fin debe ser posterior al inicio' });
 
 export type BroadcastInput = z.input<typeof broadcastSchema>;
 export type ChampionshipBroadcast = {
