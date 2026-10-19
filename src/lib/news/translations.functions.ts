@@ -196,7 +196,7 @@ export const translateNews = createServerFn({ method: "POST" })
       subtitle: ai.subtitle || null,
       excerpt: ai.excerpt || null,
       content: ai.content || null,
-      content_blocks: ai.content_blocks,
+      content_blocks: ai.content_blocks as Json,
       seo_title: ai.seo_title || null,
       seo_description: ai.seo_description || null,
       status: nextStatus,
@@ -218,7 +218,7 @@ const saveSchema = z.object({
   subtitle: z.string().max(300).nullable(),
   excerpt: z.string().max(500).nullable(),
   content: z.string().max(100000).nullable(),
-  content_blocks: z.array(z.record(z.string(), z.unknown())).max(200),
+  content_blocks: z.array(z.record(z.string(), z.unknown())).max(200).transform((v) => v as Json[]),
   seo_title: z.string().max(120).nullable(),
   seo_description: z.string().max(300).nullable(),
 });
