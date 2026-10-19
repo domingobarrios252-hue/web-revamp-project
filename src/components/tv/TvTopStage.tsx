@@ -179,7 +179,7 @@ export function TvTopStage({
         <div className="min-w-0">
           <div className="relative aspect-video w-full overflow-hidden border-y border-gold/30 bg-black md:border md:shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
             {playerActive && embedUrl ? (
-              <ExternalEmbedGate provider="reproductor externo">
+              <ExternalEmbedGate provider="reproductor externo" sourceUrl={settings?.live_stream_url ?? undefined}>
                 <TvPlayBeacon title={title} eventRef={slug ?? null} status={status} />
                 <iframe
                   src={embedUrl}

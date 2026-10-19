@@ -8,8 +8,8 @@ import { z } from "zod";
 import { videoEmbedUrl } from "@/lib/videoEmbed";
 
 export const Route = createFileRoute("/admin/tv")({
-  head: () => ({ meta: [{ title: "Admin · TV" }, { name: "robots", content: "noindex" }] }),
-  component: AdminTv,
+  head: () => ({ meta: [{ title: "Configuración TV · Admin Rollerzone" }, { name: 'description', content: 'Configuración de Rollerzone TV y retransmisiones ASU26.' }, { property: 'og:title', content: 'Configuración TV · Rollerzone' }, { property: 'og:description', content: 'Gestión de la señal general y retransmisiones.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { name: "robots", content: "noindex" }] }),
+  component: () => <><Link to="/admin/tv-emisiones" className="mb-5 inline-flex text-gold underline">Retransmisiones · Seleccionar destacado y gestionar archivo</Link><AdminTv /></>,
 });
 
 const schema = z.object({
