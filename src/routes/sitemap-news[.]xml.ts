@@ -158,6 +158,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           `        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"`,
           `        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`,
           ...urls,
+          ...enUrls,
           `</urlset>`,
         ].join("\n");
 
