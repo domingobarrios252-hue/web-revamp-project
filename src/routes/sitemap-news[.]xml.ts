@@ -69,6 +69,34 @@ export const Route = createFileRoute("/sitemap-news.xml")({
               country_code: n.country_code,
             });
           }
+
+          // Versiones en inglés aprobadas de noticias recientes.
+          const { data: trs } = await supabase
+            .from("news_translations")
+            .select("title, news!inner(slug, published_at, image_url, news_categories(name))")
+            .eq("lang", "en")
+            .eq("status", "approved")
+            .gte("news.published_at", since)
+            .limit(1000);
+
+          for (const t of (trs ?? []) as Array<{
+            title: string | null;
+            news: {
+              slug: string | null;
+              published_at: string | null;
+              image_url: string | null;
+              news_categories: { name: string | null } | null;
+            } | null;
+          }>) {
+            if (!t.news?.slug || !t.title || !t.news.published_at) continue;
+            enItems.push({
+              slug: t.news.slug,
+              title: t.title,
+              published_at: new Date(t.news.published_at).toISOString(),
+              image_url: t.news.image_url,
+              category: t.news.news_categories?.name ?? null,
+            });
+          }
         }
 
         const urls = items.map((n) => {
