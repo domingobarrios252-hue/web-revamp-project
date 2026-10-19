@@ -10,29 +10,21 @@ Preparar Rollerzone TV para retransmitir futuras competiciones de patinaje de ve
 - No ejecutar cambios hasta aprobar este plan. La aprobación del plan no autoriza publicar ni detener la sincronización.
 - La sincronización se revisará únicamente en lectura; cualquier desactivación requerirá una autorización posterior y concreta.
 
-## 2. Estructura actual comprobada
+## 2. Estructura comprobada
 
-| Área | Situación actual | Consecuencia |
-|---|---|---|
-| `/rollerzone-tv` | Redirige a `/tv`. | Sustituir la redirección por la página general, sin romper `/tv`. |
-| `/tv` | Ya tiene reproductor, programación, vídeos destacados, publicidad y patrocinadores. | Reutilizar esta experiencia, no crear una segunda TV independiente. |
-| Administración | `/admin/tv`, `/admin/tv-emisiones`, `/admin/tv-highlights` y `/admin/resultados-eventos` ya existen. | Ampliar controles existentes; no crear otro sistema de permisos. |
-| Retransmisiones de campeonatos | `result_events` ya dispone de campos `stream_*`, editables desde el gestor de eventos. | Utilizar esos eventos como fuente central, vinculados por ID. |
-| Especial ASU26 | Sigue publicado con `special_editorials.status = active`. | Mantener ese estado editorial: cambiarlo a “finalizado” impediría resolver la página. |
-| Campeonato ASU26 | Su evento de Resultados figura `en_vivo`; el evento vinculado de Calendario figura `upcoming`. | Alinear solo el estado global del campeonato a FINALIZADO. |
-| TV ASU26 | Configuración `asu26_streaming`: `streamStatus = upcoming`, `tvPromoActive = true`. | Cambiar la presentación a histórica y retirar el protagonismo temporal de la portada general. |
-
-La sincronización está habilitada y sin parada registrada. La última ejecución satisfactoria guardada es del 19 de octubre a las 02:59 UTC. Existe una tarea ASU26/Vensport activa cada 30 segundos. Esto describe los controles observados, no certifica por sí solo la integridad de las clasificaciones definitivas.
+- `/rollerzone-tv` redirige a `/tv`, que ya tiene reproductor, programación, vídeos, anuncios y patrocinadores.
+- Existen `/admin/tv`, `/admin/tv-emisiones`, `/admin/tv-highlights` y `/admin/resultados-eventos`; este último ya edita los campos `result_events.stream_*`.
+- El especial ASU26 está publicado con `special_editorials.status = active`: debe conservarse así para que su página siga disponible.
+- El campeonato figura `en_vivo` en Resultados y `upcoming` en su evento de Calendario. TV ASU26 conserva `streamStatus = upcoming` y `tvPromoActive = true`.
+- Sincronización habilitada, sin parada registrada; última ejecución satisfactoria guardada: 19 de octubre, 02:59 UTC. Tarea ASU26/Vensport activa cada 30 segundos. Esto no certifica resultados definitivos.
 
 ## 3. Especial ASU26 como archivo
 
 ### Resultado visible
 
-- Mostrar **FINALIZADO · Archivo ASU26** en el especial y su página de TV.
-- Conservar el acceso desde Especiales, todas las piezas y las URL actuales, incluidas las páginas de Resultados.
-- Mantener calendario histórico, selección española, medallero, noticias, galería y clasificaciones completas.
-- Reemplazar únicamente indicadores de actualidad como “Hoy” o “En directo” por etiquetas históricas cuando proceda; conservar las entradas y mensajes existentes.
-- Conservar todos los enlaces y señales de vídeo. No afirmar que hay grabaciones reproducibles si el proveedor solo conserva un enlace de directo; mostrar disponibilidad real y un aviso neutral cuando no haya reproducción.
+- Mostrar **FINALIZADO · Archivo ASU26**, manteniendo Especiales y todas las URL, piezas, calendario histórico, selección, medallero, noticias, galería y clasificaciones.
+- Sustituir solo indicadores de actualidad como “Hoy” o “En directo” por etiquetas históricas; conservar entradas y mensajes.
+- Mantener todas las señales y enlaces de vídeo. No anunciar grabaciones si el proveedor solo conserva un enlace de directo; mostrar disponibilidad real.
 
 ### Cambios de datos previstos, limitados a ASU26
 
@@ -47,17 +39,11 @@ El fin del campeonato **no** convierte automáticamente sus resultados en oficia
 
 ### Página general
 
-`/rollerzone-tv` tendrá:
+`/rollerzone-tv` mostrará reproductor destacado configurable, los tres estados manuales, próximas retransmisiones y archivo de competiciones con vídeo disponible y enlaces relacionados. ASU26 tendrá una entrada a su página específica, sin duplicar señales ni inventar grabaciones.
 
-1. **Retransmisión destacada:** campeonato elegido desde administración, portada y reproductor existente.
-2. **Estado manual:** PRÓXIMAMENTE, EN DIRECTO o FINALIZADO. La hora prevista no activará por sí sola un directo.
-3. **Próximas retransmisiones:** campeonatos publicados, con fecha y hora.
-4. **Archivo de competiciones:** campeonatos finalizados o archivados, con acceso a su vídeo disponible y contenidos relacionados.
-5. **ASU26:** entrada histórica que conduce a su página específica, sin duplicar sus cuatro señales ni inventar grabaciones.
+Reutilizar la experiencia de `/tv`: anuncios, patrocinadores, consentimiento y vídeos existentes. `tv_broadcasts` y `tv_highlights` se conservarán accesibles, sin migración automática.
 
-Conservar publicidad, patrocinadores, consentimiento para vídeos externos, programación antigua y vídeos destacados. Los registros de `tv_broadcasts` y `tv_highlights` permanecerán intactos y accesibles; no se migrarán ni convertirán automáticamente.
-
-`/tv` seguirá funcionando con el mismo componente y los mismos datos de la página general. No se añadirán redirecciones para páginas específicas ni se cambiarán las URL ASU26. Los enlaces principales a TV apuntarán a `/rollerzone-tv`; los enlaces antiguos seguirán funcionando. Cada dirección tendrá metadatos coherentes y una URL canónica común para evitar duplicar la página en buscadores.
+`/tv` seguirá funcionando con el mismo componente y datos. Los enlaces principales irán a `/rollerzone-tv`; los antiguos y todas las URL ASU26 seguirán válidos. Metadatos propios y una canónica común evitarán duplicidad en buscadores.
 
 ### Reglas del reproductor y archivo
 
@@ -70,15 +56,13 @@ Conservar publicidad, patrocinadores, consentimiento para vídeos externos, prog
 
 ## 5. Administración
 
-Ampliar **Admin → TV → Emisiones** como gestor de retransmisiones de campeonatos, conservando una vista de las emisiones existentes.
+Ampliar **Admin → TV → Emisiones** como gestor de campeonatos, conservando una vista de las emisiones existentes.
 
-Campos: campeonato, portada, inicio y fin con zona horaria visible, enlace de vídeo o inserción autorizada, proveedor/atribución y estado.
+Campos: campeonato, portada, inicio/fin con zona horaria visible, vídeo o inserción autorizada, proveedor/atribución y estado. Acciones: guardar, editar, publicar/ocultar vídeo, destacar y archivar, no borrar.
 
-Acciones: guardar, editar, publicar/ocultar la retransmisión, destacar y archivar. En el nuevo flujo se utilizará archivar, no borrar. Se reutilizarán los campos de retransmisión del gestor de eventos, para que ambas pantallas editen el mismo registro.
+Reutilizar los campos y controles del gestor de eventos: ambas pantallas editarán el mismo registro. Publicación de TV independiente de `result_events.published`, sin ocultar resultados. Nuevas operaciones verificadas como administrador en servidor mediante controles existentes, sin ampliar permisos ni acceder a tu Admin.
 
-La publicación en TV será independiente de `result_events.published`: ocultar un vídeo nunca ocultará sus resultados. El nuevo gestor no ampliará facultades de los editores; las operaciones nuevas se validarán como administrador en el servidor, utilizando los controles existentes. No se accederá a tu cuenta Admin para probarlo.
-
-**Vídeos autorizados:** aceptar enlaces HTTPS e inserciones de proveedores ya admitidos. De un código de inserción se extraerá solo la URL válida; no se ejecutarán scripts ni HTML arbitrario. Conservar el consentimiento actual. Si un proveedor nuevo necesita ampliar la política de seguridad, solicitar autorización antes de hacerlo.
+Aceptar HTTPS y proveedores ya admitidos. Extraer solo la URL válida de una inserción: nunca ejecutar scripts/HTML arbitrario. Conservar consentimiento. Cualquier proveedor que requiera ampliar la política de seguridad necesitará autorización aparte.
 
 ## 6. Detalle técnico: rutas, componentes y base de datos
 
@@ -124,15 +108,14 @@ Antes de proponer detenerla:
 
 **Dependencia importante:** el control `results_sync_state`, clave `asu26_speed`, es compartido por los sincronizadores ASU26 y Vensport. Desactivarlo detendría también la importación VeloPro de este campeonato. No se tocará el interruptor, las tareas programadas ni las integraciones con la aprobación de este plan. Los resultados almacenados seguirían disponibles aunque una desactivación posterior fuera autorizada.
 
-## 8. Verificación y entrega antes de publicar
+## 8. Verificación antes de publicar
 
-- Pruebas de las tres etiquetas, publicación independiente, selección única, archivo sin borrado y rechazo de inserciones no autorizadas.
-- Repetir las 52 pruebas de permisos mediante el procedimiento existente, sin usar tu Admin; cualquier dato temporal se gestionará solo mediante ese procedimiento controlado.
-- Probar con una cuenta de pruebas autorizada: guardar, editar, publicar, destacar y archivar; confirmar lectura pública y bloqueo para Editor Francia.
-- Comprobar en móvil y ordenador las dos entradas TV, ASU26, el especial, Resultados, vídeos disponibles, portadas y consentimiento.
-- Comparar antes/después publicaciones, cantidades de datos y valores de clasificaciones, medallero, noticias y horarios; ninguna modificación fuera de los estados globales descritos.
-- Revisar portada, Francia, Portugal, USA y demás páginas principales, errores y seguridad.
-- Entregar resumen de cambios y pendientes en vista previa. Publicar únicamente tras tu autorización explícita.
+- Pruebas: tres estados, publicación independiente, destacado único, archivo sin borrado, fechas e inserciones autorizadas.
+- Repetir las 52 pruebas de permisos con el procedimiento controlado existente, sin tu Admin; probar guardar→publicar→destacar→archivar con cuenta de pruebas autorizada y comprobar bloqueo del Editor Francia.
+- Verificar móvil/ordenador: ambas entradas TV, especial, ASU26, Resultados, portadas, vídeo disponible y consentimiento.
+- Comparar cantidades y valores de resultados, medallero, noticias y horarios: sin cambios fuera de los estados globales descritos.
+- Revisar errores, seguridad y regresiones en portada, Francia, Portugal, USA y páginas principales.
+- Entregar cambios y pendientes en vista previa; publicar solo con autorización explícita.
 
 ## Orden de ejecución tras aprobación
 
