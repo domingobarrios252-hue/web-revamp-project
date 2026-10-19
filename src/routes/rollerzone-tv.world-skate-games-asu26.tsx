@@ -22,10 +22,10 @@ import ogAsset from "@/assets/og-asu26-rollerzone-tv.jpg.asset.json";
 
 const PAGE_URL = "https://rollerzone.es/rollerzone-tv/world-skate-games-asu26";
 const OG = `https://rollerzone.es${ogAsset.url}`;
-const TITLE = "World Skate Games ASU26 2026 en directo | Patinaje de Velocidad | Rollerzone.TV";
+const TITLE = "Archivo World Skate Games ASU26 2026 | Patinaje de Velocidad | Rollerzone.TV";
 const DESC =
-  "Sigue en Rollerzone.TV el streaming autorizado de las pruebas de patinaje de velocidad de los World Skate Games ASU26 2026, con horarios, resultados oficiales y toda la información.";
-const OG_TITLE = "World Skate Games ASU26 · Patinaje de Velocidad EN DIRECTO";
+  "Archivo histórico ASU26 en Rollerzone TV: retransmisiones conservadas, calendario, resultados y especial de patinaje de velocidad.";
+const OG_TITLE = "World Skate Games ASU26 · Archivo histórico";
 const OG_DESC = "Streaming, horarios y resultados oficiales del patinaje de velocidad en ASU26 2026.";
 
 export const Route = createFileRoute("/rollerzone-tv/world-skate-games-asu26")({
@@ -159,8 +159,9 @@ function Asu26Hub() {
   const todays = (items ?? []).filter((i) => dayInTz(i.scheduled_at, ASU26_TZ) === today);
   const next = upcoming.find((i) => i.status === "programada");
   const live = cfg.streamStatus === "live";
+  const finished = cfg.streamStatus === "finished";
 
-  const nextIso = cfg.expectedStart || next?.scheduled_at || null;
+  const nextIso = finished ? null : cfg.expectedStart || next?.scheduled_at || null;
   const viewerZone = useViewerZone();
   const statusPill = <StatusBadge status={cfg.streamStatus} />;
 
@@ -179,7 +180,7 @@ function Asu26Hub() {
         <div className="mx-auto flex max-w-[1500px] gap-1 overflow-x-auto px-2 py-1 [scrollbar-width:none] md:px-6">
           {NAV.map((n) => (
             <a
-              key={n.label}
+              key={finished && n.id === "directo" ? "Retransmisiones" : n.label}
               href={"href" in n && n.href ? n.href : "link" in n && n.link ? specialLink(cfg.links[n.link]) : `#${n.id}`}
               onClick={(e) => {
                 if (("link" in n && n.link) || ("href" in n && n.href)) return;
@@ -188,7 +189,7 @@ function Asu26Hub() {
               }}
               className="font-condensed inline-flex min-h-11 shrink-0 items-center border-b-2 border-transparent px-3 text-xs font-bold uppercase tracking-[2px] text-muted-foreground transition-colors first:border-asu-coral first:text-foreground hover:text-foreground"
             >
-              {n.label}
+              {finished && n.id === "directo" ? "Retransmisiones" : n.label}
             </a>
           ))}
         </div>
@@ -204,7 +205,7 @@ function Asu26Hub() {
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-3">
               <h1 className="font-display text-6xl uppercase leading-[0.95] tracking-wide md:text-8xl">
-                <span className="text-asu-ink">En </span><span className="text-asu-coral">directo</span>
+                <span className="text-asu-ink">{finished ? "Archivo " : "En "}</span><span className="text-asu-coral">{finished ? "ASU26" : "directo"}</span>
               </h1>
               {statusPill}
             </div>
@@ -216,7 +217,7 @@ function Asu26Hub() {
               </div>
             )}
 
-            {!live && (
+            {!live && !finished && (
               <div className="mt-6 grid gap-4 rounded-2xl border border-asu/30 bg-surface/80 p-5 md:grid-cols-[auto_1fr] md:items-center md:gap-8 md:p-6">
                 <div className="md:border-r md:border-asu/20 md:pr-8">
                   <p className="font-condensed text-xs font-bold uppercase tracking-[2.5px] text-asu">
@@ -238,6 +239,7 @@ function Asu26Hub() {
               </div>
             )}
 
+            {finished && <p className="mt-5 text-sm text-asu-ink/80">Campeonato finalizado. Las señales y enlaces se conservan; su reproducción depende de la disponibilidad del proveedor.</p>}
             <div className="mt-6">
               <Asu26Player cfg={cfg} nextIso={nextIso} />
             </div>
@@ -248,13 +250,13 @@ function Asu26Hub() {
 
           <aside id="horarios" className="scroll-mt-16 min-w-0 self-start overflow-hidden rounded-2xl border border-asu/25 bg-surface xl:sticky xl:top-16">
             <div className="asu-dark bg-asu-deep px-5 py-4">
-              <h2 className="font-display text-3xl uppercase tracking-wide text-foreground">Próximas pruebas</h2>
+              <h2 className="font-display text-3xl uppercase tracking-wide text-foreground">{finished ? "Calendario histórico" : "Próximas pruebas"}</h2>
               <p className="mt-0.5 text-[11px] text-asu-cream/80">Horario oficial de Asunción (PY) y conversión automática a la hora local del visitante.</p>
             </div>
             <div className="px-5 pb-5">
               {items === null ? (
                 <div className="space-y-2 pt-4">{[0, 1, 2].map((i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-surface-2" />)}</div>
-              ) : upcoming.length === 0 ? (
+              ) : finished ? (<p className="pt-4 text-sm text-muted-foreground">Campeonato finalizado · 10–18 octubre de 2026. Consulta el calendario conservado.</p>) : upcoming.length === 0 ? (
                 <p className="pt-4 text-sm text-muted-foreground">No hay próximas pruebas programadas.</p>
               ) : (
                 <ul className="divide-y divide-asu/15">
@@ -330,12 +332,12 @@ function Asu26Hub() {
         <div className="mx-auto max-w-[1500px] px-4 md:px-8">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="font-display text-4xl uppercase tracking-wide md:text-6xl">
-              <span className="text-asu-ink">Hoy en </span><span className="text-asu-coral">ASU26</span>
+              <span className="text-asu-ink">{finished ? "Calendario " : "Hoy en "}</span><span className="text-asu-coral">ASU26</span>
             </h2>
             <p className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-asu">Horarios oficiales · Hora local de Asunción (PY)</p>
           </div>
-          <p className="font-condensed mt-1 text-xs font-bold uppercase tracking-[3px] text-asu first-letter:uppercase">{dayLabel(today)}</p>
-          {todays.length === 0 ? (
+          <p className="font-condensed mt-1 text-xs font-bold uppercase tracking-[3px] text-asu first-letter:uppercase">{finished ? "10–18 octubre de 2026 · Archivo histórico" : dayLabel(today)}</p>
+          {finished ? (<p className="mt-2 text-sm text-asu-ink/80">Se conservan los horarios y estados registrados de todas las pruebas.</p>) : todays.length === 0 ? (
             <p className="mt-2 text-sm text-asu-ink/80">No hay pruebas de velocidad programadas hoy.</p>
           ) : (
             <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
