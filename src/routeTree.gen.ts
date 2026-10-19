@@ -142,6 +142,7 @@ import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as UsaIndexRouteImport } from './routes/usa.index'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
+import { Route as EnNewsSlugRouteImport } from './routes/en.news.$slug'
 import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
 import { Route as FranciaEntrevistasSlugRouteImport } from './routes/francia_.entrevistas_.$slug'
@@ -872,6 +873,11 @@ const ApiPublicCspReportRoute = ApiPublicCspReportRouteImport.update({
   path: '/api/public/csp-report',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnNewsSlugRoute = EnNewsSlugRouteImport.update({
+  id: '/en/news/$slug',
+  path: '/en/news/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EspecialesSlugIndexRoute = EspecialesSlugIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -1292,6 +1298,7 @@ export interface FileRoutesByFullPath {
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/news/$slug': typeof EnNewsSlugRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
@@ -1472,6 +1479,7 @@ export interface FileRoutesByTo {
   '/usa': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/news/$slug': typeof EnNewsSlugRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
@@ -1656,6 +1664,7 @@ export interface FileRoutesById {
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/news/$slug': typeof EnNewsSlugRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia_/entrevistas_/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia_/noticias_/$slug': typeof FranciaNoticiasSlugRoute
@@ -1847,6 +1856,7 @@ export interface FileRouteTypes {
     | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/news/$slug'
     | '/especiales/$slug/$piece'
     | '/francia/entrevistas/$slug'
     | '/francia/noticias/$slug'
@@ -2027,6 +2037,7 @@ export interface FileRouteTypes {
     | '/usa'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/news/$slug'
     | '/especiales/$slug/$piece'
     | '/francia/entrevistas/$slug'
     | '/francia/noticias/$slug'
@@ -2210,6 +2221,7 @@ export interface FileRouteTypes {
     | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/news/$slug'
     | '/especiales/$slug/$piece'
     | '/francia_/entrevistas_/$slug'
     | '/francia_/noticias_/$slug'
@@ -2332,6 +2344,7 @@ export interface RootRouteChildren {
   SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
+  EnNewsSlugRoute: typeof EnNewsSlugRoute
   FranciaEntrevistasSlugRoute: typeof FranciaEntrevistasSlugRoute
   FranciaNoticiasSlugRoute: typeof FranciaNoticiasSlugRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
@@ -3275,6 +3288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCspReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/en/news/$slug': {
+      id: '/en/news/$slug'
+      path: '/en/news/$slug'
+      fullPath: '/en/news/$slug'
+      preLoaderRoute: typeof EnNewsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/especiales/$slug/': {
       id: '/especiales/$slug/'
       path: '/'
@@ -4120,6 +4140,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
+  EnNewsSlugRoute: EnNewsSlugRoute,
   FranciaEntrevistasSlugRoute: FranciaEntrevistasSlugRoute,
   FranciaNoticiasSlugRoute: FranciaNoticiasSlugRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
