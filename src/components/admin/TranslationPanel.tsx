@@ -69,11 +69,6 @@ export function TranslationPanel({
 
   useEffect(() => {
     void load();
-    supabase
-      .rpc("has_role", { _user_id: undefined as never, _role: "admin" })
-      .then(() => undefined)
-      .catch(() => undefined);
-    // has_role requiere el id explícito: lo obtenemos de la sesión.
     supabase.auth.getUser().then(async ({ data }) => {
       const uid = data.user?.id;
       if (!uid) return;
