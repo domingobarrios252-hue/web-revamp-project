@@ -3,6 +3,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { Archive, Pencil, Star, Eye, EyeOff, Undo2, Plus, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { BroadcastStatusSelect } from '@/components/admin/BroadcastStatusSelect';
 import { ImageUploadField } from '@/components/admin/ImageUploadField';
 import { ASU26_EVENT_ID, BROADCAST_LABELS, broadcastSchema, selectableBroadcast, type BroadcastInput, type ChampionshipBroadcast } from '@/lib/tv/broadcasts';
 import { getAdminBroadcasts, saveBroadcast, changeBroadcast } from '@/lib/tv/broadcasts.functions';
@@ -27,7 +28,7 @@ export function BroadcastManager() {
       <label>Título de retransmisión<input className="input mt-1" value={draft.stream_title} onChange={e => field('stream_title', e.target.value)} /></label>
       <label>Inicio ({Intl.DateTimeFormat().resolvedOptions().timeZone})<input aria-label="Inicio" type="datetime-local" className="input mt-1" value={local(draft.stream_scheduled_at)} onChange={e => field('stream_scheduled_at', e.target.value ? new Date(e.target.value).toISOString() : null)} /></label>
       <label>Fin ({Intl.DateTimeFormat().resolvedOptions().timeZone})<input aria-label="Fin" type="datetime-local" className="input mt-1" value={local(draft.stream_ends_at)} onChange={e => field('stream_ends_at', e.target.value ? new Date(e.target.value).toISOString() : null)} /></label>
-      <label>Estado<select aria-label="Estado de retransmisión" className="input mt-1" value={draft.stream_status} onChange={e => field('stream_status', e.target.value as BroadcastInput['stream_status'])}>{Object.entries(BROADCAST_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+      <label>Estado<BroadcastStatusSelect value={draft.stream_status} onChange={value => field("stream_status", value)} /></label>
       <label>Proveedor<input className="input mt-1" value={draft.stream_provider} onChange={e => field('stream_provider', e.target.value)} /></label>
       <label className="md:col-span-2">Vídeo o inserción autorizada<input aria-label="Vídeo o inserción autorizada" className="input mt-1" value={draft.stream_url} onChange={e => field('stream_url', e.target.value)} /></label>
       <div><span className="mb-1 block">Imagen de portada</span><ImageUploadField folder="streaming" value={draft.stream_poster_url} onChange={v => field('stream_poster_url', v)} /></div>
