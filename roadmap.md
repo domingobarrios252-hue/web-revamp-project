@@ -1,5 +1,6 @@
 # Roadmap
-- [ ] Transición posterior a ASU26: analizar TV, administración, archivo histórico y sincronización; presentar plan (implementación bloqueada hasta aprobación)
+- [x] Transición posterior a ASU26: analizar TV, administración, archivo histórico y sincronización; preparar plan detallado
+- [ ] Implementar transición posterior a ASU26 (bloqueado: aprobación del plan; publicación y pausa de sincronización requieren autorización separada)
 - [x] Seguridad: permisos editoriales, archivos y suspensión corregidos; 52 comprobaciones autenticadas y borrador→revisión en pantalla verificados, sin acceder al Admin ni publicar
 - [x] Francia: página, navegación, gestión existente y sitemap; publicado en rollerzone.es y comprobado en ordenador y móvil
 - [ ] Francia: creación y edición verificadas en Admin (bloqueado: no acceder a la cuenta del usuario)
