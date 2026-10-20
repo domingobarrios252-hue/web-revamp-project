@@ -40,6 +40,7 @@ test("translation rules preserve workflows, reject privilege escalation, and rol
       await tx`UPDATE public.news SET content='9.468' WHERE id=${n.id}`;
       const [stale]=await tx`SELECT * FROM public.news_translations WHERE id=${tr.id}`;expect(stale.status).toBe('pending');checks++;expect(stale.source_hash).toBeNull();checks++;
       await deny(()=>tx`UPDATE public.news_translations SET status='approved',approved_by=${admin},approved_at=now() WHERE id=${tr.id}`);
+      await tx.unsafe('RESET ROLE');
       await tx`UPDATE public.profiles SET suspended_at=now() WHERE user_id=${fr}`;
       await as(fr);expect((await tx`SELECT * FROM public.news_translations`).length).toBe(0);checks++;
       await deny(()=>tx`INSERT INTO public.news_translations(news_id) VALUES(${n.id})`);
