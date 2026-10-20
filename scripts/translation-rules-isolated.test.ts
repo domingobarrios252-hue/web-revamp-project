@@ -10,7 +10,7 @@ test("translation rules preserve workflows, reject privilege escalation, and rol
   try {
     await sql.begin(async tx => {
       await tx.unsafe(readFileSync("scripts/sql/news-translations-hardening.sql","utf8"));
-      await tx.unsafe("GRANT USAGE ON SCHEMA auth TO authenticated,anon; GRANT SELECT ON public.news TO authenticated,anon;");
+      await tx.unsafe("GRANT USAGE ON SCHEMA auth TO authenticated,anon; GRANT SELECT ON public.news TO authenticated,anon; GRANT UPDATE ON public.news,public.profiles TO authenticated;");
       for (const [id,role,country] of [[admin,"admin",null],[fr,"editor","fr"],[pt,"editor","pt"]]) {
         await tx`INSERT INTO public.profiles(user_id) VALUES(${id})`;
         await tx`INSERT INTO public.user_roles(user_id,role) VALUES(${id},${role})`;
