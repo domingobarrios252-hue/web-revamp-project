@@ -2690,6 +2690,30 @@ export type Database = {
           },
         ]
       }
+      news_translation_revisions: {
+        Row: {
+          archived_at: string
+          id: string
+          news_id: string
+          snapshot: Json
+          translation_id: string
+        }
+        Insert: {
+          archived_at?: string
+          id?: string
+          news_id: string
+          snapshot: Json
+          translation_id: string
+        }
+        Update: {
+          archived_at?: string
+          id?: string
+          news_id?: string
+          snapshot?: Json
+          translation_id?: string
+        }
+        Relationships: []
+      }
       news_translations: {
         Row: {
           approved_at: string | null
@@ -2704,6 +2728,7 @@ export type Database = {
           seo_description: string | null
           seo_title: string | null
           source_hash: string | null
+          source_snapshot: Json | null
           status: string
           subtitle: string | null
           title: string
@@ -2723,6 +2748,7 @@ export type Database = {
           seo_description?: string | null
           seo_title?: string | null
           source_hash?: string | null
+          source_snapshot?: Json | null
           status?: string
           subtitle?: string | null
           title?: string
@@ -2742,6 +2768,7 @@ export type Database = {
           seo_description?: string | null
           seo_title?: string | null
           source_hash?: string | null
+          source_snapshot?: Json | null
           status?: string
           subtitle?: string | null
           title?: string
