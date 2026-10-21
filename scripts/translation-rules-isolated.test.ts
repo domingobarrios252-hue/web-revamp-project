@@ -30,6 +30,8 @@ test("translation rules preserve workflows, reject privilege escalation, and rol
       await as(pt);expect((await tx`SELECT * FROM public.news_translations WHERE id=${tr.id}`).length).toBe(0);checks++;
       expect((await tx`UPDATE public.news_translations SET title='Forbidden' WHERE id=${tr.id} RETURNING id`).length).toBe(0);checks++;
       await as(fr);await deny(()=>tx`UPDATE public.news_translations SET news_id=${other.id} WHERE id=${tr.id}`);
+      expect((await tx`DELETE FROM public.news_translations WHERE id=${tr.id} RETURNING id`).length).toBe(0);checks++;
+      await deny(()=>tx`UPDATE public.news_translations SET lang='es' WHERE id=${tr.id}`);
       await deny(()=>tx`UPDATE public.news_translations SET status='approved',approved_by=${fr},approved_at=now() WHERE id=${tr.id}`);
       await as(admin);await tx`UPDATE public.news_translations SET status='approved',approved_by=${admin},approved_at=now() WHERE id=${tr.id}`;
       await as(null);expect((await tx`SELECT title FROM public.news_translations`)[0].title).toBe('English draft');checks++;
@@ -44,6 +46,8 @@ test("translation rules preserve workflows, reject privilege escalation, and rol
       await tx`UPDATE public.profiles SET suspended_at=now() WHERE user_id=${fr}`;
       await as(fr);expect((await tx`SELECT * FROM public.news_translations`).length).toBe(0);checks++;
       await deny(()=>tx`INSERT INTO public.news_translations(news_id) VALUES(${n.id})`);
+      expect((await tx`UPDATE public.news_translations SET title='Suspended' WHERE id=${tr.id} RETURNING id`).length).toBe(0);checks++;
+      expect((await tx`SELECT * FROM public.news_translation_revisions`).length).toBe(0);checks++;
       await tx.unsafe('RESET ROLE');
       await tx.unsafe(readFileSync('.lovable/safeguards/es-en-rules-rollback.sql','utf8'));
       expect((await tx`SELECT title FROM public.news_translations WHERE id=${tr.id}`)[0].title).toBe('Reviewed edit');checks++;

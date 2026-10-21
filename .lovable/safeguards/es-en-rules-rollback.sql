@@ -9,6 +9,8 @@ ALTER POLICY "Editors read translations of editable news" ON public.news_transla
   WHERE ((n.id = news_translations.news_id) AND ((n.created_by = auth.uid()) OR can_edit_country(auth.uid(), n.country_code)))))));
 ALTER POLICY "Editors update translations of editable news" ON public.news_translations USING ((has_role(auth.uid(), 'admin'::app_role) OR (EXISTS ( SELECT 1
    FROM news n
+  WHERE ((n.id = news_translations.news_id) AND ((n.created_by = auth.uid()) OR can_edit_country(auth.uid(), n.country_code))))))) WITH CHECK ((has_role(auth.uid(), 'admin'::app_role) OR (EXISTS ( SELECT 1
+   FROM news n
   WHERE ((n.id = news_translations.news_id) AND ((n.created_by = auth.uid()) OR can_edit_country(auth.uid(), n.country_code)))))));
 ALTER POLICY "Only admins delete translations" ON public.news_translations USING (has_role(auth.uid(), 'admin'::app_role));
 ALTER POLICY "Public reads approved translations of published news" ON public.news_translations USING (((status = 'approved'::text) AND (EXISTS ( SELECT 1
@@ -30,7 +32,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$function$
+$function$;
 
 DROP TRIGGER news_translations_guard_approval ON public.news_translations;
 CREATE TRIGGER news_translations_guard_approval BEFORE UPDATE ON public.news_translations FOR EACH ROW EXECUTE FUNCTION news_translations_guard_approval();
