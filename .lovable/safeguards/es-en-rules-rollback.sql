@@ -30,7 +30,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$function$
+$function$;
 
 DROP TRIGGER news_translations_guard_approval ON public.news_translations;
 CREATE TRIGGER news_translations_guard_approval BEFORE UPDATE ON public.news_translations FOR EACH ROW EXECUTE FUNCTION news_translations_guard_approval();

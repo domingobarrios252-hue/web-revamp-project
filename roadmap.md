@@ -1,5 +1,6 @@
 # Roadmap
 - [x] Internacionalización premium ES/EN: auditoría y plan aprobados
+- [ ] Terminar los bloques ES/EN aprobados y entregar informe, sin publicar ni aprobar los tres borradores
 - [ ] ES/EN bloque 1: verificar compatibilidad y reversión segura antes de reglas compartidas; corregir seguridad y noticias sin publicar
 - [ ] ES/EN bloque 2: navegación común y selector accesible, solo vista previa
 - [ ] ES/EN bloques 3–4: secciones compartidas bilingües sin activar novedades en producción ni cambiar sistemas deportivos
