@@ -19,7 +19,7 @@ export const Route = createFileRoute("/francia_/noticias")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/francia/noticias" }],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/francia/noticias" }, { rel: "alternate", hreflang: "es", href: "https://rollerzone.es/francia/noticias" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/france/news" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/francia/noticias" }],
   }),
   component: FranciaNewsIndex,
 });

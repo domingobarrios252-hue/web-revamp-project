@@ -7,6 +7,7 @@ export const LANGUAGE_PATHS = [
   ["/tv", "/en/rollerzone-tv"], ["/equipo", "/en/team"],
   ["/patrocinadores", "/en/sponsors"], ["/francia", "/en/france"],
   ["/portugal", "/en/portugal"], ["/usa", "/en/usa"],
+  ["/francia/noticias", "/en/france/news"], ["/portugal/noticias", "/en/portugal/news"], ["/usa/noticias", "/en/usa/news"],
 ] as const;
 
 /** Only real equivalents are mapped; untranslated editorial documents retain their URL. */

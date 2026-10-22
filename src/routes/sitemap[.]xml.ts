@@ -22,7 +22,7 @@ interface SitemapEntry {
 }
 
 const STATIC_ENTRIES: SitemapEntry[] = [
-  ...["/en", "/en/news", "/en/events", "/en/results", "/en/specials", "/en/magazine", "/en/team", "/en/sponsors", "/en/france", "/en/portugal", "/en/usa", "/en/rollerzone-tv", "/en/hub/es", "/en/hub/co"].map(path => ({ path, changefreq: "weekly" as const, priority: "0.6" })),
+  ...["/en", "/en/news", "/en/events", "/en/results", "/en/specials", "/en/magazine", "/en/team", "/en/sponsors", "/en/france", "/en/portugal", "/en/usa", "/en/france/news", "/en/portugal/news", "/en/usa/news", "/en/rollerzone-tv", "/en/hub/es", "/en/hub/co"].map(path => ({ path, changefreq: "weekly" as const, priority: "0.6" })),
   { path: "/", changefreq: "daily", priority: "1.0" },
   { path: "/noticias", changefreq: "hourly", priority: "0.9" },
   { path: "/entrevistas", changefreq: "weekly", priority: "0.8" },

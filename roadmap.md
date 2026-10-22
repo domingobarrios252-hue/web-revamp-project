@@ -2,10 +2,10 @@
 - [x] Internacionalización premium ES/EN: auditoría y plan aprobados
 - [ ] Terminar los bloques ES/EN aprobados y entregar informe, sin publicar ni aprobar los tres borradores
 - [x] Retirar «Condiciones de uso» de la sección Páginas legales y navegación pública, preservando documento y consentimiento existente
-- [ ] ES/EN bloque 1: verificar compatibilidad y reversión segura antes de reglas compartidas; corregir seguridad y noticias sin publicar
+- [x] ES/EN bloque 1: seguridad y versiones corregidas; 25 comprobaciones de reglas y reversión aisladas superadas; la migración compartida se aplicó antes de verificar la reversión (incidencia de secuencia documentada)
 - [x] ES/EN bloque 2: páginas principales, selector accesible a 1280/390, preferencia de entrada, noticia y filtros conservados; solo vista previa
-- [ ] ES/EN bloques 3–4: secciones compartidas bilingües sin activar novedades en producción ni cambiar sistemas deportivos
-- [ ] ES/EN bloque 5: SEO, pruebas dirigidas e informe de realizado/pendiente
+- [ ] ES/EN bloques 3–4: páginas principales y noticias territoriales preparadas; falta completar páginas complementarias, contacto y textos fijos secundarios, sin publicar
+- [x] ES/EN bloque 5: SEO de 24 páginas principales comprobado, 27 pruebas dirigidas y revisión 1280/390 superadas; informe entregado con límites de cobertura
 - [x] Transición posterior a ASU26: analizar TV, administración, archivo histórico y sincronización; preparar plan detallado
 - [x] Implementar transición posterior a ASU26: TV compartida, gestor, archivo, conservación; 52 pruebas de permisos y 13 unitarias, flujo temporal autenticado y móvil/ordenador verificados
 - [ ] Publicar transición TV/ASU26 (bloqueado: autorización expresa; estados globales ya aplicados al backend compartido)

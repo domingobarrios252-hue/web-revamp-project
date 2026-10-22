@@ -19,7 +19,7 @@ export const Route = createFileRoute("/portugal/noticias/")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/portugal/noticias" }],
+    links: [{ rel: "canonical", href: "https://rollerzone.es/portugal/noticias" }, { rel: "alternate", hreflang: "es", href: "https://rollerzone.es/portugal/noticias" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/portugal/news" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/portugal/noticias" }],
   }),
   component: PortugalNewsIndex,
 });

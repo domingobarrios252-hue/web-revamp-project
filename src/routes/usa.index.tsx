@@ -99,7 +99,7 @@ export function UsaHome() {
 
           <div className="mt-12 flex flex-wrap gap-3">
             <Link
-              to="/usa/noticias"
+              to={linkLanguage === "en" ? "/en/usa/news" : "/usa/noticias"}
               className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
               {ui('Noticias USA')}

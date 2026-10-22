@@ -1,4 +1,6 @@
 import { useUiText } from "@/lib/i18n/uiText";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { resultHeading } from "@/lib/i18n/resultLabels";
 import type { NormalizedResult } from "@/lib/results/provider";
 import { RESULT_STATE_LABEL } from "@/lib/results/provider";
 import { httpsOnly, type Asu26StreamingConfig } from "@/lib/tv/asu26Streaming";
@@ -77,6 +79,7 @@ export function groupResults(results: NormalizedResult[]): [string, NormalizedRe
 
 export function Asu26Results({ cfg, results, limit, emptyText, pdf }: { cfg: Asu26StreamingConfig; results: NormalizedResult[]; limit?: number; emptyText?: string; pdf?: boolean }) {
   const ui = useUiText();
+  const { lang } = useLanguage();
   const embed = cfg.veloproEnabled ? httpsOnly(cfg.veloproEmbedUrl) : "";
   const all = groupResults(results);
   const groups = limit ? all.slice(0, limit) : all;
@@ -103,7 +106,7 @@ export function Asu26Results({ cfg, results, limit, emptyText, pdf }: { cfg: Asu
             <article key={`${rows[0].scheduleItemId}-${name}`} className="min-w-0 overflow-hidden rounded-2xl bg-surface/70">
               <header className="border-b border-asu-light/30 bg-asu-deep/60 px-4 py-3">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-display min-w-0 text-lg uppercase tracking-wide text-foreground">{name}</h3>
+                  <h3 className="font-display min-w-0 text-lg uppercase tracking-wide text-foreground">{resultHeading(name, lang)}</h3>
                   <RollerzoneMark />
                 </div>
                 <div className="mt-2 flex flex-wrap items-center justify-between gap-2">

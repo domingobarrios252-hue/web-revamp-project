@@ -1,5 +1,6 @@
 import veloproLogo from "@/assets/logo-velopro-tight.png.asset.json";
 import rzLogo from "@/assets/rollerzone-logo.png";
+import { useUiText } from "@/lib/i18n/uiText";
 
 /** Marca ROLLERZONE.ES (esquina superior derecha de cada clasificación). */
 export function RollerzoneMark({ className = "" }: { className?: string }) {
@@ -13,13 +14,14 @@ export function RollerzoneMark({ className = "" }: { className?: string }) {
 
 /** Crédito «Resultados ofrecidos por VeloPro» junto al título de la prueba. */
 export function VeloproCredit({ className = "" }: { className?: string }) {
+  const ui = useUiText();
   return (
     <span className={`inline-flex items-center gap-2 ${className}`}>
       <span className="inline-flex h-7 items-center rounded bg-foreground px-1.5">
         <img src={veloproLogo.url} alt="VeloPro" className="h-5 w-auto max-w-[88px] object-contain" />
       </span>
       <span className="font-condensed text-[10px] font-bold uppercase leading-tight tracking-[1.5px] text-asu-light">
-        Resultados ofrecidos por VeloPro
+        {ui("Resultados ofrecidos por VeloPro")}
       </span>
     </span>
   );

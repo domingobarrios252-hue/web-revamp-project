@@ -150,13 +150,16 @@ import { Route as UsaIndexRouteImport } from './routes/usa.index'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
 import { Route as EnEventsIndexRouteImport } from './routes/en.events.index'
+import { Route as EnFranceNewsRouteImport } from './routes/en.france_.news'
 import { Route as EnHubCountryRouteImport } from './routes/en.hub.$country'
 import { Route as EnMagazineIndexRouteImport } from './routes/en.magazine.index'
 import { Route as EnNewsIndexRouteImport } from './routes/en.news.index'
 import { Route as EnNewsSlugRouteImport } from './routes/en.news.$slug'
+import { Route as EnPortugalNewsRouteImport } from './routes/en.portugal_.news'
 import { Route as EnResultsIndexRouteImport } from './routes/en.results.index'
 import { Route as EnResultsEventoRouteImport } from './routes/en.results.$evento'
 import { Route as EnSpecialsIndexRouteImport } from './routes/en.specials.index'
+import { Route as EnUsaNewsRouteImport } from './routes/en.usa_.news'
 import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
 import { Route as FranciaEntrevistasSlugRouteImport } from './routes/francia_.entrevistas_.$slug'
@@ -927,6 +930,11 @@ const EnEventsIndexRoute = EnEventsIndexRouteImport.update({
   path: '/en/events/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnFranceNewsRoute = EnFranceNewsRouteImport.update({
+  id: '/en/france_/news',
+  path: '/en/france/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EnHubCountryRoute = EnHubCountryRouteImport.update({
   id: '/en/hub/$country',
   path: '/en/hub/$country',
@@ -947,6 +955,11 @@ const EnNewsSlugRoute = EnNewsSlugRouteImport.update({
   path: '/en/news/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnPortugalNewsRoute = EnPortugalNewsRouteImport.update({
+  id: '/en/portugal_/news',
+  path: '/en/portugal/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EnResultsIndexRoute = EnResultsIndexRouteImport.update({
   id: '/en/results/',
   path: '/en/results/',
@@ -960,6 +973,11 @@ const EnResultsEventoRoute = EnResultsEventoRouteImport.update({
 const EnSpecialsIndexRoute = EnSpecialsIndexRouteImport.update({
   id: '/en/specials/',
   path: '/en/specials/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnUsaNewsRoute = EnUsaNewsRouteImport.update({
+  id: '/en/usa_/news',
+  path: '/en/usa/news',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EspecialesSlugIndexRoute = EspecialesSlugIndexRouteImport.update({
@@ -1389,9 +1407,12 @@ export interface FileRoutesByFullPath {
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/france/news': typeof EnFranceNewsRoute
   '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
+  '/en/portugal/news': typeof EnPortugalNewsRoute
   '/en/results/$evento': typeof EnResultsEventoRoute
+  '/en/usa/news': typeof EnUsaNewsRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
@@ -1584,9 +1605,12 @@ export interface FileRoutesByTo {
   '/usa': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/france/news': typeof EnFranceNewsRoute
   '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
+  '/en/portugal/news': typeof EnPortugalNewsRoute
   '/en/results/$evento': typeof EnResultsEventoRoute
+  '/en/usa/news': typeof EnUsaNewsRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
@@ -1783,9 +1807,12 @@ export interface FileRoutesById {
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/france_/news': typeof EnFranceNewsRoute
   '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
+  '/en/portugal_/news': typeof EnPortugalNewsRoute
   '/en/results/$evento': typeof EnResultsEventoRoute
+  '/en/usa_/news': typeof EnUsaNewsRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia_/entrevistas_/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia_/noticias_/$slug': typeof FranciaNoticiasSlugRoute
@@ -1989,9 +2016,12 @@ export interface FileRouteTypes {
     | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/france/news'
     | '/en/hub/$country'
     | '/en/news/$slug'
+    | '/en/portugal/news'
     | '/en/results/$evento'
+    | '/en/usa/news'
     | '/especiales/$slug/$piece'
     | '/francia/entrevistas/$slug'
     | '/francia/noticias/$slug'
@@ -2184,9 +2214,12 @@ export interface FileRouteTypes {
     | '/usa'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/france/news'
     | '/en/hub/$country'
     | '/en/news/$slug'
+    | '/en/portugal/news'
     | '/en/results/$evento'
+    | '/en/usa/news'
     | '/especiales/$slug/$piece'
     | '/francia/entrevistas/$slug'
     | '/francia/noticias/$slug'
@@ -2382,9 +2415,12 @@ export interface FileRouteTypes {
     | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/france_/news'
     | '/en/hub/$country'
     | '/en/news/$slug'
+    | '/en/portugal_/news'
     | '/en/results/$evento'
+    | '/en/usa_/news'
     | '/especiales/$slug/$piece'
     | '/francia_/entrevistas_/$slug'
     | '/francia_/noticias_/$slug'
@@ -2519,9 +2555,12 @@ export interface RootRouteChildren {
   SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
+  EnFranceNewsRoute: typeof EnFranceNewsRoute
   EnHubCountryRoute: typeof EnHubCountryRoute
   EnNewsSlugRoute: typeof EnNewsSlugRoute
+  EnPortugalNewsRoute: typeof EnPortugalNewsRoute
   EnResultsEventoRoute: typeof EnResultsEventoRoute
+  EnUsaNewsRoute: typeof EnUsaNewsRoute
   FranciaEntrevistasSlugRoute: typeof FranciaEntrevistasSlugRoute
   FranciaNoticiasSlugRoute: typeof FranciaNoticiasSlugRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
@@ -3526,6 +3565,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnEventsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/en/france_/news': {
+      id: '/en/france_/news'
+      path: '/en/france/news'
+      fullPath: '/en/france/news'
+      preLoaderRoute: typeof EnFranceNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/en/hub/$country': {
       id: '/en/hub/$country'
       path: '/en/hub/$country'
@@ -3554,6 +3600,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnNewsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/en/portugal_/news': {
+      id: '/en/portugal_/news'
+      path: '/en/portugal/news'
+      fullPath: '/en/portugal/news'
+      preLoaderRoute: typeof EnPortugalNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/en/results/': {
       id: '/en/results/'
       path: '/en/results'
@@ -3573,6 +3626,13 @@ declare module '@tanstack/react-router' {
       path: '/en/specials'
       fullPath: '/en/specials/'
       preLoaderRoute: typeof EnSpecialsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/usa_/news': {
+      id: '/en/usa_/news'
+      path: '/en/usa/news'
+      fullPath: '/en/usa/news'
+      preLoaderRoute: typeof EnUsaNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/especiales/$slug/': {
@@ -4427,9 +4487,12 @@ const rootRouteChildren: RootRouteChildren = {
   SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
+  EnFranceNewsRoute: EnFranceNewsRoute,
   EnHubCountryRoute: EnHubCountryRoute,
   EnNewsSlugRoute: EnNewsSlugRoute,
+  EnPortugalNewsRoute: EnPortugalNewsRoute,
   EnResultsEventoRoute: EnResultsEventoRoute,
+  EnUsaNewsRoute: EnUsaNewsRoute,
   FranciaEntrevistasSlugRoute: FranciaEntrevistasSlugRoute,
   FranciaNoticiasSlugRoute: FranciaNoticiasSlugRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,

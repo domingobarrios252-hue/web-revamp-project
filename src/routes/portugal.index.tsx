@@ -96,7 +96,7 @@ export function PortugalHome() {
 
           <div className="mt-12 flex flex-wrap gap-3">
             <Link
-              to="/portugal/noticias"
+              to={linkLanguage === "en" ? "/en/portugal/news" : "/portugal/noticias"}
               className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
               {ui('Noticias Portugal')}
@@ -108,7 +108,7 @@ export function PortugalHome() {
               {ui('Entrevistas Portugal')}
             </Link>
             <Link
-              to="/eventos"
+              to={linkLanguage === "en" ? "/en/events" : "/eventos"}
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
               {ui('Eventos y competiciones')}
