@@ -12,6 +12,9 @@ mock.module("react", () => ({
   useState: (value: unknown) => [value, () => {}],
   useEffect: (effect: () => unknown) => { effect(); },
 }));
+mock.module("../src/lib/i18n/LanguageProvider", () => ({
+  useLanguage: () => ({ lang: "es", t: (key: string) => key }),
+}));
 mock.module("../src/integrations/supabase/client", () => ({
   supabase: { from: (table: string) => { calls.push(["from", table]); return query; } },
 }));

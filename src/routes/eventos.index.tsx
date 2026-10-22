@@ -61,19 +61,19 @@ export const Route = createFileRoute("/eventos/")({
   component: EventosPage,
 });
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, lang: "es" | "en" = "es") {
   if (!d) return "";
-  return new Date(d + "T00:00:00").toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" });
+  return new Date(d + "T00:00:00").toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", { day: "2-digit", month: "long", year: "numeric" });
 }
 
-function formatRange(start: string, end: string | null) {
-  if (!end || end === start) return formatDate(start);
-  return `${formatDate(start)} → ${formatDate(end)}`;
+function formatRange(start: string, end: string | null, lang: "es" | "en" = "es") {
+  if (!end || end === start) return formatDate(start, lang);
+  return `${formatDate(start, lang)} → ${formatDate(end, lang)}`;
 }
 
 export function EventosPage() {
   const ui = useUiText();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [events, setEvents] = useState<EventItem[] | null>(null);
   const [scope, setScope] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
@@ -163,7 +163,7 @@ export function EventosPage() {
             </FilterSelect>
             <FilterSelect label={ui("Mes")} value={month} onChange={setMonth}>
               <option value="all">{ui('Todos')}</option>
-              {MONTHS.map((m, i) => <option key={m} value={String(i)}>{m}</option>)}
+              {MONTHS.map((m, i) => <option key={m} value={String(i)}>{lang === "en" ? new Date(2026, i, 1).toLocaleDateString("en-GB", { month: "long" }) : m}</option>)}
             </FilterSelect>
           </div>
         </div>
@@ -270,9 +270,10 @@ function Section({ title, items, empty, dim }: { title: string; items: EventItem
 
 function EventCard({ event }: { event: EventItem }) {
   const ui = useUiText();
+  const { lang } = useLanguage();
   const start = new Date(event.start_date + "T00:00:00");
   const day = start.toLocaleDateString("es-ES", { day: "2-digit" });
-  const month = start.toLocaleDateString("es-ES", { month: "short" }).replace(".", "");
+  const month = start.toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", { month: "short" }).replace(".", "");
   const year = start.getFullYear();
 
   return (
@@ -331,7 +332,7 @@ function EventCard({ event }: { event: EventItem }) {
         </Link>
 
         <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" aria-hidden="true" />{formatRange(event.start_date, event.end_date)}</div>
+          <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5" aria-hidden="true" />{formatRange(event.start_date, event.end_date, lang)}</div>
           {event.location && <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" aria-hidden="true" />{event.location}</div>}
           {event.organizer && <div className="flex items-center gap-2"><Users className="h-3.5 w-3.5" aria-hidden="true" />{event.organizer}</div>}
         </div>
@@ -350,14 +351,14 @@ function EventCard({ event }: { event: EventItem }) {
 
         <div className="mt-auto flex flex-wrap items-center gap-3 pt-4">
           <Link to="/eventos/$slug" params={{ slug: event.slug }} className="font-condensed inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-gold hover:text-gold-dark">
-            Ver detalle →
+            {ui("Ver detalle")} →
           </Link>
           {event.website_url && <ExternalLinkBtn href={event.website_url} icon={<Globe className="h-3.5 w-3.5" />}>Web</ExternalLinkBtn>}
           {event.instagram_url && <ExternalLinkBtn href={event.instagram_url} icon={<Instagram className="h-3.5 w-3.5" />}>Instagram</ExternalLinkBtn>}
           {event.facebook_url && <ExternalLinkBtn href={event.facebook_url} icon={<Facebook className="h-3.5 w-3.5" />}>Facebook</ExternalLinkBtn>}
           {event.registration_url && (
             <a href={event.registration_url} target="_blank" rel="noopener noreferrer" aria-label="Inscripción al evento" className="font-condensed ml-auto inline-flex items-center gap-1 bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-              Inscripción <ExternalLink className="h-3 w-3" aria-hidden="true" />
+              {lang === "en" ? "Registration" : "Inscripción"} <ExternalLink className="h-3 w-3" aria-hidden="true" />
             </a>
           )}
         </div>
