@@ -1,3 +1,6 @@
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizedPath } from "@/lib/i18n/paths";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, Search, LayoutDashboard, LogOut } from "lucide-react";
@@ -43,6 +46,8 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export function SiteHeader() {
+  const { lang, t } = useLanguage();
+  const labels: Record<string, string> = { Inicio: t("nav.home"), Actualidad: t("nav.news"), España: lang === "en" ? "Spain" : "España", Colombia: "Colombia", Francia: lang === "en" ? "France" : "Francia", "Salón de la Fama": lang === "en" ? "Hall of Fame" : "Salón de la Fama", Eventos: t("nav.events"), Resultados: t("nav.results"), Revista: t("nav.magazine") };
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -71,7 +76,7 @@ export function SiteHeader() {
     e.preventDefault();
     setSearchOpen(false);
     setMobileOpen(false);
-    navigate({ to: "/noticias" });
+    navigate({ to: lang === "en" ? "/en/news" : "/noticias" });
     setSearchValue("");
   };
 
@@ -94,25 +99,25 @@ export function SiteHeader() {
     if ("params" in item) {
       return (
         <Link
-          to={item.to}
+          to={localizedPath(item.to, lang)}
           params={item.params}
           className={NAV_LINK}
           activeProps={{ className: NAV_ACTIVE }}
           onClick={onClick}
         >
-          {item.label}
+          {labels[item.label] ?? item.label}
         </Link>
       );
     }
     return (
       <Link
-        to={item.to}
+        to={localizedPath(item.to, lang)}
         className={NAV_LINK}
         activeProps={{ className: NAV_ACTIVE }}
         activeOptions={item.to === "/" ? { exact: true } : undefined}
         onClick={onClick}
       >
-        {item.label}
+        {labels[item.label] ?? item.label}
       </Link>
     );
   };
@@ -121,7 +126,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-[#2A2A2A] bg-[#1A1A1A]/85 backdrop-blur-md supports-[backdrop-filter]:bg-[#1A1A1A]/70">
       <nav className="flex h-14 items-center justify-between px-4 md:px-6">
         <Link
-          to="/"
+          to={localizedPath("/", lang)}
           className="group flex flex-col justify-center leading-none transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40 rounded-sm"
           aria-label="RollerZone — Inicio"
         >
@@ -129,36 +134,36 @@ export function SiteHeader() {
             ROLLERZONE<span className="text-[#D4A017]">.ES</span>
           </span>
           <span className="font-condensed mt-0.5 text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.18em] text-[#B0B0B0]">
-            Revista de patinaje de velocidad
+            {lang === "en" ? "Speed skating magazine" : "Revista de patinaje de velocidad"}
           </span>
           <span className="font-ui mt-0.5 text-[9px] md:text-[10px] italic leading-tight text-[#8A8A8A]">
-            Donde la velocidad se convierte en historia
+            {lang === "en" ? "Where speed becomes history" : "Donde la velocidad se convierte en historia"}
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-2 lg:gap-4 xl:flex">
+        <ul className="hidden items-center gap-2 lg:gap-4 min-[1680px]:flex">
           {visibleNav.map((item) => (
-            <li key={item.label}>{renderNavLink(item)}</li>
+            <li key={labels[item.label] ?? item.label}>{renderNavLink(item)}</li>
           ))}
         </ul>
 
         {/* Right actions */}
         <div className="flex items-center gap-2">
           <LanguageToggle />
-          <button
+          <Button variant="ghost"
             onClick={() => setSearchOpen((v) => !v)}
-            aria-label="Buscar"
+            aria-label={t("common.search")}
             className="inline-flex h-11 w-11 items-center justify-center rounded-[6px] border border-transparent text-[#A0A0A0] hover:text-[#D4A017] hover:border-[#333] transition-colors"
           >
             <Search className="h-5 w-5" />
-          </button>
+          </Button>
 
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="hidden xl:inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40"
-                aria-label="Cuenta de usuario"
+                className="hidden min-[1680px]:inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40"
+                aria-label={lang === "en" ? "User account" : "Cuenta de usuario"}
               >
                 <Avatar className="h-9 w-9 border border-[#333]">
                   {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName} /> : null}
@@ -179,7 +184,7 @@ export function SiteHeader() {
                 )}
                 <DropdownMenuItem asChild>
                   <Link to="/dashboard" className="cursor-pointer">
-                    <LayoutDashboard className="mr-2 h-4 w-4" /> Mi panel editorial
+                    <LayoutDashboard className="mr-2 h-4 w-4" /> {lang === "en" ? "My editorial dashboard" : "Mi panel editorial"}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -190,19 +195,19 @@ export function SiteHeader() {
                   }}
                   className="cursor-pointer text-[#F5F5F5]"
                 >
-                  <LogOut className="mr-2 h-4 w-4" /> Salir
+                  <LogOut className="mr-2 h-4 w-4" /> {lang === "en" ? "Sign out" : "Salir"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : null}
 
-          <button
-            className="xl:hidden inline-flex h-11 w-11 items-center justify-center text-[#F5F5F5]"
+          <Button variant="ghost"
+            className="min-[1680px]:hidden inline-flex h-11 w-11 items-center justify-center text-[#F5F5F5]"
             onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Menú"
+            aria-label={t("nav.menu")}
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          </Button>
         </div>
       </nav>
 
@@ -212,12 +217,12 @@ export function SiteHeader() {
       {/* Mobile slide-in */}
       {mobileOpen && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/60 xl:hidden" onClick={() => setMobileOpen(false)} aria-hidden />
+          <div className="fixed inset-0 z-40 bg-black/60 min-[1680px]:hidden" onClick={() => setMobileOpen(false)} aria-hidden />
           <aside
-            className="fixed right-0 top-0 z-50 h-dvh w-[300px] max-w-[85vw] border-l border-[#333] shadow-xl xl:hidden overflow-y-auto"
-            style={{ backgroundColor: "#1A1A1A" }}
+            className="fixed right-0 top-0 z-50 h-dvh w-[300px] max-w-[85vw] border-l border-[#333] shadow-xl bg-background min-[1680px]:hidden overflow-y-auto"
+            
             role="dialog"
-            aria-label="Menú"
+            aria-label={t("nav.menu")}
           >
             <div className="flex h-14 items-center justify-between border-b border-[#333] px-4">
               <img
@@ -227,29 +232,29 @@ export function SiteHeader() {
                 decoding="async"
                 className="h-7 w-auto"
               />
-              <button onClick={() => setMobileOpen(false)} aria-label="Cerrar" className="text-[#F5F5F5]">
+              <Button variant="ghost" onClick={() => setMobileOpen(false)} aria-label={t("common.close")} className="text-[#F5F5F5]">
                 <X className="h-6 w-6" />
-              </button>
+              </Button>
             </div>
             <div className="flex flex-col gap-1 px-4 py-4">
               {visibleNav.map((item) => (
-                <div key={item.label} className="border-b border-[#333]">
+                <div key={labels[item.label] ?? item.label} className="border-b border-[#333]">
                   {"params" in item ? (
                     <Link
-                      to={item.to}
+                      to={localizedPath(item.to, lang)}
                       params={item.params}
                       onClick={() => setMobileOpen(false)}
                       className="font-ui block py-3 text-base font-semibold text-[#F5F5F5] hover:text-[#D4A017]"
                     >
-                      {item.label}
+                      {labels[item.label] ?? item.label}
                     </Link>
                   ) : (
                     <Link
-                      to={item.to}
+                      to={localizedPath(item.to, lang)}
                       onClick={() => setMobileOpen(false)}
                       className="font-ui block py-3 text-base font-semibold text-[#F5F5F5] hover:text-[#D4A017]"
                     >
-                      {item.label}
+                      {labels[item.label] ?? item.label}
                     </Link>
                   )}
                 </div>
@@ -276,7 +281,7 @@ export function SiteHeader() {
                         Admin
                       </Link>
                     )}
-                    <button
+                    <Button variant="ghost"
                       onClick={async () => {
                         await signOut();
                         setMobileOpen(false);
@@ -285,7 +290,7 @@ export function SiteHeader() {
                       className="font-ui rounded-[6px] border border-[#333] px-3 py-2 text-xs font-semibold tracking-wide text-[#F5F5F5]"
                     >
                       Cerrar sesión
-                    </button>
+                    </Button>
                   </>
                 ) : null}
               </div>

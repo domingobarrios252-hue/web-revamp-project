@@ -1,8 +1,9 @@
 # Roadmap
 - [x] Internacionalización premium ES/EN: auditoría y plan aprobados
 - [ ] Terminar los bloques ES/EN aprobados y entregar informe, sin publicar ni aprobar los tres borradores
+- [x] Retirar «Condiciones de uso» de la sección Páginas legales y navegación pública, preservando documento y consentimiento existente
 - [ ] ES/EN bloque 1: verificar compatibilidad y reversión segura antes de reglas compartidas; corregir seguridad y noticias sin publicar
-- [ ] ES/EN bloque 2: navegación común y selector accesible, solo vista previa
+- [x] ES/EN bloque 2: páginas principales, selector accesible a 1280/390, preferencia de entrada, noticia y filtros conservados; solo vista previa
 - [ ] ES/EN bloques 3–4: secciones compartidas bilingües sin activar novedades en producción ni cambiar sistemas deportivos
 - [ ] ES/EN bloque 5: SEO, pruebas dirigidas e informe de realizado/pendiente
 - [x] Transición posterior a ASU26: analizar TV, administración, archivo histórico y sincronización; preparar plan detallado
@@ -27,5 +28,5 @@
 - [ ] Descarga pública PDF en resultados ASU26 y archivo histórico (pendiente de autorización)
 
 - [x] Piloto EN: Marine, Chevi y Ecuador guardados como borradores sin aprobación; fidelidad revisada, español conservado, selector/SEO y presentación probados con límites explícitos; textos completos e informe entregados
-- [ ] Publicación bilingüe (bloqueado: revisión y autorización del usuario; incidencias de seguridad, selector a 1280 px, generación Admin y SEO pendientes de corrección autorizada)
+- [ ] Publicación bilingüe (bloqueado: revisión y autorización del usuario; tres borradores sin aprobar; revisión completa Admin no ejecutada sin usar su cuenta)
 - [ ] Certificar afirmaciones deportivas del piloto (bloqueado: fuente federativa para homologación del récord, 4:25.880 del relevo Ecuador y antecedentes 2024/2025; no cambiar el original ni inventar datos)

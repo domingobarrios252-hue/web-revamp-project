@@ -10,7 +10,10 @@ import {
   translateNews,
 } from "@/lib/news/translations.functions";
 import { sourceHash, type NewsTranslation } from "@/lib/news/translations";
-import { blocksPlainText, parseBlocks, type NewsBlock } from "@/lib/newsBlocks";
+import { cleanBlocks, parseBlocks, type NewsBlock } from "@/lib/newsBlocks";
+
+import { extractTranslationFields, restoreTranslationFields } from "@/lib/news/translationFields";
+import { Button } from "@/components/ui/button";
 
 const inputCls =
   "w-full border border-border bg-background px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold";
@@ -49,8 +52,8 @@ export function TranslationPanel({
       sourceHash({
         title: source.title,
         excerpt: source.excerpt,
-        content: "",
-        content_blocks: source.blocks,
+        content: cleanBlocks(source.blocks).filter(b => b.type === "text" || b.type === "heading").map(b => (b as { text: string }).text).join("\n\n") || null,
+        content_blocks: cleanBlocks(source.blocks),
       }),
     [source.title, source.excerpt, source.blocks],
   );
@@ -77,7 +80,7 @@ export function TranslationPanel({
     });
   }, [load]);
 
-  const outdated = Boolean(tr?.source_hash && tr.source_hash !== currentHash);
+  const outdated = Boolean(tr && (!tr.source_hash || tr.source_hash !== currentHash));
 
   const generate = async () => {
     setBusy("translate");
@@ -99,6 +102,7 @@ export function TranslationPanel({
       const { translation } = await runSave({
         data: {
           newsId,
+          sourceHash: currentHash,
           title: tr.title,
           subtitle: tr.subtitle,
           excerpt: tr.excerpt,
@@ -155,7 +159,7 @@ export function TranslationPanel({
             )}
           </p>
 
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => void generate()}
             disabled={busy !== null}
@@ -167,7 +171,7 @@ export function TranslationPanel({
               <RefreshCw className="h-4 w-4" />
             )}
             {tr ? "Regenerar con IA" : "Generar versión en inglés"}
-          </button>
+          </Button>
 
           {tr && (
             <>
@@ -187,23 +191,27 @@ export function TranslationPanel({
                 <span className={labelCls}>Cuerpo (EN, texto plano)</span>
                 <textarea rows={8} value={tr.content ?? ""} onChange={(e) => upd({ content: e.target.value })} className={inputCls} />
               </label>
-              {parseBlocks(tr.content_blocks).length > 0 && (
-                <p className="text-[11px] text-muted-foreground">
-                  Los bloques del artículo también se traducen. Vista previa del texto:{" "}
-                  {blocksPlainText(parseBlocks(tr.content_blocks)).slice(0, 140)}…
-                </p>
-              )}
+              {extractTranslationFields(parseBlocks(tr.content_blocks)).map(field => (
+                <label key={field.key} className="block">
+                  <span className={labelCls}>Bloque EN · {field.key}</span>
+                  <textarea rows={3} value={field.value} className={inputCls} onChange={e => {
+                    const blocks = parseBlocks(tr.content_blocks);
+                    const fields = extractTranslationFields(blocks).map(f => f.key === field.key ? { ...f, value: e.target.value } : f);
+                    upd({ content_blocks: restoreTranslationFields(blocks, fields) as unknown as NewsTranslation["content_blocks"] });
+                  }} />
+                </label>
+              ))}
               <label className="block">
                 <span className={labelCls}>Título SEO (EN, máx. 60)</span>
-                <input maxLength={120} value={tr.seo_title ?? ""} onChange={(e) => upd({ seo_title: e.target.value })} className={inputCls} />
+                <input maxLength={60} value={tr.seo_title ?? ""} onChange={(e) => upd({ seo_title: e.target.value })} className={inputCls} />
               </label>
               <label className="block">
                 <span className={labelCls}>Descripción SEO (EN, máx. 155)</span>
-                <textarea rows={2} maxLength={300} value={tr.seo_description ?? ""} onChange={(e) => upd({ seo_description: e.target.value })} className={inputCls} />
+                <textarea rows={2} maxLength={155} value={tr.seo_description ?? ""} onChange={(e) => upd({ seo_description: e.target.value })} className={inputCls} />
               </label>
 
               <div className="flex flex-wrap gap-2">
-                <button
+                <Button variant="outline"
                   type="button"
                   onClick={() => void save()}
                   disabled={busy !== null}
@@ -211,27 +219,27 @@ export function TranslationPanel({
                 >
                   {busy === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Guardar
-                </button>
+                </Button>
                 {isAdmin && tr.status !== "approved" && (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     onClick={() => void approve(true)}
-                    disabled={busy !== null}
+                    disabled={busy !== null || outdated}
                     className="font-condensed inline-flex min-h-11 flex-1 items-center justify-center gap-2 bg-gold px-3 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark disabled:opacity-50"
                   >
                     {busy === "approve" ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                     Aprobar
-                  </button>
+                  </Button>
                 )}
                 {isAdmin && tr.status === "approved" && (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     onClick={() => void approve(false)}
                     disabled={busy !== null}
                     className="font-condensed inline-flex min-h-11 flex-1 items-center justify-center gap-2 border border-border px-3 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold disabled:opacity-50"
                   >
                     Retirar
-                  </button>
+                  </Button>
                 )}
               </div>
               {!isAdmin && (

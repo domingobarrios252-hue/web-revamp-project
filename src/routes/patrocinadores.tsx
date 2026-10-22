@@ -1,3 +1,4 @@
+import { useUiText } from "@/lib/i18n/uiText";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, ExternalLink } from "lucide-react";
@@ -24,12 +25,13 @@ export const Route = createFileRoute("/patrocinadores")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/patrocinadores" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/patrocinadores" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/sponsors" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/patrocinadores" }, { rel: "canonical", href: "https://rollerzone.es/patrocinadores" }],
   }),
   component: SponsorsPage,
 });
 
 function PatrocinadorCard({ s }: { s: Sponsor }) {
+  const ui = useUiText();
   const Wrapper = s.website_url
     ? ({ children }: { children: React.ReactNode }) => (
         <a href={s.website_url!} target="_blank" rel="noopener noreferrer" className="group block">
@@ -61,7 +63,8 @@ function PatrocinadorCard({ s }: { s: Sponsor }) {
   );
 }
 
-function SponsorsPage() {
+export function SponsorsPage() {
+  const ui = useUiText();
   const [sponsors, setSponsors] = useState<Sponsor[] | null>(null);
 
   useEffect(() => {
@@ -86,21 +89,21 @@ function SponsorsPage() {
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <div className="mb-8 flex items-center gap-3 border-b border-border pb-4">
         <Heart className="h-7 w-7 text-gold" />
-        <h1 className="font-display text-3xl tracking-widest">PATROCINADORES</h1>
+        <h1 className="font-display text-3xl tracking-widest">{ui('PATROCINADORES')}</h1>
       </div>
       <p className="mb-8 max-w-2xl text-sm text-muted-foreground">
         Estas son las marcas que apoyan a RollerZone y al patinaje de velocidad. Logos en formato 500×200 px.
       </p>
 
       {sponsors === null ? (
-        <p className="text-muted-foreground">Cargando…</p>
+        <p className="text-muted-foreground">{ui('Cargando…')}</p>
       ) : sponsors.length === 0 ? (
-        <p className="text-muted-foreground">Aún no hay patrocinadores publicados.</p>
+        <p className="text-muted-foreground">{ui('Aún no hay patrocinadores publicados.')}</p>
       ) : (
         <>
           {principal.length > 0 && (
             <div className="mb-10">
-              <h2 className="font-display mb-4 text-lg tracking-widest text-gold">Principales</h2>
+              <h2 className="font-display mb-4 text-lg tracking-widest text-gold">{ui('Principales')}</h2>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {principal.map((s) => (<PatrocinadorCard key={s.id} s={s} />))}
               </div>
@@ -108,7 +111,7 @@ function SponsorsPage() {
           )}
           {standard.length > 0 && (
             <div>
-              {principal.length > 0 && <h2 className="font-display mb-4 text-lg tracking-widest text-gold">Colaboradores</h2>}
+              {principal.length > 0 && <h2 className="font-display mb-4 text-lg tracking-widest text-gold">{ui('Colaboradores')}</h2>}
               <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {standard.map((s) => (<PatrocinadorCard key={s.id} s={s} />))}
               </div>

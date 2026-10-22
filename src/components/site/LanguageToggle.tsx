@@ -1,21 +1,18 @@
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { localizedPath } from "@/lib/i18n/paths";
+import { Button } from "@/components/ui/button";
 
 export function LanguageToggle({ className = "" }: { className?: string }) {
   const { lang, setLang } = useLanguage();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const search = useRouterState({ select: (s) => s.location.search });
 
   const choose = (target: "es" | "en") => {
     setLang(target);
-    // En un artículo, el selector lleva al mismo artículo en el otro idioma.
-    const esMatch = pathname.match(/^\/noticias\/articulo\/([^/]+)$/);
-    const enMatch = pathname.match(/^\/en\/news\/([^/]+)$/);
-    if (target === "en" && esMatch) {
-      void navigate({ to: "/en/news/$slug", params: { slug: esMatch[1] } });
-    } else if (target === "es" && enMatch) {
-      void navigate({ to: "/noticias/articulo/$slug", params: { slug: enMatch[1] } });
-    }
+    const next = localizedPath(pathname, target);
+    void navigate({ to: next === pathname && target !== lang ? (target === "en" ? "/en" : "/") : next, search });
   };
 
   return (
@@ -24,7 +21,7 @@ export function LanguageToggle({ className = "" }: { className?: string }) {
       aria-label="Idioma / Language"
       className={`font-ui inline-flex items-center border border-border text-[11px] font-semibold uppercase tracking-widest ${className}`}
     >
-      <button
+      <Button variant="ghost" size="sm"
         type="button"
         onClick={() => choose("es")}
         aria-pressed={lang === "es"}
@@ -33,9 +30,9 @@ export function LanguageToggle({ className = "" }: { className?: string }) {
         }`}
       >
         ES
-      </button>
+      </Button>
       <span aria-hidden className="h-4 w-px bg-border" />
-      <button
+      <Button variant="ghost" size="sm"
         type="button"
         onClick={() => choose("en")}
         aria-pressed={lang === "en"}
@@ -44,7 +41,7 @@ export function LanguageToggle({ className = "" }: { className?: string }) {
         }`}
       >
         EN
-      </button>
+      </Button>
     </div>
   );
 }

@@ -17,6 +17,7 @@ export type NewsTranslation = {
   seo_description: string | null;
   status: TranslationStatus;
   source_hash: string | null;
+  source_snapshot?: Json | null;
   translated_at: string | null;
   approved_by: string | null;
   approved_at: string | null;
@@ -43,4 +44,16 @@ export function sourceHash(input: {
 
 export function translationBlocks(t: NewsTranslation | null | undefined): NewsBlock[] {
   return parseBlocks(t?.content_blocks);
+}
+
+export function sourceSnapshot(input: { title: string; excerpt?: string | null; content?: string | null; content_blocks?: unknown }) {
+  return { title: input.title, excerpt: input.excerpt ?? null, content: input.content ?? null, content_blocks: input.content_blocks ?? [] };
+}
+function stable(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stable).join(",")}]`;
+  if (value && typeof value === "object") return `{${Object.entries(value).sort(([a],[b]) => a.localeCompare(b)).map(([k,v]) => `${JSON.stringify(k)}:${stable(v)}`).join(",")}}`;
+  return JSON.stringify(value) ?? "null";
+}
+export function translationIsCurrent(t: NewsTranslation, source: Parameters<typeof sourceSnapshot>[0]) {
+  return Boolean(t.source_hash) && (t.source_snapshot ? stable(t.source_snapshot) === stable(sourceSnapshot(source)) : t.source_hash === sourceHash(source));
 }

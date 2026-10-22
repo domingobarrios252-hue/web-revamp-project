@@ -1,3 +1,5 @@
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { useUiText } from "@/lib/i18n/uiText";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { BookOpen, Calendar, Newspaper, Trophy } from "lucide-react";
@@ -61,6 +63,8 @@ type MagazineRow = {
 };
 
 export function HubDashboard({ country }: { country: string }) {
+  const ui = useUiText();
+  const { lang } = useLanguage();
   const { hub } = useCountryHub(country);
   const [news, setNews] = useState<NewsRow[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
@@ -192,7 +196,7 @@ export function HubDashboard({ country }: { country: string }) {
           {featured && (
             <article>
               <Link
-                to="/noticias/articulo/$slug"
+                to={lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
                 params={{ slug: featured.slug }}
                 className="group block rounded-2xl overflow-hidden bg-[#242424] border border-[#333] transition-all duration-300 hover:border-[#D4A017]/40 hover:shadow-2xl"
               >
@@ -208,14 +212,14 @@ export function HubDashboard({ country }: { country: string }) {
 
                     <div className="absolute top-6 left-6">
                       <span className="px-3 py-1 bg-[#D4A017] text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest rounded-[3px]">
-                        Destacado
+                        {ui('Destacado')}
                       </span>
                     </div>
                   </div>
                 )}
                 <div className="p-6 md:p-10 space-y-4 md:space-y-5">
                   <div className="flex items-center gap-3 text-[10px] font-bold text-[#888] uppercase tracking-widest">
-                    <span>{formatShortDate(featured.published_at, "es")}</span>
+                    <span>{formatShortDate(featured.published_at, lang)}</span>
                     <span className="w-1 h-1 rounded-full bg-[#444]" />
                     <span>{featured.views_count} vistas</span>
                   </div>
@@ -237,10 +241,10 @@ export function HubDashboard({ country }: { country: string }) {
             <section className="space-y-6 md:space-y-8">
               <div className="flex items-center justify-between border-b border-[#333] pb-4">
                 <h3 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-white">
-                  Última hora
+                  {ui('Última hora')}
                 </h3>
                 <Link
-                  to="/noticias"
+                  to={lang === "en" ? "/en/news" : "/noticias"}
                   className="text-[10px] font-bold text-[#D4A017] uppercase tracking-[0.2em] hover:text-white transition-colors"
                 >
                   Ver todo el archivo
@@ -251,7 +255,7 @@ export function HubDashboard({ country }: { country: string }) {
                 {rest.map((n) => (
                   <Link
                     key={n.id}
-                    to="/noticias/articulo/$slug"
+                    to={lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
                     params={{ slug: n.slug }}
                     className="group flex gap-5 cursor-pointer"
                   >
@@ -269,7 +273,7 @@ export function HubDashboard({ country }: { country: string }) {
                     )}
                     <div className="min-w-0 space-y-2">
                       <span className="text-[10px] font-bold text-[#888] uppercase tracking-wider">
-                        {formatShortDate(n.published_at, "es")}
+                        {formatShortDate(n.published_at, lang)}
                       </span>
                       <h4 className="font-display text-sm md:text-base font-bold leading-snug text-white group-hover:text-[#D4A017] transition-colors line-clamp-3">
                         {n.title}
@@ -287,13 +291,13 @@ export function HubDashboard({ country }: { country: string }) {
               <div className="flex items-center justify-between border-b border-[#333] pb-4">
                 <h3 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-white flex items-center gap-3">
                   <Trophy className="h-5 w-5 text-[#D4A017]" />
-                  Resultados recientes
+                  {ui('Resultados recientes')}
                 </h3>
                 <Link
-                  to="/resultados"
+                  to={lang === "en" ? "/en/results" : "/resultados"}
                   className="text-[10px] font-bold text-[#D4A017] uppercase tracking-[0.2em] hover:text-white transition-colors"
                 >
-                  Ver todos
+                  {ui('Ver todos')}
                 </Link>
               </div>
               <div className="overflow-hidden rounded-2xl border border-[#333] bg-[#242424]">
@@ -301,9 +305,9 @@ export function HubDashboard({ country }: { country: string }) {
                   <thead className="bg-[#2E2E2E]">
                     <tr className="text-left text-[10px] uppercase tracking-wider text-[#888]">
                       <th className="px-4 py-3">#</th>
-                      <th className="px-4 py-3">Atleta</th>
-                      <th className="px-4 py-3 hidden md:table-cell">Prueba</th>
-                      <th className="px-4 py-3 text-right">Tiempo</th>
+                      <th className="px-4 py-3">{ui('Atleta')}</th>
+                      <th className="px-4 py-3 hidden md:table-cell">{ui('Prueba')}</th>
+                      <th className="px-4 py-3 text-right">{ui('Tiempo')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -344,13 +348,13 @@ export function HubDashboard({ country }: { country: string }) {
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-xs font-black uppercase tracking-widest text-white flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-[#D4A017]" />
-                  Próximos eventos
+                  {ui('Próximos eventos')}
                 </h3>
                 <Link
-                  to="/eventos"
+                  to={lang === "en" ? "/en/events" : "/eventos"}
                   className="px-2 py-0.5 rounded bg-[#D4A017]/10 text-[#D4A017] text-[9px] font-bold tracking-wider hover:bg-[#D4A017]/20 transition-colors"
                 >
-                  CALENDARIO
+                  {ui('CALENDARIO')}
                 </Link>
               </div>
               <ul className="space-y-5">
@@ -365,7 +369,7 @@ export function HubDashboard({ country }: { country: string }) {
                         {ev.name}
                       </h4>
                       <div className="flex items-center gap-2 mt-2 text-[10px] text-[#888] font-medium uppercase">
-                        <span className="text-[#D4A017]">{formatShortDate(ev.start_date, "es")}</span>
+                        <span className="text-[#D4A017]">{formatShortDate(ev.start_date, lang)}</span>
                         {ev.location && (
                           <>
                             <span className="opacity-30">·</span>
@@ -397,7 +401,7 @@ export function HubDashboard({ country }: { country: string }) {
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1A1A1A] via-[#1A1A1A]/60 to-transparent h-2/3" />
                   <div className="absolute bottom-6 left-6 right-6">
                     <span className="text-[9px] font-black uppercase text-[#D4A017] tracking-[0.25em]">
-                      Perfil destacado
+                      {ui('Perfil destacado')}
                     </span>
                     <h3 className="font-display text-xl md:text-2xl font-black text-white mt-1 group-hover:text-[#D4A017] transition-colors leading-tight">
                       {interview.interviewee_name}
@@ -414,7 +418,7 @@ export function HubDashboard({ country }: { country: string }) {
           {/* Revista digital (Colombia u otros hubs con show_magazine) */}
           {hub?.show_magazine && magazine && (
             <section className="rounded-2xl overflow-hidden border border-[#333] bg-[#242424]">
-              <Link to="/revista" className="block group">
+              <Link to={lang === "en" ? "/en/magazine" : "/revista"} className="block group">
                 <div className="aspect-[3/4] relative overflow-hidden bg-[#0d0d0d]">
                   {(magazine.cover_url || magazine.cover_image_url) && (
                     <img
@@ -426,7 +430,7 @@ export function HubDashboard({ country }: { country: string }) {
                   )}
                   <div className="absolute top-3 left-3">
                     <span className="px-2 py-1 bg-[#D4A017] text-[#1A1A1A] text-[9px] font-black uppercase tracking-widest rounded-[3px]">
-                      Edición digital
+                      {ui('Edición digital')}
                     </span>
                   </div>
                 </div>
@@ -460,7 +464,7 @@ export function HubDashboard({ country }: { country: string }) {
             return (
               <section className="space-y-5">
                 <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#666]">
-                  Accesos rápidos
+                  {ui('Accesos rápidos')}
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
                   {links.map((l, idx) => (

@@ -84,6 +84,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
             .select("title, news!inner(slug, published_at, image_url, news_categories(name))")
             .eq("lang", "en")
             .eq("status", "approved")
+            .not("source_hash", "is", null)
             .gte("news.published_at", since)
             .limit(1000);
 

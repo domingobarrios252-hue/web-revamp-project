@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { ImageCrops } from "@/lib/imageCrops";
 import type { TerritoryCode } from "@/lib/territory/territories";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 
 export type TerritoryNews = {
   id: string;
@@ -29,6 +31,7 @@ export type TerritoryInterview = {
 export type ZoneFilter = { regionId?: string | null; cityId?: string | null };
 
 export function useTerritoryNews(code: TerritoryCode, limit = 24, zone?: ZoneFilter) {
+  const { lang } = useLanguage();
   const regionId = zone?.regionId ?? null;
   const cityId = zone?.cityId ?? null;
   const [items, setItems] = useState<TerritoryNews[]>([]);
@@ -47,13 +50,15 @@ export function useTerritoryNews(code: TerritoryCode, limit = 24, zone?: ZoneFil
       else if (regionId) q = q.eq("zone_region_id", regionId);
       const { data } = await q.order("published_at", { ascending: false }).limit(limit);
       if (cancelled) return;
-      setItems((data as TerritoryNews[]) ?? []);
+      const localized = await localizeNewsCards((data as TerritoryNews[]) ?? [], lang);
+      if (cancelled) return;
+      setItems(localized);
       setLoading(false);
     })();
     return () => {
       cancelled = true;
     };
-  }, [code, limit, regionId, cityId]);
+  }, [code, limit, regionId, cityId, lang]);
 
   return { items, loading };
 }

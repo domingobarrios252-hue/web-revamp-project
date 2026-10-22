@@ -1,3 +1,6 @@
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { useUiText } from "@/lib/i18n/uiText";
+import { localizedPath } from "@/lib/i18n/paths";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Trophy, Award, Flag, Globe2, Handshake } from "lucide-react";
 import type { ReactNode } from "react";
@@ -54,19 +57,21 @@ const TILES: Tile[] = [
 ];
 
 export function UniverseGrid() {
+  const ui = useUiText();
+  const { lang } = useLanguage();
   return (
     <section className="mx-auto max-w-7xl px-5 py-12 md:px-6">
       <SectionHeading
-        kicker="Universo RollerZone"
-        title="Mucho más que"
-        accent="noticias"
+        kicker={ui('Universo RollerZone')}
+        title={ui('Mucho más que')}
+        accent={ui('noticias')}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {TILES.map((t) => (
           <Link
             key={t.title}
-            to={t.to}
+            to={localizedPath(t.to, lang)}
             params={t.params as never}
             className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.35)]"
           >
@@ -74,16 +79,16 @@ export function UniverseGrid() {
               {t.icon}
             </div>
             <div className="font-condensed mb-1 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-              {t.kicker}
+              {ui(t.kicker)}
             </div>
             <h3 className="font-display text-xl uppercase tracking-wider text-foreground md:text-2xl">
-              {t.title}
+              {ui(t.title)}
             </h3>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-              {t.description}
+              {ui(t.description)}
             </p>
             <span className="font-condensed mt-4 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gold transition-transform group-hover:translate-x-1">
-              Explorar <ArrowRight className="h-3.5 w-3.5" />
+              {ui('Explorar')} <ArrowRight className="h-3.5 w-3.5" />
             </span>
           </Link>
         ))}

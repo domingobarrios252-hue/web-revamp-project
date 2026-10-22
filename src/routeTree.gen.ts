@@ -103,6 +103,13 @@ import { Route as DashboardPortugalRouteImport } from './routes/dashboard.portug
 import { Route as EditorFranciaRouteImport } from './routes/editor.francia'
 import { Route as EditorMiamiRouteImport } from './routes/editor.miami'
 import { Route as EditorPortugalRouteImport } from './routes/editor.portugal'
+import { Route as EnIndexRouteImport } from './routes/en.index'
+import { Route as EnFranceRouteImport } from './routes/en.france'
+import { Route as EnPortugalRouteImport } from './routes/en.portugal'
+import { Route as EnRollerzoneTvRouteImport } from './routes/en.rollerzone-tv'
+import { Route as EnSponsorsRouteImport } from './routes/en.sponsors'
+import { Route as EnTeamRouteImport } from './routes/en.team'
+import { Route as EnUsaRouteImport } from './routes/en.usa'
 import { Route as EntrevistasIndexRouteImport } from './routes/entrevistas.index'
 import { Route as EntrevistasSlugRouteImport } from './routes/entrevistas.$slug'
 import { Route as EspanaArchivoRouteImport } from './routes/espana.archivo'
@@ -142,7 +149,14 @@ import { Route as SobreSlugRouteImport } from './routes/sobre.$slug'
 import { Route as UsaIndexRouteImport } from './routes/usa.index'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
+import { Route as EnEventsIndexRouteImport } from './routes/en.events.index'
+import { Route as EnHubCountryRouteImport } from './routes/en.hub.$country'
+import { Route as EnMagazineIndexRouteImport } from './routes/en.magazine.index'
+import { Route as EnNewsIndexRouteImport } from './routes/en.news.index'
 import { Route as EnNewsSlugRouteImport } from './routes/en.news.$slug'
+import { Route as EnResultsIndexRouteImport } from './routes/en.results.index'
+import { Route as EnResultsEventoRouteImport } from './routes/en.results.$evento'
+import { Route as EnSpecialsIndexRouteImport } from './routes/en.specials.index'
 import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
 import { Route as FranciaEntrevistasSlugRouteImport } from './routes/francia_.entrevistas_.$slug'
@@ -676,6 +690,41 @@ const EditorPortugalRoute = EditorPortugalRouteImport.update({
   path: '/editor/portugal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnIndexRoute = EnIndexRouteImport.update({
+  id: '/en/',
+  path: '/en/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnFranceRoute = EnFranceRouteImport.update({
+  id: '/en/france',
+  path: '/en/france',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnPortugalRoute = EnPortugalRouteImport.update({
+  id: '/en/portugal',
+  path: '/en/portugal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnRollerzoneTvRoute = EnRollerzoneTvRouteImport.update({
+  id: '/en/rollerzone-tv',
+  path: '/en/rollerzone-tv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnSponsorsRoute = EnSponsorsRouteImport.update({
+  id: '/en/sponsors',
+  path: '/en/sponsors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnTeamRoute = EnTeamRouteImport.update({
+  id: '/en/team',
+  path: '/en/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnUsaRoute = EnUsaRouteImport.update({
+  id: '/en/usa',
+  path: '/en/usa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EntrevistasIndexRoute = EntrevistasIndexRouteImport.update({
   id: '/entrevistas/',
   path: '/entrevistas/',
@@ -873,9 +922,44 @@ const ApiPublicCspReportRoute = ApiPublicCspReportRouteImport.update({
   path: '/api/public/csp-report',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnEventsIndexRoute = EnEventsIndexRouteImport.update({
+  id: '/en/events/',
+  path: '/en/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnHubCountryRoute = EnHubCountryRouteImport.update({
+  id: '/en/hub/$country',
+  path: '/en/hub/$country',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnMagazineIndexRoute = EnMagazineIndexRouteImport.update({
+  id: '/en/magazine/',
+  path: '/en/magazine/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnNewsIndexRoute = EnNewsIndexRouteImport.update({
+  id: '/en/news/',
+  path: '/en/news/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EnNewsSlugRoute = EnNewsSlugRouteImport.update({
   id: '/en/news/$slug',
   path: '/en/news/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnResultsIndexRoute = EnResultsIndexRouteImport.update({
+  id: '/en/results/',
+  path: '/en/results/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnResultsEventoRoute = EnResultsEventoRouteImport.update({
+  id: '/en/results/$evento',
+  path: '/en/results/$evento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnSpecialsIndexRoute = EnSpecialsIndexRouteImport.update({
+  id: '/en/specials/',
+  path: '/en/specials/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EspecialesSlugIndexRoute = EspecialesSlugIndexRouteImport.update({
@@ -1254,6 +1338,12 @@ export interface FileRoutesByFullPath {
   '/editor/francia': typeof EditorFranciaRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/editor/portugal': typeof EditorPortugalRoute
+  '/en/france': typeof EnFranceRoute
+  '/en/portugal': typeof EnPortugalRoute
+  '/en/rollerzone-tv': typeof EnRollerzoneTvRoute
+  '/en/sponsors': typeof EnSponsorsRoute
+  '/en/team': typeof EnTeamRoute
+  '/en/usa': typeof EnUsaRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1285,6 +1375,7 @@ export interface FileRoutesByFullPath {
   '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
   '/colaboraciones/': typeof ColaboracionesIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/en/': typeof EnIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
@@ -1298,7 +1389,9 @@ export interface FileRoutesByFullPath {
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
+  '/en/results/$evento': typeof EnResultsEventoRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
@@ -1324,6 +1417,11 @@ export interface FileRoutesByFullPath {
   '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
+  '/en/events/': typeof EnEventsIndexRoute
+  '/en/magazine/': typeof EnMagazineIndexRoute
+  '/en/news/': typeof EnNewsIndexRoute
+  '/en/results/': typeof EnResultsIndexRoute
+  '/en/specials/': typeof EnSpecialsIndexRoute
   '/especiales/$slug/': typeof EspecialesSlugIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
@@ -1437,6 +1535,12 @@ export interface FileRoutesByTo {
   '/editor/francia': typeof EditorFranciaRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/editor/portugal': typeof EditorPortugalRoute
+  '/en/france': typeof EnFranceRoute
+  '/en/portugal': typeof EnPortugalRoute
+  '/en/rollerzone-tv': typeof EnRollerzoneTvRoute
+  '/en/sponsors': typeof EnSponsorsRoute
+  '/en/team': typeof EnTeamRoute
+  '/en/usa': typeof EnUsaRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1466,6 +1570,7 @@ export interface FileRoutesByTo {
   '/camino-al-europeo-2026': typeof CaminoAlEuropeo2026IndexRoute
   '/colaboraciones': typeof ColaboracionesIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/en': typeof EnIndexRoute
   '/entrevistas': typeof EntrevistasIndexRoute
   '/especiales': typeof EspecialesIndexRoute
   '/eventos': typeof EventosIndexRoute
@@ -1479,7 +1584,9 @@ export interface FileRoutesByTo {
   '/usa': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
+  '/en/results/$evento': typeof EnResultsEventoRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
@@ -1500,6 +1607,11 @@ export interface FileRoutesByTo {
   '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
+  '/en/events': typeof EnEventsIndexRoute
+  '/en/magazine': typeof EnMagazineIndexRoute
+  '/en/news': typeof EnNewsIndexRoute
+  '/en/results': typeof EnResultsIndexRoute
+  '/en/specials': typeof EnSpecialsIndexRoute
   '/especiales/$slug': typeof EspecialesSlugIndexRoute
   '/hub/$country': typeof HubCountryIndexRoute
   '/miami/entrevistas': typeof MiamiEntrevistasIndexRoute
@@ -1620,6 +1732,12 @@ export interface FileRoutesById {
   '/editor/francia': typeof EditorFranciaRoute
   '/editor/miami': typeof EditorMiamiRoute
   '/editor/portugal': typeof EditorPortugalRoute
+  '/en/france': typeof EnFranceRoute
+  '/en/portugal': typeof EnPortugalRoute
+  '/en/rollerzone-tv': typeof EnRollerzoneTvRoute
+  '/en/sponsors': typeof EnSponsorsRoute
+  '/en/team': typeof EnTeamRoute
+  '/en/usa': typeof EnUsaRoute
   '/entrevistas/$slug': typeof EntrevistasSlugRoute
   '/espana/archivo': typeof EspanaArchivoRoute
   '/espana/clubes': typeof EspanaClubesRoute
@@ -1651,6 +1769,7 @@ export interface FileRoutesById {
   '/camino-al-europeo-2026/': typeof CaminoAlEuropeo2026IndexRoute
   '/colaboraciones/': typeof ColaboracionesIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/en/': typeof EnIndexRoute
   '/entrevistas/': typeof EntrevistasIndexRoute
   '/especiales/': typeof EspecialesIndexRoute
   '/eventos/': typeof EventosIndexRoute
@@ -1664,7 +1783,9 @@ export interface FileRoutesById {
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
+  '/en/results/$evento': typeof EnResultsEventoRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia_/entrevistas_/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia_/noticias_/$slug': typeof FranciaNoticiasSlugRoute
@@ -1690,6 +1811,11 @@ export interface FileRoutesById {
   '/usa/$region/$city': typeof UsaRegionCityRoute
   '/usa/entrevistas/$slug': typeof UsaEntrevistasSlugRoute
   '/usa/noticias/$slug': typeof UsaNoticiasSlugRoute
+  '/en/events/': typeof EnEventsIndexRoute
+  '/en/magazine/': typeof EnMagazineIndexRoute
+  '/en/news/': typeof EnNewsIndexRoute
+  '/en/results/': typeof EnResultsIndexRoute
+  '/en/specials/': typeof EnSpecialsIndexRoute
   '/especiales/$slug/': typeof EspecialesSlugIndexRoute
   '/hub/$country/': typeof HubCountryIndexRoute
   '/miami/entrevistas/': typeof MiamiEntrevistasIndexRoute
@@ -1812,6 +1938,12 @@ export interface FileRouteTypes {
     | '/editor/francia'
     | '/editor/miami'
     | '/editor/portugal'
+    | '/en/france'
+    | '/en/portugal'
+    | '/en/rollerzone-tv'
+    | '/en/sponsors'
+    | '/en/team'
+    | '/en/usa'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -1843,6 +1975,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/'
     | '/colaboraciones/'
     | '/dashboard/'
+    | '/en/'
     | '/entrevistas/'
     | '/especiales/'
     | '/eventos/'
@@ -1856,7 +1989,9 @@ export interface FileRouteTypes {
     | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/hub/$country'
     | '/en/news/$slug'
+    | '/en/results/$evento'
     | '/especiales/$slug/$piece'
     | '/francia/entrevistas/$slug'
     | '/francia/noticias/$slug'
@@ -1882,6 +2017,11 @@ export interface FileRouteTypes {
     | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
+    | '/en/events/'
+    | '/en/magazine/'
+    | '/en/news/'
+    | '/en/results/'
+    | '/en/specials/'
     | '/especiales/$slug/'
     | '/hub/$country/'
     | '/miami/entrevistas/'
@@ -1995,6 +2135,12 @@ export interface FileRouteTypes {
     | '/editor/francia'
     | '/editor/miami'
     | '/editor/portugal'
+    | '/en/france'
+    | '/en/portugal'
+    | '/en/rollerzone-tv'
+    | '/en/sponsors'
+    | '/en/team'
+    | '/en/usa'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -2024,6 +2170,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026'
     | '/colaboraciones'
     | '/dashboard'
+    | '/en'
     | '/entrevistas'
     | '/especiales'
     | '/eventos'
@@ -2037,7 +2184,9 @@ export interface FileRouteTypes {
     | '/usa'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/hub/$country'
     | '/en/news/$slug'
+    | '/en/results/$evento'
     | '/especiales/$slug/$piece'
     | '/francia/entrevistas/$slug'
     | '/francia/noticias/$slug'
@@ -2058,6 +2207,11 @@ export interface FileRouteTypes {
     | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
+    | '/en/events'
+    | '/en/magazine'
+    | '/en/news'
+    | '/en/results'
+    | '/en/specials'
     | '/especiales/$slug'
     | '/hub/$country'
     | '/miami/entrevistas'
@@ -2177,6 +2331,12 @@ export interface FileRouteTypes {
     | '/editor/francia'
     | '/editor/miami'
     | '/editor/portugal'
+    | '/en/france'
+    | '/en/portugal'
+    | '/en/rollerzone-tv'
+    | '/en/sponsors'
+    | '/en/team'
+    | '/en/usa'
     | '/entrevistas/$slug'
     | '/espana/archivo'
     | '/espana/clubes'
@@ -2208,6 +2368,7 @@ export interface FileRouteTypes {
     | '/camino-al-europeo-2026/'
     | '/colaboraciones/'
     | '/dashboard/'
+    | '/en/'
     | '/entrevistas/'
     | '/especiales/'
     | '/eventos/'
@@ -2221,7 +2382,9 @@ export interface FileRouteTypes {
     | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/hub/$country'
     | '/en/news/$slug'
+    | '/en/results/$evento'
     | '/especiales/$slug/$piece'
     | '/francia_/entrevistas_/$slug'
     | '/francia_/noticias_/$slug'
@@ -2247,6 +2410,11 @@ export interface FileRouteTypes {
     | '/usa/$region/$city'
     | '/usa/entrevistas/$slug'
     | '/usa/noticias/$slug'
+    | '/en/events/'
+    | '/en/magazine/'
+    | '/en/news/'
+    | '/en/results/'
+    | '/en/specials/'
     | '/especiales/$slug/'
     | '/hub/$country/'
     | '/miami/entrevistas/'
@@ -2308,6 +2476,12 @@ export interface RootRouteChildren {
   EditorFranciaRoute: typeof EditorFranciaRoute
   EditorMiamiRoute: typeof EditorMiamiRoute
   EditorPortugalRoute: typeof EditorPortugalRoute
+  EnFranceRoute: typeof EnFranceRoute
+  EnPortugalRoute: typeof EnPortugalRoute
+  EnRollerzoneTvRoute: typeof EnRollerzoneTvRoute
+  EnSponsorsRoute: typeof EnSponsorsRoute
+  EnTeamRoute: typeof EnTeamRoute
+  EnUsaRoute: typeof EnUsaRoute
   EntrevistasSlugRoute: typeof EntrevistasSlugRoute
   EspanaArchivoRoute: typeof EspanaArchivoRoute
   EspanaClubesRoute: typeof EspanaClubesRoute
@@ -2335,6 +2509,7 @@ export interface RootRouteChildren {
   SobreSlugRoute: typeof SobreSlugRoute
   CountryIndexRoute: typeof CountryIndexRoute
   ColaboracionesIndexRoute: typeof ColaboracionesIndexRoute
+  EnIndexRoute: typeof EnIndexRoute
   EntrevistasIndexRoute: typeof EntrevistasIndexRoute
   EspecialesIndexRoute: typeof EspecialesIndexRoute
   EventosIndexRoute: typeof EventosIndexRoute
@@ -2344,11 +2519,18 @@ export interface RootRouteChildren {
   SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
+  EnHubCountryRoute: typeof EnHubCountryRoute
   EnNewsSlugRoute: typeof EnNewsSlugRoute
+  EnResultsEventoRoute: typeof EnResultsEventoRoute
   FranciaEntrevistasSlugRoute: typeof FranciaEntrevistasSlugRoute
   FranciaNoticiasSlugRoute: typeof FranciaNoticiasSlugRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
   RollerzoneTvWorldSkateGamesAsu26ResultadosRoute: typeof RollerzoneTvWorldSkateGamesAsu26ResultadosRoute
+  EnEventsIndexRoute: typeof EnEventsIndexRoute
+  EnMagazineIndexRoute: typeof EnMagazineIndexRoute
+  EnNewsIndexRoute: typeof EnNewsIndexRoute
+  EnResultsIndexRoute: typeof EnResultsIndexRoute
+  EnSpecialsIndexRoute: typeof EnSpecialsIndexRoute
   ApiPublicCronResultsSyncRoute: typeof ApiPublicCronResultsSyncRoute
   ApiPublicCronVensportSyncRoute: typeof ApiPublicCronVensportSyncRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -3015,6 +3197,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EditorPortugalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/en/': {
+      id: '/en/'
+      path: '/en'
+      fullPath: '/en/'
+      preLoaderRoute: typeof EnIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/france': {
+      id: '/en/france'
+      path: '/en/france'
+      fullPath: '/en/france'
+      preLoaderRoute: typeof EnFranceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/portugal': {
+      id: '/en/portugal'
+      path: '/en/portugal'
+      fullPath: '/en/portugal'
+      preLoaderRoute: typeof EnPortugalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/rollerzone-tv': {
+      id: '/en/rollerzone-tv'
+      path: '/en/rollerzone-tv'
+      fullPath: '/en/rollerzone-tv'
+      preLoaderRoute: typeof EnRollerzoneTvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/sponsors': {
+      id: '/en/sponsors'
+      path: '/en/sponsors'
+      fullPath: '/en/sponsors'
+      preLoaderRoute: typeof EnSponsorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/team': {
+      id: '/en/team'
+      path: '/en/team'
+      fullPath: '/en/team'
+      preLoaderRoute: typeof EnTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/usa': {
+      id: '/en/usa'
+      path: '/en/usa'
+      fullPath: '/en/usa'
+      preLoaderRoute: typeof EnUsaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/entrevistas/': {
       id: '/entrevistas/'
       path: '/entrevistas'
@@ -3288,11 +3519,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCspReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/en/events/': {
+      id: '/en/events/'
+      path: '/en/events'
+      fullPath: '/en/events/'
+      preLoaderRoute: typeof EnEventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/hub/$country': {
+      id: '/en/hub/$country'
+      path: '/en/hub/$country'
+      fullPath: '/en/hub/$country'
+      preLoaderRoute: typeof EnHubCountryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/magazine/': {
+      id: '/en/magazine/'
+      path: '/en/magazine'
+      fullPath: '/en/magazine/'
+      preLoaderRoute: typeof EnMagazineIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/news/': {
+      id: '/en/news/'
+      path: '/en/news'
+      fullPath: '/en/news/'
+      preLoaderRoute: typeof EnNewsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/en/news/$slug': {
       id: '/en/news/$slug'
       path: '/en/news/$slug'
       fullPath: '/en/news/$slug'
       preLoaderRoute: typeof EnNewsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/results/': {
+      id: '/en/results/'
+      path: '/en/results'
+      fullPath: '/en/results/'
+      preLoaderRoute: typeof EnResultsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/results/$evento': {
+      id: '/en/results/$evento'
+      path: '/en/results/$evento'
+      fullPath: '/en/results/$evento'
+      preLoaderRoute: typeof EnResultsEventoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/en/specials/': {
+      id: '/en/specials/'
+      path: '/en/specials'
+      fullPath: '/en/specials/'
+      preLoaderRoute: typeof EnSpecialsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/especiales/$slug/': {
@@ -4104,6 +4384,12 @@ const rootRouteChildren: RootRouteChildren = {
   EditorFranciaRoute: EditorFranciaRoute,
   EditorMiamiRoute: EditorMiamiRoute,
   EditorPortugalRoute: EditorPortugalRoute,
+  EnFranceRoute: EnFranceRoute,
+  EnPortugalRoute: EnPortugalRoute,
+  EnRollerzoneTvRoute: EnRollerzoneTvRoute,
+  EnSponsorsRoute: EnSponsorsRoute,
+  EnTeamRoute: EnTeamRoute,
+  EnUsaRoute: EnUsaRoute,
   EntrevistasSlugRoute: EntrevistasSlugRoute,
   EspanaArchivoRoute: EspanaArchivoRoute,
   EspanaClubesRoute: EspanaClubesRoute,
@@ -4131,6 +4417,7 @@ const rootRouteChildren: RootRouteChildren = {
   SobreSlugRoute: SobreSlugRoute,
   CountryIndexRoute: CountryIndexRoute,
   ColaboracionesIndexRoute: ColaboracionesIndexRoute,
+  EnIndexRoute: EnIndexRoute,
   EntrevistasIndexRoute: EntrevistasIndexRoute,
   EspecialesIndexRoute: EspecialesIndexRoute,
   EventosIndexRoute: EventosIndexRoute,
@@ -4140,12 +4427,19 @@ const rootRouteChildren: RootRouteChildren = {
   SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
+  EnHubCountryRoute: EnHubCountryRoute,
   EnNewsSlugRoute: EnNewsSlugRoute,
+  EnResultsEventoRoute: EnResultsEventoRoute,
   FranciaEntrevistasSlugRoute: FranciaEntrevistasSlugRoute,
   FranciaNoticiasSlugRoute: FranciaNoticiasSlugRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
   RollerzoneTvWorldSkateGamesAsu26ResultadosRoute:
     RollerzoneTvWorldSkateGamesAsu26ResultadosRoute,
+  EnEventsIndexRoute: EnEventsIndexRoute,
+  EnMagazineIndexRoute: EnMagazineIndexRoute,
+  EnNewsIndexRoute: EnNewsIndexRoute,
+  EnResultsIndexRoute: EnResultsIndexRoute,
+  EnSpecialsIndexRoute: EnSpecialsIndexRoute,
   ApiPublicCronResultsSyncRoute: ApiPublicCronResultsSyncRoute,
   ApiPublicCronVensportSyncRoute: ApiPublicCronVensportSyncRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

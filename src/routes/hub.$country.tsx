@@ -21,6 +21,7 @@ export const Route = createFileRoute("/hub/$country")({
         { property: "og:url", content: url },
         { name: "twitter:card", content: "summary_large_image" },
       ],
+      links: [{ rel: "canonical", href: url }, { rel: "alternate", hreflang: "es", href: url }, { rel: "alternate", hreflang: "en", href: `https://rollerzone.es/en/hub/${params.country}` }, { rel: "alternate", hreflang: "x-default", href: url }],
     };
   },
 });

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsArticleView, type ArticleViewData } from "@/components/site/NewsArticleView";
+import { translationIsCurrent, type NewsTranslation } from "@/lib/news/translations";
 import { parseBlocks, blocksPlainText } from "@/lib/newsBlocks";
 
 const ARTICLE_SELECT =
@@ -12,18 +13,20 @@ export const Route = createFileRoute("/noticias/articulo/$slug")({
       .from("news")
       .select(ARTICLE_SELECT)
       .eq("slug", params.slug)
+      .eq("published", true)
       .maybeSingle();
     if (!data) throw notFound();
 
     // Enlace hreflang: solo si existe una versión inglesa aprobada.
     const { data: tr } = await supabase
       .from("news_translations")
-      .select("id")
+      .select("*")
       .eq("news_id", (data as { id: string }).id)
       .eq("lang", "en")
+      .eq("status", "approved")
       .maybeSingle();
 
-    return { article: data as unknown as ArticleViewData, hasEn: Boolean(tr) };
+    return { article: data as unknown as ArticleViewData, hasEn: Boolean(tr && translationIsCurrent(tr as NewsTranslation, data as unknown as ArticleViewData)) };
   },
 
   head: ({ loaderData, params }) => {

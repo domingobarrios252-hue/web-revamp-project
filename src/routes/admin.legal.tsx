@@ -22,7 +22,12 @@ const SLUG_LABELS: Record<string, string> = {
 export const Route = createFileRoute("/admin/legal")({
   head: () => ({
     meta: [
-      { title: "Admin · Páginas legales" },
+      { title: "Admin · Páginas legales — RollerZone" },
+      { name: "description", content: "Gestión de los documentos legales de RollerZone." },
+      { property: "og:title", content: "Páginas legales — RollerZone" },
+      { property: "og:description", content: "Gestión de los documentos legales de RollerZone." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -42,6 +47,7 @@ function AdminLegal() {
     const { data, error } = await supabase
       .from("legal_pages")
       .select("*")
+      .neq("slug", "condiciones-uso")
       .order("slug");
     if (error) {
       toast.error("No se pudieron cargar las páginas legales");

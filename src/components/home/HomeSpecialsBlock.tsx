@@ -1,3 +1,4 @@
+import { useUiText } from "@/lib/i18n/uiText";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles, Calendar } from "lucide-react";
@@ -30,6 +31,7 @@ function formatRange(a: string | null, b: string | null, lang: "es" | "en") {
 }
 
 export function HomeSpecialsBlock() {
+  const ui = useUiText();
   const { visibility, loading: visLoading } = useHomeSectionVisibility();
   const { lang } = useLanguage();
   const [items, setItems] = useState<Special[] | null>(null);
@@ -75,11 +77,11 @@ export function HomeSpecialsBlock() {
     <section className="bg-background py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
-          kicker="Especiales RollerZone"
+          kicker={ui('Especiales RollerZone')}
           icon={<Sparkles className="h-3 w-3" />}
-          title="Especiales"
-          accent="Editoriales"
-          action={{ to: "/especiales", label: "Ver todos" }}
+          title={ui('Especiales')}
+          accent={ui('Editoriales')}
+          action={{ to: "/especiales", label: ui('Ver todos') }}
         />
 
         <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -101,7 +103,7 @@ export function HomeSpecialsBlock() {
                   <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
                   {s.featured_home && (
                     <span className="font-condensed absolute left-3 top-3 inline-block bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background shadow-md">
-                      Destacado
+                      {ui('Destacado')}
                     </span>
                   )}
                 </div>
@@ -127,7 +129,7 @@ export function HomeSpecialsBlock() {
                   )}
                   <div className="mt-auto pt-5">
                     <span className="font-condensed inline-flex items-center gap-2 rounded-md bg-gold px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-background transition-all group-hover:bg-gold-light">
-                      Ver especial <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                      {ui('Ver especial')} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                     </span>
                   </div>
                 </div>

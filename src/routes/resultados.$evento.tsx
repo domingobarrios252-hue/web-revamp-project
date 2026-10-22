@@ -1,8 +1,10 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2, Download, ExternalLink, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { useUiText } from "@/lib/i18n/uiText";
 import { formatDate } from "@/lib/i18n/format";
 import { exportCsv, exportPdf, exportXlsx, type ExportRow } from "@/lib/resultsExport";
 import { toast } from "sonner";
@@ -63,7 +65,7 @@ type OfficialDoc = {
 };
 
 
-type SearchParams = {
+export type SearchParams = {
   prueba?: string;
   categoria?: string;
   sexo?: string;
@@ -79,19 +81,7 @@ function pickString(v: unknown): string | undefined {
   return typeof v === "string" && v.trim() !== "" ? v : undefined;
 }
 
-export const Route = createFileRoute("/resultados/$evento")({
-  validateSearch: (s: Record<string, unknown>): SearchParams => ({
-    prueba: pickString(s.prueba),
-    categoria: pickString(s.categoria),
-    sexo: pickString(s.sexo),
-    ronda: pickString(s.ronda),
-    club: pickString(s.club),
-    federacion: pickString(s.federacion),
-    modalidad: pickString(s.modalidad),
-    pais: pickString(s.pais),
-    nombre: pickString(s.nombre),
-  }),
-  loader: async ({ params }) => {
+export async function loadResultsPage({ params }: { params: { evento: string } }) {
     const [{ data: meta }, { data: rows, error }] = await Promise.all([
       supabase
         .from("result_events")
@@ -129,10 +119,24 @@ export const Route = createFileRoute("/resultados/$evento")({
       meta: (meta as EventMeta | null) ?? null,
       documents,
     };
-  },
+  }
+
+export const Route = createFileRoute("/resultados/$evento")({
+  validateSearch: (s: Record<string, unknown>): SearchParams => ({
+    prueba: pickString(s.prueba),
+    categoria: pickString(s.categoria),
+    sexo: pickString(s.sexo),
+    ronda: pickString(s.ronda),
+    club: pickString(s.club),
+    federacion: pickString(s.federacion),
+    modalidad: pickString(s.modalidad),
+    pais: pickString(s.pais),
+    nombre: pickString(s.nombre),
+  }),
+  loader: loadResultsPage,
   head: ({ loaderData, params }) => {
     const title = loaderData?.meta?.name ?? loaderData?.rows?.[0]?.event_name ?? "Resultados";
-    const url = `https://rollerzone.lovable.app/resultados/${params.evento}`;
+    const url = `https://rollerzone.es/resultados/${params.evento}`;
     const desc = `Clasificaciones completas de ${title} en RollerZone.`;
     const status = "https://schema.org/EventScheduled";
     const scripts: { type: "application/ld+json"; children: string }[] = [];
@@ -155,7 +159,7 @@ export const Route = createFileRoute("/resultados/$evento")({
     }
     // Podium / top 3 as ItemList
     const podium = (loaderData?.rows ?? [])
-      .filter((r) => typeof r.position === "number" && r.position! <= 3)
+      .filter((r) => typeof r.position === "number" && r.position <= 3)
       .slice(0, 10);
     if (podium.length > 0) {
       const listLd = {
@@ -178,6 +182,8 @@ export const Route = createFileRoute("/resultados/$evento")({
         { property: "og:title", content: `${title} — Resultados RollerZone` },
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
         ...(loaderData?.meta?.banner_url
           ? [
               { property: "og:image" as const, content: loaderData.meta.banner_url },
@@ -204,18 +210,24 @@ export const Route = createFileRoute("/resultados/$evento")({
 });
 
 function ResultadosEventoPage() {
-  const data = Route.useLoaderData();
-  const search = Route.useSearch();
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
+  return <ResultsPageView data={Route.useLoaderData()} search={Route.useSearch()} />;
+}
+
+export function ResultsPageView({ data, search }: { data: Awaited<ReturnType<typeof loadResultsPage>>; search: SearchParams }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   // Campeonatos enlazados por ID (p. ej. ASU26): archivo histórico de solo lectura.
   if (data.meta?.id && data.rows.length === 0) {
     return <ChampionshipArchive eventId={data.meta.id} slug={data.evento} name={data.meta.name} eventDate={data.meta.event_date} search={search} />;
   }
-  return <LegacyEventPage />;
+  return <LegacyEventPage data={data} search={search} />;
 }
 
-function LegacyEventPage() {
-  const data = Route.useLoaderData();
-  const search = Route.useSearch();
+function LegacyEventPage({ data, search }: { data: Awaited<ReturnType<typeof loadResultsPage>>; search: SearchParams }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const rows: ResultRow[] = data.rows;
   const meta = data.meta;
   const { t, lang } = useLanguage();
@@ -277,7 +289,7 @@ function LegacyEventPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 md:px-6">
-      <Link to="/resultados" className="font-condensed mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-gold">
+      <Link to={linkLanguage === "en" ? "/en/results" : "/resultados"} className="font-condensed mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-gold">
         <ArrowLeft className="h-4 w-4" /> {t("common.backTo")} {t("results.title")}
       </Link>
 
@@ -307,7 +319,7 @@ function LegacyEventPage() {
             {meta?.country && (<span className="flex items-center gap-1.5">🌍 {meta.country}</span>)}
             {meta?.organizer && (<span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5" /> {meta.organizer}</span>)}
             {meta?.season && (<span>🗓 {meta.season}</span>)}
-            <span className="flex items-center gap-1.5">📋 {rows.length} resultados · {groups.length} pruebas</span>
+            <span className="flex items-center gap-1.5">📋 {rows.length} {linkLanguage === "en" ? "results" : "resultados"} · {groups.length} {linkLanguage === "en" ? "races" : "pruebas"}</span>
           </div>
 
           {/* Botones de acción */}
@@ -324,30 +336,30 @@ function LegacyEventPage() {
       <section className="sticky top-0 z-20 mt-6 rounded-xl border border-border bg-surface/95 p-3 backdrop-blur">
         <label className="mb-2 flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2">
           <Search className="h-4 w-4 text-muted-foreground" aria-hidden />
-          <span className="sr-only">Buscar por patinador o club</span>
+          <span className="sr-only">{ui("Buscar por patinador o club")}</span>
           <input
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Buscar patinador o club…"
+            placeholder={ui("Buscar patinador o club…")}
             className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
         </label>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-8">
-          <FilterSelect value={fRace} onChange={setFRace} placeholder="Prueba" options={opts.races} />
-          <FilterSelect value={fCat} onChange={setFCat} placeholder="Categoría" options={opts.categories} />
-          <FilterSelect value={fGender} onChange={setFGender} placeholder="Género" options={opts.genders} />
-          <FilterSelect value={fRound} onChange={setFRound} placeholder="Ronda" options={opts.rounds} />
-          <FilterSelect value={fClub} onChange={setFClub} placeholder="Club" options={opts.clubs} />
-          <FilterSelect value={fFed} onChange={setFFed} placeholder="Federación" options={opts.federations} />
-          <FilterSelect value={fCountry} onChange={setFCountry} placeholder="País" options={opts.countries} />
+          <FilterSelect value={fRace} onChange={setFRace} placeholder={ui("Prueba")} options={opts.races} />
+          <FilterSelect value={fCat} onChange={setFCat} placeholder={ui("Categoría")} options={opts.categories} />
+          <FilterSelect value={fGender} onChange={setFGender} placeholder={ui("Género")} options={opts.genders} />
+          <FilterSelect value={fRound} onChange={setFRound} placeholder={ui("Ronda")} options={opts.rounds} />
+          <FilterSelect value={fClub} onChange={setFClub} placeholder={ui("Club")} options={opts.clubs} />
+          <FilterSelect value={fFed} onChange={setFFed} placeholder={ui("Federación")} options={opts.federations} />
+          <FilterSelect value={fCountry} onChange={setFCountry} placeholder={ui("País")} options={opts.countries} />
           <button
             type="button"
             onClick={clearFilters}
             disabled={!anyFilter}
             className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:opacity-40"
           >
-            Limpiar
+            {ui("Limpiar")}
           </button>
         </div>
       </section>
@@ -356,7 +368,7 @@ function LegacyEventPage() {
       <section className="mt-6 grid gap-5">
         {rows.length === 0 ? (
           <div className="rounded-xl border border-border bg-surface p-10 text-center text-muted-foreground">
-            Aún no hay resultados publicados para este evento.
+            {ui("Aún no hay resultados publicados para este evento.")}
           </div>
         ) : groups.length === 0 ? (
           <p className="text-muted-foreground">{t("results.noRows")}</p>
@@ -465,11 +477,13 @@ function LegacyEventPage() {
 }
 
 function FilterSelect({ value, onChange, placeholder, options }: { value: string; onChange: (v: string) => void; placeholder: string; options: string[] }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   if (options.length === 0) return null;
   return (
-    <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={placeholder} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold">
-      <option value="">Todas · {placeholder}</option>
-      {options.map((o) => (<option key={o} value={o}>{o}</option>))}
+    <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={ui(placeholder)} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold">
+      <option value="">{ui("Todas")} · {ui(placeholder)}</option>
+      {options.map((o) => (<option key={o} value={o}>{ui(o)}</option>))}
     </select>
   );
 }
@@ -478,6 +492,8 @@ function SortableTh({ label, k, current, dir, onClick, icon, widthClass }: {
   label: string; k: SortKey; current: SortKey; dir: "asc" | "desc";
   onClick: (k: SortKey) => void; icon: (k: SortKey) => React.ReactNode; widthClass?: string;
 }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const isActive = current === k;
   return (
     <th className={`px-4 py-2 ${widthClass ?? ""}`} aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}>
@@ -494,6 +510,8 @@ function SortableTh({ label, k, current, dir, onClick, icon, widthClass }: {
 }
 
 function StatusPill({ status, t }: { status: ResultRow["status"]; t: (k: string) => string }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const label = status === "en_vivo" ? t("common.live") : status === "proxima" ? t("common.upcoming") : t("common.finished");
   const cls = status === "en_vivo" ? "bg-tv-red text-foreground live-red-tag" : status === "proxima" ? "border border-gold/50 bg-gold/10 text-gold" : "border border-border bg-background text-muted-foreground";
   return <span className={`font-condensed inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${cls}`}>{label}</span>;
@@ -517,7 +535,7 @@ function groupRows(rows: ResultRow[], sortKey: SortKey = "position", sortDir: "a
       round: row.round || "",
       rows: [],
     });
-    map.get(key)!.rows.push(row);
+    map.get(key)?.rows.push(row);
   }
   const cmp = (a: ResultRow, b: ResultRow) => {
     const va = a[sortKey] ?? "";
@@ -532,6 +550,8 @@ function groupRows(rows: ResultRow[], sortKey: SortKey = "position", sortDir: "a
 }
 
 function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null; eventName: string; slug: string; rows: ResultRow[] }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const url = typeof window !== "undefined" ? window.location.href : `https://rollerzone.es/resultados/${slug}`;
   const exportRows: ExportRow[] = rows.map((r) => ({
     Pos: r.position,
@@ -557,7 +577,7 @@ function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null
     const shareData = { title: eventName, text: `Resultados · ${eventName}`, url };
     try {
       if (navigator.share) await navigator.share(shareData);
-      else { await navigator.clipboard.writeText(url); toast.success("Enlace copiado"); }
+      else { await navigator.clipboard.writeText(url); toast.success(ui("Enlace copiado")); }
     } catch { /* cancelled */ }
   };
   const btn = "font-condensed inline-flex items-center gap-1.5 rounded-md border border-border bg-background/60 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold transition-colors";
@@ -567,15 +587,15 @@ function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null
       {meta?.pdf_url && (
         <SignedPdfLink
           url={meta.pdf_url}
-          label="Descargar PDF oficial"
-          ariaLabel="Descargar PDF oficial del evento"
+          label={ui("Descargar PDF oficial")}
+          ariaLabel={ui("Descargar PDF oficial del evento")}
           className={btnPrimary}
           icon={<FileText className="h-3.5 w-3.5" />}
         />
       )}
       {meta?.stream_url && (
         <a href={meta.stream_url} target="_blank" rel="noopener noreferrer" className={btn}>
-          <PlayCircle className="h-3.5 w-3.5" /> Ver retransmisión
+          <PlayCircle className="h-3.5 w-3.5" /> {ui("Ver retransmisión")}
         </a>
       )}
       {rows.length > 0 && (
@@ -592,7 +612,7 @@ function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null
         </>
       )}
       <button type="button" onClick={share} className={btn}>
-        <Share2 className="h-3.5 w-3.5" /> Compartir
+        <Share2 className="h-3.5 w-3.5" /> {ui("Compartir")}
       </button>
     </div>
   );
@@ -613,6 +633,8 @@ function SignedPdfLink({
   icon?: React.ReactNode;
   download?: boolean;
 }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const [href, setHref] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -657,12 +679,14 @@ const DOC_TYPE_LABEL: Record<OfficialDoc["doc_type"], string> = {
 };
 
 function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   if (!docs || docs.length === 0) return null;
   return (
     <section className="mt-6 rounded-xl border border-border bg-surface p-4 md:p-6">
       <div className="mb-4 flex items-center gap-2">
         <FileText className="h-4 w-4 text-gold" />
-        <h2 className="font-display text-lg uppercase tracking-widest text-gold">Documentos oficiales</h2>
+        <h2 className="font-display text-lg uppercase tracking-widest text-gold">{ui("Documentos oficiales")}</h2>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {docs.map((d) => (
@@ -670,7 +694,7 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
             <div>
               <div className="mb-2 flex flex-wrap items-center gap-1.5">
                 <span className="font-condensed inline-flex items-center bg-gold/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold">
-                  {DOC_TYPE_LABEL[d.doc_type]}
+                  {ui(DOC_TYPE_LABEL[d.doc_type])}
                 </span>
                 <span
                   className={`font-condensed inline-flex items-center px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${
@@ -679,7 +703,7 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
                       : "bg-amber-500/15 text-amber-400"
                   }`}
                 >
-                  {d.status === "oficial" ? "Oficial" : "Provisional"}
+                  {ui(d.status === "oficial" ? "Oficial" : "Provisional")}
                 </span>
                 {d.jornada && (
                   <span className="font-condensed inline-flex items-center bg-background px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -695,14 +719,14 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
             <div className="mt-4 flex items-center gap-2">
               <SignedPdfLink
                 url={d.file_url}
-                label="Ver PDF"
+                label={ui("Ver PDF")}
                 ariaLabel={`Ver PDF: ${d.name}`}
                 className="font-condensed inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 bg-gold px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
                 icon={<ExternalLink className="h-3 w-3" />}
               />
               <SignedPdfLink
                 url={d.file_url}
-                label="Descargar"
+                label={ui("Descargar")}
                 ariaLabel={`Descargar PDF: ${d.name}`}
                 className="font-condensed inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 border border-border bg-background px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-foreground hover:border-gold hover:text-gold"
                 icon={<Download className="h-3 w-3" />}
@@ -710,7 +734,7 @@ function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
               />
             </div>
 
-            <p className="mt-2 text-[10px] text-muted-foreground">Datos publicados por RollerZone.es</p>
+            <p className="mt-2 text-[10px] text-muted-foreground">{ui("Datos publicados por RollerZone.es")}</p>
           </article>
         ))}
       </div>

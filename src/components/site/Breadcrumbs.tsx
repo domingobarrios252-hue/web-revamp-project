@@ -1,6 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronRight, Home } from "lucide-react";
 import { toJsonLd } from "@/lib/jsonLd";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizedPath } from "@/lib/i18n/paths";
 
 const LABELS: Record<string, string> = {
   noticias: "Noticias",
@@ -57,43 +59,45 @@ function humanize(seg: string) {
 }
 
 export function Breadcrumbs() {
+  const { lang, t } = useLanguage();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  if (pathname === "/" || HIDDEN_PREFIXES.some((p) => pathname.startsWith(p))) return null;
+  if (pathname === "/" || pathname === "/en" || pathname === "/en/" || HIDDEN_PREFIXES.some((p) => pathname.startsWith(p))) return null;
 
-  const parts = pathname.split("/").filter(Boolean);
+  const parts = pathname.split("/").filter(Boolean).filter(p => p !== "en");
+  const enLabels: Record<string, string> = { news: "News", results: "Results", events: "Events", magazine: "Magazine", specials: "Specials", team: "Team", sponsors: "Sponsors", france: "France", portugal: "Portugal", usa: "USA", es: "Spain", co: "Colombia" };
   const crumbs = parts.map((seg, i) => {
-    const href = "/" + parts.slice(0, i + 1).join("/");
-    return { label: humanize(seg), href, last: i === parts.length - 1 };
+    const href = (lang === "en" ? "/en" : "") + "/" + parts.slice(0, i + 1).join("/");
+    return { label: lang === "en" ? enLabels[seg] ?? humanize(seg) : humanize(seg), href, last: i === parts.length - 1 };
   });
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://rollerzone.lovable.app/" },
+      { "@type": "ListItem", position: 1, name: t("nav.home"), item: `https://rollerzone.es${localizedPath("/", lang)}` },
       ...crumbs.map((c, i) => ({
         "@type": "ListItem",
         position: i + 2,
         name: c.label,
-        item: `https://rollerzone.lovable.app${c.href}`,
+        item: `https://rollerzone.es${c.href}`,
       })),
     ],
   };
 
   return (
     <nav
-      aria-label="Migas de pan"
+      aria-label={lang === "en" ? "Breadcrumbs" : "Migas de pan"}
       className="border-b border-[#2A2A2A] bg-[#141414]/60"
     >
       <ol className="mx-auto flex max-w-7xl flex-wrap items-center gap-1 px-4 py-2 text-[11px] text-[#A0A0A0] md:px-6">
         <li className="flex items-center">
           <Link
-            to="/"
+            to={localizedPath("/", lang)}
             className="inline-flex items-center gap-1 rounded px-1 py-0.5 text-[#A0A0A0] hover:text-[#D4A017] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]"
           >
             <Home className="h-3 w-3" aria-hidden />
-            <span className="sr-only sm:not-sr-only">Inicio</span>
+            <span className="sr-only sm:not-sr-only">{t("nav.home")}</span>
           </Link>
         </li>
         {crumbs.map((c) => (

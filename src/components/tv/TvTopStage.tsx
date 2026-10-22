@@ -1,3 +1,4 @@
+import { useUiText } from "@/lib/i18n/uiText";
 import { useEffect, useState } from "react";
 import { Play, Radio, CalendarClock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,11 +54,12 @@ function dateRange(a: string | null, b: string | null) {
 }
 
 function StatusPill({ status }: { status: TvStageStatus }) {
+  const ui = useUiText();
   if (status === "live")
     return (
       <span className="font-condensed inline-flex shrink-0 items-center gap-1.5 bg-tv-red px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
         <span className="live-dot h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true" />
-        {STATUS_LABEL.live}
+        {ui(STATUS_LABEL.live)}
       </span>
     );
   return (
@@ -67,17 +69,18 @@ function StatusPill({ status }: { status: TvStageStatus }) {
         (status === "finished" ? "border-border text-muted-foreground" : "border-gold/60 text-gold")
       }
     >
-      {STATUS_LABEL[status]}
+      {ui(STATUS_LABEL[status])}
     </span>
   );
 }
 
 /** TV-01 · Presenting Partner: franja discreta "Presentado por [logo]". */
 function PresentingPartner({ banner }: { banner: AdBanner }) {
+  const ui = useUiText();
   return (
     <div className="flex min-w-0 items-center gap-2 md:gap-3">
       <span className="font-condensed shrink-0 text-[9px] uppercase tracking-[2.5px] text-muted-foreground md:text-[10px]">
-        Presentado por
+        {ui('Presentado por')}
       </span>
       <AdCreative
         banner={banner}
@@ -104,6 +107,7 @@ export function TvTopStage({
   status: TvStageStatus;
   nextBroadcast: NextItem | null;
 }) {
+  const ui = useUiText();
   const [playerActive, setPlayerActive] = useState(false);
   const [place, setPlace] = useState<string | null>(null);
   const tv01 = useAdBanners("tv_01");
@@ -217,26 +221,26 @@ export function TvTopStage({
             ) : settings?.live_stream_url ? (
               <div className="flex h-full w-full flex-col items-center justify-center gap-2 px-6 text-center text-muted-foreground">
                 <Radio className="h-8 w-8 text-gold" />
-                <p className="font-display text-lg tracking-widest text-foreground">Retransmisión externa</p>
+                <p className="font-display text-lg tracking-widest text-foreground">{ui('Retransmisión externa')}</p>
                 <a
                   href={settings.live_stream_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-condensed inline-flex min-h-11 items-center border border-gold bg-gold px-5 text-[11px] font-bold uppercase tracking-widest text-primary-foreground hover:bg-gold-dark"
                 >
-                  Ver retransmisión
+                  {ui('Ver retransmisión')}
                 </a>
               </div>
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center text-center text-muted-foreground">
                 <Radio className="mb-2 h-8 w-8 text-gold" />
-                <p className="font-display text-lg tracking-widest">Sin emisión disponible</p>
+                <p className="font-display text-lg tracking-widest">{ui('Sin emisión disponible')}</p>
               </div>
             )}
             {status === "live" && (
               <span className="font-condensed pointer-events-none absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 bg-tv-red px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
                 <span className="live-dot h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true" />
-                En directo
+                {ui('En directo')}
               </span>
             )}
           </div>
@@ -246,7 +250,7 @@ export function TvTopStage({
             {tv03Banner && (
               <div className="mt-4">
                 <div className="font-condensed mb-1 text-[9px] uppercase tracking-widest text-muted-foreground/60">
-                  Publicidad
+                  {ui('Publicidad')}
                 </div>
                 <div className="aspect-[16/5] w-full overflow-hidden border border-border bg-surface md:aspect-[97/25]">
                   <AdCreative
@@ -266,10 +270,10 @@ export function TvTopStage({
               <div className="mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border border-gold/30 bg-surface px-3 py-2.5">
                 <CalendarClock className="h-5 w-5 shrink-0 text-gold" aria-hidden="true" />
                 <div className="min-w-0">
-                  <p className="font-condensed text-[10px] uppercase tracking-[2px] text-gold">Próxima emisión</p>
+                  <p className="font-condensed text-[10px] uppercase tracking-[2px] text-gold">{ui('Próxima emisión')}</p>
                   <p className="line-clamp-2 text-sm font-semibold uppercase leading-snug text-foreground">{next.title}</p>
                   <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                    {fmtDate(next.at)} · {fmtTime(next.at)} h <span className="normal-case">(tu hora)</span>
+                    {fmtDate(next.at)} · {fmtTime(next.at)} h <span className="normal-case">{ui('(tu hora)')}</span>
                   </p>
                 </div>
                 <StatusPill status="upcoming" />
@@ -303,7 +307,7 @@ export function TvTopStage({
             {tv02Banner && (
               <div className="hidden lg:block">
                 <div className="font-condensed mb-1 text-[9px] uppercase tracking-widest text-muted-foreground/60">
-                  Publicidad
+                  {ui('Publicidad')}
                 </div>
                 <div className="aspect-[6/5] w-full overflow-hidden border border-border bg-surface">
                   <AdCreative

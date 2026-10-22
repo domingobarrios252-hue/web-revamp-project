@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsArticleView, type ArticleViewData } from "@/components/site/NewsArticleView";
 import { parseBlocks, blocksPlainText } from "@/lib/newsBlocks";
-import type { NewsTranslation } from "@/lib/news/translations";
+import { translationIsCurrent, type NewsTranslation } from "@/lib/news/translations";
 
 const ARTICLE_SELECT =
   "id, title, slug, excerpt, content, content_blocks, author, writer_id, writers(id, full_name, published), legacy_tag, image_url, image_crops, hero_display_mode, gallery, video_url, video_embed_url, video_poster_url, read_minutes, views_count, published_at, updated_at, country_code, news_categories(id, name, slug, scope)";
@@ -13,6 +13,7 @@ export const Route = createFileRoute("/en/news/$slug")({
       .from("news")
       .select(ARTICLE_SELECT)
       .eq("slug", params.slug)
+      .eq("published", true)
       .maybeSingle();
     if (!data) throw notFound();
 
@@ -21,12 +22,13 @@ export const Route = createFileRoute("/en/news/$slug")({
       .select("*")
       .eq("news_id", (data as { id: string }).id)
       .eq("lang", "en")
+      .eq("status", "approved")
       .maybeSingle();
 
     // La política pública solo devuelve traducciones aprobadas; si no llega, no existe para el lector.
     return {
       article: data as unknown as ArticleViewData,
-      translation: (tr as NewsTranslation | null) ?? null,
+      translation: tr && translationIsCurrent(tr as NewsTranslation, data as unknown as ArticleViewData) ? tr as NewsTranslation : null,
     };
   },
 
@@ -99,13 +101,12 @@ export const Route = createFileRoute("/en/news/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: desc },
-        { property: "og:image", content: image },
-        { name: "twitter:image", content: image },
+        ...(rawImage && /^https:\/\//.test(image) ? [{ property: "og:image", content: image }, { name: "twitter:image", content: image }] : []),
         // Sin traducción aprobada, la página no se indexa.
         ...(tr ? [] : [{ name: "robots", content: "noindex, follow" }]),
       ],
       links: [
-        { rel: "canonical", href: enCanonical },
+        { rel: "canonical", href: tr ? enCanonical : esCanonical },
         { rel: "alternate", hreflang: "es", href: esCanonical },
         ...(tr ? [{ rel: "alternate", hreflang: "en", href: enCanonical }] : []),
         { rel: "alternate", hreflang: "x-default", href: esCanonical },
@@ -150,9 +151,10 @@ function EnArticlePage() {
       overrides={{
         title: translation.title || article.title,
         excerpt: translation.excerpt ?? article.excerpt,
-        blocks: blocks.length > 0 ? blocks : undefined,
+        blocks,
+        content: translation.content,
       }}
-      backTo={{ to: "/noticias", label: "News" }}
+      backTo={{ to: "/en/news", label: "News" }}
     />
   );
 }

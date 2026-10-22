@@ -1,3 +1,5 @@
+import { localizedPath } from "@/lib/i18n/paths";
+import { useUiText } from "@/lib/i18n/uiText";
 import { Link } from "@tanstack/react-router";
 import {
   Instagram,
@@ -29,7 +31,8 @@ import { openCookiePreferences } from "@/lib/consent";
 const CONTACT_EMAIL = "rollerzonespain@gmail.com";
 
 export function SiteFooter() {
-  const { t } = useLanguage();
+  const ui = useUiText();
+  const { t, lang } = useLanguage();
   const { settings } = usePageSettings();
   const isVisible = (slug: string) => settings[slug]?.status !== "hidden";
 
@@ -66,7 +69,7 @@ export function SiteFooter() {
       aria-labelledby="footer-heading"
     >
       <h2 id="footer-heading" className="sr-only">
-        Pie de página
+        {lang === "en" ? "Footer" : "Pie de página"}
       </h2>
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
@@ -89,9 +92,9 @@ export function SiteFooter() {
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
               {navLinks.map(({ to, label, Icon }) => (
                 <li key={to + label}>
-                  <Link to={to} className={linkClass}>
+                  <Link to={localizedPath(to, lang)} className={linkClass}>
                     <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                    <span>{label}</span>
+                    <span>{ui(label)}</span>
                   </Link>
                 </li>
               ))}
@@ -101,27 +104,27 @@ export function SiteFooter() {
           {/* 3. Sobre nosotros */}
           <div>
             <h3 className="font-display mb-4 text-base tracking-widest text-[#D4A017]">
-              Sobre nosotros
+              {t("footer.aboutUs")}
             </h3>
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
               {aboutLinks.map(({ slug, label, Icon }) => (
                 <li key={slug}>
                   <Link to="/sobre/$slug" params={{ slug }} className={linkClass}>
                     <Icon className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                    <span>{label}</span>
+                    <span>{ui(label)}</span>
                   </Link>
                 </li>
               ))}
               <li>
-                <Link to="/equipo" className={linkClass}>
+                <Link to={localizedPath("/equipo", lang)} className={linkClass}>
                   <Users className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                  <span>Equipo</span>
+                  <span>{t("nav.team")}</span>
                 </Link>
               </li>
               <li>
                 <Link to="/redactores" className={linkClass}>
                   <PenSquare className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                  <span>Red de redactores</span>
+                  <span>{lang === "en" ? "Contributor network" : "Red de redactores"}</span>
                 </Link>
               </li>
             </ul>
@@ -131,7 +134,7 @@ export function SiteFooter() {
           {/* 4. Comunidad */}
           <div>
             <h3 className="font-display mb-4 text-base tracking-widest text-[#D4A017]">
-              Comunidad
+              {lang === "en" ? "Community" : "Comunidad"}
             </h3>
             <ul className="font-condensed space-y-2.5 text-sm uppercase tracking-wider">
               <li>
@@ -192,7 +195,7 @@ export function SiteFooter() {
                   className={`${linkClass} min-h-[44px] text-left uppercase`}
                 >
                   <SlidersHorizontal className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />
-                  <span>Gestionar cookies</span>
+                  <span>{lang === "en" ? "Cookie preferences" : "Gestionar cookies"}</span>
                 </button>
               </li>
             </ul>

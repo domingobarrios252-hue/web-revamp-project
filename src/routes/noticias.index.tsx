@@ -1,4 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
+import { useUiText } from "@/lib/i18n/uiText";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, Eye, User as UserIcon, Newspaper, Inbox } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,12 +45,14 @@ export const Route = createFileRoute("/noticias/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/noticias" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/noticias" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/news" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/noticias" }, { rel: "canonical", href: "https://rollerzone.es/noticias" }],
   }),
   component: NoticiasIndexPage,
 });
 
-function NoticiasIndexPage() {
+export function NoticiasIndexPage() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const { t, lang } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -77,7 +82,7 @@ function NoticiasIndexPage() {
           withAnyRow.add(v.news_id);
           if (v.channel === "global_home") onHome.add(v.news_id);
         }
-        setNews(rows.filter((r) => onHome.has(r.id) || !withAnyRow.has(r.id)));
+        setNews(await localizeNewsCards(rows.filter((r) => onHome.has(r.id) || !withAnyRow.has(r.id)), lang));
       });
 
     supabase
@@ -85,7 +90,7 @@ function NoticiasIndexPage() {
       .select("id, name, slug, scope")
       .order("sort_order", { ascending: true })
       .then(({ data, error }) => setCategories(error ? [] : ((data as Category[]) ?? [])));
-  }, []);
+  }, [lang]);
 
   const filtered = useMemo(() => {
     if (!news) return null;
@@ -168,7 +173,7 @@ function NoticiasIndexPage() {
                 className="font-condensed mt-2 inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-gold hover:underline"
                 aria-expanded={showAllCats}
               >
-                {showAllCats ? "Ver menos" : "Ver todas"}
+                {ui(showAllCats ? "Ver menos" : "Ver todas")}
               </button>
             )}
           </div>
@@ -202,6 +207,8 @@ function NoticiasIndexPage() {
 }
 
 function NewsSkeleton() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <div className="overflow-hidden border border-border bg-surface">
       <div className="aspect-[16/10] animate-pulse bg-surface-2" />
@@ -216,10 +223,12 @@ function NewsSkeleton() {
 }
 
 function EmptyNews() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <EmptyState
       icon={Inbox}
-      title="Próximamente"
+      title={ui("Próximamente")}
       message="Aún no hay noticias publicadas en esta sección. Vuelve pronto o explora el resto del sitio."
       action={
         <Link
@@ -234,10 +243,12 @@ function EmptyNews() {
 }
 
 function NewsListCard({ news }: { news: News }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const { lang } = useLanguage();
   return (
     <Link
-      to="/noticias/articulo/$slug"
+      to={linkLanguage === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
       params={{ slug: news.slug }}
       className="group block overflow-hidden border border-border bg-surface transition-colors hover:border-gold"
       aria-label={`${news.title}`}
