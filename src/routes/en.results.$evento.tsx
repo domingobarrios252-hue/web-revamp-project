@@ -6,7 +6,9 @@ export const Route = createFileRoute("/en/results/$evento")({
   loader: loadResultsPage,
   head: ({ loaderData, params }) => {
     const name = loaderData?.meta?.name ?? loaderData?.rows[0]?.event_name ?? "Results";
-    return bilingualHead(`${name} results`, `Classifications and results for ${name}.`, `/resultados/${params.evento}`, `/en/results/${params.evento}`, "en");
+    const metadata = bilingualHead(`${name} results`, `Classifications and results for ${name}.`, `/resultados/${params.evento}`, `/en/results/${params.evento}`, "en");
+    const image = loaderData?.meta?.banner_url;
+    return { ...metadata, meta: [...metadata.meta, ...(image?.startsWith("https://") ? [{ property: "og:image", content: image }, { name: "twitter:image", content: image }] : [])] };
   },
   component: EnglishResults,
 });
