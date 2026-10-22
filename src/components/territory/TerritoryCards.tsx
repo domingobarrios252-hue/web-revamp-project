@@ -26,7 +26,7 @@ export function TerritoryMasthead({
         <span aria-hidden>{territory.flag}</span> {ui('Edición territorial')}
       </div>
       <h1 className="font-display text-4xl uppercase tracking-widest md:text-5xl">
-        ROLLER<span className="text-gold">ZONE</span> {territory.name.toUpperCase()}
+        ROLLER<span className="text-gold">ZONE</span> {(linkLanguage === "en" && territory.code === "fr" ? "France" : territory.name).toUpperCase()}
       </h1>
       <p className="font-condensed mt-2 text-sm uppercase tracking-widest text-muted-foreground">
         {subtitle ?? territory.subtitle}
