@@ -20,6 +20,7 @@
 - Spain selection results link Vensport rows to special_piece_members via verified bibs/aliases in src/lib/specials/spainLinks.ts (bib first, then exact alias). Why: no fuzzy name matching, no schema change.
 - /resultados/$evento shows championships linked by ID (no event_slug rows) via ChampionshipArchive, reusing provider.ts + Asu26Results/PDF; filters only hide whole classifications. Why: one permanent archive, independent of the Especial, PDFs always complete.
 - Archive filter clearing suppresses the pending name debounce and resets every filter together. Why: a stale name update must not restore a cleared country.
+- Result headings translate only presentation labels after grouping, leaving source rows and export names untouched. Why: language changes must never affect classification identity or sporting records.
 - English public pages reuse Spanish views and existing fetchers; route locale drives interface dictionaries and implemented URL equivalents. Why: bilingual navigation must not duplicate editorial or sporting systems.
 - English territorial news lists share TerritoryNewsIndex and the existing country-scoped hook; original-language editorial documents retain their URLs unless reviewed translations exist. Why: preserve country filters and avoid invented translations.
 - News translations require active-account ownership policies for editors, active-admin approval, source snapshots and append-only revisions; public lists and sitemaps use anonymous RLS reads. Why: drafts and stale translations cannot become public through alternative paths.
