@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useUiText } from "@/lib/i18n/uiText";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { clearedArchiveFilters, pendingArchiveName } from "@/lib/results/archiveFilters";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Search, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,6 +60,7 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
   const [champs, setChamps] = useState<Champ[]>([]);
   const [shown, setShown] = useState(PAGE);
   const [nameInput, setNameInput] = useState(search.nombre ?? "");
+  const clearingName = useRef(false);
   const f = {
     modalidad: search.modalidad ?? "", prueba: search.prueba ?? "", categoria: search.categoria ?? "",
     sexo: search.sexo ?? "", ronda: search.ronda ?? "", pais: search.pais ?? "", nombre: search.nombre ?? "",
@@ -70,7 +72,10 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
   };
 
   useEffect(() => {
-    const t = setTimeout(() => { if (nameInput !== f.nombre) set({ nombre: nameInput.trim() }); }, 300);
+    const nextName = pendingArchiveName(nameInput, f.nombre, clearingName.current);
+    clearingName.current = false;
+    if (nextName === null) return;
+    const t = setTimeout(() => set({ nombre: nextName }), 300);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nameInput]);
@@ -162,7 +167,7 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
           </span>
         </label>
         {hasFilter && (
-          <button type="button" onClick={() => { setNameInput(""); set({ modalidad: "", prueba: "", categoria: "", sexo: "", ronda: "", pais: "", nombre: "" }); }} className="font-condensed col-span-2 min-h-11 rounded-lg border border-gold/60 text-xs font-bold uppercase tracking-widest text-gold md:col-span-4 lg:col-span-5">
+          <button type="button" onClick={() => { clearingName.current = nameInput !== ""; setNameInput(""); set(clearedArchiveFilters()); }} className="font-condensed col-span-2 min-h-11 rounded-lg border border-gold/60 text-xs font-bold uppercase tracking-widest text-gold md:col-span-4 lg:col-span-5">
             {ui('Quitar filtros')}
           </button>
         )}
