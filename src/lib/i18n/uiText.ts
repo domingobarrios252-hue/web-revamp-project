@@ -1,0 +1,58 @@
+import { useLanguage } from "./LanguageProvider";
+
+/** Fixed interface labels only. Never apply this dictionary to editorial bodies or sporting data. */
+export const UI_EN: Record<string, string> = {
+  "Quiénes somos": "About us", "Colabora con RollerZone": "Contribute to RollerZone", "Contacto": "Contact", "Publicidad en RollerZone": "Advertise with RollerZone", "Política editorial": "Editorial policy", "Política de correcciones": "Corrections policy", "Transparencia": "Transparency",
+  "Lo último en": "Latest", "vídeo": "video", "Ver todos los vídeos": "View all videos", "Ir a RollerZone TV": "Go to RollerZone TV", "Ver directo →": "Watch live →", "Editoriales": "Editorial", "Universo RollerZone": "RollerZone universe", "Mucho más que": "More than", "Explorar": "Explore", "Última hora": "Latest news", "Resultados recientes": "Recent results", "Atleta": "Athlete", "Tiempo": "Time", "CALENDARIO": "CALENDAR", "Perfil destacado": "Featured interview", "Edición digital": "Digital edition", "Accesos rápidos": "Quick links",
+  "La voz del patinaje de velocidad": "The voice of speed skating",
+  "Portada": "Front page", "El medio del patinaje de velocidad": "The speed skating publication",
+  "EN DIRECTO": "LIVE", "NUEVA NOTICIA": "LATEST NEWS", "Leer actualidad": "Read the story",
+  "Únete a RollerZone": "Join RollerZone", "Leer": "Read", "Actualidad RollerZone": "RollerZone news",
+  "Últimas": "Latest", "noticias": "news", "Ver todas": "View all", "Ver todos": "View all",
+  "Ver menos": "Show less", "Aún no hay más noticias publicadas.": "No more news has been published yet.",
+  "Agenda competitiva": "Competition calendar", "Próximos": "Upcoming", "eventos": "events",
+  "No hay eventos próximos programados.": "No upcoming events are scheduled.", "Ver evento": "View event",
+  "Revista RollerZone": "RollerZone Magazine", "Última": "Latest", "edición": "issue", "Hemeroteca": "Magazine archive",
+  "Aún no hay ediciones publicadas.": "No issues have been published yet.", "Ya disponible": "Available now",
+  "Leer online": "Read online", "Descargar PDF": "Download PDF", "Ver todas las ediciones": "View all issues",
+  "Filtros": "Filters", "Limpiar": "Clear", "Ámbito": "Scope", "Todos": "All", "Todas": "All",
+  "Categoría": "Category", "Mes": "Month", "Limpiar filtros": "Clear filters",
+  "Próximos eventos": "Upcoming events", "Eventos pasados": "Past events", "Ver detalle": "View details",
+  "Próximamente": "Coming soon", "Ningún evento coincide": "No matching events",
+  "Aún no hay eventos publicados": "No events have been published yet",
+  "Estamos preparando el calendario. Vuelve pronto para descubrir nuevas competiciones.": "The calendar is being prepared. Check back for upcoming competitions.",
+  "Prueba a limpiar los filtros para ver todos los eventos disponibles.": "Clear the filters to see all available events.",
+  "No hay eventos programados próximamente.": "No upcoming events are scheduled.",
+  "Especiales RollerZone": "RollerZone specials", "Coberturas especiales": "Special coverage",
+  "Cargando…": "Loading…", "Aún no hay especiales publicados.": "No special coverage has been published yet.",
+  "Destacado": "Featured", "Ver especial": "View coverage", "REVISTA": "MAGAZINE", "Leer ahora": "Read now",
+  "Edición no disponible online": "Issue not available online", "Equipo RollerZone": "RollerZone team", "Equipo": "Team",
+  "Dirección, redacción y colaboradores que hacen posible RollerZone cada día.": "The editorial team and contributors who make RollerZone possible every day.",
+  "Aún no hay miembros del equipo publicados.": "No team members have been published yet.", "PATROCINADORES": "SPONSORS",
+  "Principales": "Main sponsors", "Colaboradores": "Partners", "Aún no hay patrocinadores publicados.": "No sponsors have been published yet.",
+  "Todos los países": "All countries", "Todos los años": "All years", "Todas las modalidades": "All disciplines",
+  "Todos los estados": "All statuses", "En vivo": "Live", "Próximo": "Upcoming", "Finalizado": "Finished",
+  "Directo": "Live", "Retransmisiones": "Broadcasts", "Archivo": "Archive", "Programación": "Schedule",
+  "Próximas": "Upcoming", "emisiones": "broadcasts", "Emisiones": "Broadcasts", "anteriores": "archive",
+  "Lo mejor": "Highlights", "& vídeos": "& videos", "Próximas retransmisiones": "Upcoming broadcasts",
+  "Archivo de competiciones": "Competition archive", "No hay próximas retransmisiones publicadas.": "No upcoming broadcasts have been published.",
+  "Archivo ASU26": "ASU26 archive", "Ver retransmisión": "Watch broadcast", "Vídeo no disponible.": "Video unavailable.",
+  "Presentado por": "Presented by", "Retransmisión externa": "External broadcast", "Sin emisión disponible": "No broadcast available",
+  "En directo": "Live", "Publicidad": "Advertisement", "Próxima emisión": "Next broadcast", "(tu hora)": "(your time)",
+  "Todos los campeonatos": "All championships", "Archivo de resultados": "Results archive",
+  "Resultados ofrecidos por VeloPro": "Results provided by VeloPro", "Campeonato y año": "Championship and year",
+  "Modalidad": "Discipline", "Prueba": "Race", "Género": "Gender", "Fase": "Phase", "País": "Country", "Patinador": "Skater",
+  "Quitar filtros": "Clear filters", "Cargando resultados…": "Loading results…", "Clasificación general": "Overall classification",
+  "No hay clasificaciones con estos filtros.": "No classifications match these filters.",
+  "Todavía no hay clasificaciones publicadas para este campeonato.": "No classifications have been published for this championship yet.",
+  "Generando…": "Generating…", "Descargar clasificación en PDF": "Download classification PDF",
+  "Edición territorial": "Country edition", "Entrevista": "Interview", "ENTRE": "INTER", "VISTAS": "VIEWS",
+  "ÚLTIMAS": "LATEST", "NOTICIAS": "NEWS", "Ver todas las noticias": "View all news", "Ver todas las entrevistas": "View all interviews",
+  "Eventos y competiciones": "Events and competitions", "Noticias Francia": "France news", "Entrevistas Francia": "France interviews",
+  "Noticias Portugal": "Portugal news", "Entrevistas Portugal": "Portugal interviews", "Noticias USA": "USA news", "Entrevistas USA": "USA interviews",
+};
+
+export function useUiText() {
+  const { lang } = useLanguage();
+  return (source: string) => lang === "en" ? UI_EN[source] ?? source : source;
+}

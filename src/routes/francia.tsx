@@ -1,4 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { Link } from "@tanstack/react-router";
+import { useUiText } from "@/lib/i18n/uiText";
+import { createFileRoute } from "@tanstack/react-router";
 import { Newspaper, Mic } from "lucide-react";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import {
@@ -27,12 +30,14 @@ export const Route = createFileRoute("/francia")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/francia" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/francia" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/france" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/francia" }, { rel: "canonical", href: "https://rollerzone.es/francia" }],
   }),
   component: FranciaHome,
 });
 
-function FranciaHome() {
+export function FranciaHome() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const { items: news, loading } = useTerritoryNews(FRANCE.code, 13);
   const { items: interviews } = useTerritoryInterviews(FRANCE.code, 6);
   const [lead, ...rest] = news;
@@ -42,7 +47,7 @@ function FranciaHome() {
       <TerritoryMasthead territory={FRANCE} />
 
       {loading ? (
-        <p className="mt-10 text-muted-foreground">Cargando…</p>
+        <p className="mt-10 text-muted-foreground">{ui('Cargando…')}</p>
       ) : (
         <>
           {lead ? (
@@ -60,9 +65,9 @@ function FranciaHome() {
               <SectionHeading
                 kicker="Francia"
                 icon={<Newspaper className="h-3.5 w-3.5" />}
-                title="ÚLTIMAS"
-                accent="NOTICIAS"
-                action={{ to: "/francia/noticias", label: "Ver todas las noticias" }}
+                title={ui("ÚLTIMAS")}
+                accent={ui("NOTICIAS")}
+                action={{ to: "/francia/noticias", label: ui("Ver todas las noticias") }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {rest.map((n) => (
@@ -77,9 +82,9 @@ function FranciaHome() {
               <SectionHeading
                 kicker="Francia"
                 icon={<Mic className="h-3.5 w-3.5" />}
-                title="ENTRE"
-                accent="VISTAS"
-                action={{ to: "/francia/entrevistas", label: "Ver todas las entrevistas" }}
+                title={ui("ENTRE")}
+                accent={ui("VISTAS")}
+                action={{ to: "/francia/entrevistas", label: ui("Ver todas las entrevistas") }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {interviews.map((it) => (
@@ -94,19 +99,19 @@ function FranciaHome() {
               to="/francia/noticias"
               className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
-              Noticias Francia
+              {ui('Noticias Francia')}
             </Link>
             <Link
               to="/francia/entrevistas"
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
-              Entrevistas Francia
+              {ui('Entrevistas Francia')}
             </Link>
             <Link
               to="/eventos"
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
-              Eventos y competiciones
+              {ui('Eventos y competiciones')}
             </Link>
           </div>
         </>

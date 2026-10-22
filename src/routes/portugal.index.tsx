@@ -1,4 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { Link } from "@tanstack/react-router";
+import { useUiText } from "@/lib/i18n/uiText";
+import { createFileRoute } from "@tanstack/react-router";
 import { Newspaper, Mic } from "lucide-react";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import {
@@ -27,12 +30,14 @@ export const Route = createFileRoute("/portugal/")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/portugal" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/portugal" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/portugal" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/portugal" }, { rel: "canonical", href: "https://rollerzone.es/portugal" }],
   }),
   component: PortugalHome,
 });
 
-function PortugalHome() {
+export function PortugalHome() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const { items: news, loading } = useTerritoryNews(PORTUGAL.code, 13);
   const { items: interviews } = useTerritoryInterviews(PORTUGAL.code, 6);
   const [lead, ...rest] = news;
@@ -42,7 +47,7 @@ function PortugalHome() {
       <TerritoryMasthead territory={PORTUGAL} />
 
       {loading ? (
-        <p className="mt-10 text-muted-foreground">Cargando…</p>
+        <p className="mt-10 text-muted-foreground">{ui('Cargando…')}</p>
       ) : (
         <>
           {lead ? (
@@ -60,9 +65,9 @@ function PortugalHome() {
               <SectionHeading
                 kicker="Portugal"
                 icon={<Newspaper className="h-3.5 w-3.5" />}
-                title="ÚLTIMAS"
-                accent="NOTICIAS"
-                action={{ to: "/portugal/noticias", label: "Ver todas las noticias" }}
+                title={ui("ÚLTIMAS")}
+                accent={ui("NOTICIAS")}
+                action={{ to: "/portugal/noticias", label: ui("Ver todas las noticias") }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {rest.map((n) => (
@@ -77,9 +82,9 @@ function PortugalHome() {
               <SectionHeading
                 kicker="Portugal"
                 icon={<Mic className="h-3.5 w-3.5" />}
-                title="ENTRE"
-                accent="VISTAS"
-                action={{ to: "/portugal/entrevistas", label: "Ver todas las entrevistas" }}
+                title={ui("ENTRE")}
+                accent={ui("VISTAS")}
+                action={{ to: "/portugal/entrevistas", label: ui("Ver todas las entrevistas") }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {interviews.map((it) => (
@@ -94,19 +99,19 @@ function PortugalHome() {
               to="/portugal/noticias"
               className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
-              Noticias Portugal
+              {ui('Noticias Portugal')}
             </Link>
             <Link
               to="/portugal/entrevistas"
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
-              Entrevistas Portugal
+              {ui('Entrevistas Portugal')}
             </Link>
             <Link
               to="/eventos"
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
-              Eventos y competiciones
+              {ui('Eventos y competiciones')}
             </Link>
           </div>
         </>

@@ -1,4 +1,5 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
+import { languageFromPath } from "@/lib/i18n/paths";
 import { AuthProvider } from "@/lib/auth-context";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -130,8 +131,9 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({ select: state => state.location.pathname });
   return (
-    <html lang="es" className="overflow-x-clip">
+    <html lang={languageFromPath(pathname)} className="overflow-x-clip">
       <head>
         <HeadContent />
       </head>

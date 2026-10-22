@@ -1,4 +1,6 @@
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Link } from "@tanstack/react-router";
+
 import { ArrowRight, Calendar, User as UserIcon, Clock, Star } from "lucide-react";
 import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
 import { SectionHeading } from "./SectionHeading";
@@ -17,6 +19,7 @@ export type CoverNews = {
 };
 
 export function EditorialCover({ news }: { news: CoverNews[] }) {
+  const { lang: linkLanguage } = useLanguage();
   if (!news || news.length === 0) return null;
   const main = news[0];
   const sides = news.slice(1, 4);
@@ -33,7 +36,7 @@ export function EditorialCover({ news }: { news: CoverNews[] }) {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* PIEZA PRINCIPAL */}
         <Link
-          to="/noticias/articulo/$slug"
+          to={linkLanguage === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
           params={{ slug: main.slug }}
           className="group relative block overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_30px_60px_-30px_rgba(0,0,0,0.7)] ring-1 ring-gold/10 transition-all hover:border-gold hover:ring-gold/40 lg:col-span-2 lg:row-span-3"
         >
@@ -105,7 +108,7 @@ export function EditorialCover({ news }: { news: CoverNews[] }) {
         {sides.map((n, i) => (
           <Link
             key={n.id}
-            to="/noticias/articulo/$slug"
+            to={linkLanguage === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
             params={{ slug: n.slug }}
             className="group flex gap-4 overflow-hidden rounded-xl border border-border bg-surface p-3 shadow-md transition-all hover:border-gold hover:shadow-lg lg:flex-col lg:p-0"
           >

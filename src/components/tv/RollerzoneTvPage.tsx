@@ -1,3 +1,4 @@
+import { useUiText } from "@/lib/i18n/uiText";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { MapPin, Play, Radio } from "lucide-react";
@@ -69,6 +70,7 @@ type Highlight = {
 };
 
 export function RollerzoneTvPage() {
+  const ui = useUiText();
   const loadCatalog = useServerFn(getPublicBroadcasts);
   const [catalog, setCatalog] = useState<ChampionshipBroadcast[]>([]);
   const [featuredId, setFeaturedId] = useState<string | null>(null);
@@ -166,11 +168,11 @@ export function RollerzoneTvPage() {
   const hasProgram = upcomingBroadcasts.length > 0;
   const hasHighlights = !!highlights && highlights.length > 0;
   const navItems = [
-    { id: "directo", label: "Directo" },
-    { id: 'retransmisiones', label: 'Retransmisiones' },
-    { id: 'archivo', label: 'Archivo' },
+    { id: "directo", label: ui("Directo") },
+    { id: 'retransmisiones', label: ui('Retransmisiones') },
+    { id: 'archivo', label: ui('Archivo') },
     ...(hasLiveCenter ? [{ id: "live-center", label: "Live Center" }] : []),
-    ...(hasProgram ? [{ id: "emisiones", label: "Programación" }] : []),
+    ...(hasProgram ? [{ id: "emisiones", label: ui("Programación") }] : []),
     ...(hasHighlights ? [{ id: "highlights", label: "Highlights" }] : []),
   ];
 
@@ -204,7 +206,7 @@ export function RollerzoneTvPage() {
       key: "tv_premium",
       ad: true,
       node: (
-        <section aria-label="Publicidad" className="bg-background">
+        <section aria-label={ui("Publicidad")} className="bg-background">
           <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
             <TvPremiumBanner
               autoplay={settings?.premium_autoplay ?? true}
@@ -231,7 +233,7 @@ export function RollerzoneTvPage() {
       node: (
         <section id="emisiones" className="scroll-mt-28 border-y border-border bg-background">
           <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-            <SectionHeader kicker="Programación" title="Próximas" highlight="emisiones" />
+            <SectionHeader kicker={ui("Programación")} title={ui("Próximas")} highlight={ui("emisiones")} />
             <BroadcastsRail items={upcomingBroadcasts} />
           </div>
         </section>
@@ -240,7 +242,7 @@ export function RollerzoneTvPage() {
     if (tv05Block) blocks.push(tv05Block);
   }
   const pastBroadcasts = (broadcasts ?? []).filter(b => new Date(b.scheduled_at).getTime() <= now.getTime());
-  if (pastBroadcasts.length) blocks.push({ key: 'legacy-archive', ad: false, node: <section className="border-y border-border bg-background"><div className="mx-auto max-w-7xl px-4 py-10 lg:px-8"><SectionHeader kicker="Archivo" title="Emisiones" highlight="anteriores" /><BroadcastsRail items={pastBroadcasts} /></div></section> });
+  if (pastBroadcasts.length) blocks.push({ key: 'legacy-archive', ad: false, node: <section className="border-y border-border bg-background"><div className="mx-auto max-w-7xl px-4 py-10 lg:px-8"><SectionHeader kicker={ui("Archivo")} title={ui("Emisiones")} highlight={ui("anteriores")} /><BroadcastsRail items={pastBroadcasts} /></div></section> });
   if (hasHighlights) {
     blocks.push({
       key: "hl",
@@ -248,7 +250,7 @@ export function RollerzoneTvPage() {
       node: (
         <section id="highlights" className="scroll-mt-28 border-y border-border bg-surface/40">
           <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-            <SectionHeader kicker="Lo mejor" title="Highlights" highlight="& vídeos" />
+            <SectionHeader kicker={ui("Lo mejor")} title="Highlights" highlight={ui("& vídeos")} />
             <HighlightsRail items={highlights ?? []} onPlay={setActiveHighlight} />
           </div>
         </section>
@@ -304,6 +306,7 @@ export function RollerzoneTvPage() {
 }
 
 function StatusBadge({ tone, label }: { tone: "live" | "gold" | "muted"; label: string }) {
+  const ui = useUiText();
   if (tone === "live") {
     return (
       <span className="font-condensed inline-flex items-center gap-2 bg-tv-red px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white">
@@ -338,6 +341,7 @@ function SectionHeader({
   title: string;
   highlight: string;
 }) {
+  const ui = useUiText();
   return (
     <div>
       <p className="font-condensed text-xs uppercase tracking-[3px] text-gold">{kicker}</p>
@@ -353,6 +357,7 @@ const RAIL = "mt-6 -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x
 const RAIL_ITEM = "w-[82%] shrink-0 snap-start sm:w-auto";
 
 function BroadcastsRail({ items }: { items: Broadcast[] }) {
+  const ui = useUiText();
   return (
     <div className={RAIL}>
       {items.map((b) => (
@@ -365,6 +370,7 @@ function BroadcastsRail({ items }: { items: Broadcast[] }) {
 }
 
 function BroadcastCard({ b }: { b: Broadcast }) {
+  const ui = useUiText();
   const cover = b.cover_url || videoThumbnail(b.stream_url);
   const d = new Date(b.scheduled_at);
   const day = d.toLocaleDateString("es-ES", { weekday: "short", day: "2-digit", month: "short" });
@@ -381,7 +387,7 @@ function BroadcastCard({ b }: { b: Broadcast }) {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
         <span className="font-condensed absolute left-2 top-2 border border-gold/60 bg-background/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gold">
-          {d.getTime() <= Date.now() ? "Finalizado" : "Próximamente"}
+          {ui(d.getTime() <= Date.now() ? "Finalizado" : "Próximamente")}
         </span>
         <div className="absolute bottom-2 left-3 right-3 flex items-end justify-between gap-2">
           <p className="font-condensed text-[11px] uppercase tracking-widest text-white/85">{day}</p>
@@ -415,6 +421,7 @@ function BroadcastCard({ b }: { b: Broadcast }) {
 }
 
 function HighlightsRail({ items, onPlay }: { items: Highlight[]; onPlay: (h: Highlight) => void }) {
+  const ui = useUiText();
   return (
     <div className={RAIL}>
       {items.map((h) => {
@@ -476,6 +483,7 @@ function HighlightsRail({ items, onPlay }: { items: Highlight[]; onPlay: (h: Hig
 }
 
 function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => void }) {
+  const ui = useUiText();
   const embed = videoEmbedUrl(item.video_url, { autoplay: true });
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();

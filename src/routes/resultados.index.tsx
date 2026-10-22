@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { useUiText } from "@/lib/i18n/uiText";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Calendar, MapPin, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,12 +30,14 @@ export const Route = createFileRoute("/resultados/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/resultados" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/resultados" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/results" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/resultados" }, { rel: "canonical", href: "https://rollerzone.es/resultados" }],
   }),
   component: ResultadosIndex,
 });
 
-function ResultadosIndex() {
+export function ResultadosIndex() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const { t, lang } = useLanguage();
   const [events, setEvents] = useState<ResultEvent[] | null>(null);
   const [legacy, setLegacy] = useState<{ slug: string; name: string }[]>([]);
@@ -118,22 +122,22 @@ function ResultadosIndex() {
       {all.length > 0 && (
         <section className="mt-6 grid gap-2 rounded-xl border border-border bg-surface p-3 sm:grid-cols-2 lg:grid-cols-4">
           <select value={fCountry} onChange={(e) => setFCountry(e.target.value)} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
-            <option value="">Todos los países</option>
+            <option value="">{ui('Todos los países')}</option>
             {countryOpts.map((c) => (<option key={c} value={c}>{c}</option>))}
           </select>
           <select value={fYear} onChange={(e) => setFYear(e.target.value)} aria-label="Año" className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
-            <option value="">Todos los años</option>
+            <option value="">{ui('Todos los años')}</option>
             {yearOpts.map((y) => (<option key={y} value={y}>{y}</option>))}
           </select>
-          <select value={fMod} onChange={(e) => setFMod(e.target.value)} aria-label="Modalidad" className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
-            <option value="">Todas las modalidades</option>
+          <select value={fMod} onChange={(e) => setFMod(e.target.value)} aria-label={ui("Modalidad")} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
+            <option value="">{ui('Todas las modalidades')}</option>
             {modOpts.map((m) => (<option key={m} value={m}>{m}</option>))}
           </select>
           <select value={fStatus} onChange={(e) => setFStatus(e.target.value as "" | ResultEvent["status"])} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none">
-            <option value="">Todos los estados</option>
-            <option value="en_vivo">En vivo</option>
-            <option value="proxima">Próximo</option>
-            <option value="finalizado">Finalizado</option>
+            <option value="">{ui('Todos los estados')}</option>
+            <option value="en_vivo">{ui('En vivo')}</option>
+            <option value="proxima">{ui('Próximo')}</option>
+            <option value="finalizado">{ui('Finalizado')}</option>
           </select>
         </section>
       )}
@@ -154,7 +158,7 @@ function ResultadosIndex() {
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={Trophy}
-          title="Próximamente"
+          title={ui("Próximamente")}
           message="Aún no hay resultados publicados. En cuanto arranquen las próximas competiciones, los verás aquí en vivo."
           className="mt-10"
         />
@@ -163,7 +167,7 @@ function ResultadosIndex() {
           {filtered.map((e) => (
             <Link
               key={e.id}
-              to="/resultados/$evento"
+              to={linkLanguage === "en" ? "/en/results/$evento" : "/resultados/$evento"}
               params={{ evento: e.slug }}
               className="group block overflow-hidden rounded-xl border border-border bg-surface transition-all hover:border-gold hover:shadow-xl"
             >
@@ -205,6 +209,8 @@ function ResultadosIndex() {
 }
 
 function StatusBadge({ status, t }: { status: ResultEvent["status"]; t: (k: string) => string }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   if (status === "en_vivo") {
     return (
       <span className="font-condensed inline-flex items-center gap-1 bg-tv-red px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-foreground live-red-tag">

@@ -1,5 +1,6 @@
 import { AdCreative, bannerVisibilityClass } from "@/components/site/AdCreative";
 import { useAdBanners, type AdBanner } from "@/lib/useAdBanners";
+import { useUiText } from "@/lib/i18n/uiText";
 
 /**
  * Small ad banner (300x100). Renders all active banners for the given
@@ -12,6 +13,7 @@ export function AdBannerSmall({
   placement: string;
   className?: string;
 }) {
+  const ui = useUiText();
   const banners = useAdBanners(placement);
 
   if (banners.length === 0) return null;
@@ -31,7 +33,7 @@ export function AdBannerSmall({
   return (
     <div className={`flex flex-col items-center ${className}`}>
       <div className="font-condensed mb-1.5 text-[9px] uppercase tracking-widest text-muted-foreground/60">
-        Publicidad
+        {ui("Publicidad")}
       </div>
       <div className="flex w-full flex-col items-center gap-3">
         {banners.map((banner) => (

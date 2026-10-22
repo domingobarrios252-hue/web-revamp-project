@@ -28,6 +28,8 @@ export const Route = createFileRoute("/legal/$slug")({
         { name: "robots", content: "index, follow" },
         { property: "og:title", content: `${title} — RollerZone` },
         { property: "og:description", content: `${title} de RollerZone.` },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary" },
       ],
     };
   },
@@ -223,7 +225,7 @@ function LegalPage() {
 
           {/* Pills nav between legal pages */}
           <div className="mt-10 flex flex-wrap gap-2">
-            {(Object.keys(SLUG_META) as LegalSlug[]).map((s) => {
+            {(Object.keys(SLUG_META) as LegalSlug[]).filter(s => s !== "condiciones-uso").map((s) => {
               const m = SLUG_META[s];
               const active = s === slug;
               const I = m.icon;

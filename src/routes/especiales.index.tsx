@@ -1,3 +1,4 @@
+import { useUiText } from "@/lib/i18n/uiText";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
@@ -36,12 +37,13 @@ export const Route = createFileRoute("/especiales/")({
       { property: "og:url", content: CANON },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: CANON }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/especiales" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/specials" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/especiales" }, { rel: "canonical", href: CANON }],
   }),
   component: SpecialsIndex,
 });
 
-function SpecialsIndex() {
+export function SpecialsIndex() {
+  const ui = useUiText();
   const [items, setItems] = useState<Special[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -63,10 +65,10 @@ function SpecialsIndex() {
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <header className="mb-10">
           <div className="font-condensed inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[3px] text-gold">
-            <Sparkles className="h-3 w-3" /> Especiales RollerZone
+            <Sparkles className="h-3 w-3" /> {ui('Especiales RollerZone')}
           </div>
           <h1 className="font-display mt-2 text-4xl uppercase tracking-wider text-foreground md:text-5xl">
-            Coberturas especiales
+            {ui('Coberturas especiales')}
           </h1>
           <div className="mt-3 h-[3px] w-24 bg-gold" />
           <p className="mt-4 max-w-2xl text-base text-muted-foreground">
@@ -76,10 +78,10 @@ function SpecialsIndex() {
         </header>
 
         {loading ? (
-          <div className="text-muted-foreground">Cargando…</div>
+          <div className="text-muted-foreground">{ui('Cargando…')}</div>
         ) : items.length === 0 ? (
           <div className="border border-dashed border-border p-8 text-center text-muted-foreground">
-            Aún no hay especiales publicados.
+            {ui('Aún no hay especiales publicados.')}
           </div>
         ) : (
           <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -100,7 +102,7 @@ function SpecialsIndex() {
                     />
                     {s.featured_home && (
                       <span className="font-condensed absolute left-3 top-3 inline-block bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background shadow-md">
-                        Destacado
+                        {ui('Destacado')}
                       </span>
                     )}
                   </div>
@@ -114,7 +116,7 @@ function SpecialsIndex() {
                       </p>
                     )}
                     <div className="font-condensed mt-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[2.5px] text-gold">
-                      Ver especial <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                      {ui('Ver especial')} <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
                 </Link>

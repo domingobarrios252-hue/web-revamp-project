@@ -1,3 +1,4 @@
+import { useUiText } from "@/lib/i18n/uiText";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, Calendar, BookOpenCheck } from "lucide-react";
@@ -39,7 +40,7 @@ export const Route = createFileRoute("/revista/")({
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "https://rollerzone.es/revista" },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/revista" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/revista" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/magazine" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/revista" }, { rel: "canonical", href: "https://rollerzone.es/revista" }],
   }),
   component: RevistaPage,
 });
@@ -52,7 +53,8 @@ function isReadable(m: Magazine) {
   return !!(m.public_access || m.is_free);
 }
 
-function RevistaPage() {
+export function RevistaPage() {
+  const ui = useUiText();
   const [issues, setIssues] = useState<Magazine[] | null>(null);
   const [tab, setTab] = useState<"spain" | "colombia">("spain");
 
@@ -89,7 +91,7 @@ function RevistaPage() {
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <div className="mb-4 flex items-center gap-3 border-b border-border pb-4">
         <BookOpen className="h-7 w-7 text-gold" />
-        <h1 className="font-display text-3xl tracking-widest">REVISTA</h1>
+        <h1 className="font-display text-3xl tracking-widest">{ui('REVISTA')}</h1>
       </div>
       <p className="mb-8 text-sm text-muted-foreground">
         Biblioteca digital de acceso libre: lee todas las ediciones publicadas sin necesidad de cuenta.
@@ -100,7 +102,7 @@ function RevistaPage() {
       ) : issues.length === 0 ? (
         <EmptyState
           icon={BookOpen}
-          title="Próximamente"
+          title={ui("Próximamente")}
           message="Aún no hay ediciones publicadas. Estamos preparando el primer número — vuelve pronto para hojearlo."
         />
       ) : (
@@ -127,6 +129,7 @@ function RevistaPage() {
 }
 
 function Skeleton() {
+  const ui = useUiText();
   return (
     <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {[0, 1, 2, 3].map((i) => (
@@ -143,11 +146,12 @@ function Skeleton() {
 }
 
 function MagazineGrid({ items }: { items: Magazine[] }) {
+  const ui = useUiText();
   if (items.length === 0) {
     return (
       <EmptyState
         icon={BookOpen}
-        title="Próximamente"
+        title={ui("Próximamente")}
         message="Aún no hay ediciones publicadas para esta región. Vuelve pronto."
       />
     );
@@ -162,6 +166,7 @@ function MagazineGrid({ items }: { items: Magazine[] }) {
 }
 
 function MagazineCard({ magazine: m }: { magazine: Magazine }) {
+  const ui = useUiText();
   const cover = m.cover_image_url || m.cover_url;
   const readable = isReadable(m);
   const externalHref = m.read_url || m.pdf_url;
@@ -202,19 +207,19 @@ function MagazineCard({ magazine: m }: { magazine: Magazine }) {
             externalHref ? (
               <Button asChild className="min-h-11 w-full bg-green-600 text-white hover:bg-green-700">
                 <a href={externalHref} target="_blank" rel="noopener noreferrer">
-                  <BookOpenCheck className="h-4 w-4" /> Leer ahora
+                  <BookOpenCheck className="h-4 w-4" /> {ui('Leer ahora')}
                 </a>
               </Button>
             ) : (
               <Button asChild className="min-h-11 w-full bg-green-600 text-white hover:bg-green-700">
                 <Link to="/revista/leer/$id" params={{ id: m.id }}>
-                  <BookOpenCheck className="h-4 w-4" /> Leer ahora
+                  <BookOpenCheck className="h-4 w-4" /> {ui('Leer ahora')}
                 </Link>
               </Button>
             )
           ) : (
             <Button variant="outline" className="min-h-11 w-full" disabled>
-              Edición no disponible online
+              {ui('Edición no disponible online')}
             </Button>
           )}
         </div>

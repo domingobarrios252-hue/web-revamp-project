@@ -1,4 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
+import { useUiText } from "@/lib/i18n/uiText";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Eye, Calendar, User as UserIcon, ArrowRight, MapPin, BookOpen, ExternalLink,
@@ -25,6 +28,8 @@ import { JoinContributorsBlock } from "@/components/home/JoinContributorsBlock";
 import { useHomeSectionVisibility } from "@/lib/home/useHomeSectionVisibility";
 
 function RedactoresGate() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const { visibility, loading } = useHomeSectionVisibility();
   if (loading) return null;
   if (!visibility.redactores) return null;
@@ -86,7 +91,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: HOME_OG_IMAGE },
     ],
 
-    links: [{ rel: "canonical", href: "https://rollerzone.es/" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/" }, { rel: "canonical", href: "https://rollerzone.es/" }],
   }),
   component: HomePage,
 });
@@ -94,7 +99,9 @@ export const Route = createFileRoute("/")({
 type HeroSettings = { live_active: boolean };
 const HERO_DEFAULTS: HeroSettings = { live_active: false };
 
-function HomePage() {
+export function HomePage() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const { t, lang } = useLanguage();
   const [news, setNews] = useState<News[] | null>(null);
   const [heroCfg, setHeroCfg] = useState<HeroSettings>(HERO_DEFAULTS);
@@ -130,7 +137,7 @@ function HomePage() {
           if (v.channel === "global_home") onHome.add(v.news_id);
         }
         const visible = rows.filter((r) => onHome.has(r.id) || !withAnyRow.has(r.id)).slice(0, 14);
-        if (!cancelled) setNews(visible);
+        if (!cancelled) setNews(await localizeNewsCards(visible, lang));
       });
 
     supabase
@@ -144,7 +151,7 @@ function HomePage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lang]);
 
   const heroSlides: News[] = (() => {
     if (!news || news.length === 0) return [];
@@ -170,7 +177,7 @@ function HomePage() {
           RollerZone
         </h1>
         <p className="font-condensed mt-2 text-[11px] font-bold uppercase tracking-[0.3em] text-foreground sm:text-sm">
-          La voz del patinaje de velocidad
+          {ui('La voz del patinaje de velocidad')}
         </p>
       </section>
 
@@ -234,6 +241,8 @@ function HeroCarousel({
   t: (k: string) => string;
   lang: "es" | "en";
 }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const autoplay = useRef(Autoplay({ delay: 5500, stopOnInteraction: false, stopOnMouseEnter: true }));
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [autoplay.current]);
   const [selected, setSelected] = useState(0);
@@ -259,7 +268,7 @@ function HeroCarousel({
           <div className="relative text-center">
             <p className="font-display text-5xl uppercase tracking-widest text-gold">RollerZone</p>
             <p className="font-condensed mt-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              La voz del patinaje de velocidad
+              {ui('La voz del patinaje de velocidad')}
             </p>
           </div>
 
@@ -349,6 +358,8 @@ function HeroSlide({
   index: number;
   total: number;
 }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const todayLabel = new Date().toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", {
     weekday: "long",
     day: "2-digit",
@@ -383,7 +394,7 @@ function HeroSlide({
       <div className="absolute inset-x-0 top-0 z-10 border-b border-white/10 bg-black/45 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
           <div className="font-condensed flex items-center gap-3 text-[10px] uppercase tracking-[3px] text-white/70">
-            <span className="text-gold">Portada</span>
+            <span className="text-gold">{ui('Portada')}</span>
             <span className="hidden sm:inline text-white/30">·</span>
             <span className="hidden sm:inline capitalize">{todayLabel}</span>
           </div>
@@ -399,7 +410,7 @@ function HeroSlide({
         <div className="w-full max-w-3xl animate-fade-in">
           {/* Kicker de marca */}
           <div className="font-condensed mb-4 inline-flex items-center gap-2 bg-gold px-3 py-1.5 text-[10px] font-bold uppercase tracking-[3.5px] text-background shadow-lg md:text-[11px]">
-            <Newspaper className="h-3 w-3" /> El medio del patinaje de velocidad
+            <Newspaper className="h-3 w-3" /> {ui('El medio del patinaje de velocidad')}
           </div>
 
           <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -409,14 +420,14 @@ function HeroSlide({
                 return (
                   <span className="live-red-tag font-condensed inline-flex items-center gap-2 rounded-sm bg-tv-red px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-white shadow-lg">
                     <span className="live-dot-fast inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                    EN DIRECTO
+                    {ui('EN DIRECTO')}
                   </span>
                 );
               }
               if (badge === "new") {
                 return (
                   <span className="font-condensed inline-flex items-center gap-2 rounded-sm bg-gold px-3 py-1.5 text-[11px] font-bold uppercase tracking-[3px] text-background shadow-lg">
-                    NUEVA NOTICIA
+                    {ui('NUEVA NOTICIA')}
                   </span>
                 );
               }
@@ -434,7 +445,7 @@ function HeroSlide({
           </div>
 
           <Link
-            to="/noticias/articulo/$slug"
+            to={linkLanguage === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
             params={{ slug: slide.slug }}
             className="block group"
           >
@@ -453,17 +464,17 @@ function HeroSlide({
           {/* CTAs duales */}
           <div className="mt-6 flex flex-wrap items-center gap-3 md:mt-8">
             <Link
-              to="/noticias/articulo/$slug"
+              to={linkLanguage === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
               params={{ slug: slide.slug }}
               className="inline-flex items-center justify-center gap-2 rounded-md bg-gold px-6 py-3 text-[13px] font-bold uppercase tracking-wider text-background shadow-lg gold-glow-soft transition-all hover:bg-gold-light hover:translate-x-1 md:text-sm"
             >
-              Leer actualidad <ArrowRight className="h-4 w-4" />
+              {ui('Leer actualidad')} <ArrowRight className="h-4 w-4" />
             </Link>
             <a
               href="#colaborar"
               className="font-condensed inline-flex items-center justify-center gap-2 rounded-md border border-white/30 bg-black/30 px-6 py-3 text-[13px] font-bold uppercase tracking-wider text-foreground backdrop-blur-sm transition-all hover:border-gold hover:bg-black/50 hover:text-gold md:text-sm"
             >
-              <UsersRound className="h-4 w-4" /> Únete a RollerZone
+              <UsersRound className="h-4 w-4" /> {ui('Únete a RollerZone')}
             </a>
           </div>
         </div>
@@ -477,6 +488,8 @@ function HeroSlide({
 /* ===================== NEWS GRID ===================== */
 
 function NewsSkeleton() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <div className="rounded-2xl border border-border bg-surface">
       <div className="aspect-[16/9] animate-pulse bg-surface-2" />
@@ -491,9 +504,11 @@ function NewsSkeleton() {
 }
 
 function NewsGridCard({ news }: { news: News }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <Link
-      to="/noticias/articulo/$slug"
+      to={linkLanguage === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
       params={{ slug: news.slug }}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.35)]"
     >
@@ -542,7 +557,7 @@ function NewsGridCard({ news }: { news: News }) {
         </div>
         <div className="mt-4">
           <span className="font-condensed inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gold transition-transform group-hover:translate-x-1">
-            Leer <ArrowRight className="h-3.5 w-3.5" />
+            {ui('Leer')} <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>
@@ -551,13 +566,15 @@ function NewsGridCard({ news }: { news: News }) {
 }
 
 function LatestNewsGrid({ news }: { news: News[] | null }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <section id="noticias" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
       <SectionHeading
-        kicker="Actualidad RollerZone"
-        title="Últimas"
-        accent="noticias"
-        action={{ to: "/noticias", label: "Ver todas" }}
+        kicker={ui("Actualidad RollerZone")}
+        title={ui("Últimas")}
+        accent={ui("noticias")}
+        action={{ to: "/noticias", label: ui("Ver todas") }}
       />
 
       {news === null ? (
@@ -565,7 +582,7 @@ function LatestNewsGrid({ news }: { news: News[] | null }) {
           {[0, 1, 2, 3, 4, 5].map((i) => <NewsSkeleton key={i} />)}
         </div>
       ) : news.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Aún no hay más noticias publicadas.</p>
+        <p className="text-sm text-muted-foreground">{ui('Aún no hay más noticias publicadas.')}</p>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {news.map((n) => <NewsGridCard key={n.id} news={n} />)}
@@ -590,6 +607,8 @@ type EventPreview = {
 };
 
 function EventsPreviewSection() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const [items, setItems] = useState<EventPreview[] | null>(null);
 
   useEffect(() => {
@@ -611,10 +630,10 @@ function EventsPreviewSection() {
   return (
     <section id="eventos" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
       <SectionHeading
-        kicker="Agenda competitiva"
-        title="Próximos"
-        accent="eventos"
-        action={{ to: "/eventos", label: "Ver todos" }}
+        kicker={ui("Agenda competitiva")}
+        title={ui("Próximos")}
+        accent={ui("eventos")}
+        action={{ to: "/eventos", label: ui("Ver todos") }}
       />
 
       {items === null ? (
@@ -622,7 +641,7 @@ function EventsPreviewSection() {
           {[0, 1, 2].map((i) => <div key={i} className="h-56 animate-pulse rounded-2xl bg-surface" />)}
         </div>
       ) : items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No hay eventos próximos programados.</p>
+        <p className="text-sm text-muted-foreground">{ui('No hay eventos próximos programados.')}</p>
       ) : (
         <Carousel opts={{ align: "start", loop: false }} className="relative">
           <CarouselContent className="-ml-4">
@@ -681,7 +700,7 @@ function EventsPreviewSection() {
                       </div>
                     )}
                     <div className="mt-4 font-condensed inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gold transition-transform group-hover:translate-x-1">
-                      Ver evento <ArrowRight className="h-3.5 w-3.5" />
+                      {ui('Ver evento')} <ArrowRight className="h-3.5 w-3.5" />
                     </div>
                   </div>
                 </Link>
@@ -711,6 +730,8 @@ type MagazinePreview = {
 };
 
 function MagazinePreviewSection() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const [item, setItem] = useState<MagazinePreview | null | undefined>(undefined);
 
   useEffect(() => {
@@ -731,16 +752,16 @@ function MagazinePreviewSection() {
   return (
     <section id="revista" className="mx-auto max-w-7xl px-5 py-12 md:px-6">
       <SectionHeading
-        kicker="Revista RollerZone"
-        title="Última"
-        accent="edición"
-        action={{ to: "/revista", label: "Hemeroteca" }}
+        kicker={ui("Revista RollerZone")}
+        title={ui("Última")}
+        accent={ui("edición")}
+        action={{ to: "/revista", label: ui("Hemeroteca") }}
       />
 
       {item === undefined ? (
         <div className="h-72 animate-pulse rounded-2xl bg-surface" />
       ) : item === null ? (
-        <p className="text-sm text-muted-foreground">Aún no hay ediciones publicadas.</p>
+        <p className="text-sm text-muted-foreground">{ui('Aún no hay ediciones publicadas.')}</p>
       ) : (
         <div className="grid gap-6 overflow-hidden rounded-2xl border border-border bg-surface shadow-xl md:grid-cols-[320px_1fr]">
           <div className="relative aspect-[3/4] overflow-hidden bg-background md:aspect-auto">
@@ -752,7 +773,7 @@ function MagazinePreviewSection() {
               </div>
             )}
             <span className="font-condensed absolute left-4 top-4 rounded-md bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2.5px] text-background shadow-lg">
-              Ya disponible
+              {ui('Ya disponible')}
             </span>
           </div>
           <div className="flex flex-col justify-center p-6 md:p-8">
@@ -769,16 +790,16 @@ function MagazinePreviewSection() {
             <div className="mt-6 flex flex-wrap gap-2">
               {item.read_url && (
                 <a href={item.read_url} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-2 rounded-md bg-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-background shadow-lg transition-all hover:bg-gold-light hover:translate-x-1">
-                  Leer online <ExternalLink className="h-3 w-3" />
+                  {ui('Leer online')} <ExternalLink className="h-3 w-3" />
                 </a>
               )}
               {item.pdf_url && (
                 <a href={item.pdf_url} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-2 rounded-md border border-gold/60 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold transition-all hover:bg-gold/10">
-                  Descargar PDF
+                  {ui('Descargar PDF')}
                 </a>
               )}
               <Link to="/revista" className="font-condensed inline-flex items-center gap-2 rounded-md border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-foreground transition-all hover:border-gold hover:text-gold">
-                Ver todas las ediciones
+                {ui('Ver todas las ediciones')}
               </Link>
             </div>
           </div>

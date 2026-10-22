@@ -1,5 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { translations, type Language } from "./translations";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { languageFromPath } from "./paths";
 
 const STORAGE_KEY = "rz_lang_v1";
 
@@ -10,20 +12,6 @@ type LanguageContextValue = {
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
-
-function readInitialLang(): Language {
-  if (typeof window === "undefined") return "es";
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "es" || stored === "en") return stored;
-    // Optional: detect browser language on first visit
-    const nav = window.navigator?.language?.toLowerCase() ?? "";
-    if (nav.startsWith("en")) return "en";
-  } catch {
-    /* ignore */
-  }
-  return "es";
-}
 
 function resolve(obj: unknown, path: string): string {
   const parts = path.split(".");
@@ -39,12 +27,25 @@ function resolve(obj: unknown, path: string): string {
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Language>("es");
+  const pathname = useRouterState({ select: state => state.location.pathname });
+  const lang = languageFromPath(pathname);
+  const navigate = useNavigate();
+  const restored = useRef(false);
 
   // Hydrate from localStorage on mount (client-only) to avoid SSR mismatch.
   useEffect(() => {
-    setLangState(readInitialLang());
-  }, []);
+    try {
+      if (!restored.current) {
+        restored.current = true;
+        // Respect explicit deep links; only the entry homepage restores preference.
+        if (pathname === "/" && window.localStorage.getItem(STORAGE_KEY) === "en") {
+          void navigate({ to: "/en" });
+          return;
+        }
+      }
+      window.localStorage.setItem(STORAGE_KEY, lang);
+    } catch { /* optional preference */ }
+  }, [lang, pathname, navigate]);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -53,7 +54,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [lang]);
 
   const setLang = useCallback((l: Language) => {
-    setLangState(l);
     try {
       window.localStorage.setItem(STORAGE_KEY, l);
     } catch {

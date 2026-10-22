@@ -1,3 +1,5 @@
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { useUiText } from "@/lib/i18n/uiText";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Play, Tv, X, Radio } from "lucide-react";
@@ -29,6 +31,8 @@ type TvSettings = {
 };
 
 export function RollerZoneTVHome() {
+  const ui = useUiText();
+  const { lang } = useLanguage();
   const [items, setItems] = useState<Highlight[] | null>(null);
   const [tv, setTv] = useState<TvSettings | null>(null);
   const [openUrl, setOpenUrl] = useState<string | null>(null);
@@ -101,10 +105,10 @@ export function RollerZoneTVHome() {
       <div className="mx-auto max-w-7xl px-5 md:px-6">
         <SectionHeading
           kicker="RollerZone TV"
-          title="Lo último en"
-          accent="vídeo"
+          title={ui('Lo último en')}
+          accent={ui('vídeo')}
           icon={<Tv className="h-3 w-3" />}
-          action={{ to: "/tv", label: "Ver todos los vídeos" }}
+          action={{ to: "/tv", label: ui('Ver todos los vídeos') }}
         />
 
         {isLive && tv ? (
@@ -203,10 +207,10 @@ export function RollerZoneTVHome() {
                 </button>
               ))}
               <Link
-                to="/tv"
+                to={lang === "en" ? "/en/rollerzone-tv" : "/tv"}
                 className="font-condensed mt-1 inline-flex items-center justify-center gap-2 rounded-md border border-gold/60 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-background"
               >
-                Ir a RollerZone TV
+                {ui('Ir a RollerZone TV')}
               </Link>
             </div>
           </div>
@@ -248,10 +252,12 @@ export function RollerZoneTVHome() {
 }
 
 function LiveTvCard({ tv }: { tv: TvSettings }) {
+  const ui = useUiText();
+  const { lang } = useLanguage();
   const thumb = tv.live_thumbnail_url || videoThumbnail(tv.live_stream_url);
   return (
     <Link
-      to="/tv"
+      to={lang === "en" ? "/en/rollerzone-tv" : "/tv"}
       className="group relative block w-full overflow-hidden rounded-2xl border border-tv-red/70 bg-black shadow-xl transition-all hover:border-gold"
     >
       <div className="relative aspect-video">
@@ -272,7 +278,7 @@ function LiveTvCard({ tv }: { tv: TvSettings }) {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
             </span>
-            EN DIRECTO
+            {ui('EN DIRECTO')}
           </span>
         </div>
         <div className="absolute inset-0 flex items-center justify-center">
@@ -291,7 +297,7 @@ function LiveTvCard({ tv }: { tv: TvSettings }) {
             <p className="clamp-2 mt-2 max-w-2xl text-sm text-white/80">{tv.live_subtitle}</p>
           )}
           <span className="font-condensed mt-4 inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-primary-foreground">
-            Ver directo →
+            {ui('Ver directo →')}
           </span>
         </div>
       </div>

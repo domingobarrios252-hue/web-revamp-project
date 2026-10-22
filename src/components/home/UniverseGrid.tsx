@@ -1,3 +1,5 @@
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { useUiText } from "@/lib/i18n/uiText";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Trophy, Award, Flag, Globe2, Handshake } from "lucide-react";
 import type { ReactNode } from "react";
@@ -54,12 +56,13 @@ const TILES: Tile[] = [
 ];
 
 export function UniverseGrid() {
+  const ui = useUiText();
   return (
     <section className="mx-auto max-w-7xl px-5 py-12 md:px-6">
       <SectionHeading
-        kicker="Universo RollerZone"
-        title="Mucho más que"
-        accent="noticias"
+        kicker={ui('Universo RollerZone')}
+        title={ui('Mucho más que')}
+        accent={ui('noticias')}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -83,7 +86,7 @@ export function UniverseGrid() {
               {t.description}
             </p>
             <span className="font-condensed mt-4 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gold transition-transform group-hover:translate-x-1">
-              Explorar <ArrowRight className="h-3.5 w-3.5" />
+              {ui('Explorar')} <ArrowRight className="h-3.5 w-3.5" />
             </span>
           </Link>
         ))}

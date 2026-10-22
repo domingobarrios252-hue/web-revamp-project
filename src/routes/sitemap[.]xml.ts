@@ -22,6 +22,7 @@ interface SitemapEntry {
 }
 
 const STATIC_ENTRIES: SitemapEntry[] = [
+  ...["/en", "/en/news", "/en/events", "/en/results", "/en/specials", "/en/magazine", "/en/team", "/en/sponsors", "/en/france", "/en/portugal", "/en/usa", "/en/rollerzone-tv", "/en/hub/es", "/en/hub/co"].map(path => ({ path, changefreq: "weekly" as const, priority: "0.6" })),
   { path: "/", changefreq: "daily", priority: "1.0" },
   { path: "/noticias", changefreq: "hourly", priority: "0.9" },
   { path: "/entrevistas", changefreq: "weekly", priority: "0.8" },
@@ -148,6 +149,16 @@ export const Route = createFileRoute("/sitemap.xml")({
               image: n.image_url ?? undefined,
               imageTitle: n.title ?? undefined,
             });
+          }
+          // Public RLS requires approved + published + exact current source snapshot.
+          // Do not use a privileged client: drafts and outdated versions must stay absent.
+          const { data: englishNews } = await supabase.from("news_translations")
+            .select("title,updated_at,news!inner(slug,published,image_url)")
+            .eq("lang", "en").eq("status", "approved").not("source_hash", "is", null).eq("news.published", true).limit(5000);
+          for (const tr of englishNews ?? []) {
+            const original = tr.news;
+            if (!original?.slug) continue;
+            entries.push({ path: `/en/news/${original.slug}`, lastmod: toIso(tr.updated_at), changefreq: "weekly", priority: "0.8", image: original.image_url ?? undefined, imageTitle: tr.title });
           }
           for (const i of (interviewsRes.data ?? []) as Array<{ slug: string | null; title: string | null; updated_at: string | null; interview_date: string | null; cover_url: string | null }>) {
             if (!i.slug) continue;

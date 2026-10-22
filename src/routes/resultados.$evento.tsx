@@ -1,4 +1,5 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowDown, ArrowUp, ArrowUpDown, Calendar, MapPin, Search, Star, Trophy, FileDown, FileSpreadsheet, FileText, PlayCircle, Share2, Building2, Download, ExternalLink, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,7 +64,7 @@ type OfficialDoc = {
 };
 
 
-type SearchParams = {
+export type SearchParams = {
   prueba?: string;
   categoria?: string;
   sexo?: string;
@@ -79,19 +80,7 @@ function pickString(v: unknown): string | undefined {
   return typeof v === "string" && v.trim() !== "" ? v : undefined;
 }
 
-export const Route = createFileRoute("/resultados/$evento")({
-  validateSearch: (s: Record<string, unknown>): SearchParams => ({
-    prueba: pickString(s.prueba),
-    categoria: pickString(s.categoria),
-    sexo: pickString(s.sexo),
-    ronda: pickString(s.ronda),
-    club: pickString(s.club),
-    federacion: pickString(s.federacion),
-    modalidad: pickString(s.modalidad),
-    pais: pickString(s.pais),
-    nombre: pickString(s.nombre),
-  }),
-  loader: async ({ params }) => {
+export async function loadResultsPage({ params }: { params: { evento: string } }) {
     const [{ data: meta }, { data: rows, error }] = await Promise.all([
       supabase
         .from("result_events")
@@ -129,10 +118,24 @@ export const Route = createFileRoute("/resultados/$evento")({
       meta: (meta as EventMeta | null) ?? null,
       documents,
     };
-  },
+  }
+
+export const Route = createFileRoute("/resultados/$evento")({
+  validateSearch: (s: Record<string, unknown>): SearchParams => ({
+    prueba: pickString(s.prueba),
+    categoria: pickString(s.categoria),
+    sexo: pickString(s.sexo),
+    ronda: pickString(s.ronda),
+    club: pickString(s.club),
+    federacion: pickString(s.federacion),
+    modalidad: pickString(s.modalidad),
+    pais: pickString(s.pais),
+    nombre: pickString(s.nombre),
+  }),
+  loader: loadResultsPage,
   head: ({ loaderData, params }) => {
     const title = loaderData?.meta?.name ?? loaderData?.rows?.[0]?.event_name ?? "Resultados";
-    const url = `https://rollerzone.lovable.app/resultados/${params.evento}`;
+    const url = `https://rollerzone.es/resultados/${params.evento}`;
     const desc = `Clasificaciones completas de ${title} en RollerZone.`;
     const status = "https://schema.org/EventScheduled";
     const scripts: { type: "application/ld+json"; children: string }[] = [];
@@ -155,7 +158,7 @@ export const Route = createFileRoute("/resultados/$evento")({
     }
     // Podium / top 3 as ItemList
     const podium = (loaderData?.rows ?? [])
-      .filter((r) => typeof r.position === "number" && r.position! <= 3)
+      .filter((r) => typeof r.position === "number" && r.position <= 3)
       .slice(0, 10);
     if (podium.length > 0) {
       const listLd = {
@@ -178,6 +181,8 @@ export const Route = createFileRoute("/resultados/$evento")({
         { property: "og:title", content: `${title} — Resultados RollerZone` },
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
         ...(loaderData?.meta?.banner_url
           ? [
               { property: "og:image" as const, content: loaderData.meta.banner_url },
@@ -204,18 +209,21 @@ export const Route = createFileRoute("/resultados/$evento")({
 });
 
 function ResultadosEventoPage() {
-  const data = Route.useLoaderData();
-  const search = Route.useSearch();
+  const { lang: linkLanguage } = useLanguage();
+  return <ResultsPageView data={Route.useLoaderData()} search={Route.useSearch()} />;
+}
+
+export function ResultsPageView({ data, search }: { data: Awaited<ReturnType<typeof loadResultsPage>>; search: SearchParams }) {
+  const { lang: linkLanguage } = useLanguage();
   // Campeonatos enlazados por ID (p. ej. ASU26): archivo histórico de solo lectura.
   if (data.meta?.id && data.rows.length === 0) {
     return <ChampionshipArchive eventId={data.meta.id} slug={data.evento} name={data.meta.name} eventDate={data.meta.event_date} search={search} />;
   }
-  return <LegacyEventPage />;
+  return <LegacyEventPage data={data} search={search} />;
 }
 
-function LegacyEventPage() {
-  const data = Route.useLoaderData();
-  const search = Route.useSearch();
+function LegacyEventPage({ data, search }: { data: Awaited<ReturnType<typeof loadResultsPage>>; search: SearchParams }) {
+  const { lang: linkLanguage } = useLanguage();
   const rows: ResultRow[] = data.rows;
   const meta = data.meta;
   const { t, lang } = useLanguage();
@@ -277,7 +285,7 @@ function LegacyEventPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 md:px-6">
-      <Link to="/resultados" className="font-condensed mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-gold">
+      <Link to={linkLanguage === "en" ? "/en/results" : "/resultados"} className="font-condensed mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-gold">
         <ArrowLeft className="h-4 w-4" /> {t("common.backTo")} {t("results.title")}
       </Link>
 
@@ -465,6 +473,7 @@ function LegacyEventPage() {
 }
 
 function FilterSelect({ value, onChange, placeholder, options }: { value: string; onChange: (v: string) => void; placeholder: string; options: string[] }) {
+  const { lang: linkLanguage } = useLanguage();
   if (options.length === 0) return null;
   return (
     <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={placeholder} className="font-condensed rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold">
@@ -478,6 +487,7 @@ function SortableTh({ label, k, current, dir, onClick, icon, widthClass }: {
   label: string; k: SortKey; current: SortKey; dir: "asc" | "desc";
   onClick: (k: SortKey) => void; icon: (k: SortKey) => React.ReactNode; widthClass?: string;
 }) {
+  const { lang: linkLanguage } = useLanguage();
   const isActive = current === k;
   return (
     <th className={`px-4 py-2 ${widthClass ?? ""}`} aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}>
@@ -494,6 +504,7 @@ function SortableTh({ label, k, current, dir, onClick, icon, widthClass }: {
 }
 
 function StatusPill({ status, t }: { status: ResultRow["status"]; t: (k: string) => string }) {
+  const { lang: linkLanguage } = useLanguage();
   const label = status === "en_vivo" ? t("common.live") : status === "proxima" ? t("common.upcoming") : t("common.finished");
   const cls = status === "en_vivo" ? "bg-tv-red text-foreground live-red-tag" : status === "proxima" ? "border border-gold/50 bg-gold/10 text-gold" : "border border-border bg-background text-muted-foreground";
   return <span className={`font-condensed inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${cls}`}>{label}</span>;
@@ -517,7 +528,7 @@ function groupRows(rows: ResultRow[], sortKey: SortKey = "position", sortDir: "a
       round: row.round || "",
       rows: [],
     });
-    map.get(key)!.rows.push(row);
+    map.get(key)?.rows.push(row);
   }
   const cmp = (a: ResultRow, b: ResultRow) => {
     const va = a[sortKey] ?? "";
@@ -532,6 +543,7 @@ function groupRows(rows: ResultRow[], sortKey: SortKey = "position", sortDir: "a
 }
 
 function ActionButtons({ meta, eventName, slug, rows }: { meta: EventMeta | null; eventName: string; slug: string; rows: ResultRow[] }) {
+  const { lang: linkLanguage } = useLanguage();
   const url = typeof window !== "undefined" ? window.location.href : `https://rollerzone.es/resultados/${slug}`;
   const exportRows: ExportRow[] = rows.map((r) => ({
     Pos: r.position,
@@ -613,6 +625,7 @@ function SignedPdfLink({
   icon?: React.ReactNode;
   download?: boolean;
 }) {
+  const { lang: linkLanguage } = useLanguage();
   const [href, setHref] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -657,6 +670,7 @@ const DOC_TYPE_LABEL: Record<OfficialDoc["doc_type"], string> = {
 };
 
 function OfficialDocsSection({ docs }: { docs: OfficialDoc[] }) {
+  const { lang: linkLanguage } = useLanguage();
   if (!docs || docs.length === 0) return null;
   return (
     <section className="mt-6 rounded-xl border border-border bg-surface p-4 md:p-6">

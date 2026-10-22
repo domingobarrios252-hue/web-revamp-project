@@ -1,3 +1,4 @@
+import { useUiText } from "@/lib/i18n/uiText";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Users, Filter, X, CalendarX2 } from "lucide-react";
@@ -39,7 +40,7 @@ export const Route = createFileRoute("/eventos/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/eventos" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/eventos" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/events" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/eventos" }, { rel: "canonical", href: "https://rollerzone.es/eventos" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -70,7 +71,8 @@ function formatRange(start: string, end: string | null) {
   return `${formatDate(start)} → ${formatDate(end)}`;
 }
 
-function EventosPage() {
+export function EventosPage() {
+  const ui = useUiText();
   const { t } = useLanguage();
   const [events, setEvents] = useState<EventItem[] | null>(null);
   const [scope, setScope] = useState<string>("all");
@@ -140,27 +142,27 @@ function EventosPage() {
         <div className="mb-8 border border-border bg-surface p-4">
           <div className="mb-3 flex items-center gap-2">
             <Filter className="h-4 w-4 text-gold" />
-            <span className="font-condensed text-xs uppercase tracking-widest text-gold">Filtros</span>
+            <span className="font-condensed text-xs uppercase tracking-widest text-gold">{ui('Filtros')}</span>
             {hasFilters && (
               <button
                 onClick={resetFilters}
                 className="font-condensed ml-auto inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-muted-foreground hover:text-gold"
               >
-                <X className="h-3 w-3" /> Limpiar
+                <X className="h-3 w-3" /> {ui('Limpiar')}
               </button>
             )}
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <FilterSelect label="Ámbito" value={scope} onChange={setScope}>
-              <option value="all">Todos</option>
+            <FilterSelect label={ui("Ámbito")} value={scope} onChange={setScope}>
+              <option value="all">{ui('Todos')}</option>
               {scopes.map((s) => <option key={s} value={s}>{s}</option>)}
             </FilterSelect>
-            <FilterSelect label="Categoría" value={category} onChange={setCategory}>
-              <option value="all">Todas</option>
+            <FilterSelect label={ui("Categoría")} value={category} onChange={setCategory}>
+              <option value="all">{ui('Todas')}</option>
               {categories.map((c) => <option key={c} value={c}>{c}</option>)}
             </FilterSelect>
-            <FilterSelect label="Mes" value={month} onChange={setMonth}>
-              <option value="all">Todos</option>
+            <FilterSelect label={ui("Mes")} value={month} onChange={setMonth}>
+              <option value="all">{ui('Todos')}</option>
               {MONTHS.map((m, i) => <option key={m} value={String(i)}>{m}</option>)}
             </FilterSelect>
           </div>
@@ -186,28 +188,28 @@ function EventosPage() {
         </div>
       ) : events.length === 0 ? (
         <EmptyEvents
-          title="Aún no hay eventos publicados"
-          message="Estamos preparando el calendario. Vuelve pronto para descubrir nuevas competiciones."
+          title={ui("Aún no hay eventos publicados")}
+          message={ui("Estamos preparando el calendario. Vuelve pronto para descubrir nuevas competiciones.")}
         />
       ) : filtered.length === 0 ? (
         <EmptyEvents
-          title="Ningún evento coincide"
-          message="Prueba a limpiar los filtros para ver todos los eventos disponibles."
+          title={ui("Ningún evento coincide")}
+          message={ui("Prueba a limpiar los filtros para ver todos los eventos disponibles.")}
           action={
             <button
               onClick={resetFilters}
               className="font-condensed mt-6 inline-flex items-center gap-2 border border-gold px-4 py-2 text-xs uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
-              <X className="h-4 w-4" /> Limpiar filtros
+              <X className="h-4 w-4" /> {ui('Limpiar filtros')}
             </button>
           }
         />
       ) : (
         <>
-          <Section title="Próximos eventos" items={upcoming} empty="No hay eventos programados próximamente." />
+          <Section title={ui("Próximos eventos")} items={upcoming} empty={ui("No hay eventos programados próximamente.")} />
           {past.length > 0 && (
             <div className="mt-12">
-              <Section title="Eventos pasados" items={past} dim />
+              <Section title={ui("Eventos pasados")} items={past} dim />
             </div>
           )}
         </>
@@ -217,6 +219,7 @@ function EventosPage() {
 }
 
 function EmptyEvents({ title, message, action }: { title: string; message: string; action?: React.ReactNode }) {
+  const ui = useUiText();
   return (
     <div className="flex flex-col items-center justify-center border border-dashed border-border bg-surface px-6 py-16 text-center">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-gold/40 bg-background">
@@ -232,6 +235,7 @@ function EmptyEvents({ title, message, action }: { title: string; message: strin
 }
 
 function FilterSelect({ label, value, onChange, children }: { label: string; value: string; onChange: (v: string) => void; children: React.ReactNode }) {
+  const ui = useUiText();
   return (
     <label className="block">
       <span className="font-condensed mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">{label}</span>
@@ -247,6 +251,7 @@ function FilterSelect({ label, value, onChange, children }: { label: string; val
 }
 
 function Section({ title, items, empty, dim }: { title: string; items: EventItem[]; empty?: string; dim?: boolean }) {
+  const ui = useUiText();
   return (
     <div>
       <h2 className="font-display mb-4 text-xl tracking-widest text-gold">{title}</h2>
@@ -264,6 +269,7 @@ function Section({ title, items, empty, dim }: { title: string; items: EventItem
 }
 
 function EventCard({ event }: { event: EventItem }) {
+  const ui = useUiText();
   const start = new Date(event.start_date + "T00:00:00");
   const day = start.toLocaleDateString("es-ES", { day: "2-digit" });
   const month = start.toLocaleDateString("es-ES", { month: "short" }).replace(".", "");
@@ -361,6 +367,7 @@ function EventCard({ event }: { event: EventItem }) {
 }
 
 function ExternalLinkBtn({ href, icon, children }: { href: string; icon: React.ReactNode; children: React.ReactNode }) {
+  const ui = useUiText();
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="font-condensed inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-muted-foreground hover:text-gold">
       {icon} {children}

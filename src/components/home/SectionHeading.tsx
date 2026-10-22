@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizedPath } from "@/lib/i18n/paths";
 
 /**
  * Encabezado editorial reutilizable para los bloques de la home.
@@ -18,6 +20,7 @@ export function SectionHeading({
   action?: { to: string; label: string };
   icon?: ReactNode;
 }) {
+  const { lang } = useLanguage();
   return (
     <div className="mb-7 flex items-end justify-between gap-4">
       <div className="min-w-0">
@@ -35,7 +38,7 @@ export function SectionHeading({
       </div>
       {action && (
         <Link
-          to={action.to}
+          to={localizedPath(action.to, lang)}
           className="font-condensed shrink-0 text-xs font-bold uppercase tracking-widest text-gold hover:text-gold-light"
         >
           {action.label} →

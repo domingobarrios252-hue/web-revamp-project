@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Search, X, Newspaper, Calendar, User as UserIcon, BookOpen, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizedPath } from "@/lib/i18n/paths";
 
 type Result =
   | { kind: "news"; id: string; title: string; slug: string; image_url: string | null }
@@ -24,6 +26,7 @@ const LABELS = {
 } as const;
 
 export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t, lang } = useLanguage();
   const [q, setQ] = useState("");
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
@@ -115,10 +118,10 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
 
   const go = (r: Result) => {
     onClose();
-    if (r.kind === "news") navigate({ to: "/noticias/articulo/$slug", params: { slug: r.slug } });
+    if (r.kind === "news") navigate({ to: lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug", params: { slug: r.slug } });
     else if (r.kind === "event") navigate({ to: "/eventos/$slug", params: { slug: r.slug } });
     else if (r.kind === "skater") navigate({ to: "/patinadores/$slug", params: { slug: r.slug } });
-    else if (r.kind === "magazine") navigate({ to: "/revista" });
+    else if (r.kind === "magazine") navigate({ to: localizedPath("/revista", lang) });
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -156,15 +159,15 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Buscar noticias, eventos, patinadores, revistas…"
-            aria-label="Buscar en RollerZone"
+            placeholder={t("common.searchPlaceholder")}
+            aria-label={lang === "en" ? "Search RollerZone" : "Buscar en RollerZone"}
             className="flex-1 bg-transparent text-sm text-[#F5F5F5] placeholder:text-[#666] focus:outline-none"
           />
           {loading && <Loader2 className="h-4 w-4 animate-spin text-[#A0A0A0]" />}
           <button
             type="button"
             onClick={onClose}
-            aria-label="Cerrar buscador"
+            aria-label={t("common.close")}
             className="rounded p-1 text-[#A0A0A0] hover:text-[#F5F5F5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]"
           >
             <X className="h-4 w-4" />
@@ -174,10 +177,10 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
         <div className="max-h-[60vh] overflow-y-auto">
           {q.trim().length < 2 ? (
             <p className="px-4 py-6 text-center text-xs text-[#888]">
-              Escribe al menos 2 caracteres para buscar.
+              {lang === "en" ? "Enter at least 2 characters to search." : "Escribe al menos 2 caracteres para buscar."}
             </p>
           ) : !loading && results.length === 0 ? (
-            <p className="px-4 py-6 text-center text-xs text-[#888]">Sin resultados para «{q}».</p>
+            <p className="px-4 py-6 text-center text-xs text-[#888]">{t("common.noResults")} · «{q}».</p>
           ) : (
             <ul className="py-1">
               {results.map((r, i) => {
@@ -196,7 +199,7 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
                       <Icon className="h-4 w-4 shrink-0 text-[#D4A017]" aria-hidden />
                       <span className="min-w-0 flex-1 truncate">{title}</span>
                       <span className="shrink-0 rounded border border-[#333] px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-[#888]">
-                        {LABELS[r.kind]}
+                        {lang === "en" ? ({ news: "News", event: "Events", skater: "Skaters", magazine: "Magazine" })[r.kind] : LABELS[r.kind]}
                       </span>
                     </button>
                   </li>
@@ -207,7 +210,7 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         <div className="border-t border-[#2A2A2A] px-3 py-1.5 text-[10px] uppercase tracking-wider text-[#666]">
-          ↑↓ navegar · ↵ abrir · esc cerrar
+          {lang === "en" ? "↑↓ navigate · ↵ open · esc close" : "↑↓ navegar · ↵ abrir · esc cerrar"}
         </div>
       </div>
     </div>

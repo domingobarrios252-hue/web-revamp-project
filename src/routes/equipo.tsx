@@ -1,3 +1,4 @@
+import { useUiText } from "@/lib/i18n/uiText";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Users } from "lucide-react";
@@ -34,12 +35,13 @@ export const Route = createFileRoute("/equipo")({
       },
       { property: "og:url", content: "https://rollerzone.es/equipo" },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/equipo" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/equipo" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/team" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/equipo" }, { rel: "canonical", href: "https://rollerzone.es/equipo" }],
   }),
   component: EquipoPage,
 });
 
-function EquipoPage() {
+export function EquipoPage() {
+  const ui = useUiText();
   const [items, setItems] = useState<Member[] | null>(null);
 
   useEffect(() => {
@@ -62,13 +64,13 @@ function EquipoPage() {
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
       <header className="mb-10 text-center">
         <div className="font-condensed inline-flex items-center gap-2 border border-gold/40 bg-gold/5 px-3 py-1 text-[10px] uppercase tracking-widest text-gold">
-          <Users className="h-3.5 w-3.5" /> Equipo RollerZone
+          <Users className="h-3.5 w-3.5" /> {ui('Equipo RollerZone')}
         </div>
         <h1 className="font-display mt-4 text-4xl tracking-widest md:text-6xl">
-          <span className="text-gold">Equipo</span>
+          <span className="text-gold">{ui('Equipo')}</span>
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
-          Dirección, redacción y colaboradores que hacen posible RollerZone cada día.
+          {ui('Dirección, redacción y colaboradores que hacen posible RollerZone cada día.')}
         </p>
       </header>
 
@@ -80,7 +82,7 @@ function EquipoPage() {
         </div>
       ) : items.length === 0 ? (
         <p className="py-20 text-center text-muted-foreground">
-          Aún no hay miembros del equipo publicados.
+          {ui('Aún no hay miembros del equipo publicados.')}
         </p>
       ) : (
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">

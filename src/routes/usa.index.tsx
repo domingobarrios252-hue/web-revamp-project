@@ -1,4 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { Link } from "@tanstack/react-router";
+import { useUiText } from "@/lib/i18n/uiText";
+import { createFileRoute } from "@tanstack/react-router";
 import { Newspaper, Mic } from "lucide-react";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import {
@@ -28,12 +31,14 @@ export const Route = createFileRoute("/usa/")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: "https://rollerzone.es/usa" }],
+    links: [{ rel: "alternate", hreflang: "es", href: "https://rollerzone.es/usa" }, { rel: "alternate", hreflang: "en", href: "https://rollerzone.es/en/usa" }, { rel: "alternate", hreflang: "x-default", href: "https://rollerzone.es/usa" }, { rel: "canonical", href: "https://rollerzone.es/usa" }],
   }),
   component: UsaHome,
 });
 
-function UsaHome() {
+export function UsaHome() {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   const { items: news, loading } = useTerritoryNews(MIAMI.code, 13);
   const { items: interviews } = useTerritoryInterviews(MIAMI.code, 6);
   const { zones } = useTerritoryZones(MIAMI.code);
@@ -45,7 +50,7 @@ function UsaHome() {
       <UsaZoneNav zones={zones} />
 
       {loading ? (
-        <p className="mt-10 text-muted-foreground">Cargando…</p>
+        <p className="mt-10 text-muted-foreground">{ui('Cargando…')}</p>
       ) : (
         <>
           {lead ? (
@@ -63,9 +68,9 @@ function UsaHome() {
               <SectionHeading
                 kicker="USA"
                 icon={<Newspaper className="h-3.5 w-3.5" />}
-                title="ÚLTIMAS"
-                accent="NOTICIAS"
-                action={{ to: "/usa/noticias", label: "Ver todas las noticias" }}
+                title={ui("ÚLTIMAS")}
+                accent={ui("NOTICIAS")}
+                action={{ to: "/usa/noticias", label: ui("Ver todas las noticias") }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {rest.map((n) => (
@@ -80,9 +85,9 @@ function UsaHome() {
               <SectionHeading
                 kicker="USA"
                 icon={<Mic className="h-3.5 w-3.5" />}
-                title="ENTRE"
-                accent="VISTAS"
-                action={{ to: "/usa/entrevistas", label: "Ver todas las entrevistas" }}
+                title={ui("ENTRE")}
+                accent={ui("VISTAS")}
+                action={{ to: "/usa/entrevistas", label: ui("Ver todas las entrevistas") }}
               />
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {interviews.map((it) => (
@@ -97,13 +102,13 @@ function UsaHome() {
               to="/usa/noticias"
               className="font-condensed border border-gold px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
             >
-              Noticias USA
+              {ui('Noticias USA')}
             </Link>
             <Link
               to="/usa/entrevistas"
               className="font-condensed border border-border px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:border-gold hover:text-gold"
             >
-              Entrevistas USA
+              {ui('Entrevistas USA')}
             </Link>
           </div>
         </>

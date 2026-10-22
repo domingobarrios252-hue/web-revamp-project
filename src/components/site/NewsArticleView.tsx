@@ -41,7 +41,7 @@ export type ArticleViewData = {
 type Props = {
   article: ArticleViewData;
   locale: "es" | "en";
-  overrides?: { title?: string; excerpt?: string | null; blocks?: NewsBlock[] };
+  overrides?: { title?: string; excerpt?: string | null; blocks?: NewsBlock[]; content?: string | null };
   backTo: { to: string; label: string };
 };
 
@@ -124,7 +124,7 @@ export function NewsArticleView({ article, locale, overrides, backTo }: Props) {
   };
 
   const blocks = overrides?.blocks ?? parseBlocks(article.content_blocks);
-  const paragraphs: string[] = (article.content ?? "")
+  const paragraphs: string[] = (overrides?.content !== undefined ? overrides.content ?? "" : article.content ?? "")
     .split("\n")
     .map((p: string) => p.trim())
     .filter((p: string) => p.length > 0);

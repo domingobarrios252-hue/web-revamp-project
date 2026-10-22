@@ -1,4 +1,7 @@
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Link } from "@tanstack/react-router";
+import { useUiText } from "@/lib/i18n/uiText";
+
 import { Calendar } from "lucide-react";
 import { cropObjectPosition } from "@/lib/imageCrops";
 import type { Territory } from "@/lib/territory/territories";
@@ -15,10 +18,12 @@ export function TerritoryMasthead({
   territory: Territory;
   subtitle?: string;
 }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <header className="border-b border-border pb-6">
       <div className="font-condensed mb-2 inline-flex items-center gap-2 bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
-        <span aria-hidden>{territory.flag}</span> Edición territorial
+        <span aria-hidden>{territory.flag}</span> {ui('Edición territorial')}
       </div>
       <h1 className="font-display text-4xl uppercase tracking-widest md:text-5xl">
         ROLLER<span className="text-gold">ZONE</span> {territory.name.toUpperCase()}
@@ -32,9 +37,11 @@ export function TerritoryMasthead({
 
 /** Noticia destacada del territorio (portada). */
 export function TerritoryLead({ item, territory }: { item: TerritoryNews; territory: Territory }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <Link
-      to="/noticias/articulo/$slug"
+      to={linkLanguage === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
       params={{ slug: item.slug }}
       className="group grid gap-5 border border-border bg-surface transition-colors hover:border-gold md:grid-cols-2"
     >
@@ -56,7 +63,7 @@ export function TerritoryLead({ item, territory }: { item: TerritoryNews; territ
       </div>
       <div className="flex flex-col justify-center gap-3 p-5 md:p-7">
         <span className="font-condensed inline-flex w-fit items-center gap-2 bg-gold px-2 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background">
-          Portada {territory.name}
+          {ui('Portada')} {territory.name}
         </span>
         <h2 className="font-display text-2xl uppercase leading-tight tracking-wide text-foreground md:text-4xl">
           {item.title}
@@ -74,9 +81,11 @@ export function TerritoryLead({ item, territory }: { item: TerritoryNews; territ
 }
 
 export function TerritoryNewsCard({ item, territory }: { item: TerritoryNews; territory: Territory }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <Link
-      to="/noticias/articulo/$slug"
+      to={linkLanguage === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
       params={{ slug: item.slug }}
       className="group flex flex-col border border-border bg-surface transition-colors hover:border-gold"
     >
@@ -109,6 +118,8 @@ export function TerritoryNewsCard({ item, territory }: { item: TerritoryNews; te
 }
 
 export function TerritoryInterviewCard({ item }: { item: TerritoryInterview }) {
+  const { lang: linkLanguage } = useLanguage();
+  const ui = useUiText();
   return (
     <Link
       to="/entrevistas/$slug"
@@ -126,7 +137,7 @@ export function TerritoryInterviewCard({ item }: { item: TerritoryInterview }) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-            Entrevista
+            {ui('Entrevista')}
           </div>
         )}
       </div>
