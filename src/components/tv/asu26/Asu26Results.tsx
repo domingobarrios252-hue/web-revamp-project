@@ -90,11 +90,11 @@ export function Asu26Results({ cfg, results, limit, emptyText, pdf }: { cfg: Asu
       ) : groups.length === 0 ? (
         <div className="asu-hero-bg relative overflow-hidden rounded-2xl px-6 py-8 text-center md:py-10">
           <p className="font-display text-xl uppercase tracking-wide text-foreground md:text-2xl">
-            {emptyText ?? "Los resultados oficiales aparecerán aquí durante la competición."}
+            {emptyText ?? ui("Los resultados oficiales aparecerán aquí durante la competición.")}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">Integración de resultados en directo disponible durante ASU26.</p>
+          <p className="mt-2 text-sm text-muted-foreground">{ui("Integración de resultados en directo disponible durante ASU26.")}</p>
           <p className="font-condensed mt-3 text-xs uppercase tracking-[3px] text-muted-foreground">
-            Proveedor oficial de resultados: VeloPro.
+            {ui("Proveedor oficial de resultados: VeloPro.")}
           </p>
         </div>
       ) : (
@@ -110,7 +110,7 @@ export function Asu26Results({ cfg, results, limit, emptyText, pdf }: { cfg: Asu
                   <VeloproCredit />
                   {rows.every((r) => r.state === "unconfirmed") ? null : (
                     <span className={`font-condensed shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[2px] ${rows.some((r) => r.state !== "official") ? "border-asu-coral/70 text-asu-coral" : "border-asu-light/50 text-asu-light"}`}>
-                      {RESULT_STATE_LABEL[rows.some((r) => r.state === "in_progress") ? "in_progress" : rows.some((r) => r.state === "provisional") ? "provisional" : rows.some((r) => r.state === "unconfirmed") ? "unconfirmed" : "official"]}
+                      {ui(RESULT_STATE_LABEL[rows.some((r) => r.state === "in_progress") ? "in_progress" : rows.some((r) => r.state === "provisional") ? "provisional" : rows.some((r) => r.state === "unconfirmed") ? "unconfirmed" : "official"])}
                     </span>
                   )}
                 </div>
@@ -128,7 +128,7 @@ export function Asu26Results({ cfg, results, limit, emptyText, pdf }: { cfg: Asu
                   const isEsp = code === "ESP";
                   return (
                     <li key={r.id} className={`grid grid-cols-[2.75rem_1fr_auto] items-center gap-3 border-b border-border/60 px-4 py-3 last:border-0 ${isEsp ? "border-l-2 border-l-gold bg-gold/10" : ""}`}>
-                      <span className={`font-display flex h-11 w-11 items-center justify-center rounded-full text-2xl ${p >= 1 && p <= 3 ? MEDAL_CLS[p - 1] : "bg-surface-2 text-foreground"}`} title={p >= 1 && p <= 3 ? MEDAL[p - 1] : undefined}>
+                      <span className={`font-display flex h-11 w-11 items-center justify-center rounded-full text-2xl ${p >= 1 && p <= 3 ? MEDAL_CLS[p - 1] : "bg-surface-2 text-foreground"}`} title={p >= 1 && p <= 3 ? ui(MEDAL[p - 1]) : undefined}>
                         {r.position ?? "–"}
                       </span>
                       <div className="min-w-0">

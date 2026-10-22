@@ -44,7 +44,7 @@ function Sel({ label, value, onChange, options }: { label: string; value: string
       <span className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-gold">{label}</span>
       <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={label} className="min-h-11 w-full min-w-0 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-gold focus:outline-none">
         <option value="">{ui('Todas')}</option>
-        {options.map(([v, l]) => (<option key={v} value={v}>{l}</option>))}
+        {options.map(([v, l]) => (<option key={v} value={v}>{ui(l)}</option>))}
       </select>
     </label>
   );
@@ -120,7 +120,7 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
   // Se pasan las filas completas de cada clasificación visible: el PDF nunca se recorta por filtros.
   const pageRows = page.flatMap(([, rows]) => rows);
   const hasFilter = Object.values(f).some(Boolean);
-  const year = (d: string | null) => (d ? d.slice(0, 4) : "Sin fecha");
+  const year = (d: string | null) => (d ? d.slice(0, 4) : ui("Sin fecha"));
   const years = [...new Set(champs.map((c) => year(c.event_date)))];
 
   return (
@@ -139,7 +139,7 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
       <section className="mt-6 grid grid-cols-2 gap-3 rounded-2xl border border-border bg-surface p-4 md:grid-cols-4 lg:grid-cols-5">
         <label className="col-span-2 flex min-w-0 flex-col gap-1 md:col-span-2">
           <span className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-gold">{ui('Campeonato y año')}</span>
-          <select value={slug} onChange={(e) => navigate({ to: lang === "en" ? "/en/results/$evento" : "/resultados/$evento", params: { evento: e.target.value }, search: {} })} aria-label="Campeonato" className="min-h-11 w-full min-w-0 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-gold focus:outline-none">
+          <select value={slug} onChange={(e) => navigate({ to: lang === "en" ? "/en/results/$evento" : "/resultados/$evento", params: { evento: e.target.value }, search: {} })} aria-label={ui("Campeonato")} className="min-h-11 w-full min-w-0 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-gold focus:outline-none">
             {champs.length === 0 && <option value={slug}>{name}</option>}
             {years.map((y) => (
               <optgroup key={y} label={y}>
@@ -158,7 +158,7 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
           <span className="font-condensed text-[10px] font-bold uppercase tracking-[2px] text-gold">{ui('Patinador')}</span>
           <span className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Buscar por nombre…" aria-label="Buscar patinador" className="min-h-11 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground focus:border-gold focus:outline-none" />
+            <input value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder={ui("Buscar por nombre…")} aria-label={ui("Buscar patinador")} className="min-h-11 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground focus:border-gold focus:outline-none" />
           </span>
         </label>
         {hasFilter && (
@@ -170,7 +170,7 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
 
       {results !== null && (
         <p className="font-condensed mt-4 text-xs uppercase tracking-widest text-muted-foreground">
-          {visible.length} de {groups.length} clasificaciones
+          {lang === "en" ? `${visible.length} of ${groups.length} classifications` : `${visible.length} de ${groups.length} clasificaciones`}
         </p>
       )}
 
@@ -182,7 +182,7 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
             cfg={{ ...ASU26_DEFAULTS, veloproEnabled: false }}
             results={pageRows}
             pdf
-            emptyText={groups.length ? "No hay clasificaciones con estos filtros." : "Todavía no hay clasificaciones publicadas para este campeonato."}
+            emptyText={ui(groups.length ? "No hay clasificaciones con estos filtros." : "Todavía no hay clasificaciones publicadas para este campeonato.")}
           />
         )}
       </div>
@@ -190,7 +190,7 @@ export function ChampionshipArchive({ eventId, slug, name, eventDate, search }: 
       {visible.length > shown && (
         <div className="mt-6 text-center">
           <button type="button" onClick={() => setShown((s) => s + PAGE)} className="font-condensed min-h-11 rounded-full border border-gold/60 px-6 text-xs font-bold uppercase tracking-[2px] text-gold hover:bg-gold/10">
-            Ver más clasificaciones ({visible.length - shown})
+            {lang === "en" ? "View more classifications" : "Ver más clasificaciones"} ({visible.length - shown})
           </button>
         </div>
       )}

@@ -159,7 +159,7 @@ export function ResultadosIndex() {
         <EmptyState
           icon={Trophy}
           title={ui("Próximamente")}
-          message="Aún no hay resultados publicados. En cuanto arranquen las próximas competiciones, los verás aquí en vivo."
+          message={ui("Aún no hay resultados publicados. En cuanto arranquen las próximas competiciones, los verás aquí en vivo.")}
           className="mt-10"
         />
       ) : (

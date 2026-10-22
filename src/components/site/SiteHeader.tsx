@@ -76,7 +76,7 @@ export function SiteHeader() {
     e.preventDefault();
     setSearchOpen(false);
     setMobileOpen(false);
-    navigate({ to: "/noticias" });
+    navigate({ to: lang === "en" ? "/en/news" : "/noticias" });
     setSearchValue("");
   };
 
@@ -163,7 +163,7 @@ export function SiteHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger
                 className="hidden min-[1680px]:inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40"
-                aria-label="Cuenta de usuario"
+                aria-label={lang === "en" ? "User account" : "Cuenta de usuario"}
               >
                 <Avatar className="h-9 w-9 border border-[#333]">
                   {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName} /> : null}
@@ -184,7 +184,7 @@ export function SiteHeader() {
                 )}
                 <DropdownMenuItem asChild>
                   <Link to="/dashboard" className="cursor-pointer">
-                    <LayoutDashboard className="mr-2 h-4 w-4" /> Mi panel editorial
+                    <LayoutDashboard className="mr-2 h-4 w-4" /> {lang === "en" ? "My editorial dashboard" : "Mi panel editorial"}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -195,7 +195,7 @@ export function SiteHeader() {
                   }}
                   className="cursor-pointer text-[#F5F5F5]"
                 >
-                  <LogOut className="mr-2 h-4 w-4" /> Salir
+                  <LogOut className="mr-2 h-4 w-4" /> {lang === "en" ? "Sign out" : "Salir"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

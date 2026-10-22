@@ -1,4 +1,5 @@
 import { useUiText } from "@/lib/i18n/uiText";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Play, Radio } from 'lucide-react';
@@ -10,6 +11,7 @@ import { ASU26_EVENT_ID, BROADCAST_LABELS, visibleBroadcast, type ChampionshipBr
 
 export function BroadcastCatalog({ items }: { items: ChampionshipBroadcast[] }) {
   const ui = useUiText();
+  const { lang } = useLanguage();
   const [playing, setPlaying] = useState<ChampionshipBroadcast | null>(null);
   const visible = items.filter(visibleBroadcast);
   const upcoming = visible.filter(e => !e.stream_archived_at && e.stream_status !== 'finished').sort((a, b) => (a.stream_scheduled_at ?? '').localeCompare(b.stream_scheduled_at ?? ''));
@@ -27,7 +29,7 @@ export function BroadcastCatalog({ items }: { items: ChampionshipBroadcast[] }) 
             return <article key={event.id} className="overflow-hidden rounded-md border border-border bg-surface">
               <div className="relative aspect-video bg-background">{cover ? <picture>{event.stream_poster_mobile_url && <source media="(max-width: 640px)" srcSet={event.stream_poster_mobile_url} />}<img src={cover} alt={event.name} loading="lazy" className="h-full w-full object-cover" /></picture> : <Radio className="absolute inset-0 m-auto h-10 w-10 text-gold" />}</div>
               <div className="space-y-3 p-4"><p className="font-condensed text-xs uppercase text-gold">{ui(BROADCAST_LABELS[event.stream_status])}</p><h3 className="font-display break-words text-xl uppercase">{event.stream_title || event.name}</h3>
-                {event.stream_scheduled_at && <p className="text-xs text-muted-foreground">{new Date(event.stream_scheduled_at).toLocaleString('es-ES')}{event.stream_ends_at && ` — ${new Date(event.stream_ends_at).toLocaleString('es-ES')}`}</p>}
+                {event.stream_scheduled_at && <p className="text-xs text-muted-foreground">{new Date(event.stream_scheduled_at).toLocaleString(lang === 'en' ? 'en-GB' : 'es-ES')}{event.stream_ends_at && ` — ${new Date(event.stream_ends_at).toLocaleString(lang === 'en' ? 'en-GB' : 'es-ES')}`}</p>}
                 {event.id === ASU26_EVENT_ID ? <Link to="/rollerzone-tv/world-skate-games-asu26" className="font-condensed text-sm text-gold underline">{ui('Archivo ASU26')}</Link> : (event.stream_url || event.stream_embed_url) ? <Button variant="outline" onClick={() => setPlaying(event)}><Play className="h-4 w-4" /> {ui('Ver retransmisión')}</Button> : <p className="text-xs text-muted-foreground">{ui('Vídeo no disponible.')}</p>}
               </div>
             </article>;
@@ -36,6 +38,6 @@ export function BroadcastCatalog({ items }: { items: ChampionshipBroadcast[] }) 
         </div>
       </div>
     </section>)}
-    <Dialog open={Boolean(playing)} onOpenChange={open => { if (!open) setPlaying(null); }}><DialogContent className="max-w-5xl"><DialogTitle>{playing?.stream_title || playing?.name}</DialogTitle><div className="aspect-video">{embed ? <ExternalEmbedGate provider={playing?.stream_provider || 'reproductor externo'} sourceUrl={source}><iframe src={embed} title={playing?.name} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen className="h-full w-full" /></ExternalEmbedGate> : <p className="p-6 text-muted-foreground">Reproducción integrada no disponible. {source && <a href={source} target="_blank" rel="noopener noreferrer" className="text-gold underline">Ver en la plataforma original</a>}</p>}</div>{playing?.stream_attribution && <p className="text-xs text-muted-foreground">{playing.stream_attribution}</p>}</DialogContent></Dialog>
+    <Dialog open={Boolean(playing)} onOpenChange={open => { if (!open) setPlaying(null); }}><DialogContent className="max-w-5xl"><DialogTitle>{playing?.stream_title || playing?.name}</DialogTitle><div className="aspect-video">{embed ? <ExternalEmbedGate provider={playing?.stream_provider || 'reproductor externo'} sourceUrl={source}><iframe src={embed} title={playing?.name} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen className="h-full w-full" /></ExternalEmbedGate> : <p className="p-6 text-muted-foreground">{ui('Reproducción integrada no disponible.')} {source && <a href={source} target="_blank" rel="noopener noreferrer" className="text-gold underline">{ui('Ver en la plataforma original')}</a>}</p>}</div>{playing?.stream_attribution && <p className="text-xs text-muted-foreground">{playing.stream_attribution}</p>}</DialogContent></Dialog>
   </>;
 }

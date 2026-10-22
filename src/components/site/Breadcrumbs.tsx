@@ -87,7 +87,7 @@ export function Breadcrumbs() {
 
   return (
     <nav
-      aria-label="Migas de pan"
+      aria-label={lang === "en" ? "Breadcrumbs" : "Migas de pan"}
       className="border-b border-[#2A2A2A] bg-[#141414]/60"
     >
       <ol className="mx-auto flex max-w-7xl flex-wrap items-center gap-1 px-4 py-2 text-[11px] text-[#A0A0A0] md:px-6">

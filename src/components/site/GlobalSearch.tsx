@@ -143,7 +143,7 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Buscador global"
+      aria-label={lang === "en" ? "Site search" : "Buscador global"}
       className="fixed inset-0 z-[70] flex items-start justify-center bg-black/70 px-4 pt-[10vh] backdrop-blur-sm"
       onClick={onClose}
     >
