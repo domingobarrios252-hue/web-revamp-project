@@ -162,7 +162,7 @@ export function HubDashboard({ country }: { country: string }) {
             return false;
           })
           .slice(0, 6);
-        setNews(visibleNews);
+        setNews(await localizeNewsCards(visibleNews, lang));
         setEvents((e.data as EventRow[]) ?? []);
         setResults((r.data as ResultRow[]) ?? []);
         setInterview((i.data as InterviewRow) ?? null);
@@ -182,7 +182,7 @@ export function HubDashboard({ country }: { country: string }) {
     return () => {
       cancelled = true;
     };
-  }, [country]);
+  }, [country, lang]);
 
   const featured = news[0];
   const rest = news.slice(1);

@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 
 type Related = {
   id: string;
@@ -13,6 +15,7 @@ type Related = {
 /**
  * "También te puede interesar": prioriza contenidos del mismo territorio
  * y completa con noticias generales de RollerZone si no hay suficientes.
+ * En inglés muestra las traducciones aprobadas cuando existen.
  */
 export function RelatedContent({
   countryCode,
@@ -21,6 +24,7 @@ export function RelatedContent({
   countryCode: string | null;
   excludeId: string;
 }) {
+  const { lang } = useLanguage();
   const [items, setItems] = useState<Related[]>([]);
 
   useEffect(() => {
@@ -55,25 +59,26 @@ export function RelatedContent({
         }
       }
 
-      if (!cancelled) setItems(collected.slice(0, 3));
+      const localized = await localizeNewsCards(collected.slice(0, 3), lang);
+      if (!cancelled) setItems(localized);
     })();
     return () => {
       cancelled = true;
     };
-  }, [countryCode, excludeId]);
+  }, [countryCode, excludeId, lang]);
 
   if (items.length === 0) return null;
 
   return (
     <section className="mt-12 border-t border-border pt-6">
       <h3 className="font-display mb-4 text-sm uppercase tracking-widest text-gold">
-        También te puede interesar
+        {lang === "en" ? "You may also like" : "También te puede interesar"}
       </h3>
       <div className="grid gap-4 sm:grid-cols-3">
         {items.map((n) => (
           <Link
             key={n.id}
-            to="/noticias/articulo/$slug"
+            to={lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
             params={{ slug: n.slug }}
             className="group border border-border bg-surface transition-colors hover:border-gold"
           >
@@ -92,7 +97,7 @@ export function RelatedContent({
                 {n.title}
               </h4>
               <div className="font-condensed mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-                {new Date(n.published_at).toLocaleDateString("es-ES")}
+                {new Date(n.published_at).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES")}
               </div>
             </div>
           </Link>
