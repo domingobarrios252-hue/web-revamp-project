@@ -150,7 +150,7 @@ function EnArticlePage() {
       locale="en"
       overrides={{
         title: translation.title || article.title,
-        excerpt: translation.excerpt ?? article.excerpt,
+        excerpt: translation.excerpt,
         blocks,
         content: translation.content,
       }}

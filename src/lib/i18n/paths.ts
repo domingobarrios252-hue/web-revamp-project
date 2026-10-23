@@ -17,6 +17,8 @@ export function localizedPath(path: string, lang: Language): string {
   if (article) return `${lang === "en" ? "/en/news" : "/noticias/articulo"}/${article[1]}`;
   const result = clean.match(/^\/(?:resultados|en\/results)\/([^/]+)$/);
   if (result) return `${lang === "en" ? "/en/results" : "/resultados"}/${result[1]}`;
+  const event = clean.match(/^\/(?:eventos|en\/events)\/([^/]+)$/);
+  if (event) return `${lang === "en" ? "/en/events" : "/eventos"}/${event[1]}`;
   const hub = clean.match(/^\/(?:hub|en\/hub)\/([^/]+)$/);
   if (hub) return `${lang === "en" ? "/en/hub" : "/hub"}/${hub[1]}`;
   for (const [es, en] of LANGUAGE_PATHS) {
