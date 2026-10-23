@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Search, Calendar, Trophy, Mic, Newspaper, Crown, X } from "lucide-react";
 import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 
 type NewsRow = {
   id: string;
@@ -43,6 +45,7 @@ type LegendRow = {
 type FilterOption = { id: string; label: string };
 
 export function ArchiveBrowser({ country }: { country: string }) {
+  const { lang } = useLanguage();
   const [tab, setTab] = useState("noticias");
   const [search, setSearch] = useState("");
   const [year, setYear] = useState<string>("");
