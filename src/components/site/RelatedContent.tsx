@@ -31,7 +31,7 @@ export function RelatedContent({
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const cols = "id,title,slug,image_url,published_at";
+      const cols = "id,title,excerpt,slug,image_url,published_at";
       const collected: Related[] = [];
 
       if (countryCode) {
