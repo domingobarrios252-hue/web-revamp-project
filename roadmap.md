@@ -4,7 +4,8 @@
 - [x] Retirar «Condiciones de uso» de la sección Páginas legales y navegación pública, preservando documento y consentimiento existente
 - [x] ES/EN bloque 1: seguridad y versiones corregidas; 25 comprobaciones de reglas y reversión aisladas superadas; la migración compartida se aplicó antes de verificar la reversión (incidencia de secuencia documentada)
 - [x] ES/EN bloque 2: páginas principales, selector accesible a 1280/390, preferencia de entrada, noticia y filtros conservados; solo vista previa
-- [ ] ES/EN bloques 3–4: páginas principales y noticias territoriales preparadas; falta completar páginas complementarias, contacto y textos fijos secundarios, sin publicar
+- [~] ES/EN bloques 3–4: portada (hero, portada editorial), listados, hubs de país, relacionadas y especiales ya leen traducciones aprobadas con fallback al español; quedan textos fijos secundarios (TV, pie de página, detalle de evento), sin publicar
+- [x] Header: logo un 25 % más grande, más margen lateral y vertical, responsive comprobado a 1280/390, sin publicar
 - [x] ES/EN bloque 5: SEO de 24 páginas principales comprobado, 27 pruebas dirigidas y revisión 1280/390 superadas; informe entregado con límites de cobertura
 - [x] Transición posterior a ASU26: analizar TV, administración, archivo histórico y sincronización; preparar plan detallado
 - [x] Implementar transición posterior a ASU26: TV compartida, gestor, archivo, conservación; 52 pruebas de permisos y 13 unitarias, flujo temporal autenticado y móvil/ordenador verificados
