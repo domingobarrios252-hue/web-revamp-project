@@ -4,8 +4,11 @@ import { Calendar, MapPin, Globe, Instagram, Facebook, ExternalLink, Trophy, Arr
 import { supabase } from "@/integrations/supabase/client";
 import { AdBannerSmall } from "@/components/site/AdBannerSmall";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { useUiText } from "@/lib/i18n/uiText";
+import { localizedPath } from "@/lib/i18n/paths";
 
-type EventDetail = {
+export type EventDetail = {
   id: string;
   name: string;
   slug: string;
@@ -27,18 +30,20 @@ type EventDetail = {
 };
 
 
-export const Route = createFileRoute("/eventos/$slug")({
-  loader: async ({ params }) => {
+export async function loadEventDetail(slug: string) {
     const { data, error } = await supabase
       .from("events")
       .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url, gallery, convocatoria_pdf_url, convocatoria_pdf_name")
-      .eq("slug", params.slug)
+      .eq("slug", slug)
       .eq("published", true)
       .maybeSingle();
     if (error) throw error;
     if (!data) throw notFound();
     return { event: data as EventDetail };
-  },
+}
+
+export const Route = createFileRoute("/eventos/$slug")({
+  loader: ({ params }) => loadEventDetail(params.slug),
   head: ({ loaderData, params }) => {
     const e = loaderData?.event;
     if (!e) return { meta: [{ title: "Evento | RollerZone" }] };
@@ -85,7 +90,8 @@ export const Route = createFileRoute("/eventos/$slug")({
         { property: "og:description", content: desc },
         { property: "og:type", content: "event" },
         { property: "og:url", content: url },
-        ...(e.cover_url ? [{ property: "og:image", content: e.cover_url }, { name: "twitter:image", content: e.cover_url }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(e.cover_url && /^https:\/\//.test(e.cover_url) ? [{ property: "og:image", content: e.cover_url }, { name: "twitter:image", content: e.cover_url }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
@@ -113,27 +119,28 @@ export const Route = createFileRoute("/eventos/$slug")({
       </Link>
     </div>
   ),
-  component: EventoDetail,
+  component: () => <EventoDetail event={Route.useLoaderData().event} />,
 });
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return "";
-  return new Date(d + "T00:00:00").toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" });
+  return new Date(d + "T00:00:00").toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" });
 }
 
-function formatRange(start: string, end: string | null) {
-  if (!end || end === start) return formatDate(start);
-  return `${formatDate(start)} → ${formatDate(end)}`;
+function formatRange(start: string, end: string | null, locale: string) {
+  if (!end || end === start) return formatDate(start, locale);
+  return `${formatDate(start, locale)} → ${formatDate(end, locale)}`;
 }
 
-function EventoDetail() {
-  const { event } = Route.useLoaderData();
+export function EventoDetail({ event }: { event: EventDetail }) {
+  const ui = useUiText();
+  const { lang } = useLanguage();
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   return (
     <article className="mx-auto max-w-6xl px-4 py-10 md:px-8">
-      <Link to="/eventos" className="font-condensed mb-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground hover:text-gold">
-        <ArrowLeft className="h-3.5 w-3.5" /> Volver a Eventos
+      <Link to={localizedPath("/eventos", lang)} className="font-condensed mb-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground hover:text-gold">
+        <ArrowLeft className="h-3.5 w-3.5" /> {ui("Volver a Eventos")}
       </Link>
 
       {/* Split: cartel A4 izquierda + info derecha */}
@@ -143,7 +150,7 @@ function EventoDetail() {
             <button
               type="button"
               onClick={() => setLightboxOpen(true)}
-              aria-label={`Ampliar cartel de ${event.name}`}
+              aria-label={`${ui("Ampliar")}: ${event.name}`}
               className="group relative block aspect-[1/1.414] w-full overflow-hidden border border-border bg-background shadow-2xl transition hover:border-gold focus:border-gold focus:outline-none"
             >
               <img loading="lazy" decoding="async"
@@ -154,14 +161,14 @@ function EventoDetail() {
               />
               <img loading="lazy" decoding="async"
                 src={event.cover_url}
-                alt={`Cartel de ${event.name}`}
+                alt={`${ui("Cartel oficial")}: ${event.name}`}
                 className="relative h-full w-full object-contain"
               />
               <span className="font-condensed absolute left-3 top-3 bg-background/85 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
-                Cartel oficial
+                {ui("Cartel oficial")}
               </span>
               <span className="font-condensed absolute bottom-3 right-3 inline-flex items-center gap-1 bg-background/85 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground/90 opacity-0 backdrop-blur-sm transition group-hover:opacity-100 group-focus:opacity-100">
-                <ZoomIn className="h-3 w-3" /> Ampliar
+                <ZoomIn className="h-3 w-3" /> {ui("Ampliar")}
               </span>
             </button>
           ) : (
@@ -176,7 +183,7 @@ function EventoDetail() {
               rel="noopener noreferrer"
               className="font-condensed mt-4 flex w-full items-center justify-center gap-2 bg-gold px-5 py-3 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
             >
-              Inscripción <ExternalLink className="h-3.5 w-3.5" />
+              {ui("Inscripción")} <ExternalLink className="h-3.5 w-3.5" />
             </a>
           )}
           {event.convocatoria_pdf_url && (
@@ -187,7 +194,7 @@ function EventoDetail() {
               download={event.convocatoria_pdf_name ?? undefined}
               className="font-condensed mt-3 flex w-full items-center justify-center gap-2 border border-gold px-5 py-3 text-xs font-bold uppercase tracking-widest text-gold hover:bg-gold/10"
             >
-              <FileText className="h-3.5 w-3.5" /> Descargar convocatoria (PDF)
+              <FileText className="h-3.5 w-3.5" /> {ui("Descargar convocatoria (PDF)")}
             </a>
           )}
 
@@ -201,11 +208,11 @@ function EventoDetail() {
           <h1 className="font-display mt-2 text-3xl leading-tight tracking-wide md:text-4xl lg:text-5xl">{event.name}</h1>
 
           <div className="mt-6 grid gap-3 border-y border-border py-5 sm:grid-cols-2">
-            <InfoRow icon={<Calendar className="h-4 w-4" />} label="Fecha">{formatRange(event.start_date, event.end_date)}</InfoRow>
-            {event.location && <InfoRow icon={<MapPin className="h-4 w-4" />} label="Ubicación">{event.location}</InfoRow>}
-            {event.organizer && <InfoRow icon={<Users className="h-4 w-4" />} label="Organizador">{event.organizer}</InfoRow>}
+            <InfoRow icon={<Calendar className="h-4 w-4" />} label={ui("Fecha")}>{formatRange(event.start_date, event.end_date, lang === "en" ? "en-GB" : "es-ES")}</InfoRow>
+            {event.location && <InfoRow icon={<MapPin className="h-4 w-4" />} label={ui("Ubicación")}>{event.location}</InfoRow>}
+            {event.organizer && <InfoRow icon={<Users className="h-4 w-4" />} label={ui("Organizador")}>{event.organizer}</InfoRow>}
             {event.categories?.length > 0 && (
-              <InfoRow icon={<Trophy className="h-4 w-4" />} label="Categorías">
+              <InfoRow icon={<Trophy className="h-4 w-4" />} label={ui("Categorías")}>
                 <div className="flex flex-wrap gap-1.5">
                   {event.categories.map((c: string) => (
                     <span key={c} className="font-condensed border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-foreground/80">{c}</span>
@@ -217,13 +224,13 @@ function EventoDetail() {
 
           {event.description && (
             <div className="mt-8">
-              <h2 className="font-display mb-3 text-xl tracking-widest text-gold">Descripción</h2>
+              <h2 className="font-display mb-3 text-xl tracking-widest text-gold">{ui("Descripción")}</h2>
               <p className="whitespace-pre-line text-base leading-relaxed text-foreground/90">{event.description}</p>
             </div>
           )}
 
           <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-6">
-            {event.website_url && <ExternalBtn href={event.website_url} icon={<Globe className="h-4 w-4" />}>Web oficial</ExternalBtn>}
+            {event.website_url && <ExternalBtn href={event.website_url} icon={<Globe className="h-4 w-4" />}>{ui("Web oficial")}</ExternalBtn>}
             {event.instagram_url && <ExternalBtn href={event.instagram_url} icon={<Instagram className="h-4 w-4" />}>Instagram</ExternalBtn>}
             {event.facebook_url && <ExternalBtn href={event.facebook_url} icon={<Facebook className="h-4 w-4" />}>Facebook</ExternalBtn>}
           </div>
@@ -232,11 +239,11 @@ function EventoDetail() {
 
       {event.gallery?.length > 0 && (
         <div className="mt-12">
-          <h2 className="font-display mb-4 text-xl tracking-widest text-gold">Galería</h2>
+          <h2 className="font-display mb-4 text-xl tracking-widest text-gold">{ui("Galería")}</h2>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
             {event.gallery.map((url: string, i: number) => (
               <a key={url + i} href={url} target="_blank" rel="noopener noreferrer" className="group block aspect-square overflow-hidden border border-border bg-background">
-                <img src={url} alt={`${event.name} — foto ${i + 1}`} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                <img src={url} alt={`${event.name} — ${lang === "en" ? "photo" : "foto"} ${i + 1}`} loading="lazy" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
               </a>
             ))}
           </div>
@@ -248,7 +255,7 @@ function EventoDetail() {
       {lightboxOpen && event.cover_url && (
         <PosterLightbox
           src={event.cover_url}
-          alt={`Cartel de ${event.name}`}
+          alt={`${ui("Cartel oficial")}: ${event.name}`}
           onClose={() => setLightboxOpen(false)}
         />
       )}
@@ -257,6 +264,7 @@ function EventoDetail() {
 }
 
 function PosterLightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  const ui = useUiText();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -281,10 +289,10 @@ function PosterLightbox({ src, alt, onClose }: { src: string; alt: string; onClo
       <button
         type="button"
         onClick={onClose}
-        aria-label="Cerrar"
+        aria-label={ui("Cerrar")}
         className="font-condensed absolute right-4 top-4 inline-flex items-center gap-1.5 border border-border bg-background/80 px-3 py-2 text-xs uppercase tracking-widest text-foreground hover:border-gold hover:text-gold md:right-6 md:top-6"
       >
-        <X className="h-4 w-4" /> Cerrar
+        <X className="h-4 w-4" /> {ui("Cerrar")}
       </button>
       <img
         src={src}
@@ -317,11 +325,13 @@ function ExternalBtn({ href, icon, children }: { href: string; icon: React.React
 }
 
 function EventLocationMap({ location, name }: { location: string; name: string }) {
+  const ui = useUiText();
+  const { lang } = useLanguage();
   const query = encodeURIComponent(location);
   // OpenStreetMap embed centered by search query (no API key needed)
   const osmUrl = `https://www.openstreetmap.org/export/embed.html?bbox=-15,35,10,55&layer=mapnik&marker=`;
   // Use search-based embed via Nominatim-friendly query iframe
-  const mapSrc = `https://maps.google.com/maps?q=${query}&hl=es&z=14&output=embed`;
+  const mapSrc = `https://maps.google.com/maps?q=${query}&hl=${lang}&z=14&output=embed`;
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
   const viewUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
   void osmUrl;
@@ -329,13 +339,13 @@ function EventLocationMap({ location, name }: { location: string; name: string }
   return (
     <div className="mt-10 max-w-3xl">
       <h2 className="font-display mb-3 flex items-center gap-2 text-xl tracking-widest text-gold">
-        <MapPin className="h-5 w-5" /> Ubicación
+        <MapPin className="h-5 w-5" /> {ui("Ubicación")}
       </h2>
       <p className="mb-3 text-sm text-foreground/80">{location}</p>
       <div className="aspect-video overflow-hidden border border-border bg-background">
         <ExternalEmbedGate provider="Google Maps" sourceUrl={directionsUrl}>
           <iframe
-            title={`Mapa de ${name}`}
+            title={`${lang === "en" ? "Map of" : "Mapa de"} ${name}`}
             src={mapSrc}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
@@ -350,7 +360,7 @@ function EventLocationMap({ location, name }: { location: string; name: string }
           rel="noopener noreferrer"
           className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark"
         >
-          <Navigation className="h-3.5 w-3.5" /> Cómo llegar
+          <Navigation className="h-3.5 w-3.5" /> {ui("Cómo llegar")}
         </a>
         <a
           href={viewUrl}
@@ -358,7 +368,7 @@ function EventLocationMap({ location, name }: { location: string; name: string }
           rel="noopener noreferrer"
           className="font-condensed inline-flex items-center gap-2 border border-border px-4 py-2 text-xs uppercase tracking-widest text-foreground/80 hover:border-gold hover:text-gold"
         >
-          <ExternalLink className="h-3.5 w-3.5" /> Ver en Google Maps
+          <ExternalLink className="h-3.5 w-3.5" /> {ui("Ver en Google Maps")}
         </a>
       </div>
     </div>
