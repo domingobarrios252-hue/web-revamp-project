@@ -124,19 +124,19 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#2A2A2A] bg-[#1A1A1A]/85 backdrop-blur-md supports-[backdrop-filter]:bg-[#1A1A1A]/70">
-      <nav className="flex h-16 md:h-[72px] items-center justify-between px-5 md:px-8 lg:px-10">
+      <nav className="flex h-16 md:h-[72px] items-center justify-between gap-2 px-3 sm:px-5 md:px-8 lg:px-10">
         <Link
           to={localizedPath("/", lang)}
-          className="group flex flex-col justify-center leading-none transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40 rounded-sm"
+          className="group flex min-w-0 flex-col justify-center leading-none transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40 rounded-sm"
           aria-label="RollerZone — Inicio"
         >
-          <span className="font-display text-[24px] md:text-[32px] leading-none tracking-[0.03em] text-[#F5F5F5]">
+          <span className="font-display text-[20px] min-[375px]:text-[24px] md:text-[32px] leading-none tracking-[0.03em] text-[#F5F5F5] whitespace-nowrap">
             ROLLERZONE<span className="text-[#D4A017]">.ES</span>
           </span>
-          <span className="font-condensed mt-1 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.18em] text-[#B0B0B0]">
+          <span className="font-condensed mt-1 hidden min-[375px]:block text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.18em] text-[#B0B0B0] whitespace-nowrap">
             {lang === "en" ? "Speed skating magazine" : "Revista de patinaje de velocidad"}
           </span>
-          <span className="font-ui mt-0.5 text-[10px] md:text-[11px] italic leading-tight text-[#8A8A8A]">
+          <span className="font-ui mt-0.5 hidden sm:block text-[10px] md:text-[11px] italic leading-tight text-[#8A8A8A]">
             {lang === "en" ? "Where speed becomes history" : "Donde la velocidad se convierte en historia"}
           </span>
         </Link>
@@ -149,7 +149,7 @@ export function SiteHeader() {
         </ul>
 
         {/* Right actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <LanguageToggle />
           <Button variant="ghost"
             onClick={() => setSearchOpen((v) => !v)}
