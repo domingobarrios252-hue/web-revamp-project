@@ -63,6 +63,8 @@ test("translation keeps the original media and block IDs", () => {
 test("ES EN switching retains the result ID and article slug", () => {
   expect(localizedPath("/resultados/asu26", "en")).toBe("/en/results/asu26");
   expect(localizedPath("/en/results/asu26", "es")).toBe("/resultados/asu26");
+  expect(localizedPath("/eventos/asu26", "en")).toBe("/en/events/asu26");
+  expect(localizedPath("/en/events/asu26", "es")).toBe("/eventos/asu26");
   expect(localizedPath("/noticias/articulo/marine-lefeuvre", "en")).toBe("/en/news/marine-lefeuvre");
 });
 

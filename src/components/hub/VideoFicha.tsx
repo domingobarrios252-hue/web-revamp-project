@@ -6,13 +6,16 @@ import { useVideo, useVideos } from "@/lib/hub/useVideos";
 import { videoEmbedUrl } from "@/lib/videoEmbed";
 import { VideoCard } from "./VideoCard";
 import { ExternalEmbedGate } from "@/components/site/ExternalEmbedGate";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 
 type RelatedSkater = { id: string; full_name: string; slug: string };
 type RelatedClub = { id: string; name: string; slug: string };
 type RelatedEvent = { id: string; name: string; slug: string };
-type RelatedNews = { id: string; title: string; slug: string };
+type RelatedNews = { id: string; title: string; excerpt: string | null; slug: string };
 
 export function VideoFicha({ country, slug }: { country: string; slug: string }) {
+  const { lang } = useLanguage();
   const { video, loading } = useVideo(slug);
   const { videos: latest } = useVideos(country, { limit: 8 });
   const [skaters, setSkaters] = useState<RelatedSkater[]>([]);
@@ -56,16 +59,17 @@ export function VideoFicha({ country, slug }: { country: string; slug: string })
       if (video.news_id) {
         const { data } = await supabase
           .from("news")
-          .select("id, title, slug")
+          .select("id, title, excerpt, slug")
           .eq("id", video.news_id)
           .maybeSingle();
-        if (!cancelled) setNews((data as RelatedNews) ?? null);
+        const [translated] = await localizeNewsCards(data ? [data] : [], lang);
+        if (!cancelled) setNews(translated ?? null);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [video]);
+  }, [video, lang]);
 
   if (loading) {
     return <div className="px-6 py-12 text-[#888]">Cargando vídeo…</div>;
@@ -172,11 +176,11 @@ export function VideoFicha({ country, slug }: { country: string; slug: string })
             )}
             {news && (
               <Link
-                to="/noticias/$slug"
+                to={lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
                 params={{ slug: news.slug }}
                 className="border border-[#333] px-3 py-1.5 text-[#D5D5D5] hover:border-[#D4A017] hover:text-[#D4A017]"
               >
-                Noticia: {news.title}
+                {lang === "en" ? "News" : "Noticia"}: {news.title}
               </Link>
             )}
           </div>
