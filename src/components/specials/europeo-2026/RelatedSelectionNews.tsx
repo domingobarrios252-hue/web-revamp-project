@@ -46,14 +46,14 @@ export function RelatedSelectionNews({ limit = 8 }: { limit?: number }) {
       )
       .order("published_at", { ascending: false })
       .limit(limit)
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         if (cancelled) return;
-        setItems((data as unknown as RelatedNews[]) ?? []);
+        setItems(await localizeNewsCards((data as unknown as RelatedNews[]) ?? [], lang));
       });
     return () => {
       cancelled = true;
     };
-  }, [limit]);
+  }, [limit, lang]);
 
   return (
     <section className="bg-surface/40 py-16 md:py-20">
@@ -61,18 +61,18 @@ export function RelatedSelectionNews({ limit = 8 }: { limit?: number }) {
         <header className="mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="font-condensed text-[10px] font-bold uppercase tracking-[3px] text-gold">
-              Bloque vivo
+              {lang === "en" ? "Live block" : "Bloque vivo"}
             </div>
             <h2 className="font-display mt-2 text-3xl uppercase tracking-wider text-foreground md:text-4xl">
-              Actualidad de la selección española
+              {lang === "en" ? "Spanish national team news" : "Actualidad de la selección española"}
             </h2>
             <div className="mt-3 h-[3px] w-24 bg-gold" />
           </div>
           <Link
-            to="/noticias"
+            to={lang === "en" ? "/en/news" : "/noticias"}
             className="font-condensed inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[2.5px] text-gold hover:text-gold-light"
           >
-            Ver todas las noticias <ArrowRight className="h-3 w-3" />
+            {lang === "en" ? "See all news" : "Ver todas las noticias"} <ArrowRight className="h-3 w-3" />
           </Link>
         </header>
 
