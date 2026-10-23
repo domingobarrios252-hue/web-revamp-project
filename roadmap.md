@@ -9,6 +9,7 @@
 - [x] ES/EN bloque 2: páginas principales, selector accesible a 1280/390, preferencia de entrada, noticia y filtros conservados; solo vista previa
 - [~] ES/EN bloques 3–4: noticias de portada/listados/hubs/relacionadas usan versiones aprobadas; textos secundarios TV, pie y fichas de eventos completados; piezas editoriales fuera de noticias necesitan flujo propio autorizado, sin publicar
 - [x] Header: logo un 25 % más grande, más margen lateral y vertical, responsive comprobado a 1280/390, sin publicar
+- [x] Corrección responsive móvil: logotipo ya no se corta a 320/375/390/430 (margen 12 px, tamaño proporcional, lemas ocultos solo bajo 375 px); auditoría de 8 páginas a 320/390/768 sin desbordamiento horizontal; build OK, sin publicar
 - [x] ES/EN bloque 5: SEO de 24 páginas principales comprobado, 27 pruebas dirigidas y revisión 1280/390 superadas; informe entregado con límites de cobertura
 - [x] Transición posterior a ASU26: analizar TV, administración, archivo histórico y sincronización; preparar plan detallado
 - [x] Implementar transición posterior a ASU26: TV compartida, gestor, archivo, conservación; 52 pruebas de permisos y 13 unitarias, flujo temporal autenticado y móvil/ordenador verificados
