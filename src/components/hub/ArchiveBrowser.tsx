@@ -323,7 +323,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
                 {filteredNews.map((n) => (
                   <Link
                     key={n.id}
-                    to="/noticias/articulo/$slug"
+                    to={lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
                     params={{ slug: n.slug }}
                     className="group block overflow-hidden border border-[#222] bg-[#161616] transition-colors hover:border-gold/60"
                   >
