@@ -133,6 +133,17 @@ export const translateNews = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     const news = await editableSource(supabase, userId, data.newsId, "edit");
+    // Reuse the reviewed or draft version before consuming rate limits or AI credits.
+    const { data: existing, error: existingError } = await supabase
+      .from("news_translations")
+      .select("*")
+      .eq("news_id", data.newsId)
+      .eq("lang", "en")
+      .maybeSingle();
+    if (existingError) throw new Error(existingError.message);
+    if (existing && translationIsCurrent(existing as NewsTranslation, news)) {
+      return { translation: existing as NewsTranslation, reused: true };
+    }
     const { data: siteOk, error: siteError } = await supabase.rpc("check_rate_limit", {
       _action: "ai_translate_site", _identity: "global", _max_hits: TRANSLATION_LIMITS.site, _window_seconds: TRANSLATION_LIMITS.windowSeconds,
     });
@@ -155,12 +166,6 @@ export const translateNews = createServerFn({ method: "POST" })
     const translatedBlocks = restoreTranslationFields(parseBlocks(news.content_blocks), ai.fields);
 
     // No rebajar una traducción aprobada: pasa a pendiente de revisión.
-    const { data: existing } = await supabase
-      .from("news_translations")
-      .select("id, status")
-      .eq("news_id", data.newsId)
-      .eq("lang", "en")
-      .maybeSingle();
     const nextStatus = existing?.status === "approved" ? "pending" : "draft";
 
     const row = {
@@ -185,7 +190,7 @@ export const translateNews = createServerFn({ method: "POST" })
       : await supabase.from("news_translations").insert(row).select("*").single();
     if (upErr) throw new Error(upErr.message);
 
-    return { translation: saved as NewsTranslation };
+    return { translation: saved as NewsTranslation, reused: false };
   });
 
 const saveSchema = z.object({

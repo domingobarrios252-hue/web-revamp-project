@@ -85,9 +85,9 @@ export function TranslationPanel({
   const generate = async () => {
     setBusy("translate");
     try {
-      const { translation } = await runTranslate({ data: { newsId } });
+      const { translation, reused } = await runTranslate({ data: { newsId } });
       setTr(translation);
-      toast.success("Traducción generada. Revísala antes de aprobarla.");
+      toast.success(reused ? "Versión guardada recuperada, sin consumir IA." : "Traducción generada. Revísala antes de aprobarla.");
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -170,7 +170,7 @@ export function TranslationPanel({
             ) : (
               <RefreshCw className="h-4 w-4" />
             )}
-            {tr ? "Regenerar con IA" : "Generar versión en inglés"}
+            {tr ? (outdated ? "Actualizar versión en inglés" : "Recuperar versión guardada") : "Generar versión en inglés"}
           </Button>
 
           {tr && (
