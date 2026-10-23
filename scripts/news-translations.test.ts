@@ -45,6 +45,14 @@ test("source media changes invalidate reviewed translations", () => {
   expect(translationIsCurrent(tr, source)).toBe(true);
   expect(translationIsCurrent(tr, { ...source, content_blocks: [{ ...source.content_blocks[0], url: "/changed.jpg" }] })).toBe(false);
 });
+test("unchanged source reuses translations regardless of editorial approval", () => {
+  const source = { title: "Chevi Guzmán", content: "100 metros, 9.800", content_blocks: [] };
+  for (const status of ["draft", "pending", "approved"] as const) {
+    const tr = { status, source_hash: sourceHash(source), source_snapshot: sourceSnapshot(source) } as NewsTranslation;
+    expect(translationIsCurrent(tr, { ...source })).toBe(true);
+    expect(translationIsCurrent(tr, { ...source, content: "100 metros, 9.700" })).toBe(false);
+  }
+});
 test("translation keeps the original media and block IDs", () => {
   const blocks = parseBlocks([{ id: "a", type: "text", text: "España" }, { id: "b", type: "image", url: "/photo.jpg", caption: "Final" }]);
   const translated = restoreTranslationFields(blocks, extractTranslationFields(blocks).map(f => ({ ...f, value: "English" })));
@@ -55,6 +63,8 @@ test("translation keeps the original media and block IDs", () => {
 test("ES EN switching retains the result ID and article slug", () => {
   expect(localizedPath("/resultados/asu26", "en")).toBe("/en/results/asu26");
   expect(localizedPath("/en/results/asu26", "es")).toBe("/resultados/asu26");
+  expect(localizedPath("/eventos/asu26", "en")).toBe("/en/events/asu26");
+  expect(localizedPath("/en/events/asu26", "es")).toBe("/eventos/asu26");
   expect(localizedPath("/noticias/articulo/marine-lefeuvre", "en")).toBe("/en/news/marine-lefeuvre");
 });
 

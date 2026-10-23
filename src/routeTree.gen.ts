@@ -150,6 +150,7 @@ import { Route as UsaIndexRouteImport } from './routes/usa.index'
 import { Route as ApiOgPremiosMvpDotsvgRouteImport } from './routes/api.og.premios-mvp[.]svg'
 import { Route as ApiPublicCspReportRouteImport } from './routes/api.public.csp-report'
 import { Route as EnEventsIndexRouteImport } from './routes/en.events.index'
+import { Route as EnEventsSlugRouteImport } from './routes/en.events.$slug'
 import { Route as EnFranceNewsRouteImport } from './routes/en.france_.news'
 import { Route as EnHubCountryRouteImport } from './routes/en.hub.$country'
 import { Route as EnMagazineIndexRouteImport } from './routes/en.magazine.index'
@@ -930,6 +931,11 @@ const EnEventsIndexRoute = EnEventsIndexRouteImport.update({
   path: '/en/events/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnEventsSlugRoute = EnEventsSlugRouteImport.update({
+  id: '/en/events/$slug',
+  path: '/en/events/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EnFranceNewsRoute = EnFranceNewsRouteImport.update({
   id: '/en/france_/news',
   path: '/en/france/news',
@@ -1407,6 +1413,7 @@ export interface FileRoutesByFullPath {
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/events/$slug': typeof EnEventsSlugRoute
   '/en/france/news': typeof EnFranceNewsRoute
   '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
@@ -1605,6 +1612,7 @@ export interface FileRoutesByTo {
   '/usa': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/events/$slug': typeof EnEventsSlugRoute
   '/en/france/news': typeof EnFranceNewsRoute
   '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
@@ -1807,6 +1815,7 @@ export interface FileRoutesById {
   '/usa/': typeof UsaIndexRoute
   '/api/og/premios-mvp.svg': typeof ApiOgPremiosMvpDotsvgRoute
   '/api/public/csp-report': typeof ApiPublicCspReportRoute
+  '/en/events/$slug': typeof EnEventsSlugRoute
   '/en/france_/news': typeof EnFranceNewsRoute
   '/en/hub/$country': typeof EnHubCountryRoute
   '/en/news/$slug': typeof EnNewsSlugRoute
@@ -2016,6 +2025,7 @@ export interface FileRouteTypes {
     | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/events/$slug'
     | '/en/france/news'
     | '/en/hub/$country'
     | '/en/news/$slug'
@@ -2214,6 +2224,7 @@ export interface FileRouteTypes {
     | '/usa'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/events/$slug'
     | '/en/france/news'
     | '/en/hub/$country'
     | '/en/news/$slug'
@@ -2415,6 +2426,7 @@ export interface FileRouteTypes {
     | '/usa/'
     | '/api/og/premios-mvp.svg'
     | '/api/public/csp-report'
+    | '/en/events/$slug'
     | '/en/france_/news'
     | '/en/hub/$country'
     | '/en/news/$slug'
@@ -2555,6 +2567,7 @@ export interface RootRouteChildren {
   SalonDeLaFamaIndexRoute: typeof SalonDeLaFamaIndexRoute
   ApiOgPremiosMvpDotsvgRoute: typeof ApiOgPremiosMvpDotsvgRoute
   ApiPublicCspReportRoute: typeof ApiPublicCspReportRoute
+  EnEventsSlugRoute: typeof EnEventsSlugRoute
   EnFranceNewsRoute: typeof EnFranceNewsRoute
   EnHubCountryRoute: typeof EnHubCountryRoute
   EnNewsSlugRoute: typeof EnNewsSlugRoute
@@ -3565,6 +3578,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnEventsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/en/events/$slug': {
+      id: '/en/events/$slug'
+      path: '/en/events/$slug'
+      fullPath: '/en/events/$slug'
+      preLoaderRoute: typeof EnEventsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/en/france_/news': {
       id: '/en/france_/news'
       path: '/en/france/news'
@@ -4487,6 +4507,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalonDeLaFamaIndexRoute: SalonDeLaFamaIndexRoute,
   ApiOgPremiosMvpDotsvgRoute: ApiOgPremiosMvpDotsvgRoute,
   ApiPublicCspReportRoute: ApiPublicCspReportRoute,
+  EnEventsSlugRoute: EnEventsSlugRoute,
   EnFranceNewsRoute: EnFranceNewsRoute,
   EnHubCountryRoute: EnHubCountryRoute,
   EnNewsSlugRoute: EnNewsSlugRoute,

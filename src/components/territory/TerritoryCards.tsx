@@ -7,8 +7,8 @@ import { cropObjectPosition } from "@/lib/imageCrops";
 import type { Territory } from "@/lib/territory/territories";
 import type { TerritoryInterview, TerritoryNews } from "@/lib/territory/useTerritory";
 
-const dateFmt = (iso: string) =>
-  new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" });
+const dateFmt = (iso: string, lang: "es" | "en") =>
+  new Date(iso).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", { day: "2-digit", month: "long", year: "numeric" });
 
 /** Cabecera editorial de una delegación territorial. */
 export function TerritoryMasthead({
@@ -29,7 +29,7 @@ export function TerritoryMasthead({
         ROLLER<span className="text-gold">ZONE</span> {(linkLanguage === "en" && territory.code === "fr" ? "France" : territory.name).toUpperCase()}
       </h1>
       <p className="font-condensed mt-2 text-sm uppercase tracking-widest text-muted-foreground">
-        {subtitle ?? territory.subtitle}
+        {ui(subtitle ?? territory.subtitle)}
       </p>
     </header>
   );
@@ -72,7 +72,7 @@ export function TerritoryLead({ item, territory }: { item: TerritoryNews; territ
         <div className="font-condensed flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-widest text-muted-foreground">
           <span className="text-foreground">{item.author}</span>
           <span className="inline-flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-gold" /> {dateFmt(item.published_at)}
+            <Calendar className="h-3.5 w-3.5 text-gold" /> {dateFmt(item.published_at, linkLanguage)}
           </span>
         </div>
       </div>
@@ -110,7 +110,7 @@ export function TerritoryNewsCard({ item, territory }: { item: TerritoryNews; te
         </h3>
         {item.excerpt && <p className="line-clamp-3 text-sm text-muted-foreground">{item.excerpt}</p>}
         <div className="font-condensed mt-auto pt-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-          {dateFmt(item.published_at)}
+          {dateFmt(item.published_at, linkLanguage)}
         </div>
       </div>
     </Link>
@@ -150,7 +150,7 @@ export function TerritoryInterviewCard({ item }: { item: TerritoryInterview }) {
         </h3>
         {item.excerpt && <p className="line-clamp-3 text-sm text-muted-foreground">{item.excerpt}</p>}
         <div className="font-condensed mt-auto pt-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-          {dateFmt(item.interview_date)}
+          {dateFmt(item.interview_date, linkLanguage)}
         </div>
       </div>
     </Link>

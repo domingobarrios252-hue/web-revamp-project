@@ -4,6 +4,7 @@ import { Search, X, Newspaper, Calendar, User as UserIcon, BookOpen, Loader2 } f
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { localizedPath } from "@/lib/i18n/paths";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 
 type Result =
   | { kind: "news"; id: string; title: string; slug: string; image_url: string | null }
@@ -67,7 +68,7 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
       const [news, events, skaters, magazines] = await Promise.all([
         supabase
           .from("news")
-          .select("id, title, slug, image_url")
+          .select("id, title, excerpt, slug, image_url")
           .eq("published", true)
           .ilike("title", like)
           .limit(5),
@@ -91,8 +92,10 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
           .limit(5),
       ]);
       if (ctrl.cancelled) return;
+      const localizedNews = await localizeNewsCards(news.data ?? [], lang);
+      if (ctrl.cancelled) return;
       const merged: Result[] = [
-        ...((news.data ?? []) as { id: string; title: string; slug: string; image_url: string | null }[]).map(
+        ...localizedNews.map(
           (n) => ({ kind: "news" as const, ...n }),
         ),
         ...((events.data ?? []) as { id: string; name: string; slug: string }[]).map((e) => ({
@@ -114,12 +117,12 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
       ctrl.cancelled = true;
       clearTimeout(t);
     };
-  }, [q, open]);
+  }, [q, open, lang]);
 
   const go = (r: Result) => {
     onClose();
     if (r.kind === "news") navigate({ to: lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug", params: { slug: r.slug } });
-    else if (r.kind === "event") navigate({ to: "/eventos/$slug", params: { slug: r.slug } });
+    else if (r.kind === "event") navigate({ to: lang === "en" ? "/en/events/$slug" : "/eventos/$slug", params: { slug: r.slug } });
     else if (r.kind === "skater") navigate({ to: "/patinadores/$slug", params: { slug: r.slug } });
     else if (r.kind === "magazine") navigate({ to: localizedPath("/revista", lang) });
   };

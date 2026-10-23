@@ -1,10 +1,12 @@
 # Roadmap
 - [x] Internacionalización premium ES/EN: auditoría y plan aprobados
-- [ ] Terminar los bloques ES/EN aprobados y entregar informe, sin publicar ni aprobar los tres borradores
+- [~] Bloques ES/EN disponibles completados y verificados; ampliación editorial fuera de noticias pendiente de decisión y autorización, sin publicar ni aprobar los tres borradores
+- [x] Finalización incremental disponible: reutilización secuencial por versión, subtítulos/entradillas, buscador y relacionadas, textos TV/consentimiento/territorios, fichas de eventos EN y QA dirigido (17 pruebas + navegador); informe en .lovable/es-en-finalization-verification.md; sin migraciones, IA masiva ni publicación
+- [ ] Expansión editorial fuera de noticias (bloqueado: no existe flujo de aprobación para entrevistas independientes, piezas especiales, revista/PDF ni descripciones administrables; necesita decisión de arquitectura y autorización)
 - [x] Retirar «Condiciones de uso» de la sección Páginas legales y navegación pública, preservando documento y consentimiento existente
 - [x] ES/EN bloque 1: seguridad y versiones corregidas; 25 comprobaciones de reglas y reversión aisladas superadas; la migración compartida se aplicó antes de verificar la reversión (incidencia de secuencia documentada)
 - [x] ES/EN bloque 2: páginas principales, selector accesible a 1280/390, preferencia de entrada, noticia y filtros conservados; solo vista previa
-- [~] ES/EN bloques 3–4: portada (hero, portada editorial), listados, hubs de país, relacionadas y especiales ya leen traducciones aprobadas con fallback al español; quedan textos fijos secundarios (TV, pie de página, detalle de evento), sin publicar
+- [~] ES/EN bloques 3–4: noticias de portada/listados/hubs/relacionadas usan versiones aprobadas; textos secundarios TV, pie y fichas de eventos completados; piezas editoriales fuera de noticias necesitan flujo propio autorizado, sin publicar
 - [x] Header: logo un 25 % más grande, más margen lateral y vertical, responsive comprobado a 1280/390, sin publicar
 - [x] ES/EN bloque 5: SEO de 24 páginas principales comprobado, 27 pruebas dirigidas y revisión 1280/390 superadas; informe entregado con límites de cobertura
 - [x] Transición posterior a ASU26: analizar TV, administración, archivo histórico y sincronización; preparar plan detallado

@@ -164,7 +164,7 @@ export function SiteFooter() {
               <li>
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
-                  aria-label={`Enviar email a ${CONTACT_EMAIL}`}
+                  aria-label={`${lang === "en" ? "Send email to" : "Enviar email a"} ${CONTACT_EMAIL}`}
                   className={linkClass}
                 >
                   <Mail className="h-3.5 w-3.5 text-[#D4A017]/70" aria-hidden="true" />

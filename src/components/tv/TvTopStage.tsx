@@ -1,4 +1,5 @@
 import { useUiText } from "@/lib/i18n/uiText";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { useEffect, useState } from "react";
 import { Play, Radio, CalendarClock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,17 +35,17 @@ const STATUS_LABEL: Record<TvStageStatus, string> = {
   finished: "Finalizado",
 };
 
-const fmtDay = (iso: string) =>
-  new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
-const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" });
-const fmtTime = (iso: string) => new Date(iso).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+const fmtDay = (iso: string, locale: string) =>
+  new Date(iso).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
+const fmtDate = (iso: string, locale: string) =>
+  new Date(iso).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
+const fmtTime = (iso: string, locale: string) => new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
 
-function dateRange(a: string | null, b: string | null) {
+function dateRange(a: string | null, b: string | null, locale: string) {
   if (!a) return null;
-  const da = fmtDay(a);
+  const da = fmtDay(a, locale);
   if (!b) return da;
-  const db = fmtDay(b);
+  const db = fmtDay(b, locale);
   if (da === db) return da;
   const A = new Date(a);
   const B = new Date(b);
@@ -109,6 +110,8 @@ export function TvTopStage({
 }) {
   const ui = useUiText();
   const [playerActive, setPlayerActive] = useState(false);
+  const { lang } = useLanguage();
+  const locale = lang === "en" ? "en-GB" : "es-ES";
   const [place, setPlace] = useState<string | null>(null);
   const tv01 = useAdBanners("tv_01");
   const tv02 = useAdBanners("tv_02");
@@ -134,7 +137,7 @@ export function TvTopStage({
   const embedUrl = videoEmbedUrl(settings?.live_stream_url, { autoplay: true });
   const thumbnail = settings?.live_thumbnail_url || videoThumbnail(settings?.live_stream_url) || null;
   const title = settings?.live_title || "Rollerzone TV";
-  const range = dateRange(settings?.live_starts_at ?? null, settings?.live_ends_at ?? null);
+  const range = dateRange(settings?.live_starts_at ?? null, settings?.live_ends_at ?? null, locale);
   const meta = [range, place].filter(Boolean).join(" · ");
 
   const partner = tv01[0];
@@ -183,7 +186,7 @@ export function TvTopStage({
         <div className="min-w-0">
           <div className="relative aspect-video w-full overflow-hidden border-y border-gold/30 bg-black md:border md:shadow-[0_0_40px_oklch(0.78_0.16_70/0.18)]">
             {playerActive && embedUrl ? (
-              <ExternalEmbedGate provider="reproductor externo" sourceUrl={settings?.live_stream_url ?? undefined}>
+              <ExternalEmbedGate provider={ui("reproductor externo")} sourceUrl={settings?.live_stream_url ?? undefined}>
                 <TvPlayBeacon title={title} eventRef={slug ?? null} status={status} />
                 <iframe
                   src={embedUrl}
@@ -198,7 +201,7 @@ export function TvTopStage({
                 type="button"
                 onClick={() => setPlayerActive(true)}
                 className="group relative flex h-full w-full items-center justify-center bg-black"
-                aria-label={`Reproducir: ${title}`}
+                aria-label={`${ui("Reproducir")}: ${title}`}
               >
                 {thumbnail ? (
                   <img
@@ -273,7 +276,7 @@ export function TvTopStage({
                   <p className="font-condensed text-[10px] uppercase tracking-[2px] text-gold">{ui('Próxima emisión')}</p>
                   <p className="line-clamp-2 text-sm font-semibold uppercase leading-snug text-foreground">{next.title}</p>
                   <p className="font-condensed text-[11px] uppercase tracking-widest text-muted-foreground">
-                    {fmtDate(next.at)} · {fmtTime(next.at)} h <span className="normal-case">{ui('(tu hora)')}</span>
+                    {fmtDate(next.at, locale)} · {fmtTime(next.at, locale)} h <span className="normal-case">{ui('(tu hora)')}</span>
                   </p>
                 </div>
                 <StatusPill status="upcoming" />

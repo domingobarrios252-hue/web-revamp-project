@@ -282,10 +282,10 @@ function EventCard({ event }: { event: EventItem }) {
       <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 bg-gold" />
 
       <Link
-        to="/eventos/$slug"
+        to={lang === "en" ? "/en/events/$slug" : "/eventos/$slug"}
         params={{ slug: event.slug }}
         className="relative block"
-        aria-label={`Ver detalle del evento ${event.name}`}
+        aria-label={`${ui("Ver detalle")}: ${event.name}`}
       >
         {event.cover_url ? (
           <div className="relative aspect-[1/1.414] overflow-hidden bg-background">
@@ -298,7 +298,7 @@ function EventCard({ event }: { event: EventItem }) {
             />
             <img
               src={event.cover_url}
-              alt={`Cartel de ${event.name}`}
+              alt={`${ui("Cartel oficial")}: ${event.name}`}
               loading="lazy"
               className="relative h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
             />
@@ -325,7 +325,7 @@ function EventCard({ event }: { event: EventItem }) {
       </Link>
 
       <div className="flex flex-1 flex-col p-5">
-        <Link to="/eventos/$slug" params={{ slug: event.slug }}>
+        <Link to={lang === "en" ? "/en/events/$slug" : "/eventos/$slug"} params={{ slug: event.slug }}>
           <h3 className="font-display text-lg leading-tight tracking-wide text-foreground hover:text-gold">
             {event.name}
           </h3>
@@ -348,9 +348,10 @@ function EventCard({ event }: { event: EventItem }) {
         )}
 
         {event.description && <p className="mt-3 line-clamp-3 text-sm text-foreground/80">{event.description}</p>}
+        {lang === "en" && event.description && <p className="mt-2 text-xs text-muted-foreground">Original-language editorial information.</p>}
 
         <div className="mt-auto flex flex-wrap items-center gap-3 pt-4">
-          <Link to="/eventos/$slug" params={{ slug: event.slug }} className="font-condensed inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-gold hover:text-gold-dark">
+          <Link to={lang === "en" ? "/en/events/$slug" : "/eventos/$slug"} params={{ slug: event.slug }} className="font-condensed inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-gold hover:text-gold-dark">
             {ui("Ver detalle")} →
           </Link>
           {event.website_url && <ExternalLinkBtn href={event.website_url} icon={<Globe className="h-3.5 w-3.5" />}>Web</ExternalLinkBtn>}

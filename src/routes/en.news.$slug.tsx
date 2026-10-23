@@ -138,7 +138,7 @@ function EnArticlePage() {
             This article is not available in English yet — showing the Spanish original.
           </p>
         </div>
-        <NewsArticleView article={article} locale="es" backTo={{ to: "/noticias", label: "Noticias" }} />
+        <NewsArticleView article={article} locale="en" backTo={{ to: "/en/news", label: "News" }} />
       </>
     );
   }
@@ -150,7 +150,8 @@ function EnArticlePage() {
       locale="en"
       overrides={{
         title: translation.title || article.title,
-        excerpt: translation.excerpt ?? article.excerpt,
+        subtitle: translation.subtitle,
+        excerpt: translation.excerpt,
         blocks,
         content: translation.content,
       }}

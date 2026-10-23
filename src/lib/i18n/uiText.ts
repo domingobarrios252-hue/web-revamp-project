@@ -2,6 +2,17 @@ import { useLanguage } from "./LanguageProvider";
 
 /** Fixed interface labels only. Never apply this dictionary to editorial bodies or sporting data. */
 export const UI_EN: Record<string, string> = {
+  "Noticias y entrevistas del patinaje de velocidad en Estados Unidos": "Speed skating news and interviews from the United States",
+  "Noticias y entrevistas del patinaje de velocidade em Portugal": "Speed skating news and interviews from Portugal",
+  "Actualidad del patinaje de velocidad francés.": "French speed skating news.",
+  "Reproducir": "Play", "Cerrar": "Close", "reproductor externo": "external player",
+  "No se puede reproducir este vídeo. Ábrelo en": "This video cannot be played. Open it on",
+  "la plataforma original": "the original platform",
+  "Volver a Eventos": "Back to events", "Cartel oficial": "Official poster", "Ampliar": "Enlarge",
+  "Inscripción": "Registration", "Descargar convocatoria (PDF)": "Download event announcement (PDF)",
+  "Fecha": "Date", "Ubicación": "Location", "Organizador": "Organiser", "Categorías": "Categories",
+  "Descripción": "Description", "Web oficial": "Official website", "Galería": "Gallery",
+  "Cómo llegar": "Directions", "Ver en Google Maps": "View on Google Maps",
   "Reconocimiento": "Recognition", "Premios MVP": "MVP Awards", "Los mejores patinadores y patinadoras de la temporada según RollerZone.": "RollerZone's top skaters of the season.", "Memoria deportiva": "Sporting heritage", "Salón de la Fama": "Hall of Fame", "Las leyendas que escribieron la historia del patinaje de velocidad.": "The legends who shaped the history of speed skating.", "Hub oficial": "Country hub", "España": "Spain", "Liga nacional, clubes, federaciones y selección absoluta.": "National league, clubs, federations and senior national team.", "Liga, ligas regionales y la potencia mundial del patinaje.": "National and regional leagues in a world-leading skating nation.", "Institucional": "Partnerships", "Colaboraciones y Convenios": "Collaborations and agreements", "Proyectos y entidades que escriben junto a RollerZone la historia del patinaje de velocidad.": "Projects and organisations shaping speed skating alongside RollerZone.",
   "Buscar por nombre…": "Search by name…", "Buscar patinador": "Search skaters", "Campeonato": "Championship", "Sin fecha": "No date", "Pista": "Track", "Ruta": "Road", "Maratón": "Marathon", "Femenino": "Women", "Masculino": "Men", "En curso": "In progress", "Oficial": "Official", "Sin confirmar": "Unconfirmed", "Oro": "Gold", "Plata": "Silver", "Bronce": "Bronze",
   "Reproducción integrada no disponible.": "Embedded playback unavailable.", "Ver en la plataforma original": "Watch on the original platform", "Documentos oficiales": "Official documents", "Descargar PDF oficial": "Download official PDF", "Descargar PDF oficial del evento": "Download the official event PDF", "Compartir": "Share", "Enlace copiado": "Link copied", "Ver PDF": "View PDF", "Descargar": "Download", "Datos publicados por RollerZone.es": "Data published by RollerZone.es", "Resultados completos": "Full results", "Acta": "Report", "Medallero": "Medal table", "Otro": "Other", "Ronda": "Round", "Federación": "Federation", "Buscar patinador o club…": "Search skater or club…", "Buscar por patinador o club": "Search by skater or club", "Aún no hay resultados publicados para este evento.": "No results have been published for this event yet.",
