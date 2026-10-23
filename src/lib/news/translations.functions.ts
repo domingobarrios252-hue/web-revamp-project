@@ -144,14 +144,19 @@ export const translateNews = createServerFn({ method: "POST" })
     if (existing && translationIsCurrent(existing as NewsTranslation, news)) {
       return { translation: existing as NewsTranslation, reused: true };
     }
-    const { data: siteOk, error: siteError } = await supabase.rpc("check_rate_limit", {
+    // This RPC is intentionally service-role-only. Editorial authorization above
+    // must succeed before loading the privileged client; ordinary reads/writes stay under RLS.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: siteOk, error: siteError } = await supabaseAdmin.rpc("check_rate_limit", {
       _action: "ai_translate_site", _identity: "global", _max_hits: TRANSLATION_LIMITS.site, _window_seconds: TRANSLATION_LIMITS.windowSeconds,
     });
-    if (siteError || siteOk !== true) throw new Error("Límite diario de traducciones alcanzado (30) o comprobación no disponible.");
-    const { data: newsOk, error: newsError } = await supabase.rpc("check_rate_limit", {
+    if (siteError || siteOk == null) throw new Error("No se pudo comprobar el límite de traducciones. Inténtalo de nuevo más tarde.");
+    if (siteOk !== true) throw new Error("Límite de 30 intentos de traducción en las últimas 24 horas alcanzado.");
+    const { data: newsOk, error: newsError } = await supabaseAdmin.rpc("check_rate_limit", {
       _action: "ai_translate_news", _identity: data.newsId, _max_hits: TRANSLATION_LIMITS.article, _window_seconds: TRANSLATION_LIMITS.windowSeconds,
     });
-    if (newsError || newsOk !== true) throw new Error("Esta noticia alcanzó el límite de 3 traducciones al día o la comprobación no está disponible.");
+    if (newsError || newsOk == null) throw new Error("No se pudo comprobar el límite de esta noticia. Inténtalo de nuevo más tarde.");
+    if (newsOk !== true) throw new Error("Esta noticia alcanzó el límite de 3 intentos de traducción en las últimas 24 horas.");
 
     const hash = sourceHash(news);
     const ai = await callTranslationModel({

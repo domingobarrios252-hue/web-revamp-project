@@ -1,4 +1,5 @@
 # Roadmap
+- [~] Revisar exclusivamente límites ES/EN: bloqueo por RPC reservado al servidor confirmado; corregir llamada y distinguir fallos de cupo agotado, probar sin IA ni escrituras; sin publicar.
 - [x] Internacionalización premium ES/EN: auditoría y plan aprobados
 - [~] Bloques ES/EN disponibles completados y verificados; ampliación editorial fuera de noticias pendiente de decisión y autorización, sin publicar ni aprobar los tres borradores
 - [x] Finalización incremental disponible: reutilización secuencial por versión, subtítulos/entradillas, buscador y relacionadas, textos TV/consentimiento/territorios, fichas de eventos EN y QA dirigido (17 pruebas + navegador); informe en .lovable/es-en-finalization-verification.md; sin migraciones, IA masiva ni publicación
