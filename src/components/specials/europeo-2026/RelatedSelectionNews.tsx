@@ -91,9 +91,19 @@ export function RelatedSelectionNews({ limit = 8 }: { limit?: number }) {
         ) : items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border bg-surface p-10 text-center">
             <p className="text-sm text-muted-foreground">
-              Aún no hay noticias publicadas en este bloque. Las noticias que se
-              etiqueten con <code className="text-gold">europeo-2026</code> o se
-              asignen a la selección española aparecerán aquí automáticamente.
+              {lang === "en" ? (
+                <>
+                  No news has been published in this block yet. News tagged with{" "}
+                  <code className="text-gold">europeo-2026</code> or assigned to the
+                  Spanish national team will appear here automatically.
+                </>
+              ) : (
+                <>
+                  Aún no hay noticias publicadas en este bloque. Las noticias que se
+                  etiqueten con <code className="text-gold">europeo-2026</code> o se
+                  asignen a la selección española aparecerán aquí automáticamente.
+                </>
+              )}
             </p>
           </div>
         ) : (
@@ -101,7 +111,7 @@ export function RelatedSelectionNews({ limit = 8 }: { limit?: number }) {
             {items.map((n) => (
               <Link
                 key={n.id}
-                to="/noticias/articulo/$slug"
+                to={lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
                 params={{ slug: n.slug }}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-lg transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.35)]"
               >
