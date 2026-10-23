@@ -1,4 +1,5 @@
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 import { useUiText } from "@/lib/i18n/uiText";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";

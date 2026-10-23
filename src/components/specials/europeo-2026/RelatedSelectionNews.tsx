@@ -4,6 +4,7 @@ import { ArrowRight, Calendar } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate } from "@/lib/i18n/format";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 
 type RelatedNews = {
   id: string;
