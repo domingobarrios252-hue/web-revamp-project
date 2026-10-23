@@ -1,4 +1,5 @@
 import { useUiText } from "@/lib/i18n/uiText";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { MapPin, Play, Radio } from "lucide-react";
@@ -371,10 +372,11 @@ function BroadcastsRail({ items }: { items: Broadcast[] }) {
 
 function BroadcastCard({ b }: { b: Broadcast }) {
   const ui = useUiText();
+  const { lang } = useLanguage();
   const cover = b.cover_url || videoThumbnail(b.stream_url);
   const d = new Date(b.scheduled_at);
-  const day = d.toLocaleDateString("es-ES", { weekday: "short", day: "2-digit", month: "short" });
-  const time = d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+  const day = d.toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", { weekday: "short", day: "2-digit", month: "short" });
+  const time = d.toLocaleTimeString(lang === "en" ? "en-GB" : "es-ES", { hour: "2-digit", minute: "2-digit" });
   const body = (
     <>
       <div className="relative aspect-video overflow-hidden bg-black">
@@ -422,19 +424,20 @@ function BroadcastCard({ b }: { b: Broadcast }) {
 
 function HighlightsRail({ items, onPlay }: { items: Highlight[]; onPlay: (h: Highlight) => void }) {
   const ui = useUiText();
+  const { lang } = useLanguage();
   return (
     <div className={RAIL}>
       {items.map((h) => {
         const thumb = h.thumbnail_url || videoThumbnail(h.video_url);
         const date = h.created_at
-          ? new Date(h.created_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })
+          ? new Date(h.created_at).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", { day: "2-digit", month: "short", year: "numeric" })
           : null;
         return (
           <div key={h.id} className={RAIL_ITEM}>
             <button
               type="button"
               onClick={() => onPlay(h)}
-              aria-label={`Reproducir: ${h.title}`}
+              aria-label={`${ui("Reproducir")}: ${h.title}`}
               className="group block h-full w-full overflow-hidden border border-border bg-surface text-left transition-colors hover:border-gold"
             >
               <div className="relative aspect-video overflow-hidden bg-black">
@@ -503,14 +506,14 @@ function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => voi
       <div className="relative w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
-          aria-label="Cerrar"
+          aria-label={ui("Cerrar")}
           className="absolute -top-10 right-0 text-white hover:text-gold"
         >
-          ✕ CERRAR
+          ✕ {ui("Cerrar")}
         </button>
         <div className="aspect-video w-full border border-gold bg-black shadow-[0_0_60px_oklch(0.78_0.16_70/0.3)]">
           {embed ? (
-            <ExternalEmbedGate provider="reproductor externo" sourceUrl={item.video_url}>
+            <ExternalEmbedGate provider={ui("reproductor externo")} sourceUrl={item.video_url}>
               <iframe
                 src={embed}
                 title={item.title}
@@ -521,14 +524,14 @@ function HighlightModal({ item, onClose }: { item: Highlight; onClose: () => voi
             </ExternalEmbedGate>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-              No se puede reproducir este vídeo. Ábrelo en{" "}
+              {ui("No se puede reproducir este vídeo. Ábrelo en")}{" "}
               <a
                 href={item.video_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-1 text-gold underline"
               >
-                la plataforma original
+                {ui("la plataforma original")}
               </a>
               .
             </div>
