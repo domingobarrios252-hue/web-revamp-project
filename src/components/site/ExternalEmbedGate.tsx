@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ExternalLink, ShieldQuestion } from "lucide-react";
 import { useConsent } from "@/lib/consent";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 type Props = {
   children: ReactNode;
@@ -18,6 +19,7 @@ type Props = {
  */
 export function ExternalEmbedGate({ children, provider, sourceUrl, className = "" }: Props) {
   const { categories, ready, save, openPreferences } = useConsent();
+  const { lang } = useLanguage();
 
   if (!ready || categories.external) {
     // Antes de hidratar no renderizamos el iframe (estado por defecto: denegado).
@@ -38,8 +40,8 @@ export function ExternalEmbedGate({ children, provider, sourceUrl, className = "
     >
       <ShieldQuestion className="h-8 w-8 text-gold" aria-hidden="true" />
       <p className="max-w-md text-sm leading-relaxed text-foreground/85">
-        Este contenido pertenece a un proveedor externo
-        {provider ? ` (${provider})` : ""}. Para visualizarlo debes permitir el contenido externo.
+        {lang === "en" ? "This content is provided by an external service" : "Este contenido pertenece a un proveedor externo"}
+        {provider ? ` (${provider})` : ""}{lang === "en" ? ". Allow external content to view it." : ". Para visualizarlo debes permitir el contenido externo."}
       </p>
       <div className="flex flex-wrap items-center justify-center gap-2">
         <button
@@ -47,14 +49,14 @@ export function ExternalEmbedGate({ children, provider, sourceUrl, className = "
           onClick={() => save({ external: true })}
           className="font-condensed min-h-[44px] bg-gold px-5 py-2 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          Permitir y ver contenido
+          {lang === "en" ? "Allow and view content" : "Permitir y ver contenido"}
         </button>
         <button
           type="button"
           onClick={openPreferences}
           className="font-condensed min-h-[44px] border border-border px-4 py-2 text-xs font-semibold uppercase tracking-widest text-foreground/85 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
         >
-          Gestionar cookies
+          {lang === "en" ? "Cookie preferences" : "Gestionar cookies"}
         </button>
       </div>
       {sourceUrl ? (
@@ -64,7 +66,7 @@ export function ExternalEmbedGate({ children, provider, sourceUrl, className = "
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 text-xs text-gold underline underline-offset-2 hover:text-gold-dark"
         >
-          <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /> Ver en el proveedor
+          <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /> {lang === "en" ? "View on provider website" : "Ver en el proveedor"}
         </a>
       ) : null}
     </div>

@@ -2,6 +2,9 @@ import { useLanguage } from "./LanguageProvider";
 
 /** Fixed interface labels only. Never apply this dictionary to editorial bodies or sporting data. */
 export const UI_EN: Record<string, string> = {
+  "Noticias y entrevistas del patinaje de velocidad en Estados Unidos": "Speed skating news and interviews from the United States",
+  "Noticias y entrevistas del patinaje de velocidade em Portugal": "Speed skating news and interviews from Portugal",
+  "Actualidad del patinaje de velocidad francés.": "French speed skating news.",
   "Reproducir": "Play", "Cerrar": "Close", "reproductor externo": "external player",
   "No se puede reproducir este vídeo. Ábrelo en": "This video cannot be played. Open it on",
   "la plataforma original": "the original platform",
