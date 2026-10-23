@@ -1,6 +1,7 @@
 # Roadmap
 - [x] Internacionalización premium ES/EN: auditoría y plan aprobados
 - [ ] Terminar los bloques ES/EN aprobados y entregar informe, sin publicar ni aprobar los tres borradores
+- [ ] Finalización incremental: reutilización por versión sin IA duplicada, textos secundarios EN y QA dirigido; sin migraciones, traducciones masivas ni publicación
 - [x] Retirar «Condiciones de uso» de la sección Páginas legales y navegación pública, preservando documento y consentimiento existente
 - [x] ES/EN bloque 1: seguridad y versiones corregidas; 25 comprobaciones de reglas y reversión aisladas superadas; la migración compartida se aplicó antes de verificar la reversión (incidencia de secuencia documentada)
 - [x] ES/EN bloque 2: páginas principales, selector accesible a 1280/390, preferencia de entrada, noticia y filtros conservados; solo vista previa
