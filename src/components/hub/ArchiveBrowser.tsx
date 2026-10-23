@@ -111,7 +111,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
           .limit(500),
       ]);
       if (cancelled) return;
-      setNews((n.data as NewsRow[]) ?? []);
+      setNews(await localizeNewsCards((n.data as NewsRow[]) ?? [], lang));
       const evList = (e.data as EventRow[]) ?? [];
       setEvents(evList);
       setInterviews((i.data as InterviewRow[]) ?? []);
@@ -134,7 +134,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
     return () => {
       cancelled = true;
     };
-  }, [country]);
+  }, [country, lang]);
 
   const years = useMemo(() => {
     const set = new Set<string>();
