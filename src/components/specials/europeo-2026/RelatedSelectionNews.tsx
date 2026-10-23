@@ -4,6 +4,7 @@ import { ArrowRight, Calendar } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate } from "@/lib/i18n/format";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 
 type RelatedNews = {
   id: string;
@@ -45,14 +46,14 @@ export function RelatedSelectionNews({ limit = 8 }: { limit?: number }) {
       )
       .order("published_at", { ascending: false })
       .limit(limit)
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         if (cancelled) return;
-        setItems((data as unknown as RelatedNews[]) ?? []);
+        setItems(await localizeNewsCards((data as unknown as RelatedNews[]) ?? [], lang));
       });
     return () => {
       cancelled = true;
     };
-  }, [limit]);
+  }, [limit, lang]);
 
   return (
     <section className="bg-surface/40 py-16 md:py-20">
@@ -60,18 +61,18 @@ export function RelatedSelectionNews({ limit = 8 }: { limit?: number }) {
         <header className="mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="font-condensed text-[10px] font-bold uppercase tracking-[3px] text-gold">
-              Bloque vivo
+              {lang === "en" ? "Live block" : "Bloque vivo"}
             </div>
             <h2 className="font-display mt-2 text-3xl uppercase tracking-wider text-foreground md:text-4xl">
-              Actualidad de la selección española
+              {lang === "en" ? "Spanish national team news" : "Actualidad de la selección española"}
             </h2>
             <div className="mt-3 h-[3px] w-24 bg-gold" />
           </div>
           <Link
-            to="/noticias"
+            to={lang === "en" ? "/en/news" : "/noticias"}
             className="font-condensed inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[2.5px] text-gold hover:text-gold-light"
           >
-            Ver todas las noticias <ArrowRight className="h-3 w-3" />
+            {lang === "en" ? "See all news" : "Ver todas las noticias"} <ArrowRight className="h-3 w-3" />
           </Link>
         </header>
 
@@ -90,9 +91,19 @@ export function RelatedSelectionNews({ limit = 8 }: { limit?: number }) {
         ) : items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border bg-surface p-10 text-center">
             <p className="text-sm text-muted-foreground">
-              Aún no hay noticias publicadas en este bloque. Las noticias que se
-              etiqueten con <code className="text-gold">europeo-2026</code> o se
-              asignen a la selección española aparecerán aquí automáticamente.
+              {lang === "en" ? (
+                <>
+                  No news has been published in this block yet. News tagged with{" "}
+                  <code className="text-gold">europeo-2026</code> or assigned to the
+                  Spanish national team will appear here automatically.
+                </>
+              ) : (
+                <>
+                  Aún no hay noticias publicadas en este bloque. Las noticias que se
+                  etiqueten con <code className="text-gold">europeo-2026</code> o se
+                  asignen a la selección española aparecerán aquí automáticamente.
+                </>
+              )}
             </p>
           </div>
         ) : (
@@ -100,7 +111,7 @@ export function RelatedSelectionNews({ limit = 8 }: { limit?: number }) {
             {items.map((n) => (
               <Link
                 key={n.id}
-                to="/noticias/articulo/$slug"
+                to={lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
                 params={{ slug: n.slug }}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-lg transition-all hover:-translate-y-1 hover:border-gold hover:shadow-[0_15px_40px_-10px_rgba(212,160,23,0.35)]"
               >

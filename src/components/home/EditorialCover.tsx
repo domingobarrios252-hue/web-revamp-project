@@ -27,10 +27,10 @@ export function EditorialCover({ news }: { news: CoverNews[] }) {
   return (
     <section className="mx-auto max-w-7xl px-5 py-14 md:px-6 md:py-16">
       <SectionHeading
-        kicker="Portada · Lo más importante"
-        title="La portada de"
+        kicker={linkLanguage === "en" ? "Front page · The most important" : "Portada · Lo más importante"}
+        title={linkLanguage === "en" ? "The front page of" : "La portada de"}
         accent="RollerZone"
-        action={{ to: "/noticias", label: "Ver todas" }}
+        action={{ to: linkLanguage === "en" ? "/en/news" : "/noticias", label: linkLanguage === "en" ? "See all" : "Ver todas" }}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -58,7 +58,7 @@ export function EditorialCover({ news }: { news: CoverNews[] }) {
             {/* Etiqueta noticia principal */}
             <div className="absolute left-5 top-5 z-10 flex items-center gap-2 md:left-7 md:top-7">
               <span className="font-condensed inline-flex items-center gap-1.5 bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-background shadow-lg">
-                <Star className="h-3 w-3" /> Noticia principal
+                <Star className="h-3 w-3" /> {linkLanguage === "en" ? "Top story" : "Noticia principal"}
               </span>
               {main.news_categories?.name && (
                 <span className="font-condensed inline-flex items-center border border-gold/60 bg-black/50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[3px] text-gold backdrop-blur-sm">
@@ -71,7 +71,7 @@ export function EditorialCover({ news }: { news: CoverNews[] }) {
               <div className="font-condensed mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-[3px] text-white/70">
                 <span className="inline-flex items-center gap-1.5">
                   <Calendar className="h-3 w-3" />
-                  {new Date(main.published_at).toLocaleDateString("es-ES", {
+                  {new Date(main.published_at).toLocaleDateString(linkLanguage === "en" ? "en-GB" : "es-ES", {
                     day: "2-digit",
                     month: "long",
                     year: "numeric",
@@ -98,7 +98,7 @@ export function EditorialCover({ news }: { news: CoverNews[] }) {
                 </p>
               )}
               <span className="font-condensed mt-5 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gold transition-transform group-hover:translate-x-1">
-                Leer reportaje completo <ArrowRight className="h-3.5 w-3.5" />
+                {linkLanguage === "en" ? "Read the full story" : "Leer reportaje completo"} <ArrowRight className="h-3.5 w-3.5" />
               </span>
             </div>
           </div>
@@ -139,7 +139,7 @@ export function EditorialCover({ news }: { news: CoverNews[] }) {
               </h4>
               <div className="font-condensed mt-2 flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
                 <Calendar className="h-3 w-3" />
-                {new Date(n.published_at).toLocaleDateString("es-ES", {
+                {new Date(n.published_at).toLocaleDateString(linkLanguage === "en" ? "en-GB" : "es-ES", {
                   day: "2-digit",
                   month: "short",
                 })}

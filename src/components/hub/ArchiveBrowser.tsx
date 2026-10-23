@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Search, Calendar, Trophy, Mic, Newspaper, Crown, X } from "lucide-react";
 import { cropObjectPosition, type ImageCrops } from "@/lib/imageCrops";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { localizeNewsCards } from "@/lib/news/localizedCards";
 
 type NewsRow = {
   id: string;
@@ -43,6 +45,7 @@ type LegendRow = {
 type FilterOption = { id: string; label: string };
 
 export function ArchiveBrowser({ country }: { country: string }) {
+  const { lang } = useLanguage();
   const [tab, setTab] = useState("noticias");
   const [search, setSearch] = useState("");
   const [year, setYear] = useState<string>("");
@@ -108,7 +111,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
           .limit(500),
       ]);
       if (cancelled) return;
-      setNews((n.data as NewsRow[]) ?? []);
+      setNews(await localizeNewsCards((n.data as NewsRow[]) ?? [], lang));
       const evList = (e.data as EventRow[]) ?? [];
       setEvents(evList);
       setInterviews((i.data as InterviewRow[]) ?? []);
@@ -131,7 +134,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
     return () => {
       cancelled = true;
     };
-  }, [country]);
+  }, [country, lang]);
 
   const years = useMemo(() => {
     const set = new Set<string>();
@@ -320,7 +323,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
                 {filteredNews.map((n) => (
                   <Link
                     key={n.id}
-                    to="/noticias/articulo/$slug"
+                    to={lang === "en" ? "/en/news/$slug" : "/noticias/articulo/$slug"}
                     params={{ slug: n.slug }}
                     className="group block overflow-hidden border border-[#222] bg-[#161616] transition-colors hover:border-gold/60"
                   >

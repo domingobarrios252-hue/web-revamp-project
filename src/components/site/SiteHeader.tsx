@@ -20,7 +20,7 @@ import { LanguageToggle } from "@/components/site/LanguageToggle";
 import { usePageSettings } from "@/lib/pageSettings";
 
 const NAV_LINK =
-  "font-ui relative inline-flex h-14 items-center px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#B5B5B5] transition-all duration-200 hover:text-[#F5F5F5] focus-visible:text-[#F5F5F5] focus-visible:outline-none after:absolute after:inset-x-1 after:bottom-3 after:h-[2px] after:scale-x-0 after:origin-left after:bg-[#D4A017] after:transition-transform after:duration-300 hover:after:scale-x-100 focus-visible:after:scale-x-100";
+  "font-ui relative inline-flex h-16 md:h-[72px] items-center px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#B5B5B5] transition-all duration-200 hover:text-[#F5F5F5] focus-visible:text-[#F5F5F5] focus-visible:outline-none after:absolute after:inset-x-1 after:bottom-3 after:h-[2px] after:scale-x-0 after:origin-left after:bg-[#D4A017] after:transition-transform after:duration-300 hover:after:scale-x-100 focus-visible:after:scale-x-100";
 const NAV_ACTIVE = "text-[#F5F5F5] after:scale-x-100";
 const ACTION_BTN =
   "font-ui inline-flex items-center gap-1.5 rounded-[6px] border border-[#D4A017] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#D4A017] transition-all duration-200 hover:bg-[#D4A017] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40";
@@ -124,19 +124,19 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#2A2A2A] bg-[#1A1A1A]/85 backdrop-blur-md supports-[backdrop-filter]:bg-[#1A1A1A]/70">
-      <nav className="flex h-14 items-center justify-between px-4 md:px-6">
+      <nav className="flex h-16 md:h-[72px] items-center justify-between px-5 md:px-8 lg:px-10">
         <Link
           to={localizedPath("/", lang)}
           className="group flex flex-col justify-center leading-none transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A017]/40 rounded-sm"
           aria-label="RollerZone — Inicio"
         >
-          <span className="font-display text-[20px] md:text-[26px] leading-none tracking-[0.03em] text-[#F5F5F5]">
+          <span className="font-display text-[24px] md:text-[32px] leading-none tracking-[0.03em] text-[#F5F5F5]">
             ROLLERZONE<span className="text-[#D4A017]">.ES</span>
           </span>
-          <span className="font-condensed mt-0.5 text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.18em] text-[#B0B0B0]">
+          <span className="font-condensed mt-1 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.18em] text-[#B0B0B0]">
             {lang === "en" ? "Speed skating magazine" : "Revista de patinaje de velocidad"}
           </span>
-          <span className="font-ui mt-0.5 text-[9px] md:text-[10px] italic leading-tight text-[#8A8A8A]">
+          <span className="font-ui mt-0.5 text-[10px] md:text-[11px] italic leading-tight text-[#8A8A8A]">
             {lang === "en" ? "Where speed becomes history" : "Donde la velocidad se convierte en historia"}
           </span>
         </Link>
@@ -224,13 +224,13 @@ export function SiteHeader() {
             role="dialog"
             aria-label={t("nav.menu")}
           >
-            <div className="flex h-14 items-center justify-between border-b border-[#333] px-4">
+            <div className="flex h-16 items-center justify-between border-b border-[#333] px-5">
               <img
                 src={logoUrl}
                 alt="Rollerzone — patinaje de velocidad"
                 loading="lazy"
                 decoding="async"
-                className="h-7 w-auto"
+                className="h-8 w-auto"
               />
               <Button variant="ghost" onClick={() => setMobileOpen(false)} aria-label={t("common.close")} className="text-[#F5F5F5]">
                 <X className="h-6 w-6" />

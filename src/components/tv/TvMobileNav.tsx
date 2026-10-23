@@ -4,7 +4,7 @@ export function TvMobileNav({ items, live }: { items: { id: string; label: strin
   return (
     <nav
       aria-label="Secciones de Rollerzone TV"
-      className="sticky top-[57px] z-30 border-b border-border bg-background/95 backdrop-blur lg:hidden"
+      className="sticky top-[65px] md:top-[73px] z-30 border-b border-border bg-background/95 backdrop-blur lg:hidden"
     >
       <div className="flex max-w-full snap-x overflow-x-auto px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {items.map((it) => (
