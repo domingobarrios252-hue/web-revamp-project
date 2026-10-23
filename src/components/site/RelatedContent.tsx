@@ -7,6 +7,7 @@ import { localizeNewsCards } from "@/lib/news/localizedCards";
 type Related = {
   id: string;
   title: string;
+  excerpt: string | null;
   slug: string;
   image_url: string | null;
   published_at: string;
