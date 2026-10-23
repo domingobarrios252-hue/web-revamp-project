@@ -41,7 +41,7 @@ export type ArticleViewData = {
 type Props = {
   article: ArticleViewData;
   locale: "es" | "en";
-  overrides?: { title?: string; excerpt?: string | null; blocks?: NewsBlock[]; content?: string | null };
+  overrides?: { title?: string; subtitle?: string | null; excerpt?: string | null; blocks?: NewsBlock[]; content?: string | null };
   backTo: { to: string; label: string };
 };
 
@@ -173,6 +173,7 @@ export function NewsArticleView({ article, locale, overrides, backTo }: Props) {
         >
           {title}
         </h1>
+        {overrides?.subtitle && <p className="mt-2 text-lg leading-relaxed text-foreground/90">{overrides.subtitle}</p>}
         {excerpt && (
           <p itemProp="description" className="mt-3 text-base text-muted-foreground md:text-lg">
             {excerpt}
