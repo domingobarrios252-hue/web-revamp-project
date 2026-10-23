@@ -133,7 +133,7 @@ export function SiteHeader() {
           <span className="font-display text-[20px] min-[375px]:text-[24px] md:text-[32px] leading-none tracking-[0.03em] text-[#F5F5F5] whitespace-nowrap">
             ROLLERZONE<span className="text-[#D4A017]">.ES</span>
           </span>
-          <span className="font-condensed mt-1 text-[9px] min-[375px]:text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.14em] min-[375px]:tracking-[0.18em] text-[#B0B0B0] whitespace-nowrap">
+          <span className="font-condensed mt-1 hidden min-[375px]:block text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.18em] text-[#B0B0B0] whitespace-nowrap">
             {lang === "en" ? "Speed skating magazine" : "Revista de patinaje de velocidad"}
           </span>
           <span className="font-ui mt-0.5 hidden sm:block text-[10px] md:text-[11px] italic leading-tight text-[#8A8A8A]">
