@@ -158,7 +158,7 @@ function AdminEventos() {
               </tr>
             </thead>
             <tbody>
-              {items.map((e) => (
+              {visible.map((e) => (
                 <tr key={e.id} className="border-b border-border/60 last:border-0">
                   <td className="px-3 py-2">{e.cover_url && <img src={e.cover_url} alt="" className="h-10 w-16 object-cover" />}</td>
                   <td className="px-3 py-2">
@@ -167,7 +167,7 @@ function AdminEventos() {
                   </td>
                   <td className="px-3 py-2 text-xs">{e.start_date}{e.end_date && e.end_date !== e.start_date ? ` → ${e.end_date}` : ""}</td>
                   <td className="px-3 py-2 text-xs">{e.categories?.join(", ") || "—"}</td>
-                  <td className="px-3 py-2 text-xs">{e.published ? <span className="text-gold">Publicado</span> : <span className="text-muted-foreground">Borrador</span>}</td>
+                  <td className="px-3 py-2 text-xs">{e.published ? <span className="text-gold">Publicado</span> : <span className="text-muted-foreground">Borrador</span>}{e.archived_at && <span className="ml-2 text-muted-foreground">· Archivado</span>}</td>
                   <td className="px-3 py-2 text-xs">
                     <button
                       type="button"
@@ -190,8 +190,13 @@ function AdminEventos() {
                     </button>
                   </td>
                   <td className="px-3 py-2 text-right">
-                    <button onClick={() => { setEditing(e); setShowForm(true); }} className="mr-2 text-muted-foreground hover:text-gold"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => onDelete(e.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => setHistoryFor(e)} title="Historial de cambios" className="mr-2 text-muted-foreground hover:text-gold"><History className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => { setEditing(e); setShowForm(true); }} title="Editar" className="mr-2 text-muted-foreground hover:text-gold"><Pencil className="h-3.5 w-3.5" /></button>
+                    {e.archived_at ? (
+                      <button onClick={() => onRestore(e)} title="Restaurar" className="text-muted-foreground hover:text-gold"><ArchiveRestore className="h-3.5 w-3.5" /></button>
+                    ) : (
+                      <button onClick={() => onArchive(e)} title="Archivar (reversible)" className="text-muted-foreground hover:text-destructive"><Archive className="h-3.5 w-3.5" /></button>
+                    )}
                   </td>
                 </tr>
               ))}
