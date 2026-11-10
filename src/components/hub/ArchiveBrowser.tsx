@@ -78,6 +78,7 @@ export function ArchiveBrowser({ country }: { country: string }) {
           .from("events")
           .select("id,slug,name,start_date,location,cover_url")
           .eq("published", true)
+          .is("archived_at", null)
           .eq("country_code", country)
           .lt("start_date", new Date().toISOString().slice(0, 10))
           .order("start_date", { ascending: false })

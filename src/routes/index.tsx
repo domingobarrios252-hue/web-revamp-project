@@ -618,6 +618,7 @@ function EventsPreviewSection() {
       .from("events")
       .select("id,name,slug,start_date,end_date,location,scope,cover_url,categories")
       .eq("published", true)
+      .is("archived_at", null)
       .gte("start_date", today)
       .order("start_date", { ascending: true })
       .limit(24)

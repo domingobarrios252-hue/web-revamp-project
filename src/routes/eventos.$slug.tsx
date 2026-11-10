@@ -36,6 +36,7 @@ export async function loadEventDetail(slug: string) {
       .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url, gallery, convocatoria_pdf_url, convocatoria_pdf_name")
       .eq("slug", slug)
       .eq("published", true)
+      .is("archived_at", null)
       .maybeSingle();
     if (error) throw error;
     if (!data) throw notFound();

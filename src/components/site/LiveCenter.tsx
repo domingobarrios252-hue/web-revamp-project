@@ -135,6 +135,7 @@ export function LiveCenter() {
           .from("events")
           .select("id, slug, name, cover_url, start_date, end_date, location, status, scope")
           .eq("published", true)
+          .is("archived_at", null)
           .gte("start_date", new Date().toISOString().slice(0, 10))
           .order("start_date", { ascending: true })
           .limit(12),

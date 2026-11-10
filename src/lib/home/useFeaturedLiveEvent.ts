@@ -59,6 +59,7 @@ export function useFeaturedLiveEvent() {
         .from("events")
         .select("*")
         .eq("published", true)
+        .is("archived_at", null)
         .eq("is_featured", true)
         .eq("live_center_enabled", true)
         .order("start_date", { ascending: false })
