@@ -124,6 +124,7 @@ export const Route = createFileRoute("/sitemap.xml")({
                 .from("events")
                 .select("slug, name, updated_at, start_date, cover_url")
                 .eq("published", true)
+                .is("archived_at", null)
                 .order("start_date", { ascending: false })
                 .limit(5000),
               supabase

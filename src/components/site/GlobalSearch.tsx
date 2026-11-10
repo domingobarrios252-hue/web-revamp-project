@@ -76,6 +76,7 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
           .from("events")
           .select("id, name, slug")
           .eq("published", true)
+          .is("archived_at", null)
           .ilike("name", like)
           .limit(5),
         supabase

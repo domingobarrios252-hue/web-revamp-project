@@ -49,6 +49,7 @@ export function useActiveLiveEvent(country: string) {
         .select("*")
         .eq("country_code", country)
         .eq("published", true)
+        .is("archived_at", null)
         .eq("status", "live")
         .order("start_date", { ascending: false })
         .limit(1)

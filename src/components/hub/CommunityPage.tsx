@@ -107,6 +107,7 @@ function CommunityCalendar({ country }: { country: string }) {
       .from("events")
       .select("id,name,slug,start_date,location,cover_url,scope")
       .eq("published", true)
+      .is("archived_at", null)
       .eq("country_code", country)
       .gte("start_date", new Date().toISOString().slice(0, 10))
       .order("start_date", { ascending: true })

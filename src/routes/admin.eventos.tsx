@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Archive, ArchiveRestore, History, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -32,7 +32,17 @@ type EventRow = {
   live_center_enabled: boolean | null;
   convocatoria_pdf_url: string | null;
   convocatoria_pdf_name: string | null;
+  archived_at: string | null;
   regions: { name: string } | null;
+};
+
+type ChangeLogRow = {
+  id: string;
+  action: "create" | "update" | "archive" | "restore";
+  changed_fields: Record<string, { old: unknown; new: unknown }>;
+  actor_id: string | null;
+  source: string;
+  created_at: string;
 };
 
 
@@ -71,6 +81,8 @@ function AdminEventos() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EventRow | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [historyFor, setHistoryFor] = useState<EventRow | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -85,21 +97,39 @@ function AdminEventos() {
 
   useEffect(() => { load(); }, []);
 
-  const onDelete = async (id: string) => {
-    if (!confirm("¿Eliminar evento?")) return;
-    const { error } = await supabase.from("events").delete().eq("id", id);
+  const onArchive = async (e: EventRow) => {
+    if (!confirm(`¿Archivar «${e.name}»? Desaparecerá del calendario público, pero se conserva todo y se puede restaurar.`)) return;
+    const { error } = await supabase.from("events").update({ archived_at: new Date().toISOString() }).eq("id", e.id);
     if (error) return toast.error(error.message);
-    toast.success("Evento eliminado");
+    toast.success("Evento archivado (reversible)");
     load();
   };
+
+  const onRestore = async (e: EventRow) => {
+    if (!confirm(`¿Restaurar «${e.name}»? Volverá a mostrarse con el mismo estado de publicación que tenía.`)) return;
+    const { error } = await supabase.from("events").update({ archived_at: null, archived_by: null }).eq("id", e.id);
+    if (error) return toast.error(error.message);
+    toast.success("Evento restaurado");
+    load();
+  };
+
+  const visible = items.filter((e) => (showArchived ? e.archived_at : !e.archived_at));
 
   return (
     <div>
       <div className="mb-5 flex items-center justify-between">
         <h1 className="font-display text-2xl tracking-widest">Eventos</h1>
-        <button onClick={() => { setEditing(null); setShowForm(true); }} className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-          <Plus className="h-4 w-4" /> Nuevo
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowArchived((v) => !v)}
+            className={"font-condensed inline-flex items-center gap-2 border px-4 py-2 text-xs font-bold uppercase tracking-widest " + (showArchived ? "border-gold text-gold" : "border-border text-muted-foreground hover:border-gold hover:text-gold")}
+          >
+            <Archive className="h-4 w-4" /> {showArchived ? "Ver activas" : `Archivadas (${items.filter((e) => e.archived_at).length})`}
+          </button>
+          <button onClick={() => { setEditing(null); setShowForm(true); }} className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
+            <Plus className="h-4 w-4" /> Nuevo
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -111,7 +141,9 @@ function AdminEventos() {
         />
       )}
 
-      {loading ? <p className="text-muted-foreground">Cargando…</p> : items.length === 0 ? <p className="text-muted-foreground">Aún no hay eventos.</p> : (
+      {historyFor && <EventHistory event={historyFor} onClose={() => setHistoryFor(null)} />}
+
+      {loading ? <p className="text-muted-foreground">Cargando…</p> : visible.length === 0 ? <p className="text-muted-foreground">{showArchived ? "No hay eventos archivados." : "Aún no hay eventos."}</p> : (
         <div className="overflow-x-auto border border-border">
           <table className="w-full">
             <thead className="border-b border-border bg-surface">
@@ -126,7 +158,7 @@ function AdminEventos() {
               </tr>
             </thead>
             <tbody>
-              {items.map((e) => (
+              {visible.map((e) => (
                 <tr key={e.id} className="border-b border-border/60 last:border-0">
                   <td className="px-3 py-2">{e.cover_url && <img src={e.cover_url} alt="" className="h-10 w-16 object-cover" />}</td>
                   <td className="px-3 py-2">
@@ -135,7 +167,7 @@ function AdminEventos() {
                   </td>
                   <td className="px-3 py-2 text-xs">{e.start_date}{e.end_date && e.end_date !== e.start_date ? ` → ${e.end_date}` : ""}</td>
                   <td className="px-3 py-2 text-xs">{e.categories?.join(", ") || "—"}</td>
-                  <td className="px-3 py-2 text-xs">{e.published ? <span className="text-gold">Publicado</span> : <span className="text-muted-foreground">Borrador</span>}</td>
+                  <td className="px-3 py-2 text-xs">{e.published ? <span className="text-gold">Publicado</span> : <span className="text-muted-foreground">Borrador</span>}{e.archived_at && <span className="ml-2 text-muted-foreground">· Archivado</span>}</td>
                   <td className="px-3 py-2 text-xs">
                     <button
                       type="button"
@@ -158,8 +190,13 @@ function AdminEventos() {
                     </button>
                   </td>
                   <td className="px-3 py-2 text-right">
-                    <button onClick={() => { setEditing(e); setShowForm(true); }} className="mr-2 text-muted-foreground hover:text-gold"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => onDelete(e.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => setHistoryFor(e)} title="Historial de cambios" className="mr-2 text-muted-foreground hover:text-gold"><History className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => { setEditing(e); setShowForm(true); }} title="Editar" className="mr-2 text-muted-foreground hover:text-gold"><Pencil className="h-3.5 w-3.5" /></button>
+                    {e.archived_at ? (
+                      <button onClick={() => onRestore(e)} title="Restaurar" className="text-muted-foreground hover:text-gold"><ArchiveRestore className="h-3.5 w-3.5" /></button>
+                    ) : (
+                      <button onClick={() => onArchive(e)} title="Archivar (reversible)" className="text-muted-foreground hover:text-destructive"><Archive className="h-3.5 w-3.5" /></button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -414,6 +451,61 @@ function GalleryEditor({ value, onChange, slug }: { value: string[]; onChange: (
         >
           <Plus className="h-3 w-3" /> Añadir foto
         </button>
+      )}
+    </div>
+  );
+}
+
+function EventHistory({ event, onClose }: { event: EventRow; onClose: () => void }) {
+  const [rows, setRows] = useState<ChangeLogRow[] | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("event_change_log")
+      .select("id, action, changed_fields, actor_id, source, created_at")
+      .eq("event_id", event.id)
+      .order("created_at", { ascending: false })
+      .limit(100)
+      .then(({ data }) => setRows((data as unknown as ChangeLogRow[]) ?? []));
+  }, [event.id]);
+
+  const actionLabel: Record<ChangeLogRow["action"], string> = {
+    create: "Alta",
+    update: "Modificación",
+    archive: "Archivado",
+    restore: "Restauración",
+  };
+
+  return (
+    <div className="mb-6 border border-border bg-surface p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="font-display text-lg tracking-widest text-gold">Historial · {event.name}</h2>
+        <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+      </div>
+      {rows === null ? (
+        <p className="text-muted-foreground">Cargando…</p>
+      ) : rows.length === 0 ? (
+        <p className="text-muted-foreground">Sin cambios registrados todavía.</p>
+      ) : (
+        <ul className="space-y-3">
+          {rows.map((r) => (
+            <li key={r.id} className="border-b border-border/60 pb-3 last:border-0">
+              <div className="font-condensed text-xs uppercase tracking-widest">
+                <span className="text-gold">{actionLabel[r.action]}</span>
+                <span className="ml-2 text-muted-foreground">{new Date(r.created_at).toLocaleString("es-ES")} · origen: {r.source}</span>
+              </div>
+              {r.action === "update" && Object.keys(r.changed_fields ?? {}).length > 0 && (
+                <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
+                  {Object.entries(r.changed_fields).map(([field, change]) => (
+                    <li key={field}>
+                      <span className="text-foreground">{field}</span>: {JSON.stringify(change.old) ?? "—"} → {JSON.stringify(change.new) ?? "—"}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

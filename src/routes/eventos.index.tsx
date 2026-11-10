@@ -91,6 +91,7 @@ export function EventosPage() {
       .from("events")
       .select("id, name, slug, description, start_date, end_date, location, organizer, scope, categories, cover_url, website_url, instagram_url, facebook_url, registration_url")
       .eq("published", true)
+      .is("archived_at", null)
       .order("start_date", { ascending: true })
       .limit(200)
       .then(({ data }) => {

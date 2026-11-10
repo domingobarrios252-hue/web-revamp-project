@@ -35,3 +35,13 @@
 - [x] Piloto EN: Marine, Chevi y Ecuador guardados como borradores sin aprobación; fidelidad revisada, español conservado, selector/SEO y presentación probados con límites explícitos; textos completos e informe entregados
 - [ ] Publicación bilingüe (bloqueado: revisión y autorización del usuario; tres borradores sin aprobar; revisión completa Admin no ejecutada sin usar su cuenta)
 - [ ] Certificar afirmaciones deportivas del piloto (bloqueado: fuente federativa para homologación del récord, 4:25.880 del relevo Ecuador y antecedentes 2024/2025; no cambiar el original ni inventar datos)
+
+## Fase 0 — Protección del calendario (aprobada con condiciones)
+- [x] Respaldo previo completo (40 eventos + relaciones) y script de reversión
+- [x] Migración: archived_at/archived_by, event_change_log, trigger historial, bloqueo de borrado
+- [x] Admin Eventos: archivar/restaurar, filtro archivadas, panel historial
+- [x] Filtrar archivadas en las 11 consultas públicas
+- [x] Verificaciones: 40 intactas, restaurar conserva publicación/destacado, historial solo cambios reales, borrado bloqueado, VeloPro/Vensport intactos
+- [x] Informe final (sin publicar)
+- [ ] Pendiente: revisión visual del usuario en Admin (MFA) y autorización para publicar
+- [ ] Fase 1 (bandeja de propuestas): NO iniciar sin autorización

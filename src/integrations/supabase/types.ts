@@ -885,6 +885,45 @@ export type Database = {
         }
         Relationships: []
       }
+      event_change_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          changed_fields: Json
+          created_at: string
+          event_id: string
+          event_slug: string | null
+          id: string
+          new_snapshot: Json | null
+          old_snapshot: Json | null
+          source: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          changed_fields?: Json
+          created_at?: string
+          event_id: string
+          event_slug?: string | null
+          id?: string
+          new_snapshot?: Json | null
+          old_snapshot?: Json | null
+          source?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          changed_fields?: Json
+          created_at?: string
+          event_id?: string
+          event_slug?: string | null
+          id?: string
+          new_snapshot?: Json | null
+          old_snapshot?: Json | null
+          source?: string
+        }
+        Relationships: []
+      }
       event_clubs: {
         Row: {
           club_id: string
@@ -1003,6 +1042,8 @@ export type Database = {
       }
       events: {
         Row: {
+          archived_at: string | null
+          archived_by: string | null
           banner_url: string | null
           categories: string[]
           city: string | null
@@ -1045,6 +1086,8 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
           banner_url?: string | null
           categories?: string[]
           city?: string | null
@@ -1087,6 +1130,8 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          archived_at?: string | null
+          archived_by?: string | null
           banner_url?: string | null
           categories?: string[]
           city?: string | null
