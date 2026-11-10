@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Archive, ArchiveRestore, History, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -32,7 +32,17 @@ type EventRow = {
   live_center_enabled: boolean | null;
   convocatoria_pdf_url: string | null;
   convocatoria_pdf_name: string | null;
+  archived_at: string | null;
   regions: { name: string } | null;
+};
+
+type ChangeLogRow = {
+  id: string;
+  action: "create" | "update" | "archive" | "restore";
+  changed_fields: Record<string, { old: unknown; new: unknown }>;
+  actor_id: string | null;
+  source: string;
+  created_at: string;
 };
 
 
