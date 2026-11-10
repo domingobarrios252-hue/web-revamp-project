@@ -127,6 +127,13 @@
       "when": 1792574628198,
       "tag": "0017_news_translation_review_security",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794343290079,
+      "tag": "0018_fase0_events_archive_and_change_log",
+      "breakpoints": true
     }
   ]
 }
