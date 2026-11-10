@@ -119,9 +119,17 @@ function AdminEventos() {
     <div>
       <div className="mb-5 flex items-center justify-between">
         <h1 className="font-display text-2xl tracking-widest">Eventos</h1>
-        <button onClick={() => { setEditing(null); setShowForm(true); }} className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
-          <Plus className="h-4 w-4" /> Nuevo
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowArchived((v) => !v)}
+            className={"font-condensed inline-flex items-center gap-2 border px-4 py-2 text-xs font-bold uppercase tracking-widest " + (showArchived ? "border-gold text-gold" : "border-border text-muted-foreground hover:border-gold hover:text-gold")}
+          >
+            <Archive className="h-4 w-4" /> {showArchived ? "Ver activas" : `Archivadas (${items.filter((e) => e.archived_at).length})`}
+          </button>
+          <button onClick={() => { setEditing(null); setShowForm(true); }} className="font-condensed inline-flex items-center gap-2 bg-gold px-4 py-2 text-xs font-bold uppercase tracking-widest text-background hover:bg-gold-dark">
+            <Plus className="h-4 w-4" /> Nuevo
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -133,7 +141,9 @@ function AdminEventos() {
         />
       )}
 
-      {loading ? <p className="text-muted-foreground">Cargando…</p> : items.length === 0 ? <p className="text-muted-foreground">Aún no hay eventos.</p> : (
+      {historyFor && <EventHistory event={historyFor} onClose={() => setHistoryFor(null)} />}
+
+      {loading ? <p className="text-muted-foreground">Cargando…</p> : visible.length === 0 ? <p className="text-muted-foreground">{showArchived ? "No hay eventos archivados." : "Aún no hay eventos."}</p> : (
         <div className="overflow-x-auto border border-border">
           <table className="w-full">
             <thead className="border-b border-border bg-surface">
