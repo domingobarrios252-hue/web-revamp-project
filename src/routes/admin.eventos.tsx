@@ -456,6 +456,61 @@ function GalleryEditor({ value, onChange, slug }: { value: string[]; onChange: (
   );
 }
 
+function EventHistory({ event, onClose }: { event: EventRow; onClose: () => void }) {
+  const [rows, setRows] = useState<ChangeLogRow[] | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("event_change_log")
+      .select("id, action, changed_fields, actor_id, source, created_at")
+      .eq("event_id", event.id)
+      .order("created_at", { ascending: false })
+      .limit(100)
+      .then(({ data }) => setRows((data as unknown as ChangeLogRow[]) ?? []));
+  }, [event.id]);
+
+  const actionLabel: Record<ChangeLogRow["action"], string> = {
+    create: "Alta",
+    update: "Modificación",
+    archive: "Archivado",
+    restore: "Restauración",
+  };
+
+  return (
+    <div className="mb-6 border border-border bg-surface p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="font-display text-lg tracking-widest text-gold">Historial · {event.name}</h2>
+        <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+      </div>
+      {rows === null ? (
+        <p className="text-muted-foreground">Cargando…</p>
+      ) : rows.length === 0 ? (
+        <p className="text-muted-foreground">Sin cambios registrados todavía.</p>
+      ) : (
+        <ul className="space-y-3">
+          {rows.map((r) => (
+            <li key={r.id} className="border-b border-border/60 pb-3 last:border-0">
+              <div className="font-condensed text-xs uppercase tracking-widest">
+                <span className="text-gold">{actionLabel[r.action]}</span>
+                <span className="ml-2 text-muted-foreground">{new Date(r.created_at).toLocaleString("es-ES")} · origen: {r.source}</span>
+              </div>
+              {r.action === "update" && Object.keys(r.changed_fields ?? {}).length > 0 && (
+                <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
+                  {Object.entries(r.changed_fields).map(([field, change]) => (
+                    <li key={field}>
+                      <span className="text-foreground">{field}</span>: {JSON.stringify(change.old) ?? "—"} → {JSON.stringify(change.new) ?? "—"}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
   return (
     <label className={`block ${full ? "md:col-span-2" : ""}`}>
