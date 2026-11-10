@@ -81,6 +81,8 @@ function AdminEventos() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EventRow | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [historyFor, setHistoryFor] = useState<EventRow | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -95,13 +97,23 @@ function AdminEventos() {
 
   useEffect(() => { load(); }, []);
 
-  const onDelete = async (id: string) => {
-    if (!confirm("¿Eliminar evento?")) return;
-    const { error } = await supabase.from("events").delete().eq("id", id);
+  const onArchive = async (e: EventRow) => {
+    if (!confirm(`¿Archivar «${e.name}»? Desaparecerá del calendario público, pero se conserva todo y se puede restaurar.`)) return;
+    const { error } = await supabase.from("events").update({ archived_at: new Date().toISOString() }).eq("id", e.id);
     if (error) return toast.error(error.message);
-    toast.success("Evento eliminado");
+    toast.success("Evento archivado (reversible)");
     load();
   };
+
+  const onRestore = async (e: EventRow) => {
+    if (!confirm(`¿Restaurar «${e.name}»? Volverá a mostrarse con el mismo estado de publicación que tenía.`)) return;
+    const { error } = await supabase.from("events").update({ archived_at: null, archived_by: null }).eq("id", e.id);
+    if (error) return toast.error(error.message);
+    toast.success("Evento restaurado");
+    load();
+  };
+
+  const visible = items.filter((e) => (showArchived ? e.archived_at : !e.archived_at));
 
   return (
     <div>
