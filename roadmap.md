@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Home: sección Especial ASU26 ES/EN con las dos portadas, estreno 2026-11-15T17:00:00Z validado en servidor y enlaces privados pendientes; pruebas de activación por edición y móvil, sin publicar.
 - [x] Revisar exclusivamente límites ES/EN: hoy 0 traducciones/0 intentos; ventana móvil 24 h en UTC, incluye intentos fallidos; llamada al RPC reservado al servidor corregida tras autorización editorial y errores separados del cupo; 17 pruebas pasan y build OK, sin IA, escrituras de datos ni publicación. Generación real no ejecutada para preservar traducciones.
 - [x] Internacionalización premium ES/EN: auditoría y plan aprobados
 - [~] Bloques ES/EN disponibles completados y verificados; ampliación editorial fuera de noticias pendiente de decisión y autorización, sin publicar ni aprobar los tres borradores
