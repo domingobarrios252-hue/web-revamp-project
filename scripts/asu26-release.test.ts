@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test";
 import { asu26ReleaseState, asu26EditionResponse } from "../src/lib/magazine/asu26Release";
 const launch = Date.parse("2026-11-15T17:00:00Z");
-const links = { es: "https://heyzine.com/flip-book/test-es.html", en: "https://heyzine.com/flip-book/test-en.html" };
+const links = { es: "https://rollerzonecolombiadigital.aflip.in/e1fb399f1b.html", en: "https://rollerzonecolombiadigital.aflip.in/73f06e9b58.html" };
 test("15 noviembre 18:00 Europe/Madrid equivale a 17:00 UTC", () => {
   expect(new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(launch)).toBe("18:00");
 });
@@ -27,7 +27,7 @@ test("configurar solo español no activa inglés", () => {
   expect(asu26ReleaseState(launch, { es: links.es, en: undefined }).editions).toEqual({ es: true, en: false });
 });
 test("no admite redirecciones arbitrarias o enlaces inválidos", () => {
-  for (const es of ["http://heyzine.com/book", "https://heyzine.com.evil.example/book", "[PEGAR ENLACE HEYZINE ES]", "https://heyzine.com/"]) {
+  for (const es of ["http://heyzine.com/book", "https://heyzine.com.evil.example/book", "[PEGAR ENLACE HEYZINE ES]", "https://heyzine.com/", "https://aflip.in/book", "https://rollerzonecolombiadigital.aflip.in.evil.example/book", "http://rollerzonecolombiadigital.aflip.in/book"]) {
     expect(asu26ReleaseState(launch, { es, en: undefined }).editions.es).toBe(false);
   }
   expect(asu26EditionResponse("fr", launch, links).status).toBe(404);
