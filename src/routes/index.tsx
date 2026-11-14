@@ -20,6 +20,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { formatDate } from "@/lib/i18n/format";
 
 import { EditorialCover, type CoverNews } from "@/components/home/EditorialCover";
+import { Asu26MagazineSection } from "@/components/home/Asu26MagazineSection";
 import { HomeSpecialsBlock } from "@/components/home/HomeSpecialsBlock";
 import { EventModeHomeBlock } from "@/components/home/EventModeHomeBlock";
 import { RollerZoneTVHome } from "@/components/home/RollerZoneTVHome";
@@ -193,6 +194,8 @@ export function HomePage() {
 
       {/* BANNER PUBLICITARIO */}
       <AdBanner placement="home_top" />
+
+      <Asu26MagazineSection />
 
       {/* 3. PORTADA EDITORIAL */}
       {coverNews.length > 0 && <EditorialCover news={coverNews} />}
