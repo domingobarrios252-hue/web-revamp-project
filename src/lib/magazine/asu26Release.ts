@@ -6,7 +6,7 @@ export function heyzineUrl(value: string | undefined): string | null {
   if (!value?.trim()) return null;
   try {
     const url = new URL(value.trim());
-    if (url.protocol !== "https:" || !["heyzine.com", "www.heyzine.com"].includes(url.hostname) || url.username || url.password || url.port) return null;
+    if (url.protocol !== "https:" || !["heyzine.com", "www.heyzine.com", "rollerzonecolombiadigital.aflip.in"].includes(url.hostname) || url.username || url.password || url.port) return null;
     if (url.pathname === "/") return null;
     return url.href;
   } catch { return null; }

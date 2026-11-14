@@ -1,6 +1,6 @@
 # Roadmap
 - [x] Home: sección Especial ASU26 ES/EN con ambas portadas completas; servidor valida estreno 2026-11-15T17:00:00Z y enlaces por edición; 6 pruebas/19 aserciones y vistas 1280/390/320, actualización sin recarga simulada, build OK; sin publicar.
-- [ ] Especial ASU26: configurar enlaces privados ES/EN cuando el usuario los facilite y verificar destinos reales; publicación pendiente de autorización.
+- [x] Especial ASU26: enlaces privados ES/EN configurados, host Aflip autorizado; 6 pruebas/22 aserciones, bloqueo real de ambos botones y rutas antes de 2026-11-15T17:00:00Z y destinos HTTP 200; build OK. Publicación pendiente de autorización.
 - [x] Revisar exclusivamente límites ES/EN: hoy 0 traducciones/0 intentos; ventana móvil 24 h en UTC, incluye intentos fallidos; llamada al RPC reservado al servidor corregida tras autorización editorial y errores separados del cupo; 17 pruebas pasan y build OK, sin IA, escrituras de datos ni publicación. Generación real no ejecutada para preservar traducciones.
 - [x] Internacionalización premium ES/EN: auditoría y plan aprobados
 - [~] Bloques ES/EN disponibles completados y verificados; ampliación editorial fuera de noticias pendiente de decisión y autorización, sin publicar ni aprobar los tres borradores
