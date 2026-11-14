@@ -161,6 +161,7 @@ import { Route as EnResultsIndexRouteImport } from './routes/en.results.index'
 import { Route as EnResultsEventoRouteImport } from './routes/en.results.$evento'
 import { Route as EnSpecialsIndexRouteImport } from './routes/en.specials.index'
 import { Route as EnUsaNewsRouteImport } from './routes/en.usa_.news'
+import { Route as EspecialAsu26LeerEditionRouteImport } from './routes/especial-asu26.leer.$edition'
 import { Route as EspecialesSlugIndexRouteImport } from './routes/especiales.$slug.index'
 import { Route as EspecialesSlugPieceRouteImport } from './routes/especiales.$slug.$piece'
 import { Route as FranciaEntrevistasSlugRouteImport } from './routes/francia_.entrevistas_.$slug'
@@ -986,6 +987,12 @@ const EnUsaNewsRoute = EnUsaNewsRouteImport.update({
   path: '/en/usa/news',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EspecialAsu26LeerEditionRoute =
+  EspecialAsu26LeerEditionRouteImport.update({
+    id: '/especial-asu26/leer/$edition',
+    path: '/especial-asu26/leer/$edition',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const EspecialesSlugIndexRoute = EspecialesSlugIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -1420,6 +1427,7 @@ export interface FileRoutesByFullPath {
   '/en/portugal/news': typeof EnPortugalNewsRoute
   '/en/results/$evento': typeof EnResultsEventoRoute
   '/en/usa/news': typeof EnUsaNewsRoute
+  '/especial-asu26/leer/$edition': typeof EspecialAsu26LeerEditionRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
@@ -1619,6 +1627,7 @@ export interface FileRoutesByTo {
   '/en/portugal/news': typeof EnPortugalNewsRoute
   '/en/results/$evento': typeof EnResultsEventoRoute
   '/en/usa/news': typeof EnUsaNewsRoute
+  '/especial-asu26/leer/$edition': typeof EspecialAsu26LeerEditionRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia/entrevistas/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia/noticias/$slug': typeof FranciaNoticiasSlugRoute
@@ -1822,6 +1831,7 @@ export interface FileRoutesById {
   '/en/portugal_/news': typeof EnPortugalNewsRoute
   '/en/results/$evento': typeof EnResultsEventoRoute
   '/en/usa_/news': typeof EnUsaNewsRoute
+  '/especial-asu26/leer/$edition': typeof EspecialAsu26LeerEditionRoute
   '/especiales/$slug/$piece': typeof EspecialesSlugPieceRoute
   '/francia_/entrevistas_/$slug': typeof FranciaEntrevistasSlugRoute
   '/francia_/noticias_/$slug': typeof FranciaNoticiasSlugRoute
@@ -2032,6 +2042,7 @@ export interface FileRouteTypes {
     | '/en/portugal/news'
     | '/en/results/$evento'
     | '/en/usa/news'
+    | '/especial-asu26/leer/$edition'
     | '/especiales/$slug/$piece'
     | '/francia/entrevistas/$slug'
     | '/francia/noticias/$slug'
@@ -2231,6 +2242,7 @@ export interface FileRouteTypes {
     | '/en/portugal/news'
     | '/en/results/$evento'
     | '/en/usa/news'
+    | '/especial-asu26/leer/$edition'
     | '/especiales/$slug/$piece'
     | '/francia/entrevistas/$slug'
     | '/francia/noticias/$slug'
@@ -2433,6 +2445,7 @@ export interface FileRouteTypes {
     | '/en/portugal_/news'
     | '/en/results/$evento'
     | '/en/usa_/news'
+    | '/especial-asu26/leer/$edition'
     | '/especiales/$slug/$piece'
     | '/francia_/entrevistas_/$slug'
     | '/francia_/noticias_/$slug'
@@ -2574,6 +2587,7 @@ export interface RootRouteChildren {
   EnPortugalNewsRoute: typeof EnPortugalNewsRoute
   EnResultsEventoRoute: typeof EnResultsEventoRoute
   EnUsaNewsRoute: typeof EnUsaNewsRoute
+  EspecialAsu26LeerEditionRoute: typeof EspecialAsu26LeerEditionRoute
   FranciaEntrevistasSlugRoute: typeof FranciaEntrevistasSlugRoute
   FranciaNoticiasSlugRoute: typeof FranciaNoticiasSlugRoute
   NoticiasArticuloSlugRoute: typeof NoticiasArticuloSlugRoute
@@ -3655,6 +3669,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnUsaNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/especial-asu26/leer/$edition': {
+      id: '/especial-asu26/leer/$edition'
+      path: '/especial-asu26/leer/$edition'
+      fullPath: '/especial-asu26/leer/$edition'
+      preLoaderRoute: typeof EspecialAsu26LeerEditionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/especiales/$slug/': {
       id: '/especiales/$slug/'
       path: '/'
@@ -4514,6 +4535,7 @@ const rootRouteChildren: RootRouteChildren = {
   EnPortugalNewsRoute: EnPortugalNewsRoute,
   EnResultsEventoRoute: EnResultsEventoRoute,
   EnUsaNewsRoute: EnUsaNewsRoute,
+  EspecialAsu26LeerEditionRoute: EspecialAsu26LeerEditionRoute,
   FranciaEntrevistasSlugRoute: FranciaEntrevistasSlugRoute,
   FranciaNoticiasSlugRoute: FranciaNoticiasSlugRoute,
   NoticiasArticuloSlugRoute: NoticiasArticuloSlugRoute,
