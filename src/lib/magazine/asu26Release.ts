@@ -1,4 +1,4 @@
-export const ASU26_RELEASE_AT = "2026-11-15T17:00:00Z";
+export const ASU26_RELEASE_AT = "2026-11-15T16:15:00Z";
 export type Asu26Edition = "es" | "en";
 export const ASU26_RELEASE_HEADERS = { "Cache-Control": "no-store, max-age=0", "CDN-Cache-Control": "no-store" };
 
@@ -24,7 +24,7 @@ export function asu26ReleaseState(now: number, links: Record<Asu26Edition, strin
 
 export function asu26EditionResponse(edition: string, now: number, links: Record<Asu26Edition, string | undefined>): Response {
   if (edition !== "es" && edition !== "en") return new Response("Not found", { status: 404, headers: ASU26_RELEASE_HEADERS });
-  if (now < Date.parse(ASU26_RELEASE_AT)) return new Response(edition === "es" ? "Edición disponible desde el 15 de noviembre a las 18:00 CET." : "Available from 15 November at 18:00 CET.", { status: 403, headers: ASU26_RELEASE_HEADERS });
+  if (now < Date.parse(ASU26_RELEASE_AT)) return new Response(edition === "es" ? "Edición todavía no disponible." : "Edition not yet available.", { status: 403, headers: ASU26_RELEASE_HEADERS });
   const url = heyzineUrl(links[edition]);
   if (!url) return new Response(edition === "es" ? "Edición todavía no disponible." : "Edition not yet available.", { status: 503, headers: ASU26_RELEASE_HEADERS });
   return new Response(null, { status: 302, headers: { ...ASU26_RELEASE_HEADERS, Location: url } });
