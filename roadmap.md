@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Adelantar apertura de las revistas ES/EN al 15 de noviembre, 17:15 Madrid por petición expresa; verificar botones y destinos, sin publicar otros cambios pendientes.
+- [x] Apertura adelantada ES/EN al 15 de noviembre, 17:15 Madrid; 6 pruebas/23 aserciones, ambos botones pulsados con destinos reales correctos y build OK; disponible en vista previa, sin publicar cambios pendientes.
 - [x] Home: sección Especial ASU26 ES/EN con ambas portadas completas; servidor valida estreno 2026-11-15T17:00:00Z y enlaces por edición; 6 pruebas/19 aserciones y vistas 1280/390/320, actualización sin recarga simulada, build OK; sin publicar.
 - [x] Especial ASU26: enlaces privados ES/EN configurados, host Aflip autorizado; 6 pruebas/22 aserciones, bloqueo real de ambos botones y rutas antes de 2026-11-15T17:00:00Z y destinos HTTP 200; build OK. Publicación pendiente de autorización.
 - [x] Revisar exclusivamente límites ES/EN: hoy 0 traducciones/0 intentos; ventana móvil 24 h en UTC, incluye intentos fallidos; llamada al RPC reservado al servidor corregida tras autorización editorial y errores separados del cupo; 17 pruebas pasan y build OK, sin IA, escrituras de datos ni publicación. Generación real no ejecutada para preservar traducciones.
