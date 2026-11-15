@@ -74,7 +74,7 @@ export function Asu26MagazineSection() {
           ))}
         </div>
         {!state?.released && <p role="status" className="mt-6 text-center text-sm text-gold">
-          {lang === "en" ? "Available Sunday, 15 November at 18:00 CET (17:00 UTC)" : "Estreno el domingo 15 de noviembre a las 18:00 h (hora peninsular española)"}
+          {lang === "en" ? "Checking edition availability…" : "Comprobando disponibilidad de las ediciones…"}
         </p>}
       </div>
     </section>
